@@ -22,6 +22,19 @@ mix credo --strict
 # Check if Credo exited with a non-zero status (indicating issues)
 if [ \$? -ne 0 ]; then
   echo "Credo found issues, commit aborted!"
+  echo "use git commit --no-verify to commit anyway"
+  git stash pop -q
+  exit 1
+fi
+
+# Run mix dialyzer
+echo "Running mix dialyzer..."
+mix dialyzer
+
+# Check if Dialyzer exited with a non-zero status (indicating issues)
+if [ \$? -ne 0 ]; then
+  echo "Dialyzer found issues, commit aborted!"
+  echo "use git commit --no-verify to commit anyway"
   git stash pop -q
   exit 1
 fi
