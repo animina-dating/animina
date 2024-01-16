@@ -28,13 +28,12 @@ jobs:
     - name: Install asdf
       run: |
         git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
-        echo ". $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
-        echo ". $HOME/.asdf/completions/asdf.bash" >> $HOME/.bashrc
-        source $HOME/.bashrc
+        echo -e "\n. $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
+        echo -e "\n. $HOME/.asdf/completions/asdf.bash" >> $HOME/.bashrc
 
     - name: Install Erlang and Elixir from .tool-versions
       run: |
-        source $HOME/.bashrc
+        . $HOME/.asdf/asdf.sh
         asdf plugin-add erlang
         asdf plugin-add elixir
         erlang_version=$(grep erlang .tool-versions | cut -d " " -f2)
@@ -46,7 +45,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        source $HOME/.bashrc
+        . $HOME/.asdf/asdf.sh
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
@@ -59,7 +58,7 @@ jobs:
         PGPASSWORD: postgres
         PGDATABASE: animina_test
       run: |
-        source $HOME/.bashrc
+        . $HOME/.asdf/asdf.sh
         mix ecto.create
         mix ecto.migrate
 
@@ -71,5 +70,5 @@ jobs:
         PGPASSWORD: postgres
         PGDATABASE: animina_test
       run: |
-        source $HOME/.bashrc
+        . $HOME/.asdf/asdf.sh
         mix test
