@@ -74,4 +74,5 @@ jobs:
           mix test
 
       - name: Run Credo
+        . $HOME/.asdf/asdf.sh
         run: mix credo --strict
