@@ -76,4 +76,4 @@ jobs:
       - name: Run Credo
         run: |
           . $HOME/.asdf/asdf.sh
-          run: mix credo --strict
+          mix credo --strict
