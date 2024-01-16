@@ -1,0 +1,54 @@
+name: Elixir CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: animina_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Elixir and Erlang
+      uses: erlef/setup-beam@v1
+      with:
+        otp-version: auto
+        elixir-version: auto
+        fetch-deps: true
+        install-hex: true
+        install-rebar: true
+    - name: Install Dependencies
+      run: mix deps.get
+    - name: Create and Migrate Database
+      env:
+        MIX_ENV: test
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        PGDATABASE: animina_test
+      run: |
+        mix ecto.create
+        mix ecto.migrate
+    - name: Run Tests
+      env:
+        MIX_ENV: test
+        PGHOST: localhost
+        PGUSER: postgres
+        PGPASSWORD: postgres
+        PGDATABASE: animina_test
+      run: mix test
+
