@@ -18,7 +18,7 @@ Use `asdf install` to install the correct versions of Elixir and Erlang.
 
 ## Git Stuff
 
-Please run the `setup-hooks.sh` script to install the git hooks.
+Please run the `./setup-hooks.sh` script to install the git hooks.
 
 ## Phoenix Framework
 
