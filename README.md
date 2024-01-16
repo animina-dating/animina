@@ -2,6 +2,26 @@
 
 ## Development Environment
 
+Please install the following tools:
+
+  * [Elixir](https://elixir-lang.org/install.html)
+  * [Phoenix](https://hexdocs.pm/phoenix/installation.html)
+  * [PostgreSQL](https://www.postgresql.org/download/)
+  * [asfd (optional)](https://asdf-vm.com)
+
+Use `asdf install` to install the correct versions of Elixir and Erlang.
+
+## Database Setup
+
+  * Run `mix ecto.setup` to create the database and run migrations
+  * Run `mix ecto.reset` to drop the database and run migrations
+
+## Git Stuff
+
+Please run the `setup-hooks.sh` script to install the git hooks.
+
+## Phoenix Framework
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
