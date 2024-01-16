@@ -28,7 +28,6 @@ jobs:
       with:
         otp-version: auto
         elixir-version: auto
-        fetch-deps: true
         install-hex: true
         install-rebar: true
     - name: Install Dependencies
