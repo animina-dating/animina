@@ -52,7 +52,11 @@ defmodule Animina.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ash, "~> 2.18"},
+      {:ash_authentication, "~> 3.12"},
+      {:ash_authentication_phoenix, "~>  1.9"},
+      {:ash_postgres, "~> 1.4"}
     ]
   end
 
