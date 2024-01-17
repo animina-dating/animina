@@ -7,7 +7,7 @@ Please install the following tools:
   * [Elixir](https://elixir-lang.org/install.html)
   * [Phoenix](https://hexdocs.pm/phoenix/installation.html)
   * [PostgreSQL](https://www.postgresql.org/download/)
-  * [asfd (optional)](https://asdf-vm.com)
+  * [asdf (optional)](https://asdf-vm.com)
 
 Use `asdf install` to install the correct versions of Elixir and Erlang.
 
