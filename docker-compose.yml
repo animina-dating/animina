@@ -1,0 +1,67 @@
+version: '3.7'
+
+networks:
+  all-in-one:
+    driver: "${NETWORK_MODE}"
+    attachable: true
+    enable_ipv6: false
+
+services:
+  
+  web:
+    hostname: web
+    build: ./
+    entrypoint: ./docker-entrypoint.sh
+    restart: on-failure
+    networks:
+      - all-in-one
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 1
+    ports:
+      - "4000:4000/tcp"
+    volumes:
+      - "./docker-entrypoint.sh:/application/docker-entrypoint.sh:ro"
+      - "./assets:/application/assets:ro"
+      - "./config:/application/config:ro"
+      - "./lib:/application/lib:ro"
+      - "./mix.exs:/application/mix.exs:ro"
+      - "./mix.lock:/application/mix.lock:ro"
+      - "./priv:/application/priv:ro"
+      - "./priv/static/assets:/application/priv/static/assets:rw"
+      - "./test:/application/test:ro"
+    depends_on:
+      db:
+        condition: service_started
+    environment:
+      DATABASE_USER: "postgres"
+      DATABASE_PASSWORD: "postgres"
+      DATABASE_HOST: "db"
+      DATABASE_NAME: "animina_dev"
+  
+  db:
+    hostname: db
+    #image: postgres:16
+    build: ./db-docker/
+    restart: on-failure
+    networks:
+      - all-in-one
+    sysctls:
+      net.ipv6.conf.all.disable_ipv6: 1
+    ports:
+      - "5432:5432/tcp"  # for external access
+    #volumes:
+    #  - "./db-docker/dumps/z-2024.sql:/docker-entrypoint-initdb.d/z-2024.sql"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      
+
+# For Emacs:
+# Local Variables:
+# indent-tabs-mode:nil
+# tab-width:2
+# c-basic-offset:2
+# End:
+# For VIM:
+# vim:set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
+
