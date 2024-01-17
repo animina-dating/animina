@@ -1,5 +1,7 @@
 defmodule Animina.Repo do
-  use Ecto.Repo,
-    otp_app: :animina,
-    adapter: Ecto.Adapters.Postgres
+  use AshPostgres.Repo, otp_app: :animina
+
+  def installed_extensions do
+    ["uuid-ossp", "citext"]
+  end
 end

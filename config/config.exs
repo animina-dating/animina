@@ -31,6 +31,9 @@ config :animina, AniminaWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
+config :animina,
+  ash_apis: [Animina.Accounts]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

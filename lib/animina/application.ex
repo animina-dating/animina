@@ -17,7 +17,8 @@ defmodule Animina.Application do
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
       # Start to serve requests, typically the last entry
-      AniminaWeb.Endpoint
+      AniminaWeb.Endpoint,
+      {AshAuthentication.Supervisor, otp_app: :animina}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
