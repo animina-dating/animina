@@ -85,6 +85,7 @@ defmodule AniminaWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import AniminaWeb.CoreComponents
+      import AniminaWeb.AniminaComponents
       import AniminaWeb.Gettext
 
       # Shortcut for generating JS commands
