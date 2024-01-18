@@ -1,0 +1,170 @@
+<.top_navigation points={10_000} />
+
+<div class="py-6 space-y-10 px-5">
+  <.notification_box
+    title="Du hast 5 Punkte für den ersten Schritt erhalten!"
+    message="Nutze die Punkte, um neue Leute in deiner Umgebung
+zu entdecken."
+    avatar_url="https://www.wintermeyer.de/assets/images/avatar.jpg"
+  />
+
+  <.status_bar title="Account anlegen" percent={20} />
+
+  <div class="space-y-6">
+    <div class="space-y-1">
+      <h2 class=" font-bold text-2xl text-brand-silver-900">Wen möchtest du daten?</h2>
+      <p class="text-brand-silver-900 text-base font-normal">Mehrere Optionen möglich</p>
+    </div>
+    <div class="space-y-4">
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="checkbox"
+            class="appearance-none w-4 h-4  shrink-0 rounded-sm border-[1.5px]  border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <svg
+            class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            fill="fill-current"
+            viewBox="0 0 256 256"
+          >
+            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+            </path>
+          </svg>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Männer
+        </span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="checkbox"
+            class="appearance-none w-4 h-4  shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <svg
+            class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            fill="fill-current"
+            viewBox="0 0 256 256"
+          >
+            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+            </path>
+          </svg>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Frauen
+        </span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="checkbox"
+            class="appearance-none w-4 h-4  shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <svg
+            class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            fill="fill-current"
+            viewBox="0 0 256 256"
+          >
+            <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z">
+            </path>
+          </svg>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">Nichtbinäre
+          Personen</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <div class="space-y-1">
+      <h2 class=" font-bold text-2xl text-brand-silver-900">Wonach suchst du?</h2>
+      <p class="text-brand-silver-900 text-base font-normal">Wähle eine Option aus</p>
+    </div>
+    <div class="space-y-4">
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="radio"
+            name="test"
+            class="appearance-none w-4 h-4  shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
+          </div>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Lebenspartner
+        </span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="radio"
+            name="test"
+            class="appearance-none w-4 h-4  shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
+          </div>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Beziehung
+        </span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="radio"
+            name="test"
+            class="appearance-none w-4 h-4  shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
+          </div>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Etwas für Spaß
+        </span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="radio"
+            name="test"
+            class="appearance-none w-4 h-4  shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
+          </div>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">Noch nicht
+          sicher</span>
+      </label>
+      <label class="flex items-center gap-3 px-4 py-3 border-2 border-brand-silver-400 rounded-lg has-[:checked]:border-brand-azure transition-colors ease-in-out duration-150">
+        <div class="relative w-4 h-4 flex items-center justify-center">
+          <input
+            type="radio"
+            name="test"
+            class="appearance-none w-4 h-4  shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+          />
+          <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
+          </div>
+        </div>
+        <span class="text-brand-silver-900 -mb-0.5 text-base font-normal select-none">
+          Möchte ich nicht angeben
+        </span>
+      </label>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="text-center text-white font-bold text-base bg-brand-azure px-5 py-3.5 rounded-lg w-full"
+  >
+    Weiter
+  </button>
+</div>

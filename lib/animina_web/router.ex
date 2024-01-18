@@ -21,6 +21,7 @@ defmodule AniminaWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/demo", PageController, :demo
 
     sign_in_route(register_path: "/register", reset_path: "/reset")
     sign_out_route AuthController
