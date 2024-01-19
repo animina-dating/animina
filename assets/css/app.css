@@ -2,4 +2,22 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-/* This file is for your main application CSS */
+/* App is optimized for mobile phones. Limit maximum width on other devices for now. */
+body {
+	max-width: 13.229cm; /* == 500px == 375pt */
+	margin-left: auto;
+	margin-right: auto;
+}
+
+
+
+/*
+# For Emacs:
+# Local Variables:
+# mode: css
+# indent-tabs-mode: t
+# End:
+# For VIM:
+# vim:set noexpandtab:
+*/
+
