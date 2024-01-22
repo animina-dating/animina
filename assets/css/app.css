@@ -9,6 +9,11 @@ body {
 	margin-right: auto;
 }
 
+input::invalid {
+	background-color: hsl(12, 100%, 92%);
+}
+
+
 
 
 /*
