@@ -13,6 +13,10 @@ input::invalid {
 	background-color: hsl(12, 100%, 92%);
 }
 
+p, *.wordwrap {
+	@apply break-words hyphens-auto;
+}
+
 
 
 
@@ -21,6 +25,7 @@ input::invalid {
 # Local Variables:
 # mode: css
 # indent-tabs-mode: t
+# tab-width: 3
 # End:
 # For VIM:
 # vim:set noexpandtab:
