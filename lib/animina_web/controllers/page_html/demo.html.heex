@@ -25,11 +25,37 @@ zu entdecken."
   
   <fieldset class="my-7 space-y-3 bg-green-100 p-3">
     <div class="space-y-1">
-      <h2 class="font-bold text-2xl text-brand-silver-900">Benutzername</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Ist für andere Benutzer_innen sichtbar. Kann nicht nachträglich geändert werden. Nur <q>a-z</q>, <q>0-9</q> und <q>_</q> erlaubt.)</p>
+      <h2 class="font-bold text-2xl text-brand-silver-900">Neues Konto anlegen</h2>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right">
+        Bereits angemeldet? &rarr;
+        <a href="/login" class="font-bold underline">Einloggen</a>
+      </p>
     </div>
-    <div class="space-y-4">
-      <input type="text" size="20" maxlength="25" class="font-mono rounded-lg peer" required="required" minlength="3" maxlength="25" name="username" pattern="[a-zA-Z0-9_]{3,25}" />
+    <div class="space-y-1 pt-1 pb-1">
+      <label for="input-email" class="font-bold text-brand-silver-900">E-Mail</label>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Ist für andere Be&shy;nut&shy;zer&shy;_innen nicht sichtbar.
+      </p>
+      <input type="email" class="font-mono rounded-lg peer w-[calc(100%-2em)]" required="required" name="email" id="input-email" />
+      <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+    </div>
+    <div class="space-y-1 pt-1 pb-1">
+      <label for="input-password" class="font-bold text-brand-silver-900">Passwort</label>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Muss mindestens 8 Zeichen lang sein.
+      </p>
+      <input type="password" class="font-mono rounded-lg peer w-[calc(100%-2em)]" required="required" name="email" id="input-password" pattern=".{8,}" />
+      <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+    </div>
+    <div class="space-y-1 pt-1 pb-1">
+      <label for="input-username" class="font-bold text-brand-silver-900">Benutzername</label>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+        Kann nicht nachträglich geändert werden.
+        Nur <q>a-z</q>, <q>0-9</q> und <q>_</q> erlaubt.
+        Mindestens 3 Zeichen.
+      </p>
+      <input type="text" size="20" maxlength="25" class="font-mono rounded-lg peer" required="required" minlength="3" maxlength="25" name="username" id="input-username" pattern="[a-zA-Z0-9_]{3,25}" />
       <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
     </div>
   </fieldset>
@@ -37,7 +63,12 @@ zu entdecken."
   <fieldset class="my-7 space-y-3 bg-red-100 p-3">
     <div class="space-y-1">
       <h2 class="font-bold text-2xl text-brand-silver-900">Name</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Ein frei wählbarer Name für das Profil. Kann z.B. der Vorname sein oder ein beliebiger anderer Name, wie etwa <q>Marathonläuferin 123</q>, <q>Techno-Fan aus Berlin</q>, <q>passionierter Briefmarkensammler</q> o.ä. Kann auch nachträglich geändert werden. Ist für andere Benutzer_innen sichtbar.)</p>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Ein frei wählbarer Name für das Profil.
+        Kann z.B. der Vorname sein oder ein beliebiger anderer Name, wie etwa <q>Marathonläuferin 123</q>, <q>Techno-Fan aus Berlin</q>, <q>passionierter Briefmarkensammler</q> o.ä.
+        Kann auch nachträglich geändert werden.
+        Ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+      </p>
     </div>
     <div class="space-y-4">
       <input type="text" maxlength="50" minlength="1" maxlength="50" name="name" class="rounded-lg w-full" />
@@ -47,7 +78,11 @@ zu entdecken."
   <fieldset class="my-7 space-y-3 bg-lime-100 p-3">
     <div class="space-y-1">
       <h2 class="font-bold text-2xl text-brand-silver-900">Geburtsdatum</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Für andere Benutzer_innen ist dein Alter sichtbar. Tag und Monat dürfen aus Gründen der Privatsphäre auch nach oben abgeändert werden. Derzeit dürfen nur volljährige Personen unser Angebot nutzen.)</p>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Für andere Be&shy;nut&shy;zer&shy;_innen ist dein Alter sichtbar.
+        Tag und Monat dürfen aus Gründen der Privatsphäre auch nach oben abgeändert werden.
+        Derzeit dürfen nur volljährige Personen diesen Dienst nutzen.
+      </p>
     </div>
     <div class="space-y-4">
       <table>
@@ -87,7 +122,9 @@ zu entdecken."
   <fieldset class="my-7 space-y-6 bg-cyan-50 p-3">
     <div class="space-y-1">
       <h2 class="font-bold text-2xl text-brand-silver-900">Du bist …</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Die Auswahl ist für andere Benutzer_innen sichtbar.)</p>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Die Auswahl ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+      </p>
     </div>
     <div class="space-y-4">
       <%= for { item_code, item_title } <- [
@@ -118,7 +155,9 @@ zu entdecken."
   <fieldset class="my-7 space-y-6 bg-rose-50 p-3">
     <div class="space-y-1">
       <h2 class="font-bold text-2xl text-brand-silver-900">Wen möchtest du daten?</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Mehrere Optionen möglich. Die Auswahl ist für andere Benutzer_innen sichtbar.)</p>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Mehrere Optionen möglich. Die Auswahl ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+      </p>
     </div>
     <div class="space-y-4">
       <%= for { item_code, item_title } <- [
@@ -152,7 +191,9 @@ zu entdecken."
   <fieldset class="my-7 space-y-6 bg-amber-50 p-3">
     <div class="space-y-1">
       <h2 class="font-bold text-2xl text-brand-silver-900">Wonach suchst du?</h2>
-      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">(Die Auswahl ist für andere Benutzer_innen sichtbar.)</p>
+      <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
+        Die Auswahl ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+      </p>
     </div>
     <div class="space-y-4">
       <%= for { item_code, item_title } <- [
