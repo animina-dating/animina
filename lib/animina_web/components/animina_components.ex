@@ -107,7 +107,7 @@ defmodule AniminaWeb.AniminaComponents do
               stroke-linejoin="round"
             />
           </svg>
-          <span class="flex items-center gap-px">
+          <span class="flex items-center gap-px" aria-hidden="true">
             <%= humanized_points(@points) %>
             <svg
               class="w-2.5 h-2.5 shrink-0 stroke-current"
@@ -132,6 +132,9 @@ defmodule AniminaWeb.AniminaComponents do
                 </clipPath>
               </defs>
             </svg>
+          </span>
+          <span class="hidden">
+            <%= @points %> Punkte
           </span>
         </button>
         
