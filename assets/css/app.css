@@ -9,8 +9,8 @@ body {
 	margin-right: auto;
 }
 
-input::invalid {
-	background-color: hsl(12, 100%, 92%);
+input:invalid {
+	background-color: hsl( 12, 100%, 95% );
 }
 
 input:disabled, select:disabled, textarea:disabled, button:disabled {
