@@ -14,6 +14,8 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+      },
       colors: {
         brand: "#FD4F00",
       }
