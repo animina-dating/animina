@@ -13,6 +13,10 @@ input::invalid {
 	background-color: hsl(12, 100%, 92%);
 }
 
+input:disabled, select:disabled, textarea:disabled, button:disabled {
+	opacity: 0.5;
+}
+
 p, *.wordwrap {
 	@apply break-words hyphens-auto;
 }
