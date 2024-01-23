@@ -2,5 +2,5 @@
 
 set -e
 
-exec docker-compose exec web iex
+exec docker-compose exec web iex "$@"
 
