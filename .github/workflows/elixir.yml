@@ -77,11 +77,6 @@ jobs:
           . $HOME/.asdf/asdf.sh
           mix test
       
-      - name: mix format
-        run: |
-          . $HOME/.asdf/asdf.sh
-          mix format
-      
       - uses: EndBug/add-and-commit@v9
         with:
           default_author: github_actions
