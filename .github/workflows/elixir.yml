@@ -52,6 +52,7 @@ jobs:
           mix local.hex --force
           mix local.rebar --force
           mix deps.get
+          mix compile
       
       - name: Create and migrate database
         env:
