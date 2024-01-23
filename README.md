@@ -47,10 +47,13 @@ Run the containers: `docker-compose up`
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 
-## Learn more about Phoenix
+## Ash Framework
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+We use the [Ash Framework](https://ash-hq.org) to build our application.
+
+## Database Migrations
+
+- `mix ash_postgres.create` to create the database
+- `mix ash_postgres.drop` to drop the database
+- `mix ash_postgres.reset` to drop and create the database
+- `mix ash_postgres.migrate` to run migrations

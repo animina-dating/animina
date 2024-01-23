@@ -22,8 +22,8 @@ defmodule AniminaWeb.Router do
 
     get "/", PageController, :home
     get "/demo", PageController, :demo
+    get "/register", AuthController, :register
 
-    sign_in_route(register_path: "/register", reset_path: "/reset")
     sign_out_route AuthController
     auth_routes_for Animina.Accounts.User, to: AuthController
     reset_route []
