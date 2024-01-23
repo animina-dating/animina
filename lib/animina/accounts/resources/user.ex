@@ -14,6 +14,12 @@ defmodule Animina.Accounts.User do
     attribute :username, :string, allow_nil?: false
   end
 
+  calculations do
+    # bob = Animina.Accounts.User.by_username!("bob")
+    # bob |> Animina.Accounts.load(:gravatar_hash)
+    calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
+  end
+
   authentication do
     api Animina.Accounts
 
@@ -41,6 +47,7 @@ defmodule Animina.Accounts.User do
 
   identities do
     identity :unique_email, [:email]
+    identity :unique_username, [:username]
   end
 
   actions do
@@ -50,6 +57,7 @@ defmodule Animina.Accounts.User do
   code_interface do
     define_for Animina.Accounts
     define :read
+    define :by_username, get_by: [:username], action: :read
   end
 
   # TODO: Uncomment this if you want to use policies
