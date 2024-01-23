@@ -25,17 +25,28 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache asdf installation and plugins
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.asdf
+            ~/.asdf/plugins/*
+            ~/.asdf/installs/*
+          key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
+
       - name: Install asdf
         run: |
-          git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
-          echo -e "\n. $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
-          echo -e "\n. $HOME/.asdf/completions/asdf.bash" >> $HOME/.bashrc
+          if [ ! -d $HOME/.asdf ]; then
+            git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
+            echo -e "\n. $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
+            echo -e "\n. $HOME/.asdf/completions/asdf.bash" >> $HOME/.bashrc
+          fi
 
       - name: Install Erlang and Elixir from .tool-versions
         run: |
           . $HOME/.asdf/asdf.sh
-          asdf plugin-add erlang
-          asdf plugin-add elixir
+          asdf plugin-add erlang || true
+          asdf plugin-add elixir || true
           erlang_version=$(grep erlang .tool-versions | cut -d " " -f2)
           elixir_version=$(grep elixir .tool-versions | cut -d " " -f2)
           asdf install erlang $erlang_version
