@@ -22,9 +22,12 @@ defmodule AniminaWeb.AniminaComponents do
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             class="fill-current w-6 h-6 shrink-0"
-            width="25" height="24" viewBox="0 0 25 24"
+            width="25"
+            height="24"
+            viewBox="0 0 25 24"
             fill="none"
           >
             <path
@@ -42,14 +45,17 @@ defmodule AniminaWeb.AniminaComponents do
           </svg>
           <span>Home</span>
         </button>
-        
+
         <button
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             class="stroke-current w-6 h-6 shrink-0"
-            width="25" height="24" viewBox="0 0 25 24"
+            width="25"
+            height="24"
+            viewBox="0 0 25 24"
             fill="none"
           >
             <g clip-path="url(#clip0_67_382)">
@@ -69,14 +75,17 @@ defmodule AniminaWeb.AniminaComponents do
           </svg>
           <span>Likes</span>
         </button>
-        
+
         <button
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             class="stroke-current w-6 h-6 shrink-0"
-            width="25" height="24" viewBox="0 0 25 24"
+            width="25"
+            height="24"
+            viewBox="0 0 25 24"
             fill="none"
           >
             <path
@@ -89,14 +98,17 @@ defmodule AniminaWeb.AniminaComponents do
           </svg>
           <span>Chat</span>
         </button>
-        
+
         <button
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
             class="stroke-current w-6 h-6 shrink-0"
-            width="25" height="24" viewBox="0 0 25 24"
+            width="25"
+            height="24"
+            viewBox="0 0 25 24"
             fill="none"
           >
             <path
@@ -137,7 +149,6 @@ defmodule AniminaWeb.AniminaComponents do
             <%= @points %> Punkte
           </span>
         </button>
-        
       </nav>
     </div>
     """
@@ -159,10 +170,10 @@ defmodule AniminaWeb.AniminaComponents do
       </p>
     </.notification_box>
   """
-  attr :points     , :integer, default: 0  , doc: "number of points the user has"
-  attr :avatar_url , :string , default: nil, doc: "URL of the user's avatar"
-  attr :title      , :string , default: nil, doc: "title of the notification"
-  attr :message    , :string , default: nil, doc: "message of the notification"
+  attr :points, :integer, default: 0, doc: "number of points the user has"
+  attr :avatar_url, :string, default: nil, doc: "URL of the user's avatar"
+  attr :title, :string, default: nil, doc: "title of the notification"
+  attr :message, :string, default: nil, doc: "message of the notification"
   slot :inner_block
 
   def notification_box(assigns) do
@@ -235,8 +246,8 @@ defmodule AniminaWeb.AniminaComponents do
 
     <.status_bar title="Dating-Präferenzen" percent={15} />
   """
-  attr :title   , :string , default: nil, doc: "title of the status bar"
-  attr :percent , :integer, default: 0  , doc: "percent"
+  attr :title, :string, default: nil, doc: "title of the status bar"
+  attr :percent, :integer, default: 0, doc: "percent"
 
   def status_bar(assigns) do
     ~H"""
@@ -248,9 +259,9 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
-  
+
   # -------------------------------------------------------------
-  
+
   defp humanized_points(points) when points < 1_000 do
     Integer.to_string(points)
   end
@@ -262,5 +273,4 @@ defmodule AniminaWeb.AniminaComponents do
   defp humanized_points(points) do
     Integer.to_string(div(points, 1_000_000)) <> "\u{00a0}M"
   end
-  
 end
