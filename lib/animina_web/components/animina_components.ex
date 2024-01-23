@@ -248,9 +248,9 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
-  
+
   # -------------------------------------------------------------
-  
+
   defp humanized_points(points) when points < 1_000 do
     Integer.to_string(points)
   end
@@ -262,5 +262,5 @@ defmodule AniminaWeb.AniminaComponents do
   defp humanized_points(points) do
     Integer.to_string(div(points, 1_000_000)) <> "\u{00a0}M"
   end
-  
+
 end
