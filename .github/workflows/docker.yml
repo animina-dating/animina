@@ -10,6 +10,8 @@ jobs:
       matrix:
         os: [ubuntu-22.04]
     timeout-minutes: 15
+    permissions:
+      actions: write
     
     steps:
       - name: Checkout
@@ -30,7 +32,7 @@ jobs:
         continue-on-error: true
       
       - name: Build containers
-        run: DOCKER_BUILDKIT=1 docker-compose build
+        run: DOCKER_BUILDKIT=0 docker-compose build
         timeout-minutes: 10
       
       - name: Start containers
@@ -45,6 +47,7 @@ jobs:
               echo "All containers are running."
               echo "Waiting for post-up actions ..."
               sleep 30
+              echo "Done waiting."
               exit 0
             fi
             echo "Containers not running yet (state_db=${state_db}, state_web=${state_web})."
