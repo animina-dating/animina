@@ -39,8 +39,8 @@ jobs:
           elapsed=0
           while [ $elapsed -le 120 ]
           do
-            state_db="$(  docker container ls --filter "name=animina-db"  --format="{{.State}}" )"
-            state_web="$( docker container ls --filter "name=animina-web" --format="{{.State}}" )"
+            state_db="$(  docker container ls --filter "name=animina[\\-_]db"  --format="{{.State}}" )"
+            state_web="$( docker container ls --filter "name=animina[\\-_]web" --format="{{.State}}" )"
             if [[ "$state_db" == "running" ]] && [[ "$state_web" == "running" ]]; then
               echo "All containers are running."
               echo "Waiting for post-up actions ..."
@@ -54,6 +54,11 @@ jobs:
           done
           echo "Containers failed to start."
           exit 1
+        # Note that the docs for COMPOSE_PROJECT_NAME say that the container
+        # name is "{compose_project_name}-{service_name}", and it is like that
+        # indeed when using Docker Desktop, but on ubuntu-22.04 on GitHub a
+        # "_" is used as separator.
+        # https://web.archive.org/web/20240106171030/https://docs.docker.com/compose/environment-variables/envvars/#compose_project_name
           
         timeout-minutes: 2
       
