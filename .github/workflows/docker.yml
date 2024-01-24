@@ -46,7 +46,7 @@ jobs:
             if [[ "$state_db" == "running" ]] && [[ "$state_web" == "running" ]]; then
               echo "All containers are running."
               echo "Waiting for post-up actions ..."
-              sleep 10
+              sleep 20
               echo "Done waiting."
               exit 0
             fi
