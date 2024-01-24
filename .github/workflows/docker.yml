@@ -46,7 +46,7 @@ jobs:
             if [[ "$state_db" == "running" ]] && [[ "$state_web" == "running" ]]; then
               echo "All containers are running."
               echo "Waiting for post-up actions ..."
-              sleep 30
+              sleep 10
               echo "Done waiting."
               exit 0
             fi
@@ -68,7 +68,7 @@ jobs:
       - name: Stop containers
         if: always()
         run: docker-compose down
-        timeout-minutes: 2
+        timeout-minutes: 1
       
       # Finally, "Post Run jpribyl/action-docker-layer-caching@v0.1.1",
       # which is the process of saving the cache, will be executed.
