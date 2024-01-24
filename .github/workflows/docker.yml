@@ -47,7 +47,7 @@ jobs:
               sleep 30
               exit 0
             fi
-            echo "Containers not running yet."
+            echo "Containers not running yet (state_db=${state_db}, state_web=${state_web})."
             sleep 5
             elapsed=$((elapsed + 5))
           done
