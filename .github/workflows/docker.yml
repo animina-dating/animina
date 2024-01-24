@@ -34,13 +34,31 @@ jobs:
         timeout-minutes: 10
       
       - name: Start containers
-        run: docker-compose up
+        run: |
+          docker-compose up &
+          elapsed=0
+          while [ $elapsed -le 120 ]
+          do
+            state_db="$(  docker container ls --filter "name=animina-dbFAIL"  --format="{{.State}}" )"
+            state_web="$( docker container ls --filter "name=animina-web" --format="{{.State}}" )"
+            if [[ "$state_db" == "running" ]] && [[ "$state_web" == "running" ]]; then
+              echo "All containers are running."
+              echo "Waiting for post-up actions ..."
+              sleep 30
+              exit 0
+            fi
+            sleep 5
+            elapsed=$((elapsed + 5))
+          done
+          echo "Containers failed to start."
+          exit 1
+          
         timeout-minutes: 5
       
       - name: Stop containers
         if: always()
         run: docker-compose down
-        timeout-minutes: 5
+        timeout-minutes: 2
       
       # Finally, "Post Run jpribyl/action-docker-layer-caching@v0.1.1",
       # which is the process of saving the cache, will be executed.
