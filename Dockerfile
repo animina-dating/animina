@@ -30,6 +30,8 @@ COPY "./mix.exs"  "./mix.exs"
 COPY "./mix.lock" "./mix.lock"
 COPY "./priv"     "./priv"
 COPY "./test"     "./test"
+COPY "./.formatter.exs"  "./.formatter.exs"
+COPY "./.credo.exs"      "./.credo.exs"
 
 RUN mix deps.clean --all
 RUN mix deps.get

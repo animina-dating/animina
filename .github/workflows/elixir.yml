@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
     services:
       db:
         image: postgres:13
@@ -21,27 +23,28 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
+    
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Cache asdf installation and plugins
-        uses: actions/cache@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Cache Asdf installation and plugins
+        uses: actions/cache@v4
         with:
           path: |
             ~/.asdf
             ~/.asdf/plugins/*
             ~/.asdf/installs/*
           key: ${{ runner.os }}-asdf-${{ hashFiles('.tool-versions') }}
-
-      - name: Install asdf
+      
+      - name: Install Asdf
         run: |
           if [ ! -d $HOME/.asdf ]; then
             git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.8.0
             echo -e "\n. $HOME/.asdf/asdf.sh" >> $HOME/.bashrc
             echo -e "\n. $HOME/.asdf/completions/asdf.bash" >> $HOME/.bashrc
           fi
-
+      
       - name: Install Erlang and Elixir from .tool-versions
         run: |
           . $HOME/.asdf/asdf.sh
@@ -50,18 +53,19 @@ jobs:
           erlang_version=$(grep erlang .tool-versions | cut -d " " -f2)
           elixir_version=$(grep elixir .tool-versions | cut -d " " -f2)
           asdf install erlang $erlang_version
-          asdf global erlang $erlang_version
+          asdf global  erlang $erlang_version
           asdf install elixir $elixir_version
-          asdf global elixir $elixir_version
-
-      - name: Install Dependencies
+          asdf global  elixir $elixir_version
+      
+      - name: Install dependencies
         run: |
           . $HOME/.asdf/asdf.sh
           mix local.hex --force
           mix local.rebar --force
           mix deps.get
-
-      - name: Create and Migrate Database
+          mix compile
+      
+      - name: Create and migrate database
         env:
           MIX_ENV: test
           PGHOST: localhost
@@ -72,8 +76,8 @@ jobs:
           . $HOME/.asdf/asdf.sh
           mix ecto.create
           mix ecto.migrate
-
-      - name: Run Tests
+      
+      - name: Run tests
         env:
           MIX_ENV: test
           PGHOST: localhost
@@ -83,8 +87,21 @@ jobs:
         run: |
           . $HOME/.asdf/asdf.sh
           mix test
-
+      
       - name: Run Credo
         run: |
           . $HOME/.asdf/asdf.sh
           mix credo --strict
+
+
+# For Emacs:
+# Local Variables:
+# mode: yaml
+# indent-tabs-mode: nil
+# tab-width: 2
+# c-basic-offset: 2
+# End:
+#
+# For VIM:
+# vim: set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
+

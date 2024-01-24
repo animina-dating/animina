@@ -29,6 +29,8 @@ services:
       - "./priv:/application/priv:ro"
       - "./priv/static/assets:/application/priv/static/assets:rw"
       - "./test:/application/test:ro"
+      - "./.formatter.exs:/application/.formatter.exs:ro"
+      - "./.credo.exs:/application/.credo.exs:ro"
     depends_on:
       db:
         condition: service_started
