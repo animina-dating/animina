@@ -2,6 +2,10 @@ defmodule AniminaWeb.AuthController do
   use AniminaWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias Animina.Accounts
+  alias Animina.Accounts.User
+  alias AshPhoenix.Form
+
   def success(conn, _activity, user, _token) do
     return_to = get_session(conn, :return_to) || ~p"/"
 
@@ -12,10 +16,28 @@ defmodule AniminaWeb.AuthController do
     |> redirect(to: return_to)
   end
 
-  def failure(conn, _activity, _reason) do
-    conn
-    |> put_status(401)
-    |> render("failure.html")
+  def failure(conn, _activity, reason) do
+    # TODO: Fix the display of validation errors
+    # see https://elixirforum.com/t/return-to-create-form-after-validation-error-for-ash-authentication/61110/5
+    params =
+      if reason.changeset do
+        reason.changeset.params
+      else
+        %{}
+      end
+
+    conn =
+      conn
+      |> assign(:form_id, "sign-up-form")
+      |> assign(:cta, "Account anlegen")
+      |> assign(:action, ~p"/auth/user/password/register")
+      |> assign(:is_register?, true)
+      |> assign(
+        :form,
+        Form.for_create(User, :register_with_password, api: Accounts, as: "user", params: params)
+      )
+
+    render(conn, :register, layout: false)
   end
 
   def sign_out(conn, _params) do
@@ -24,5 +46,20 @@ defmodule AniminaWeb.AuthController do
     conn
     |> clear_session()
     |> redirect(to: return_to)
+  end
+
+  def register(conn, _params) do
+    conn =
+      conn
+      |> assign(:form_id, "sign-up-form")
+      |> assign(:cta, "Account anlegen")
+      |> assign(:action, ~p"/auth/user/password/register")
+      |> assign(:is_register?, true)
+      |> assign(
+        :form,
+        Form.for_create(User, :register_with_password, api: Accounts, as: "user")
+      )
+
+    render(conn, :register, layout: false)
   end
 end

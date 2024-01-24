@@ -11,6 +11,13 @@ defmodule Animina.Accounts.User do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :username, :string, allow_nil?: false
+  end
+
+  calculations do
+    # bob = Animina.Accounts.User.by_username!("bob")
+    # bob |> Animina.Accounts.load(:gravatar_hash)
+    calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
   end
 
   authentication do
@@ -20,6 +27,8 @@ defmodule Animina.Accounts.User do
       password :password do
         identity_field :email
         sign_in_tokens_enabled? true
+        confirmation_required?(false)
+        register_action_accept([:username])
       end
     end
 
@@ -38,6 +47,17 @@ defmodule Animina.Accounts.User do
 
   identities do
     identity :unique_email, [:email]
+    identity :unique_username, [:username]
+  end
+
+  actions do
+    defaults [:read]
+  end
+
+  code_interface do
+    define_for Animina.Accounts
+    define :read
+    define :by_username, get_by: [:username], action: :read
   end
 
   # TODO: Uncomment this if you want to use policies
