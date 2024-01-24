@@ -39,7 +39,7 @@ jobs:
           elapsed=0
           while [ $elapsed -le 120 ]
           do
-            state_db="$(  docker container ls --filter "name=animina-dbFAIL"  --format="{{.State}}" )"
+            state_db="$(  docker container ls --filter "name=animina-db"  --format="{{.State}}" )"
             state_web="$( docker container ls --filter "name=animina-web" --format="{{.State}}" )"
             if [[ "$state_db" == "running" ]] && [[ "$state_web" == "running" ]]; then
               echo "All containers are running."
@@ -47,6 +47,7 @@ jobs:
               sleep 30
               exit 0
             fi
+            echo "Containers not running yet."
             sleep 5
             elapsed=$((elapsed + 5))
           done
