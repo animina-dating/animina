@@ -1,0 +1,60 @@
+name: Docker build
+
+on: push
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    name: OS ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        timeout-minutes: 5
+      
+      # Pull the latest image to build, and avoid caching pull-only images.
+      # (docker pull is faster than caching in most cases.)
+      #- name: Docker pull
+      #  run: docker-compose pull
+      
+      # In this step, this action saves a list of existing images,
+      # the cache is created without them in the post run.
+      # It also restores the cache if it exists.
+      - name: action-docker-layer-caching
+        uses: jpribyl/action-docker-layer-caching@v0.1.1
+        # Ignore the failure of a step and avoid terminating the job:
+        continue-on-error: true
+      
+      - name: Build containers
+        run: DOCKER_BUILDKIT=1 docker-compose build
+        timeout-minutes: 10
+      
+      - name: Start containers
+        run: docker-compose up
+        timeout-minutes: 5
+      
+      - name: Stop containers
+        if: always()
+        run: docker-compose down
+        timeout-minutes: 5
+      
+      # Finally, "Post Run jpribyl/action-docker-layer-caching@v0.1.1",
+      # which is the process of saving the cache, will be executed.
+
+
+
+# For Emacs:
+# Local Variables:
+# mode: yaml
+# indent-tabs-mode: nil
+# tab-width: 2
+# c-basic-offset: 2
+# End:
+#
+# For VIM:
+# vim: set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
+
