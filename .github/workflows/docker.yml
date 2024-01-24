@@ -62,7 +62,6 @@ jobs:
         # indeed when using Docker Desktop, but on ubuntu-22.04 on GitHub a
         # "_" is used as separator.
         # https://web.archive.org/web/20240106171030/https://docs.docker.com/compose/environment-variables/envvars/#compose_project_name
-          
         timeout-minutes: 2
       
       - name: Stop containers
