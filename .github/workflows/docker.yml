@@ -18,8 +18,8 @@ jobs:
       
       # Pull the latest image to build, and avoid caching pull-only images.
       # (docker pull is faster than caching in most cases.)
-      #- name: Docker pull
-      #  run: docker-compose pull
+      - name: Docker-Compose pull
+        run: docker-compose pull
       
       # In this step, this action saves a list of existing images,
       # the cache is created without them in the post run.
@@ -48,13 +48,14 @@ jobs:
               exit 0
             fi
             echo "Containers not running yet (state_db=${state_db}, state_web=${state_web})."
+            docker container ls
             sleep 5
             elapsed=$((elapsed + 5))
           done
           echo "Containers failed to start."
           exit 1
           
-        timeout-minutes: 5
+        timeout-minutes: 2
       
       - name: Stop containers
         if: always()
