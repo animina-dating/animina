@@ -27,19 +27,45 @@ COPY "./mix.exs"  "./mix.exs"
 COPY "./mix.lock" "./mix.lock"
 
 RUN mix deps.clean --all
+
+# install dependencies
 RUN mix deps.get
+
+# copy compile-time config files before we compile dependencies
+# to ensure any relevant config change will trigger the dependencies
+# to be re-compiled.
+COPY "./config"   "./config"
+COPY [ \
+  "./config/config.exs", \
+  "./config/dev.exs", \
+  "./config/test.exs", \
+  "./config/prod.exs", \
+  # ->
+  "./config/" \
+]
+
+# compile deps
+RUN mix deps.compile
+
+# compile
 RUN mix compile
 
 COPY "./lib"      "./lib"
 COPY "./assets"   "./assets"
-COPY "./config"   "./config"
 COPY "./priv"     "./priv"
 COPY "./test"     "./test"
+
+# compile assets
+RUN mix assets.deploy
 
 COPY "./.formatter.exs"  "./.formatter.exs"
 COPY "./.credo.exs"      "./.credo.exs"
 
 RUN mix compile
+
+# changes to config/runtime.exs don't require recompiling the code
+COPY "./config/runtime.exs"   "./config/runtime.exs"
+
 
 #RUN cd assets && npm install
 
