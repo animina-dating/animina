@@ -23,18 +23,22 @@ RUN mix local.rebar --force
 RUN mkdir -p /application
 WORKDIR /application
 
-COPY "./assets"   "./assets"
-COPY "./config"   "./config"
-COPY "./lib"      "./lib"
 COPY "./mix.exs"  "./mix.exs"
 COPY "./mix.lock" "./mix.lock"
-COPY "./priv"     "./priv"
-COPY "./test"     "./test"
-COPY "./.formatter.exs"  "./.formatter.exs"
-COPY "./.credo.exs"      "./.credo.exs"
 
 RUN mix deps.clean --all
 RUN mix deps.get
+RUN mix compile
+
+COPY "./lib"      "./lib"
+COPY "./assets"   "./assets"
+COPY "./config"   "./config"
+COPY "./priv"     "./priv"
+COPY "./test"     "./test"
+
+COPY "./.formatter.exs"  "./.formatter.exs"
+COPY "./.credo.exs"      "./.credo.exs"
+
 RUN mix compile
 
 #RUN cd assets && npm install
