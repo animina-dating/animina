@@ -50,13 +50,14 @@ RUN mix deps.compile
 # compile
 RUN mix compile
 
-COPY "./lib"      "./lib"
 COPY "./assets"   "./assets"
+
+# compile assets (downloads TailwindCSS and ESBuild)
+RUN mix assets.deploy
+
+COPY "./lib"      "./lib"
 COPY "./priv"     "./priv"
 COPY "./test"     "./test"
-
-# compile assets
-RUN mix assets.deploy
 
 COPY "./.formatter.exs"  "./.formatter.exs"
 COPY "./.credo.exs"      "./.credo.exs"
