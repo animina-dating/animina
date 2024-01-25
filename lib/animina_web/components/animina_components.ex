@@ -1,6 +1,6 @@
 defmodule AniminaWeb.AniminaComponents do
   @moduledoc """
-  Provides animina UI components.
+  Provides Animina UI components.
   """
   use Phoenix.Component
 
@@ -17,12 +17,13 @@ defmodule AniminaWeb.AniminaComponents do
   def top_navigation(assigns) do
     ~H"""
     <div class="border-y border-brand-silver-100">
-      <nav class="grid grid-cols-4 gap-1">
-        <button
+      <nav class="grid grid-cols-4 gap-1" phx-no-format>
+        
+        <button phx-no-format
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="fill-current w-6 h-6 shrink-0"
             width="25" height="24" viewBox="0 0 25 24"
             fill="none"
@@ -39,11 +40,11 @@ defmodule AniminaWeb.AniminaComponents do
           <span>Home</span>
         </button>
         
-        <button
+        <button phx-no-format
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
             width="25" height="24" viewBox="0 0 25 24"
             fill="none"
@@ -64,11 +65,11 @@ defmodule AniminaWeb.AniminaComponents do
           <span>Likes</span>
         </button>
         
-        <button
+        <button phx-no-format
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
             width="25" height="24" viewBox="0 0 25 24"
             fill="none"
@@ -82,11 +83,11 @@ defmodule AniminaWeb.AniminaComponents do
           <span>Chat</span>
         </button>
         
-        <button
+        <button phx-no-format
           type="button"
           class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
         >
-          <svg xmlns="http://www.w3.org/2000/svg"
+          <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
             width="25" height="24" viewBox="0 0 25 24"
             fill="none"
@@ -99,7 +100,7 @@ defmodule AniminaWeb.AniminaComponents do
           </svg>
           <span class="flex items-center gap-px" aria-hidden="true">
             <%= humanized_points(@points) %>
-            <svg xmlns="http://www.w3.org/2000/svg"
+            <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
               class="w-2.5 h-2.5 shrink-0 stroke-current"
               width="11" height="10" viewBox="0 0 11 10"
               fill="none"
