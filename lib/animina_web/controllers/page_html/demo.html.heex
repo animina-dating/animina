@@ -10,25 +10,29 @@ zu entdecken."
 
   <.status_bar title="Account anlegen" percent={20} />
   
-  <table>
+  <table phx-no-format>
     <tr>
       <td class="align-top pr-3 text-xl">
         <span aria-hidden="true">&#x24D8;</span>
         <span class="hidden">Hinweis</span>
       </td>
       <td class="align-top">
-        Derzeit dürfen nur voll geschäftsfähige Personen aus Deutschland diesen Dienst nutzen.
+        Derzeit dürfen nur voll geschäftsfähige Personen aus Deutschland
+        diesen Dienst nutzen.
       </td>
     </tr>
   </table>
   
   <!-- .form for={} phx-change="validate" phx-submit="save" -->
-  <form method="get" action="/demo">
+  <form method="get" action="/demo" phx-no-format>
     
-    <fieldset class="my-7 space-y-3 bg-green-100 p-3">
+    <fieldset class="my-7 space-y-3 bg-green-100 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Neues Konto anlegen</h2>
-        <p class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right" phx-no-format>
+        <p
+          class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right"
+          phx-no-format
+        >
           Bereits angemeldet? &rarr;
           <a href="/login" class="font-bold underline">Einloggen</a>
         </p>
@@ -96,7 +100,10 @@ zu entdecken."
               <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" />
             </svg>
           </div>
-          <span class="text-brand-silver-900 -mb-0.5 text-sm font-normal select-none">
+          <span
+            class="text-brand-silver-900 -mb-0.5 text-sm font-normal select-none"
+            phx-no-format
+          >
             Ich willige in die Verarbeitung und Nutzung meiner
             personen&shy;bezogenen Daten gemäß der
             <a href="/datenschutz" class="underline">Daten&shy;schutz&shy;erklärung</a>
@@ -108,7 +115,7 @@ zu entdecken."
       </div>
     </fieldset>
     
-    <fieldset class="my-7 space-y-3 bg-lime-100 p-3">
+    <fieldset class="my-7 space-y-3 bg-lime-100 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Erzähl uns über dich!</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -150,9 +157,15 @@ zu entdecken."
       <div class="space-y-4 pb-4">
         <table>
           <tr>
-            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">Tag</td>
-            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">Mon.</td>
-            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">Jahr</td>
+            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">
+              Tag
+            </td>
+            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">
+              Mon.
+            </td>
+            <td class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right pr-2.5">
+              Jahr
+            </td>
           </tr>
           <tr>
             <td class="text-right pr-1.5">
@@ -217,7 +230,7 @@ zu entdecken."
       </div>
     </fieldset>
     
-    <fieldset class="my-7 space-y-3 bg-cyan-50 p-3">
+    <fieldset class="my-7 space-y-3 bg-cyan-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wo befindest du dich?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -251,7 +264,7 @@ zu entdecken."
       </div>
     </fieldset>
     
-    <fieldset class="my-7 space-y-6 bg-cyan-50 p-3">
+    <fieldset class="my-7 space-y-6 bg-cyan-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Was ist dein Geschlecht?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -285,7 +298,7 @@ zu entdecken."
       </div>
     </fieldset>
     
-    <fieldset class="my-7 space-y-6 bg-rose-50 p-3">
+    <fieldset class="my-7 space-y-6 bg-rose-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wen möchtest du daten?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -325,7 +338,7 @@ zu entdecken."
       </div>
     </fieldset>
     
-    <fieldset class="my-7 space-y-6 bg-amber-50 p-3">
+    <fieldset class="my-7 space-y-6 bg-amber-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wonach suchst du?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -373,7 +386,7 @@ zu entdecken."
 </div>
 
 
-<%
+<% #
 # For Emacs:
 # Local Variables:
 # mode: html
