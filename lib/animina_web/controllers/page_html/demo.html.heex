@@ -47,6 +47,7 @@ zu entdecken."
           type="email"
           required="required"
           class="font-mono rounded-lg peer w-[calc(100%-2em)]"
+          placeholder=" "
         />
         <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
       </div>
@@ -56,11 +57,12 @@ zu entdecken."
           Muss mindestens 8 Zeichen lang sein.
         </p>
         <input
-          name="email" id="input-password"
+          name="password" id="input-password"
           type="password"
           required="required"
           minlength="8"
           class="font-mono rounded-lg peer w-[calc(100%-2em)]"
+          placeholder=" "
         />
         <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
       </div>
@@ -80,6 +82,7 @@ zu entdecken."
           pattern="[a-zA-Z0-9_]{3,25}"
           class="font-mono rounded-lg peer"
           autocomplete="off"
+          placeholder=" "
         />
         <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
       </div>
@@ -142,6 +145,7 @@ zu entdecken."
           minlength="1" maxlength="50"
           class="rounded-lg w-full"
           autocomplete="off"
+          placeholder=" "
         />
       </div>
       
@@ -174,9 +178,10 @@ zu entdecken."
                 type="number"
                 min="1" max="31"
                 size="2" maxlength="2"
-                placeholder=""
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:4.1em;"
+                required="required"
               />.
             </td>
             <td class="text-right pr-1.5">
@@ -185,9 +190,10 @@ zu entdecken."
                 type="number"
                 min="1" max="12"
                 size="2" maxlength="2"
-                placeholder=""
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:4.1em;"
+                required="required"
               />.
             </td>
             <td class="text-right pr-1.5">
@@ -196,9 +202,10 @@ zu entdecken."
                 type="number"
                 min="1900" max={ DateTime.utc_now.year - 1 }
                 size="4" maxlength="4"
-                placeholder=""
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:5.3em;"
+                required="required"
               />.
             </td>
           </tr>
@@ -259,6 +266,7 @@ zu entdecken."
           required="required"
           autocomplete="postal-code"
           class="font-mono rounded-lg peer"
+          placeholder=" "
         />
         <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
       </div>
