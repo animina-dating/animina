@@ -11,8 +11,10 @@ RUN apt-get update \
     npm \
     yarn \
     build-essential \
-    git \
     postgresql-client \
+    # for convenience:
+    git \
+    less \
   && rm -rf /var/lib/apt/lists/*
 
 # Hex, Phoenix
@@ -67,6 +69,12 @@ RUN mix compile
 # changes to config/runtime.exs don't require recompiling the code
 COPY "./config/runtime.exs"   "./config/runtime.exs"
 
+RUN mkdir -p "$HOME/.config/git" \
+  && ( \
+    echo '' ;\
+    echo '# ignore ".DS_Store" files from Mac OS X:' ;\
+    echo '.DS_Store' ;\
+  ) > "$HOME/.config/git/ignore"
 
 #RUN cd assets && npm install
 
