@@ -58,7 +58,7 @@ input[type="week"] {
 
 input[type="checkbox"],
 input[type="radio"] {
-	@apply shadow-md;
+	@apply drop-shadow-md;
 }
 
 input[type="button"],
@@ -66,7 +66,7 @@ input[type="submit"]
 input[type="reset"],
 button,
 select {
-	@apply shadow-lg;
+	@apply drop-shadow-lg;
 }
 
 

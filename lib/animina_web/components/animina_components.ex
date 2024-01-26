@@ -21,7 +21,7 @@ defmodule AniminaWeb.AniminaComponents do
         
         <button phx-no-format
           type="button"
-          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
+          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="fill-current w-6 h-6 shrink-0"
@@ -42,7 +42,7 @@ defmodule AniminaWeb.AniminaComponents do
         
         <button phx-no-format
           type="button"
-          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
+          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
@@ -67,7 +67,7 @@ defmodule AniminaWeb.AniminaComponents do
         
         <button phx-no-format
           type="button"
-          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
+          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
@@ -85,7 +85,7 @@ defmodule AniminaWeb.AniminaComponents do
         
         <button phx-no-format
           type="button"
-          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3"
+          class="text-xs text-brand-silver-200 font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none"
         >
           <svg xmlns="http://www.w3.org/2000/svg" phx-no-format
             class="stroke-current w-6 h-6 shrink-0"
