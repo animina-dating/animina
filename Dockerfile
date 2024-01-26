@@ -52,9 +52,12 @@ RUN mix deps.compile
 # compile
 RUN mix compile
 
+# download TailwindCSS and ESBuild, if missing
+RUN mix assets.setup
+
 COPY "./assets"   "./assets"
 
-# compile assets (downloads TailwindCSS and ESBuild)
+# compile assets
 RUN mix assets.deploy
 
 COPY "./lib"      "./lib"
