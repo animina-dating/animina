@@ -21,6 +21,35 @@ p, *.wordwrap {
 	@apply break-words hyphens-auto;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="file"],
+input[type="month"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="week"] {
+	@apply shadow-inner;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+	@apply shadow-md;
+}
+
+input[type="button"],
+input[type="submit"]
+input[type="reset"],
+button,
+select {
+	@apply shadow-lg;
+}
 
 
 
