@@ -44,7 +44,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <div
       class={[
         "relative text-xs font-medium flex flex-col items-center justify-center gap-1.5 py-3",
-        if(@is_active, do: "bg-blue-100 text-gray-400 cursor-not-allowed", else: "")
+        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: "")
       ]}
     >
       <%= render_slot(@inner_block) %>
