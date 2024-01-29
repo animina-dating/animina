@@ -86,6 +86,7 @@ defmodule AniminaWeb do
       # Core UI components and translation
       import AniminaWeb.CoreComponents
       import AniminaWeb.AniminaComponents
+      import AniminaWeb.TopNavigationCompontents
       import AniminaWeb.Gettext
 
       # https://elixirforum.com/t/form-for-not-working-in-phoenix-1-7/52013
