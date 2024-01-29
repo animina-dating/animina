@@ -45,7 +45,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       type="button"
       class={[
         "relative text-xs font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none",
-        if(@is_active, do: "bg-blue-100 text-gray-400 cursor-auto", else: "")
+        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: "")
       ]}
     >
       <%= render_slot(@inner_block) %>
