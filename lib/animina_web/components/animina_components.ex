@@ -31,7 +31,7 @@ defmodule AniminaWeb.AniminaComponents do
     ~H"""
     <div class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow">
       <%= if @avatar_url_b do %>
-        <div class="relative w-20">
+        <div class="relative w-[4.7rem]">
           <.notification_box_avatar avatar_url={ @avatar_url   }
             classes={[
               "absolute", "top-0", "left-0",
