@@ -2,5 +2,5 @@
 
 set -e
 
-exec docker-compose exec -ti web mix credo --strict
+exec docker-compose exec web mix credo --strict
 

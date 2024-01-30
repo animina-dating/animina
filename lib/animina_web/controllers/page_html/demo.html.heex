@@ -7,27 +7,41 @@
 zu entdecken."
     avatar_url="https://www.wintermeyer.de/assets/images/avatar.jpg"
   />
+  
+  <.notification_box
+    title="Du hast ein Match bekommen!"
+    message="Sag hallo!"
+    avatar_url="https://www.wintermeyer.de/assets/images/avatar.jpg"
+    avatar_url_b="https://www.wintermeyer.de/assets/images/avatar.jpg"
+  />
 
   <.status_bar title="Account anlegen" percent={20} />
-
-  <table>
+  
+  <table phx-no-format>
     <tr>
       <td class="align-top pr-3 text-xl">
         <span aria-hidden="true">&#x24D8;</span>
         <span class="hidden">Hinweis</span>
       </td>
       <td class="align-top">
-        Derzeit dürfen nur voll geschäftsfähige Personen aus Deutschland diesen Dienst nutzen.
+        Derzeit dürfen nur voll geschäftsfähige Personen aus Deutschland
+        diesen Dienst nutzen.
       </td>
     </tr>
   </table>
+  
   <!-- .form for={} phx-change="validate" phx-submit="save" -->
-  <form method="get" action="/demo">
-    <fieldset class="my-7 space-y-3 bg-green-100 p-3">
+  <form method="get" action="/demo" phx-no-format>
+    
+    <fieldset class="my-7 space-y-3 bg-green-100 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Neues Konto anlegen</h2>
-        <p class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right">
-          Bereits angemeldet? &rarr; <a href="/login" class="font-bold underline">Einloggen</a>
+        <p
+          class="text-brand-silver-900 text-sm font-normal text-neutral-500 text-right"
+          phx-no-format
+        >
+          Bereits angemeldet? &rarr;
+          <a href="/login" class="font-bold underline">Einloggen</a>
         </p>
       </div>
       <div class="space-y-1 pt-1 pb-1">
@@ -36,13 +50,13 @@ zu entdecken."
           Ist für andere Be&shy;nut&shy;zer&shy;_innen nicht sichtbar.
         </p>
         <input
+          name="email" id="input-email"
           type="email"
-          class="font-mono rounded-lg peer w-[calc(100%-2em)]"
           required="required"
-          name="email"
-          id="input-email"
+          class="font-mono rounded-lg peer w-[calc(100%-2em)]"
+          placeholder=" "
         />
-        <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+        <span class="hidden peer-invalid:inline cursor-default select-none" title="ungültig">&#x26A0;</span>
       </div>
       <div class="space-y-1 pt-1 pb-1">
         <label for="input-password" class="font-bold text-brand-silver-900">Passwort</label>
@@ -50,14 +64,14 @@ zu entdecken."
           Muss mindestens 8 Zeichen lang sein.
         </p>
         <input
+          name="password" id="input-password"
           type="password"
-          class="font-mono rounded-lg peer w-[calc(100%-2em)]"
           required="required"
-          name="email"
-          id="input-password"
           minlength="8"
+          class="font-mono rounded-lg peer w-[calc(100%-2em)]"
+          placeholder=" "
         />
-        <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+        <span class="hidden peer-invalid:inline cursor-default select-none" title="ungültig">&#x26A0;</span>
       </div>
       <div class="space-y-1 pt-1 pb-1">
         <label for="input-username" class="font-bold text-brand-silver-900">Benutzername</label>
@@ -68,20 +82,16 @@ zu entdecken."
           Mindestens 3 Zeichen.
         </p>
         <input
+          name="username" id="input-username"
           type="text"
-          size="20"
-          maxlength="25"
-          class="font-mono rounded-lg peer"
           required="required"
-          minlength="3"
-          maxlength="25"
-          name="username"
-          id="input-username"
+          size="20" minlength="3" maxlength="25"
           pattern="[a-zA-Z0-9_]{3,25}"
-          minlength="3"
+          class="font-mono rounded-lg peer"
           autocomplete="off"
+          placeholder=" "
         />
-        <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+        <span class="hidden peer-invalid:inline cursor-default select-none" title="ungültig">&#x26A0;</span>
       </div>
       <div class="space-y-1 pt-1 pb-1">
         <label class="flex align-top gap-3 px-4 py-3 border-2 border-gray-300 has-[:checked]:border-blue-500 rounded-lg transition-colors ease-in-out duration-150">
@@ -89,32 +99,34 @@ zu entdecken."
             <input
               type="checkbox"
               name="confirm_terms_and_conditions"
-              class="appearance-none w-4 h-4 shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-blue-500 peer"
+              id="input-confirm_terms_and_conditions"
               required="required"
+              class="appearance-none w-4 h-4 shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-blue-500 peer"
             />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
+            <svg xmlns="http://www.w3.org/2000/svg"
               class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
-              width="48"
-              height="48"
-              viewBox="0 0 256 256"
+              width="48" height="48" viewBox="0 0 256 256"
               fill="fill-current"
             >
               <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" />
             </svg>
           </div>
-          <span class="text-brand-silver-900 -mb-0.5 text-sm font-normal select-none">
+          <span
+            class="text-brand-silver-900 -mb-0.5 text-sm font-normal select-none"
+            phx-no-format
+          >
             Ich willige in die Verarbeitung und Nutzung meiner
             personen&shy;bezogenen Daten gemäß der
             <a href="/datenschutz" class="underline">Daten&shy;schutz&shy;erklärung</a>
-            und der <a href="/nutzungsbedingungen" class="underline">Nutzungs&shy;bedingungen</a>
+            und der
+            <a href="/nutzungsbedingungen" class="underline">Nutzungs&shy;bedingungen</a>
             ein.
           </span>
         </label>
       </div>
     </fieldset>
-
-    <fieldset class="my-7 space-y-3 bg-lime-100 p-3">
+    
+    <fieldset class="my-7 space-y-3 bg-lime-100 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Erzähl uns über dich!</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -122,35 +134,35 @@ zu entdecken."
           kennenlernen können.
         </p>
       </div>
-
+      
       <div class="space-y-1 pt-1">
         <label class="font-bold text-brand-silver-900">Name</label>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
           Ein frei wählbarer Name für das Profil.
-          Kann z.B. der Vorname sein oder ein beliebiger anderer Name, wie etwa <q>Marathonläuferin 123</q>, <q>Techno-Fan aus Berlin</q>,
-          <q>passionierter Briefmarkensammler</q>
-          o.ä.
+          Kann z.B. der Vorname sein oder ein beliebiger anderer Name,
+          wie etwa <q>Marathonläuferin 123</q>, <q>Techno-Fan aus Berlin</q>,
+          <q>passionierter Briefmarkensammler</q> o.ä.
           Kann auch nachträglich geändert werden.
           Ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
         </p>
       </div>
       <div class="space-y-4 pb-4">
         <input
+          name="name" id="input-name"
           type="text"
-          maxlength="50"
-          minlength="1"
-          maxlength="50"
-          name="name"
+          minlength="1" maxlength="50"
           class="rounded-lg w-full"
           autocomplete="off"
+          placeholder=" "
         />
       </div>
-
+      
       <div class="space-y-1 pt-1">
         <label class="font-bold text-brand-silver-900">Geburtsdatum</label>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
           Für andere Be&shy;nut&shy;zer&shy;_innen ist dein Alter sichtbar.
-          Tag und Monat dürfen aus Gründen der Privatsphäre auch nach oben abgeändert werden.
+          Tag und Monat dürfen aus Gründen der Privatsphäre auch nach oben
+          abgeändert werden.
           Derzeit dürfen nur volljährige Personen diesen Dienst nutzen.
         </p>
       </div>
@@ -170,62 +182,57 @@ zu entdecken."
           <tr>
             <td class="text-right pr-1.5">
               <input
+                name="date_of_birth_d" id="input-date_of_birth_d"
                 type="number"
-                min="1"
-                max="31"
-                placeholder=""
-                size="2"
-                maxlength="2"
+                min="1" max="31"
+                size="2" maxlength="2"
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:4.1em;"
-                name="date_of_birth_d"
+                required="required"
               />.
             </td>
             <td class="text-right pr-1.5">
               <input
+                name="date_of_birth_m" id="input-date_of_birth_m"
                 type="number"
-                min="1"
-                max="12"
-                placeholder=""
-                size="2"
-                maxlength="2"
+                min="1" max="12"
+                size="2" maxlength="2"
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:4.1em;"
-                name="date_of_birth_m"
+                required="required"
               />.
             </td>
             <td class="text-right pr-1.5">
               <input
+                name="date_of_birth_y" id="input-date_of_birth_y"
                 type="number"
-                min="1900"
-                max={DateTime.utc_now().year - 1}
-                placeholder=""
-                size="4"
-                maxlength="4"
+                min="1900" max={ DateTime.utc_now.year - 1 }
+                size="4" maxlength="4"
+                placeholder=" "
                 class="font-mono text-right rounded-lg"
                 style="width:5.3em;"
-                name="date_of_birth_y"
+                required="required"
               />.
             </td>
           </tr>
         </table>
       </div>
-
+      
       <div class="space-y-4 pb-2">
         <label class="flex items-center gap-3 px-4 py-3 border-2 border-gray-300 has-[:checked]:border-blue-500 rounded-lg transition-colors ease-in-out duration-150">
           <div class="relative w-4 h-4 flex items-center justify-center">
             <input
-              type="checkbox"
               name="confirm_voll_geschaeftsfaehig"
-              class="appearance-none w-4 h-4 shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-blue-500 peer"
+              id="input-confirm_voll_geschaeftsfaehig"
+              type="checkbox"
               required="required"
+              class="appearance-none w-4 h-4 shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-blue-500 peer"
             />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
+            <svg xmlns="http://www.w3.org/2000/svg"
               class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
-              width="48"
-              height="48"
-              viewBox="0 0 256 256"
+              width="48" height="48" viewBox="0 0 256 256"
               fill="fill-current"
             >
               <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" />
@@ -237,8 +244,8 @@ zu entdecken."
         </label>
       </div>
     </fieldset>
-
-    <fieldset class="my-7 space-y-3 bg-cyan-50 p-3">
+    
+    <fieldset class="my-7 space-y-3 bg-cyan-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wo befindest du dich?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -255,28 +262,25 @@ zu entdecken."
         </select>
       </div>
       <div class="space-y-1 pt-1 pb-1">
-        <label for="input-postal_code" class="font-bold text-brand-silver-900">
-          Postleitzahl
-        </label>
+        <label for="input-postal_code" class="font-bold text-brand-silver-900">Postleitzahl</label>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
           Die PLZ ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
         </p>
         <input
+          name="postal_code" id="input-postal_code"
           type="text"
+          minlength="5" maxlength="5"
           size="6"
-          class="font-mono rounded-lg peer"
           required="required"
-          name="postal_code"
-          id="input-postal_code"
           autocomplete="postal-code"
-          minlength="5"
-          maxlength="5"
+          class="font-mono rounded-lg peer"
+          placeholder=" "
         />
-        <span class="hidden peer-invalid:inline" title="ungültig">&#x26A0;</span>
+        <span class="hidden peer-invalid:inline cursor-default select-none" title="ungültig">&#x26A0;</span>
       </div>
     </fieldset>
-
-    <fieldset class="my-7 space-y-6 bg-cyan-50 p-3">
+    
+    <fieldset class="my-7 space-y-6 bg-cyan-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Was ist dein Geschlecht?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -285,15 +289,16 @@ zu entdecken."
       </div>
       <div class="space-y-4">
         <%= for { item_code, item_title } <- [
-        { :m, "männlich" },
-        { :w, "weiblich" },
-        { :x, "nicht-binär" },
-      ] do %>
+          { :m, "männlich" },
+          { :w, "weiblich" },
+          { :x, "nicht-binär" },
+        ] do %>
+          
           <label class="flex items-center gap-3 px-4 py-3 border-2 border-gray-300 has-[:checked]:border-blue-500 rounded-lg transition-colors ease-in-out duration-150">
             <div class="relative w-4 h-4 flex items-center justify-center">
               <input
+                name="gender" id="input-gender"
                 type="radio"
-                name="gender"
                 value={item_code}
                 class="appearance-none w-4 h-4 shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
               />
@@ -304,37 +309,37 @@ zu entdecken."
               <%= item_title %>
             </span>
           </label>
+          
         <% end %>
       </div>
     </fieldset>
-
-    <fieldset class="my-7 space-y-6 bg-rose-50 p-3">
+    
+    <fieldset class="my-7 space-y-6 bg-rose-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wen möchtest du daten?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
-          Mehrere Optionen möglich. Die Auswahl ist für andere Be&shy;nut&shy;zer&shy;_innen sichtbar.
+          Mehrere Optionen möglich. Die Auswahl ist für andere
+          Be&shy;nut&shy;zer&shy;_innen sichtbar.
         </p>
       </div>
       <div class="space-y-4">
         <%= for { item_code, item_title } <- [
-        { :m, "Männer" },
-        { :w, "Frauen" },
-        { :x, "nicht-binäre Personen" },
-      ] do %>
+          { :m, "Männer" },
+          { :w, "Frauen" },
+          { :x, "nicht-binäre Personen" },
+        ] do %>
+          
           <label class="flex items-center gap-3 px-4 py-3 border-2 border-gray-300 has-[:checked]:border-blue-500 rounded-lg transition-colors ease-in-out duration-150">
             <div class="relative w-4 h-4 flex items-center justify-center">
               <input
-                type="checkbox"
                 name="looking_for_gender[]"
+                type="checkbox"
                 value={item_code}
                 class="appearance-none w-4 h-4 shrink-0 rounded-sm border-[1.5px] border-brand-gray-600 checked:border-blue-500 peer"
               />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
+              <svg xmlns="http://www.w3.org/2000/svg"
                 class="w-3 h-3 hidden peer-checked:block shrink-0 fill-current text-brand-azure absolute"
-                width="48"
-                height="48"
-                viewBox="0 0 256 256"
+                width="48" height="48" viewBox="0 0 256 256"
                 fill="fill-current"
               >
                 <path d="M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" />
@@ -344,11 +349,12 @@ zu entdecken."
               <%= item_title %>
             </span>
           </label>
+          
         <% end %>
       </div>
     </fieldset>
-
-    <fieldset class="my-7 space-y-6 bg-amber-50 p-3">
+    
+    <fieldset class="my-7 space-y-6 bg-amber-50 p-3" phx-no-format>
       <div class="space-y-1">
         <h2 class="font-bold text-2xl text-brand-silver-900">Wonach suchst du?</h2>
         <p class="text-brand-silver-900 text-sm font-normal text-neutral-500">
@@ -357,16 +363,18 @@ zu entdecken."
       </div>
       <div class="space-y-4">
         <%= for { item_code, item_title } <- [
-        { :partner, "Lebenspartner_in" },
-        { :fun, "etwas für Spaß" },
-        { :unsure, "noch nicht sicher" },
-        { :"", "möchte ich nicht angeben" },
-      ] do %>
+          { :partner, "Lebenspartner_in" },
+          { :fun, "etwas für Spaß" },
+          { :unsure, "noch nicht sicher" },
+          { :"", "möchte ich nicht angeben" },
+        ] do %>
+          
           <label class="flex items-center gap-3 px-4 py-3 border-2 border-gray-300 has-[:checked]:border-blue-500 rounded-lg transition-colors ease-in-out duration-150">
             <div class="relative w-4 h-4 flex items-center justify-center">
               <input
-                type="radio"
                 name="looking_for_relationship_type"
+                id="input-looking_for_relationship_type"
+                type="radio"
                 value={item_code}
                 class="appearance-none w-4 h-4 shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
               />
@@ -377,21 +385,25 @@ zu entdecken."
               <%= item_title %>
             </span>
           </label>
+          
         <% end %>
       </div>
     </fieldset>
-
+    
     <button
       type="submit"
       class="text-center bg-blue-500 hover:bg-blue-700 active:bg-blue-700 font-bold text-white text-base bg-brand-azure px-5 py-3.5 rounded-full border border-blue-700 w-40"
     >
       Weiter
     </button>
-    <!-- /.form -->
+    
+  <!-- /.form -->
   </form>
 </div>
 
-<% # For Emacs:
+
+<% #
+# For Emacs:
 # Local Variables:
 # mode: html
 # indent-tabs-mode: nil
@@ -399,4 +411,6 @@ zu entdecken."
 # c-basic-offset: 2
 # End:
 # For VIM:
-# vim:set softtabstop=2 shiftwidth=2 tabstop=2 expandtab: %>
+# vim:set softtabstop=2 shiftwidth=2 tabstop=2 expandtab:
+# %>
+

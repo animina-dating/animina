@@ -27,10 +27,12 @@ services:
       - "./mix.exs:/application/mix.exs:ro"
       - "./mix.lock:/application/mix.lock:ro"
       - "./priv:/application/priv:ro"
-      - "./priv/static/assets:/application/priv/static/assets:rw"
+      - "./priv/static/assets:/application/priv/static/assets:rw"  # note: read-write!
       - "./test:/application/test:ro"
       - "./.formatter.exs:/application/.formatter.exs:ro"
       - "./.credo.exs:/application/.credo.exs:ro"
+      - "./.git:/application/.git:ro"  # just so we can compare changes made by "mix format", as an experiment
+      - "./.gitignore:/application/.gitignore:ro"  # just so we can compare changes made by "mix format", as an experiment
     depends_on:
       db:
         condition: service_started

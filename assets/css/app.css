@@ -9,8 +9,26 @@ body {
 	margin-right: auto;
 }
 
-input:invalid {
+input:invalid:not(:placeholder-shown) {
 	background-color: hsl( 12, 100%, 95% );
+}
+
+input:not([placeholder])[type="text"],
+input:not([placeholder])[type="email"],
+input:not([placeholder])[type="number"],
+input:not([placeholder])[type="password"],
+input:not([placeholder])[type="date"],
+input:not([placeholder])[type="datetime"],
+input:not([placeholder])[type="datetime-local"],
+input:not([placeholder])[type="file"],
+input:not([placeholder])[type="month"],
+input:not([placeholder])[type="search"],
+input:not([placeholder])[type="tel"],
+input:not([placeholder])[type="time"],
+input:not([placeholder])[type="url"],
+input:not([placeholder])[type="week"] {
+	border: 5px dashed #f30 !important;
+	outline: 5px dashed #f96 !important;
 }
 
 input:disabled, select:disabled, textarea:disabled, button:disabled {
@@ -21,6 +39,35 @@ p, *.wordwrap {
 	@apply break-words hyphens-auto;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="file"],
+input[type="month"],
+input[type="search"],
+input[type="tel"],
+input[type="time"],
+input[type="url"],
+input[type="week"] {
+	@apply shadow-inner;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+	@apply drop-shadow-md;
+}
+
+input[type="button"],
+input[type="submit"]
+input[type="reset"],
+button,
+select {
+	@apply drop-shadow-lg;
+}
 
 
 

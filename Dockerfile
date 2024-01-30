@@ -11,8 +11,10 @@ RUN apt-get update \
     npm \
     yarn \
     build-essential \
-    git \
     postgresql-client \
+    # for convenience:
+    git \
+    less \
   && rm -rf /var/lib/apt/lists/*
 
 # Hex, Phoenix
@@ -23,19 +25,59 @@ RUN mix local.rebar --force
 RUN mkdir -p /application
 WORKDIR /application
 
-COPY "./assets"   "./assets"
-COPY "./config"   "./config"
-COPY "./lib"      "./lib"
 COPY "./mix.exs"  "./mix.exs"
 COPY "./mix.lock" "./mix.lock"
+
+RUN mix deps.clean --all
+
+# install dependencies
+RUN mix deps.get
+
+# copy compile-time config files before we compile dependencies
+# to ensure any relevant config change will trigger the dependencies
+# to be re-compiled.
+COPY "./config"   "./config"
+COPY [ \
+  "./config/config.exs", \
+  "./config/dev.exs", \
+  "./config/test.exs", \
+  "./config/prod.exs", \
+  # ->
+  "./config/" \
+]
+
+# compile deps
+RUN mix deps.compile
+
+# compile
+RUN mix compile
+
+# download TailwindCSS and ESBuild, if missing
+RUN mix assets.setup
+
+COPY "./assets"   "./assets"
+
+# compile assets
+RUN mix assets.deploy
+
+COPY "./lib"      "./lib"
 COPY "./priv"     "./priv"
 COPY "./test"     "./test"
+
 COPY "./.formatter.exs"  "./.formatter.exs"
 COPY "./.credo.exs"      "./.credo.exs"
 
-RUN mix deps.clean --all
-RUN mix deps.get
 RUN mix compile
+
+# changes to config/runtime.exs don't require recompiling the code
+COPY "./config/runtime.exs"   "./config/runtime.exs"
+
+RUN mkdir -p "$HOME/.config/git" \
+  && ( \
+    echo '' ;\
+    echo '# ignore ".DS_Store" files from Mac OS X:' ;\
+    echo '.DS_Store' ;\
+  ) > "$HOME/.config/git/ignore"
 
 #RUN cd assets && npm install
 
