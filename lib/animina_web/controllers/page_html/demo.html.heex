@@ -31,7 +31,7 @@ zu entdecken."
   </table>
   
   <!-- .form for={} phx-change="validate" phx-submit="save" -->
-  <form method="get" action="/demo" phx-no-format>
+  <form method="get" action="/demo" class="group" phx-no-format>
     
     <fieldset class="my-7 space-y-3 bg-green-100 p-3" phx-no-format>
       <div class="space-y-1">
@@ -268,9 +268,9 @@ zu entdecken."
         </p>
         <input
           name="postal_code" id="input-postal_code"
-          type="text"
-          minlength="5" maxlength="5"
-          size="6"
+          type="number"
+          min="1000" max="99999"
+          size="8"
           required="required"
           autocomplete="postal-code"
           class="font-mono rounded-lg peer"
@@ -301,6 +301,7 @@ zu entdecken."
                 type="radio"
                 value={item_code}
                 class="appearance-none w-4 h-4 shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+                required="required"
               />
               <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
               </div>
@@ -377,6 +378,7 @@ zu entdecken."
                 type="radio"
                 value={item_code}
                 class="appearance-none w-4 h-4 shrink-0 rounded-full border-[1.5px] checked:bg-brand-azure border-brand-gray-600 checked:border-brand-azure peer"
+                required="required"
               />
               <div class="w-2 h-2 bg-white rounded-full hidden peer-checked:block shrink-0 absolute">
               </div>
@@ -392,7 +394,19 @@ zu entdecken."
     
     <button
       type="submit"
-      class="text-center bg-blue-500 hover:bg-blue-700 active:bg-blue-700 font-bold text-white text-base bg-brand-azure px-5 py-3.5 rounded-full border border-blue-700 w-40"
+      class="
+        text-center
+        bg-blue-500
+        hover:bg-blue-700
+        active:bg-blue-700
+        font-bold text-white text-base bg-brand-azure px-5 py-3.5 rounded-full
+        border border-blue-700
+        w-40
+        group-invalid:opacity-40
+        group-invalid:cursor-not-allowed
+        group-invalid:hover:bg-blue-500
+        group-invalid:active:bg-blue-500
+      "
     >
       Weiter
     </button>
