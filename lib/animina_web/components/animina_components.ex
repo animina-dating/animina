@@ -29,16 +29,21 @@ defmodule AniminaWeb.AniminaComponents do
 
   def notification_box(assigns) do
     ~H"""
-    <div class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow">
+    <div
+      class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow"
+      phx-no-format
+    >
       <%= if @avatar_url_b do %>
         <div class="relative w-[4.7rem]">
-          <.notification_box_avatar avatar_url={ @avatar_url   }
+          <.notification_box_avatar
+            avatar_url={ @avatar_url   }
             classes={[
               "absolute", "top-0", "left-0",
               "opacity-50", "brightness-95", "border-neutral-100",
             ]}
           />
-          <.notification_box_avatar avatar_url={ @avatar_url_b }
+          <.notification_box_avatar
+            avatar_url={ @avatar_url_b }
             classes={[
               "absolute", "top-0", "left-[1.875rem]",
               "outline", "outline-[0.6px]", "outline-white", "outline-offset-0",
@@ -46,7 +51,9 @@ defmodule AniminaWeb.AniminaComponents do
           />
         </div>
       <% else %>
-        <.notification_box_avatar avatar_url={ @avatar_url } />
+        <.notification_box_avatar
+          avatar_url={ @avatar_url }
+        />
       <% end %>
       <div>
         <.notification_title :if={@title}>
@@ -66,7 +73,7 @@ defmodule AniminaWeb.AniminaComponents do
   Avatar in a notification message box.
   """
   attr :avatar_url   , :string , default: nil, doc: "URL of the user's avatar"
-  attr :classes      , :list   , default: [], doc: "classes"
+  attr :classes      , :list   , default: [] , doc: "classes"
   
   def notification_box_avatar(assigns) do
     ~H"""
