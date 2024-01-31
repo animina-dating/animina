@@ -157,18 +157,19 @@ defmodule AniminaWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        Bitte warten Sie einen Moment bis Sie wieder online sind. <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+        Bitte warten Sie einen Moment bis Sie wieder online sind.
+        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title="Something went wrong!"
+        title="Es gibt ein Server-Problem!"
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        Bitte warten Sie einen Moment auf den Server.
+        Bitte warten Sie einen Moment.
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
