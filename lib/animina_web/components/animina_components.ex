@@ -157,4 +157,5 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
 end
