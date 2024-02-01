@@ -89,7 +89,7 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title="Willkommen bei Animina 🎉",
+        title="Willkommen bei Animina 🎉"
         message="der Open-Source-Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert!"
         box_with_avatar={false}
       />
