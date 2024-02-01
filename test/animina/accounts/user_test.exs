@@ -13,7 +13,8 @@ defmodule Animina.Accounts.UserTest do
           email_confirmed: true,
           date_of_birth: "1950-01-01",
           #subscribed_at: 1706659201,
-          subscribed_at: %DateTime{ calendar: Calendar.ISO,
+          subscribed_at: %DateTime{
+            calendar: Calendar.ISO,
             year: 2024, month: 1, day: 31,
             hour: 18, minute: 0, second: 1,
             std_offset: 0,
