@@ -5,6 +5,6 @@ defmodule AniminaWeb.RootTest do
   test "checks the home page", %{conn: conn} do
     {:ok, view, _html} = live(conn, "/")
 
-    assert render(view) =~ "Willkommen bei animina!"
+    assert render(view) =~ "Willkommen bei Animina"
   end
 end
