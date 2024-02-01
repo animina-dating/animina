@@ -20,7 +20,11 @@ defmodule AniminaWeb.Router do
   scope "/", AniminaWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # get "/", PageController, :home
+    live "/", RootLive, :register
+    live "/register", AniminaWeb.AuthLive.Index, :register
+    live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
+
     get "/demo", PageController, :demo
     get "/register", AuthController, :register
 

@@ -26,6 +26,10 @@ defmodule Animina.Accounts.User do
     calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
   end
 
+  preparations do
+    prepare build(load: [:gravatar_hash])
+  end
+
   authentication do
     api Animina.Accounts
 
@@ -64,6 +68,7 @@ defmodule Animina.Accounts.User do
     define_for Animina.Accounts
     define :read
     define :by_username, get_by: [:username], action: :read
+    define :by_id, get_by: [:id], action: :read
   end
 
   # TODO: Uncomment this if you want to use policies

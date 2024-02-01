@@ -13,8 +13,8 @@ defmodule Animina.Calculations.Md5 do
     # Convert data to a string, handling Ash.CiString or any other type correctly
     string_data = to_string(data)
 
-    string_data
-    |> :erlang.md5()
-    |> Base.encode16(case: :lower)
+    :crypto.hash(:sha256, string_data)
+    |> Base.encode16()
+    |> String.downcase()
   end
 end
