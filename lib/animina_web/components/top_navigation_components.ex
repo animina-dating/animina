@@ -68,7 +68,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def user_profile_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :profile }>
       <%= if @current_user do %>
         <img alt="Avatar" class="w-6 h-6 rounded-full object-cover" src={"https://www.gravatar.com/avatar/#{@current_user.gravatar_hash}"} />
       <% else %>
@@ -127,7 +127,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def home_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :home, do: true, else: false}>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :home }>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="fill-current w-6 h-6 shrink-0"
@@ -163,7 +163,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def chat_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :chat, do: true, else: false}>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :chat }>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current w-6 h-6 shrink-0"
