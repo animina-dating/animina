@@ -12,6 +12,11 @@ defmodule Animina.Accounts.User do
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
     attribute :username, :string, allow_nil?: false
+    attribute :name, :string, allow_nil?: false
+    attribute :birthday, :date, allow_nil?: false
+    attribute :zip_code, :string, allow_nil?: false
+    attribute :gender, :string, allow_nil?: false
+    attribute :height, :integer, allow_nil?: false
   end
 
   calculations do
@@ -32,7 +37,7 @@ defmodule Animina.Accounts.User do
         identity_field :email
         sign_in_tokens_enabled? true
         confirmation_required?(false)
-        register_action_accept([:username])
+        register_action_accept([:username, :name, :zip_code, :birthday, :height, :gender])
       end
     end
 
@@ -55,12 +60,13 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read]
+    defaults [:create, :read]
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
+    define :create
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
   end

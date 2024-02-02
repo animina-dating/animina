@@ -14,14 +14,16 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :points, :integer, default: 0, doc: "points the user has"
 
   def top_navigation(assigns) do
     ~H"""
     <div class="border-y border-brand-silver-100">
-      <nav class="grid grid-cols-3 gap-1">
+      <nav class="grid grid-cols-4 gap-1">
         <.home_nav_item active_tab={@active_tab} />
-        <.chat_nav_item current_user={@current_user} />
-        <.user_profile_item current_user={@current_user} />
+        <.bookmarks_nav_item active_tab={@active_tab} />
+        <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.user_profile_item current_user={@current_user} active_tab={@active_tab} points={@points} />
       </nav>
     </div>
     """
@@ -38,6 +40,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       </.top_navigation_entry>
   """
   attr :is_active, :boolean, default: false, doc: "active state of the item"
+  attr :current_user, :any, default: nil, doc: "current user"
   slot :inner_block
 
   def top_navigation_entry(assigns) do
@@ -46,7 +49,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
       type="button"
       class={[
         "relative text-xs font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none",
-        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: "")
+        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: ""),
+        unless(@current_user && @is_active, do: "text-gray-400")
       ]}
     >
       <%= render_slot(@inner_block) %>
@@ -194,6 +198,30 @@ defmodule AniminaWeb.TopNavigationCompontents do
           +1
         </div>
       </div>
+    </.top_navigation_entry>
+    """
+  end
+
+  @doc """
+  Chat menu entry.
+
+  ## Examples
+
+      <.chat_nav_item />
+  """
+  attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :current_user, :any, default: nil, doc: "current user"
+
+  def bookmarks_nav_item(assigns) do
+    ~H"""
+    <.top_navigation_entry phx-no-format is_active={if @active_tab == :chat, do: true, else: false}>
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
+    <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
+        License - https://fontawesome.com/license/free Copyright 2024
+        Fonticons, Inc.-->
+    <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
+    </svg>
+    <span>Bookmarks</span>
     </.top_navigation_entry>
     """
   end
