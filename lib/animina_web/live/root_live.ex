@@ -89,13 +89,14 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title="Willkommen bei animina! 🎉"
-        message="Open-Source Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert."
+        title="Willkommen bei Animina 🎉"
+        message="der Open-Source-Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert!"
+        box_with_avatar={false}
       />
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
         <div>
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
-            Username <span class="text-gray-400">- öffentlich sichtbar</span>
+            Username <span class="text-gray-400">&ndash; öffentlich sichtbar</span>
           </label>
           <div class="mt-2">
             <%= text_input(f, :username,
@@ -111,7 +112,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
-            E-Mail Addresse
+            E-Mail-Adresse
           </label>
           <div class="mt-2">
             <%= text_input(f, :email,

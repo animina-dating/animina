@@ -13,6 +13,9 @@ services:
     build: ./
     entrypoint: ./docker-entrypoint.sh
     restart: on-failure
+    stop_grace_period: 2s
+    stop_signal: SIGTERM
+    init: true
     networks:
       - all-in-one
     sysctls:
@@ -24,10 +27,13 @@ services:
       - "./assets:/application/assets:ro"
       - "./config:/application/config:ro"
       - "./lib:/application/lib:ro"
+      - "./lib/animina/accounts/resources/user.ex:/application/lib/animina/accounts/resources/user.ex:rw"
       - "./mix.exs:/application/mix.exs:ro"
       - "./mix.lock:/application/mix.lock:ro"
       - "./priv:/application/priv:ro"
       - "./priv/static/assets:/application/priv/static/assets:rw"  # note: read-write!
+      - "./priv/repo/migrations:/application/priv/repo/migrations:rw"  # note: read-write!
+      - "./priv/resource_snapshots/repo:/application/priv/resource_snapshots/repo:rw"  # note: read-write!
       - "./test:/application/test:ro"
       - "./.formatter.exs:/application/.formatter.exs:ro"
       - "./.credo.exs:/application/.credo.exs:ro"

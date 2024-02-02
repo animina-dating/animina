@@ -20,30 +20,42 @@ defmodule AniminaWeb.AniminaComponents do
       </p>
     </.notification_box>
   """
-  attr :avatar_urls, :any, default: [], doc: "List of URLs for the user's avatars"
-  attr :title, :string, default: nil, doc: "title of the notification"
-  attr :message, :string, default: nil, doc: "message of the notification"
+  attr :box_with_avatar, :boolean, default: true
+  attr :avatar_url   , :string , default: nil, doc: "URL of the user's avatar"
+  attr :avatar_url_b , :string , default: nil, doc: "URL of the user's avatar"
+  attr :title        , :string , default: nil, doc: "title of the notification"
+  attr :message      , :string , default: nil, doc: "message of the notification"
   slot :inner_block
 
   def notification_box(assigns) do
     ~H"""
-    <div class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow">
-      <%= if Enum.any?(@avatar_urls) do %>
-        <div class="relative w-[4.7rem]">
-          <%= for avatar_url <- @avatar_urls do %>
+    <div
+      class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow"
+      phx-no-format
+    >
+      <%= if @box_with_avatar do %>
+        <%= if @avatar_url_b do %>
+          <div class="relative w-[4.7rem]">
             <.notification_box_avatar
-              avatar_url={avatar_url}
+              avatar_url={ @avatar_url   }
               classes={[
-                "absolute",
-                "top-0",
-                "left-0",
-                "opacity-50",
-                "brightness-95",
-                "border-neutral-100"
+                "absolute", "top-0", "left-0",
+                "opacity-50", "brightness-95", "border-neutral-100",
               ]}
             />
-          <% end %>
-        </div>
+            <.notification_box_avatar
+              avatar_url={ @avatar_url_b }
+              classes={[
+                "absolute", "top-0", "left-[1.875rem]",
+                "outline", "outline-[0.6px]", "outline-white", "outline-offset-0",
+              ]}
+            />
+          </div>
+        <% else %>
+          <.notification_box_avatar
+            avatar_url={ @avatar_url }
+          />
+        <% end %>
       <% end %>
       <div>
         <.notification_title :if={@title}>
@@ -62,15 +74,15 @@ defmodule AniminaWeb.AniminaComponents do
   @doc """
   Avatar in a notification message box.
   """
-  attr :avatar_url, :string, default: nil, doc: "URL of the user's avatar"
-  attr :classes, :list, default: [], doc: "classes"
-
+  attr :avatar_url   , :string , default: nil, doc: "URL of the user's avatar"
+  attr :classes      , :list   , default: [] , doc: "classes"
+  
   def notification_box_avatar(assigns) do
     ~H"""
     <div
       class={[
         "w-11 h-11 shrink-0 rounded-full border border-white overflow-hidden drop-shadow-md text-center align-middle",
-        @classes
+        @classes,
       ]}
       phx-no-format
     >
@@ -134,8 +146,8 @@ defmodule AniminaWeb.AniminaComponents do
 
     <.status_bar title="Dating-Präferenzen" percent={15} />
   """
-  attr :title, :string, default: nil, doc: "title of the status bar"
-  attr :percent, :integer, default: 0, doc: "percent"
+  attr :title   , :string , default: nil, doc: "title of the status bar"
+  attr :percent , :integer, default: 0  , doc: "percent"
 
   def status_bar(assigns) do
     ~H"""
@@ -147,4 +159,5 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
 end

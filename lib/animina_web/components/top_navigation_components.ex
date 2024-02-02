@@ -68,22 +68,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def user_profile_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
-    <%= if @current_user do %>
-      <img alt="Avatar" class="w-6 h-6 rounded-full object-cover" src={"https://www.gravatar.com/avatar/#{@current_user.gravatar_hash}"} />
-    <% else %>
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current w-6 h-6 shrink-0"
-        width="25" height="24" viewBox="0 0 25 24"
-        fill="none"
-      >
-        <path
-          d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
-          stroke="stroke-current" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round"
-        />
-      </svg>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :profile }>
+      <%= if @current_user do %>
+        <img alt="Avatar" class="w-6 h-6 rounded-full object-cover" src={"https://www.gravatar.com/avatar/#{@current_user.gravatar_hash}"} />
+      <% else %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-current w-6 h-6 shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+            stroke="stroke-current" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+          />
+        </svg>
       <% end %>
       <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= humanized_points(@points) %>
@@ -110,8 +110,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <span class="hidden">
         <%= @points %> Punkte
       </span>
-
-
     </.top_navigation_entry>
     """
   end
@@ -129,7 +127,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def home_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :home, do: true, else: false}>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :home }>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="fill-current w-6 h-6 shrink-0"
@@ -165,7 +163,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def chat_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :chat, do: true, else: false}>
+    <.top_navigation_entry phx-no-format is_active={ @active_tab == :chat }>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="stroke-current w-6 h-6 shrink-0"
@@ -197,6 +195,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </.top_navigation_entry>
     """
   end
+  
+  # -------------------------------------------------------------
 
   defp humanized_points(points) when points < 1_000 do
     Integer.to_string(points)
@@ -209,4 +209,5 @@ defmodule AniminaWeb.TopNavigationCompontents do
   defp humanized_points(points) do
     Integer.to_string(div(points, 1_000_000)) <> "\u{00a0}M"
   end
+  
 end

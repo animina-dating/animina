@@ -9,9 +9,15 @@ defmodule Animina.Accounts.User do
 
   attributes do
     uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :username, :string, allow_nil?: false
+    attribute :email                   , :ci_string      , allow_nil?: false
+    attribute :email_confirmed         , :boolean        , allow_nil?: false
+    attribute :hashed_password         , :string         , allow_nil?: false, sensitive?: true
+    attribute :username                , :string         , allow_nil?: false
+    attribute :disabled_by_platform_at , :utc_datetime   , allow_nil?: true
+    attribute :disabled_by_user_at     , :utc_datetime   , allow_nil?: true
+    attribute :date_of_birth           , :date           , allow_nil?: false
+    attribute :subscribed_at           , :utc_datetime   , allow_nil?: false
+    #attribute :terms_conds_id          , :uuid           , allow_nil?: true
   end
 
   calculations do

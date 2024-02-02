@@ -9,7 +9,18 @@ defmodule Animina.Accounts.UserTest do
         Ash.Seed.seed!(%User{
           email: "bob@example.com",
           username: "bob",
-          hashed_password: "zzzzzzzzzzz"
+          hashed_password: "zzzzzzzzzzz",
+          email_confirmed: true,
+          date_of_birth: "1950-01-01",
+          #subscribed_at: 1706659201,
+          subscribed_at: %DateTime{
+            calendar: Calendar.ISO,
+            year: 2024, month: 1, day: 31,
+            hour: 18, minute: 0, second: 1,
+            std_offset: 0,
+            utc_offset: 0,
+            time_zone: "Etc/UTC", zone_abbr: "UTC",
+          },
         })
         |> Animina.Accounts.load!(:gravatar_hash)
 
