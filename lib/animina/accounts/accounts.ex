@@ -6,6 +6,7 @@ defmodule Animina.Accounts do
   use Ash.Api
 
   resources do
+    resource Animina.Accounts.BasicUser
     resource Animina.Accounts.User
     resource Animina.Accounts.Token
   end

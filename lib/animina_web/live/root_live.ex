@@ -2,8 +2,9 @@ defmodule AniminaWeb.RootLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.Accounts.User
+  alias Animina.Accounts.BasicUser
   alias AshPhoenix.Form
+  alias AniminaWeb.Registration
 
   @impl true
   def mount(_params, session, socket) do
@@ -11,28 +12,10 @@ defmodule AniminaWeb.RootLive do
       :timer.send_interval(2500, self(), :tick)
     end
 
-    current_user =
-      case get_user_id_from_session(session) do
-        nil ->
-          nil
-
-        "" ->
-          nil
-
-        user_id ->
-          case Accounts.User.by_id(user_id) do
-            {:ok, user} ->
-              user
-
-            _ ->
-              nil
-          end
-      end
-
     socket =
       socket
       |> assign(points: 0)
-      |> assign(current_user: current_user)
+      |> assign(current_user: Registration.get_current_user(session))
       |> assign(active_tab: :home)
       |> assign(today: Date.utc_today())
 
@@ -46,48 +29,20 @@ defmodule AniminaWeb.RootLive do
     {:noreply, socket}
   end
 
-  defp get_user_id_from_session(session) do
-    case session["user"] do
-      nil ->
-        nil
-
-      "" ->
-        nil
-
-      user_id ->
-        user_id
-        |> String.split("=")
-        |> List.last()
-    end
-  end
-
   @impl true
-  @spec handle_params(
-          any(),
-          any(),
-          atom()
-          | %{
-              :assigns =>
-                atom() | %{:live_action => :register | :sign_in, optional(any()) => any()},
-              optional(any()) => any()
-            }
-        ) :: {:noreply, map()}
-
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :register, _params) do
     socket
-    |> assign(page_title: "animina - Die ehrliche Dating-App")
+    |> assign(page_title: "animina Dating-App")
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, "Neu registrieren")
-    |> assign(:alternative_path, ~p"/sign-in")
-    |> assign(:alternative, "Have an account?")
     |> assign(:action, ~p"/auth/user/password/register")
     |> assign(
       :form,
-      Form.for_create(User, :register_with_password, api: Accounts, as: "user")
+      Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
     )
   end
 
@@ -95,12 +50,10 @@ defmodule AniminaWeb.RootLive do
     socket
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, "Sign in")
-    |> assign(:alternative_path, ~p"/register")
-    |> assign(:alternative, "Need an account?")
     |> assign(:action, ~p"/auth/user/password/sign_in")
     |> assign(
       :form,
-      Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user")
+      Form.for_action(BasicUser, :sign_in_with_password, api: Accounts, as: "user")
     )
   end
 
@@ -140,10 +93,10 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :name,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "Horst Müller",
+              placeholder: "Horst",
               type: :text,
               required: true,
-              autocomplete: :name
+              autocomplete: "given-name"
             ) %>
           </div>
         </div>
@@ -200,42 +153,46 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <label class="text-base font-semibold text-gray-900">Geschlecht</label>
-          <fieldset class="mt-4">
-            <legend class="sr-only">Geschlecht</legend>
-            <div class="space-y-4">
-              <div class="flex items-center">
-                <%= radio_button(f, :gender, "male",
-                  class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600",
-                  checked: true
-                ) %>
-
-                <label for="male" class="ml-3 block text-sm font-medium leading-6 text-gray-900">
-                  Männlich
-                </label>
-              </div>
-
-              <div class="flex items-center">
-                <%= radio_button(f, :gender, "female",
-                  class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                ) %>
-
-                <label for="female" class="ml-3 block text-sm font-medium leading-6 text-gray-900">
-                  Weiblich
-                </label>
-              </div>
-
-              <div class="flex items-center">
-                <%= radio_button(f, :gender, "diverse",
-                  class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                ) %>
-
-                <label for="diverse" class="ml-3 block text-sm font-medium leading-6 text-gray-900">
-                  Divers
-                </label>
-              </div>
+          <div class="flex items-center justify-between">
+            <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">
+              Geschlecht
+            </label>
+          </div>
+          <div class="mt-2">
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, "male",
+                id: "gender_male",
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+                checked: true
+              ) %>
+              <%= label(f, :gender, "Männlich",
+                for: "gender_male",
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
             </div>
-          </fieldset>
+
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, "female",
+                id: "gender_female",
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              ) %>
+              <%= label(f, :gender, "Weiblich",
+                for: "gender_female",
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
+            </div>
+
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, "divers",
+                id: "gender_divers",
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              ) %>
+              <%= label(f, :gender, "Divers",
+                for: "gender_divers",
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -251,7 +208,8 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :zip_code,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "12345",
+              # Zip code of Der Bundestag ;-)
+              placeholder: "11011",
               autocomplete: "postal-code"
             ) %>
           </div>
@@ -271,6 +229,24 @@ defmodule AniminaWeb.RootLive do
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
               placeholder: "160"
+            ) %>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
+              Handynummer
+              <span class="text-gray-400">
+                (für den Verifizierungscode)
+              </span>
+            </label>
+          </div>
+          <div class="mt-2">
+            <%= text_input(f, :mobile_phone,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+              placeholder: "0151-12345678"
             ) %>
           </div>
         </div>

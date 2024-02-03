@@ -12,10 +12,8 @@ defmodule Animina.Repo.Migrations.MigrateResources1 do
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
       add :email, :citext, null: false
       add :hashed_password, :text, null: false
-      add :username, :text, null: false
-      add :disabled_by_platform_at, :utc_datetime
-      add :disabled_by_user_at, :utc_datetime
-      add :name, :text, null: false
+      add :username, :citext
+      add :name, :text
       add :birthday, :date, null: false
       add :zip_code, :text, null: false
       add :gender, :text, null: false
