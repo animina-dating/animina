@@ -1,4 +1,4 @@
-defmodule AniminaWeb.RootLive do
+defmodule AniminaWeb.SecondStepLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
@@ -21,11 +21,11 @@ defmodule AniminaWeb.RootLive do
 
         user_id ->
           case Accounts.User.by_id(user_id) do
+            {:error, _} ->
+              nil
+
             {:ok, user} ->
               user
-
-            _ ->
-              nil
           end
       end
 
@@ -34,7 +34,6 @@ defmodule AniminaWeb.RootLive do
       |> assign(points: 0)
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
-      |> assign(today: Date.utc_today())
 
     {:ok, socket}
   end
@@ -62,42 +61,18 @@ defmodule AniminaWeb.RootLive do
   end
 
   @impl true
-  @spec handle_params(
-          any(),
-          any(),
-          atom()
-          | %{
-              :assigns =>
-                atom() | %{:live_action => :register | :sign_in, optional(any()) => any()},
-              optional(any()) => any()
-            }
-        ) :: {:noreply, map()}
-
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :register, _params) do
+  defp apply_action(socket, :index, _params) do
     socket
-    |> assign(page_title: "animina - Die ehrliche Dating-App")
+    |> assign(page_title: "animina Profil vervollständigen")
     |> assign(:form_id, "sign-up-form")
-    |> assign(:cta, "Neu registrieren")
+    |> assign(:cta, "Speichern")
     |> assign(:alternative_path, ~p"/sign-in")
     |> assign(:alternative, "Have an account?")
     |> assign(:action, ~p"/auth/user/password/register")
-    |> assign(
-      :form,
-      Form.for_create(User, :register_with_password, api: Accounts, as: "user")
-    )
-  end
-
-  defp apply_action(socket, :sign_in, _params) do
-    socket
-    |> assign(:form_id, "sign-in-form")
-    |> assign(:cta, "Sign in")
-    |> assign(:alternative_path, ~p"/register")
-    |> assign(:alternative, "Need an account?")
-    |> assign(:action, ~p"/auth/user/password/sign_in")
     |> assign(
       :form,
       Form.for_action(User, :sign_in_with_password, api: Accounts, as: "user")
@@ -109,15 +84,14 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title="Willkommen bei Animina 🎉"
-        message="der Open-Source-Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert!"
-        box_with_avatar={false}
+        title="Willkommen bei animina! 🎉"
+        message="Open-Source Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert."
       />
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
         <div>
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
-            Username
+            Username <span class="text-gray-400">- öffentlich sichtbar</span>
           </label>
           <div class="mt-2">
             <%= text_input(f, :username,
@@ -126,31 +100,14 @@ defmodule AniminaWeb.RootLive do
               placeholder: "Pusteblume1977",
               type: :text,
               required: true,
-              autofocus: true,
-              autocomplete: :username
-            ) %>
-          </div>
-        </div>
-
-        <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
-            Name
-          </label>
-          <div class="mt-2">
-            <%= text_input(f, :name,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "Horst Müller",
-              type: :text,
-              required: true,
-              autocomplete: :name
+              autofocus: true
             ) %>
           </div>
         </div>
 
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
-            E-Mail-Adresse
+            E-Mail Addresse
           </label>
           <div class="mt-2">
             <%= text_input(f, :email,
@@ -158,8 +115,7 @@ defmodule AniminaWeb.RootLive do
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
               placeholder: "eddie@beispiel.de",
               type: :email,
-              required: true,
-              autocomplete: :email
+              required: true
             ) %>
           </div>
         </div>
@@ -174,8 +130,7 @@ defmodule AniminaWeb.RootLive do
             <%= password_input(f, :password,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "Passwort",
-              autocomplete: "new-password"
+              placeholder: "Passwort"
             ) %>
           </div>
         </div>
@@ -184,17 +139,13 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
               Geburtstag
-              <span class="text-gray-400">
-                (heute mindestens 18 Jahre alt z.B. <%= "#{@today.day}.#{@today.month}.#{@today.year - 18}" %>)
-              </span>
             </label>
           </div>
           <div class="mt-2">
             <%= date_input(f, :birthday,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "",
-              autocomplete: "bday"
+              placeholder: ""
             ) %>
           </div>
         </div>
@@ -251,8 +202,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :zip_code,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "12345",
-              autocomplete: "postal-code"
+              placeholder: "12345"
             ) %>
           </div>
         </div>

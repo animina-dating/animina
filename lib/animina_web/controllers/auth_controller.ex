@@ -7,16 +7,17 @@ defmodule AniminaWeb.AuthController do
   alias AshPhoenix.Form
 
   def success(conn, _activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    # return_to = get_session(conn, :return_to) || ~p"/"
 
     conn
     |> delete_session(:return_to)
     |> store_in_session(user)
     |> assign(:current_user, user)
-    |> redirect(to: return_to)
+    |> redirect(to: ~p"/second-step")
   end
 
   def failure(conn, _activity, reason) do
+    # dbg(conn)
     # TODO: Fix the display of validation errors
     # see https://elixirforum.com/t/return-to-create-form-after-validation-error-for-ash-authentication/61110/5
     params =

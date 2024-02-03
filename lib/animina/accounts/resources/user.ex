@@ -9,20 +9,21 @@ defmodule Animina.Accounts.User do
 
   attributes do
     uuid_primary_key :id
-    attribute :email                   , :ci_string      , allow_nil?: false
-    attribute :email_confirmed         , :boolean        , allow_nil?: false
-    attribute :hashed_password         , :string         , allow_nil?: false, sensitive?: true
-    attribute :username                , :string         , allow_nil?: false
-    attribute :disabled_by_platform_at , :utc_datetime   , allow_nil?: true
-    attribute :disabled_by_user_at     , :utc_datetime   , allow_nil?: true
-    attribute :date_of_birth           , :date           , allow_nil?: false
-    attribute :subscribed_at           , :utc_datetime   , allow_nil?: false
-    #attribute :terms_conds_id          , :uuid           , allow_nil?: true
+    attribute :email, :ci_string, allow_nil?: false
+    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :username, :string, allow_nil?: false
+    attribute :disabled_by_platform_at, :utc_datetime, allow_nil?: true
+    attribute :disabled_by_user_at, :utc_datetime, allow_nil?: true
+    # attribute :subscribed_at, :utc_datetime, allow_nil?: false
+    # attribute :terms_conds_id          , :uuid           , allow_nil?: true
+    attribute :name, :string, allow_nil?: false
+    attribute :birthday, :date, allow_nil?: false
+    attribute :zip_code, :string, allow_nil?: false
+    attribute :gender, :string, allow_nil?: false
+    attribute :height, :integer, allow_nil?: false
   end
 
   calculations do
-    # bob = Animina.Accounts.User.by_username!("bob")
-    # bob |> Animina.Accounts.load(:gravatar_hash)
     calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
   end
 
@@ -38,7 +39,7 @@ defmodule Animina.Accounts.User do
         identity_field :email
         sign_in_tokens_enabled? true
         confirmation_required?(false)
-        register_action_accept([:username])
+        register_action_accept([:username, :name, :zip_code, :birthday, :height, :gender])
       end
     end
 
@@ -61,14 +62,16 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read]
+    defaults [:create, :read]
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
+    define :create
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
+    define :by_email, get_by: [:email], action: :read
   end
 
   # TODO: Uncomment this if you want to use policies

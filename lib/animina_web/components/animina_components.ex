@@ -21,10 +21,10 @@ defmodule AniminaWeb.AniminaComponents do
     </.notification_box>
   """
   attr :box_with_avatar, :boolean, default: true
-  attr :avatar_url   , :string , default: nil, doc: "URL of the user's avatar"
-  attr :avatar_url_b , :string , default: nil, doc: "URL of the user's avatar"
-  attr :title        , :string , default: nil, doc: "title of the notification"
-  attr :message      , :string , default: nil, doc: "message of the notification"
+  attr :avatar_url, :string, default: nil, doc: "URL of the user's avatar"
+  attr :avatar_url_b, :string, default: nil, doc: "URL of the user's avatar"
+  attr :title, :string, default: nil, doc: "title of the notification"
+  attr :message, :string, default: nil, doc: "message of the notification"
   slot :inner_block
 
   def notification_box(assigns) do
@@ -74,15 +74,15 @@ defmodule AniminaWeb.AniminaComponents do
   @doc """
   Avatar in a notification message box.
   """
-  attr :avatar_url   , :string , default: nil, doc: "URL of the user's avatar"
-  attr :classes      , :list   , default: [] , doc: "classes"
-  
+  attr :avatar_url, :string, default: nil, doc: "URL of the user's avatar"
+  attr :classes, :list, default: [], doc: "classes"
+
   def notification_box_avatar(assigns) do
     ~H"""
     <div
       class={[
         "w-11 h-11 shrink-0 rounded-full border border-white overflow-hidden drop-shadow-md text-center align-middle",
-        @classes,
+        @classes
       ]}
       phx-no-format
     >
@@ -146,8 +146,8 @@ defmodule AniminaWeb.AniminaComponents do
 
     <.status_bar title="Dating-Präferenzen" percent={15} />
   """
-  attr :title   , :string , default: nil, doc: "title of the status bar"
-  attr :percent , :integer, default: 0  , doc: "percent"
+  attr :title, :string, default: nil, doc: "title of the status bar"
+  attr :percent, :integer, default: 0, doc: "percent"
 
   def status_bar(assigns) do
     ~H"""
@@ -159,5 +159,4 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
-
 end
