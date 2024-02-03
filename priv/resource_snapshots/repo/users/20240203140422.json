@@ -33,28 +33,8 @@
     {
       "default": "nil",
       "size": null,
-      "type": "text",
+      "type": "citext",
       "source": "username",
-      "references": null,
-      "allow_nil?": false,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "utc_datetime",
-      "source": "disabled_by_platform_at",
-      "references": null,
-      "allow_nil?": true,
-      "generated?": false,
-      "primary_key?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "utc_datetime",
-      "source": "disabled_by_user_at",
       "references": null,
       "allow_nil?": true,
       "generated?": false,
@@ -66,7 +46,7 @@
       "type": "text",
       "source": "name",
       "references": null,
-      "allow_nil?": false,
+      "allow_nil?": true,
       "generated?": false,
       "primary_key?": false
     },
@@ -109,16 +89,26 @@
       "allow_nil?": false,
       "generated?": false,
       "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "mobile_phone",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
     }
   ],
   "table": "users",
-  "hash": "530F29305D6C0B47E92CF460C84E0B12A5776A4090793580D6704900B4F24830",
+  "hash": "FDC34D7C9F718C13390EC4101000165A2BB41B4333155BD4F9586A2F6142B306",
   "repo": "Elixir.Animina.Repo",
   "schema": null,
   "multitenancy": {
     "global": null,
-    "attribute": null,
-    "strategy": null
+    "strategy": null,
+    "attribute": null
   },
   "identities": [
     {

@@ -1,8 +1,9 @@
-defmodule AniminaWeb.SecondStepLive do
+defmodule AniminaWeb.PotentialPartnerLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
   alias Animina.Accounts.User
+  alias AniminaWeb.Registration
   alias AshPhoenix.Form
 
   @impl true
@@ -11,28 +12,10 @@ defmodule AniminaWeb.SecondStepLive do
       :timer.send_interval(2500, self(), :tick)
     end
 
-    current_user =
-      case get_user_id_from_session(session) do
-        nil ->
-          nil
-
-        "" ->
-          nil
-
-        user_id ->
-          case Accounts.User.by_id(user_id) do
-            {:error, _} ->
-              nil
-
-            {:ok, user} ->
-              user
-          end
-      end
-
     socket =
       socket
       |> assign(points: 0)
-      |> assign(current_user: current_user)
+      |> assign(current_user: Registration.get_current_user(session))
       |> assign(active_tab: :home)
 
     {:ok, socket}
@@ -43,21 +26,6 @@ defmodule AniminaWeb.SecondStepLive do
     socket = assign(socket, points: socket.assigns.points + 1)
 
     {:noreply, socket}
-  end
-
-  defp get_user_id_from_session(session) do
-    case session["user"] do
-      nil ->
-        nil
-
-      "" ->
-        nil
-
-      user_id ->
-        user_id
-        |> String.split("=")
-        |> List.last()
-    end
   end
 
   @impl true
@@ -84,8 +52,8 @@ defmodule AniminaWeb.SecondStepLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title="Willkommen bei animina! 🎉"
-        message="Open-Source Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert."
+        title={"Hallo #{@current_user.name}!"}
+        message="Danke für Deine Registierung."
       />
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
