@@ -17,7 +17,7 @@ defmodule AniminaWeb.AuthController do
   end
 
   def failure(conn, _activity, reason) do
-    dbg(conn)
+    # dbg(conn)
     # TODO: Fix the display of validation errors
     # see https://elixirforum.com/t/return-to-create-form-after-validation-error-for-ash-authentication/61110/5
     params =
