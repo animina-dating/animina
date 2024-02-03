@@ -3,8 +3,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
-  alias AshPhoenix.Form
   alias AniminaWeb.Registration
+  alias AshPhoenix.Form
 
   @impl true
   def mount(_params, session, socket) do
