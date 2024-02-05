@@ -51,7 +51,16 @@ defmodule Animina.Accounts.BasicUser do
         identity_field :email
         sign_in_tokens_enabled? true
         confirmation_required?(false)
-        register_action_accept([:username, :name, :zip_code, :birthday, :height, :gender])
+
+        register_action_accept([
+          :username,
+          :name,
+          :zip_code,
+          :birthday,
+          :height,
+          :gender,
+          :mobile_phone
+        ])
       end
     end
 

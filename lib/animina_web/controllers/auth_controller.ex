@@ -17,7 +17,6 @@ defmodule AniminaWeb.AuthController do
   end
 
   def failure(conn, _activity, reason) do
-    # dbg(conn)
     # TODO: Fix the display of validation errors
     # see https://elixirforum.com/t/return-to-create-form-after-validation-error-for-ash-authentication/61110/5
     params =
@@ -35,7 +34,11 @@ defmodule AniminaWeb.AuthController do
       |> assign(:is_register?, true)
       |> assign(
         :form,
-        Form.for_create(User, :register_with_password, api: Accounts, as: "user", params: params)
+        Form.for_create(BasicUser, :register_with_password,
+          api: Accounts,
+          as: "user",
+          params: params
+        )
       )
 
     render(conn, :register, layout: false)
