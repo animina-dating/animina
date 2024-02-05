@@ -4,13 +4,29 @@ defmodule AniminaWeb.Registration do
   """
   alias Animina.Accounts
 
-  def get_current_user(session) do
+  def get_current_basic_user(session) do
     case get_user_id(session) do
       nil ->
         nil
 
       user_id ->
         case Accounts.BasicUser.by_id(user_id) do
+          {:ok, user} ->
+            user
+
+          _ ->
+            nil
+        end
+    end
+  end
+
+  def get_current_user(session) do
+    case get_user_id(session) do
+      nil ->
+        nil
+
+      user_id ->
+        case Accounts.User.by_id(user_id) do
           {:ok, user} ->
             user
 

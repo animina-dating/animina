@@ -15,7 +15,7 @@ defmodule AniminaWeb.RootLive do
     socket =
       socket
       |> assign(points: 0)
-      |> assign(current_user: Registration.get_current_user(session))
+      |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(today: Date.utc_today())
 
