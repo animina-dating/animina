@@ -8,22 +8,24 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def mount(_params, session, socket) do
     current_user = Registration.get_current_user(session)
 
-    # TODO: Let's not update these values in the database at this point
-    # in time.
-    current_user =
-      current_user
-      |> User.update!(%{
-        maximum_partner_height: cal_maximum_partner_height(current_user),
-        minimum_partner_height: cal_minimum_partner_height(current_user),
-        maximum_partner_age: cal_maximum_partner_age(current_user),
-        minimum_partner_age: cal_minimum_partner_age(current_user)
-      })
-
     socket =
-      socket
+      case current_user do
+        nil ->
+          socket
+
+        _ ->
+          user =
+            current_user
+            |> Map.put(:maximum_partner_height, cal_maximum_partner_height(current_user))
+            |> Map.put(:minimum_partner_height, cal_minimum_partner_height(current_user))
+            |> Map.put(:maximum_partner_age, cal_maximum_partner_age(current_user))
+            |> Map.put(:minimum_partner_age, cal_minimum_partner_age(current_user))
+
+          socket
+          |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
+      end
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
-      |> assign(update_form: AshPhoenix.Form.for_update(current_user, :update) |> to_form())
 
     {:ok, socket}
   end
