@@ -29,6 +29,10 @@ defmodule Animina.Accounts.Credit do
   postgres do
     table "credits"
     repo Animina.Repo
+
+    references do
+      reference :user, on_delete: :delete
+    end
   end
 
   actions do
