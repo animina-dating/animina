@@ -42,13 +42,21 @@ defmodule Animina.Accounts.User do
     attribute :maximum_partner_age, :integer, allow_nil?: true
   end
 
+  relationships do
+    has_many :credits, Animina.Accounts.Credit
+  end
+
   calculations do
     calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
+  aggregates do
+    sum :credit_points, :credits, :points
+  end
+
   preparations do
-    prepare build(load: [:gravatar_hash, :age])
+    prepare build(load: [:gravatar_hash, :age, :credit_points])
   end
 
   authentication do
