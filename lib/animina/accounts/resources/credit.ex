@@ -9,13 +9,10 @@ defmodule Animina.Accounts.Credit do
   attributes do
     uuid_primary_key :id
 
-    attribute :points, :integer do
-      constraints min: 1,
-                  max: 10_000
-    end
+    attribute :points, :integer, allow_nil?: false
 
     attribute :subject, :string do
-      constraints max_length: 50,
+      constraints max_length: 255,
                   min_length: 1,
                   trim?: true,
                   allow_empty?: false
@@ -23,7 +20,10 @@ defmodule Animina.Accounts.Credit do
   end
 
   relationships do
-    belongs_to :user, Animina.Accounts.User
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
   end
 
   postgres do

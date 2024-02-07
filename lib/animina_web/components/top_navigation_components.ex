@@ -14,7 +14,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
-  attr :points, :integer, default: nil, doc: "points the user has"
 
   def top_navigation(assigns) do
     ~H"""
@@ -23,7 +22,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <.home_nav_item active_tab={@active_tab} />
         <.bookmarks_nav_item active_tab={@active_tab} />
         <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.user_profile_item current_user={@current_user} active_tab={@active_tab} points={@points} />
+        <.user_profile_item current_user={@current_user} active_tab={@active_tab} />
       </nav>
     </div>
     """
@@ -67,7 +66,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <.user_profile_item />
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
-  attr :points, :integer, default: nil, doc: "number of points the user has"
   attr :current_user, :any, default: nil, doc: "current user"
 
   def user_profile_item(assigns) do
@@ -89,18 +87,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
           />
         </svg>
       <% end %>
-      <span class="flex items-center gap-0.5" aria-hidden="true">
-        <%= if @points do %>
-          Punkte: <%= humanized_points(@points) %>
+        <span class="flex items-center gap-0.5" aria-hidden="true">
+        <%= if @current_user do %>
+          Punkte: <%= humanized_points(@current_user.credit_points) %>
+        <% else %>
+          Punkte: 0
         <% end %>
-
-      </span>
-      <%= if @points do %>
-      <span class="hidden" >
-        <%= @points %> Punkte
-      </span>
-      <% end %>
-    </.top_navigation_entry>
+        </span>
+      </.top_navigation_entry>
     """
   end
 
@@ -210,6 +204,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <span>Bookmarks</span>
     </.top_navigation_entry>
     """
+  end
+
+  defp humanized_points(nil) do
+    "0"
   end
 
   defp humanized_points(points) when is_integer(points) and points < 1_000 do
