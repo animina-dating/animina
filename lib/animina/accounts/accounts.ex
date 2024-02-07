@@ -7,6 +7,7 @@ defmodule Animina.Accounts do
 
   resources do
     resource Animina.Accounts.BasicUser
+    resource Animina.Accounts.Credit
     resource Animina.Accounts.User
     resource Animina.Accounts.Token
   end
