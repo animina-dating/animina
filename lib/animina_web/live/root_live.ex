@@ -40,6 +40,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, "Neu registrieren")
     |> assign(:action, ~p"/auth/user/password/register")
+    |> assign(:hidden_points, 100)
     |> assign(
       :form,
       Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
@@ -84,6 +85,8 @@ defmodule AniminaWeb.RootLive do
             ) %>
           </div>
         </div>
+
+        <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
 
         <div>
           <label for="name" class="block text-sm font-medium leading-6 text-gray-900">

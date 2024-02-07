@@ -26,6 +26,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
       end
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
+      |> assign(page_title: "Partnerpräferenzen eingeben")
 
     {:ok, socket}
   end

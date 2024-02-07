@@ -52,7 +52,7 @@ defmodule Animina.Accounts.User do
   end
 
   aggregates do
-    sum :credit_points, :credits, :points
+    sum :credit_points, :credits, :points, default: 0
   end
 
   preparations do
