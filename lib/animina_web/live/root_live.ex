@@ -36,10 +36,11 @@ defmodule AniminaWeb.RootLive do
 
   defp apply_action(socket, :register, _params) do
     socket
-    |> assign(page_title: "animina Dating-App")
+    |> assign(page_title: gettext("animina Dating-App"))
     |> assign(:form_id, "sign-up-form")
-    |> assign(:cta, "Neu registrieren")
+    |> assign(:cta, gettext("Register new account"))
     |> assign(:action, ~p"/auth/user/password/register")
+    |> assign(:hidden_points, 100)
     |> assign(
       :form,
       Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
@@ -49,7 +50,7 @@ defmodule AniminaWeb.RootLive do
   defp apply_action(socket, :sign_in, _params) do
     socket
     |> assign(:form_id, "sign-in-form")
-    |> assign(:cta, "Sign in")
+    |> assign(:cta, gettext("Sign in"))
     |> assign(:action, ~p"/auth/user/password/sign_in")
     |> assign(
       :form,
@@ -62,15 +63,15 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title="Willkommen bei Animina 🎉"
-        message="der Open-Source-Dating-Plattform, die auch ohne Zwangs-Abo gut funktioniert!"
+        title={gettext("Welcome to Animina! 🎉")}
+        message={gettext("The open-source dating plattform for everyone.")}
         box_with_avatar={false}
       />
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
         <div>
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
-            Username
+            <%= gettext("Username") %>
           </label>
           <div class="mt-2">
             <%= text_input(f, :username,
@@ -85,15 +86,17 @@ defmodule AniminaWeb.RootLive do
           </div>
         </div>
 
+        <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
+
         <div>
           <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
-            Name
+            <%= gettext("Name") %>
           </label>
           <div class="mt-2">
             <%= text_input(f, :name,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "Horst",
+              placeholder: gettext("Alice"),
               type: :text,
               required: true,
               autocomplete: "given-name"
@@ -103,13 +106,13 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
-            E-Mail-Adresse
+            <%= gettext("Email Address") %>
           </label>
           <div class="mt-2">
             <%= text_input(f, :email,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "eddie@beispiel.de",
+              placeholder: gettext("alice@company.com"),
               type: :email,
               required: true,
               autocomplete: :email
@@ -120,14 +123,15 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
-              Passwort <span class="text-gray-400">(mindestens 8 Zeichen)</span>
+              <%= gettext("Password") %>
+              <span class="text-gray-400">(<%= gettext("at least 8 characters") %>)</span>
             </label>
           </div>
           <div class="mt-2">
             <%= password_input(f, :password,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: "Passwort",
+              placeholder: gettext("Password"),
               autocomplete: "new-password"
             ) %>
           </div>
@@ -136,9 +140,11 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
-              Geburtstag
+              <%= gettext("Date of birth") %>
               <span class="text-gray-400">
-                (heute mindestens 18 Jahre alt z.B. <%= "#{@today.day}.#{@today.month}.#{@today.year - 18}" %>)
+                (<%= gettext("today at least 18 years old e.g. birthday %{date_of_birth}",
+                  date_of_birth: "#{@today.day}.#{@today.month}.#{@today.year - 18}"
+                ) %>)
               </span>
             </label>
           </div>
@@ -155,7 +161,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">
-              Geschlecht
+              <%= gettext("Gender") %>
             </label>
           </div>
           <div class="mt-2">
@@ -165,7 +171,7 @@ defmodule AniminaWeb.RootLive do
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
                 checked: true
               ) %>
-              <%= label(f, :gender, "Männlich",
+              <%= label(f, :gender, gettext("Male"),
                 for: "gender_male",
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
@@ -176,14 +182,14 @@ defmodule AniminaWeb.RootLive do
                 id: "gender_female",
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, "Weiblich",
+              <%= label(f, :gender, gettext("Female"),
                 for: "gender_female",
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
 
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "divers",
+              <%= radio_button(f, :gender, gettext("Divers"),
                 id: "gender_divers",
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
@@ -198,9 +204,9 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
-              Postleitzahl
+              <%= gettext("Zip code") %>
               <span class="text-gray-400">
-                (5-stellige deutsche Postleitzahl)
+                (<%= gettext("5-digit Germany zip code)") %>)
               </span>
             </label>
           </div>
@@ -218,9 +224,9 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="height" class="block text-sm font-medium leading-6 text-gray-900">
-              Körpergröße
+              <%= gettext("Height") %>
               <span class="text-gray-400">
-                (in cm)
+                (<%= gettext("in cm") %>)
               </span>
             </label>
           </div>
@@ -236,9 +242,9 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
-              Handynummer
+              <%= gettext("Mobile phone number") %>
               <span class="text-gray-400">
-                (für den Verifizierungscode)
+                (<%= gettext("to receive a verification code") %>)
               </span>
             </label>
           </div>

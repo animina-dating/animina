@@ -8,22 +8,25 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def mount(_params, session, socket) do
     current_user = Registration.get_current_user(session)
 
-    # TODO: Let's not update these values in the database at this point
-    # in time.
-    current_user =
-      current_user
-      |> User.update!(%{
-        maximum_partner_height: cal_maximum_partner_height(current_user),
-        minimum_partner_height: cal_minimum_partner_height(current_user),
-        maximum_partner_age: cal_maximum_partner_age(current_user),
-        minimum_partner_age: cal_minimum_partner_age(current_user)
-      })
-
     socket =
-      socket
+      case current_user do
+        nil ->
+          socket
+
+        _ ->
+          user =
+            current_user
+            |> Map.put(:maximum_partner_height, cal_maximum_partner_height(current_user))
+            |> Map.put(:minimum_partner_height, cal_minimum_partner_height(current_user))
+            |> Map.put(:maximum_partner_age, cal_maximum_partner_age(current_user))
+            |> Map.put(:minimum_partner_age, cal_minimum_partner_age(current_user))
+
+          socket
+          |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
+      end
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
-      |> assign(update_form: AshPhoenix.Form.for_update(current_user, :update) |> to_form())
+      |> assign(page_title: gettext("Preferences for your future partner"))
 
     {:ok, socket}
   end
@@ -42,22 +45,23 @@ defmodule AniminaWeb.PotentialPartnerLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title={"Hallo #{@current_user.name}!"}
-        message="Danke für Deine Registierung."
+        title={gettext("Hello %{name}!", name: @current_user.name)}
+        message={gettext("Thanks for your registration!")}
+        box_with_avatar={false}
       />
 
-      <h2>Kriterien für Deine Partnerwahl</h2>
+      <h2><%= gettext("Kriteria For Your New Partner") %></h2>
       <.form :let={f} for={@update_form} phx-submit="update_user" class="space-y-6">
         <div>
           <label
             for="minimum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
-            Minimale Größe <span class="text-gray-400">(in cm)</span>
+            <%= gettext("Minimal height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
           </label>
           <div class="mt-2">
             <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-              prompt: "Egal",
+              prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
               autofocus: true
@@ -70,11 +74,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
             for="maximum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
-            Maximale Größe <span class="text-gray-400">(in cm)</span>
+            <%= gettext("Maximum height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
           </label>
           <div class="mt-2">
             <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-              prompt: "Egal",
+              prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             ) %>
@@ -83,11 +87,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
         <div>
           <label for="minimum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
-            Mindestalter
+            <%= gettext("Minimum age") %>
           </label>
           <div class="mt-2">
             <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
-              prompt: "Egal",
+              prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             ) %>
@@ -96,11 +100,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
         <div>
           <label for="maximum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
-            Höchstalter
+            <%= gettext("Maximum age") %>
           </label>
           <div class="mt-2">
             <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
-              prompt: "Egal",
+              prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             ) %>
@@ -108,7 +112,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <%= submit("Update",
+          <%= submit(gettext("Update"),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           ) %>

@@ -14,7 +14,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
-  attr :points, :integer, default: 0, doc: "points the user has"
 
   def top_navigation(assigns) do
     ~H"""
@@ -23,7 +22,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <.home_nav_item active_tab={@active_tab} />
         <.bookmarks_nav_item active_tab={@active_tab} />
         <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.user_profile_item current_user={@current_user} active_tab={@active_tab} points={@points} />
+        <.user_profile_item current_user={@current_user} active_tab={@active_tab} />
       </nav>
     </div>
     """
@@ -67,7 +66,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <.user_profile_item />
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
-  attr :points, :integer, default: 0, doc: "number of points the user has"
   attr :current_user, :any, default: nil, doc: "current user"
 
   def user_profile_item(assigns) do
@@ -89,32 +87,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
           />
         </svg>
       <% end %>
-      <span class="flex items-center gap-0.5" aria-hidden="true">
-        <%= humanized_points(@points) %>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-3 h-3 -mt-0.5 shrink-0 stroke-current"
-          width="11" height="10" viewBox="0 0 11 10"
-          fill="none"
-        >
-          <g clip-path="url(#clip0_67_391)">
-            <path
-              d="M5.62516 0.833374L6.91266 3.44171L9.79183 3.86254L7.7085 5.89171L8.20016 8.75837L5.62516 7.40421L3.05016 8.75837L3.54183 5.89171L1.4585 3.86254L4.33766 3.44171L5.62516 0.833374Z"
-              stroke="stroke-current" stroke-width="0.861021"
-              stroke-linecap="round" stroke-linejoin="round"
-            />
-          </g>
-          <defs>
-            <clipPath id="clip0_67_391">
-              <rect width="10" height="10" fill="white" transform="translate(0.625)"></rect>
-            </clipPath>
-          </defs>
-        </svg>
-      </span>
-      <span class="hidden">
-        <%= @points %> Punkte
-      </span>
-    </.top_navigation_entry>
+        <span class="flex items-center gap-0.5" aria-hidden="true">
+        <%= if @current_user do %>
+          Punkte: <%= humanized_points(@current_user.credit_points) %>
+        <% else %>
+          Punkte: 0
+        <% end %>
+        </span>
+      </.top_navigation_entry>
     """
   end
 
@@ -226,15 +206,19 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
-  defp humanized_points(points) when points < 1_000 do
+  defp humanized_points(nil) do
+    "0"
+  end
+
+  defp humanized_points(points) when is_integer(points) and points < 1_000 do
     Integer.to_string(points)
   end
 
-  defp humanized_points(points) when points < 1_000_000 do
+  defp humanized_points(points) when is_integer(points) and points < 1_000_000 do
     Integer.to_string(div(points, 1_000)) <> "\u{00a0}k"
   end
 
-  defp humanized_points(points) do
+  defp humanized_points(points) when is_integer(points) do
     Integer.to_string(div(points, 1_000_000)) <> "\u{00a0}M"
   end
 end
