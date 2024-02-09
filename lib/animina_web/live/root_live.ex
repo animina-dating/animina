@@ -36,7 +36,7 @@ defmodule AniminaWeb.RootLive do
 
   defp apply_action(socket, :register, _params) do
     socket
-    |> assign(page_title: gettext("animina Dating-App"))
+    |> assign(page_title: gettext("Animina dating app"))
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, gettext("Register new account"))
     |> assign(:action, ~p"/auth/user/password/register")
@@ -106,13 +106,13 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Email Address") %>
+            <%= gettext("E-mail address") %>
           </label>
           <div class="mt-2">
             <%= text_input(f, :email,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              placeholder: gettext("alice@company.com"),
+              placeholder: gettext("alice@example.net"),
               type: :email,
               required: true,
               autocomplete: :email
@@ -142,8 +142,8 @@ defmodule AniminaWeb.RootLive do
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
               <span class="text-gray-400">
-                (<%= gettext("today at least 18 years old e.g. birthday %{date_of_birth}",
-                  date_of_birth: "#{@today.day}.#{@today.month}.#{@today.year - 18}"
+                (<%= gettext("at least 18 years, i.e. date of birth %{date_of_birth}",
+                  date_of_birth: "#{@today.day}. #{@today.month}. #{@today.year - 18}"
                 ) %>)
               </span>
             </label>
@@ -153,6 +153,11 @@ defmodule AniminaWeb.RootLive do
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
               placeholder: "",
+              value: [
+                (@today.year - 18) |> Integer.to_string() |> String.pad_leading( 4, "0" ),
+                (@today.month    ) |> Integer.to_string() |> String.pad_leading( 2, "0" ),
+                (@today.day      ) |> Integer.to_string() |> String.pad_leading( 2, "0" ),
+              ] |> Enum.join("-"),
               autocomplete: "bday"
             ) %>
           </div>
@@ -189,11 +194,11 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, gettext("Divers"),
+              <%= radio_button(f, :gender, gettext("Diverse / non-binary"),
                 id: "gender_divers",
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, "Divers",
+              <%= label(f, :gender, "Diverse / non-binary",
                 for: "gender_divers",
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
@@ -204,9 +209,9 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Zip code") %>
+              <%= gettext("Postal code") %>
               <span class="text-gray-400">
-                (<%= gettext("5-digit Germany zip code)") %>)
+                (<%= gettext("5-digit postal code in Germany") %>)
               </span>
             </label>
           </div>
@@ -214,7 +219,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :zip_code,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-              # Zip code of Der Bundestag ;-)
+              # Postal code of the Bundestag :-)
               placeholder: "11011",
               autocomplete: "postal-code"
             ) %>
