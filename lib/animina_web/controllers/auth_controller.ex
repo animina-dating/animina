@@ -3,17 +3,17 @@ defmodule AniminaWeb.AuthController do
   use AshAuthentication.Phoenix.Controller
 
   alias Animina.Accounts
-  alias Animina.Accounts.User
+  alias Animina.Accounts.BasicUser
   alias AshPhoenix.Form
 
   def success(conn, _activity, user, _token) do
-    return_to = get_session(conn, :return_to) || ~p"/"
+    # return_to = get_session(conn, :return_to) || ~p"/"
 
     conn
     |> delete_session(:return_to)
     |> store_in_session(user)
     |> assign(:current_user, user)
-    |> redirect(to: return_to)
+    |> redirect(to: ~p"/registration/potential-partner")
   end
 
   def failure(conn, _activity, reason) do
@@ -34,7 +34,11 @@ defmodule AniminaWeb.AuthController do
       |> assign(:is_register?, true)
       |> assign(
         :form,
-        Form.for_create(User, :register_with_password, api: Accounts, as: "user", params: params)
+        Form.for_create(BasicUser, :register_with_password,
+          api: Accounts,
+          as: "user",
+          params: params
+        )
       )
 
     render(conn, :register, layout: false)
@@ -57,7 +61,7 @@ defmodule AniminaWeb.AuthController do
       |> assign(:is_register?, true)
       |> assign(
         :form,
-        Form.for_create(User, :register_with_password, api: Accounts, as: "user")
+        Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
       )
 
     render(conn, :register, layout: false)

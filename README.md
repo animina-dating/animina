@@ -13,11 +13,6 @@ Please install the following tools:
 
 Use `asdf install` to install the correct versions of Elixir and Erlang.
 
-### Database Setup
-
-  * Run `mix ecto.setup` to create the database and run migrations
-  * Run `mix ecto.reset` to drop the database and run migrations
-
 ### Git Hooks
 
 Please run the `./setup-hooks.sh` script to install the git hooks.

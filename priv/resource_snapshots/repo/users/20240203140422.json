@@ -7,8 +7,8 @@
       "source": "id",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": true,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": true
     },
     {
       "default": "nil",
@@ -17,18 +17,8 @@
       "source": "email",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "boolean",
-      "source": "email_confirmed",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": false
     },
     {
       "default": "nil",
@@ -37,71 +27,97 @@
       "source": "hashed_password",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "citext",
+      "source": "username",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
     },
     {
       "default": "nil",
       "size": null,
       "type": "text",
-      "source": "username",
-      "references": null,
-      "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "utc_datetime",
-      "source": "disabled_by_platform_at",
+      "source": "name",
       "references": null,
       "allow_nil?": true,
-      "primary_key?": false,
-      "generated?": false
-    },
-    {
-      "default": "nil",
-      "size": null,
-      "type": "utc_datetime",
-      "source": "disabled_by_user_at",
-      "references": null,
-      "allow_nil?": true,
-      "primary_key?": false,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": false
     },
     {
       "default": "nil",
       "size": null,
       "type": "date",
-      "source": "date_of_birth",
+      "source": "birthday",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": false
     },
     {
       "default": "nil",
       "size": null,
-      "type": "utc_datetime",
-      "source": "subscribed_at",
+      "type": "text",
+      "source": "zip_code",
       "references": null,
       "allow_nil?": false,
-      "primary_key?": false,
-      "generated?": false
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "gender",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "height",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "mobile_phone",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
     }
   ],
   "table": "users",
-  "hash": "A92BCC3249490FC0EE03A6E1A5E07B2C88423F68E5377B910AF5527127AD3F9D",
+  "hash": "FDC34D7C9F718C13390EC4101000165A2BB41B4333155BD4F9586A2F6142B306",
   "repo": "Elixir.Animina.Repo",
+  "schema": null,
+  "multitenancy": {
+    "global": null,
+    "strategy": null,
+    "attribute": null
+  },
   "identities": [
     {
       "name": "unique_email",
       "keys": [
         "email"
       ],
-      "base_filter": null,
       "all_tenants?": false,
+      "base_filter": null,
       "index_name": "users_unique_email_index"
     },
     {
@@ -109,20 +125,14 @@
       "keys": [
         "username"
       ],
-      "base_filter": null,
       "all_tenants?": false,
+      "base_filter": null,
       "index_name": "users_unique_username_index"
     }
   ],
-  "schema": null,
+  "base_filter": null,
   "check_constraints": [],
   "custom_indexes": [],
-  "multitenancy": {
-    "global": null,
-    "strategy": null,
-    "attribute": null
-  },
-  "base_filter": null,
   "custom_statements": [],
   "has_create_action": true
 }

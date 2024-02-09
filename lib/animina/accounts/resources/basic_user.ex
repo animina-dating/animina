@@ -1,6 +1,7 @@
-defmodule Animina.Accounts.User do
+defmodule Animina.Accounts.BasicUser do
   @moduledoc """
-  This is the User module.
+  This is the Basic User module. It is a stripped down version of the
+  User module. It is used for the registration form.
   """
 
   use Ash.Resource,
@@ -32,23 +33,14 @@ defmodule Animina.Accounts.User do
     attribute :gender, :string, allow_nil?: false
     attribute :height, :integer, allow_nil?: false
     attribute :mobile_phone, :string, allow_nil?: false
-    # attribute :body_type, :integer, allow_nil?: false
-    # attribute :subscribed_at, :utc_datetime, allow_nil?: false
-    # attribute :terms_conds_id, :uuid, allow_nil?: true
-
-    attribute :minimum_partner_height, :integer, allow_nil?: true
-    attribute :maximum_partner_height, :integer, allow_nil?: true
-    attribute :minimum_partner_age, :integer, allow_nil?: true
-    attribute :maximum_partner_age, :integer, allow_nil?: true
   end
 
   calculations do
     calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
-    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
   preparations do
-    prepare build(load: [:gravatar_hash, :age])
+    prepare build(load: [:gravatar_hash])
   end
 
   authentication do
@@ -91,24 +83,13 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:create, :read]
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
-    define :update
-    define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
-    define :by_email, get_by: [:email], action: :read
   end
-
-  # TODO: Uncomment this if you want to use policies
-  # If using policies, add the following bypass:
-  # policies do
-  #   bypass AshAuthentication.Checks.AshAuthenticationInteraction do
-  #     authorize_if always()
-  #   end
-  # end
 end

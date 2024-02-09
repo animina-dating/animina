@@ -1,4 +1,4 @@
-defmodule Animina.Repo.Migrations.AddUserAndToken do
+defmodule Animina.Repo.Migrations.MigrateResources1 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -12,23 +12,21 @@ defmodule Animina.Repo.Migrations.AddUserAndToken do
       add :id, :uuid, null: false, default: fragment("uuid_generate_v4()"), primary_key: true
       add :email, :citext, null: false
       add :hashed_password, :text, null: false
+      add :username, :citext
+      add :name, :text
+      add :birthday, :date, null: false
+      add :zip_code, :text, null: false
+      add :gender, :text, null: false
+      add :height, :bigint, null: false
     end
 
     create unique_index(:users, [:email], name: "users_unique_email_index")
 
-    create table(:tokens, primary_key: false) do
-      add :updated_at, :utc_datetime_usec, null: false, default: fragment("now()")
-      add :created_at, :utc_datetime_usec, null: false, default: fragment("now()")
-      add :extra_data, :map
-      add :purpose, :text, null: false
-      add :expires_at, :utc_datetime, null: false
-      add :subject, :text, null: false
-      add :jti, :text, null: false, primary_key: true
-    end
+    create unique_index(:users, [:username], name: "users_unique_username_index")
   end
 
   def down do
-    drop table(:tokens)
+    drop_if_exists unique_index(:users, [:username], name: "users_unique_username_index")
 
     drop_if_exists unique_index(:users, [:email], name: "users_unique_email_index")
 

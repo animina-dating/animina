@@ -1,4 +1,4 @@
-defmodule Animina.Repo.Migrations.AddUsernameToUsers do
+defmodule Animina.Repo.Migrations.MigrateResources2 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 
@@ -9,13 +9,13 @@ defmodule Animina.Repo.Migrations.AddUsernameToUsers do
 
   def up do
     alter table(:users) do
-      add :username, :text, null: false
+      add :mobile_phone, :text, null: false
     end
   end
 
   def down do
     alter table(:users) do
-      remove :username
+      remove :mobile_phone
     end
   end
 end

@@ -22,11 +22,12 @@ defmodule AniminaWeb.Router do
 
     # get "/", PageController, :home
     live "/", RootLive, :register
-    live "/register", AniminaWeb.AuthLive.Index, :register
+    live "/registration/potential-partner", PotentialPartnerLive, :index
+    # live "/register", AniminaWeb.AuthLive.Index, :register
     live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
 
     get "/demo", PageController, :demo
-    get "/register", AuthController, :register
+    # get "/register", AuthController, :register
 
     sign_out_route AuthController
     auth_routes_for Animina.Accounts.User, to: AuthController
