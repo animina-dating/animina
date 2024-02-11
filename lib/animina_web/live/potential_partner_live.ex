@@ -50,14 +50,14 @@ defmodule AniminaWeb.PotentialPartnerLive do
         box_with_avatar={false}
       />
 
-      <h2><%= gettext("Kriteria For Your New Partner") %></h2>
+      <h2 class="font-bold text-xl"><%= gettext("Criteria for your new partner") %></h2>
       <.form :let={f} for={@update_form} phx-submit="update_user" class="space-y-6">
         <div>
           <label
             for="minimum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
-            <%= gettext("Minimal height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
+            <%= gettext("Minimum height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
           </label>
           <div class="mt-2">
             <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
@@ -112,7 +112,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <%= submit(gettext("Update"),
+          <%= submit(gettext("Save"),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           ) %>

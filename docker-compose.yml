@@ -28,6 +28,7 @@ services:
       - "./config:/application/config:ro"
       - "./lib:/application/lib:ro"
       - "./lib/animina/accounts/resources/user.ex:/application/lib/animina/accounts/resources/user.ex:rw"
+      - "./lib/animina_web/controllers/auth_html.ex:/application/lib/animina_web/controllers/auth_html.ex:rw"
       - "./mix.exs:/application/mix.exs:ro"
       - "./mix.lock:/application/mix.lock:ro"
       - "./priv:/application/priv:ro"
