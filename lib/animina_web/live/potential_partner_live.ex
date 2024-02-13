@@ -41,15 +41,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
     {:ok, socket}
   end
 
+  @impl true
   defp add_registration_bonus(socket, user) do
     if !connected?(socket) && user do
       # Make sure that a user gets one but only one registration bonus.
-      case Animina.Accounts.Credit
+      case Credit
            |> Ash.Query.filter(user_id: user.id)
            |> Ash.Query.filter(subject: "Registration bonus")
            |> Animina.Accounts.read!() do
         [] ->
-          Animina.Accounts.Credit.create!(%{
+          Credit.create!(%{
             user_id: user.id,
             points: 100,
             subject: "Registration bonus"
@@ -61,7 +62,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
     end
   end
 
-  @impl true
   def handle_event("update_user", %{"form" => form_params}, socket) do
     current_user =
       User.by_id!(socket.assigns.current_user.id)
