@@ -4,6 +4,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
+  alias Animina.Accounts.Credit
 
   @impl true
   def mount(_params, session, socket) do
@@ -41,7 +42,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
     {:ok, socket}
   end
 
-  @impl true
   defp add_registration_bonus(socket, user) do
     if !connected?(socket) && user do
       # Make sure that a user gets one but only one registration bonus.
@@ -62,6 +62,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
     end
   end
 
+  @impl true
   def handle_event("update_user", %{"form" => form_params}, socket) do
     current_user =
       User.by_id!(socket.assigns.current_user.id)
