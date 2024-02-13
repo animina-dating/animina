@@ -63,9 +63,11 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title={gettext("Welcome to Animina! 🎉")}
-        message={gettext("The open-source dating plattform for everyone.")}
-        box_with_avatar={false}
+        title={gettext("Animina Dating Plattform")}
+        message={gettext("Fair, Fast and Free. Join us now!")}
+        box_with_avatar={true}
+        avatar_url="/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg"
+        avatar_url_b="/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
       />
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
@@ -142,9 +144,7 @@ defmodule AniminaWeb.RootLive do
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
               <span class="text-gray-400">
-                (<%= gettext("at least 18 years, i.e. date of birth %{date_of_birth}",
-                  date_of_birth: "#{@today.day}. #{@today.month}. #{@today.year - 18}"
-                ) %>)
+                (<%= gettext("you have to be at least 18 years old") %>)
               </span>
             </label>
           </div>
@@ -154,7 +154,7 @@ defmodule AniminaWeb.RootLive do
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
               placeholder: "",
               value: [
-                (@today.year - 18) |> Integer.to_string() |> String.pad_leading( 4, "0" ),
+                (@today.year - 19) |> Integer.to_string() |> String.pad_leading( 4, "0" ),
                 (@today.month    ) |> Integer.to_string() |> String.pad_leading( 2, "0" ),
                 (@today.day      ) |> Integer.to_string() |> String.pad_leading( 2, "0" ),
               ] |> Enum.join("-"),

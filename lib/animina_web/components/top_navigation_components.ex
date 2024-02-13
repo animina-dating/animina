@@ -4,6 +4,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   use Phoenix.Component
 
+  import AniminaWeb.Gettext
+
   # -------------------------------------------------------------
   @doc """
   Top navigation bar.
@@ -89,9 +91,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% end %>
         <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= if @current_user do %>
-          Punkte: <%= humanized_points(@current_user.credit_points) %>
+          <%= gettext("Points") %>: <%= humanized_points(@current_user.credit_points) %>
         <% else %>
-          Punkte: 0
+          <%= gettext("Points") %>: 0
         <% end %>
         </span>
       </.top_navigation_entry>
