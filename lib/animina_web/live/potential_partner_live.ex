@@ -1,12 +1,22 @@
 defmodule AniminaWeb.PotentialPartnerLive do
   use AniminaWeb, :live_view
+  require Ash.Query
 
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
 
   @impl true
   def mount(_params, session, socket) do
-    current_user = Registration.get_current_user(session)
+    current_user =
+      case Registration.get_current_user(session) do
+        nil ->
+          redirect(socket, to: "/")
+
+        user ->
+          user
+      end
+
+    add_registration_bonus(socket, current_user)
 
     socket =
       case current_user do
@@ -32,6 +42,26 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   @impl true
+  defp add_registration_bonus(socket, user) do
+    if !connected?(socket) && user do
+      # Make sure that a user gets one but only one registration bonus.
+      case Credit
+           |> Ash.Query.filter(user_id: user.id)
+           |> Ash.Query.filter(subject: "Registration bonus")
+           |> Animina.Accounts.read!() do
+        [] ->
+          Credit.create!(%{
+            user_id: user.id,
+            points: 100,
+            subject: "Registration bonus"
+          })
+
+        _ ->
+          nil
+      end
+    end
+  end
+
   def handle_event("update_user", %{"form" => form_params}, socket) do
     current_user =
       User.by_id!(socket.assigns.current_user.id)
@@ -46,7 +76,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
     <div class="space-y-10 px-5">
       <.notification_box
         title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={gettext("Thanks for your registration!")}
+        message={
+          gettext(
+            "Thanks for your registration! We credited your account with 100 points. You can use points to interact with other users. Have fun!"
+          )
+        }
         box_with_avatar={false}
       />
 

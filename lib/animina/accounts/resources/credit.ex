@@ -11,12 +11,13 @@ defmodule Animina.Accounts.Credit do
 
     attribute :points, :integer, allow_nil?: false
 
-    attribute :subject, :string do
-      constraints max_length: 255,
-                  min_length: 1,
-                  trim?: true,
-                  allow_empty?: false
-    end
+    attribute :subject, :string, allow_nil?: false
+    # attribute :subject, :string do
+    #   constraints max_length: 255,
+    #               min_length: 1,
+    #               trim?: true,
+    #               allow_empty?: false
+    # end
   end
 
   relationships do
