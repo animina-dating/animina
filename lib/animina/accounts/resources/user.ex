@@ -40,6 +40,8 @@ defmodule Animina.Accounts.User do
     attribute :maximum_partner_height, :integer, allow_nil?: true
     attribute :minimum_partner_age, :integer, allow_nil?: true
     attribute :maximum_partner_age, :integer, allow_nil?: true
+
+    attribute :search_range, :integer, allow_nil?: true
   end
 
   relationships do
