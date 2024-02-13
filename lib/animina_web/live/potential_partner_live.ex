@@ -2,9 +2,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
   use AniminaWeb, :live_view
   require Ash.Query
 
+  alias Animina.Accounts.Credit
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
-  alias Animina.Accounts.Credit
 
   @impl true
   def mount(_params, session, socket) do
@@ -79,7 +79,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         title={gettext("Hello %{name}!", name: @current_user.name)}
         message={
           gettext(
-            "Thanks for your registration! We credited your account with 100 points. You can use points to interact with other users. Have fun!"
+            "You can always check your points in the top navigation bar. You just received 100 for the registration."
           )
         }
         box_with_avatar={false}
@@ -92,7 +92,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
             for="minimum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
-            <%= gettext("Minimum height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
+            <%= gettext("Minimum height") %>
           </label>
           <div class="mt-2">
             <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
@@ -109,7 +109,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
             for="maximum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
-            <%= gettext("Maximum height") %> <span class="text-gray-400">(<%= gettext("cm") %>)</span>
+            <%= gettext("Maximum height") %>
           </label>
           <div class="mt-2">
             <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
@@ -139,6 +139,19 @@ defmodule AniminaWeb.PotentialPartnerLive do
           </label>
           <div class="mt-2">
             <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
+              prompt: gettext("doesn't matter"),
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            ) %>
+          </div>
+        </div>
+
+        <div>
+          <label for="search_range" class="block text-sm font-medium leading-6 text-gray-900">
+            <%= gettext("Search range") %>
+          </label>
+          <div class="mt-2">
+            <%= select(f, :search_range, [{"2 km", 2}, {"5 km", 5}, {"10 km", 10}, {"20 km", 20}, {"30 km", 30}, {"50 km", 50}, {"75 km", 75}, {"100 km", 100}, {"150 km", 150}, {"200 km", 200}, {"300 km", 300}],
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
