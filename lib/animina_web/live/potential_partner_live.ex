@@ -7,13 +7,14 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   @impl true
   def mount(_params, session, socket) do
-    current_user = case Registration.get_current_user(session) do
-      nil ->
+    current_user =
+      case Registration.get_current_user(session) do
+        nil ->
           redirect(socket, to: "/")
 
-      user ->
-        user
-    end
+        user ->
+          user
+      end
 
     add_registration_bonus(socket, current_user)
 
@@ -41,23 +42,21 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   defp add_registration_bonus(socket, user) do
-    unless connected?(socket) do
-      if user do
-        # Make sure that a user gets one but only one registration bonus.
-        case Animina.Accounts.Credit
-             |> Ash.Query.filter(user_id: user.id)
-             |> Ash.Query.filter(subject: "Registration bonus")
-             |> Animina.Accounts.read!() do
-          [] ->
-            Animina.Accounts.Credit.create!(%{
-              user_id: user.id,
-              points: 100,
-              subject: "Registration bonus"
-            })
+    if !connected?(socket) && user do
+      # Make sure that a user gets one but only one registration bonus.
+      case Animina.Accounts.Credit
+           |> Ash.Query.filter(user_id: user.id)
+           |> Ash.Query.filter(subject: "Registration bonus")
+           |> Animina.Accounts.read!() do
+        [] ->
+          Animina.Accounts.Credit.create!(%{
+            user_id: user.id,
+            points: 100,
+            subject: "Registration bonus"
+          })
 
-          _ ->
-            nil
-        end
+        _ ->
+          nil
       end
     end
   end
