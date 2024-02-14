@@ -17,6 +17,7 @@ defmodule AniminaWeb.RootLive do
       |> assign(points: 0)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
+      |> assign(trigger_action: false)
       |> assign(today: Date.utc_today())
 
     {:ok, socket}
@@ -59,6 +60,26 @@ defmodule AniminaWeb.RootLive do
   end
 
   @impl true
+  def handle_event("validate", %{"user" => user}, socket) do
+    form = Form.validate(socket.assigns.form, user, errors: true)
+
+    {:noreply, socket |> assign(form: form)}
+  end
+
+  @impl true
+  def handle_event("submit", %{"user" => user}, socket) do
+    form = Form.validate(socket.assigns.form, user)
+
+    socket =
+      socket
+      |> assign(:form, form)
+      |> assign(:errors, Form.errors(form))
+      |> assign(:trigger_action, form.valid?)
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="space-y-10 px-5">
@@ -71,21 +92,39 @@ defmodule AniminaWeb.RootLive do
         ]}
       />
 
-      <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
+      <.form
+        :let={f}
+        id="basic_user_form"
+        for={@form}
+        action={@action}
+        phx-trigger-action={@trigger_action}
+        method="POST"
+        class="space-y-6"
+        phx-change="validate"
+        phx-submit="submit"
+      >
         <div>
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Username") %>
           </label>
           <div class="mt-2">
-            <%= text_input(f, :username,
+            <%= text_input(
+              f,
+              :username,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset  placeholder:text-gray-400 focus:ring-2 focus:ring-inset  sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:username], :username) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: "Pusteblume1977",
               type: :text,
               required: true,
               autofocus: true,
               autocomplete: :username
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:username], :username)}><%= msg %></.error>
           </div>
         </div>
 
@@ -98,12 +137,18 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= text_input(f, :name,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:name], :name) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: gettext("Alice"),
               type: :text,
               required: true,
               autocomplete: "given-name"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:name], :name)}><%= msg %></.error>
           </div>
         </div>
 
@@ -114,12 +159,18 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= text_input(f, :email,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset  placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:email], :email) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: gettext("alice@example.net"),
               type: :email,
               required: true,
               autocomplete: :email
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:email], :email)}><%= msg %></.error>
           </div>
         </div>
 
@@ -133,10 +184,16 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= password_input(f, :password,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:password], :password) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: gettext("Password"),
               autocomplete: "new-password"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:password], :password)}><%= msg %></.error>
           </div>
         </div>
 
@@ -152,7 +209,11 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= date_input(f, :birthday,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:birthday], :birthday) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: "",
               value:
                 [
@@ -163,6 +224,8 @@ defmodule AniminaWeb.RootLive do
                 |> Enum.join("-"),
               autocomplete: "bday"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}><%= msg %></.error>
           </div>
         </div>
 
@@ -221,11 +284,17 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= text_input(f, :zip_code,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:zip_code], :zip_code) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               # Postal code of the Bundestag :-)
               placeholder: "11011",
               autocomplete: "postal-code"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}><%= msg %></.error>
           </div>
         </div>
 
@@ -241,9 +310,15 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= text_input(f, :height,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:height], :height) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: "160"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:height], :height)}><%= msg %></.error>
           </div>
         </div>
 
@@ -259,9 +334,17 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2">
             <%= text_input(f, :mobile_phone,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
+                  if(get_field_errors(f[:mobile_phone], :mobile_phone) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               placeholder: "0151-12345678"
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
+              <%= msg %>
+            </.error>
           </div>
         </div>
 
@@ -274,5 +357,19 @@ defmodule AniminaWeb.RootLive do
       </.form>
     </div>
     """
+  end
+
+  defp get_field_errors(field, name) do
+    case field_touched(field, name) do
+      true ->
+        Enum.map(field.errors, &translate_error(&1))
+
+      _ ->
+        []
+    end
+  end
+
+  defp field_touched(field, name) do
+    MapSet.member?(field.form.source.touched_forms, to_string(name))
   end
 end
