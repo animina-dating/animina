@@ -82,7 +82,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
             "You can always check your points in the top navigation bar. You just received 100 for the registration."
           )
         }
-        box_with_avatar={false}
       />
 
       <h2 class="font-bold text-xl"><%= gettext("Criteria for your new partner") %></h2>
@@ -151,7 +150,22 @@ defmodule AniminaWeb.PotentialPartnerLive do
             <%= gettext("Search range") %>
           </label>
           <div class="mt-2">
-            <%= select(f, :search_range, [{"2 km", 2}, {"5 km", 5}, {"10 km", 10}, {"20 km", 20}, {"30 km", 30}, {"50 km", 50}, {"75 km", 75}, {"100 km", 100}, {"150 km", 150}, {"200 km", 200}, {"300 km", 300}],
+            <%= select(
+              f,
+              :search_range,
+              [
+                {"2 km", 2},
+                {"5 km", 5},
+                {"10 km", 10},
+                {"20 km", 20},
+                {"30 km", 30},
+                {"50 km", 50},
+                {"75 km", 75},
+                {"100 km", 100},
+                {"150 km", 150},
+                {"200 km", 200},
+                {"300 km", 300}
+              ],
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"

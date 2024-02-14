@@ -65,9 +65,10 @@ defmodule AniminaWeb.RootLive do
       <.notification_box
         title={gettext("Animina Dating Plattform")}
         message={gettext("Fair, Fast and Free. Join us now!")}
-        box_with_avatar={true}
-        avatar_url="/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg"
-        avatar_url_b="/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
+        avatars_urls={[
+          "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
+          "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
+        ]}
       />
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
@@ -155,7 +156,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: "",
               value:
                 [
-                  (@today.year - 19) |> Integer.to_string() |> String.pad_leading(4, "0"),
+                  (@today.year - 20) |> Integer.to_string() |> String.pad_leading(4, "0"),
                   @today.month |> Integer.to_string() |> String.pad_leading(2, "0"),
                   @today.day |> Integer.to_string() |> String.pad_leading(2, "0")
                 ]
