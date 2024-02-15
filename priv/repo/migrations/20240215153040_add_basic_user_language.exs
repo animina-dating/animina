@@ -18,8 +18,4 @@ defmodule Animina.Repo.Migrations.AddBasicUserLanguage do
       remove :language
     end
   end
-<<<<<<< Updated upstream
 end
-=======
-end
->>>>>>> Stashed changes
