@@ -15,7 +15,8 @@ defmodule Animina.Accounts.UserTest do
           height: 180,
           zip_code: "12345",
           gender: "male",
-          mobile_phone: "0151-12345678"
+          mobile_phone: "0151-12345678",
+          language: "en"
           # subscribed_at: 1706659201,
           # subscribed_at: %DateTime{
           #   calendar: Calendar.ISO,
