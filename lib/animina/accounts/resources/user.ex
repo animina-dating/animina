@@ -40,6 +40,8 @@ defmodule Animina.Accounts.User do
     attribute :maximum_partner_height, :integer, allow_nil?: true
     attribute :minimum_partner_age, :integer, allow_nil?: true
     attribute :maximum_partner_age, :integer, allow_nil?: true
+
+    attribute :search_range, :integer, allow_nil?: true
   end
 
   relationships do
@@ -57,6 +59,13 @@ defmodule Animina.Accounts.User do
 
   preparations do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
+  end
+
+  validations do
+    validate {Animina.Validations.MinMaxAge, attribute: :maximum_partner_age}
+    validate {Animina.Validations.MinMaxAge, attribute: :minimum_partner_age}
+    validate {Animina.Validations.MinMaxHeight, attribute: :minimum_partner_height}
+    validate {Animina.Validations.MinMaxHeight, attribute: :maximum_partner_height}
   end
 
   authentication do

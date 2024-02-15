@@ -1,23 +1,36 @@
 # Animina Dating Platform
 
-## Local Install
+Animina is a web based dating platfrom. It is initially targeted at the
+German market. In case you have a question do not hesitate to contact
+Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
-### Development Environment
+Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
-Please install the following tools:
+## Development
+
+We use:
 
   * [Elixir](https://elixir-lang.org/install.html)
   * [Phoenix](https://hexdocs.pm/phoenix/installation.html)
   * [PostgreSQL](https://www.postgresql.org/download/)
-  * [asdf (optional)](https://asdf-vm.com)
 
-Use `asdf install` to install the correct versions of Elixir and Erlang.
+Probably the easiest way to install Elixir and Erlang is to use
+[asdf](https://asdf-vm.com) with the command `asdf install`.
 
-### Git Hooks
+NOTE: Have a look at https://elixir-phoenix-ash.com if you are new to Elixir, Phoenix or Ash.
 
-Please run the `./setup-hooks.sh` script to install the git hooks.
+## Ash Framework
 
-### Phoenix Framework
+We use the [Ash Framework](https://ash-hq.org).
+
+### Database Migrations
+
+- `mix ash_postgres.create` to create the database
+- `mix ash_postgres.migrate` to run migrations
+- `mix ash_postgres.drop` to drop the database
+- `mix ash_postgres.reset` to drop, create and migrate the database
+
+## Local Phoenix Server
 
 To start your Phoenix server:
 
@@ -25,7 +38,6 @@ To start your Phoenix server:
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
 
 ## Docker Compose
 
@@ -41,14 +53,21 @@ Run the containers: `docker-compose up`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Submiting Code
 
-## Ash Framework
+Please create a Pull-Request if you want to submit code to the project.
+Make sure to run the following commands before any commit:
 
-We use the [Ash Framework](https://ash-hq.org) to build our application.
+- `mix format`
+- `mix credo`
+- `mix dialyzer`
+- `mix test`
 
-## Database Migrations
+The same commands will be run by the GitHub CI and will stop any
+Pull-Request if an error occurs.
 
-- `mix ash_postgres.create` to create the database
-- `mix ash_postgres.drop` to drop the database
-- `mix ash_postgres.reset` to drop and create the database
-- `mix ash_postgres.migrate` to run migrations
+### Git Hooks
+
+Run the `./setup-hooks.sh` script to install the git hooks. If
+you don't use those hooks: Please have a look into the script to see
+what we expect befor commiting code to the repo.
