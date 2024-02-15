@@ -121,7 +121,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:minimum_partner_height], :minimum_partner_height) != [],
+                  unless(get_field_errors(f[:minimum_partner_height], :minimum_partner_height) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -148,7 +148,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:maximum_partner_height], :maximum_partner_height) != [],
+                  unless(get_field_errors(f[:maximum_partner_height], :maximum_partner_height) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   )
@@ -171,7 +171,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) != [],
+                  unless(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   )
@@ -192,7 +192,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) != [],
+                  unless(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   )
@@ -228,7 +228,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               prompt: gettext("doesn't matter"),
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:search_range], :search_range) != [],
+                  unless(get_field_errors(f[:search_range], :search_range) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   )

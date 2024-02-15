@@ -7,10 +7,9 @@ defmodule Animina.Validations.MinMaxHeight do
 
   @impl true
   def init(opts) do
-    if is_atom(opts[:attribute]) do
-      {:ok, opts}
-    else
-      {:error, "attribute must be an integer!"}
+    case is_atom(opts[:attribute]) do
+      true -> {:ok, opts}
+      _ -> {:error, "attribute must be an integer!"}
     end
   end
 
@@ -20,6 +19,9 @@ defmodule Animina.Validations.MinMaxHeight do
     max_height = Ash.Changeset.get_attribute(changeset, :maximum_partner_height)
 
     cond do
+      min_height == nil || max_height == nil ->
+        :ok
+
       opts[:attribute] == :maximum_partner_height && max_height < min_height ->
         {:error,
          field: opts[:attribute], message: "must be same or higher than minimum partner height"}

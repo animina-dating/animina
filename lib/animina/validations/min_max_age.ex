@@ -7,10 +7,9 @@ defmodule Animina.Validations.MinMaxAge do
 
   @impl true
   def init(opts) do
-    if is_atom(opts[:attribute]) do
-      {:ok, opts}
-    else
-      {:error, "attribute must be an atom!"}
+    case is_atom(opts[:attribute]) do
+      true -> {:ok, opts}
+      _ -> {:error, "attribute must be an atom!"}
     end
   end
 
@@ -20,6 +19,9 @@ defmodule Animina.Validations.MinMaxAge do
     max_age = Ash.Changeset.get_attribute(changeset, :maximum_partner_age)
 
     cond do
+      min_age == nil || max_age == nil ->
+        :ok
+
       opts[:attribute] == :maximum_partner_age && max_age < min_age ->
         {:error,
          field: opts[:attribute], message: "must be same or higher than minimum partner age"}

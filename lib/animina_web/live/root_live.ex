@@ -113,11 +113,11 @@ defmodule AniminaWeb.RootLive do
               :username,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:username], :username) != [],
+                  unless(get_field_errors(f[:username], :username) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: "Pusteblume1977",
+              placeholder: gettext("Pusteblume1977"),
               value: f[:username].value,
               type: :text,
               required: true,
@@ -141,7 +141,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :name,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:name], :name) != [],
+                  unless(get_field_errors(f[:name], :name) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -166,7 +166,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :email,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:email], :email) != [],
+                  unless(get_field_errors(f[:email], :email) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -194,7 +194,7 @@ defmodule AniminaWeb.RootLive do
             <%= password_input(f, :password,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:password], :password) != [],
+                  unless(get_field_errors(f[:password], :password) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -222,7 +222,7 @@ defmodule AniminaWeb.RootLive do
             <%= date_input(f, :birthday,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:birthday], :birthday) != [],
+                  unless(get_field_errors(f[:birthday], :birthday) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -299,7 +299,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :zip_code,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:zip_code], :zip_code) != [],
+                  unless(get_field_errors(f[:zip_code], :zip_code) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -329,7 +329,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :height,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:height], :height) != [],
+                  unless(get_field_errors(f[:height], :height) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -356,7 +356,7 @@ defmodule AniminaWeb.RootLive do
             <%= text_input(f, :mobile_phone,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  if(get_field_errors(f[:mobile_phone], :mobile_phone) != [],
+                  unless(get_field_errors(f[:mobile_phone], :mobile_phone) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
