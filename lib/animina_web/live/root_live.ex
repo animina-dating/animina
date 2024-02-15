@@ -118,6 +118,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "Pusteblume1977",
+              value: f[:username].value,
               type: :text,
               required: true,
               autofocus: true,
@@ -145,6 +146,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("Alice"),
+              value: f[:name].value,
               type: :text,
               required: true,
               autocomplete: "given-name"
@@ -169,6 +171,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("alice@example.net"),
+              value: f[:email].value,
               type: :email,
               required: true,
               autocomplete: :email
@@ -196,6 +199,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("Password"),
+              value: f[:password].value,
               autocomplete: "new-password"
             ) %>
 
@@ -301,6 +305,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               # Postal code of the Bundestag :-)
               placeholder: "11011",
+              value: f[:zip_code].value,
               autocomplete: "postal-code"
             ) %>
 
@@ -320,12 +325,6 @@ defmodule AniminaWeb.RootLive do
             </label>
           </div>
 
-          <%!-- class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6 " <>
-                  if(get_field_errors(f[:height], :height) != [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ), --%>
           <div phx-feedback-for={f[:height].name} class="mt-2">
             <%= text_input(f, :height,
               class:
@@ -334,7 +333,8 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: "160"
+              placeholder: "160",
+              value: f[:height].value
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:height], :height)}>
@@ -355,8 +355,13 @@ defmodule AniminaWeb.RootLive do
           <div phx-feedback-for={f[:mobile_phone].name} class="mt-2">
             <%= text_input(f, :mobile_phone,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 ring-red-600 focus:ring-red-600 sm:leading-6",
-              placeholder: "0151-12345678"
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  if(get_field_errors(f[:mobile_phone], :mobile_phone) != [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              placeholder: "0151-12345678",
+              value: f[:mobile_phone].value
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
