@@ -61,6 +61,13 @@ defmodule Animina.Accounts.User do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
   end
 
+  validations do
+    validate {Animina.Validations.MinMaxAge, attribute: :maximum_partner_age}
+    validate {Animina.Validations.MinMaxAge, attribute: :minimum_partner_age}
+    validate {Animina.Validations.MinMaxHeight, attribute: :minimum_partner_height}
+    validate {Animina.Validations.MinMaxHeight, attribute: :maximum_partner_height}
+  end
+
   authentication do
     api Animina.Accounts
 

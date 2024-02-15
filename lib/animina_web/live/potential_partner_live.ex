@@ -6,6 +6,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
 
+  alias AshPhoenix.Form
+
   @impl true
   def mount(_params, session, socket) do
     current_user =
@@ -63,12 +65,27 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   @impl true
-  def handle_event("update_user", %{"form" => form_params}, socket) do
-    current_user =
-      User.by_id!(socket.assigns.current_user.id)
-      |> User.update!(form_params)
+  def handle_event("validate_user", %{"form" => form_params}, socket) do
+    form = Form.validate(socket.assigns.update_form, form_params, errors: true)
 
-    {:noreply, assign(socket, current_user: current_user)}
+    {:noreply, socket |> assign(update_form: form)}
+  end
+
+  @impl true
+  def handle_event("update_user", %{"form" => form_params}, socket) do
+    form = Form.validate(socket.assigns.update_form, form_params)
+
+    case Form.errors(form) do
+      [] ->
+        current_user =
+          User.by_id!(socket.assigns.current_user.id)
+          |> User.update!(form_params)
+
+        {:noreply, assign(socket, current_user: current_user)}
+
+      _ ->
+        {:noreply, assign(socket, update_form: form)}
+    end
   end
 
   @impl true
@@ -85,7 +102,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
       />
 
       <h2 class="font-bold text-xl"><%= gettext("Criteria for your new partner") %></h2>
-      <.form :let={f} for={@update_form} phx-submit="update_user" class="space-y-6">
+      <.form
+        :let={f}
+        for={@update_form}
+        phx-submit="update_user"
+        phx-change="validate_user"
+        class="space-y-6"
+      >
         <div>
           <label
             for="minimum_partner_height"
@@ -93,13 +116,23 @@ defmodule AniminaWeb.PotentialPartnerLive do
           >
             <%= gettext("Minimum height") %>
           </label>
-          <div class="mt-2">
+          <div phx-feedback-for={f[:minimum_partner_height].name} class="mt-2">
             <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  unless(get_field_errors(f[:minimum_partner_height], :minimum_partner_height) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
               autofocus: true
             ) %>
+
+            <.error :for={
+              msg <- get_field_errors(f[:minimum_partner_height], :minimum_partner_height)
+            }>
+              <%= gettext("Minimum height") <> " " <> msg %>
+            </.error>
           </div>
         </div>
 
@@ -110,12 +143,22 @@ defmodule AniminaWeb.PotentialPartnerLive do
           >
             <%= gettext("Maximum height") %>
           </label>
-          <div class="mt-2">
+          <div phx-feedback-for={f[:maximum_partner_height].name} class="mt-2">
             <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  unless(get_field_errors(f[:maximum_partner_height], :maximum_partner_height) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  )
             ) %>
+
+            <.error :for={
+              msg <- get_field_errors(f[:maximum_partner_height], :maximum_partner_height)
+            }>
+              <%= gettext("Maximum height") <> " " <> msg %>
+            </.error>
           </div>
         </div>
 
@@ -123,12 +166,20 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <label for="minimum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Minimum age") %>
           </label>
-          <div class="mt-2">
+          <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
             <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  unless(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  )
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:minimum_partner_age], :minimum_partner_age)}>
+              <%= gettext("Minimum age") <> " " <> msg %>
+            </.error>
           </div>
         </div>
 
@@ -136,12 +187,20 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <label for="maximum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Maximum age") %>
           </label>
-          <div class="mt-2">
+          <div phx-feedback-for={f[:maximum_partner_age].name} class="mt-2">
             <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  unless(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  )
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
+              <%= gettext("Maximum age") <> " " <> msg %>
+            </.error>
           </div>
         </div>
 
@@ -149,7 +208,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <label for="search_range" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Search range") %>
           </label>
-          <div class="mt-2">
+          <div phx-feedback-for={f[:search_range].name} class="mt-2">
             <%= select(
               f,
               :search_range,
@@ -168,8 +227,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
               ],
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  unless(get_field_errors(f[:search_range], :search_range) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  )
             ) %>
+
+            <.error :for={msg <- get_field_errors(f[:search_range], :search_range)}>
+              <%= gettext("Search range") <> " " <> msg %>
+            </.error>
           </div>
         </div>
 
@@ -208,5 +275,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   def cal_maximum_partner_age(user) do
     user.age + 5
+  end
+
+  defp get_field_errors(field, _name) do
+    Enum.map(field.errors, &translate_error(&1))
   end
 end
