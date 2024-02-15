@@ -34,7 +34,11 @@ defmodule AniminaWeb.AniminaComponents do
         <div class="flex -space-x-4">
           <%= for {avatar_url, index} <- Enum.with_index(@avatars_urls) do %>
             <% rotate_by = Integer.to_string(index * 12) %>
-            <img class={["w-16", "h-16", "border-2", "border-white", "rotate-"<>rotate_by]} src={avatar_url} alt="" />
+            <img class={[
+              "w-16", "h-16",
+              "border-2", "border-white",
+              "rotate-[" <> rotate_by <> "deg]",
+            ]} src={avatar_url} alt="" />
           <% end %>
         </div>
       <% end %>
