@@ -42,6 +42,7 @@ defmodule Animina.Accounts.User do
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
     attribute :search_range, :integer, allow_nil?: true
+    attribute :language, :string, allow_nil?: true
   end
 
   relationships do
@@ -84,7 +85,8 @@ defmodule Animina.Accounts.User do
           :birthday,
           :height,
           :gender,
-          :mobile_phone
+          :mobile_phone,
+          :language
         ])
       end
     end

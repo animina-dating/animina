@@ -33,6 +33,7 @@ defmodule Animina.Accounts.BasicUser do
     attribute :gender, :string, allow_nil?: false
     attribute :height, :integer, allow_nil?: false
     attribute :mobile_phone, :string, allow_nil?: false
+    attribute :language, :string, allow_nil?: false
   end
 
   relationships do
@@ -70,7 +71,8 @@ defmodule Animina.Accounts.BasicUser do
           :birthday,
           :height,
           :gender,
-          :mobile_phone
+          :mobile_phone,
+          :language
         ])
       end
     end
