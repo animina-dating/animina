@@ -42,7 +42,7 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
     end
   end
 
-  defp supported_locales(),
+  defp supported_locales,
     do: Gettext.known_locales(AniminaWeb.Gettext) ++ ["de"]
 
   defp supported_locale?(locale), do: Enum.member?(supported_locales(), locale)
