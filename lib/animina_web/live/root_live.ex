@@ -7,7 +7,7 @@ defmodule AniminaWeb.RootLive do
   alias AshPhoenix.Form
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(_params, %{"language" => language} = session, socket) do
     if connected?(socket) do
       :timer.send_interval(2500, self(), :tick)
     end
@@ -15,6 +15,7 @@ defmodule AniminaWeb.RootLive do
     socket =
       socket
       |> assign(points: 0)
+      |> assign(language: language)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
@@ -132,6 +133,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
+        <%= text_input(f, :language, type: :hidden, value: @language) %>
 
         <div>
           <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
