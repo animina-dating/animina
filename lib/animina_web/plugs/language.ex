@@ -13,9 +13,15 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
     |> extract_accept_language()
     |> case do
       [language | _] ->
-        conn |> put_session("language", String.split(language, "-") |> Enum.at(0, "en"))
+        case parse_language(language) |> supported_locale?() do
+          true -> Gettext.put_locale(AniminaWeb.Gettext, parse_language(language))
+          _ -> Gettext.put_locale(AniminaWeb.Gettext, "en")
+        end
+
+        conn |> put_session("language", language)
 
       [] ->
+        Gettext.put_locale(AniminaWeb.Gettext, "en")
         conn |> put_session("language", "en")
     end
   end
@@ -33,6 +39,19 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
 
       _ ->
         []
+    end
+  end
+
+  defp supported_locales(),
+    do: Gettext.known_locales(AniminaWeb.Gettext) ++ ["de"]
+
+  defp supported_locale?(locale), do: Enum.member?(supported_locales(), locale)
+
+  defp parse_language(language) do
+    case language do
+      "de-" <> _rest -> "de"
+      "en-" <> _rest -> "en"
+      true -> language
     end
   end
 

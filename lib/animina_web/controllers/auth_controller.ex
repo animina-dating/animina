@@ -53,12 +53,15 @@ defmodule AniminaWeb.AuthController do
   end
 
   def register(conn, _params) do
+    language = get_session(conn, :language) || "en-gb"
+
     conn =
       conn
       |> assign(:form_id, "sign-up-form")
       |> assign(:cta, "Account anlegen")
       |> assign(:action, ~p"/auth/user/password/register")
       |> assign(:is_register?, true)
+      |> assign(:language, language)
       |> assign(
         :form,
         Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
