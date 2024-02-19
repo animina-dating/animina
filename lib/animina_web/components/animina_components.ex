@@ -26,6 +26,7 @@ defmodule AniminaWeb.AniminaComponents do
 
   def notification_box(assigns) do
     ~H"""
+    <div class="rotate-[24deg] rotate-[12deg] rotate-[0deg]" />
     <div
       class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow"
       phx-no-format
