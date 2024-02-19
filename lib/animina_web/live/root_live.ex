@@ -100,7 +100,7 @@ defmodule AniminaWeb.RootLive do
         action={@action}
         phx-trigger-action={@trigger_action}
         method="POST"
-        class="space-y-6"
+        class="space-y-6 group"
         phx-change="validate"
         phx-submit="submit"
       >
@@ -375,7 +375,8 @@ defmodule AniminaWeb.RootLive do
         <div>
           <%= submit(@cta,
             class:
-              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:opacity-40
+         group-invalid:cursor-not-allowed group-invalid:hover:bg-blue-500 group-invalid:active:bg-blue-500"
           ) %>
         </div>
       </.form>

@@ -29,9 +29,21 @@ defmodule Animina.Accounts.BasicUser do
     end
 
     attribute :birthday, :date, allow_nil?: false
-    attribute :zip_code, :string, allow_nil?: false
+
+    attribute :zip_code, :string do
+      constraints max_length: 5,
+                  min_length: 5,
+                  trim?: true,
+                  allow_empty?: false
+    end
+
     attribute :gender, :string, allow_nil?: false
-    attribute :height, :integer, allow_nil?: false
+
+    attribute :height, :integer do
+      constraints max: 250,
+                  min: 50
+    end
+
     attribute :mobile_phone, :string, allow_nil?: false
     attribute :language, :string, allow_nil?: false
   end
@@ -53,6 +65,10 @@ defmodule Animina.Accounts.BasicUser do
 
   preparations do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
+  end
+
+  validations do
+    validate {Animina.Validations.Birthday, attribute: :birthday}
   end
 
   authentication do
@@ -91,8 +107,9 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   identities do
-    identity :unique_email, [:email]
-    identity :unique_username, [:username]
+    identity :unique_email, [:email], eager_check_with: Animina.Accounts
+    identity :unique_username, [:username], eager_check_with: Animina.Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Animina.Accounts
   end
 
   actions do
