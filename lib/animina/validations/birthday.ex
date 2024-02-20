@@ -25,6 +25,12 @@ defmodule Animina.Validations.Birthday do
       today.year - birthday.year < 18 ->
         {:error, field: opts[:attribute], message: "must be at least 18 years old"}
 
+      Date.compare(
+        Date.new!(today.year, birthday.month, birthday.day),
+        Date.new!(today.year, today.month, today.day)
+      ) == :gt ->
+        {:error, field: opts[:attribute], message: "must be at least 18 years old"}
+
       true ->
         :ok
     end
