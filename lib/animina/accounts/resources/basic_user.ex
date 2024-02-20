@@ -8,6 +8,9 @@ defmodule Animina.Accounts.BasicUser do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication]
 
+  alias Animina.Accounts
+  alias Animina.Validations
+
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false
@@ -29,15 +32,27 @@ defmodule Animina.Accounts.BasicUser do
     end
 
     attribute :birthday, :date, allow_nil?: false
-    attribute :zip_code, :string, allow_nil?: false
+
+    attribute :zip_code, :string do
+      constraints trim?: true,
+                  allow_empty?: false
+    end
+
     attribute :gender, :string, allow_nil?: false
-    attribute :height, :integer, allow_nil?: false
+
+    attribute :height, :integer do
+      allow_nil? false
+
+      constraints max: 250,
+                  min: 50
+    end
+
     attribute :mobile_phone, :string, allow_nil?: false
     attribute :language, :string, allow_nil?: false
   end
 
   relationships do
-    has_many :credits, Animina.Accounts.Credit do
+    has_many :credits, Accounts.Credit do
       destination_attribute :user_id
     end
   end
@@ -55,8 +70,13 @@ defmodule Animina.Accounts.BasicUser do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
   end
 
+  validations do
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.PostalCode, attribute: :zip_code}
+  end
+
   authentication do
-    api Animina.Accounts
+    api Accounts
 
     strategies do
       password :password do
@@ -79,9 +99,9 @@ defmodule Animina.Accounts.BasicUser do
 
     tokens do
       enabled? true
-      token_resource Animina.Accounts.Token
+      token_resource Accounts.Token
 
-      signing_secret Animina.Accounts.Secrets
+      signing_secret Accounts.Secrets
     end
   end
 
@@ -91,8 +111,9 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   identities do
-    identity :unique_email, [:email]
-    identity :unique_username, [:username]
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 
   actions do
@@ -100,7 +121,7 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    define_for Accounts
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
