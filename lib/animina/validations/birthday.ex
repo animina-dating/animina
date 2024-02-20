@@ -6,6 +6,14 @@ defmodule Animina.Validations.Birthday do
   """
 
   @impl true
+  def init(opts) do
+    case is_atom(opts[:attribute]) do
+      true -> {:ok, opts}
+      _ -> {:error, "attribute must be an atom!"}
+    end
+  end
+
+  @impl true
   def validate(changeset, opts) do
     birthday = Ash.Changeset.get_attribute(changeset, :birthday)
     today = Date.utc_today()
