@@ -17,6 +17,8 @@ defmodule Animina.Accounts.BasicUser do
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :username, :ci_string do
+      allow_nil? false
+
       constraints max_length: 15,
                   min_length: 2,
                   match: ~r/^[A-Za-z_-]*$/,
@@ -25,6 +27,8 @@ defmodule Animina.Accounts.BasicUser do
     end
 
     attribute :name, :string do
+      allow_nil? false
+
       constraints max_length: 50,
                   min_length: 1,
                   trim?: true,
