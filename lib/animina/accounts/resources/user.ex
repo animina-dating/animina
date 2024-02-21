@@ -7,12 +7,17 @@ defmodule Animina.Accounts.User do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication]
 
+  alias Animina.Accounts
+  alias Animina.Validations
+
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :username, :ci_string do
+      allow_nil? false
+
       constraints max_length: 15,
                   min_length: 2,
                   match: ~r/^[A-Za-z_-]*$/,
@@ -21,6 +26,8 @@ defmodule Animina.Accounts.User do
     end
 
     attribute :name, :string do
+      allow_nil? false
+
       constraints max_length: 50,
                   min_length: 1,
                   trim?: true,
@@ -28,9 +35,21 @@ defmodule Animina.Accounts.User do
     end
 
     attribute :birthday, :date, allow_nil?: false
-    attribute :zip_code, :string, allow_nil?: false
+
+    attribute :zip_code, :string do
+      constraints trim?: true,
+                  allow_empty?: false
+    end
+
     attribute :gender, :string, allow_nil?: false
-    attribute :height, :integer, allow_nil?: false
+
+    attribute :height, :integer do
+      allow_nil? false
+
+      constraints max: 250,
+                  min: 50
+    end
+
     attribute :mobile_phone, :string, allow_nil?: false
     # attribute :body_type, :integer, allow_nil?: false
     # attribute :subscribed_at, :utc_datetime, allow_nil?: false
@@ -42,10 +61,11 @@ defmodule Animina.Accounts.User do
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
     attribute :search_range, :integer, allow_nil?: true
+    attribute :language, :string, allow_nil?: true
   end
 
   relationships do
-    has_many :credits, Animina.Accounts.Credit
+    has_many :credits, Accounts.Credit
   end
 
   calculations do
@@ -62,14 +82,16 @@ defmodule Animina.Accounts.User do
   end
 
   validations do
-    validate {Animina.Validations.MinMaxAge, attribute: :maximum_partner_age}
-    validate {Animina.Validations.MinMaxAge, attribute: :minimum_partner_age}
-    validate {Animina.Validations.MinMaxHeight, attribute: :minimum_partner_height}
-    validate {Animina.Validations.MinMaxHeight, attribute: :maximum_partner_height}
+    validate {Validations.MinMaxAge, attribute: :maximum_partner_age}
+    validate {Validations.MinMaxAge, attribute: :minimum_partner_age}
+    validate {Validations.MinMaxHeight, attribute: :minimum_partner_height}
+    validate {Validations.MinMaxHeight, attribute: :maximum_partner_height}
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.PostalCode, attribute: :zip_code}
   end
 
   authentication do
-    api Animina.Accounts
+    api Accounts
 
     strategies do
       password :password do
@@ -84,16 +106,17 @@ defmodule Animina.Accounts.User do
           :birthday,
           :height,
           :gender,
-          :mobile_phone
+          :mobile_phone,
+          :language
         ])
       end
     end
 
     tokens do
       enabled? true
-      token_resource Animina.Accounts.Token
+      token_resource Accounts.Token
 
-      signing_secret Animina.Accounts.Secrets
+      signing_secret Accounts.Secrets
     end
   end
 
@@ -103,8 +126,9 @@ defmodule Animina.Accounts.User do
   end
 
   identities do
-    identity :unique_email, [:email]
-    identity :unique_username, [:username]
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 
   actions do
@@ -112,7 +136,7 @@ defmodule Animina.Accounts.User do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    define_for Accounts
     define :read
     define :create
     define :update

@@ -7,7 +7,7 @@ defmodule AniminaWeb.RootLive do
   alias AshPhoenix.Form
 
   @impl true
-  def mount(_params, session, socket) do
+  def mount(_params, %{"language" => language} = session, socket) do
     if connected?(socket) do
       :timer.send_interval(2500, self(), :tick)
     end
@@ -15,6 +15,7 @@ defmodule AniminaWeb.RootLive do
     socket =
       socket
       |> assign(points: 0)
+      |> assign(language: language)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
@@ -99,7 +100,7 @@ defmodule AniminaWeb.RootLive do
         action={@action}
         phx-trigger-action={@trigger_action}
         method="POST"
-        class="space-y-6"
+        class="space-y-6 group"
         phx-change="validate"
         phx-submit="submit"
       >
@@ -132,6 +133,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
+        <%= text_input(f, :language, type: :hidden, value: @language) %>
 
         <div>
           <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
@@ -187,7 +189,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Password") %>
-              <span class="text-gray-400">(<%= gettext("at least 8 characters") %>)</span>
             </label>
           </div>
           <div phx-feedback-for={f[:password].name} class="mt-2">
@@ -213,9 +214,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
-              <span class="text-gray-400">
-                (<%= gettext("you have to be at least 18 years old") %>)
-              </span>
             </label>
           </div>
           <div phx-feedback-for={f[:birthday].name} class="mt-2">
@@ -290,9 +288,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Postal code") %>
-              <span class="text-gray-400">
-                (<%= gettext("5-digit postal code in Germany") %>)
-              </span>
             </label>
           </div>
           <div phx-feedback-for={f[:zip_code].name} class="mt-2">
@@ -373,7 +368,11 @@ defmodule AniminaWeb.RootLive do
         <div>
           <%= submit(@cta,
             class:
-              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+                unless(@form.valid? == false,
+                  do: "",
+                  else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+                )
           ) %>
         </div>
       </.form>
