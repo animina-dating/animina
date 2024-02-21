@@ -376,10 +376,9 @@ defmodule AniminaWeb.RootLive do
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.valid?,
-                  do:
-                    "group-invalid:opacity-40 group-invalid:cursor-not-allowed group-invalid:hover:bg-blue-500 group-invalid:active:bg-blue-500",
-                  else: ""
+                unless(@form.valid? == false,
+                  do: "",
+                  else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 )
           ) %>
         </div>

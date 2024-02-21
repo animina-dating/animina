@@ -15,8 +15,6 @@
 
       <.form :let={f} for={@form} action={@action} method="POST" class="space-y-6">
         <%= if @is_register? do %>
-          <%= text_input(f, :language, type: :hidden, value: @language) %>
-
           <div>
             <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
               Username
