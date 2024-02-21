@@ -189,7 +189,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Password") %>
-              <span class="text-gray-400">(<%= gettext("at least 8 characters") %>)</span>
             </label>
           </div>
           <div phx-feedback-for={f[:password].name} class="mt-2">
@@ -215,9 +214,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
-              <span class="text-gray-400">
-                (<%= gettext("you have to be at least 18 years old") %>)
-              </span>
             </label>
           </div>
           <div phx-feedback-for={f[:birthday].name} class="mt-2">
@@ -292,9 +288,6 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Postal code") %>
-              <span class="text-gray-400">
-                (<%= gettext("5-digit postal code in Germany") %>)
-              </span>
             </label>
           </div>
           <div phx-feedback-for={f[:zip_code].name} class="mt-2">
