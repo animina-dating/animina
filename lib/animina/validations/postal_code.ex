@@ -21,8 +21,8 @@ defmodule Animina.Validations.PostalCode do
       zip_code == nil ->
         :ok
 
-      String.length(zip_code) < 5 || String.length(zip_code) > 5 ->
-        {:error, field: opts[:attribute], message: "length must be 5"}
+      ! String.match?(zip_code, ~r/\A [0-9]{5} \z/x) ->
+        {:error, field: opts[:attribute], message: "must have 5 digits"}
 
       true ->
         :ok
