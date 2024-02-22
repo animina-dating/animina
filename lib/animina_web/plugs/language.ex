@@ -51,7 +51,7 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
     case language do
       "de-" <> _rest -> "de"
       "en-" <> _rest -> "en"
-      true -> language
+      _ -> language
     end
   end
 
