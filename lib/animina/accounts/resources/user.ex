@@ -67,6 +67,7 @@ defmodule Animina.Accounts.User do
 
   relationships do
     has_many :credits, Accounts.Credit
+    has_many :photos, Accounts.Photo
   end
 
   validations do

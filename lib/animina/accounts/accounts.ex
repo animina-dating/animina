@@ -10,5 +10,6 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.Credit
     resource Animina.Accounts.User
     resource Animina.Accounts.Token
+    resource Animina.Accounts.Photo
   end
 end
