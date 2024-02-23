@@ -105,7 +105,7 @@ defmodule AniminaWeb.RootLive do
         phx-submit="submit"
       >
         <div>
-          <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_username" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Username") %>
           </label>
           <div phx-feedback-for={f[:username].name} class="mt-2">
@@ -122,7 +122,6 @@ defmodule AniminaWeb.RootLive do
               value: f[:username].value,
               type: :text,
               required: true,
-              autofocus: true,
               autocomplete: :username
             ) %>
 
@@ -136,7 +135,7 @@ defmodule AniminaWeb.RootLive do
         <%= text_input(f, :language, type: :hidden, value: @language) %>
 
         <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_name" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Name") %>
           </label>
           <div phx-feedback-for={f[:name].name} class="mt-2">
@@ -161,7 +160,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("E-mail address") %>
           </label>
           <div phx-feedback-for={f[:email].name} class="mt-2">
@@ -187,7 +186,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Password") %>
             </label>
           </div>
@@ -212,7 +211,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
             </label>
           </div>
@@ -243,50 +242,41 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_gender" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Gender") %>
             </label>
           </div>
           <div class="mt-2">
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "male",
-                id: "gender_male",
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
-                checked: true
-              ) %>
-              <%= label(f, :gender, gettext("Male"),
-                for: "gender_male",
-                class: "ml-3 block text-sm font-medium text-gray-700"
-              ) %>
-            </div>
+            
+            <%= for { item_code, item_title } <- [
+              { "m", gettext("Male")},
+              { "f", gettext("Female")},
+              { "x", gettext("Diverse / non-binary")},
+            ] do %>
+              
+              <div class="flex items-center mb-4">
+                <%= radio_button(f, :gender, item_code,
+                  id: "input-gender_" <> item_code,
+                  class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                ) %>
+                <%= label(f, :gender, item_title,
+                  for: "input-gender_" <> item_code,
+                  class: "ml-3 block text-sm font-medium text-gray-700"
+                ) %>
+              </div>
+              
+            <% end %>
+            
+            <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
+              <%= gettext("Gender") <> " " <> msg %>
+            </.error>
 
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "female",
-                id: "gender_female",
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              ) %>
-              <%= label(f, :gender, gettext("Female"),
-                for: "gender_female",
-                class: "ml-3 block text-sm font-medium text-gray-700"
-              ) %>
-            </div>
-
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, gettext("Diverse / non-binary"),
-                id: "gender_divers",
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              ) %>
-              <%= label(f, :gender, "Diverse / non-binary",
-                for: "gender_divers",
-                class: "ml-3 block text-sm font-medium text-gray-700"
-              ) %>
-            </div>
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Postal code") %>
             </label>
           </div>
@@ -301,6 +291,8 @@ defmodule AniminaWeb.RootLive do
               # Postal code of the Bundestag :-)
               placeholder: "11011",
               value: f[:zip_code].value,
+              pattern: "[0-9]{5}",
+              inputmode: "numeric",
               autocomplete: "postal-code"
             ) %>
 
@@ -312,14 +304,13 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="height" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_height" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Height") %>
               <span class="text-gray-400">
                 (<%= gettext("in cm") %>)
               </span>
             </label>
           </div>
-
           <div phx-feedback-for={f[:height].name} class="mt-2">
             <%= text_input(f, :height,
               class:
@@ -329,6 +320,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "160",
+              pattern: "[1-9][0-9]{2}",
+              inputmode: "numeric",
               value: f[:height].value
             ) %>
 
@@ -340,7 +333,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Mobile phone number") %>
               <span class="text-gray-400">
                 (<%= gettext("to receive a verification code") %>)
@@ -356,6 +349,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "0151-12345678",
+              pattern: "[0-9+ \-]*",
+              inputmode: "numeric",
               value: f[:mobile_phone].value
             ) %>
 
