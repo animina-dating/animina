@@ -41,7 +41,14 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :gender, :string, allow_nil?: false
+    attribute :gender, :string do
+      allow_nil? false
+      
+      constraints(
+        match: ~r/\A [mfx] \z/x,
+        allow_empty?: false,
+      )
+    end
 
     attribute :height, :integer do
       allow_nil? false
