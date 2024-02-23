@@ -59,6 +59,10 @@ defmodule Animina.Accounts.BasicUser do
     has_many :credits, Accounts.Credit do
       destination_attribute :user_id
     end
+
+    has_many :photos, Accounts.Photo do
+      destination_attribute :user_id
+    end
   end
 
   calculations do

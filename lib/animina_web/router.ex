@@ -24,6 +24,7 @@ defmodule AniminaWeb.Router do
     # get "/", PageController, :home
     live "/", RootLive, :register
     live "/registration/potential-partner", PotentialPartnerLive, :index
+    live "/registration/profile-photo", ProfilePhotoLive, :index
     # live "/register", AniminaWeb.AuthLive.Index, :register
     live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
 

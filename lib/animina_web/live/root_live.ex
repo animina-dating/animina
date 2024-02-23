@@ -19,6 +19,7 @@ defmodule AniminaWeb.RootLive do
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
+      |> assign(:errors, [])
       |> assign(today: Date.utc_today())
 
     {:ok, socket}
@@ -372,7 +373,8 @@ defmodule AniminaWeb.RootLive do
                 unless(@form.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
-                )
+                ),
+            disabled: @form.valid? == false
           ) %>
         </div>
       </.form>
