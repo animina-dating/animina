@@ -27,15 +27,6 @@ defmodule Animina.Accounts.Credit do
     end
   end
 
-  postgres do
-    table "credits"
-    repo Animina.Repo
-
-    references do
-      reference :user, on_delete: :delete
-    end
-  end
-
   actions do
     defaults [:create, :read]
   end
@@ -45,5 +36,14 @@ defmodule Animina.Accounts.Credit do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
+  end
+
+  postgres do
+    table "credits"
+    repo Animina.Repo
+
+    references do
+      reference :user, on_delete: :delete
+    end
   end
 end
