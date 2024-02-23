@@ -29,22 +29,6 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-  end
-
-  postgres do
-    table "photos"
-    repo Animina.Repo
-
-    references do
-      reference :user, on_delete: :delete
-    end
-  end
-
   state_machine do
     initial_states([:pending_review])
     default_initial_state(:pending_review)
@@ -55,6 +39,13 @@ defmodule Animina.Accounts.Photo do
       transition(:report, from: :approved, to: :in_review)
       transition(:reject, from: :in_review, to: :rejected)
       transition(:error, from: [:pending_review, :in_review, :approved, :rejected], to: :error)
+    end
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
     end
   end
 
@@ -83,6 +74,13 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
+  code_interface do
+    define_for Animina.Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+  end
+
   changes do
     change after_transaction(fn
              changeset, {:ok, result} ->
@@ -101,10 +99,12 @@ defmodule Animina.Accounts.Photo do
            on: :update
   end
 
-  code_interface do
-    define_for Animina.Accounts
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
+  postgres do
+    table "photos"
+    repo Animina.Repo
+
+    references do
+      reference :user, on_delete: :delete
+    end
   end
 end
