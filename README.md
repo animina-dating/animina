@@ -1,6 +1,6 @@
 # Animina Dating Platform
 
-Animina is a web based dating platfrom. It is initially targeted at the
+Animina is a web based dating platform. It is initially targeted at the
 German market. In case you have a question do not hesitate to contact
 Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
