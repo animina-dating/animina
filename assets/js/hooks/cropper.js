@@ -17,19 +17,21 @@ export default ImageCropper = {
         let image = new Image();
         image.src = this.createObjectURL(file);
         image.onload = (event) => {
-          this.crop(event.target, 300, 300).toBlob(async (blob) => {
-            const newFile = new File([blob], file.name, { type: file.type });
+          this.crop(event.target, this.maxWidth, this.maxHeight).toBlob(
+            async (blob) => {
+              const newFile = new File([blob], file.name, { type: file.type });
 
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(newFile);
+              const dataTransfer = new DataTransfer();
+              dataTransfer.items.add(newFile);
 
-            LiveUploader.trackFiles(
-              photoInput,
-              dataTransfer.files,
-              dataTransfer
-            );
-            photoInput.dispatchEvent(new Event("input", { bubbles: true }));
-          });
+              LiveUploader.trackFiles(
+                photoInput,
+                dataTransfer.files,
+                dataTransfer
+              );
+              photoInput.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+          );
         };
       }
     });

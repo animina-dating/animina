@@ -43,25 +43,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
   end
 
   @impl true
-  def handle_event("select_photo", %{"photo" => params}, socket) do
-    form = Form.validate(socket.assigns.form, params, errors: true)
-
-    {:noreply, socket |> assign(:form, form)}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_event("change", _, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("crop_photo", %{"size" => size}, socket) do
-    form = Form.validate(socket.assigns.form, %{"size" => size}, errors: true)
-
-    {:noreply, socket |> assign(:form, form)}
-  end
-
-  @impl true
   def handle_event("submit_photo", %{"photo" => params}, socket) do
     consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
       filename = entry.uuid <> "." <> ext(entry)
@@ -162,23 +143,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <%= text_input(f, :mime, type: :hidden, value: entry.client_type) %>
           <%= text_input(f, :size, type: :hidden, value: entry.client_size) %>
 
-          <div
-            phx-mounted={
-              JS.push("select_photo",
-                value: %{
-                  photo: %{
-                    filename: entry.uuid <> "." <> ext(entry),
-                    original_filename: entry.client_name,
-                    ext: ext(entry),
-                    user_id: @current_user.id,
-                    mime: entry.client_type,
-                    size: entry.client_size
-                  }
-                }
-              )
-            }
-            class="flex space-x-8"
-          >
+          <div class="flex space-x-8">
             <.live_img_preview class="inline-block object-cover h-32 w-32 rounded-md" entry={entry} />
 
             <div class="flex-1 flex flex-col justify-center">
