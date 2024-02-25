@@ -22,8 +22,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
       socket
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
+      |> assign(attachment: nil)
+      |> assign(uploading: false)
+      |> assign(preview_url: nil)
       |> assign(page_title: gettext("Upload a profile photo"))
-      |> allow_upload(:photo, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "audio_file")
+      |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "audio_file")
       |> assign(
         :form,
         Form.for_create(Photo, :create, api: Accounts, as: "photo")
@@ -46,12 +49,31 @@ defmodule AniminaWeb.ProfilePhotoLive do
     {:noreply, socket |> assign(:form, form)}
   end
 
+  @impl Phoenix.LiveView
+  def handle_event("change", _, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("crop_photo", %{"size" => size}, socket) do
+    form = Form.validate(socket.assigns.form, %{"size" => size}, errors: true)
+
+    {:noreply, socket |> assign(:form, form)}
+  end
+
   @impl true
   def handle_event("submit_photo", %{"photo" => params}, socket) do
-    consume_uploaded_entries(socket, :photo, fn _meta, entry ->
+    consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+      filename = entry.uuid <> "." <> ext(entry)
+
+      dest =
+        Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+
+      File.cp!(path, dest)
+
       {:ok,
        %{
-         "filename" => entry.uuid <> "." <> ext(entry),
+         "filename" => filename,
          "original_filename" => entry.client_name,
          "ext" => ext(entry),
          "mime" => entry.client_type,
@@ -88,7 +110,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   def handle_event("cancel_upload", %{"ref" => ref, "value" => _value}, socket) do
     {:noreply,
      socket
-     |> cancel_upload(:photo, ref)
+     |> cancel_upload(:photos, ref)
      |> assign(
        :form,
        Form.for_create(Photo, :create, api: Accounts, as: "photo")
@@ -113,22 +135,19 @@ defmodule AniminaWeb.ProfilePhotoLive do
         phx-change="validate_photo"
         phx-submit="submit_photo"
       >
-        <div class="hidden">
-          <.live_file_input
-            type="file"
-            accept="image/*"
-            upload={@uploads.photo}
-            class="hidden pointer-events-none"
-          />
-        </div>
+        <.live_file_input type="file" accept="image/*" upload={@uploads.photos} class="hidden" />
 
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <div
-          :if={Enum.count(@uploads.photo.entries) == 0}
-          phx-click={JS.dispatch("click", to: "##{@uploads.photo.ref}", bubbles: false)}
-          phx-drop-target={@uploads.photo.ref}
-          for={@uploads.photo.ref}
+          :if={Enum.count(@uploads.photos.entries) == 0}
+          id={"photo-#{@uploads.photos.ref}"}
+          phx-hook="ImageCropper"
+          phx-click={JS.dispatch("click", to: "##{@uploads.photos.ref}", bubbles: false)}
+          phx-drop-target={@uploads.photos.ref}
+          for={@uploads.photos.ref}
+          data-upload-target="photos"
+          data-input={@uploads.photos.ref}
           class="flex flex-col items-center max-w-2xl w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  rounded-md"
         >
           <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
@@ -136,7 +155,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <p class="text-sm">Upload or drag & drop your photo file JPG, JPEG, PNG</p>
         </div>
 
-        <%= for entry <- @uploads.photo.entries do %>
+        <%= for entry <- @uploads.photos.entries do %>
           <%= text_input(f, :filename, type: :hidden, value: entry.uuid <> "." <> ext(entry)) %>
           <%= text_input(f, :original_filename, type: :hidden, value: entry.client_name) %>
           <%= text_input(f, :ext, type: :hidden, value: ext(entry)) %>
@@ -182,9 +201,13 @@ defmodule AniminaWeb.ProfilePhotoLive do
             </div>
           </div>
 
-          <div :if={Enum.count(upload_errors(@uploads.photo, entry))} class="danger mb-4" role="alert">
+          <div
+            :if={Enum.count(upload_errors(@uploads.photos, entry))}
+            class="danger mb-4"
+            role="alert"
+          >
             <ul class="error-messages">
-              <%= for err <- upload_errors(@uploads.photo, entry) do %>
+              <%= for err <- upload_errors(@uploads.photos, entry) do %>
                 <li>
                   <p><%= error_to_string(err) %></p>
                 </li>
