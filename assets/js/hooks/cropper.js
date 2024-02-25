@@ -1,7 +1,7 @@
+import LiveUploader from "../../../deps/phoenix_live_view/assets/js/phoenix_live_view/live_uploader";
+
 export default ImageCropper = {
   mounted() {
-    this.croppedImage = null;
-    this.blobUrl = null;
     this.maxWidth = 300;
     this.maxHeight = 300;
     this.uploadTarget = this.el.dataset.uploadTarget;
@@ -18,7 +18,17 @@ export default ImageCropper = {
         image.src = this.createObjectURL(file);
         image.onload = (event) => {
           this.crop(event.target, 300, 300).toBlob(async (blob) => {
-            this.upload(this.uploadTarget, [blob]);
+            const newFile = new File([blob], file.name, { type: file.type });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(newFile);
+
+            LiveUploader.trackFiles(
+              photoInput,
+              dataTransfer.files,
+              dataTransfer
+            );
+            photoInput.dispatchEvent(new Event("input", { bubbles: true }));
           });
         };
       }
