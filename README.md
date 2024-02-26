@@ -30,6 +30,11 @@ We use the [Ash Framework](https://ash-hq.org).
 - `mix ash_postgres.drop` to drop the database
 - `mix ash_postgres.reset` to drop, create and migrate the database
 
+### Database Seeds
+
+You want to include the default flags:
+`mix run priv/repo/flag_seeds.exs`
+
 ## Local Phoenix Server
 
 To start your Phoenix server:
