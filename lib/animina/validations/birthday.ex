@@ -15,23 +15,19 @@ defmodule Animina.Validations.Birthday do
 
   @impl true
   def validate(changeset, opts) do
-    birthday = Ash.Changeset.get_attribute(changeset, :birthday)
     today = Date.utc_today()
 
-    cond do
-      birthday == nil ->
-        :ok
+    case Ash.Changeset.get_attribute(changeset, :birthday) do
+      %Date{} = birthday ->
+        case Date.compare(
+               Date.from_erl!({birthday.year + 18, birthday.month, birthday.day}),
+               today
+             ) do
+          :gt -> {:error, field: opts[:attribute], message: "must be at least 18 years old"}
+          _ -> :ok
+        end
 
-      today.year - birthday.year < 18 ->
-        {:error, field: opts[:attribute], message: "must be at least 18 years old"}
-
-      Date.compare(
-        Date.new!(today.year, birthday.month, birthday.day),
-        Date.new!(today.year, today.month, today.day)
-      ) == :gt ->
-        {:error, field: opts[:attribute], message: "must be at least 18 years old"}
-
-      true ->
+      _ ->
         :ok
     end
   end
