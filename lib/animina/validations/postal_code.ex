@@ -16,16 +16,12 @@ defmodule Animina.Validations.PostalCode do
   @impl true
   def validate(changeset, opts) do
     zip_code = Ash.Changeset.get_attribute(changeset, :zip_code)
+    valid_zip_code? = String.match?(zip_code || "", ~r/^[0-9]{5}$/)
 
-    cond do
-      zip_code == nil ->
-        :ok
-
-      String.length(zip_code) < 5 || String.length(zip_code) > 5 ->
-        {:error, field: opts[:attribute], message: "length must be 5"}
-
-      true ->
-        :ok
+    case {zip_code, valid_zip_code?} do
+      {nil, _} -> :ok
+      {_, true} -> :ok
+      _ -> {:error, field: opts[:attribute], message: "must have 5 digits"}
     end
   end
 end
