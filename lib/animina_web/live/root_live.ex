@@ -261,12 +261,12 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, gettext("Diverse / non-binary"),
-                id: "gender_divers",
+              <%= radio_button(f, :gender, "diverse",
+                id: "gender_diverse",
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, "Diverse / non-binary",
-                for: "gender_divers",
+              <%= label(f, :gender, gettext("Diverse"),
+                for: "gender_diverse",
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>

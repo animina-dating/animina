@@ -77,6 +77,7 @@ defmodule Animina.Accounts.User do
     validate {Validations.MinMaxHeight, attribute: :maximum_partner_height}
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.PostalCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
   end
 
   identities do

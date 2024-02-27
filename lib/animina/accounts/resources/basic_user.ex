@@ -68,6 +68,7 @@ defmodule Animina.Accounts.BasicUser do
   validations do
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.PostalCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
   end
 
   identities do
