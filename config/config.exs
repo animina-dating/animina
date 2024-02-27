@@ -32,7 +32,7 @@ config :animina, AniminaWeb.Endpoint,
 config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
 config :animina,
-  ash_apis: [Animina.Accounts]
+  ash_apis: [Animina.Accounts, Animina.Traits]
 
 # Configure esbuild (the version is required)
 config :esbuild,
@@ -66,6 +66,25 @@ config :phoenix, :json_library, Jason
 
 # I18n
 config :animina, AniminaWeb.Gettext, default_locale: "en", locales: ~w(en de)
+
+config :spark, :formatter,
+  remove_parens?: true,
+  "Ash.Resource": [
+    type: Ash.Resource,
+    section_order: [
+      :attributes,
+      :relationships,
+      :validations,
+      :identities,
+      :aggregates,
+      :calculations,
+      :preparations,
+      :policies,
+      :authentication,
+      :token,
+      :postgres
+    ]
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

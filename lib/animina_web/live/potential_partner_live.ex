@@ -81,7 +81,10 @@ defmodule AniminaWeb.PotentialPartnerLive do
           User.by_id!(socket.assigns.current_user.id)
           |> User.update!(form_params)
 
-        {:noreply, assign(socket, current_user: current_user)}
+        {:noreply,
+         socket
+         |> assign(current_user: current_user)
+         |> push_navigate(to: "/registration/profile-photo")}
 
       _ ->
         {:noreply, assign(socket, update_form: form)}
