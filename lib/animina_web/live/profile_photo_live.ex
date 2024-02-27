@@ -26,7 +26,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
       |> assign(uploading: false)
       |> assign(preview_url: nil)
       |> assign(page_title: gettext("Upload a profile photo"))
-      |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "audio_file")
+      |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
       |> assign(
         :form,
         Form.for_create(Photo, :create, api: Accounts, as: "photo")

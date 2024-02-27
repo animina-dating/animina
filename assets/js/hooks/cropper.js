@@ -19,7 +19,9 @@ export default ImageCropper = {
         image.onload = (event) => {
           this.crop(event.target, this.maxWidth, this.maxHeight).toBlob(
             async (blob) => {
-              const newFile = new File([blob], file.name, { type: file.type });
+              const newFile = new File([blob], file.name, {
+                type: "image/png",
+              });
 
               const dataTransfer = new DataTransfer();
               dataTransfer.items.add(newFile);
