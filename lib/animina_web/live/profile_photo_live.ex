@@ -39,6 +39,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
   def handle_event("validate_photo", %{"photo" => params}, socket) do
     form = Form.validate(socket.assigns.form, params, errors: true)
 
+    IO.inspect(Form.errors(form))
+
     {:noreply, socket |> assign(:form, form)}
   end
 
@@ -185,11 +187,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <%= submit(gettext("Upload"),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.valid? == false,
+                unless(@uploads.photos.entries == [],
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.valid? == false
+            disabled: @uploads.photos.entries == []
           ) %>
         </div>
       </.form>
