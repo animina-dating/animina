@@ -111,7 +111,8 @@ defmodule AniminaWeb.RootLive do
               type: :text,
               required: true,
               autofocus: true,
-              autocomplete: :username
+              autocomplete: :username,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:username], :username)}>
@@ -164,7 +165,8 @@ defmodule AniminaWeb.RootLive do
               value: f[:email].value,
               type: :email,
               required: true,
-              autocomplete: :email
+              autocomplete: :email,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:email], :email)}>
@@ -189,7 +191,8 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: gettext("Password"),
               value: f[:password].value,
-              autocomplete: "new-password"
+              autocomplete: "new-password",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:password], :password)}>
@@ -214,7 +217,8 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: "",
               value: f[:birthday].value,
-              autocomplete: "bday"
+              autocomplete: "bday",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
@@ -283,7 +287,8 @@ defmodule AniminaWeb.RootLive do
               # Postal code of the Bundestag :-)
               placeholder: "11011",
               value: f[:zip_code].value,
-              autocomplete: "postal-code"
+              autocomplete: "postal-code",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
@@ -311,7 +316,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "160",
-              value: f[:height].value
+              value: f[:height].value,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:height], :height)}>
@@ -338,7 +344,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "0151-12345678",
-              value: f[:mobile_phone].value
+              value: f[:mobile_phone].value,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
