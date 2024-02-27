@@ -61,7 +61,8 @@ defmodule Animina.MixProject do
       {:ash_authentication_phoenix, "~>  1.9"},
       {:ash_postgres, "~> 1.4"},
       {:size, "~> 0.1.0"},
-      {:ash_state_machine, "~> 0.2.2"}
+      {:ash_state_machine, "~> 0.2.2"},
+      {:ex_phone_number, "~> 0.4.3"}
     ]
   end
 

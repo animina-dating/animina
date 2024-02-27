@@ -50,7 +50,7 @@ defmodule Animina.Accounts.User do
                   min: 50
     end
 
-    attribute :mobile_phone, :string, allow_nil?: false
+    attribute :mobile_phone, :ash_phone_number, allow_nil?: false
 
     # attribute :body_type, :integer, allow_nil?: false
     # attribute :subscribed_at, :utc_datetime, allow_nil?: false
