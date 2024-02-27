@@ -94,7 +94,7 @@ defmodule AniminaWeb.RootLive do
         phx-submit="submit"
       >
         <div>
-          <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_username" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Username") %>
           </label>
           <div phx-feedback-for={f[:username].name} class="mt-2">
@@ -125,7 +125,7 @@ defmodule AniminaWeb.RootLive do
         <%= text_input(f, :language, type: :hidden, value: @language) %>
 
         <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_name" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Name") %>
           </label>
           <div phx-feedback-for={f[:name].name} class="mt-2">
@@ -150,7 +150,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("E-mail address") %>
           </label>
           <div phx-feedback-for={f[:email].name} class="mt-2">
@@ -176,7 +176,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Password") %>
             </label>
           </div>
@@ -201,7 +201,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
             </label>
           </div>
@@ -232,7 +232,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_gender" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Gender") %>
             </label>
           </div>
@@ -275,7 +275,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Postal code") %>
             </label>
           </div>
@@ -301,7 +301,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="height" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_height" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Height") %>
               <span class="text-gray-400">
                 (<%= gettext("in cm") %>)
@@ -329,7 +329,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Mobile phone number") %>
               <span class="text-gray-400">
                 (<%= gettext("to receive a verification code") %>)
