@@ -46,7 +46,7 @@ work under the same license and rights.
 
 [Why we don't explicitly require a CLA for contributions to Animina](https://ben.balter.com/2018/01/02/why-you-probably-shouldnt-add-a-cla-to-your-open-source-project/)
 
-### mix format ...
+### Misc Tooling
 
 Make sure to always run the following commands before any commit:
 
