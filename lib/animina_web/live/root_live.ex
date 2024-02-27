@@ -8,13 +8,8 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
-    if connected?(socket) do
-      :timer.send_interval(2500, self(), :tick)
-    end
-
     socket =
       socket
-      |> assign(points: 0)
       |> assign(language: language)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
@@ -23,13 +18,6 @@ defmodule AniminaWeb.RootLive do
       |> assign(today: Date.utc_today())
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_info(:tick, socket) do
-    socket = assign(socket, points: socket.assigns.points + 1)
-
-    {:noreply, socket}
   end
 
   @impl true
