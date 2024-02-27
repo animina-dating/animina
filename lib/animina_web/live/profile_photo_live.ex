@@ -39,8 +39,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
   def handle_event("validate_photo", %{"photo" => params}, socket) do
     form = Form.validate(socket.assigns.form, params, errors: true)
 
-    IO.inspect(Form.errors(form))
-
     {:noreply, socket |> assign(:form, form)}
   end
 
