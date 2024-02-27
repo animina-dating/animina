@@ -16,12 +16,9 @@ defmodule Animina.AshPhoneNumber do
 
     case ecto_type_cast do
       {:ok, raw_phone_number} ->
-        case ExPhoneNumber.parse(value, "DE") do
+        case ExPhoneNumber.parse(raw_phone_number, "DE") do
           {:ok, phone_number} ->
-            case ExPhoneNumber.is_possible_number?(phone_number) do
-              true -> {:ok, ExPhoneNumber.format(phone_number, :e164)}
-              _ -> ecto_type_cast
-            end
+            {:ok, ExPhoneNumber.format(phone_number, :e164)}
 
           _ ->
             ecto_type_cast
