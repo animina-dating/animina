@@ -15,7 +15,6 @@ defmodule AniminaWeb.RootLive do
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
-      |> assign(today: Date.utc_today())
 
     {:ok, socket}
   end
@@ -214,13 +213,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "",
-              value:
-                [
-                  (@today.year - 20) |> Integer.to_string() |> String.pad_leading(4, "0"),
-                  @today.month |> Integer.to_string() |> String.pad_leading(2, "0"),
-                  @today.day |> Integer.to_string() |> String.pad_leading(2, "0")
-                ]
-                |> Enum.join("-"),
+              value: f[:birthday].value,
               autocomplete: "bday"
             ) %>
 
