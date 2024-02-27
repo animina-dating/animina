@@ -34,6 +34,8 @@ config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 config :animina,
   ash_apis: [Animina.Accounts, Animina.Traits]
 
+config :ash, :custom_types, ash_phone_number: Animina.AshPhoneNumber
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
