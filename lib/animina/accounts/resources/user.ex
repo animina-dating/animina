@@ -58,7 +58,12 @@ defmodule Animina.Accounts.User do
 
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
-    attribute :minimum_partner_age, :integer, allow_nil?: true
+
+    attribute :minimum_partner_age, :integer do
+      allow_nil? true
+      constraints min: 18
+    end
+
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
     attribute :search_range, :integer, allow_nil?: true
@@ -71,10 +76,6 @@ defmodule Animina.Accounts.User do
   end
 
   validations do
-    validate {Validations.MinMaxAge, attribute: :maximum_partner_age}
-    validate {Validations.MinMaxAge, attribute: :minimum_partner_age}
-    validate {Validations.MinMaxHeight, attribute: :minimum_partner_height}
-    validate {Validations.MinMaxHeight, attribute: :maximum_partner_height}
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.PostalCode, attribute: :zip_code}
     validate {Validations.Gender, attribute: :gender}
