@@ -57,7 +57,7 @@ config :animina, AniminaWeb.Endpoint,
 config :animina, AniminaWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/animina_web/(controllers|live|components)/.*(ex|heex)$"
     ]
