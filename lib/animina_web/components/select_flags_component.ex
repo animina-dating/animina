@@ -1,4 +1,7 @@
 defmodule AniminaWeb.SelectFlagsComponent do
+  @moduledoc """
+  This component renders flags which a user can click on.
+  """
   use AniminaWeb, :live_component
 
   @impl true
