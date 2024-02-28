@@ -123,7 +123,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
         <div
           :if={Enum.count(@uploads.photos.entries) == 0}
           id={"photo-#{@uploads.photos.ref}"}
-          phx-hook="ImageCropper"
           phx-click={JS.dispatch("click", to: "##{@uploads.photos.ref}", bubbles: false)}
           phx-drop-target={@uploads.photos.ref}
           for={@uploads.photos.ref}

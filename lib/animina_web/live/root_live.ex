@@ -110,7 +110,8 @@ defmodule AniminaWeb.RootLive do
               value: f[:username].value,
               type: :text,
               required: true,
-              autocomplete: :username
+              autocomplete: :username,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:username], :username)}>
@@ -163,7 +164,8 @@ defmodule AniminaWeb.RootLive do
               value: f[:email].value,
               type: :email,
               required: true,
-              autocomplete: :email
+              autocomplete: :email,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:email], :email)}>
@@ -188,6 +190,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: gettext("Password"),
               value: f[:password].value,
+              "phx-debounce": "300",
               autocomplete: "new-password"
             ) %>
 
@@ -213,6 +216,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: "",
               value: f[:birthday].value,
+              "phx-debounce": "300",
               autocomplete: "bday"
             ) %>
 
@@ -228,50 +232,50 @@ defmodule AniminaWeb.RootLive do
               <%= gettext("Gender") %>
             </label>
           </div>
-          <div class="mt-2">
+          <div class="mt-2" phx-no-format>
             
             <%
-              item_code = "male"                            # formerly "m"
-              item_title = gettext("male")
+              item_code = "male"                  # formerly "m"
+              item_title = gettext("Male")
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
-                id: "input-gender_" <> item_code,
+                id: "gender_" <> item_code,
                 checked: true,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
               <%= label(f, :gender, item_title,
-                for: "input-gender_" <> item_code,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
             
             <%
-              item_code = "female"                          # formerly "f"
-              item_title = gettext("female")
+              item_code = "female"                # formerly "f"
+              item_title = gettext("Female")
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
-                id: "input-gender_" <> item_code,
+                id: "gender_" <> item_code,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
               <%= label(f, :gender, item_title,
-                for: "input-gender_" <> item_code,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
             
             <%
-              item_code = "diverse"                         # formerly "x"
-              item_title = gettext("diverse / non-binary")
+              item_code = "diverse"               # formerly "x"
+              item_title = gettext("Diverse")
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
-                id: "input-gender_" <> item_code,
+                id: "gender_" <> item_code,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
               <%= label(f, :gender, item_title,
-                for: "input-gender_" <> item_code,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
@@ -298,6 +302,7 @@ defmodule AniminaWeb.RootLive do
               value: f[:zip_code].value,
               pattern: "[0-9]{5}",
               inputmode: "numeric",
+              "phx-debounce": "300",
               autocomplete: "postal-code"
             ) %>
 
@@ -327,6 +332,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: "160",
               pattern: "[1-9][0-9]{2}",
               inputmode: "numeric",
+              "phx-debounce": "300",
               value: f[:height].value
             ) %>
 
@@ -356,6 +362,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: "0151-12345678",
               pattern: "[0-9+ \-]*",
               inputmode: "numeric",
+              "phx-debounce": "300",
               value: f[:mobile_phone].value
             ) %>
 
