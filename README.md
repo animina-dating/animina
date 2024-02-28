@@ -1,6 +1,6 @@
 # Animina Dating Platform
 
-Animina is a web based dating platfrom. It is initially targeted at the
+Animina is a web based dating platform. It is initially targeted at the
 German market. In case you have a question do not hesitate to contact
 Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
@@ -30,6 +30,11 @@ We use the [Ash Framework](https://ash-hq.org).
 - `mix ash_postgres.drop` to drop the database
 - `mix ash_postgres.reset` to drop, create and migrate the database
 
+### Database Seeds
+
+You want to include the default flags:
+`mix run priv/repo/flag_seeds.exs`
+
 ## Local Phoenix Server
 
 To start your Phoenix server:
@@ -55,19 +60,4 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Submiting Code
 
-Please create a Pull-Request if you want to submit code to the project.
-Make sure to run the following commands before any commit:
-
-- `mix format`
-- `mix credo`
-- `mix dialyzer`
-- `mix test`
-
-The same commands will be run by the GitHub CI and will stop any
-Pull-Request if an error occurs.
-
-### Git Hooks
-
-Run the `./setup-hooks.sh` script to install the git hooks. If
-you don't use those hooks: Please have a look into the script to see
-what we expect befor commiting code to the repo.
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.

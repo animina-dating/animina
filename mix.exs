@@ -41,7 +41,7 @@ defmodule Animina.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.20.1"},
+      {:phoenix_live_view, "~> 0.20.9"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.2"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
@@ -59,7 +59,10 @@ defmodule Animina.MixProject do
       {:ash, "~> 2.18"},
       {:ash_authentication, "~> 3.12"},
       {:ash_authentication_phoenix, "~>  1.9"},
-      {:ash_postgres, "~> 1.4"}
+      {:ash_postgres, "~> 1.4"},
+      {:size, "~> 0.1.0"},
+      {:ash_state_machine, "~> 0.2.2"},
+      {:ex_phone_number, "~> 0.4.3"}
     ]
   end
 

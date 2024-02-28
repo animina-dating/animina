@@ -41,14 +41,7 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :gender, :string do
-      allow_nil? false
-      
-      constraints(
-        match: ~r/\A [mfx] \z/x,
-        allow_empty?: false,
-      )
-    end
+    attribute :gender, :string, allow_nil?: false
 
     attribute :height, :integer do
       allow_nil? false
@@ -57,14 +50,20 @@ defmodule Animina.Accounts.User do
                   min: 50
     end
 
-    attribute :mobile_phone, :string, allow_nil?: false
+    attribute :mobile_phone, :ash_phone_number, allow_nil?: false
+
     # attribute :body_type, :integer, allow_nil?: false
     # attribute :subscribed_at, :utc_datetime, allow_nil?: false
     # attribute :terms_conds_id, :uuid, allow_nil?: true
 
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
-    attribute :minimum_partner_age, :integer, allow_nil?: true
+
+    attribute :minimum_partner_age, :integer do
+      allow_nil? true
+      constraints min: 18
+    end
+
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
     attribute :search_range, :integer, allow_nil?: true
@@ -73,6 +72,38 @@ defmodule Animina.Accounts.User do
 
   relationships do
     has_many :credits, Accounts.Credit
+    has_many :photos, Accounts.Photo
+  end
+
+  validations do
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.PostalCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
+    validate {Validations.PhoneNumber, attribute: :mobile_phone}
+  end
+
+  identities do
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
+  end
+
+  actions do
+    defaults [:create, :read, :update]
+  end
+
+  code_interface do
+    define_for Accounts
+    define :read
+    define :create
+    define :update
+    define :by_username, get_by: [:username], action: :read
+    define :by_id, get_by: [:id], action: :read
+    define :by_email, get_by: [:email], action: :read
+  end
+
+  aggregates do
+    sum :credit_points, :credits, :points, default: 0
   end
 
   calculations do
@@ -80,21 +111,8 @@ defmodule Animina.Accounts.User do
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
-  aggregates do
-    sum :credit_points, :credits, :points, default: 0
-  end
-
   preparations do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
-  end
-
-  validations do
-    validate {Validations.MinMaxAge, attribute: :maximum_partner_age}
-    validate {Validations.MinMaxAge, attribute: :minimum_partner_age}
-    validate {Validations.MinMaxHeight, attribute: :minimum_partner_height}
-    validate {Validations.MinMaxHeight, attribute: :maximum_partner_height}
-    validate {Validations.Birthday, attribute: :birthday}
-    validate {Validations.PostalCode, attribute: :zip_code}
   end
 
   authentication do
@@ -130,26 +148,6 @@ defmodule Animina.Accounts.User do
   postgres do
     table "users"
     repo Animina.Repo
-  end
-
-  identities do
-    identity :unique_email, [:email], eager_check_with: Accounts
-    identity :unique_username, [:username], eager_check_with: Accounts
-    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
-  end
-
-  actions do
-    defaults [:create, :read, :update]
-  end
-
-  code_interface do
-    define_for Accounts
-    define :read
-    define :create
-    define :update
-    define :by_username, get_by: [:username], action: :read
-    define :by_id, get_by: [:id], action: :read
-    define :by_email, get_by: [:email], action: :read
   end
 
   # TODO: Uncomment this if you want to use policies

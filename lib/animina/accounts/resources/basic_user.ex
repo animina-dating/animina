@@ -42,14 +42,7 @@ defmodule Animina.Accounts.BasicUser do
                   allow_empty?: false
     end
 
-    attribute :gender, :string do
-      allow_nil? false
-      
-      constraints(
-        match: ~r/\A [mfx] \z/x,
-        allow_empty?: false,
-      )
-    end
+    attribute :gender, :string, allow_nil?: false
 
     attribute :height, :integer do
       allow_nil? false
@@ -58,7 +51,7 @@ defmodule Animina.Accounts.BasicUser do
                   min: 50
     end
 
-    attribute :mobile_phone, :string, allow_nil?: false
+    attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
   end
 
@@ -66,6 +59,38 @@ defmodule Animina.Accounts.BasicUser do
     has_many :credits, Accounts.Credit do
       destination_attribute :user_id
     end
+
+    has_many :photos, Accounts.Photo do
+      destination_attribute :user_id
+    end
+  end
+
+  validations do
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.PostalCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
+    validate {Validations.PhoneNumber, attribute: :mobile_phone}
+  end
+
+  identities do
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
+  end
+
+  actions do
+    defaults [:create, :read]
+  end
+
+  code_interface do
+    define_for Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+  end
+
+  aggregates do
+    sum :credit_points, :credits, :points
   end
 
   calculations do
@@ -73,17 +98,8 @@ defmodule Animina.Accounts.BasicUser do
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
-  aggregates do
-    sum :credit_points, :credits, :points
-  end
-
   preparations do
     prepare build(load: [:gravatar_hash, :age, :credit_points])
-  end
-
-  validations do
-    validate {Validations.Birthday, attribute: :birthday}
-    validate {Validations.PostalCode, attribute: :zip_code}
   end
 
   authentication do
@@ -119,22 +135,5 @@ defmodule Animina.Accounts.BasicUser do
   postgres do
     table "users"
     repo Animina.Repo
-  end
-
-  identities do
-    identity :unique_email, [:email], eager_check_with: Accounts
-    identity :unique_username, [:username], eager_check_with: Accounts
-    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
-  end
-
-  actions do
-    defaults [:create, :read]
-  end
-
-  code_interface do
-    define_for Accounts
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
   end
 end

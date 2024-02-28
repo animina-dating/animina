@@ -8,27 +8,15 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
-    if connected?(socket) do
-      :timer.send_interval(2500, self(), :tick)
-    end
-
     socket =
       socket
-      |> assign(points: 0)
       |> assign(language: language)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
-      |> assign(today: Date.utc_today())
+      |> assign(:errors, [])
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_info(:tick, socket) do
-    socket = assign(socket, points: socket.assigns.points + 1)
-
-    {:noreply, socket}
   end
 
   @impl true
@@ -224,13 +212,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "",
-              value:
-                [
-                  (@today.year - 20) |> Integer.to_string() |> String.pad_leading(4, "0"),
-                  @today.month |> Integer.to_string() |> String.pad_leading(2, "0"),
-                  @today.day |> Integer.to_string() |> String.pad_leading(2, "0")
-                ]
-                |> Enum.join("-"),
+              value: f[:birthday].value,
               autocomplete: "bday"
             ) %>
 
@@ -248,29 +230,52 @@ defmodule AniminaWeb.RootLive do
           </div>
           <div class="mt-2">
             
-            <%= for { item_code, item_title } <- [
-              { "m", gettext("Male")},
-              { "f", gettext("Female")},
-              { "x", gettext("Diverse / non-binary")},
-            ] do %>
-              
-              <div class="flex items-center mb-4">
-                <%= radio_button(f, :gender, item_code,
-                  id: "input-gender_" <> item_code,
-                  class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                ) %>
-                <%= label(f, :gender, item_title,
-                  for: "input-gender_" <> item_code,
-                  class: "ml-3 block text-sm font-medium text-gray-700"
-                ) %>
-              </div>
-              
-            <% end %>
+            <%
+              item_code = "male"                            # formerly "m"
+              item_title = gettext("male")
+            %>
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, item_code,
+                id: "input-gender_" <> item_code,
+                checked: true,
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              ) %>
+              <%= label(f, :gender, item_title,
+                for: "input-gender_" <> item_code,
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
+            </div>
             
-            <.error :for={msg <- get_field_errors(f[:gender], :gender)}>
-              <%= gettext("Gender") <> " " <> msg %>
-            </.error>
-
+            <%
+              item_code = "female"                          # formerly "f"
+              item_title = gettext("female")
+            %>
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, item_code,
+                id: "input-gender_" <> item_code,
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              ) %>
+              <%= label(f, :gender, item_title,
+                for: "input-gender_" <> item_code,
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
+            </div>
+            
+            <%
+              item_code = "diverse"                         # formerly "x"
+              item_title = gettext("diverse / non-binary")
+            %>
+            <div class="flex items-center mb-4">
+              <%= radio_button(f, :gender, item_code,
+                id: "input-gender_" <> item_code,
+                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              ) %>
+              <%= label(f, :gender, item_title,
+                for: "input-gender_" <> item_code,
+                class: "ml-3 block text-sm font-medium text-gray-700"
+              ) %>
+            </div>
+            
           </div>
         </div>
 
@@ -367,7 +372,8 @@ defmodule AniminaWeb.RootLive do
                 unless(@form.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
-                )
+                ),
+            disabled: @form.valid? == false
           ) %>
         </div>
       </.form>
