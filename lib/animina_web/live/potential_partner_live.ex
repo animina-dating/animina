@@ -95,15 +95,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-10 px-5">
-      <.notification_box
-        title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={
-          gettext(
-            "You can always check your points in the top navigation bar. You just received 100 for the registration."
-          )
-        }
-      />
-
       <h2 class="font-bold text-xl"><%= gettext("Criteria for your new partner") %></h2>
       <.form
         :let={f}
@@ -114,7 +105,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
       >
         <div>
           <label
-            for="minimum_partner_height"
+            for="form_minimum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
             <%= gettext("Minimum height") %>
@@ -141,7 +132,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
         <div>
           <label
-            for="maximum_partner_height"
+            for="form_maximum_partner_height"
             class="block text-sm font-medium leading-6 text-gray-900"
           >
             <%= gettext("Maximum height") %>
@@ -166,7 +157,10 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <label for="minimum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="form_minimum_partner_age"
+            class="block text-sm font-medium leading-6 text-gray-900"
+          >
             <%= gettext("Minimum age") %>
           </label>
           <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
@@ -187,7 +181,10 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <label for="maximum_partner_age" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="form_maximum_partner_age"
+            class="block text-sm font-medium leading-6 text-gray-900"
+          >
             <%= gettext("Maximum age") %>
           </label>
           <div phx-feedback-for={f[:maximum_partner_age].name} class="mt-2">
@@ -208,7 +205,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <label for="search_range" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="form_search_range" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Search range") %>
           </label>
           <div phx-feedback-for={f[:search_range].name} class="mt-2">

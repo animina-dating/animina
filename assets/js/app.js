@@ -21,13 +21,8 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
-import ImageCropper from "./hooks/cropper";
 
 let Hooks = {};
-
-Hooks = {
-  ImageCropper,
-};
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

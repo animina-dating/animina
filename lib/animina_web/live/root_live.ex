@@ -8,28 +8,15 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
-    if connected?(socket) do
-      :timer.send_interval(2500, self(), :tick)
-    end
-
     socket =
       socket
-      |> assign(points: 0)
       |> assign(language: language)
       |> assign(current_user: Registration.get_current_basic_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
-      |> assign(today: Date.utc_today())
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_info(:tick, socket) do
-    socket = assign(socket, points: socket.assigns.points + 1)
-
-    {:noreply, socket}
   end
 
   @impl true
@@ -106,7 +93,7 @@ defmodule AniminaWeb.RootLive do
         phx-submit="submit"
       >
         <div>
-          <label for="username" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_username" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Username") %>
           </label>
           <div phx-feedback-for={f[:username].name} class="mt-2">
@@ -124,7 +111,8 @@ defmodule AniminaWeb.RootLive do
               type: :text,
               required: true,
               autofocus: true,
-              autocomplete: :username
+              autocomplete: :username,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:username], :username)}>
@@ -137,7 +125,7 @@ defmodule AniminaWeb.RootLive do
         <%= text_input(f, :language, type: :hidden, value: @language) %>
 
         <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_name" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Name") %>
           </label>
           <div phx-feedback-for={f[:name].name} class="mt-2">
@@ -162,7 +150,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <label for="email" class="block text-sm font-medium leading-6 text-gray-900">
+          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("E-mail address") %>
           </label>
           <div phx-feedback-for={f[:email].name} class="mt-2">
@@ -177,7 +165,8 @@ defmodule AniminaWeb.RootLive do
               value: f[:email].value,
               type: :email,
               required: true,
-              autocomplete: :email
+              autocomplete: :email,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:email], :email)}>
@@ -188,7 +177,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Password") %>
             </label>
           </div>
@@ -202,7 +191,8 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: gettext("Password"),
               value: f[:password].value,
-              autocomplete: "new-password"
+              autocomplete: "new-password",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:password], :password)}>
@@ -213,7 +203,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="birthday" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_birthday" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Date of birth") %>
             </label>
           </div>
@@ -226,14 +216,9 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "",
-              value:
-                [
-                  (@today.year - 20) |> Integer.to_string() |> String.pad_leading(4, "0"),
-                  @today.month |> Integer.to_string() |> String.pad_leading(2, "0"),
-                  @today.day |> Integer.to_string() |> String.pad_leading(2, "0")
-                ]
-                |> Enum.join("-"),
-              autocomplete: "bday"
+              value: f[:birthday].value,
+              autocomplete: "bday",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
@@ -244,7 +229,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="gender" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_gender" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Gender") %>
             </label>
           </div>
@@ -273,12 +258,12 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, gettext("Diverse / non-binary"),
-                id: "gender_divers",
+              <%= radio_button(f, :gender, "diverse",
+                id: "gender_diverse",
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, "Diverse / non-binary",
-                for: "gender_divers",
+              <%= label(f, :gender, gettext("Diverse"),
+                for: "gender_diverse",
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
@@ -287,7 +272,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="zip_code" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Postal code") %>
             </label>
           </div>
@@ -302,7 +287,8 @@ defmodule AniminaWeb.RootLive do
               # Postal code of the Bundestag :-)
               placeholder: "11011",
               value: f[:zip_code].value,
-              autocomplete: "postal-code"
+              autocomplete: "postal-code",
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
@@ -313,7 +299,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="height" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_height" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Height") %>
               <span class="text-gray-400">
                 (<%= gettext("in cm") %>)
@@ -330,7 +316,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "160",
-              value: f[:height].value
+              value: f[:height].value,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:height], :height)}>
@@ -341,7 +328,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
+            <label for="user_mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Mobile phone number") %>
               <span class="text-gray-400">
                 (<%= gettext("to receive a verification code") %>)
@@ -357,7 +344,8 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "0151-12345678",
-              value: f[:mobile_phone].value
+              value: f[:mobile_phone].value,
+              "phx-debounce": "300"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
