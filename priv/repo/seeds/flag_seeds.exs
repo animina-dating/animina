@@ -1,6 +1,6 @@
 # Script for populating the database with flag data. You can run it as:
 #
-#     mix run priv/repo/flag_seeds.exs
+#     mix run priv/repo/seeds/flag_seeds.exs
 
 [
   %{
