@@ -33,7 +33,7 @@ We use the [Ash Framework](https://ash-hq.org).
 ### Database Seeds
 
 You want to include the default flags:
-`mix run priv/repo/flag_seeds.exs`
+`mix run priv/repo/seeds/flag_seeds.exs`
 
 ## Local Phoenix Server
 
