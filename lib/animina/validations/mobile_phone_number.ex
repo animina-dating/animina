@@ -43,5 +43,4 @@ defmodule Animina.Validations.MobilePhoneNumber do
         end
     end
   end
-
 end
