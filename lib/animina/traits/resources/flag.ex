@@ -9,6 +9,7 @@ defmodule Animina.Traits.Flag do
   attributes do
     uuid_primary_key :id
     attribute :name, :ci_string, allow_nil?: false
+    attribute :emoji, :string, allow_nil?: true
   end
 
   relationships do
