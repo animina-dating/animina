@@ -1,12 +1,8 @@
 name: Elixir CI
 
-#on:
-#  push:
-#    branches: [main]
-#  pull_request:
-#    branches: [main]
-
-on: push
+on:
+  push:
+  pull_request:
 
 jobs:
   build:
