@@ -1,0 +1,98 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": true,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "flag_id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "user_interests_user_id_fkey",
+        "table": "users",
+        "destination_attribute": "id",
+        "on_delete": "delete",
+        "primary_key?": true,
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    }
+  ],
+  "table": "user_interests",
+  "hash": "4398E4A8E2C9DC08BCE8AF2E878344CA87CF7DFDCCFE07555BF92C9E031FE983",
+  "identities": [],
+  "repo": "Elixir.Animina.Repo",
+  "custom_indexes": [
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        "user_id"
+      ],
+      "unique": false,
+      "concurrently": false,
+      "using": null,
+      "all_tenants?": false
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        "flag_id"
+      ],
+      "unique": false,
+      "concurrently": false,
+      "using": null,
+      "all_tenants?": false
+    }
+  ],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}
