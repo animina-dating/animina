@@ -5,6 +5,8 @@ defmodule Animina.Validations.ZipCode do
   This is a module for validating the zip code length
   """
 
+  alias Animina.GeoData.City
+
   @impl true
   def init(opts) do
     case is_atom(opts[:attribute]) do
@@ -34,7 +36,7 @@ defmodule Animina.Validations.ZipCode do
   end
 
   defp valid_german_zip_code?(zip_code) do
-    case Animina.GeoData.City.by_zip_code(zip_code) do
+    case City.by_zip_code(zip_code) do
       {:ok, _} -> true
       _ -> false
     end
