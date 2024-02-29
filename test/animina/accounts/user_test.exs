@@ -14,7 +14,7 @@ defmodule Animina.Accounts.UserTest do
           birthday: "1950-01-01",
           height: 180,
           zip_code: "12345",
-          gender: "male",
+          gender: "m",
           mobile_phone: "0151-12345678",
           language: "en"
           # subscribed_at: 1706659201,

@@ -33,6 +33,7 @@ services:
       - "./mix.lock:/application/mix.lock:ro"
       - "./priv:/application/priv:ro"
       - "./priv/static/assets:/application/priv/static/assets:rw"  # note: read-write!
+      - "./priv/static/uploads:/application/priv/static/uploads:rw"  # note: read-write!
       - "./priv/repo/migrations:/application/priv/repo/migrations:rw"  # note: read-write!
       - "./priv/resource_snapshots/repo:/application/priv/resource_snapshots/repo:rw"  # note: read-write!
       - "./test:/application/test:ro"
