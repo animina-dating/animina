@@ -75,49 +75,19 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         category_name: %{de: "Substanzgebrauch", en: "Substance Use"},
         items: [
           %{
-            name: %{de: "Seltenes Rauchen", en: "Rare Smoking"},
-            hashtags: %{de: "#SeltenesRauchen", en: "#RareSmoking"},
+            name: %{de: "Rauchen", en: "Smoking"},
+            hashtags: %{de: "#Rauchen", en: "#Smoking"},
             emoji: "🚬"
           },
           %{
-            name: %{de: "Gelegentliches Rauchen", en: "Occasional Smoking"},
-            hashtags: %{de: "#GelegentlichesRauchen", en: "#OccasionalSmoking"},
-            emoji: "🚬🚬"
-          },
-          %{
-            name: %{de: "Regelmäßiges Rauchen", en: "Regular Smoking"},
-            hashtags: %{de: "#RegelmäßigesRauchen", en: "#RegularSmoking"},
-            emoji: "🚬🚬🚬"
-          },
-          %{
-            name: %{de: "Selten Alkohol", en: "Rare Alcohol Consumption"},
-            hashtags: %{de: "#SeltenAlkohol", en: "#RareDrinking"},
+            name: %{de: "Alkohol", en: "Alcohol"},
+            hashtags: %{de: "#Alkohol", en: "#Alcohol"},
             emoji: "🍻"
           },
           %{
-            name: %{de: "Gelegentlicher Alkoholkonsum", en: "Occasional Alcohol Consumption"},
-            hashtags: %{de: "#GelegentlicherAlkohol", en: "#OccasionalDrinking"},
-            emoji: "🍻🍻"
-          },
-          %{
-            name: %{de: "Regelmäßiger Alkoholkonsum", en: "Regular Alcohol Consumption"},
-            hashtags: %{de: "#RegelmäßigerAlkohol", en: "#RegularDrinking"},
-            emoji: "🍻🍻🍻"
-          },
-          %{
-            name: %{de: "Selten Marihuana", en: "Rare Marijuana Use"},
-            hashtags: %{de: "#SeltenMarihuana", en: "#RareMarijuana"},
+            name: %{de: "Marihuana", en: "Marijuana"},
+            hashtags: %{de: "#Marihuana", en: "#Marijuana"},
             emoji: "🌿"
-          },
-          %{
-            name: %{de: "Gelegentlicher Marihuanakonsum", en: "Occasional Marijuana Use"},
-            hashtags: %{de: "#GelegentlichMarihuana", en: "#OccasionalMarijuana"},
-            emoji: "🌿🌿"
-          },
-          %{
-            name: %{de: "Regelmäßiger Marihuanakonsum", en: "Regular Marijuana Use"},
-            hashtags: %{de: "#RegelmäßigMarihuana", en: "#RegularMarijuana"},
-            emoji: "🌿🌿🌿"
           }
         ]
       },
@@ -939,8 +909,8 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             emoji: "🗺️"
           },
           %{
-            name: %{de: "Kinder- und Familienfilme", en: "Children and Family Movies"},
-            hashtags: %{de: "#KinderUndFamilienfilme", en: "#ChildrenAndFamilyMoviesMovies"},
+            name: %{de: "Kinder- und Familien", en: "Children and Family"},
+            hashtags: %{de: "#KinderUndFamilien", en: "#ChildrenAndFamily"},
             emoji: "👨‍👩‍👧‍👦"
           },
           %{
@@ -1036,12 +1006,12 @@ defmodule Animina.Repo.Migrations.SeedFlag do
           },
           %{
             name: %{
-              de: "Kinder- und Jugendliteratur",
-              en: "Children's and Young Adult Literature"
+              de: "Kinder- und Jugend",
+              en: "Children's and Young Adult"
             },
             hashtags: %{
-              de: "#KinderUndJugendliteraturLit",
-              en: "#ChildrensAndYoungAdultLiteratureLit"
+              de: "#KinderUndJugendLit",
+              en: "#ChildrensAndYoungAdultLit"
             },
             emoji: "👧👦"
           },
@@ -1071,8 +1041,8 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             emoji: "🍂"
           },
           %{
-            name: %{de: "Abenteuerliteratur", en: "Adventure Literature"},
-            hashtags: %{de: "#AbenteuerliteraturLit", en: "#AdventureLiteratureLit"},
+            name: %{de: "Abenteuer", en: "Adventure"},
+            hashtags: %{de: "#AbenteuerLit", en: "#AdventureLit"},
             emoji: "🌍"
           },
           %{
@@ -1384,32 +1354,32 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         items: [
           %{
             name: %{
-              de: "Christlich Demokratische Union Deutschlands",
-              en: "Christian Democratic Union of Germany"
+              de: "CDU",
+              en: "CDU"
             },
             hashtags: %{de: "#CDU", en: "#CDU"},
             emoji: nil
           },
           %{
             name: %{
-              de: "Sozialdemokratische Partei Deutschlands",
-              en: "Social Democratic Party of Germany"
+              de: "SPD",
+              en: "SPD"
             },
             hashtags: %{de: "#SPD", en: "#SPD"},
             emoji: nil
           },
           %{
-            name: %{de: "Bündnis 90/Die Grünen", en: "Alliance 90/The Greens"},
+            name: %{de: "Die Grünen", en: "Die Grünen"},
             hashtags: %{de: "#Grüne", en: "#Greens"},
             emoji: nil
           },
           %{
-            name: %{de: "Freie Demokratische Partei", en: "Free Democratic Party"},
+            name: %{de: "FDP", en: "FDP"},
             hashtags: %{de: "#FDP", en: "#FDP"},
             emoji: nil
           },
           %{
-            name: %{de: "Alternative für Deutschland", en: "Alternative for Germany"},
+            name: %{de: "AfD", en: "AfD"},
             hashtags: %{de: "#AfD", en: "#AfD"},
             emoji: nil
           },
@@ -1420,15 +1390,10 @@ defmodule Animina.Repo.Migrations.SeedFlag do
           },
           %{
             name: %{
-              de: "Christlich-Soziale Union in Bayern",
-              en: "Christian Social Union in Bavaria"
+              de: "CSU",
+              en: "CSU"
             },
             hashtags: %{de: "#CSU", en: "#CSU"},
-            emoji: nil
-          },
-          %{
-            name: %{de: "Freie Wähler", en: "Free Voters"},
-            hashtags: %{de: "#FreieWähler", en: "#FreeVoters"},
             emoji: nil
           }
         ]
