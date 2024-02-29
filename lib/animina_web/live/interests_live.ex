@@ -3,7 +3,7 @@ defmodule AniminaWeb.InterestsLive do
 
   alias Animina.Traits
   alias AniminaWeb.Registration
-  alias AniminaWeb.SelectFlagsComponen
+  alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
 
   @impl true
