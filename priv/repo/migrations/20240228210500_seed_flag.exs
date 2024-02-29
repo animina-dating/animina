@@ -1,4 +1,4 @@
-defmodule Animina.Repo.Migrations.SeedEmoji do
+defmodule Animina.Repo.Migrations.SeedFlag do
   @moduledoc """
   Seed flags.
   """
