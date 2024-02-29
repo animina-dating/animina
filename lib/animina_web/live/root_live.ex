@@ -112,7 +112,7 @@ defmodule AniminaWeb.RootLive do
               required: true,
               autofocus: true,
               autocomplete: :username,
-              "phx-debounce": "300"
+              "phx-debounce": "200"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:username], :username)}>
@@ -166,7 +166,7 @@ defmodule AniminaWeb.RootLive do
               type: :email,
               required: true,
               autocomplete: :email,
-              "phx-debounce": "300"
+              "phx-debounce": "200"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:email], :email)}>
@@ -192,7 +192,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: gettext("Password"),
               value: f[:password].value,
               autocomplete: "new-password",
-              "phx-debounce": "300"
+              "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:password], :password)}>
@@ -218,7 +218,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: "",
               value: f[:birthday].value,
               autocomplete: "bday",
-              "phx-debounce": "300"
+              "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
@@ -288,7 +288,7 @@ defmodule AniminaWeb.RootLive do
               placeholder: "11011",
               value: f[:zip_code].value,
               autocomplete: "postal-code",
-              "phx-debounce": "300"
+              "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
@@ -317,7 +317,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: "160",
               value: f[:height].value,
-              "phx-debounce": "300"
+              "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:height], :height)}>
@@ -345,7 +345,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: "0151-12345678",
               value: f[:mobile_phone].value,
-              "phx-debounce": "300"
+              "phx-debounce": "100"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
