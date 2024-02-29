@@ -71,131 +71,53 @@ defmodule Animina.Repo.Migrations.SeedFlag do
   defp flags do
     [
       %{
-        category_id: "sports",
-        category_name: %{de: "Sport", en: "Sports"},
+        category_id: "substance_use",
+        category_name: %{de: "Substanzgebrauch", en: "Substance Use"},
         items: [
           %{
-            name: %{de: "Fußball", en: "Soccer"},
-            hashtags: %{de: "#Fußball", en: "#Soccer"},
-            emoji: "⚽"
+            name: %{de: "Seltenes Rauchen", en: "Rare Smoking"},
+            hashtags: %{de: "#SeltenesRauchen", en: "#RareSmoking"},
+            emoji: "🚬"
           },
           %{
-            name: %{de: "Turnen", en: "Gymnastics"},
-            hashtags: %{de: "#Turnen", en: "#Gymnastics"},
-            emoji: "🤸"
+            name: %{de: "Gelegentliches Rauchen", en: "Occasional Smoking"},
+            hashtags: %{de: "#GelegentlichesRauchen", en: "#OccasionalSmoking"},
+            emoji: "🚬🚬"
           },
           %{
-            name: %{de: "Tennis", en: "Tennis"},
-            hashtags: %{de: "#Tennis", en: "#Tennis"},
-            emoji: "🎾"
+            name: %{de: "Regelmäßiges Rauchen", en: "Regular Smoking"},
+            hashtags: %{de: "#RegelmäßigesRauchen", en: "#RegularSmoking"},
+            emoji: "🚬🚬🚬"
           },
           %{
-            name: %{de: "Wandern", en: "Hiking"},
-            hashtags: %{de: "#Wandern", en: "#Hiking"},
-            emoji: "🥾"
+            name: %{de: "Selten Alkohol", en: "Rare Alcohol Consumption"},
+            hashtags: %{de: "#SeltenAlkohol", en: "#RareDrinking"},
+            emoji: "🍻"
           },
           %{
-            name: %{de: "Klettern", en: "Climbing"},
-            hashtags: %{de: "#Klettern", en: "#Climbing"},
-            emoji: "🧗"
-          },
-          %{name: %{de: "Ski", en: "Skiing"}, hashtags: %{de: "#Ski", en: "#Skiing"}, emoji: "⛷"},
-          %{
-            name: %{de: "Leichtathletik", en: "Athletics"},
-            hashtags: %{de: "#Leichtathletik", en: "#Athletics"},
-            emoji: "🏃"
+            name: %{de: "Gelegentlicher Alkoholkonsum", en: "Occasional Alcohol Consumption"},
+            hashtags: %{de: "#GelegentlicherAlkohol", en: "#OccasionalDrinking"},
+            emoji: "🍻🍻"
           },
           %{
-            name: %{de: "Handball", en: "Handball"},
-            hashtags: %{de: "#Handball", en: "#Handball"},
-            emoji: "🤾"
+            name: %{de: "Regelmäßiger Alkoholkonsum", en: "Regular Alcohol Consumption"},
+            hashtags: %{de: "#RegelmäßigerAlkohol", en: "#RegularDrinking"},
+            emoji: "🍻🍻🍻"
           },
           %{
-            name: %{de: "Reiten", en: "Horse Riding"},
-            hashtags: %{de: "#Reiten", en: "#HorseRiding"},
-            emoji: "🏇"
-          },
-          %{name: %{de: "Golf", en: "Golf"}, hashtags: %{de: "#Golf", en: "#Golf"}, emoji: "⛳"},
-          %{
-            name: %{de: "Schwimmen", en: "Swimming"},
-            hashtags: %{de: "#Schwimmen", en: "#Swimming"},
-            emoji: "🏊"
+            name: %{de: "Selten Marihuana", en: "Rare Marijuana Use"},
+            hashtags: %{de: "#SeltenMarihuana", en: "#RareMarijuana"},
+            emoji: "🌿"
           },
           %{
-            name: %{de: "Volleyball", en: "Volleyball"},
-            hashtags: %{de: "#Volleyball", en: "#Volleyball"},
-            emoji: "🏐"
+            name: %{de: "Gelegentlicher Marihuanakonsum", en: "Occasional Marijuana Use"},
+            hashtags: %{de: "#GelegentlichMarihuana", en: "#OccasionalMarijuana"},
+            emoji: "🌿🌿"
           },
           %{
-            name: %{de: "Basketball", en: "Basketball"},
-            hashtags: %{de: "#Basketball", en: "#Basketball"},
-            emoji: "🏀"
-          },
-          %{
-            name: %{de: "Eishockey", en: "Ice Hockey"},
-            hashtags: %{de: "#Eishockey", en: "#IceHockey"},
-            emoji: "🏒"
-          },
-          %{
-            name: %{de: "Tischtennis", en: "Table Tennis"},
-            hashtags: %{de: "#Tischtennis", en: "#TableTennis"},
-            emoji: "🏓"
-          },
-          %{
-            name: %{de: "Badminton", en: "Badminton"},
-            hashtags: %{de: "#Badminton", en: "#Badminton"},
-            emoji: "🏸"
-          },
-          %{name: %{de: "Yoga", en: "Yoga"}, hashtags: %{de: "#Yoga", en: "#Yoga"}, emoji: "🧘"},
-          %{
-            name: %{de: "Tauchen", en: "Diving"},
-            hashtags: %{de: "#Tauchen", en: "#Diving"},
-            emoji: "🤿"
-          },
-          %{
-            name: %{de: "Surfen", en: "Surfing"},
-            hashtags: %{de: "#Surfen", en: "#Surfing"},
-            emoji: "🏄"
-          },
-          %{
-            name: %{de: "Segeln", en: "Sailing"},
-            hashtags: %{de: "#Segeln", en: "#Sailing"},
-            emoji: "⛵"
-          },
-          %{
-            name: %{de: "Rudern", en: "Rowing"},
-            hashtags: %{de: "#Rudern", en: "#Rowing"},
-            emoji: "🚣"
-          },
-          %{
-            name: %{de: "Boxen", en: "Boxing"},
-            hashtags: %{de: "#Boxen", en: "#Boxing"},
-            emoji: "🥊"
-          },
-          %{
-            name: %{de: "Radfahren", en: "Cycling"},
-            hashtags: %{de: "#Radfahren", en: "#Cycling"},
-            emoji: "🚴"
-          },
-          %{
-            name: %{de: "Joggen", en: "Jogging"},
-            hashtags: %{de: "#Joggen", en: "#Jogging"},
-            emoji: "🏃‍♂️"
-          },
-          %{
-            name: %{de: "Pilates", en: "Pilates"},
-            hashtags: %{de: "#Pilates", en: "#Pilates"},
-            emoji: "🤸‍♀️"
-          },
-          %{
-            name: %{de: "Fitnessstudio", en: "Gym"},
-            hashtags: %{de: "#Fitnessstudio", en: "#Gym"},
-            emoji: "🏋️"
-          },
-          %{
-            name: %{de: "Kampfsport", en: "Martial Arts"},
-            hashtags: %{de: "#Kampfsport", en: "#MartialArts"},
-            emoji: "🥋"
+            name: %{de: "Regelmäßiger Marihuanakonsum", en: "Regular Marijuana Use"},
+            hashtags: %{de: "#RegelmäßigMarihuana", en: "#RegularMarijuana"},
+            emoji: "🌿🌿🌿"
           }
         ]
       },
@@ -302,196 +224,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Soziales Bewusstsein", en: "Social Awareness"},
             hashtags: %{de: "#SozialesBewusstsein", en: "#SocialAwareness"},
             emoji: "🌐"
-          }
-        ]
-      },
-      %{
-        category_id: "travels",
-        category_name: %{de: "Reisen", en: "Travels"},
-        items: [
-          %{
-            name: %{de: "Strandurlaub", en: "Beach Vacation"},
-            hashtags: %{de: "#Strandurlaub", en: "#BeachVacation"},
-            emoji: "🏖️"
-          },
-          %{
-            name: %{de: "Städtereisen", en: "City Trips"},
-            hashtags: %{de: "#Städtereisen", en: "#CityTrips"},
-            emoji: "🏙️"
-          },
-          %{
-            name: %{de: "Wanderurlaub", en: "Hiking Vacation"},
-            hashtags: %{de: "#Wanderurlaub", en: "#HikingVacation"},
-            emoji: "🥾"
-          },
-          %{
-            name: %{de: "Skiurlaub", en: "Ski Vacation"},
-            hashtags: %{de: "#Skiurlaub", en: "#SkiVacation"},
-            emoji: "⛷️"
-          },
-          %{
-            name: %{de: "Kreuzfahrten", en: "Cruises"},
-            hashtags: %{de: "#Kreuzfahrten", en: "#Cruises"},
-            emoji: "🚢"
-          },
-          %{
-            name: %{de: "Fahrradtouren", en: "Bike Tours"},
-            hashtags: %{de: "#Fahrradtouren", en: "#BikeTours"},
-            emoji: "🚴"
-          },
-          %{
-            name: %{de: "Wellness", en: "Wellness"},
-            hashtags: %{de: "#Wellness", en: "#Wellness"},
-            emoji: "🧘‍♀️"
-          },
-          %{
-            name: %{de: "Aktiv und Sporturlaub", en: "Active and Sports Vacation"},
-            hashtags: %{de: "#AktivUndSporturlaub", en: "#ActiveAndSportsVacation"},
-            emoji: "🏋️‍♂️"
-          },
-          %{
-            name: %{de: "Campingurlaub", en: "Camping Vacation"},
-            hashtags: %{de: "#Campingurlaub", en: "#CampingVacation"},
-            emoji: "🏕️"
-          },
-          %{
-            name: %{de: "Kulturreisen", en: "Cultural Trips"},
-            hashtags: %{de: "#Kulturreisen", en: "#CulturalTrips"},
-            emoji: "🕌"
-          },
-          %{
-            name: %{de: "Wintersport", en: "Winter Sports"},
-            hashtags: %{de: "#Wintersport", en: "#WinterSports"},
-            emoji: "🏂"
-          }
-        ]
-      },
-      %{
-        category_id: "favorite_destinations",
-        category_name: %{de: "Lieblingsziele", en: "Favorite Destinations"},
-        items: [
-          %{
-            name: %{de: "Spanien", en: "Spain"},
-            hashtags: %{de: "#Spanien", en: "#Spain"},
-            emoji: "🇪🇸"
-          },
-          %{
-            name: %{de: "Italien", en: "Italy"},
-            hashtags: %{de: "#Italien", en: "#Italy"},
-            emoji: "🇮🇹"
-          },
-          %{
-            name: %{de: "Türkei", en: "Turkey"},
-            hashtags: %{de: "#Türkei", en: "#Turkey"},
-            emoji: "🇹🇷"
-          },
-          %{
-            name: %{de: "Österreich", en: "Austria"},
-            hashtags: %{de: "#Österreich", en: "#Austria"},
-            emoji: "🇦🇹"
-          },
-          %{
-            name: %{de: "Griechenland", en: "Greece"},
-            hashtags: %{de: "#Griechenland", en: "#Greece"},
-            emoji: "🇬🇷"
-          },
-          %{
-            name: %{de: "Frankreich", en: "France"},
-            hashtags: %{de: "#Frankreich", en: "#France"},
-            emoji: "🇫🇷"
-          },
-          %{
-            name: %{de: "Kroatien", en: "Croatia"},
-            hashtags: %{de: "#Kroatien", en: "#Croatia"},
-            emoji: "🇭🇷"
-          },
-          %{
-            name: %{de: "Deutschland", en: "Germany"},
-            hashtags: %{de: "#Deutschland", en: "#Germany"},
-            emoji: "🇩🇪"
-          },
-          %{
-            name: %{de: "Thailand", en: "Thailand"},
-            hashtags: %{de: "#Thailand", en: "#Thailand"},
-            emoji: "🇹🇭"
-          },
-          %{name: %{de: "USA", en: "USA"}, hashtags: %{de: "#USA", en: "#USA"}, emoji: "🇺🇸"},
-          %{
-            name: %{de: "Portugal", en: "Portugal"},
-            hashtags: %{de: "#Portugal", en: "#Portugal"},
-            emoji: "🇵🇹"
-          },
-          %{
-            name: %{de: "Schweiz", en: "Switzerland"},
-            hashtags: %{de: "#Schweiz", en: "#Switzerland"},
-            emoji: "🇨🇭"
-          },
-          %{
-            name: %{de: "Niederlande", en: "Netherlands"},
-            hashtags: %{de: "#Niederlande", en: "#Netherlands"},
-            emoji: "🇳🇱"
-          },
-          %{
-            name: %{de: "Ägypten", en: "Egypt"},
-            hashtags: %{de: "#Ägypten", en: "#Egypt"},
-            emoji: "🇪🇬"
-          },
-          %{
-            name: %{de: "Kanarische Inseln", en: "Canary Islands"},
-            hashtags: %{de: "#KanarischeInseln", en: "#CanaryIslands"},
-            emoji: "🌴"
-          },
-          %{
-            name: %{de: "Mallorca", en: "Mallorca"},
-            hashtags: %{de: "#Mallorca", en: "#Mallorca"},
-            emoji: "🏝️"
-          },
-          %{name: %{de: "Bali", en: "Bali"}, hashtags: %{de: "#Bali", en: "#Bali"}, emoji: "🌺"},
-          %{
-            name: %{de: "Norwegen", en: "Norway"},
-            hashtags: %{de: "#Norwegen", en: "#Norway"},
-            emoji: "🇳🇴"
-          },
-          %{
-            name: %{de: "Kanada", en: "Canada"},
-            hashtags: %{de: "#Kanada", en: "#Canada"},
-            emoji: "🇨🇦"
-          },
-          %{
-            name: %{de: "Großbritannien", en: "United Kingdom"},
-            hashtags: %{de: "#Großbritannien", en: "#UnitedKingdom"},
-            emoji: "🇬🇧"
-          },
-          %{
-            name: %{de: "Europa", en: "Europe"},
-            hashtags: %{de: "#Europa", en: "#Europe"},
-            emoji: "🇪🇺"
-          },
-          %{name: %{de: "Asien", en: "Asia"}, hashtags: %{de: "#Asien", en: "#Asia"}, emoji: "🌏"},
-          %{
-            name: %{de: "Afrika", en: "Africa"},
-            hashtags: %{de: "#Afrika", en: "#Africa"},
-            emoji: "🌍"
-          },
-          %{
-            name: %{de: "Nordamerika", en: "North America"},
-            hashtags: %{de: "#Nordamerika", en: "#NorthAmerica"},
-            emoji: "🌎"
-          },
-          %{
-            name: %{de: "Südamerika", en: "South America"},
-            hashtags: %{de: "#Südamerika", en: "#SouthAmerica"},
-            emoji: "🌎"
-          },
-          %{
-            name: %{de: "Australien", en: "Australia"},
-            hashtags: %{de: "#Australien", en: "#Australia"},
-            emoji: "🇦🇺"
-          },
-          %{
-            name: %{de: "Antarktis", en: "Antarctica"},
-            hashtags: %{de: "#Antarktis", en: "#Antarctica"},
-            emoji: "❄️"
           }
         ]
       },
@@ -726,6 +458,325 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Sekt", en: "Sparkling Wine"},
             hashtags: %{de: "#Sekt", en: "#SparklingWine"},
             emoji: "🍾"
+          }
+        ]
+      },
+      %{
+        category_id: "sports",
+        category_name: %{de: "Sport", en: "Sports"},
+        items: [
+          %{
+            name: %{de: "Fußball", en: "Soccer"},
+            hashtags: %{de: "#Fußball", en: "#Soccer"},
+            emoji: "⚽"
+          },
+          %{
+            name: %{de: "Turnen", en: "Gymnastics"},
+            hashtags: %{de: "#Turnen", en: "#Gymnastics"},
+            emoji: "🤸"
+          },
+          %{
+            name: %{de: "Tennis", en: "Tennis"},
+            hashtags: %{de: "#Tennis", en: "#Tennis"},
+            emoji: "🎾"
+          },
+          %{
+            name: %{de: "Wandern", en: "Hiking"},
+            hashtags: %{de: "#Wandern", en: "#Hiking"},
+            emoji: "🥾"
+          },
+          %{
+            name: %{de: "Klettern", en: "Climbing"},
+            hashtags: %{de: "#Klettern", en: "#Climbing"},
+            emoji: "🧗"
+          },
+          %{name: %{de: "Ski", en: "Skiing"}, hashtags: %{de: "#Ski", en: "#Skiing"}, emoji: "⛷"},
+          %{
+            name: %{de: "Leichtathletik", en: "Athletics"},
+            hashtags: %{de: "#Leichtathletik", en: "#Athletics"},
+            emoji: "🏃"
+          },
+          %{
+            name: %{de: "Handball", en: "Handball"},
+            hashtags: %{de: "#Handball", en: "#Handball"},
+            emoji: "🤾"
+          },
+          %{
+            name: %{de: "Reiten", en: "Horse Riding"},
+            hashtags: %{de: "#Reiten", en: "#HorseRiding"},
+            emoji: "🏇"
+          },
+          %{name: %{de: "Golf", en: "Golf"}, hashtags: %{de: "#Golf", en: "#Golf"}, emoji: "⛳"},
+          %{
+            name: %{de: "Schwimmen", en: "Swimming"},
+            hashtags: %{de: "#Schwimmen", en: "#Swimming"},
+            emoji: "🏊"
+          },
+          %{
+            name: %{de: "Volleyball", en: "Volleyball"},
+            hashtags: %{de: "#Volleyball", en: "#Volleyball"},
+            emoji: "🏐"
+          },
+          %{
+            name: %{de: "Basketball", en: "Basketball"},
+            hashtags: %{de: "#Basketball", en: "#Basketball"},
+            emoji: "🏀"
+          },
+          %{
+            name: %{de: "Eishockey", en: "Ice Hockey"},
+            hashtags: %{de: "#Eishockey", en: "#IceHockey"},
+            emoji: "🏒"
+          },
+          %{
+            name: %{de: "Tischtennis", en: "Table Tennis"},
+            hashtags: %{de: "#Tischtennis", en: "#TableTennis"},
+            emoji: "🏓"
+          },
+          %{
+            name: %{de: "Badminton", en: "Badminton"},
+            hashtags: %{de: "#Badminton", en: "#Badminton"},
+            emoji: "🏸"
+          },
+          %{name: %{de: "Yoga", en: "Yoga"}, hashtags: %{de: "#Yoga", en: "#Yoga"}, emoji: "🧘"},
+          %{
+            name: %{de: "Tauchen", en: "Diving"},
+            hashtags: %{de: "#Tauchen", en: "#Diving"},
+            emoji: "🤿"
+          },
+          %{
+            name: %{de: "Surfen", en: "Surfing"},
+            hashtags: %{de: "#Surfen", en: "#Surfing"},
+            emoji: "🏄"
+          },
+          %{
+            name: %{de: "Segeln", en: "Sailing"},
+            hashtags: %{de: "#Segeln", en: "#Sailing"},
+            emoji: "⛵"
+          },
+          %{
+            name: %{de: "Rudern", en: "Rowing"},
+            hashtags: %{de: "#Rudern", en: "#Rowing"},
+            emoji: "🚣"
+          },
+          %{
+            name: %{de: "Boxen", en: "Boxing"},
+            hashtags: %{de: "#Boxen", en: "#Boxing"},
+            emoji: "🥊"
+          },
+          %{
+            name: %{de: "Radfahren", en: "Cycling"},
+            hashtags: %{de: "#Radfahren", en: "#Cycling"},
+            emoji: "🚴"
+          },
+          %{
+            name: %{de: "Joggen", en: "Jogging"},
+            hashtags: %{de: "#Joggen", en: "#Jogging"},
+            emoji: "🏃‍♂️"
+          },
+          %{
+            name: %{de: "Pilates", en: "Pilates"},
+            hashtags: %{de: "#Pilates", en: "#Pilates"},
+            emoji: "🤸‍♀️"
+          },
+          %{
+            name: %{de: "Fitnessstudio", en: "Gym"},
+            hashtags: %{de: "#Fitnessstudio", en: "#Gym"},
+            emoji: "🏋️"
+          },
+          %{
+            name: %{de: "Kampfsport", en: "Martial Arts"},
+            hashtags: %{de: "#Kampfsport", en: "#MartialArts"},
+            emoji: "🥋"
+          }
+        ]
+      },
+      %{
+        category_id: "travels",
+        category_name: %{de: "Reisen", en: "Travels"},
+        items: [
+          %{
+            name: %{de: "Strandurlaub", en: "Beach Vacation"},
+            hashtags: %{de: "#Strandurlaub", en: "#BeachVacation"},
+            emoji: "🏖️"
+          },
+          %{
+            name: %{de: "Städtereisen", en: "City Trips"},
+            hashtags: %{de: "#Städtereisen", en: "#CityTrips"},
+            emoji: "🏙️"
+          },
+          %{
+            name: %{de: "Wanderurlaub", en: "Hiking Vacation"},
+            hashtags: %{de: "#Wanderurlaub", en: "#HikingVacation"},
+            emoji: "🥾"
+          },
+          %{
+            name: %{de: "Skiurlaub", en: "Ski Vacation"},
+            hashtags: %{de: "#Skiurlaub", en: "#SkiVacation"},
+            emoji: "⛷️"
+          },
+          %{
+            name: %{de: "Kreuzfahrten", en: "Cruises"},
+            hashtags: %{de: "#Kreuzfahrten", en: "#Cruises"},
+            emoji: "🚢"
+          },
+          %{
+            name: %{de: "Fahrradtouren", en: "Bike Tours"},
+            hashtags: %{de: "#Fahrradtouren", en: "#BikeTours"},
+            emoji: "🚴"
+          },
+          %{
+            name: %{de: "Wellness", en: "Wellness"},
+            hashtags: %{de: "#Wellness", en: "#Wellness"},
+            emoji: "🧘‍♀️"
+          },
+          %{
+            name: %{de: "Aktiv und Sporturlaub", en: "Active and Sports Vacation"},
+            hashtags: %{de: "#AktivUndSporturlaub", en: "#ActiveAndSportsVacation"},
+            emoji: "🏋️‍♂️"
+          },
+          %{
+            name: %{de: "Campingurlaub", en: "Camping Vacation"},
+            hashtags: %{de: "#Campingurlaub", en: "#CampingVacation"},
+            emoji: "🏕️"
+          },
+          %{
+            name: %{de: "Kulturreisen", en: "Cultural Trips"},
+            hashtags: %{de: "#Kulturreisen", en: "#CulturalTrips"},
+            emoji: "🕌"
+          },
+          %{
+            name: %{de: "Wintersport", en: "Winter Sports"},
+            hashtags: %{de: "#Wintersport", en: "#WinterSports"},
+            emoji: "🏂"
+          }
+        ]
+      },
+      %{
+        category_id: "favorite_destinations",
+        category_name: %{de: "Lieblingsziele", en: "Favorite Destinations"},
+        items: [
+          %{
+            name: %{de: "Spanien", en: "Spain"},
+            hashtags: %{de: "#Spanien", en: "#Spain"},
+            emoji: "🇪🇸"
+          },
+          %{
+            name: %{de: "Italien", en: "Italy"},
+            hashtags: %{de: "#Italien", en: "#Italy"},
+            emoji: "🇮🇹"
+          },
+          %{
+            name: %{de: "Türkei", en: "Turkey"},
+            hashtags: %{de: "#Türkei", en: "#Turkey"},
+            emoji: "🇹🇷"
+          },
+          %{
+            name: %{de: "Österreich", en: "Austria"},
+            hashtags: %{de: "#Österreich", en: "#Austria"},
+            emoji: "🇦🇹"
+          },
+          %{
+            name: %{de: "Griechenland", en: "Greece"},
+            hashtags: %{de: "#Griechenland", en: "#Greece"},
+            emoji: "🇬🇷"
+          },
+          %{
+            name: %{de: "Frankreich", en: "France"},
+            hashtags: %{de: "#Frankreich", en: "#France"},
+            emoji: "🇫🇷"
+          },
+          %{
+            name: %{de: "Kroatien", en: "Croatia"},
+            hashtags: %{de: "#Kroatien", en: "#Croatia"},
+            emoji: "🇭🇷"
+          },
+          %{
+            name: %{de: "Deutschland", en: "Germany"},
+            hashtags: %{de: "#Deutschland", en: "#Germany"},
+            emoji: "🇩🇪"
+          },
+          %{
+            name: %{de: "Thailand", en: "Thailand"},
+            hashtags: %{de: "#Thailand", en: "#Thailand"},
+            emoji: "🇹🇭"
+          },
+          %{name: %{de: "USA", en: "USA"}, hashtags: %{de: "#USA", en: "#USA"}, emoji: "🇺🇸"},
+          %{
+            name: %{de: "Portugal", en: "Portugal"},
+            hashtags: %{de: "#Portugal", en: "#Portugal"},
+            emoji: "🇵🇹"
+          },
+          %{
+            name: %{de: "Schweiz", en: "Switzerland"},
+            hashtags: %{de: "#Schweiz", en: "#Switzerland"},
+            emoji: "🇨🇭"
+          },
+          %{
+            name: %{de: "Niederlande", en: "Netherlands"},
+            hashtags: %{de: "#Niederlande", en: "#Netherlands"},
+            emoji: "🇳🇱"
+          },
+          %{
+            name: %{de: "Ägypten", en: "Egypt"},
+            hashtags: %{de: "#Ägypten", en: "#Egypt"},
+            emoji: "🇪🇬"
+          },
+          %{
+            name: %{de: "Kanarische Inseln", en: "Canary Islands"},
+            hashtags: %{de: "#KanarischeInseln", en: "#CanaryIslands"},
+            emoji: "🌴"
+          },
+          %{
+            name: %{de: "Mallorca", en: "Mallorca"},
+            hashtags: %{de: "#Mallorca", en: "#Mallorca"},
+            emoji: "🏝️"
+          },
+          %{name: %{de: "Bali", en: "Bali"}, hashtags: %{de: "#Bali", en: "#Bali"}, emoji: "🌺"},
+          %{
+            name: %{de: "Norwegen", en: "Norway"},
+            hashtags: %{de: "#Norwegen", en: "#Norway"},
+            emoji: "🇳🇴"
+          },
+          %{
+            name: %{de: "Kanada", en: "Canada"},
+            hashtags: %{de: "#Kanada", en: "#Canada"},
+            emoji: "🇨🇦"
+          },
+          %{
+            name: %{de: "Großbritannien", en: "United Kingdom"},
+            hashtags: %{de: "#Großbritannien", en: "#UnitedKingdom"},
+            emoji: "🇬🇧"
+          },
+          %{
+            name: %{de: "Europa", en: "Europe"},
+            hashtags: %{de: "#Europa", en: "#Europe"},
+            emoji: "🇪🇺"
+          },
+          %{name: %{de: "Asien", en: "Asia"}, hashtags: %{de: "#Asien", en: "#Asia"}, emoji: "🌏"},
+          %{
+            name: %{de: "Afrika", en: "Africa"},
+            hashtags: %{de: "#Afrika", en: "#Africa"},
+            emoji: "🌍"
+          },
+          %{
+            name: %{de: "Nordamerika", en: "North America"},
+            hashtags: %{de: "#Nordamerika", en: "#NorthAmerica"},
+            emoji: "🌎"
+          },
+          %{
+            name: %{de: "Südamerika", en: "South America"},
+            hashtags: %{de: "#Südamerika", en: "#SouthAmerica"},
+            emoji: "🌎"
+          },
+          %{
+            name: %{de: "Australien", en: "Australia"},
+            hashtags: %{de: "#Australien", en: "#Australia"},
+            emoji: "🇦🇺"
+          },
+          %{
+            name: %{de: "Antarktis", en: "Antarctica"},
+            hashtags: %{de: "#Antarktis", en: "#Antarctica"},
+            emoji: "❄️"
           }
         ]
       },
