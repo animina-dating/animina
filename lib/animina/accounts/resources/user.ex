@@ -21,7 +21,7 @@ defmodule Animina.Accounts.User do
 
       constraints max_length: 15,
                   min_length: 2,
-                  match: ~r/^[A-Za-z_-]*$/,
+                  match: ~r/^[A-Za-z0-9._-]*$/,
                   trim?: true,
                   allow_empty?: false
     end
