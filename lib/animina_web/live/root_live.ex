@@ -285,7 +285,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Postal code") %>
+              <%= gettext("Zip code") %>
             </label>
           </div>
           <div phx-feedback-for={f[:zip_code].name} class="mt-2">
@@ -296,7 +296,7 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              # Postal code of the Bundestag :-)
+              # Easter egg (Bundestag)
               placeholder: "11011",
               value: f[:zip_code].value,
               inputmode: "numeric",
@@ -305,7 +305,7 @@ defmodule AniminaWeb.RootLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
-              <%= gettext("Postal code") <> " " <> msg %>
+              <%= gettext("Zip code") <> " " <> msg %>
             </.error>
           </div>
         </div>
