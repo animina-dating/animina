@@ -233,7 +233,7 @@ defmodule AniminaWeb.RootLive do
             </label>
           </div>
           <div class="mt-2" phx-no-format>
-            
+
             <%
               item_code = "male"                  # formerly "m"
               item_title = gettext("Male")
@@ -249,7 +249,7 @@ defmodule AniminaWeb.RootLive do
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
-            
+
             <%
               item_code = "female"                # formerly "f"
               item_title = gettext("Female")
@@ -264,7 +264,7 @@ defmodule AniminaWeb.RootLive do
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
-            
+
             <%
               item_code = "diverse"               # formerly "x"
               item_title = gettext("Diverse")
@@ -279,7 +279,6 @@ defmodule AniminaWeb.RootLive do
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
-            
           </div>
         </div>
 
@@ -300,7 +299,6 @@ defmodule AniminaWeb.RootLive do
               # Postal code of the Bundestag :-)
               placeholder: "11011",
               value: f[:zip_code].value,
-              #pattern: "[0-9]{5}",
               inputmode: "numeric",
               autocomplete: "postal-code",
               "phx-debounce": "blur"
@@ -330,7 +328,6 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "160",
-              #pattern: "[1-9][0-9]{2}",
               inputmode: "numeric",
               value: f[:height].value,
               "phx-debounce": "blur"
@@ -360,7 +357,6 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "0151-12345678",
-              #pattern: "[0-9+ \-]*",
               inputmode: "numeric",
               value: f[:mobile_phone].value,
               "phx-debounce": "100"
