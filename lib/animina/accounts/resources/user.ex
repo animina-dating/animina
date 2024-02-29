@@ -8,6 +8,7 @@ defmodule Animina.Accounts.User do
     extensions: [AshAuthentication]
 
   alias Animina.Accounts
+  alias Animina.Traits
   alias Animina.Validations
 
   attributes do
@@ -73,6 +74,10 @@ defmodule Animina.Accounts.User do
   relationships do
     has_many :credits, Accounts.Credit
     has_many :photos, Accounts.Photo
+
+    has_many :interests, Traits.UserInterests do
+      api Traits
+    end
   end
 
   validations do
