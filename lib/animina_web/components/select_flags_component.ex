@@ -88,7 +88,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
               )
             }
             class={
-              if(@can_select || (@can_select == false && Map.get(@selected_flags, flag.id) != nil ), do: "cursor-pointer ", else: "cursor-not-allowed ") <>
+              if(@can_select || (@can_select == false && Map.get(@selected_flags, flag.id) != nil), do: "cursor-pointer ", else: "cursor-not-allowed ") <>
               "rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
               <> if(Map.get(@selected_flags, flag.id) != nil, do: "hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600 text-white shadow-sm", else: "hover:bg-indigo-50  bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600 shadow-none")
             }

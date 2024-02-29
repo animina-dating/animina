@@ -38,7 +38,7 @@ defmodule Animina.Traits.UserInterests do
   end
 
   preparations do
-    prepare build(load: [:flag])
+    prepare build(load: [:flag, :user_id])
   end
 
   postgres do
@@ -53,6 +53,7 @@ defmodule Animina.Traits.UserInterests do
     custom_indexes do
       index [:user_id]
       index [:flag_id]
+      index [:flag_id, :user_id]
     end
   end
 end
