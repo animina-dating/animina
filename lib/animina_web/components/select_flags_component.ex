@@ -93,7 +93,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
               <> if(Map.get(@selected_flags, flag.id) != nil, do: "hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600 text-white shadow-sm", else: "hover:bg-indigo-50  bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600 shadow-none")
             }
           >
-            <%= get_translation(flag.flag_translations, @language) %>
+            <%= flag.emoji %> <%= get_translation(flag.flag_translations, @language) %>
           </div>
         </li>
       </ol>

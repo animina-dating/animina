@@ -122,7 +122,7 @@ defmodule AniminaWeb.InterestsLive do
     <div class="space-y-8 px-5">
       <.notification_box
         title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={gettext("To complete your profile choose topics you are interested in")}
+        message={gettext("Chose up to 20 flags which describe you the best.")}
       />
 
       <h2 class="font-bold text-xl"><%= gettext("Choose your interests") %></h2>
