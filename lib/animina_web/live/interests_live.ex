@@ -1,9 +1,9 @@
 defmodule AniminaWeb.InterestsLive do
   use AniminaWeb, :live_view
 
-  alias AniminaWeb.Registration
   alias Animina.Traits
   alias AniminaWeb.SelectFlagsComponent
+  alias AniminaWeb.Registration
   alias Phoenix.LiveView.AsyncResult
 
   @impl true
