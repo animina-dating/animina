@@ -92,18 +92,20 @@ defmodule AniminaWeb.InterestsLive do
         }
       end)
 
-    bulk_result = Traits.bulk_create(interests, Traits.UserInterests, :create)
+    bulk_result =
+      Traits.bulk_create(interests, Traits.UserInterests, :create, stop_on_error?: true)
 
     case bulk_result.status do
       :error ->
-        {:noreply, socket |> put_flash(:error, "Something went wrong adding your interests")}
+        {:noreply,
+         socket |> put_flash(:error, gettext("Something went wrong adding your interests"))}
 
       _ ->
         {:noreply,
          socket
          |> assign(selected: 0)
          |> assign(selected_flags: [])
-         |> put_flash(:info, "Your interests have been added succesfully")
+         |> put_flash(:info, gettext("Your interests have been added succesfully"))
          |> push_navigate(to: "/registration/interests")}
     end
   end
