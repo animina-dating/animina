@@ -75,7 +75,7 @@ defmodule Animina.Accounts.User do
     has_many :credits, Accounts.Credit
     has_many :photos, Accounts.Photo
 
-    has_many :interests, Traits.UserInterests do
+    has_many :flags, Traits.UserFlags do
       api Traits
     end
   end

@@ -1,4 +1,4 @@
-defmodule AniminaWeb.InterestsLive do
+defmodule AniminaWeb.FlagsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Traits
@@ -17,20 +17,51 @@ defmodule AniminaWeb.InterestsLive do
           user
       end
 
+    flags_config = Application.get_env(:animina, AniminaWeb.FlagsLive)
+
     socket =
       socket
       |> assign(current_user: current_user)
-      |> assign(max_selected: 20)
+      |> assign(max_selected: flags_config[:max_selected])
       |> assign(selected: 0)
       |> assign(active_tab: :home)
       |> assign(selected_flags: [])
       |> assign(language: language)
-      |> assign(page_title: gettext("Select your interests"))
+      |> assign(color: :white)
       |> assign(categories: AsyncResult.loading())
       |> stream(:categories, [])
       |> start_async(:fetch_categories, fn -> fetch_categories() end)
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp apply_action(socket, :white, _params) do
+    socket
+    |> assign(page_title: gettext("Select your white flags"))
+    |> assign(color: :white)
+    |> assign(navigate_to: "/registration/green-flags")
+    |> assign(title: gettext("Choose your white flags"))
+  end
+
+  defp apply_action(socket, :red, _params) do
+    socket
+    |> assign(page_title: gettext("Select your red flags"))
+    |> assign(color: :red)
+    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(title: gettext("Choose your red flags"))
+  end
+
+  defp apply_action(socket, :green, _params) do
+    socket
+    |> assign(page_title: gettext("Select your green flags"))
+    |> assign(color: :green)
+    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(title: gettext("Choose your green flags"))
   end
 
   @impl true
@@ -93,13 +124,14 @@ defmodule AniminaWeb.InterestsLive do
   end
 
   @impl true
-  def handle_event("add_interests", _params, socket) do
+  def handle_event("add_flags", _params, socket) do
     interests =
       Enum.with_index(socket.assigns.selected_flags, fn element, index -> {index, element} end)
       |> Enum.map(fn {index, flag_id} ->
         %{
           flag_id: flag_id,
           user_id: socket.assigns.current_user.id,
+          coloor: socket.assigns.color,
           position: index + 1
         }
       end)
@@ -109,16 +141,15 @@ defmodule AniminaWeb.InterestsLive do
 
     case bulk_result.status do
       :error ->
-        {:noreply,
-         socket |> put_flash(:error, gettext("Something went wrong adding your interests"))}
+        {:noreply, socket |> put_flash(:error, gettext("Something went wrong adding your flags"))}
 
       _ ->
         {:noreply,
          socket
          |> assign(selected: 0)
          |> assign(selected_flags: [])
-         |> put_flash(:info, gettext("Your interests have been added succesfully"))
-         |> push_navigate(to: "/registration/interests")}
+         |> put_flash(:info, gettext("Your flags have been added succesfully"))
+         |> push_navigate(to: socket.assigns.navigate_to)}
     end
   end
 
@@ -134,10 +165,10 @@ defmodule AniminaWeb.InterestsLive do
     <div class="space-y-8 px-5">
       <.notification_box
         title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={gettext("To complete your profile choose topics you are interested in")}
+        message={gettext("To complete your profile choose your flags")}
       />
 
-      <h2 class="font-bold text-xl"><%= gettext("Choose your interests") %></h2>
+      <h2 class="font-bold text-xl"><%= @title %></h2>
 
       <.async_result :let={_categories} assign={@categories}>
         <:loading><%= gettext("Loading interests...") %></:loading>
@@ -152,13 +183,14 @@ defmodule AniminaWeb.InterestsLive do
               language={@language}
               can_select={@selected < @max_selected}
               user_flags={@selected_flags}
+              color={@color}
             />
           </div>
         </div>
 
         <div class="pb-8">
           <button
-            phx-click="add_interests"
+            phx-click="add_flags"
             class={
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@selected == 0,
@@ -167,7 +199,7 @@ defmodule AniminaWeb.InterestsLive do
                 )}
             disabled={@selected == 0}
           >
-            <%= gettext("Add interests") %>
+            <%= gettext("Add flags") %>
           </button>
         </div>
       </.async_result>

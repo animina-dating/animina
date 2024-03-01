@@ -69,6 +69,8 @@ config :phoenix, :json_library, Jason
 # I18n
 config :animina, AniminaWeb.Gettext, default_locale: "en", locales: ~w(en de)
 
+config :animina, AniminaWeb.FlagsLive, max_selected: 20
+
 config :spark, :formatter,
   remove_parens?: true,
   "Ash.Resource": [

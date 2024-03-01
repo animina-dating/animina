@@ -25,7 +25,9 @@ defmodule AniminaWeb.Router do
     live "/", RootLive, :register
     live "/registration/potential-partner", PotentialPartnerLive, :index
     live "/registration/profile-photo", ProfilePhotoLive, :index
-    live "/registration/interests", InterestsLive, :index
+    live "/registration/white-flags", FlagsLive, :white
+    live "/registration/green-flags", FlagsLive, :green
+    live "/registration/red-flags", FlagsLive, :red
     # live "/register", AniminaWeb.AuthLive.Index, :register
     live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
 
