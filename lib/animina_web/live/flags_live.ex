@@ -46,7 +46,13 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(color: :white)
     |> assign(navigate_to: "/registration/green-flags")
     |> assign(title: gettext("Choose Your Own Flags"))
-    |> assign(info_text: gettext("We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important.", number_of_flags: @max_flags))
+    |> assign(
+      info_text:
+        gettext(
+          "We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important.",
+          number_of_flags: @max_flags
+        )
+    )
   end
 
   defp apply_action(socket, :red, _params) do
@@ -55,7 +61,13 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(color: :red)
     |> assign(navigate_to: "/registration/red-flags")
     |> assign(title: gettext("Choose Your Red Flags"))
-    |> assign(info_text: gettext("Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important.", number_of_flags: @max_flags))
+    |> assign(
+      info_text:
+        gettext(
+          "Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important.",
+          number_of_flags: @max_flags
+        )
+    )
   end
 
   defp apply_action(socket, :green, _params) do
@@ -63,8 +75,7 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
     |> assign(navigate_to: "/registration/red-flags")
-    |> assign(title: gettext("Choose Your Green Flags"))
-    |> assign(info_text: gettext("Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important.", number_of_flags: @max_flags))
+    |> assign(title: gettext("Choose your green flags"))
   end
 
   @impl true
@@ -165,13 +176,17 @@ defmodule AniminaWeb.FlagsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-4 px-5">
+    <div class="space-y-8 px-5">
+      <.notification_box
+        title={gettext("Hello %{name}!", name: @current_user.name)}
+        message={gettext("To complete your profile choose your flags")}
+      />
+
       <h2 class="font-bold text-xl"><%= @title %></h2>
-      <p><%= @info_text %></p>
 
       <.async_result :let={_categories} assign={@categories}>
-        <:loading><%= gettext("Loading flags...") %></:loading>
-        <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
+        <:loading><%= gettext("Loading interests...") %></:loading>
+        <:failed :let={_failure}><%= gettext("There was an error loading interests") %></:failed>
 
         <div id="stream_categories" phx-update="stream">
           <div :for={{dom_id, category} <- @streams.categories} id={"#{dom_id}"}>
@@ -198,7 +213,7 @@ defmodule AniminaWeb.FlagsLive do
                 )}
             disabled={@selected == 0}
           >
-            <%= gettext("Save these flags") %>
+            <%= gettext("Add flags") %>
           </button>
         </div>
       </.async_result>
