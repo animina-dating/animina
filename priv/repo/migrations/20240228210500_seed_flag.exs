@@ -71,6 +71,86 @@ defmodule Animina.Repo.Migrations.SeedFlag do
   defp flags do
     [
       %{
+        category_id: "relationship_type",
+        category_name: %{de: "Beziehungsart", en: "Type of Relationship"},
+        items: [
+          %{
+            name: %{de: "Ich weiß es nicht", en: "I don't know"},
+            hashtags: %{de: "#IchWeißEsNicht", en: "#IDontKnow"},
+            emoji: "🤷‍♂️"
+          },
+          %{
+            name: %{de: "Etwas kurzfristiges", en: "Something Short-Term"},
+            hashtags: %{de: "#Kurzfristig", en: "#ShortTerm"},
+            emoji: "⏳"
+          },
+          %{
+            name: %{de: "Etwas langfristiges", en: "Something Long-Term"},
+            hashtags: %{de: "#Langfristig", en: "#LongTerm"},
+            emoji: "⌛"
+          },
+          %{
+            name: %{de: "Etwas lockeres", en: "Something Casual"},
+            hashtags: %{de: "#Lockeres", en: "#Casual"},
+            emoji: "🍃"
+          },
+          %{
+            name: %{de: "Offen für alles", en: "Open to Anything"},
+            hashtags: %{de: "#OffenFürAlles", en: "#OpenToAnything"},
+            emoji: "🔓"
+          },
+          %{
+            name: %{de: "Freundschaft Plus", en: "Friends With Benefits"},
+            hashtags: %{de: "#FreundschaftPlus", en: "#FriendsWithBenefits"},
+            emoji: "👫💕"
+          },
+          %{
+            name: %{de: "Monogame Beziehung", en: "Monogamous Relationship"},
+            hashtags: %{de: "#Monogam", en: "#Monogamous"},
+            emoji: "💍"
+          },
+          %{
+            name: %{de: "Polyamore Beziehung", en: "Polyamorous Relationship"},
+            hashtags: %{de: "#Polyamor", en: "#Polyamorous"},
+            emoji: "❤️🔁"
+          },
+          %{
+            name: %{de: "Kein Interesse an Beziehungen", en: "No Interest in Relationships"},
+            hashtags: %{de: "#KeinInteresse", en: "#NoInterest"},
+            emoji: "🚫💔"
+          }
+        ]
+      },
+      %{
+        category_id: "family_planning",
+        category_name: %{de: "Familienplanung", en: "Family Planning"},
+        items: [
+          %{
+            name: %{
+              de: "Habe Kinder, möchte keine weiteren",
+              en: "Have Children, Want No More"
+            },
+            hashtags: %{de: "#HabeKinderKeineWeiteren", en: "#HaveChildrenNoMore"},
+            emoji: "👨‍👩‍👧‍👦❌"
+          },
+          %{
+            name: %{de: "Habe Kinder, offen für mehr", en: "Have Children, Open to More"},
+            hashtags: %{de: "#HabeKinderOffenFürMehr", en: "#HaveChildrenOpenToMore"},
+            emoji: "👨‍👩‍👧‍👦➕"
+          },
+          %{
+            name: %{de: "Keine Kinder, möchte welche", en: "No Children, Want Some"},
+            hashtags: %{de: "#KeineKinderMöchteWelche", en: "#NoChildrenWantSome"},
+            emoji: "❌👶➡️👪"
+          },
+          %{
+            name: %{de: "Möchte keine Kinder", en: "Do Not Want Children"},
+            hashtags: %{de: "#MöchteKeineKinder", en: "#DoNotWantChildren"},
+            emoji: "❌👶"
+          }
+        ]
+      },
+      %{
         category_id: "substance_use",
         category_name: %{de: "Substanzgebrauch", en: "Substance Use"},
         items: [
