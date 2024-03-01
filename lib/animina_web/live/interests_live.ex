@@ -105,7 +105,7 @@ defmodule AniminaWeb.InterestsLive do
       end)
 
     bulk_result =
-      Traits.bulk_create(interests, Traits.UserInterests, :create, stop_on_error?: true)
+      Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
 
     case bulk_result.status do
       :error ->
