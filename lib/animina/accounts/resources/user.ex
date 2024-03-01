@@ -63,6 +63,8 @@ defmodule Animina.Accounts.User do
 
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
+    attribute :partner_gender, :string, allow_nil?: true
+
     attribute :search_range, :integer, allow_nil?: true
     attribute :language, :string, allow_nil?: true
     attribute :legal_terms_accepted, :boolean, allow_nil?: false
@@ -81,6 +83,7 @@ defmodule Animina.Accounts.User do
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.ZipCode, attribute: :zip_code}
     validate {Validations.Gender, attribute: :gender}
+    validate {Validations.Gender, attribute: :partner_gender}
     validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
     validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
   end

@@ -15,14 +15,12 @@ defmodule Animina.Validations.Gender do
 
   @impl true
   def validate(changeset, opts) do
-    gender = Ash.Changeset.get_attribute(changeset, :gender)
-
-    case gender do
+    case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do
       nil -> :ok
       "male" -> :ok
       "female" -> :ok
       "diverse" -> :ok
-      _ -> {:error, field: opts[:attribute], message: "must be a valide gender"}
+      _ -> {:error, field: opts[:attribute], message: "must be male, female or diverse"}
     end
   end
 end
