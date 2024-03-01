@@ -2,10 +2,11 @@ defmodule Animina.Accounts.UserTest do
   use Animina.DataCase, async: true
 
   alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
 
   describe "gravatar_hash calculation" do
     test "calculates the gravatar_hash correctly" do
-      assert {:error, _} = Animina.Accounts.User.by_email("bob@example.com")
+      assert {:error, _} = User.by_email("bob@example.com")
 
       Ash.Seed.seed!(%BasicUser{
         email: "bob@example.com",
@@ -21,7 +22,7 @@ defmodule Animina.Accounts.UserTest do
         legal_terms_accepted: true
       })
 
-      assert {:ok, _} = Animina.Accounts.User.by_email("bob@example.com")
+      assert {:ok, _} = User.by_email("bob@example.com")
     end
   end
 end
