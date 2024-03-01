@@ -1,6 +1,6 @@
-defmodule Animina.Traits.UserInterests do
+defmodule Animina.Traits.UserFlags do
   @moduledoc """
-  This is the UserInterests module which we use to manage a user's interests.
+  This is the UserFlags module which we use to manage a user's flags.
   """
 
   use Ash.Resource,
@@ -11,6 +11,12 @@ defmodule Animina.Traits.UserInterests do
 
     attribute :flag_id, :uuid, allow_nil?: false
     attribute :user_id, :uuid, allow_nil?: false
+    attribute :position, :integer, allow_nil?: false
+
+    attribute :color, :atom do
+      constraints one_of: [:white, :green, :red]
+      allow_nil? false
+    end
   end
 
   relationships do
@@ -42,7 +48,7 @@ defmodule Animina.Traits.UserInterests do
   end
 
   postgres do
-    table "user_interests"
+    table "user_flags"
     repo Animina.Repo
 
     references do
@@ -54,6 +60,7 @@ defmodule Animina.Traits.UserInterests do
       index [:user_id]
       index [:flag_id]
       index [:flag_id, :user_id]
+      index [:color, :user_id]
     end
   end
 end

@@ -10,6 +10,6 @@ defmodule Animina.Traits do
     resource Animina.Traits.CategoryTranslation
     resource Animina.Traits.Flag
     resource Animina.Traits.FlagTranslation
-    resource Animina.Traits.UserInterests
+    resource Animina.Traits.UserFlags
   end
 end
