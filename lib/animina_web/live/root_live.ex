@@ -110,7 +110,6 @@ defmodule AniminaWeb.RootLive do
               value: f[:username].value,
               type: :text,
               required: true,
-              autofocus: true,
               autocomplete: :username,
               "phx-debounce": "200"
             ) %>
@@ -233,37 +232,50 @@ defmodule AniminaWeb.RootLive do
               <%= gettext("Gender") %>
             </label>
           </div>
-          <div class="mt-2">
+          <div class="mt-2" phx-no-format>
+
+            <%
+              item_code = "male"                  # formerly "m"
+              item_title = gettext("Male")
+            %>
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "male",
-                id: "gender_male",
+              <%= radio_button(f, :gender, item_code,
+                id: "gender_" <> item_code,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
                 checked: true
               ) %>
-              <%= label(f, :gender, gettext("Male"),
-                for: "gender_male",
+              <%= label(f, :gender, item_title,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
 
+            <%
+              item_code = "female"                # formerly "f"
+              item_title = gettext("Female")
+            %>
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "female",
-                id: "gender_female",
+              <%= radio_button(f, :gender, item_code,
+                id: "gender_" <> item_code,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, gettext("Female"),
-                for: "gender_female",
+              <%= label(f, :gender, item_title,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
 
+            <%
+              item_code = "diverse"               # formerly "x"
+              item_title = gettext("Diverse")
+            %>
             <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, "diverse",
-                id: "gender_diverse",
+              <%= radio_button(f, :gender, item_code,
+                id: "gender_" <> item_code,
                 class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
               ) %>
-              <%= label(f, :gender, gettext("Diverse"),
-                for: "gender_diverse",
+              <%= label(f, :gender, item_title,
+                for: "gender_" <> item_code,
                 class: "ml-3 block text-sm font-medium text-gray-700"
               ) %>
             </div>
@@ -273,7 +285,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <div class="flex items-center justify-between">
             <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Postal code") %>
+              <%= gettext("Zip code") %>
             </label>
           </div>
           <div phx-feedback-for={f[:zip_code].name} class="mt-2">
@@ -284,15 +296,16 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              # Postal code of the Bundestag :-)
+              # Easter egg (Bundestag)
               placeholder: "11011",
               value: f[:zip_code].value,
+              inputmode: "numeric",
               autocomplete: "postal-code",
               "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
-              <%= gettext("Postal code") <> " " <> msg %>
+              <%= gettext("Zip code") <> " " <> msg %>
             </.error>
           </div>
         </div>
@@ -306,7 +319,6 @@ defmodule AniminaWeb.RootLive do
               </span>
             </label>
           </div>
-
           <div phx-feedback-for={f[:height].name} class="mt-2">
             <%= text_input(f, :height,
               class:
@@ -316,6 +328,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "160",
+              inputmode: "numeric",
               value: f[:height].value,
               "phx-debounce": "blur"
             ) %>
@@ -344,6 +357,7 @@ defmodule AniminaWeb.RootLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: "0151-12345678",
+              inputmode: "numeric",
               value: f[:mobile_phone].value,
               "phx-debounce": "100"
             ) %>
