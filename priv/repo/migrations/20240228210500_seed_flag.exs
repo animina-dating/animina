@@ -75,6 +75,11 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         category_name: %{de: "Beziehungsart", en: "Type of Relationship"},
         items: [
           %{
+            name: %{de: "Ich weiß es nicht", en: "I don't know"},
+            hashtags: %{de: "#IchWeißEsNicht", en: "#IDontKnow"},
+            emoji: "🤷‍♂️"
+          },
+          %{
             name: %{de: "Etwas kurzfristiges", en: "Something Short-Term"},
             hashtags: %{de: "#Kurzfristig", en: "#ShortTerm"},
             emoji: "⏳"
