@@ -32,7 +32,7 @@ config :animina, AniminaWeb.Endpoint,
 config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
 config :animina,
-  ash_apis: [Animina.Accounts, Animina.Traits, Animina.GeoData]
+  ash_apis: [Animina.Accounts, Animina.Traits, Animina.GeoData, Animina.Narratives]
 
 config :ash, :custom_types, ash_phone_number: Animina.AshPhoneNumber
 
