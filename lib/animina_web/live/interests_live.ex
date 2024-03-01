@@ -56,14 +56,19 @@ defmodule AniminaWeb.InterestsLive do
   def handle_info({:flag_selected, flag_id}, socket) do
     selected = socket.assigns.selected + 1
     can_select = selected < socket.assigns.max_selected
+    selected_flags = List.insert_at(socket.assigns.selected_flags, -1, flag_id)
 
     for category_id <- socket.assigns.categories.result do
-      send_update(SelectFlagsComponent, id: "flags_#{category_id}", can_select: can_select)
+      send_update(SelectFlagsComponent,
+        id: "flags_#{category_id}",
+        can_select: can_select,
+        user_flags: selected_flags
+      )
     end
 
     {:noreply,
      socket
-     |> assign(:selected_flags, List.insert_at(socket.assigns.selected_flags, -1, flag_id))
+     |> assign(:selected_flags, selected_flags)
      |> assign(:selected, selected)}
   end
 
@@ -71,24 +76,31 @@ defmodule AniminaWeb.InterestsLive do
   def handle_info({:flag_unselected, flag_id}, socket) do
     selected = max(socket.assigns.selected - 1, 0)
     can_select = selected < socket.assigns.max_selected
+    selected_flags = List.delete(socket.assigns.selected_flags, flag_id)
 
     for category_id <- socket.assigns.categories.result do
-      send_update(SelectFlagsComponent, id: "flags_#{category_id}", can_select: can_select)
+      send_update(SelectFlagsComponent,
+        id: "flags_#{category_id}",
+        can_select: can_select,
+        user_flags: selected_flags
+      )
     end
 
     {:noreply,
      socket
-     |> assign(:selected_flags, List.delete(socket.assigns.selected_flags, flag_id))
+     |> assign(:selected_flags, selected_flags)
      |> assign(:selected, selected)}
   end
 
   @impl true
   def handle_event("add_interests", _params, socket) do
     interests =
-      Enum.map(socket.assigns.selected_flags, fn flag_id ->
+      Enum.with_index(socket.assigns.selected_flags, fn element, index -> {index, element} end)
+      |> Enum.map(fn {index, flag_id} ->
         %{
           flag_id: flag_id,
-          user_id: socket.assigns.current_user.id
+          user_id: socket.assigns.current_user.id,
+          position: index + 1
         }
       end)
 
@@ -139,6 +151,7 @@ defmodule AniminaWeb.InterestsLive do
               category={category}
               language={@language}
               can_select={@selected < @max_selected}
+              user_flags={@selected_flags}
             />
           </div>
         </div>

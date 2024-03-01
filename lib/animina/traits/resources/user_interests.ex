@@ -11,6 +11,7 @@ defmodule Animina.Traits.UserInterests do
 
     attribute :flag_id, :uuid, allow_nil?: false
     attribute :user_id, :uuid, allow_nil?: false
+    attribute :position, :integer, allow_nil?: false
   end
 
   relationships do
