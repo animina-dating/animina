@@ -5,8 +5,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
-
   alias AshPhoenix.Form
+  alias Animina.GeoData.City
 
   @impl true
   def mount(_params, session, socket) do
@@ -38,7 +38,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
           socket
           |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
-          |> assign(city_name: Animina.GeoData.City.by_zip_code!(current_user.zip_code))
+          |> assign(city_name: City.by_zip_code!(current_user.zip_code))
       end
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
