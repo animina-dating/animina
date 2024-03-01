@@ -199,8 +199,11 @@ defmodule AniminaWeb.FlagsLive do
               language={@language}
               can_select={@selected < @max_selected}
               user_flags={@selected_flags}
-      <p><%= @info_text %></p>
-              color={@color}
+              <p
+            >
+              <%= @info_text %>
+            </.live_component>
+            color={@color}
             />
           </div>
         </div>
