@@ -4,9 +4,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
+  alias Animina.GeoData.City
   alias AniminaWeb.Registration
   alias AshPhoenix.Form
-  alias Animina.GeoData.City
 
   @impl true
   def mount(_params, session, socket) do
