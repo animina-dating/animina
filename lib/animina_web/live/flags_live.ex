@@ -6,6 +6,8 @@ defmodule AniminaWeb.FlagsLive do
   alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
 
+  @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
+
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
     current_user =
@@ -17,12 +19,10 @@ defmodule AniminaWeb.FlagsLive do
           user
       end
 
-    flags_config = Application.get_env(:animina, AniminaWeb.FlagsLive)
-
     socket =
       socket
       |> assign(current_user: current_user)
-      |> assign(max_selected: flags_config[:max_selected])
+      |> assign(max_selected: @max_flags)
       |> assign(selected: 0)
       |> assign(active_tab: :home)
       |> assign(selected_flags: [])
@@ -42,10 +42,17 @@ defmodule AniminaWeb.FlagsLive do
 
   defp apply_action(socket, :white, _params) do
     socket
-    |> assign(page_title: gettext("Select your white flags"))
+    |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
     |> assign(navigate_to: "/registration/green-flags")
-    |> assign(title: gettext("Choose your white flags"))
+    |> assign(title: gettext("Choose Your Own Flags"))
+    |> assign(
+      info_text:
+        gettext(
+          "We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important.",
+          number_of_flags: @max_flags
+        )
+    )
   end
 
   defp apply_action(socket, :red, _params) do
@@ -53,7 +60,14 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
     |> assign(navigate_to: "/registration/red-flags")
-    |> assign(title: gettext("Choose your red flags"))
+    |> assign(title: gettext("Choose Your Red Flags"))
+    |> assign(
+      info_text:
+        gettext(
+          "Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important.",
+          number_of_flags: @max_flags
+        )
+    )
   end
 
   defp apply_action(socket, :green, _params) do
