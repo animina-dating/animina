@@ -8,19 +8,20 @@ defmodule Animina.Accounts.UserTest do
     test "calculates the gravatar_hash correctly" do
       assert {:error, _} = User.by_email("bob@example.com")
 
-      Ash.Seed.seed!(%BasicUser{
-        email: "bob@example.com",
-        username: "bob",
-        name: "Bob",
-        hashed_password: "zzzzzzzzzzz",
-        birthday: "1950-01-01",
-        height: 180,
-        zip_code: "12345",
-        gender: "m",
-        mobile_phone: "0151-12345678",
-        language: "en",
-        legal_terms_accepted: true
-      })
+      assert {:ok, _} =
+               BasicUser.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true
+               })
 
       assert {:ok, _} = User.by_email("bob@example.com")
     end

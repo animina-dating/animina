@@ -4,8 +4,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
+  alias Animina.GeoData.City
   alias AniminaWeb.Registration
-
   alias AshPhoenix.Form
 
   @impl true
@@ -33,9 +33,12 @@ defmodule AniminaWeb.PotentialPartnerLive do
             |> Map.put(:minimum_partner_height, cal_minimum_partner_height(current_user))
             |> Map.put(:maximum_partner_age, cal_maximum_partner_age(current_user))
             |> Map.put(:minimum_partner_age, cal_minimum_partner_age(current_user))
+            |> Map.put(:partner_gender, guess_partner_gender(current_user))
+            |> Map.put(:search_range, 50)
 
           socket
           |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
+          |> assign(city_name: City.by_zip_code!(current_user.zip_code))
       end
       |> assign(current_user: current_user)
       |> assign(active_tab: :home)
@@ -94,8 +97,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10 px-5">
+    <div class="space-y-5 px-5">
       <h2 class="font-bold text-xl"><%= gettext("Criteria for your new partner") %></h2>
+      <p>
+        <%= gettext("We will use this information to find suitable partners for you.") %>
+      </p>
       <.form
         :let={f}
         for={@update_form}
@@ -103,6 +109,61 @@ defmodule AniminaWeb.PotentialPartnerLive do
         phx-change="validate_user"
         class="space-y-6"
       >
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="user_partner_gender" class="block text-sm font-medium leading-6 text-gray-900">
+              <%= gettext("Gender") %>
+            </label>
+          </div>
+          <div class="mt-2" phx-no-format>
+
+        <%
+          item_code = "male"
+          item_title = gettext("Male")
+        %>
+        <div class="flex items-center mb-4">
+          <%= radio_button(f, :partner_gender, item_code,
+            id: "partner_gender_" <> item_code,
+            class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+            checked: true
+          ) %>
+          <%= label(f, :partner_gender, item_title,
+            for: "partner_gender_" <> item_code,
+            class: "ml-3 block text-sm font-medium text-gray-700"
+          ) %>
+        </div>
+
+        <%
+          item_code = "female"
+          item_title = gettext("Female")
+        %>
+        <div class="flex items-center mb-4">
+          <%= radio_button(f, :partner_gender, item_code,
+            id: "partner_gender_" <> item_code,
+            class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          ) %>
+          <%= label(f, :partner_gender, item_title,
+            for: "partner_gender_" <> item_code,
+            class: "ml-3 block text-sm font-medium text-gray-700"
+          ) %>
+        </div>
+
+        <%
+          item_code = "diverse"
+          item_title = gettext("Diverse")
+        %>
+        <div class="flex items-center mb-4">
+          <%= radio_button(f, :partner_gender, item_code,
+            id: "partner_gender_" <> item_code,
+            class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          ) %>
+          <%= label(f, :partner_gender, item_title,
+            for: "partner_gender_" <> item_code,
+            class: "ml-3 block text-sm font-medium text-gray-700"
+          ) %>
+        </div>
+      </div>
+        </div>
         <div>
           <label
             for="form_minimum_partner_height"
@@ -207,6 +268,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
         <div>
           <label for="form_search_range" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Search range") %>
+            <span class="text-gray-400">
+              (<%= gettext("around") %> <%= @current_user.zip_code %> <%= @city_name.name %>)
+            </span>
           </label>
           <div phx-feedback-for={f[:search_range].name} class="mt-2">
             <%= select(
@@ -270,11 +334,19 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   def cal_minimum_partner_age(user) do
-    user.age - 5
+    user.age - 7
   end
 
   def cal_maximum_partner_age(user) do
-    user.age + 5
+    user.age + 7
+  end
+
+  def guess_partner_gender(user) do
+    case user.gender do
+      "male" -> "female"
+      "female" -> "male"
+      _ -> "diverse"
+    end
   end
 
   defp get_field_errors(field, _name) do

@@ -235,7 +235,7 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2" phx-no-format>
 
             <%
-              item_code = "male"                  # formerly "m"
+              item_code = "male"
               item_title = gettext("Male")
             %>
             <div class="flex items-center mb-4">
@@ -251,7 +251,7 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <%
-              item_code = "female"                # formerly "f"
+              item_code = "female"
               item_title = gettext("Female")
             %>
             <div class="flex items-center mb-4">
@@ -266,7 +266,7 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <%
-              item_code = "diverse"               # formerly "x"
+              item_code = "diverse"
               item_title = gettext("Diverse")
             %>
             <div class="flex items-center mb-4">
