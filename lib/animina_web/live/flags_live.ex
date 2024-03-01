@@ -75,7 +75,14 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
     |> assign(navigate_to: "/registration/red-flags")
-    |> assign(title: gettext("Choose your green flags"))
+    |> assign(title: gettext("Choose Your Green Flags"))
+    |> assign(
+      info_text:
+        gettext(
+          "Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important.",
+          number_of_flags: @max_flags
+        )
+    )
   end
 
   @impl true
@@ -176,17 +183,12 @@ defmodule AniminaWeb.FlagsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-8 px-5">
-      <.notification_box
-        title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={gettext("To complete your profile choose your flags")}
-      />
-
+    <div class="space-y-4 px-5">
       <h2 class="font-bold text-xl"><%= @title %></h2>
 
       <.async_result :let={_categories} assign={@categories}>
-        <:loading><%= gettext("Loading interests...") %></:loading>
-        <:failed :let={_failure}><%= gettext("There was an error loading interests") %></:failed>
+        <:loading><%= gettext("Loading flags...") %></:loading>
+        <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
 
         <div id="stream_categories" phx-update="stream">
           <div :for={{dom_id, category} <- @streams.categories} id={"#{dom_id}"}>
@@ -197,7 +199,11 @@ defmodule AniminaWeb.FlagsLive do
               language={@language}
               can_select={@selected < @max_selected}
               user_flags={@selected_flags}
-              color={@color}
+              <p
+            >
+              <%= @info_text %>
+            </.live_component>
+            color={@color}
             />
           </div>
         </div>
@@ -213,7 +219,7 @@ defmodule AniminaWeb.FlagsLive do
                 )}
             disabled={@selected == 0}
           >
-            <%= gettext("Add flags") %>
+            <%= gettext("Save these flags") %>
           </button>
         </div>
       </.async_result>
