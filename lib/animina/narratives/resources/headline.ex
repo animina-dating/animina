@@ -22,6 +22,7 @@ defmodule Animina.Narratives.Headline do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
+    define :by_subject, get_by: [:subject], action: :read
   end
 
   identities do
