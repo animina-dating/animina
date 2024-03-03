@@ -44,5 +44,4 @@ defmodule Animina.Repo.Migrations.AddStory do
 
     drop table(:stories)
   end
-
 end
