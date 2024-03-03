@@ -67,7 +67,8 @@ defmodule Animina.Accounts.User do
 
     attribute :search_range, :integer, allow_nil?: true
     attribute :language, :string, allow_nil?: true
-    attribute :legal_terms_accepted, :boolean, allow_nil?: false
+    attribute :legal_terms_accepted, :boolean, default: false
+    attribute :occupation, :string
   end
 
   relationships do
@@ -139,7 +140,8 @@ defmodule Animina.Accounts.User do
           :gender,
           :mobile_phone,
           :language,
-          :legal_terms_accepted
+          :legal_terms_accepted,
+          :occupation
         ])
       end
     end

@@ -53,7 +53,8 @@ defmodule Animina.Accounts.BasicUser do
 
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
-    attribute :legal_terms_accepted, :boolean, allow_nil?: false
+    attribute :legal_terms_accepted, :boolean, default: false
+    attribute :occupation, :string
   end
 
   relationships do
@@ -122,7 +123,8 @@ defmodule Animina.Accounts.BasicUser do
           :gender,
           :mobile_phone,
           :language,
-          :legal_terms_accepted
+          :legal_terms_accepted,
+          :occupation
         ])
       end
     end
