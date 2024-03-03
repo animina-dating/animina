@@ -33,7 +33,20 @@ defmodule Animina.Traits.UserFlags do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create, :read, :destroy]
+
+    read :by_user_id do
+      argument :id, :uuid, allow_nil?: false
+
+      argument :color, :atom do
+        constraints one_of: [:white, :green, :red]
+        allow_nil? false
+      end
+
+      prepare build(sort: [position: :asc])
+
+      filter expr(user_id == ^arg(:id) and color == ^arg(:color))
+    end
   end
 
   code_interface do

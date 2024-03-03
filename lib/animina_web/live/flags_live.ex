@@ -1,4 +1,5 @@
 defmodule AniminaWeb.FlagsLive do
+  require Ash.Query
   use AniminaWeb, :live_view
 
   alias Animina.Traits
@@ -25,7 +26,7 @@ defmodule AniminaWeb.FlagsLive do
       |> assign(max_selected: @max_flags)
       |> assign(selected: 0)
       |> assign(active_tab: :home)
-      |> assign(selected_flags: [])
+      |> assign(user_flags: [])
       |> assign(language: language)
       |> assign(color: :white)
       |> assign(categories: AsyncResult.loading())
@@ -44,7 +45,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
-    |> assign(navigate_to: "/registration/green-flags")
+    |> assign(navigate_to: "/profile/green-flags")
     |> assign(title: gettext("Choose Your Own Flags"))
     |> assign(
       info_text:
@@ -53,13 +54,14 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
   end
 
   defp apply_action(socket, :red, _params) do
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
-    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(navigate_to: "/profile/red-flags")
     |> assign(title: gettext("Choose Your Red Flags"))
     |> assign(
       info_text:
@@ -68,13 +70,14 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :red) end)
   end
 
   defp apply_action(socket, :green, _params) do
     socket
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
-    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(navigate_to: "/profile/red-flags")
     |> assign(title: gettext("Choose Your Green Flags"))
     |> assign(
       info_text:
@@ -83,6 +86,19 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :green) end)
+  end
+
+  @impl true
+  def handle_async(:fetch_flags, {:ok, flags}, socket) do
+    flags = Enum.map(flags, fn flag -> flag.flag_id end)
+
+    {:noreply, socket |> assign(user_flags: flags) |> assign(selected: Enum.count(flags))}
+  end
+
+  @impl true
+  def handle_async(:fetch_flags, {:exit, _reason}, socket) do
+    {:noreply, socket}
   end
 
   @impl true
@@ -108,19 +124,19 @@ defmodule AniminaWeb.FlagsLive do
   def handle_info({:flag_selected, flag_id}, socket) do
     selected = socket.assigns.selected + 1
     can_select = selected < socket.assigns.max_selected
-    selected_flags = List.insert_at(socket.assigns.selected_flags, -1, flag_id)
+    user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
 
     for category_id <- socket.assigns.categories.result do
       send_update(SelectFlagsComponent,
         id: "flags_#{category_id}",
         can_select: can_select,
-        user_flags: selected_flags
+        user_flags: user_flags
       )
     end
 
     {:noreply,
      socket
-     |> assign(:selected_flags, selected_flags)
+     |> assign(:user_flags, user_flags)
      |> assign(:selected, selected)}
   end
 
@@ -128,34 +144,40 @@ defmodule AniminaWeb.FlagsLive do
   def handle_info({:flag_unselected, flag_id}, socket) do
     selected = max(socket.assigns.selected - 1, 0)
     can_select = selected < socket.assigns.max_selected
-    selected_flags = List.delete(socket.assigns.selected_flags, flag_id)
+    user_flags = List.delete(socket.assigns.user_flags, flag_id)
 
     for category_id <- socket.assigns.categories.result do
       send_update(SelectFlagsComponent,
         id: "flags_#{category_id}",
         can_select: can_select,
-        user_flags: selected_flags
+        user_flags: user_flags
       )
     end
 
     {:noreply,
      socket
-     |> assign(:selected_flags, selected_flags)
+     |> assign(:user_flags, user_flags)
      |> assign(:selected, selected)}
   end
 
   @impl true
   def handle_event("add_flags", _params, socket) do
     interests =
-      Enum.with_index(socket.assigns.selected_flags, fn element, index -> {index, element} end)
+      Enum.with_index(socket.assigns.user_flags, fn element, index -> {index, element} end)
       |> Enum.map(fn {index, flag_id} ->
         %{
           flag_id: flag_id,
           user_id: socket.assigns.current_user.id,
-          coloor: socket.assigns.color,
+          color: socket.assigns.color,
           position: index + 1
         }
       end)
+
+    Traits.UserFlags
+    |> Ash.Query.filter(
+      user_id == ^socket.assigns.current_user.id and color == ^socket.assigns.color
+    )
+    |> Traits.bulk_destroy(:destroy, %{})
 
     bulk_result =
       Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
@@ -168,7 +190,7 @@ defmodule AniminaWeb.FlagsLive do
         {:noreply,
          socket
          |> assign(selected: 0)
-         |> assign(selected_flags: [])
+         |> assign(user_flags: [])
          |> put_flash(:info, gettext("Your flags have been added succesfully"))
          |> push_navigate(to: socket.assigns.navigate_to)}
     end
@@ -177,6 +199,12 @@ defmodule AniminaWeb.FlagsLive do
   defp fetch_categories do
     Traits.Category
     |> Ash.Query.for_read(:read)
+    |> Traits.read!()
+  end
+
+  defp fetch_flags(current_user_id, color) do
+    Traits.UserFlags
+    |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
     |> Traits.read!()
   end
 
@@ -198,13 +226,11 @@ defmodule AniminaWeb.FlagsLive do
               category={category}
               language={@language}
               can_select={@selected < @max_selected}
-              user_flags={@selected_flags}
-              <p
+              user_flags={@user_flags}
+              color={@color}
             >
-              <%= @info_text %>
+              <p><%= @info_text %></p>
             </.live_component>
-            color={@color}
-            />
           </div>
         </div>
 

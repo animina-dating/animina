@@ -13,7 +13,7 @@ defmodule AniminaWeb.AuthController do
     |> delete_session(:return_to)
     |> store_in_session(user)
     |> assign(:current_user, user)
-    |> redirect(to: ~p"/registration/potential-partner")
+    |> redirect(to: ~p"/profile/potential-partner")
   end
 
   def failure(conn, _activity, reason) do
