@@ -11,9 +11,15 @@ defmodule AniminaWeb.SelectFlagsComponent do
 
   @impl true
   def update(assigns, socket) do
+    selected_flags =
+      Enum.reduce(assigns.user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
+        Map.put_new(acc, flag_id, %{})
+      end)
+
     socket =
       socket
       |> assign(assigns)
+      |> assign(selected_flags: selected_flags)
 
     {:ok, socket}
   end
@@ -22,8 +28,6 @@ defmodule AniminaWeb.SelectFlagsComponent do
   def handle_event(
         "select_flag",
         %{
-          "category" => category,
-          "categoryid" => category_id,
           "flag" => flag,
           "flagid" => flag_id
         },
@@ -39,14 +43,8 @@ defmodule AniminaWeb.SelectFlagsComponent do
             :selected_flags,
             Map.merge(socket.assigns.selected_flags, %{
               "#{flag_id}" => %{
-                "category" => %{
-                  "id" => category_id,
-                  "name" => category
-                },
-                "flag" => %{
-                  "id" => flag_id,
-                  "name" => flag
-                }
+                "id" => flag_id,
+                "name" => flag
               }
             })
           )
@@ -75,8 +73,6 @@ defmodule AniminaWeb.SelectFlagsComponent do
       <ol class="flex flex-wrap gap-2 w-full">
         <li :for={flag <- @category.flags}>
           <div
-            phx-value-category={@category.name}
-            phx-value-categoryid={@category.id}
             phx-value-flag={flag.name}
             phx-value-flagid={flag.id}
             phx-target={@myself}
