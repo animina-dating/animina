@@ -45,7 +45,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your white flags"))
     |> assign(color: :white)
-    |> assign(navigate_to: "/registration/green-flags")
+    |> assign(navigate_to: "/profile/green-flags")
     |> assign(title: gettext("Choose your white flags"))
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
   end
@@ -54,7 +54,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
-    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(navigate_to: "/profile/red-flags")
     |> assign(title: gettext("Choose your red flags"))
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :red) end)
   end
@@ -63,7 +63,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
-    |> assign(navigate_to: "/registration/red-flags")
+    |> assign(navigate_to: "/profile/red-flags")
     |> assign(title: gettext("Choose your green flags"))
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :green) end)
   end
