@@ -23,11 +23,11 @@ defmodule AniminaWeb.Router do
 
     # get "/", PageController, :home
     live "/", RootLive, :register
-    live "/registration/potential-partner", PotentialPartnerLive, :index
-    live "/registration/profile-photo", ProfilePhotoLive, :index
-    live "/registration/white-flags", FlagsLive, :white
-    live "/registration/green-flags", FlagsLive, :green
-    live "/registration/red-flags", FlagsLive, :red
+    live "/profile/potential-partner", PotentialPartnerLive, :index
+    live "/profile/profile-photo", ProfilePhotoLive, :index
+    live "/profile/white-flags", FlagsLive, :white
+    live "/profile/green-flags", FlagsLive, :green
+    live "/profile/red-flags", FlagsLive, :red
     # live "/register", AniminaWeb.AuthLive.Index, :register
     live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
 
