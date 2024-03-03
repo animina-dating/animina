@@ -53,6 +53,7 @@ defmodule Animina.Accounts.BasicUser do
 
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
+    attribute :legal_terms_accepted, :boolean, allow_nil?: false
   end
 
   relationships do
@@ -70,6 +71,7 @@ defmodule Animina.Accounts.BasicUser do
     validate {Validations.ZipCode, attribute: :zip_code}
     validate {Validations.Gender, attribute: :gender}
     validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
+    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
   end
 
   identities do
@@ -119,7 +121,8 @@ defmodule Animina.Accounts.BasicUser do
           :height,
           :gender,
           :mobile_phone,
-          :language
+          :language,
+          :legal_terms_accepted
         ])
       end
     end

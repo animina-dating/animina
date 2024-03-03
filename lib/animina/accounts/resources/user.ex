@@ -53,10 +53,6 @@ defmodule Animina.Accounts.User do
 
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
 
-    # attribute :body_type, :integer, allow_nil?: false
-    # attribute :subscribed_at, :utc_datetime, allow_nil?: false
-    # attribute :terms_conds_id, :uuid, allow_nil?: true
-
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
 
@@ -67,8 +63,11 @@ defmodule Animina.Accounts.User do
 
     attribute :maximum_partner_age, :integer, allow_nil?: true
 
+    attribute :partner_gender, :string, allow_nil?: true
+
     attribute :search_range, :integer, allow_nil?: true
     attribute :language, :string, allow_nil?: true
+    attribute :legal_terms_accepted, :boolean, allow_nil?: false
   end
 
   relationships do
@@ -84,7 +83,9 @@ defmodule Animina.Accounts.User do
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.ZipCode, attribute: :zip_code}
     validate {Validations.Gender, attribute: :gender}
+    validate {Validations.Gender, attribute: :partner_gender}
     validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
+    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
   end
 
   identities do
@@ -137,7 +138,8 @@ defmodule Animina.Accounts.User do
           :height,
           :gender,
           :mobile_phone,
-          :language
+          :language,
+          :legal_terms_accepted
         ])
       end
     end

@@ -1,0 +1,78 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": true,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "subject",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "position",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "true",
+      "size": null,
+      "type": "boolean",
+      "source": "is_active",
+      "references": null,
+      "allow_nil?": true,
+      "primary_key?": false,
+      "generated?": false
+    }
+  ],
+  "table": "headlines",
+  "hash": "032F22BC6BD4144ECB8F5B46E21152D1A7DD5F9074420940372E4DF7D028B394",
+  "identities": [
+    {
+      "name": "unique_position",
+      "keys": [
+        "position"
+      ],
+      "base_filter": null,
+      "all_tenants?": false,
+      "index_name": "headlines_unique_position_index"
+    },
+    {
+      "name": "unique_subject",
+      "keys": [
+        "subject"
+      ],
+      "base_filter": null,
+      "all_tenants?": false,
+      "index_name": "headlines_unique_subject_index"
+    }
+  ],
+  "repo": "Elixir.Animina.Repo",
+  "schema": null,
+  "check_constraints": [],
+  "custom_indexes": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}

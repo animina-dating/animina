@@ -235,7 +235,7 @@ defmodule AniminaWeb.RootLive do
           <div class="mt-2" phx-no-format>
 
             <%
-              item_code = "male"                  # formerly "m"
+              item_code = "male"
               item_title = gettext("Male")
             %>
             <div class="flex items-center mb-4">
@@ -251,7 +251,7 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <%
-              item_code = "female"                # formerly "f"
+              item_code = "female"
               item_title = gettext("Female")
             %>
             <div class="flex items-center mb-4">
@@ -266,7 +266,7 @@ defmodule AniminaWeb.RootLive do
             </div>
 
             <%
-              item_code = "diverse"               # formerly "x"
+              item_code = "diverse"
               item_title = gettext("Diverse")
             %>
             <div class="flex items-center mb-4">
@@ -359,11 +359,37 @@ defmodule AniminaWeb.RootLive do
               placeholder: "0151-12345678",
               inputmode: "numeric",
               value: f[:mobile_phone].value,
-              "phx-debounce": "100"
+              "phx-debounce": "blur"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
               <%= gettext("Mobile phone number") <> " " <> msg %>
+            </.error>
+          </div>
+        </div>
+
+        <div class="relative flex gap-x-3">
+          <div phx-feedback-for={f[:legal_terms_accepted].name} class="flex h-6 items-center">
+            <%= checkbox(f, :legal_terms_accepted,
+              class:
+                "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              value: f[:legal_terms_accepted].value,
+              "phx-debounce": "200"
+            ) %>
+          </div>
+          <div class="text-sm leading-6">
+            <label for="comments" class="font-medium text-gray-900">
+              <%= gettext("I accept the legal terms of animina.") %>
+            </label>
+            <p class="text-gray-500">
+              <%= gettext("Warning: We will sell your data to the devel and Santa Claus.") %>
+            </p>
+            <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
+              <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
             </.error>
           </div>
         </div>
