@@ -283,6 +283,31 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
+          <label for="user_occupation" class="block text-sm font-medium leading-6 text-gray-900">
+            <%= gettext("Occupation") %>
+          </label>
+          <div phx-feedback-for={f[:occupation].name} class="mt-2">
+            <%= text_input(f, :occupation,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:occupation], :name) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              placeholder: gettext("Dating Coach"),
+              value: f[:occupation].value,
+              type: :text,
+              required: false,
+              autocomplete: "organization-title"
+            ) %>
+
+            <.error :for={msg <- get_field_errors(f[:occupation], :name)}>
+              <%= gettext("Occupation") <> " " <> msg %>
+            </.error>
+          </div>
+        </div>
+
+        <div>
           <div class="flex items-center justify-between">
             <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
               <%= gettext("Zip code") %>
