@@ -15,7 +15,7 @@ defmodule Animina.Validations.MobilePhoneNumber do
 
   @impl true
   def validate(changeset, opts) do
-    Ash.Changeset.get_attribute(changeset, :mobile_phone)
+    Ash.Changeset.get_attribute(changeset, opts[:attribute])
     |> extract_ex_phone_number()
     |> validate_mobile_phone_number(opts)
   end
