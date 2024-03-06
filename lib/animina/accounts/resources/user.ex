@@ -87,6 +87,10 @@ defmodule Animina.Accounts.User do
     validate {Validations.Gender, attribute: :partner_gender}
     validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
     validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
+
+    validate {Validations.BadPassword,
+              where: [action_is([:register_with_password, :change_password])],
+              attribute: :password}
   end
 
   identities do
