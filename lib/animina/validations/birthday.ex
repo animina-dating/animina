@@ -17,7 +17,7 @@ defmodule Animina.Validations.Birthday do
   def validate(changeset, opts) do
     today = Date.utc_today()
 
-    case Ash.Changeset.get_attribute(changeset, :birthday) do
+    case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do
       %Date{} = birthday ->
         case Date.compare(
                Date.from_erl!({birthday.year + 18, birthday.month, birthday.day}),

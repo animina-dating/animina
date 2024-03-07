@@ -17,7 +17,7 @@ defmodule Animina.Validations.ZipCode do
 
   @impl true
   def validate(changeset, opts) do
-    zip_code = Ash.Changeset.get_attribute(changeset, :zip_code)
+    zip_code = Ash.Changeset.get_attribute(changeset, opts[:attribute])
     five_digits? = String.match?(zip_code || "", ~r/^[0-9]{5}$/)
 
     case {zip_code, five_digits?} do
