@@ -21,18 +21,26 @@ defmodule AniminaWeb.Router do
   scope "/", AniminaWeb do
     pipe_through :browser
 
-    # get "/", PageController, :home
-    live "/", RootLive, :register
-    live "/profile/potential-partner", PotentialPartnerLive, :index
-    live "/profile/profile-photo", ProfilePhotoLive, :index
-    live "/profile/white-flags", FlagsLive, :white
-    live "/profile/green-flags", FlagsLive, :green
-    live "/profile/red-flags", FlagsLive, :red
-    # live "/register", AniminaWeb.AuthLive.Index, :register
-    live "/sign-in", AniminaWeb.AuthLive.Index, :sign_in
+    ash_authentication_live_session :user_optional,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
+      live "/", RootLive, :register
+    end
+
+    ash_authentication_live_session :authentication_optional,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_no_user} do
+      live "/sign-in", RootLive, :sign_in
+    end
+
+    ash_authentication_live_session :authentication_required,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required} do
+      live "/profile/potential-partner", PotentialPartnerLive, :index
+      live "/profile/profile-photo", ProfilePhotoLive, :index
+      live "/profile/white-flags", FlagsLive, :white
+      live "/profile/green-flags", FlagsLive, :green
+      live "/profile/red-flags", FlagsLive, :red
+    end
 
     get "/demo", PageController, :demo
-    # get "/register", AuthController, :register
 
     sign_out_route AuthController
     auth_routes_for Animina.Accounts.User, to: AuthController

@@ -6,6 +6,15 @@ defmodule Animina.Accounts.Token do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication.TokenResource]
 
+  actions do
+    defaults [:read, :destroy]
+  end
+
+  code_interface do
+    define_for Animina.Accounts
+    define :destroy
+  end
+
   token do
     api Animina.Accounts
   end

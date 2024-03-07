@@ -48,7 +48,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   defp add_registration_bonus(socket, user) do
-    if !connected?(socket) && user do
+    if !connected?(socket) && is_nil(user) == false do
       # Make sure that a user gets one but only one registration bonus.
       case Credit
            |> Ash.Query.filter(user_id: user.id)
