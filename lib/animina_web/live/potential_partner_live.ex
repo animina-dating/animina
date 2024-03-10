@@ -5,44 +5,27 @@ defmodule AniminaWeb.PotentialPartnerLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
   alias Animina.GeoData.City
-  alias AniminaWeb.Registration
   alias AshPhoenix.Form
 
   @impl true
-  def mount(_params, session, socket) do
-    current_user =
-      case Registration.get_current_user(session) do
-        nil ->
-          redirect(socket, to: "/")
+  def mount(_params, _session, socket) do
+    add_registration_bonus(socket, socket.assigns.current_user)
 
-        user ->
-          user
-      end
+    user =
+      socket.assigns.current_user
+      |> Map.put(:maximum_partner_height, cal_maximum_partner_height(socket.assigns.current_user))
+      |> Map.put(:minimum_partner_height, cal_minimum_partner_height(socket.assigns.current_user))
+      |> Map.put(:maximum_partner_age, cal_maximum_partner_age(socket.assigns.current_user))
+      |> Map.put(:minimum_partner_age, cal_minimum_partner_age(socket.assigns.current_user))
+      |> Map.put(:partner_gender, guess_partner_gender(socket.assigns.current_user))
+      |> Map.put(:search_range, 50)
 
-    add_registration_bonus(socket, current_user)
-
-    socket =
-      case current_user do
-        nil ->
-          socket
-
-        _ ->
-          user =
-            current_user
-            |> Map.put(:maximum_partner_height, cal_maximum_partner_height(current_user))
-            |> Map.put(:minimum_partner_height, cal_minimum_partner_height(current_user))
-            |> Map.put(:maximum_partner_age, cal_maximum_partner_age(current_user))
-            |> Map.put(:minimum_partner_age, cal_minimum_partner_age(current_user))
-            |> Map.put(:partner_gender, guess_partner_gender(current_user))
-            |> Map.put(:search_range, 50)
-
-          socket
-          |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
-          |> assign(city_name: City.by_zip_code!(current_user.zip_code))
-      end
-      |> assign(current_user: current_user)
-      |> assign(active_tab: :home)
-      |> assign(page_title: gettext("Preferences for your future partner"))
+    socket
+    |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
+    |> assign(city_name: City.by_zip_code!(user.zip_code))
+    |> assign(current_user: user)
+    |> assign(active_tab: :home)
+    |> assign(page_title: gettext("Preferences for your future partner"))
 
     {:ok, socket}
   end
