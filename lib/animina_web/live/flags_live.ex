@@ -192,9 +192,18 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp fetch_flags(current_user_id, color) do
-    Traits.UserFlags
-    |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
-    |> Traits.read!()
+    flags =
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
+      |> Traits.read!()
+
+    if Enum.empty?(flags) && color == :green do
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: :white})
+      |> Traits.read!()
+    else
+      flags
+    end
   end
 
   @impl true

@@ -12,20 +12,31 @@ defmodule AniminaWeb.PotentialPartnerLive do
     add_registration_bonus(socket, socket.assigns.current_user)
 
     user =
-      socket.assigns.current_user
-      |> Map.put(:maximum_partner_height, cal_maximum_partner_height(socket.assigns.current_user))
-      |> Map.put(:minimum_partner_height, cal_minimum_partner_height(socket.assigns.current_user))
-      |> Map.put(:maximum_partner_age, cal_maximum_partner_age(socket.assigns.current_user))
-      |> Map.put(:minimum_partner_age, cal_minimum_partner_age(socket.assigns.current_user))
-      |> Map.put(:partner_gender, guess_partner_gender(socket.assigns.current_user))
-      |> Map.put(:search_range, 50)
+      if socket.assigns.current_user.maximum_partner_height == nil do
+        socket.assigns.current_user
+        |> Map.put(
+          :maximum_partner_height,
+          cal_maximum_partner_height(socket.assigns.current_user)
+        )
+        |> Map.put(
+          :minimum_partner_height,
+          cal_minimum_partner_height(socket.assigns.current_user)
+        )
+        |> Map.put(:maximum_partner_age, cal_maximum_partner_age(socket.assigns.current_user))
+        |> Map.put(:minimum_partner_age, cal_minimum_partner_age(socket.assigns.current_user))
+        |> Map.put(:partner_gender, guess_partner_gender(socket.assigns.current_user))
+        |> Map.put(:search_range, 50)
+      else
+        socket.assigns.current_user
+      end
 
-    socket
-    |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
-    |> assign(city_name: City.by_zip_code!(user.zip_code))
-    |> assign(current_user: user)
-    |> assign(active_tab: :home)
-    |> assign(page_title: gettext("Preferences for your future partner"))
+    socket =
+      socket
+      |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
+      |> assign(city_name: City.by_zip_code!(user.zip_code))
+      |> assign(current_user: user)
+      |> assign(active_tab: :home)
+      |> assign(page_title: gettext("Preferences for your future partner"))
 
     {:ok, socket}
   end
@@ -210,6 +221,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
             <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
               prompt: gettext("doesn't matter"),
+              value: f[:minimum_partner_age].value,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                   unless(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) == [],

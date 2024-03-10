@@ -19,6 +19,9 @@ defmodule Animina.Validations.BadPassword do
   @impl true
   def validate(changeset, _opts) do
     case changeset.arguments do
+      %{password: nil} ->
+        :ok
+
       %{password: password} ->
         case {String.length(password), BadPassword.by_value(password)} do
           {8, _} ->

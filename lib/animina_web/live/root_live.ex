@@ -421,6 +421,14 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
+          <.link navigate={~p"/sign-in"}>
+            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+              <%= gettext("Already have an account? Sign in") %>
+            </p>
+          </.link>
+        </div>
+
+        <div>
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
@@ -495,6 +503,14 @@ defmodule AniminaWeb.RootLive do
               <%= gettext("Password") <> " " <> msg %>
             </.error>
           </div>
+        </div>
+
+        <div>
+          <.link navigate={~p"/"}>
+            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+              <%= gettext("Don't have an account? Sign up") %>
+            </p>
+          </.link>
         </div>
 
         <div>
