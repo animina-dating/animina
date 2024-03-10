@@ -3,6 +3,7 @@ defmodule AniminaWeb.AuthController do
   use AshAuthentication.Phoenix.Controller
 
   alias Animina.Accounts.Token
+  alias AshAuthentication.TokenResource
 
   def success(conn, _activity, user, _token) do
     return_to =
@@ -60,7 +61,7 @@ defmodule AniminaWeb.AuthController do
 
     if token do
       Token
-      |> AshAuthentication.TokenResource.Actions.get_token(%{"token" => token})
+      |> TokenResource.Actions.get_token(%{"token" => token})
       |> case do
         {:ok, [token]} ->
           Token.destroy!(token, authorize?: false)
