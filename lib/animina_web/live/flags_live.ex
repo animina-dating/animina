@@ -3,26 +3,15 @@ defmodule AniminaWeb.FlagsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Traits
-  alias AniminaWeb.Registration
   alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
 
   @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
 
   @impl true
-  def mount(_params, %{"language" => language} = session, socket) do
-    current_user =
-      case Registration.get_current_user(session) do
-        nil ->
-          redirect(socket, to: "/")
-
-        user ->
-          user
-      end
-
+  def mount(_params, %{"language" => language} = _session, socket) do
     socket =
       socket
-      |> assign(current_user: current_user)
       |> assign(max_selected: @max_flags)
       |> assign(selected: 0)
       |> assign(active_tab: :home)
@@ -203,9 +192,18 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp fetch_flags(current_user_id, color) do
-    Traits.UserFlags
-    |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
-    |> Traits.read!()
+    flags =
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
+      |> Traits.read!()
+
+    if Enum.empty?(flags) && color == :green do
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: :white})
+      |> Traits.read!()
+    else
+      flags
+    end
   end
 
   @impl true

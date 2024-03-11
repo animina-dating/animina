@@ -147,29 +147,29 @@ defmodule AniminaWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title="Erfolg!" flash={@flash} />
-      <.flash kind={:error} title="Fehler!" flash={@flash} />
+      <.flash kind={:info} title={gettext("Erfolg!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Fehler!")} flash={@flash} />
       <.flash
         id="client-error"
         kind={:error}
-        title="Keine Internetverbindung"
+        title={gettext("Keine Internetverbindung")}
         phx-disconnected={show(".phx-client-error #client-error")}
         phx-connected={hide("#client-error")}
         hidden
       >
-        Bitte warten Sie einen Moment bis Sie wieder online sind.
+        <%= gettext("Bitte warten Sie einen Moment bis Sie wieder online sind.") %>
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title="Es gibt ein Server-Problem!"
+        title={gettext("Es gibt ein Server-Problem!")}
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        Bitte warten Sie einen Moment.
+        <%= gettext("Bitte warten Sie einen Moment.") %>
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>

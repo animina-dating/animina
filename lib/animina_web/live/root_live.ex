@@ -83,6 +83,7 @@ defmodule AniminaWeb.RootLive do
 
       <.form
         :let={f}
+        :if={@form_id == "sign-up-form"}
         id="basic_user_form"
         for={@form}
         action={@action}
@@ -417,6 +418,99 @@ defmodule AniminaWeb.RootLive do
               <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
             </.error>
           </div>
+        </div>
+
+        <div>
+          <.link navigate={~p"/sign-in"}>
+            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+              <%= gettext("Already have an account? Sign in") %>
+            </p>
+          </.link>
+        </div>
+
+        <div>
+          <%= submit(@cta,
+            class:
+              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+                unless(@form.valid? == false,
+                  do: "",
+                  else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+                ),
+            disabled: @form.valid? == false
+          ) %>
+        </div>
+      </.form>
+
+      <.form
+        :let={f}
+        :if={@form_id == "sign-in-form"}
+        id="basic_user_sign_in_form"
+        for={@form}
+        action={@action}
+        phx-trigger-action={@trigger_action}
+        method="POST"
+        class="space-y-6 group"
+        phx-change="validate"
+        phx-submit="submit"
+      >
+        <div>
+          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
+            <%= gettext("E-mail address") %>
+          </label>
+          <div phx-feedback-for={f[:email].name} class="mt-2">
+            <%= text_input(f, :email,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:email], :email) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              placeholder: gettext("alice@example.net"),
+              value: f[:email].value,
+              type: :email,
+              required: true,
+              autocomplete: :email,
+              "phx-debounce": "200"
+            ) %>
+
+            <.error :for={msg <- get_field_errors(f[:email], :email)}>
+              <%= gettext("E-mail address") <> " " <> msg %>
+            </.error>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between">
+            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
+              <%= gettext("Password") %>
+            </label>
+          </div>
+          <div phx-feedback-for={f[:password].name} class="mt-2">
+            <%= password_input(f, :password,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:password], :password) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              placeholder: gettext("Password"),
+              value: f[:password].value,
+              autocomplete: "new-password",
+              "phx-debounce": "blur"
+            ) %>
+
+            <.error :for={msg <- get_field_errors(f[:password], :password)}>
+              <%= gettext("Password") <> " " <> msg %>
+            </.error>
+          </div>
+        </div>
+
+        <div>
+          <.link navigate={~p"/"}>
+            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+              <%= gettext("Don't have an account? Sign up") %>
+            </p>
+          </.link>
         </div>
 
         <div>

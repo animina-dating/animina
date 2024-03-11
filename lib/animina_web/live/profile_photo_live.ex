@@ -1,26 +1,14 @@
 defmodule AniminaWeb.ProfilePhotoLive do
   use AniminaWeb, :live_view
 
-  alias AniminaWeb.Registration
-
   alias Animina.Accounts
   alias Animina.Accounts.Photo
   alias AshPhoenix.Form
 
   @impl true
-  def mount(_params, session, socket) do
-    current_user =
-      case Registration.get_current_user(session) do
-        nil ->
-          redirect(socket, to: "/")
-
-        user ->
-          user
-      end
-
+  def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(current_user: current_user)
       |> assign(active_tab: :home)
       |> assign(attachment: nil)
       |> assign(uploading: false)
