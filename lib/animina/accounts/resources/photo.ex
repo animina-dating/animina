@@ -47,10 +47,19 @@ defmodule Animina.Accounts.Photo do
       allow_nil? false
       attribute_writable? true
     end
+
+    belongs_to :story, Animina.Narratives.Story do
+      attribute_writable? true
+    end
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create, :update]
+
+    read :read do
+      primary? true
+      pagination offset?: true, keyset?: true, required?: false
+    end
 
     update :review do
       change transition_state(:in_review)

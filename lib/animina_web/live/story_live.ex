@@ -1,6 +1,7 @@
-defmodule AniminaWeb.StoryLive.Create do
+defmodule AniminaWeb.StoryLive do
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts
   alias Animina.Accounts.Photo
   alias Animina.Narratives
   alias Animina.Narratives.Story
@@ -13,6 +14,14 @@ defmodule AniminaWeb.StoryLive.Create do
       socket
       |> assign(language: language)
       |> assign(active_tab: :home)
+      |> assign(
+        :photo,
+        get_user_default_photo(socket)
+      )
+      |> assign(
+        :position,
+        get_user_story_position(socket)
+      )
       |> assign(:errors, [])
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
 
@@ -33,15 +42,10 @@ defmodule AniminaWeb.StoryLive.Create do
           headline: [
             resource: Headline,
             create_action: :create
-          ],
-          photo: [
-            resource: Photo,
-            create_action: :create
           ]
         ]
       )
-      |> AshPhoenix.Form.add_form([:headline])
-      |> AshPhoenix.Form.add_form([:photo])
+      |> AshPhoenix.Form.add_form([:headline], params: %{subject: "About me"}, validate?: false)
       |> to_form()
 
     socket
@@ -54,16 +58,32 @@ defmodule AniminaWeb.StoryLive.Create do
   end
 
   defp apply_action(socket, _, _params) do
+    form =
+      Form.for_create(Story, :create,
+        api: Narratives,
+        as: "story",
+        forms: [
+          headline: [
+            resource: Headline,
+            create_action: :create
+          ],
+          photo: [
+            resource: Photo,
+            create_action: :create
+          ]
+        ]
+      )
+      |> AshPhoenix.Form.add_form([:headline], params: %{subject: "About me"}, validate?: false)
+      |> AshPhoenix.Form.add_form([:photo], validate?: false)
+      |> to_form()
+
     socket
     |> assign(page_title: gettext("Create a story"))
     |> assign(form_id: "create-story-form")
     |> assign(title: gettext("Create your own story"))
     |> assign(:cta, gettext("Create new story"))
     |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
-    |> assign(
-      :form,
-      Form.for_create(Story, :create, api: Narratives, as: "story", forms: [auto?: true])
-    )
+    |> assign(form: form)
   end
 
   @impl true
@@ -71,6 +91,27 @@ defmodule AniminaWeb.StoryLive.Create do
     form = Form.validate(socket.assigns.form, story, errors: true)
 
     {:noreply, socket |> assign(form: form)}
+  end
+
+  @impl true
+  def handle_event("submit", %{"story" => story}, socket)
+      when is_nil(socket.assigns.photo) == false do
+    form = Form.validate(socket.assigns.form, story)
+
+    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form, params: story) do
+      Ash.Changeset.for_update(socket.assigns.photo, :update, %{story_id: story.id})
+      |> Accounts.update()
+
+      {:noreply,
+       socket
+       |> assign(:errors, [])}
+    else
+      {:error, form} ->
+        {:noreply, socket |> assign(:form, form)}
+
+      errors ->
+        {:noreply, socket |> assign(:errors, errors)}
+    end
   end
 
   @impl true
@@ -83,6 +124,27 @@ defmodule AniminaWeb.StoryLive.Create do
       |> assign(:errors, Form.errors(form))
 
     {:noreply, socket}
+  end
+
+  defp get_user_default_photo(socket) do
+    photos_results =
+      Accounts.Photo
+      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
+      |> Accounts.read!(page: [limit: 1])
+
+    case Map.get(photos_results, :results) do
+      [photo | _] -> photo
+      _ -> nil
+    end
+  end
+
+  defp get_user_story_position(socket) do
+    story_results =
+      Narratives.Story
+      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
+      |> Narratives.read!(page: [limit: 1, count: true])
+
+    Map.get(story_results, :count) + 1
   end
 
   @impl true
@@ -101,8 +163,11 @@ defmodule AniminaWeb.StoryLive.Create do
         phx-change="validate"
         phx-submit="submit"
       >
+        <%= text_input(f, :position, type: :hidden, value: @position) %>
+        <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
+
         <.inputs_for :let={headline_form} field={@form[:headline]}>
-          <%= text_input(headline_form, :position, type: :hidden, value: 1) %>
+          <%= text_input(headline_form, :position, type: :hidden, value: @position) %>
 
           <%= text_input(headline_form, :user_id, type: :hidden, value: @current_user.id) %>
 
@@ -152,7 +217,8 @@ defmodule AniminaWeb.StoryLive.Create do
               placeholder: gettext("I like swimming"),
               value: f[:content].value,
               type: :text,
-              "phx-debounce": "200"
+              "phx-debounce": "200",
+              maxlength: "1024"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:content], :content)}>
@@ -161,7 +227,18 @@ defmodule AniminaWeb.StoryLive.Create do
           </div>
         </div>
 
-        <.inputs_for :let={photo_form} field={@form[:photo]}>
+        <div :if={@photo != nil} class="w-full space-y-2">
+          <p class="block text-sm font-medium leading-6 text-gray-900">
+            <%= gettext("Photo") %>
+          </p>
+
+          <img
+            class="object-cover h-200 drop-shadow border rounded-lg"
+            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @photo.filename}
+          />
+        </div>
+
+        <.inputs_for :let={photo_form} :if={@photo == nil} field={@form[:photo]}>
           <p class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Photo") %>
           </p>
@@ -235,11 +312,11 @@ defmodule AniminaWeb.StoryLive.Create do
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(false == false,
+                unless(@form.source.valid?,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: false == false
+            disabled: @form.source.valid?
           ) %>
         </div>
       </.form>

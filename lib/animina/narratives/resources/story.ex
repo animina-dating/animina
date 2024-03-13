@@ -8,7 +8,7 @@ defmodule Animina.Narratives.Story do
 
   attributes do
     uuid_primary_key :id
-    attribute :content, :string, allow_nil?: false
+    attribute :content, :string
     attribute :position, :integer, allow_nil?: false
   end
 
@@ -21,10 +21,17 @@ defmodule Animina.Narratives.Story do
     belongs_to :headline, Animina.Narratives.Headline do
       attribute_writable? true
     end
+
+    has_one :photo, Animina.Accounts.Photo
   end
 
   actions do
-    defaults [:create, :update, :destroy, :read]
+    defaults [:create, :update, :destroy]
+
+    read :read do
+      primary? true
+      pagination offset?: true, keyset?: true, required?: false
+    end
   end
 
   code_interface do
