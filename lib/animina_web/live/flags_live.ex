@@ -50,7 +50,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
-    |> assign(navigate_to: "/profile/red-flags")
+    |> assign(navigate_to: "/profile/about-me")
     |> assign(title: gettext("Choose Your Red Flags"))
     |> assign(
       info_text:
@@ -212,6 +212,8 @@ defmodule AniminaWeb.FlagsLive do
     <div class="space-y-4 px-5">
       <h2 class="font-bold text-xl"><%= @title %></h2>
 
+      <p><%= @info_text %></p>
+
       <.async_result :let={_categories} assign={@categories}>
         <:loading><%= gettext("Loading flags...") %></:loading>
         <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
@@ -226,9 +228,7 @@ defmodule AniminaWeb.FlagsLive do
               can_select={@selected < @max_selected}
               user_flags={@user_flags}
               color={@color}
-            >
-              <p><%= @info_text %></p>
-            </.live_component>
+            />
           </div>
         </div>
 

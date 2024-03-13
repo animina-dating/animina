@@ -27,6 +27,7 @@ defmodule AniminaWeb.StoryLive.Create do
     socket
     |> assign(page_title: gettext("Create your first story"))
     |> assign(:form_id, "create-story-form")
+    |> assign(title: gettext("Create your first story"))
     |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
     |> assign(
       :form,
@@ -38,6 +39,7 @@ defmodule AniminaWeb.StoryLive.Create do
     socket
     |> assign(page_title: gettext("Create a story"))
     |> assign(form_id: "create-story-form")
+    |> assign(title: gettext("Create your own story"))
     |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
     |> assign(
       :form,
@@ -67,15 +69,10 @@ defmodule AniminaWeb.StoryLive.Create do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10 px-5">
-      <.notification_box
-        title={gettext("Animina Dating Plattform")}
-        message={gettext("Fair, Fast and Free. Join us now!")}
-        avatars_urls={[
-          "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
-          "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
-        ]}
-      />
+    <div class="space-y-4 px-5">
+      <h2 class="font-bold text-xl"><%= @title %></h2>
+
+      <p><%= @info_text %></p>
 
       <.form
         :let={f}
