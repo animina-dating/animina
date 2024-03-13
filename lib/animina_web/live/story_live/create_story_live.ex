@@ -32,7 +32,6 @@ defmodule AniminaWeb.StoryLive.Create do
         forms: [
           headline: [
             resource: Headline,
-            data: %{subject: "Hello world", position: 1},
             create_action: :create
           ],
           photo: [
@@ -104,6 +103,8 @@ defmodule AniminaWeb.StoryLive.Create do
       >
         <.inputs_for :let={headline_form} field={@form[:headline]}>
           <%= text_input(headline_form, :position, type: :hidden, value: 1) %>
+
+          <%= text_input(headline_form, :user_id, type: :hidden, value: @current_user.id) %>
 
           <div>
             <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
