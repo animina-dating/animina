@@ -14,7 +14,12 @@ defmodule Animina.Narratives.Headline do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create]
+
+    read :read do
+      primary? true
+      pagination offset?: true, keyset?: true, required?: false
+    end
   end
 
   code_interface do

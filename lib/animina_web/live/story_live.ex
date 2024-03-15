@@ -4,8 +4,8 @@ defmodule AniminaWeb.StoryLive do
   alias Animina.Accounts
   alias Animina.Accounts.Photo
   alias Animina.Narratives
-  alias Animina.Narratives.Story
   alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
   alias AshPhoenix.Form
 
   @impl true
@@ -19,8 +19,12 @@ defmodule AniminaWeb.StoryLive do
         get_user_default_photo(socket)
       )
       |> assign(
-        :position,
+        :story_position,
         get_user_story_position(socket)
+      )
+      |> assign(
+        :headline_position,
+        get_user_headline_position(socket)
       )
       |> assign(:errors, [])
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
@@ -73,7 +77,7 @@ defmodule AniminaWeb.StoryLive do
           ]
         ]
       )
-      |> AshPhoenix.Form.add_form([:headline], params: %{subject: "About me"}, validate?: false)
+      |> AshPhoenix.Form.add_form([:headline], validate?: false)
       |> AshPhoenix.Form.add_form([:photo], validate?: false)
       |> to_form()
 
@@ -116,17 +120,53 @@ defmodule AniminaWeb.StoryLive do
 
   @impl true
   def handle_event("submit", %{"story" => story}, socket) do
-    form = Form.validate(socket.assigns.form, story)
+    form =
+      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+        filename = entry.uuid <> "." <> ext(entry)
 
-    socket =
-      socket
-      |> assign(:form, form)
-      |> assign(:errors, Form.errors(form))
+        dest =
+          Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
 
-    {:noreply, socket}
+        File.cp!(path, dest)
+
+        {:ok,
+         %{
+           "filename" => filename,
+           "original_filename" => entry.client_name,
+           "ext" => ext(entry),
+           "mime" => entry.client_type,
+           "size" => entry.client_size
+         }}
+      end)
+      |> case do
+        [] ->
+          Form.remove_form(socket.assigns.form, [:photo])
+
+        [%{} = file] ->
+          photo = Map.get(story, "photo") |> Map.merge(file)
+          story = Map.merge(story, %{"photo" => photo})
+          Form.validate(socket.assigns.form, story)
+      end
+
+    with [] <- Form.errors(form), {:ok, _story} <- Form.submit(form) do
+      {:noreply,
+       socket
+       |> assign(:errors, [])
+       |> assign(
+         :form,
+         nil
+       )
+       |> push_navigate(to: ~p"/profile/create-story")}
+    else
+      {:error, form} ->
+        {:noreply, socket |> assign(:form, form)}
+
+      errors ->
+        {:noreply, socket |> assign(:errors, errors)}
+    end
   end
 
-  defp get_user_default_photo(socket) do
+  defp get_user_default_photo(socket) when socket.assigns.live_action == :about_me do
     photos_results =
       Accounts.Photo
       |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
@@ -138,6 +178,10 @@ defmodule AniminaWeb.StoryLive do
     end
   end
 
+  defp get_user_default_photo(_socket) do
+    nil
+  end
+
   defp get_user_story_position(socket) do
     story_results =
       Narratives.Story
@@ -145,6 +189,15 @@ defmodule AniminaWeb.StoryLive do
       |> Narratives.read!(page: [limit: 1, count: true])
 
     Map.get(story_results, :count) + 1
+  end
+
+  defp get_user_headline_position(socket) do
+    headline_results =
+      Narratives.Headline
+      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
+      |> Narratives.read!(page: [limit: 1, count: true])
+
+    Map.get(headline_results, :count) + 1
   end
 
   @impl true
@@ -163,11 +216,11 @@ defmodule AniminaWeb.StoryLive do
         phx-change="validate"
         phx-submit="submit"
       >
-        <%= text_input(f, :position, type: :hidden, value: @position) %>
+        <%= text_input(f, :position, type: :hidden, value: @story_position) %>
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <.inputs_for :let={headline_form} field={@form[:headline]}>
-          <%= text_input(headline_form, :position, type: :hidden, value: @position) %>
+          <%= text_input(headline_form, :position, type: :hidden, value: @headline_position) %>
 
           <%= text_input(headline_form, :user_id, type: :hidden, value: @current_user.id) %>
 
@@ -247,6 +300,10 @@ defmodule AniminaWeb.StoryLive do
 
           <%= text_input(photo_form, :user_id, type: :hidden, value: @current_user.id) %>
 
+          <div :if={Enum.count(@uploads.photos.entries) == 0}>
+            <%= text_input(photo_form, :_ignored, type: :hidden, value: "true") %>
+          </div>
+
           <div
             :if={Enum.count(@uploads.photos.entries) == 0}
             id={"photo-#{@uploads.photos.ref}"}
@@ -312,11 +369,11 @@ defmodule AniminaWeb.StoryLive do
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.valid?,
+                unless(@form.source.forms.headline.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.source.valid?
+            disabled: @form.source.forms.headline.valid? == false
           ) %>
         </div>
       </.form>
