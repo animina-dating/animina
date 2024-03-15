@@ -22,7 +22,9 @@ defmodule Animina.Narratives.Story do
       attribute_writable? true
     end
 
-    has_one :photo, Animina.Accounts.Photo
+    has_one :photo, Animina.Accounts.Photo do
+      api Animina.Accounts
+    end
   end
 
   actions do
