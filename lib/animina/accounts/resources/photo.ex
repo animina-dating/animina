@@ -49,6 +49,7 @@ defmodule Animina.Accounts.Photo do
     end
 
     belongs_to :story, Animina.Narratives.Story do
+      api Animina.Narratives
       attribute_writable? true
     end
   end
