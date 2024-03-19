@@ -49,6 +49,8 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:errors, [])
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
+      |> assign(:headlines, get_user_headlines(socket))
+      |> assign(:default_headline, get_default_headline(socket))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
 
     {:ok, socket}
