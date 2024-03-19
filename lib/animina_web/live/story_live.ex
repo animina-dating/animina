@@ -27,6 +27,8 @@ defmodule AniminaWeb.StoryLive do
         get_user_headline_position(socket)
       )
       |> assign(:errors, [])
+      |> assign(:headlines, get_user_headlines(socket))
+      |> assign(:default_headline, get_default_headline(socket))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
 
     {:ok, socket}
@@ -42,14 +44,8 @@ defmodule AniminaWeb.StoryLive do
       Form.for_create(Story, :create,
         api: Narratives,
         as: "story",
-        forms: [
-          headline: [
-            resource: Headline,
-            create_action: :create
-          ]
-        ]
+        forms: []
       )
-      |> AshPhoenix.Form.add_form([:headline], params: %{subject: "About me"}, validate?: false)
       |> to_form()
 
     socket
@@ -67,17 +63,12 @@ defmodule AniminaWeb.StoryLive do
         api: Narratives,
         as: "story",
         forms: [
-          headline: [
-            resource: Headline,
-            create_action: :create
-          ],
           photo: [
             resource: Photo,
             create_action: :create
           ]
         ]
       )
-      |> AshPhoenix.Form.add_form([:headline], validate?: false)
       |> AshPhoenix.Form.add_form([:photo], validate?: false)
       |> to_form()
 
@@ -106,9 +97,7 @@ defmodule AniminaWeb.StoryLive do
       Ash.Changeset.for_update(socket.assigns.photo, :update, %{story_id: story.id})
       |> Accounts.update()
 
-      {:noreply,
-       socket
-       |> assign(:errors, [])}
+      {:noreply, socket |> assign(:errors, []) |> push_navigate(to: ~p"/profile/create-story")}
     else
       {:error, form} ->
         {:noreply, socket |> assign(:form, form)}
@@ -193,11 +182,34 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_user_headline_position(socket) do
     headline_results =
-      Narratives.Headline
+      Headline
       |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
       |> Narratives.read!(page: [limit: 1, count: true])
 
     Map.get(headline_results, :count) + 1
+  end
+
+  defp get_user_headlines(_) do
+    Headline
+    |> Ash.Query.for_read(:read)
+    |> Narratives.read!()
+    |> Enum.map(fn headline ->
+      [key: headline.subject, value: headline.id, disabled: false]
+    end)
+  end
+
+  defp get_default_headline(socket) when socket.assigns.live_action == :about_me do
+    Narratives.Headline
+    |> Ash.Query.for_read(:by_subject, %{subject: "About me"})
+    |> Narratives.read_one()
+    |> case do
+      {:ok, headline} -> headline.id
+      _ -> nil
+    end
+  end
+
+  defp get_default_headline(_socket) do
+    nil
   end
 
   @impl true
@@ -219,38 +231,53 @@ defmodule AniminaWeb.StoryLive do
         <%= text_input(f, :position, type: :hidden, value: @story_position) %>
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
-        <.inputs_for :let={headline_form} field={@form[:headline]}>
-          <%= text_input(headline_form, :position, type: :hidden, value: @headline_position) %>
+        <div>
+          <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
+            <%= gettext("Headline") %>
+          </label>
 
-          <%= text_input(headline_form, :user_id, type: :hidden, value: @current_user.id) %>
+          <div :if={@default_headline == nil} phx-feedback-for={f[:headline_id].name} class="mt-2">
+            <%= select(
+              f,
+              :headline_id,
+              @headlines,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:headline_id], :headline_id) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              prompt: gettext("Select a headline"),
+              value: f[:headline_id].value,
+              "phx-debounce": "200"
+            ) %>
 
-          <div>
-            <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Headline") %>
-            </label>
-
-            <div phx-feedback-for={headline_form[:subject].name} class="mt-2">
-              <%= text_input(
-                headline_form,
-                :subject,
-                class:
-                  "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                    unless(get_field_errors(headline_form[:subject], :subject) == [],
-                      do: "ring-red-600 focus:ring-red-600",
-                      else: "ring-gray-300 focus:ring-indigo-600"
-                    ),
-                placeholder: gettext("About me"),
-                value: headline_form[:subject].value,
-                type: :text,
-                "phx-debounce": "200"
-              ) %>
-
-              <.error :for={msg <- get_field_errors(headline_form[:subject], :subject)}>
-                <%= gettext("Headline") <> " " <> msg %>
-              </.error>
-            </div>
+            <.error :for={msg <- get_field_errors(f[:headline_id], :headline_id)}>
+              <%= gettext("Headline") <> " " <> msg %>
+            </.error>
           </div>
-        </.inputs_for>
+
+          <div :if={@default_headline != nil} phx-feedback-for={f[:headline_id].name} class="mt-2">
+            <%= select(
+              f,
+              :headline_id,
+              [[key: gettext("About me"), value: @default_headline, selected: "selected"]],
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:headline_id], :headline_id) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              prompt: gettext("Select a headline"),
+              value: @default_headline,
+              "phx-debounce": "200"
+            ) %>
+
+            <.error :for={msg <- get_field_errors(f[:headline_id], :headline_id)}>
+              <%= gettext("Headline") <> " " <> msg %>
+            </.error>
+          </div>
+        </div>
 
         <div>
           <label for="story_content" class="block text-sm font-medium leading-6 text-gray-900">
@@ -369,11 +396,11 @@ defmodule AniminaWeb.StoryLive do
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.forms.headline.valid? == false,
+                unless(@form.source.source.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.source.forms.headline.valid? == false
+            disabled: @form.source.source.valid? == false
           ) %>
         </div>
       </.form>
