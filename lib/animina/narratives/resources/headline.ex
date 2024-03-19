@@ -20,6 +20,12 @@ defmodule Animina.Narratives.Headline do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
     end
+
+    read :by_subject do
+      argument :subject, :string, allow_nil?: false
+
+      filter expr(subject == ^arg(:subject))
+    end
   end
 
   code_interface do
