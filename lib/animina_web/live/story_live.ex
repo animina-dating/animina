@@ -189,12 +189,24 @@ defmodule AniminaWeb.StoryLive do
     Map.get(headline_results, :count) + 1
   end
 
-  defp get_user_headlines(_) do
+  defp get_user_headlines(socket) do
+    user_headlines =
+      Story
+      |> Ash.Query.for_read(:user_headlines, %{user_id: socket.assigns.current_user.id})
+      |> Narratives.read!()
+      |> Enum.reduce(%{}, fn story, acc ->
+        Map.put(acc, story.headline_id, "")
+      end)
+
     Headline
     |> Ash.Query.for_read(:read)
     |> Narratives.read!()
     |> Enum.map(fn headline ->
-      [key: headline.subject, value: headline.id, disabled: false]
+      [
+        key: headline.subject,
+        value: headline.id,
+        disabled: Map.get(user_headlines, headline.id) != nil
+      ]
     end)
   end
 
