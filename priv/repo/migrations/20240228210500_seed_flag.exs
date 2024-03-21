@@ -71,107 +71,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
   defp flags do
     [
       %{
-        category_id: "relationship_type",
-        category_name: %{de: "Beziehungsart", en: "Type of Relationship"},
-        items: [
-          %{
-            name: %{de: "Ich weiß es nicht", en: "I don't know"},
-            hashtags: %{de: "#IchWeißEsNicht", en: "#IDontKnow"},
-            emoji: "🤷‍♂️"
-          },
-          %{
-            name: %{de: "Etwas kurzfristiges", en: "Something Short-Term"},
-            hashtags: %{de: "#Kurzfristig", en: "#ShortTerm"},
-            emoji: "⏳"
-          },
-          %{
-            name: %{de: "Etwas langfristiges", en: "Something Long-Term"},
-            hashtags: %{de: "#Langfristig", en: "#LongTerm"},
-            emoji: "⌛"
-          },
-          %{
-            name: %{de: "Etwas lockeres", en: "Something Casual"},
-            hashtags: %{de: "#Lockeres", en: "#Casual"},
-            emoji: "🍃"
-          },
-          %{
-            name: %{de: "Offen für alles", en: "Open to Anything"},
-            hashtags: %{de: "#OffenFürAlles", en: "#OpenToAnything"},
-            emoji: "🔓"
-          },
-          %{
-            name: %{de: "Freundschaft Plus", en: "Friends With Benefits"},
-            hashtags: %{de: "#FreundschaftPlus", en: "#FriendsWithBenefits"},
-            emoji: "👫💕"
-          },
-          %{
-            name: %{de: "Monogame Beziehung", en: "Monogamous Relationship"},
-            hashtags: %{de: "#Monogam", en: "#Monogamous"},
-            emoji: "💍"
-          },
-          %{
-            name: %{de: "Polyamore Beziehung", en: "Polyamorous Relationship"},
-            hashtags: %{de: "#Polyamor", en: "#Polyamorous"},
-            emoji: "❤️🔁"
-          },
-          %{
-            name: %{de: "Kein Interesse an Beziehungen", en: "No Interest in Relationships"},
-            hashtags: %{de: "#KeinInteresse", en: "#NoInterest"},
-            emoji: "🚫💔"
-          }
-        ]
-      },
-      %{
-        category_id: "family_planning",
-        category_name: %{de: "Familienplanung", en: "Family Planning"},
-        items: [
-          %{
-            name: %{
-              de: "Habe Kinder, möchte keine weiteren",
-              en: "Have Children, Want No More"
-            },
-            hashtags: %{de: "#HabeKinderKeineWeiteren", en: "#HaveChildrenNoMore"},
-            emoji: "👨‍👩‍👧‍👦❌"
-          },
-          %{
-            name: %{de: "Habe Kinder, offen für mehr", en: "Have Children, Open to More"},
-            hashtags: %{de: "#HabeKinderOffenFürMehr", en: "#HaveChildrenOpenToMore"},
-            emoji: "👨‍👩‍👧‍👦➕"
-          },
-          %{
-            name: %{de: "Keine Kinder, möchte welche", en: "No Children, Want Some"},
-            hashtags: %{de: "#KeineKinderMöchteWelche", en: "#NoChildrenWantSome"},
-            emoji: "❌👶➡️👪"
-          },
-          %{
-            name: %{de: "Möchte keine Kinder", en: "Do Not Want Children"},
-            hashtags: %{de: "#MöchteKeineKinder", en: "#DoNotWantChildren"},
-            emoji: "❌👶"
-          }
-        ]
-      },
-      %{
-        category_id: "substance_use",
-        category_name: %{de: "Substanzgebrauch", en: "Substance Use"},
-        items: [
-          %{
-            name: %{de: "Rauchen", en: "Smoking"},
-            hashtags: %{de: "#Rauchen", en: "#Smoking"},
-            emoji: "🚬"
-          },
-          %{
-            name: %{de: "Alkohol", en: "Alcohol"},
-            hashtags: %{de: "#Alkohol", en: "#Alcohol"},
-            emoji: "🍻"
-          },
-          %{
-            name: %{de: "Marihuana", en: "Marijuana"},
-            hashtags: %{de: "#Marihuana", en: "#Marijuana"},
-            emoji: "🌿"
-          }
-        ]
-      },
-      %{
         category_id: "characters",
         category_name: %{de: "Charakter", en: "Character"},
         items: [
@@ -278,11 +177,60 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         ]
       },
       %{
+        category_id: "family_planning",
+        category_name: %{de: "Familienplanung", en: "Family Planning"},
+        items: [
+          %{
+            name: %{
+              de: "Habe Kinder",
+              en: "Have Children"
+            },
+            hashtags: %{de: "#HabeKinder", en: "#HaveChildren"},
+            emoji: "👨‍👩‍👧‍👦"
+          },
+          %{
+            name: %{
+              de: "Möchte keine weiteren Kinder",
+              en: "Want No More Children"
+            },
+            hashtags: %{de: "#KeineWeiterenKinder", en: "#NoMoreChildren"},
+            emoji: "👨‍👩‍👧‍👦❌"
+          },
+          %{
+            name: %{de: "Offen für weitere Kinder", en: "Open to More Children"},
+            hashtags: %{de: "#OffenFürMehrKinder", en: "#OpenToMoreChildren"},
+            emoji: "👨‍👩‍👧‍👦➕"
+          }
+        ]
+      },
+      %{
+        category_id: "substance_use",
+        category_name: %{de: "Substanzgebrauch", en: "Substance Use"},
+        items: [
+          %{
+            name: %{de: "Rauchen", en: "Smoking"},
+            hashtags: %{de: "#Rauchen", en: "#Smoking"},
+            emoji: "🚬"
+          },
+          %{
+            name: %{de: "Alkohol", en: "Alcohol"},
+            hashtags: %{de: "#Alkohol", en: "#Alcohol"},
+            emoji: "🍻"
+          },
+          %{
+            name: %{de: "Marihuana", en: "Marijuana"},
+            hashtags: %{de: "#Marihuana", en: "#Marijuana"},
+            emoji: "🌿"
+          }
+        ]
+      },
+      %{
         category_id: "animals",
         category_name: %{de: "Tiere", en: "Animals"},
         items: [
-          %{name: %{de: "Katze", en: "Cat"}, hashtags: %{de: "#Katze", en: "#Cat"}, emoji: "🐱"},
           %{name: %{de: "Hund", en: "Dog"}, hashtags: %{de: "#Hund", en: "#Dog"}, emoji: "🐶"},
+          %{name: %{de: "Katze", en: "Cat"}, hashtags: %{de: "#Katze", en: "#Cat"}, emoji: "🐱"},
+          %{name: %{de: "Maus", en: "Mouse"}, hashtags: %{de: "#Maus", en: "#Mouse"}, emoji: "🐭"},
           %{
             name: %{de: "Kaninchen", en: "Rabbit"},
             hashtags: %{de: "#Kaninchen", en: "#Rabbit"},
@@ -304,12 +252,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Reptil", en: "Reptile"},
             hashtags: %{de: "#Reptil", en: "#Reptile"},
             emoji: "🦎"
-          },
-          %{name: %{de: "Maus", en: "Mouse"}, hashtags: %{de: "#Maus", en: "#Mouse"}, emoji: "🐭"},
-          %{
-            name: %{de: "Spinne", en: "Spider"},
-            hashtags: %{de: "#Spinne", en: "#Spider"},
-            emoji: "🕷️"
           },
           %{
             name: %{de: "Pferd", en: "Horse"},
@@ -434,80 +376,9 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             emoji: "🍖"
           },
           %{
-            name: %{de: "Frühstück", en: "Breakfast"},
-            hashtags: %{de: "#Frühstück", en: "#Breakfast"},
-            emoji: "🍳"
-          },
-          %{
             name: %{de: "Snacks", en: "Snacks"},
             hashtags: %{de: "#Snacks", en: "#Snacks"},
             emoji: "🍿"
-          }
-        ]
-      },
-      %{
-        category_id: "drinks",
-        category_name: %{de: "Trinken", en: "Drinks"},
-        items: [
-          %{
-            name: %{de: "Spirituosen", en: "Spirits"},
-            hashtags: %{de: "#Spirituosen", en: "#Spirits"},
-            emoji: "🍸"
-          },
-          %{
-            name: %{de: "Wasser", en: "Water"},
-            hashtags: %{de: "#Wasser", en: "#Water"},
-            emoji: "💧"
-          },
-          %{
-            name: %{de: "Kaffee", en: "Coffee"},
-            hashtags: %{de: "#Kaffee", en: "#Coffee"},
-            emoji: "☕"
-          },
-          %{name: %{de: "Tee", en: "Tea"}, hashtags: %{de: "#Tee", en: "#Tea"}, emoji: "🍵"},
-          %{name: %{de: "Bier", en: "Beer"}, hashtags: %{de: "#Bier", en: "#Beer"}, emoji: "🍺"},
-          %{name: %{de: "Wein", en: "Wine"}, hashtags: %{de: "#Wein", en: "#Wine"}, emoji: "🍷"},
-          %{name: %{de: "Saft", en: "Juice"}, hashtags: %{de: "#Saft", en: "#Juice"}, emoji: "🧃"},
-          %{
-            name: %{de: "Limonade", en: "Lemonade"},
-            hashtags: %{de: "#Limonade", en: "#Lemonade"},
-            emoji: "🍋"
-          },
-          %{
-            name: %{de: "Smoothies", en: "Smoothies"},
-            hashtags: %{de: "#Smoothies", en: "#Smoothies"},
-            emoji: "🍹"
-          },
-          %{
-            name: %{de: "Cocktails", en: "Cocktails"},
-            hashtags: %{de: "#Cocktails", en: "#Cocktails"},
-            emoji: "🍹"
-          },
-          %{name: %{de: "Milch", en: "Milk"}, hashtags: %{de: "#Milch", en: "#Milk"}, emoji: "🥛"},
-          %{
-            name: %{de: "Espresso", en: "Espresso"},
-            hashtags: %{de: "#Espresso", en: "#Espresso"},
-            emoji: "☕️"
-          },
-          %{
-            name: %{de: "Cappuccino", en: "Cappuccino"},
-            hashtags: %{de: "#Cappuccino", en: "#Cappuccino"},
-            emoji: "☕️"
-          },
-          %{
-            name: %{de: "Energy Drinks", en: "Energy Drinks"},
-            hashtags: %{de: "#EnergyDrinks", en: "#EnergyDrinks"},
-            emoji: "⚡️"
-          },
-          %{
-            name: %{de: "Mineralwasser", en: "Mineral Water"},
-            hashtags: %{de: "#Mineralwasser", en: "#MineralWater"},
-            emoji: "💧"
-          },
-          %{
-            name: %{de: "Sekt", en: "Sparkling Wine"},
-            hashtags: %{de: "#Sekt", en: "#SparklingWine"},
-            emoji: "🍾"
           }
         ]
       },
@@ -645,8 +516,8 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         category_name: %{de: "Reisen", en: "Travels"},
         items: [
           %{
-            name: %{de: "Strandurlaub", en: "Beach Vacation"},
-            hashtags: %{de: "#Strandurlaub", en: "#BeachVacation"},
+            name: %{de: "Strand", en: "Beach"},
+            hashtags: %{de: "#Strand", en: "#Beach"},
             emoji: "🏖️"
           },
           %{
@@ -655,14 +526,9 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             emoji: "🏙️"
           },
           %{
-            name: %{de: "Wanderurlaub", en: "Hiking Vacation"},
+            name: %{de: "Wandern", en: "Hiking Vacation"},
             hashtags: %{de: "#Wanderurlaub", en: "#HikingVacation"},
             emoji: "🥾"
-          },
-          %{
-            name: %{de: "Skiurlaub", en: "Ski Vacation"},
-            hashtags: %{de: "#Skiurlaub", en: "#SkiVacation"},
-            emoji: "⛷️"
           },
           %{
             name: %{de: "Kreuzfahrten", en: "Cruises"},
@@ -685,8 +551,8 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             emoji: "🏋️‍♂️"
           },
           %{
-            name: %{de: "Campingurlaub", en: "Camping Vacation"},
-            hashtags: %{de: "#Campingurlaub", en: "#CampingVacation"},
+            name: %{de: "Camping", en: "Camping"},
+            hashtags: %{de: "#Camping", en: "#Camping"},
             emoji: "🏕️"
           },
           %{
@@ -705,6 +571,37 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         category_id: "favorite_destinations",
         category_name: %{de: "Lieblingsziele", en: "Favorite Destinations"},
         items: [
+          %{
+            name: %{de: "Europa", en: "Europe"},
+            hashtags: %{de: "#Europa", en: "#Europe"},
+            emoji: "🇪🇺"
+          },
+          %{name: %{de: "Asien", en: "Asia"}, hashtags: %{de: "#Asien", en: "#Asia"}, emoji: "🌏"},
+          %{
+            name: %{de: "Afrika", en: "Africa"},
+            hashtags: %{de: "#Afrika", en: "#Africa"},
+            emoji: "🌍"
+          },
+          %{
+            name: %{de: "Nordamerika", en: "North America"},
+            hashtags: %{de: "#Nordamerika", en: "#NorthAmerica"},
+            emoji: "🌎"
+          },
+          %{
+            name: %{de: "Südamerika", en: "South America"},
+            hashtags: %{de: "#Südamerika", en: "#SouthAmerica"},
+            emoji: "🌎"
+          },
+          %{
+            name: %{de: "Australien", en: "Australia"},
+            hashtags: %{de: "#Australien", en: "#Australia"},
+            emoji: "🇦🇺"
+          },
+          %{
+            name: %{de: "Antarktis", en: "Antarctica"},
+            hashtags: %{de: "#Antarktis", en: "#Antarctica"},
+            emoji: "❄️"
+          },
           %{
             name: %{de: "Spanien", en: "Spain"},
             hashtags: %{de: "#Spanien", en: "#Spain"},
@@ -796,37 +693,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Großbritannien", en: "United Kingdom"},
             hashtags: %{de: "#Großbritannien", en: "#UnitedKingdom"},
             emoji: "🇬🇧"
-          },
-          %{
-            name: %{de: "Europa", en: "Europe"},
-            hashtags: %{de: "#Europa", en: "#Europe"},
-            emoji: "🇪🇺"
-          },
-          %{name: %{de: "Asien", en: "Asia"}, hashtags: %{de: "#Asien", en: "#Asia"}, emoji: "🌏"},
-          %{
-            name: %{de: "Afrika", en: "Africa"},
-            hashtags: %{de: "#Afrika", en: "#Africa"},
-            emoji: "🌍"
-          },
-          %{
-            name: %{de: "Nordamerika", en: "North America"},
-            hashtags: %{de: "#Nordamerika", en: "#NorthAmerica"},
-            emoji: "🌎"
-          },
-          %{
-            name: %{de: "Südamerika", en: "South America"},
-            hashtags: %{de: "#Südamerika", en: "#SouthAmerica"},
-            emoji: "🌎"
-          },
-          %{
-            name: %{de: "Australien", en: "Australia"},
-            hashtags: %{de: "#Australien", en: "#Australia"},
-            emoji: "🇦🇺"
-          },
-          %{
-            name: %{de: "Antarktis", en: "Antarctica"},
-            hashtags: %{de: "#Antarktis", en: "#Antarctica"},
-            emoji: "❄️"
           }
         ]
       },
@@ -1429,8 +1295,8 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         ]
       },
       %{
-        category_id: "political_parties",
-        category_name: %{de: "Parteien", en: "Parties"},
+        category_id: "politics",
+        category_name: %{de: "Politik", en: "Politics"},
         items: [
           %{
             name: %{
@@ -1483,12 +1349,12 @@ defmodule Animina.Repo.Migrations.SeedFlag do
         category_name: %{de: "Religion", en: "Religion"},
         items: [
           %{
-            name: %{de: "Römisch-Katholische Kirche", en: "Roman Catholic Church"},
+            name: %{de: "Römisch-Katholische", en: "Roman Catholic"},
             hashtags: %{de: "#Katholisch", en: "#Catholic"},
             emoji: "✝️"
           },
           %{
-            name: %{de: "Evangelische Kirche", en: "Protestant Church"},
+            name: %{de: "Evangelisch", en: "Protestant"},
             hashtags: %{de: "#Evangelisch", en: "#Protestant"},
             emoji: "✝️"
           },
@@ -1526,21 +1392,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Agnostizismus", en: "Agnosticism"},
             hashtags: %{de: "#Agnostizismus", en: "#Agnosticism"},
             emoji: "❓"
-          },
-          %{
-            name: %{de: "Humanismus", en: "Humanism"},
-            hashtags: %{de: "#Humanismus", en: "#Humanism"},
-            emoji: "🌍"
-          },
-          %{
-            name: %{de: "Säkularismus", en: "Secularism"},
-            hashtags: %{de: "#Säkularismus", en: "#Secularism"},
-            emoji: "🔬"
-          },
-          %{
-            name: %{de: "Freidenker", en: "Freethought"},
-            hashtags: %{de: "#Freidenker", en: "#Freethought"},
-            emoji: "💭"
           },
           %{
             name: %{de: "Spiritualität", en: "Spirituality"},
