@@ -56,6 +56,10 @@ defmodule Animina.Narratives.Story do
     identity :unique_position, [:position, :user_id]
   end
 
+  preparations do
+    prepare build(load: [:headline, :photo, :user])
+  end
+
   postgres do
     table "stories"
     repo Animina.Repo
