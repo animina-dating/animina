@@ -62,6 +62,12 @@ defmodule Animina.Accounts.Photo do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :user_profile_photo do
+      argument :user_id, :uuid, allow_nil?: false
+
+      filter expr(is_nil(story_id) == ^true and user_id == ^arg(:user_id))
+    end
+
     update :review do
       change transition_state(:in_review)
     end

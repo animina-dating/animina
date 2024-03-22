@@ -34,6 +34,12 @@ defmodule Animina.Narratives.Story do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
     end
+
+    read :user_headlines do
+      argument :user_id, :uuid, allow_nil?: false
+
+      filter expr(is_nil(headline_id) == ^false and user_id == ^arg(:user_id))
+    end
   end
 
   code_interface do
@@ -48,6 +54,10 @@ defmodule Animina.Narratives.Story do
 
   identities do
     identity :unique_position, [:position, :user_id]
+  end
+
+  preparations do
+    prepare build(load: [:headline, :photo, :user])
   end
 
   postgres do
