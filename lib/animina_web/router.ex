@@ -39,6 +39,7 @@ defmodule AniminaWeb.Router do
       live "/profile/green-flags", FlagsLive, :green
       live "/profile/red-flags", FlagsLive, :red
       live "/profile/create-story", StoryLive, :new
+      live "/profile/edit-story/:id", StoryLive, :edit
       live "/profile/about-me", StoryLive, :about_me
     end
 

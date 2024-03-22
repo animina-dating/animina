@@ -9,6 +9,26 @@ defmodule AniminaWeb.StoryLive do
   alias AshPhoenix.Form
 
   @impl true
+  def mount(%{"id" => story_id}, %{"language" => language} = _session, socket) do
+    story = Story.by_id!(story_id)
+
+    socket =
+      socket
+      |> assign(language: language)
+      |> assign(story: story)
+      |> assign(active_tab: :home)
+      |> assign(:photo, story.photo)
+      |> assign(:story_position, nil)
+      |> assign(:headline_position, nil)
+      |> assign(:errors, [])
+      |> assign(:headlines, get_user_headlines(socket))
+      |> assign(:default_headline, nil)
+      |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
+
+    {:ok, socket}
+  end
+
+  @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     socket =
       socket
@@ -39,12 +59,55 @@ defmodule AniminaWeb.StoryLive do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
+  defp apply_action(socket, :edit, _params) do
+    form =
+      if socket.assigns.story.photo do
+        Form.for_update(socket.assigns.story, :update,
+          api: Narratives,
+          as: "story",
+          forms: [
+            photo: [
+              resource: Photo,
+              create_action: :create
+            ]
+          ]
+        )
+        |> to_form()
+      else
+        Form.for_update(socket.assigns.story, :update,
+          api: Narratives,
+          as: "story",
+          forms: [
+            photo: [
+              resource: Photo,
+              create_action: :create
+            ]
+          ]
+        )
+        |> AshPhoenix.Form.add_form([:photo], validate?: false)
+        |> to_form()
+      end
+
+    socket
+    |> assign(page_title: gettext("Edit your story"))
+    |> assign(form_id: "edit-story-form")
+    |> assign(title: gettext("Edit your story"))
+    |> assign(:cta, gettext("Save story"))
+    |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
+    |> assign(form: form)
+  end
+
   defp apply_action(socket, :about_me, _params) do
     form =
       Form.for_create(Story, :create,
         api: Narratives,
         as: "story",
-        forms: []
+        forms: [
+          photo: [
+            resource: Photo,
+            create_action: :create
+          ]
+        ]
       )
       |> to_form()
 
@@ -94,10 +157,25 @@ defmodule AniminaWeb.StoryLive do
     form = Form.validate(socket.assigns.form, story)
 
     with [] <- Form.errors(form), {:ok, story} <- Form.submit(form, params: story) do
-      Ash.Changeset.for_update(socket.assigns.photo, :update, %{story_id: story.id})
-      |> Accounts.update()
+      Ash.Changeset.for_create(
+        Photo,
+        :create,
+        %{
+          user_id: socket.assigns.photo.user_id,
+          filename: socket.assigns.photo.filename,
+          original_filename: socket.assigns.photo.original_filename,
+          mime: socket.assigns.photo.mime,
+          size: socket.assigns.photo.size,
+          ext: socket.assigns.photo.ext,
+          dimensions: socket.assigns.photo.dimensions,
+          state: socket.assigns.photo.state,
+          story_id: story.id
+        }
+      )
+      |> Accounts.create()
 
-      {:noreply, socket |> assign(:errors, []) |> push_navigate(to: ~p"/profile/create-story")}
+      {:noreply,
+       socket |> assign(:errors, []) |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
     else
       {:error, form} ->
         {:noreply, socket |> assign(:form, form)}
@@ -137,15 +215,33 @@ defmodule AniminaWeb.StoryLive do
           Form.validate(socket.assigns.form, story)
       end
 
-    with [] <- Form.errors(form), {:ok, _story} <- Form.submit(form) do
-      {:noreply,
-       socket
-       |> assign(:errors, [])
-       |> assign(
-         :form,
-         nil
-       )
-       |> push_navigate(to: ~p"/profile/create-story")}
+    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form) do
+      if form.params["photo"] do
+        Ash.Changeset.for_create(
+          Photo,
+          :create,
+          Map.put(form.params["photo"], "story_id", story.id)
+        )
+        |> Accounts.create()
+
+        {:noreply,
+         socket
+         |> assign(:errors, [])
+         |> assign(
+           :form,
+           nil
+         )
+         |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
+      else
+        {:noreply,
+         socket
+         |> assign(:errors, [])
+         |> assign(
+           :form,
+           nil
+         )
+         |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
+      end
     else
       {:error, form} ->
         {:noreply, socket |> assign(:form, form)}
@@ -156,12 +252,10 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp get_user_default_photo(socket) when socket.assigns.live_action == :about_me do
-    photos_results =
-      Accounts.Photo
-      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
-      |> Accounts.read!(page: [limit: 1])
-
-    case Map.get(photos_results, :results) do
+    Accounts.Photo
+    |> Ash.Query.for_read(:user_profile_photo, %{user_id: socket.assigns.current_user.id})
+    |> Accounts.read!()
+    |> case do
       [photo | _] -> photo
       _ -> nil
     end
@@ -173,11 +267,15 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_user_story_position(socket) do
     story_results =
-      Narratives.Story
+      Story
       |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
+      |> Ash.Query.sort(position: :desc)
       |> Narratives.read!(page: [limit: 1, count: true])
 
-    Map.get(story_results, :count) + 1
+    case Map.get(story_results, :results) do
+      [story | _] -> story.position + 1
+      _ -> Map.get(story_results, :count) + 1
+    end
   end
 
   defp get_user_headline_position(socket) do
@@ -189,12 +287,24 @@ defmodule AniminaWeb.StoryLive do
     Map.get(headline_results, :count) + 1
   end
 
-  defp get_user_headlines(_) do
+  defp get_user_headlines(socket) do
+    user_headlines =
+      Story
+      |> Ash.Query.for_read(:user_headlines, %{user_id: socket.assigns.current_user.id})
+      |> Narratives.read!()
+      |> Enum.reduce(%{}, fn story, acc ->
+        Map.put(acc, story.headline_id, "")
+      end)
+
     Headline
     |> Ash.Query.for_read(:read)
     |> Narratives.read!()
     |> Enum.map(fn headline ->
-      [key: headline.subject, value: headline.id, disabled: false]
+      [
+        key: headline.subject,
+        value: headline.id,
+        disabled: Map.get(user_headlines, headline.id) != nil
+      ]
     end)
   end
 
@@ -228,7 +338,15 @@ defmodule AniminaWeb.StoryLive do
         phx-change="validate"
         phx-submit="submit"
       >
-        <%= text_input(f, :position, type: :hidden, value: @story_position) %>
+        <%= if @form.source.type == :create do %>
+          <%= text_input(f, :position, type: :hidden, value: @story_position) %>
+        <% end %>
+
+        <%= if @form.source.type == :update do %>
+          <%= text_input(f, :position, type: :hidden, value: f[:position].value) %>
+          <%= text_input(f, :id, type: :hidden, value: f[:id].value) %>
+        <% end %>
+
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <div>
