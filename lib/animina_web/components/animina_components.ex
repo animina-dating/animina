@@ -26,25 +26,31 @@ defmodule AniminaWeb.AniminaComponents do
 
   def notification_box(assigns) do
     ~H"""
-    <div class="rotate-[24deg] rotate-[12deg] rotate-[0deg]" />
+    <div class="rotate-[24deg] w-[100%] rotate-[12deg] rotate-[0deg]" />
     <div
-      class="border border-purple-400 rounded-lg bg-blue-100 px-4 py-3.5 flex items-start gap-4 drop-shadow"
+      class="border border-purple-400 w-full rounded-lg bg-blue-100 px-4 py-3.5 flex items-start justify-between gap-8 drop-shadow xs:justify-start "
       phx-no-format
     >
       <%= unless Enum.empty?(@avatars_urls) do %>
-        <div class="flex -space-x-4">
+        <div class="flex  xs:w-[25%] w-[20%]  -space-x-4">
           <%= for {avatar_url, index} <- Enum.with_index(@avatars_urls) do %>
             <% rotate_by = Integer.to_string(index * 12) %>
-            <img class={[
-              "w-16", "h-16",
-              "border-2", "border-white",
-              "rotate-[" <> rotate_by <> "deg]",
-            ]} src={avatar_url} alt="" />
+            <img
+              class={[
+                "w-16",
+                "h-16",
+                "border-2 object-cover",
+                "border-white",
+                "rotate-[" <> rotate_by <> "deg]"
+              ]}
+              src={avatar_url}
+              alt=""
+            />
           <% end %>
         </div>
       <% end %>
 
-      <div class="flex-grow pl-4">
+      <div class="xs:w-[65%] w-[70%] pl-4">
         <.notification_title :if={@title}>
           <%= @title %>
         </.notification_title>
@@ -56,6 +62,7 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
 
   @doc """
   Title within the notification box.
