@@ -92,6 +92,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-5 dark:text-white px-5">
+    
       <h2 class="font-bold  text-xl"><%= gettext("Criteria for your new partner") %></h2>
       <p>
         <%= gettext("We will use this information to find suitable partners for you.") %>
@@ -105,7 +106,10 @@ defmodule AniminaWeb.PotentialPartnerLive do
       >
         <div>
           <div class="flex items-center justify-between">
-            <label for="user_partner_gender" class="block text-sm font-medium leading-6 dark:text-white text-gray-900">
+            <label
+              for="user_partner_gender"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
               <%= gettext("Gender") %>
             </label>
           </div>
@@ -261,7 +265,10 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div>
-          <label for="form_search_range" class="block text-sm font-medium dark:text-white leading-6 text-gray-900">
+          <label
+            for="form_search_range"
+            class="block text-sm font-medium dark:text-white leading-6 text-gray-900"
+          >
             <%= gettext("Search range") %>
             <span class="text-gray-400">
               (<%= gettext("around") %> <%= @current_user.zip_code %> <%= @city_name.name %>)
