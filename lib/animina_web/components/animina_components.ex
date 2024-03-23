@@ -63,7 +63,6 @@ defmodule AniminaWeb.AniminaComponents do
     """
   end
 
-
   @doc """
   Title within the notification box.
 
