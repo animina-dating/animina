@@ -92,7 +92,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-5 dark:text-white px-5">
-    
       <h2 class="font-bold  text-xl"><%= gettext("Criteria for your new partner") %></h2>
       <p>
         <%= gettext("We will use this information to find suitable partners for you.") %>
@@ -162,105 +161,111 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
       </div>
         </div>
-        <div>
-          <label
-            for="form_minimum_partner_height"
-            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-          >
-            <%= gettext("Minimum height") %>
-          </label>
-          <div phx-feedback-for={f[:minimum_partner_height].name} class="mt-2">
-            <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-              prompt: gettext("doesn't matter"),
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 dark:bg-gray-700 dark:text-white focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  unless(get_field_errors(f[:minimum_partner_height], :minimum_partner_height) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              autofocus: true
-            ) %>
 
-            <.error :for={
-              msg <- get_field_errors(f[:minimum_partner_height], :minimum_partner_height)
-            }>
-              <%= gettext("Minimum height") <> " " <> msg %>
-            </.error>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <label
+              for="form_minimum_partner_height"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Minimum height") %>
+            </label>
+            <div phx-feedback-for={f[:minimum_partner_height].name} class="mt-2">
+              <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
+                prompt: gettext("doesn't matter"),
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 dark:bg-gray-700 dark:text-white focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                    unless(
+                      get_field_errors(f[:minimum_partner_height], :minimum_partner_height) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                autofocus: true
+              ) %>
+
+              <.error :for={
+                msg <- get_field_errors(f[:minimum_partner_height], :minimum_partner_height)
+              }>
+                <%= gettext("Minimum height") <> " " <> msg %>
+              </.error>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="form_maximum_partner_height"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Maximum height") %>
+            </label>
+            <div phx-feedback-for={f[:maximum_partner_height].name} class="mt-2">
+              <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
+                prompt: gettext("doesn't matter"),
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                    unless(
+                      get_field_errors(f[:maximum_partner_height], :maximum_partner_height) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    )
+              ) %>
+
+              <.error :for={
+                msg <- get_field_errors(f[:maximum_partner_height], :maximum_partner_height)
+              }>
+                <%= gettext("Maximum height") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
         </div>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <label
+              for="form_minimum_partner_age"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Minimum age") %>
+            </label>
+            <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
+              <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
+                prompt: gettext("doesn't matter"),
+                value: f[:minimum_partner_age].value,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                    unless(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    )
+              ) %>
 
-        <div>
-          <label
-            for="form_maximum_partner_height"
-            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-          >
-            <%= gettext("Maximum height") %>
-          </label>
-          <div phx-feedback-for={f[:maximum_partner_height].name} class="mt-2">
-            <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-              prompt: gettext("doesn't matter"),
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  unless(get_field_errors(f[:maximum_partner_height], :maximum_partner_height) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  )
-            ) %>
-
-            <.error :for={
-              msg <- get_field_errors(f[:maximum_partner_height], :maximum_partner_height)
-            }>
-              <%= gettext("Maximum height") <> " " <> msg %>
-            </.error>
+              <.error :for={msg <- get_field_errors(f[:minimum_partner_age], :minimum_partner_age)}>
+                <%= gettext("Minimum age") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label
-            for="form_minimum_partner_age"
-            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-          >
-            <%= gettext("Minimum age") %>
-          </label>
-          <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
-            <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
-              prompt: gettext("doesn't matter"),
-              value: f[:minimum_partner_age].value,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  unless(get_field_errors(f[:minimum_partner_age], :minimum_partner_age) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  )
-            ) %>
+          <div>
+            <label
+              for="form_maximum_partner_age"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Maximum age") %>
+            </label>
+            <div phx-feedback-for={f[:maximum_partner_age].name} class="mt-2">
+              <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
+                prompt: gettext("doesn't matter"),
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                    unless(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    )
+              ) %>
 
-            <.error :for={msg <- get_field_errors(f[:minimum_partner_age], :minimum_partner_age)}>
-              <%= gettext("Minimum age") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <label
-            for="form_maximum_partner_age"
-            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-          >
-            <%= gettext("Maximum age") %>
-          </label>
-          <div phx-feedback-for={f[:maximum_partner_age].name} class="mt-2">
-            <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
-              prompt: gettext("doesn't matter"),
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
-                  unless(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  )
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
-              <%= gettext("Maximum age") <> " " <> msg %>
-            </.error>
+              <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
+                <%= gettext("Maximum age") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
         </div>
 
