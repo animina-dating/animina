@@ -4,13 +4,26 @@
 
 /* App is optimized for mobile phones. Limit maximum width on other devices for now. */
 body {
-	max-width: 13.229cm; /* == 500px == 375pt */
-	margin-left: auto;
-	margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media screen and (max-width: 500px) {
+  /* Adjust max-width for smaller screens */
+  body {
+    max-width: 13.229cm;
+  }
+}
+
+@media screen and (min-width: 501px) {
+  /* Adjust width for larger screens */
+  body {
+    width: 80%;
+  }
 }
 
 input:invalid:not(:placeholder-shown) {
-	background-color: hsl( 12, 100%, 95% );
+  background-color: hsl(12, 100%, 95%);
 }
 
 input:not([placeholder])[type="text"],
@@ -27,16 +40,20 @@ input:not([placeholder])[type="tel"],
 input:not([placeholder])[type="time"],
 input:not([placeholder])[type="url"],
 input:not([placeholder])[type="week"] {
-	border: 5px dashed #f30 !important;
-	outline: 5px dashed #f96 !important;
+  border: 5px dashed #f30 !important;
+  outline: 5px dashed #f96 !important;
 }
 
-input:disabled, select:disabled, textarea:disabled, button:disabled {
-	opacity: 0.5;
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+  opacity: 0.5;
 }
 
-p, *.wordwrap {
-	@apply break-words hyphens-auto;
+p,
+*.wordwrap {
+  @apply break-words hyphens-auto;
 }
 
 input[type="text"],
@@ -53,23 +70,20 @@ input[type="tel"],
 input[type="time"],
 input[type="url"],
 input[type="week"] {
-	@apply shadow-inner;
+  @apply shadow-inner;
 }
 
 input[type="checkbox"],
 input[type="radio"] {
-	@apply drop-shadow-md;
+  @apply drop-shadow-md;
 }
 
 input[type="button"],
-input[type="submit"]
-input[type="reset"],
+input[type="submit"] input[type="reset"],
 button,
 select {
-	@apply drop-shadow-lg;
+  @apply drop-shadow-lg;
 }
-
-
 
 /*
 # For Emacs:
@@ -81,4 +95,3 @@ select {
 # For VIM:
 # vim:set noexpandtab:
 */
-
