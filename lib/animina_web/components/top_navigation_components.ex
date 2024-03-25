@@ -19,7 +19,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def top_navigation(assigns) do
     ~H"""
-    <div class="border-y border-brand-silver-100">
+    <div class="border-y md:border-r md:border-l border-brand-silver-100">
       <nav class="grid grid-cols-4 gap-1">
         <.home_nav_item active_tab={@active_tab} />
         <.bookmarks_nav_item active_tab={@active_tab} />
