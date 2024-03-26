@@ -127,7 +127,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <%= label(f, :partner_gender, item_title,
             for: "partner_gender_" <> item_code,
             class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
-            class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
           ) %>
         </div>
 
