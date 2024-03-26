@@ -65,6 +65,8 @@ defmodule Animina.Accounts.Photo do
     read :user_profile_photo do
       argument :user_id, :uuid, allow_nil?: false
 
+      pagination offset?: true, keyset?: true, required?: false
+
       filter expr(is_nil(story_id) == ^true and user_id == ^arg(:user_id))
     end
 

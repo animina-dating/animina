@@ -120,10 +120,12 @@ defmodule Animina.Accounts.User do
   calculations do
     calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
+    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
+    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
   end
 
   preparations do
-    prepare build(load: [:gravatar_hash, :age, :credit_points])
+    prepare build(load: [:gravatar_hash, :age, :credit_points, :profile_photo, :city])
   end
 
   authentication do
