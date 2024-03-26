@@ -190,13 +190,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
               </.error>
             </div>
           </div>
-              <.error :for={
-                msg <- get_field_errors(f[:minimum_partner_height], :minimum_partner_height)
-              }>
-                <%= gettext("Minimum height") <> " " <> msg %>
-              </.error>
-            </div>
-          </div>
 
           <div>
             <label
@@ -250,11 +243,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
               </.error>
             </div>
           </div>
-              <.error :for={msg <- get_field_errors(f[:minimum_partner_age], :minimum_partner_age)}>
-                <%= gettext("Minimum age") <> " " <> msg %>
-              </.error>
-            </div>
-          </div>
 
           <div>
             <label
@@ -274,10 +262,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
                     )
               ) %>
 
-              <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
-                <%= gettext("Maximum age") <> " " <> msg %>
-              </.error>
-            </div>
               <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
                 <%= gettext("Maximum age") <> " " <> msg %>
               </.error>
@@ -314,7 +298,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
               ],
               prompt: gettext("doesn't matter"),
               class:
-                "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                 "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                   unless(get_field_errors(f[:search_range], :search_range) == [],
                     do: "ring-red-600 focus:ring-red-600",
