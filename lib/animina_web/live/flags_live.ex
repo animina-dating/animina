@@ -215,7 +215,14 @@ defmodule AniminaWeb.FlagsLive do
       <p><%= @info_text %></p>
 
       <.async_result :let={_categories} assign={@categories}>
-        <:loading><%= gettext("Loading flags...") %></:loading>
+        <:loading>
+          <div class="space-y-4 pt-4">
+            <.flag_card_loading />
+            <.flag_card_loading />
+            <.flag_card_loading />
+            <.flag_card_loading />
+          </div>
+        </:loading>
         <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
 
         <div id="stream_categories" phx-update="stream">

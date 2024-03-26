@@ -113,6 +113,10 @@ defmodule AniminaWeb.ProfileLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-4 px-5 pb-8">
+      <div :if={@user == nil}>
+        <%= gettext("There was an error loading the user's profile") %>
+      </div>
+
       <div :if={@user != nil}>
         <div class="rounded-lg border border-gray-100 shadow-sm flex items-center space-x-4 px-4">
           <div class="w-24 h-24 flex flex-col items-center justify-center">
@@ -142,7 +146,13 @@ defmodule AniminaWeb.ProfileLive do
         <div class="mt-8 space-y-4">
           <h2 class="font-bold text-xl">My Stories</h2>
           <.async_result :let={_stories} assign={@stories}>
-            <:loading><%= gettext("Loading stories...") %></:loading>
+            <:loading>
+              <div class="space-y-4">
+                <.story_card_loading />
+                <.story_card_loading />
+                <.story_card_loading />
+              </div>
+            </:loading>
             <:failed :let={_failure}><%= gettext("There was an error loading stories") %></:failed>
 
             <div class="space-y-4" id="stream_stories" phx-update="stream">
@@ -163,7 +173,14 @@ defmodule AniminaWeb.ProfileLive do
           <h2 class="font-bold text-xl">My White Flags</h2>
 
           <.async_result :let={_flags} assign={@flags}>
-            <:loading><%= gettext("Loading flags...") %></:loading>
+            <:loading>
+              <div class="space-y-4 pt-4">
+                <.flag_card_loading />
+                <.flag_card_loading />
+                <.flag_card_loading />
+                <.flag_card_loading />
+              </div>
+            </:loading>
             <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
 
             <div class="space-y-4" id="stream_flags" phx-update="stream">
