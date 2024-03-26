@@ -35,6 +35,7 @@ defmodule Animina.Narratives.Story do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+<<<<<<< HEAD
     read :by_user_id do
       pagination offset?: true, keyset?: true, required?: false
 
@@ -47,6 +48,8 @@ defmodule Animina.Narratives.Story do
       filter expr(user_id == ^arg(:user_id))
     end
 
+=======
+>>>>>>> 35a60b7 (deactivate already used headlines)
     read :user_headlines do
       argument :user_id, :uuid, allow_nil?: false
 
