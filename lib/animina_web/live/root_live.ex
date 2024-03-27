@@ -73,7 +73,7 @@ defmodule AniminaWeb.RootLive do
     ~H"""
     <div class="space-y-10 px-5">
       <.notification_box
-        title={gettext("Animina Dating Plattform")}
+        title={gettext("Animina Dating Platform")}
         message={gettext("Fair, Fast and Free. Join us now!")}
         avatars_urls={[
           "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
@@ -89,128 +89,145 @@ defmodule AniminaWeb.RootLive do
         action={@action}
         phx-trigger-action={@trigger_action}
         method="POST"
-        class="space-y-6 group"
+        class="space-y-6 group "
         phx-change="validate"
         phx-submit="submit"
       >
-        <div>
-          <label for="user_username" class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Username") %>
-          </label>
-          <div phx-feedback-for={f[:username].name} class="mt-2">
-            <%= text_input(
-              f,
-              :username,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:username], :username) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("Pusteblume1977"),
-              value: f[:username].value,
-              type: :text,
-              required: true,
-              autocomplete: :username,
-              "phx-debounce": "200"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:username], :username)}>
-              <%= gettext("Username") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
-        <%= text_input(f, :language, type: :hidden, value: @language) %>
-
-        <div>
-          <label for="user_name" class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Name") %>
-          </label>
-          <div phx-feedback-for={f[:name].name} class="mt-2">
-            <%= text_input(f, :name,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:name], :name) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("Alice"),
-              value: f[:name].value,
-              type: :text,
-              required: true,
-              autocomplete: "given-name"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:name], :name)}>
-              <%= gettext("Name") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("E-mail address") %>
-          </label>
-          <div phx-feedback-for={f[:email].name} class="mt-2">
-            <%= text_input(f, :email,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:email], :email) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("alice@example.net"),
-              value: f[:email].value,
-              type: :email,
-              required: true,
-              autocomplete: :email,
-              "phx-debounce": "200"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:email], :email)}>
-              <%= gettext("E-mail address") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Password") %>
+        <div class="w-[100%] md:grid grid-cols-2 gap-8">
+          <div>
+            <label
+              for="user_username"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Username") %>
             </label>
-          </div>
-          <div phx-feedback-for={f[:password].name} class="mt-2">
-            <%= password_input(f, :password,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:password], :password) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("Password"),
-              value: f[:password].value,
-              autocomplete: "new-password",
-              "phx-debounce": "blur"
-            ) %>
+            <div phx-feedback-for={f[:username].name} class="mt-2">
+              <%= text_input(
+                f,
+                :username,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:username], :username) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: gettext("Pusteblume1977"),
+                value: f[:username].value,
+                type: :text,
+                required: true,
+                autocomplete: :username,
+                "phx-debounce": "200"
+              ) %>
 
-            <.error :for={msg <- get_field_errors(f[:password], :password)}>
-              <%= gettext("Password") <> " " <> msg %>
-            </.error>
+              <.error :for={msg <- get_field_errors(f[:username], :username)}>
+                <%= gettext("Username") <> " " <> msg %>
+              </.error>
+            </div>
+          </div>
+
+          <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
+          <%= text_input(f, :language, type: :hidden, value: @language) %>
+
+          <div>
+            <label
+              for="user_name"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Name") %>
+            </label>
+            <div phx-feedback-for={f[:name].name} class="mt-2">
+              <%= text_input(f, :name,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:name], :name) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: gettext("Alice"),
+                value: f[:name].value,
+                type: :text,
+                required: true,
+                autocomplete: "given-name"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:name], :name)}>
+                <%= gettext("Name") <> " " <> msg %>
+              </.error>
+            </div>
+          </div>
+
+          <div>
+            <label
+              for="user_email"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("E-mail address") %>
+            </label>
+            <div phx-feedback-for={f[:email].name} class="mt-2">
+              <%= text_input(f, :email,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:email], :email) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: gettext("alice@example.net"),
+                value: f[:email].value,
+                type: :email,
+                required: true,
+                autocomplete: :email,
+                "phx-debounce": "200"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:email], :email)}>
+                <%= gettext("E-mail address") <> " " <> msg %>
+              </.error>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="user_password"
+                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              >
+                <%= gettext("Password") %>
+              </label>
+            </div>
+            <div phx-feedback-for={f[:password].name} class="mt-2">
+              <%= password_input(f, :password,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:password], :password) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: gettext("Password"),
+                value: f[:password].value,
+                autocomplete: "new-password",
+                "phx-debounce": "blur"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:password], :password)}>
+                <%= gettext("Password") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
         </div>
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="user_birthday" class="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              for="user_birthday"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
               <%= gettext("Date of birth") %>
             </label>
           </div>
           <div phx-feedback-for={f[:birthday].name} class="mt-2">
             <%= date_input(f, :birthday,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:birthday], :birthday) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -229,7 +246,10 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="user_gender" class="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              for="user_gender"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
               <%= gettext("Gender") %>
             </label>
           </div>
@@ -247,7 +267,7 @@ defmodule AniminaWeb.RootLive do
               ) %>
               <%= label(f, :gender, item_title,
                 for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium text-gray-700"
+                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
               ) %>
             </div>
 
@@ -262,7 +282,7 @@ defmodule AniminaWeb.RootLive do
               ) %>
               <%= label(f, :gender, item_title,
                 for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium text-gray-700"
+                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
               ) %>
             </div>
 
@@ -277,120 +297,133 @@ defmodule AniminaWeb.RootLive do
               ) %>
               <%= label(f, :gender, item_title,
                 for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium text-gray-700"
+                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
               ) %>
             </div>
           </div>
         </div>
-
-        <div>
-          <label for="user_occupation" class="block text-sm font-medium leading-6 text-gray-900">
-            <%= gettext("Occupation") %>
-          </label>
-          <div phx-feedback-for={f[:occupation].name} class="mt-2">
-            <%= text_input(f, :occupation,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:occupation], :name) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("Dating Coach"),
-              value: f[:occupation].value,
-              type: :text,
-              required: false,
-              autocomplete: "organization-title"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:occupation], :name)}>
-              <%= gettext("Occupation") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="user_zip_code" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Zip code") %>
+        <div class="w-[100%] md:grid grid-cols-2 gap-8">
+          <div>
+            <label
+              for="user_occupation"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
+              <%= gettext("Occupation") %>
             </label>
-          </div>
-          <div phx-feedback-for={f[:zip_code].name} class="mt-2">
-            <%= text_input(f, :zip_code,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:zip_code], :zip_code) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              # Easter egg (Bundestag)
-              placeholder: "11011",
-              value: f[:zip_code].value,
-              inputmode: "numeric",
-              autocomplete: "postal-code",
-              "phx-debounce": "blur"
-            ) %>
+            <div phx-feedback-for={f[:occupation].name} class="mt-2">
+              <%= text_input(f, :occupation,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:occupation], :name) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: gettext("Dating Coach"),
+                value: f[:occupation].value,
+                type: :text,
+                required: false,
+                autocomplete: "organization-title"
+              ) %>
 
-            <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
-              <%= gettext("Zip code") <> " " <> msg %>
-            </.error>
+              <.error :for={msg <- get_field_errors(f[:occupation], :name)}>
+                <%= gettext("Occupation") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="user_height" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Height") %>
-              <span class="text-gray-400">
-                (<%= gettext("in cm") %>)
-              </span>
-            </label>
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="user_zip_code"
+                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              >
+                <%= gettext("Zip code") %>
+              </label>
+            </div>
+            <div phx-feedback-for={f[:zip_code].name} class="mt-2">
+              <%= text_input(f, :zip_code,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:zip_code], :zip_code) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                # Easter egg (Bundestag)
+                placeholder: "11011",
+                value: f[:zip_code].value,
+                inputmode: "numeric",
+                autocomplete: "postal-code",
+                "phx-debounce": "blur"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
+                <%= gettext("Zip code") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
-          <div phx-feedback-for={f[:height].name} class="mt-2">
-            <%= text_input(f, :height,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:height], :height) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: "160",
-              inputmode: "numeric",
-              value: f[:height].value,
-              "phx-debounce": "blur"
-            ) %>
 
-            <.error :for={msg <- get_field_errors(f[:height], :height)}>
-              <%= gettext("Height") <> " " <> msg %>
-            </.error>
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="user_height"
+                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              >
+                <%= gettext("Height") %>
+                <span class="text-gray-400 dark:text-gray-100">
+                  (<%= gettext("in cm") %>)
+                </span>
+              </label>
+            </div>
+            <div phx-feedback-for={f[:height].name} class="mt-2">
+              <%= text_input(f, :height,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900  dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:height], :height) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: "160",
+                inputmode: "numeric",
+                value: f[:height].value,
+                "phx-debounce": "blur"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:height], :height)}>
+                <%= gettext("Height") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
-        </div>
 
-        <div>
-          <div class="flex items-center justify-between">
-            <label for="user_mobile_phone" class="block text-sm font-medium leading-6 text-gray-900">
-              <%= gettext("Mobile phone number") %>
-              <span class="text-gray-400">
-                (<%= gettext("to receive a verification code") %>)
-              </span>
-            </label>
-          </div>
-          <div phx-feedback-for={f[:mobile_phone].name} class="mt-2">
-            <%= text_input(f, :mobile_phone,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:mobile_phone], :mobile_phone) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: "0151-12345678",
-              inputmode: "numeric",
-              value: f[:mobile_phone].value,
-              "phx-debounce": "blur"
-            ) %>
+          <div>
+            <div class="flex items-center justify-between">
+              <label
+                for="user_mobile_phone"
+                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              >
+                <%= gettext("Mobile phone number") %>
+                <span class="text-gray-400 dark:text-gray-100">
+                  (<%= gettext("to receive a verification code") %>)
+                </span>
+              </label>
+            </div>
+            <div phx-feedback-for={f[:mobile_phone].name} class="mt-2">
+              <%= text_input(f, :mobile_phone,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:mobile_phone], :mobile_phone) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: "0151-12345678",
+                inputmode: "numeric",
+                value: f[:mobile_phone].value,
+                "phx-debounce": "blur"
+              ) %>
 
-            <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
-              <%= gettext("Mobile phone number") <> " " <> msg %>
-            </.error>
+              <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
+                <%= gettext("Mobile phone number") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
         </div>
 
@@ -398,7 +431,7 @@ defmodule AniminaWeb.RootLive do
           <div phx-feedback-for={f[:legal_terms_accepted].name} class="flex h-6 items-center">
             <%= checkbox(f, :legal_terms_accepted,
               class:
-                "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -408,10 +441,10 @@ defmodule AniminaWeb.RootLive do
             ) %>
           </div>
           <div class="text-sm leading-6">
-            <label for="comments" class="font-medium text-gray-900">
+            <label for="comments" class="font-medium dark:text-white text-gray-900">
               <%= gettext("I accept the legal terms of animina.") %>
             </label>
-            <p class="text-gray-500">
+            <p class=" dark:text-gray-100 text-gray-500">
               <%= gettext("Warning: We will sell your data to the devel and Santa Claus.") %>
             </p>
             <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
@@ -422,7 +455,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <.link navigate={~p"/sign-in"}>
-            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+            <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
               <%= gettext("Already have an account? Sign in") %>
             </p>
           </.link>
@@ -431,7 +464,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <%= submit(@cta,
             class:
-              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+              "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@form.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
@@ -454,13 +487,16 @@ defmodule AniminaWeb.RootLive do
         phx-submit="submit"
       >
         <div>
-          <label for="user_email" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="user_email"
+            class="block text-sm font-medium  leading-6 dark:text-white text-gray-900"
+          >
             <%= gettext("E-mail address") %>
           </label>
           <div phx-feedback-for={f[:email].name} class="mt-2">
             <%= text_input(f, :email,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white  shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:email], :email) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -481,14 +517,17 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <div class="flex items-center justify-between">
-            <label for="user_password" class="block text-sm font-medium leading-6 text-gray-900">
+            <label
+              for="user_password"
+              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+            >
               <%= gettext("Password") %>
             </label>
           </div>
           <div phx-feedback-for={f[:password].name} class="mt-2">
             <%= password_input(f, :password,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 dark:bg-gray-700 dark:text-white ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:password], :password) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -507,7 +546,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <.link navigate={~p"/"}>
-            <p class="block text-sm leading-6 text-gray-700 hover:text-gray-900 hover:cursor-pointer hover:underline">
+            <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
               <%= gettext("Don't have an account? Sign up") %>
             </p>
           </.link>
@@ -516,7 +555,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <%= submit(@cta,
             class:
-              "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+              "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@form.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
