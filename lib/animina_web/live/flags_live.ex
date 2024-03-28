@@ -171,17 +171,28 @@ defmodule AniminaWeb.FlagsLive do
     bulk_result =
       Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
 
+    successful_socket =
+      socket
+      |> assign(:user_flags, [])
+      |> assign(:selected, 0)
+      |> push_navigate(to: socket.assigns.navigate_to)
+
     case bulk_result.status do
       :error ->
         {:noreply, socket |> put_flash(:error, gettext("Something went wrong adding your flags"))}
 
       _ ->
-        {:noreply,
-         socket
-         |> assign(selected: 0)
-         |> assign(user_flags: [])
-         |> put_flash(:info, gettext("Your flags have been added succesfully"))
-         |> push_navigate(to: socket.assigns.navigate_to)}
+        case socket.assigns.selected do
+          0 ->
+            {:noreply,
+             successful_socket
+             |> put_flash(:info, gettext("You have proceeded without selecting any flags"))}
+
+          _ ->
+            {:noreply,
+             successful_socket
+             |> put_flash(:info, gettext("Your flags have been added successfully"))}
+        end
     end
   end
 
@@ -210,9 +221,9 @@ defmodule AniminaWeb.FlagsLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-4 px-5">
-      <h2 class="font-bold text-xl"><%= @title %></h2>
+      <h2 class="font-bold dark:text-white text-xl"><%= @title %></h2>
 
-      <p><%= @info_text %></p>
+      <p class="dark:text-white"><%= @info_text %></p>
 
       <.async_result :let={_categories} assign={@categories}>
         <:loading><%= gettext("Loading flags...") %></:loading>
@@ -238,12 +249,15 @@ defmodule AniminaWeb.FlagsLive do
             class={
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@selected == 0,
-                  do: "",
-                  else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+                  do: " ",
+                  else: "opacity-40  hover:bg-blue-500 active:bg-blue-500"
                 )}
-            disabled={@selected == 0}
           >
-            <%= gettext("Save these flags") %>
+            <%= if @selected == 0 do %>
+              <%= gettext("Proceed without selecting a flag") %>
+            <% else %>
+              <%= gettext("Save flags") %>
+            <% end %>
           </button>
         </div>
       </.async_result>
