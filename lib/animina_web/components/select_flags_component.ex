@@ -66,7 +66,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
   def render(assigns) do
     ~H"""
     <div class="py-4 space-y-2">
-      <h3 class="font-semibold text-gray-800 truncate">
+      <h3 class="font-semibold text-gray-800 dark:text-white truncate">
         <%= get_translation(@category.category_translations, @language) %>
       </h3>
 
