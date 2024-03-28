@@ -55,6 +55,9 @@ defmodule Animina.Accounts.BasicUser do
     attribute :language, :string, allow_nil?: false
     attribute :legal_terms_accepted, :boolean, default: false
     attribute :occupation, :string
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do

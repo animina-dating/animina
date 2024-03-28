@@ -17,6 +17,9 @@ defmodule Animina.Traits.UserFlags do
       constraints one_of: [:white, :green, :red]
       allow_nil? false
     end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do

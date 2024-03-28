@@ -175,7 +175,9 @@ defmodule AniminaWeb.StoryLive do
       |> Accounts.create()
 
       {:noreply,
-       socket |> assign(:errors, []) |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
+       socket
+       |> assign(:errors, [])
+       |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
     else
       {:error, form} ->
         {:noreply, socket |> assign(:form, form)}
@@ -231,7 +233,7 @@ defmodule AniminaWeb.StoryLive do
            :form,
            nil
          )
-         |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
+         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
       else
         {:noreply,
          socket
@@ -240,7 +242,7 @@ defmodule AniminaWeb.StoryLive do
            :form,
            nil
          )
-         |> push_navigate(to: ~p"/profile/edit-story/#{story.id}")}
+         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
       end
     else
       {:error, form} ->

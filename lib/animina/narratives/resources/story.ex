@@ -10,6 +10,9 @@ defmodule Animina.Narratives.Story do
     uuid_primary_key :id
     attribute :content, :string
     attribute :position, :integer, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
@@ -35,6 +38,18 @@ defmodule Animina.Narratives.Story do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    read :by_user_id do
+      pagination offset?: true, keyset?: true, required?: false
+
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(sort: [position: :asc])
+
+      filter expr(user_id == ^arg(:user_id))
+    end
+
     read :user_headlines do
       argument :user_id, :uuid, allow_nil?: false
 
@@ -49,7 +64,6 @@ defmodule Animina.Narratives.Story do
     define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
-    define :by_user_id, get_by: [:user_id], action: :read
   end
 
   identities do
