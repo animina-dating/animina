@@ -27,6 +27,9 @@ defmodule Animina.Accounts.Photo do
       default :pending_review
       allow_nil? false
     end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   state_machine do

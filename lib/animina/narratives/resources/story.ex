@@ -10,6 +10,9 @@ defmodule Animina.Narratives.Story do
     uuid_primary_key :id
     attribute :content, :string
     attribute :position, :integer, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
