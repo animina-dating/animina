@@ -121,4 +121,53 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
+  @doc """
+  Story card loading.
+
+  ## Examples
+
+    <.story_card_loading />
+  """
+
+  def story_card_loading(assigns) do
+    ~H"""
+    <div class="animate-pulse rounded-lg border border-gray-100 shadow-sm pb-4">
+      <div class="h-[300px] w-full bg-gray-100"></div>
+
+      <div class="pt-4 px-4">
+        <div class="h-4 w-2/3 bg-gray-200 rounded-full"></div>
+      </div>
+
+      <div class="mt-4 px-4 space-y-1">
+        <div class="h-3 w-[90%] bg-gray-100 rounded-full"></div>
+        <div class="h-3 w-[80%] bg-gray-100 rounded-full"></div>
+        <div class="h-3 w-[40%] bg-gray-100 rounded-full"></div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Flag card loading.
+
+  ## Examples
+
+    <.flag_card_loading />
+  """
+
+  def flag_card_loading(assigns) do
+    ~H"""
+    <div class="animate-pulse pb-4">
+      <div class="h-4 w-1/3 bg-gray-200 rounded-full"></div>
+
+      <div class="mt-4 flex flex-wrap gap-2 w-full">
+        <div class="h-8 w-[60%] bg-gray-100 rounded-full"></div>
+        <div class="h-8 w-[30%] bg-gray-100 rounded-full"></div>
+        <div class="h-8 w-[40%] bg-gray-100 rounded-full"></div>
+        <div class="h-8 w-[50%] bg-gray-100 rounded-full"></div>
+      </div>
+    </div>
+    """
+  end
 end
