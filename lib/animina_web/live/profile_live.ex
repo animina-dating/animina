@@ -112,22 +112,15 @@ defmodule AniminaWeb.ProfileLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-4 px-5 pb-8">
+    <div class="px-5 pb-8 space-y-4">
       <div :if={@user == nil}>
         <%= gettext("There was an error loading the user's profile") %>
       </div>
 
       <div :if={@user != nil}>
-        <div class="rounded-lg border border-gray-100 shadow-sm flex items-center space-x-4 px-4">
-          <div class="w-24 h-24 flex flex-col items-center justify-center">
-            <img
-              :if={@user.profile_photo != nil}
-              class="object-fit"
-              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @user.profile_photo.filename}
-            />
-          </div>
-
+        <div class="flex items-center px-4 space-x-4 border border-gray-100 rounded-lg shadow-sm">
           <div class="py-4">
+
             <h3 class="text-lg dark:text-white font-semibold"><%= @user.name %></h3>
             <p class="text-sm dark:text-gray-100 font-medium text-gray-500"><%= @user.username %></p>
 
@@ -135,15 +128,20 @@ defmodule AniminaWeb.ProfileLive do
               <p class=" dark:text-gray-100  text-gray-600">
                 <%= gettext("Lives in ") %> <%= @user.city.name %>
               </p>
+               <%= if @user.occupation && @user.occupation != "" do %>
 
               <p class=" dark:text-gray-100  text-gray-600">
                 <%= gettext("I'm a ") %> <%= @user.occupation %>
+                
               </p>
+              <%end %>
+
             </div>
           </div>
         </div>
 
         <div class="mt-8 space-y-4">
+
           <h2 class="font-bold dark:text-white text-xl">My Stories</h2>
           <.async_result :let={_stories} assign={@stories}>
             <:loading>
@@ -170,11 +168,13 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
+
           <h2 class="font-bold dark:text-white text-xl">My White Flags</h2>
+
 
           <.async_result :let={_flags} assign={@flags}>
             <:loading>
-              <div class="space-y-4 pt-4">
+              <div class="pt-4 space-y-4">
                 <.flag_card_loading />
                 <.flag_card_loading />
                 <.flag_card_loading />
@@ -189,7 +189,7 @@ defmodule AniminaWeb.ProfileLive do
                   <%= category.name %>
                 </h3>
 
-                <ol class="flex flex-wrap gap-2 w-full">
+                <ol class="flex flex-wrap w-full gap-2">
                   <li :for={user_flag <- category.flags}>
                     <div class="cursor-pointer text-white shadow-sm rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600 ">
                       <span :if={user_flag.flag.emoji} class="pr-1.5">
