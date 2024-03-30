@@ -120,28 +120,25 @@ defmodule AniminaWeb.ProfileLive do
       <div :if={@user != nil}>
         <div class="flex items-center px-4 space-x-4 border border-gray-100 rounded-lg shadow-sm">
           <div class="py-4">
-
             <h3 class="text-lg dark:text-white font-semibold"><%= @user.name %></h3>
             <p class="text-sm dark:text-gray-100 font-medium text-gray-500"><%= @user.username %></p>
 
             <div class="mt-2">
+              <p class="dark:text-gray-100  text-gray-600">
+                <%= gettext("Lives in ") %> <%= @user.city.zip_code %> <%= @user.city.name %>.
+              </p>
               <p class=" dark:text-gray-100  text-gray-600">
                 <%= gettext("Lives in ") %> <%= @user.city.name %>
               </p>
-               <%= if @user.occupation && @user.occupation != "" do %>
 
               <p class=" dark:text-gray-100  text-gray-600">
                 <%= gettext("I'm a ") %> <%= @user.occupation %>
-                
               </p>
-              <%end %>
-
             </div>
           </div>
         </div>
 
         <div class="mt-8 space-y-4">
-
           <h2 class="font-bold dark:text-white text-xl">My Stories</h2>
           <.async_result :let={_stories} assign={@stories}>
             <:loading>
@@ -168,9 +165,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
-
           <h2 class="font-bold dark:text-white text-xl">My White Flags</h2>
-
 
           <.async_result :let={_flags} assign={@flags}>
             <:loading>
