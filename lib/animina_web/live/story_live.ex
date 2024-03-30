@@ -328,9 +328,9 @@ defmodule AniminaWeb.StoryLive do
   def render(assigns) do
     ~H"""
     <div class="space-y-4 px-5">
-      <h2 class="font-bold text-xl"><%= @title %></h2>
+      <h2 class="font-bold dark:text-white text-xl"><%= @title %></h2>
 
-      <p><%= @info_text %></p>
+      <p class="dark:text-white"><%= @info_text %></p>
 
       <.form
         :let={f}
@@ -352,7 +352,10 @@ defmodule AniminaWeb.StoryLive do
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <div>
-          <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="story_headline"
+            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+          >
             <%= gettext("Headline") %>
           </label>
 
@@ -400,7 +403,10 @@ defmodule AniminaWeb.StoryLive do
         </div>
 
         <div>
-          <label for="story_content" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="story_content"
+            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+          >
             <%= gettext("Content") %>
           </label>
 
@@ -414,8 +420,12 @@ defmodule AniminaWeb.StoryLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("I like swimming"),
+              placeholder:
+                gettext(
+                  "Hey there! I'm Joy, a 25-year-old Doctor who enjoys the simple things in life. I'm easygoing, down-to-earth, and always up for new experiences. Whether it's trying out a new restaurant, going for a hike, or just chilling at home with a good movie, I'm all about enjoying the moment."
+                ),
               value: f[:content].value,
+              rows: 5,
               type: :text,
               "phx-debounce": "200",
               maxlength: "1024"
@@ -428,7 +438,7 @@ defmodule AniminaWeb.StoryLive do
         </div>
 
         <div :if={@photo != nil} class="w-full space-y-2">
-          <p class="block text-sm font-medium leading-6 text-gray-900">
+          <p class="block text-sm font-medium leading-6 dark:text-white text-gray-900">
             <%= gettext("Photo") %>
           </p>
 
@@ -439,7 +449,7 @@ defmodule AniminaWeb.StoryLive do
         </div>
 
         <.inputs_for :let={photo_form} :if={@photo == nil} field={@form[:photo]}>
-          <p class="block text-sm font-medium leading-6 text-gray-900">
+          <p class="block text-sm font-medium leading-6 dark:text-white text-gray-900">
             <%= gettext("Photo") %>
           </p>
 
@@ -459,7 +469,7 @@ defmodule AniminaWeb.StoryLive do
             for={@uploads.photos.ref}
             data-upload-target="photos"
             data-input={@uploads.photos.ref}
-            class="flex flex-col items-center max-w-2xl w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  rounded-md"
+            class="flex flex-col items-center  w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  rounded-md"
           >
             <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
@@ -476,9 +486,9 @@ defmodule AniminaWeb.StoryLive do
             <div class="flex space-x-8">
               <.live_img_preview class="inline-block object-cover h-32 w-32 rounded-md" entry={entry} />
 
-              <div class="flex-1 flex flex-col justify-center">
+              <div class="flex-1 dark:text-white flex flex-col justify-center">
                 <p><%= entry.client_name %></p>
-                <p class="text-sm text-gray-600">
+                <p class="text-sm  dark:text-white text-gray-600">
                   <%= Size.humanize!(entry.client_size, output: :string) %>
                 </p>
 
