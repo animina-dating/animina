@@ -49,7 +49,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <button
       type="button"
       class={[
-        "relative text-xs font-medium flex flex-col items-center justify-center gap-1.5 py-3 shadow-none drop-shadow-none",
+        "relative text-xs font-medium flex md:flex-row flex-col items-center md:justify-start  md:rounded-md justify-center gap-1.5 py-3 px-0 md:px-3  shadow-none drop-shadow-none",
         if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: ""),
         unless(@current_user && @is_active, do: "text-gray-400")
       ]}
@@ -205,6 +205,48 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </svg>
     <span>Bookmarks</span>
     </.top_navigation_entry>
+    """
+  end
+
+  @doc """
+  Desktop top text
+
+  ## Examples
+
+      <.desktop_top_text />
+  """
+
+  def desktop_top_text(assigns) do
+    ~H"""
+    <div class="w-[100%] hidden  md:flex flex-col gap-4">
+      <div class="flex flex-col dark:text-[#E0E2EB] py-2 text-[#191C22] gap-1">
+        <p class="text-2xl">
+          Animina
+        </p>
+        <p class="text-lg">
+          Dating Platform
+        </p>
+      </div>
+      <p class="h-[1px] w-[100%] bg-gray-500" />
+    </div>
+    """
+  end
+
+  @doc """
+  Desktop sidebar .
+
+  ## Examples
+
+      <.desktop_sidebar />
+  """
+  def desktop_sidebar(assigns) do
+    ~H"""
+    <div class="w-[15%] hidden md:flex h-[100vh]  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
+      <.home_nav_item active_tab={@active_tab} />
+      <.bookmarks_nav_item active_tab={@active_tab} />
+      <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.user_profile_item current_user={@current_user} active_tab={@active_tab} />
+    </div>
     """
   end
 
