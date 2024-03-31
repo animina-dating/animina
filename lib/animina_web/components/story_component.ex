@@ -31,7 +31,7 @@ defmodule AniminaWeb.StoryComponent do
       </div>
 
       <div :if={@story.headline != nil} class="pt-4 px-4">
-        <h3 class="text-lg font-semibold"><%= @story.headline.subject %></h3>
+        <h3 class="text-lg dark:text-white font-semibold"><%= @story.headline.subject %></h3>
       </div>
 
       <%!-- <p class="truncate text-sm text-gray-300">
@@ -41,7 +41,7 @@ defmodule AniminaWeb.StoryComponent do
       </p> --%>
 
       <div :if={@story.content != nil} class="pt-1 px-4">
-        <p class="text-gray-600"><%= @story.content %></p>
+        <p class="text-gray-600 dark:text-gray-100"><%= @story.content %></p>
       </div>
     </div>
     """

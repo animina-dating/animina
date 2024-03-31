@@ -65,7 +65,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
              :form,
              Form.for_create(Photo, :create, api: Accounts, as: "photo")
            )
-           |> push_navigate(to: ~p"/profile/white-flags")}
+           |> push_navigate(to: ~p"/profile/flags/white")}
         else
           {:error, form} ->
             {:noreply, socket |> assign(:form, form)}
@@ -90,13 +90,13 @@ defmodule AniminaWeb.ProfilePhotoLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10 px-5">
+    <div class="px-5 space-y-10">
       <.notification_box
         title={gettext("Hello %{name}!", name: @current_user.name)}
         message={gettext("To complete your profile upload a profile photo")}
       />
 
-      <h2 class="font-bold text-xl"><%= gettext("Select or use camera to take a photo") %></h2>
+      <h2 class="text-xl font-bold"><%= gettext("Select or use camera to take a photo") %></h2>
 
       <.form
         :let={f}
@@ -117,7 +117,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
           for={@uploads.photos.ref}
           data-upload-target="photos"
           data-input={@uploads.photos.ref}
-          class="flex flex-col items-center max-w-2xl w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  rounded-md"
+          class="flex flex-col items-center w-full max-w-2xl px-6 py-8 mx-auto text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer bg-gray-50"
         >
           <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
@@ -132,9 +132,9 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <%= text_input(f, :size, type: :hidden, value: entry.client_size) %>
 
           <div class="flex space-x-8">
-            <.live_img_preview class="inline-block object-cover h-32 w-32 rounded-md" entry={entry} />
+            <.live_img_preview class="inline-block object-cover w-32 h-32 rounded-md" entry={entry} />
 
-            <div class="flex-1 flex flex-col justify-center">
+            <div class="flex flex-col justify-center flex-1">
               <p><%= entry.client_name %></p>
               <p class="text-sm text-gray-600">
                 <%= Size.humanize!(entry.client_size, output: :string) %>
@@ -156,7 +156,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
 
           <div
             :if={Enum.count(upload_errors(@uploads.photos, entry))}
-            class="danger mb-4"
+            class="mb-4 danger"
             role="alert"
           >
             <ul class="error-messages">
