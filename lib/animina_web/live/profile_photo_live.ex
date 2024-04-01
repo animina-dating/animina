@@ -96,7 +96,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
         message={gettext("To complete your profile upload a profile photo")}
       />
 
-      <h2 class="text-xl font-bold"><%= gettext("Select or use camera to take a photo") %></h2>
+      <h2 class="text-xl dark:text-white font-bold"><%= gettext("Select or use camera to take a photo") %></h2>
 
       <.form
         :let={f}
@@ -136,7 +136,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
 
             <div class="flex flex-col justify-center flex-1">
               <p><%= entry.client_name %></p>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm dark:text-gray-100 text-gray-600">
                 <%= Size.humanize!(entry.client_size, output: :string) %>
               </p>
 

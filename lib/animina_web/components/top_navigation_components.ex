@@ -241,7 +241,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   def desktop_sidebar(assigns) do
     ~H"""
-    <div class="w-[15%] hidden md:flex h-[100vh]  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
+    <div class="w-[15%] hidden md:flex flex-grow  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
       <.home_nav_item active_tab={@active_tab} />
       <.bookmarks_nav_item active_tab={@active_tab} />
       <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
