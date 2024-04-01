@@ -69,7 +69,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     IO.puts("|--------------------------|--------|-----------------|---------|-----|")
   end
 
-  def random_zip_code() do
+  def random_zip_code do
     Enum.take_random(
       [
         "56068",
@@ -89,7 +89,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     |> hd
   end
 
-  def random_mobile_phone_number() do
+  def random_mobile_phone_number do
     hd(Enum.take_random(["0171", "0151", "0172", "0160", "0170", "0157"], 1)) <>
       Phone.EnUs.subscriber_number(8)
   end
