@@ -5,6 +5,8 @@ defmodule Mix.Tasks.CreateDummyAccounts do
 
   use Mix.Task
   alias Animina.Accounts.User
+  alias Faker.Person
+  alias Faker.Phone
 
   def run(args) do
     Mix.Task.run("app.start", [])
@@ -40,7 +42,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
         mobile_phone: random_mobile_phone_number(),
         birthday: birthday,
         hashed_password: Faker.UUID.v4(),
-        occupation: Faker.Person.En.title_descriptor(),
+        occupation: Person.En.title_descriptor(),
         minimum_partner_height: height - 30,
         maximum_partner_height: height + 15,
         minimum_partner_age: minimum_partner_age(age),
@@ -89,7 +91,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
 
   def random_mobile_phone_number() do
     hd(Enum.take_random(["0171", "0151", "0172", "0160", "0170", "0157"], 1)) <>
-      Faker.Phone.EnUs.subscriber_number(8)
+      Phone.EnUs.subscriber_number(8)
   end
 
   def opposite_gender("male") do
