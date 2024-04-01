@@ -4,11 +4,13 @@
 
 <.desktop_top_text />
 
-<div class="w-[100%] pt-4  flex justify-start items-start">
+<div class="w-[100%] pt-4  flex justify-center">
   <.desktop_sidebar active_tab={@active_tab} current_user={@current_user} />
-  <main class="md:w-[78%] w-[100%]  space-y-5 px-3">
+  <main class="md:w-[78%] w-[100%] flex flex-col gap-2 flex-grow  space-y-5 px-3">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
   </main>
-  <p class="bg-[#C1C6D5] dark:bg-[#414753] hidden md:block w-[1px] h-[100vh]" />
+  <div class="hidden md:flex  flex-grow justify-end">
+    <p class="bg-[#C1C6D5] dark:bg-[#414753]  w-[1px] " />
+  </div>
 </div>
