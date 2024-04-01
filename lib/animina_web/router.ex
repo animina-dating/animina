@@ -35,15 +35,11 @@ defmodule AniminaWeb.Router do
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_required} do
       live "/profile/potential-partner", PotentialPartnerLive, :index
       live "/profile/profile-photo", ProfilePhotoLive, :index
-      
       live "/profile/stories/new", StoryLive, :new
       live "/profile/stories/:id/edit", StoryLive, :edit
-
       live "/profile/flags/white", FlagsLive, :white
       live "/profile/flags/green", FlagsLive, :green
       live "/profile/flags/red", FlagsLive, :red
-     
-
       live "/profile/about-me", StoryLive, :about_me
       live "/:username", ProfileLive
     end

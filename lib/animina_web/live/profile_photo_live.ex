@@ -96,7 +96,9 @@ defmodule AniminaWeb.ProfilePhotoLive do
         message={gettext("To complete your profile upload a profile photo")}
       />
 
-      <h2 class="text-xl dark:text-white font-bold"><%= gettext("Select or use camera to take a photo") %></h2>
+      <h2 class="text-xl dark:text-white font-bold">
+        <%= gettext("Select or use camera to take a photo") %>
+      </h2>
 
       <.form
         :let={f}
