@@ -269,25 +269,22 @@ defmodule AniminaWeb.FlagsLive do
             />
           </div>
         </div>
-        <div class="fixed bottom-0 w-[100%]">
-          <div class=" absolute  bottom-0 bg-white dark:bg-gray-900 p-4 w-[100%] md:w-[70%]">
-            <button
-              phx-click="add_flags"
-              class={
+
+        <button
+          phx-click="add_flags"
+          class={
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@selected == 0,
                   do: " ",
                   else: "opacity-40  hover:bg-blue-500 active:bg-blue-500"
                 )}
-            >
-              <%= if @selected == 0 do %>
-                <%= gettext("Proceed without selecting a flag") %>
-              <% else %>
-                <%= gettext("Save flags") %>
-              <% end %>
-            </button>
-          </div>
-        </div>
+        >
+          <%= if @selected == 0 do %>
+            <%= gettext("Proceed without selecting a flag") %>
+          <% else %>
+            <%= gettext("Save flags") %>
+          <% end %>
+        </button>
       </.async_result>
     </div>
     """
