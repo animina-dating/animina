@@ -74,7 +74,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :profile}>
       <%= if @current_user do %>
-        <img alt="Avatar" class="w-6 h-6 rounded-full object-cover" src={"https://www.gravatar.com/avatar/#{@current_user.gravatar_hash}"} />
+      <%= if @current_user.profile_photo do %>
+      <img class="w-6 h-6 rounded-full object-cover"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
+      <% else %>
+      <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="stroke-current w-6 h-6 shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+            stroke="stroke-current" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+          />
+        </svg>
+        <%end %>
       <% else %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
