@@ -136,7 +136,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <div class="flex space-x-8">
             <.live_img_preview class="inline-block object-cover w-32 h-32 rounded-md" entry={entry} />
 
-            <div class="flex flex-col justify-center flex-1">
+            <div class="flex flex-col dark:text-white justify-center flex-1">
               <p><%= entry.client_name %></p>
               <p class="text-sm dark:text-gray-100 text-gray-600">
                 <%= Size.humanize!(entry.client_size, output: :string) %>
