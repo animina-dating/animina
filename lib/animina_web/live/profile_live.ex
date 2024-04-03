@@ -12,12 +12,6 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
-    average_potential_partner_height =
-      trunc(
-        (socket.assigns.current_user.minimum_partner_height +
-           socket.assigns.current_user.maximum_partner_height) / 2
-      )
-
     socket =
       Accounts.User.by_username(username)
       |> case do
@@ -26,7 +20,6 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(language: language)
           |> assign(active_tab: :home)
           |> assign(user: user)
-          |> assign(average_potential_partner_height: average_potential_partner_height)
           |> assign(stories: AsyncResult.loading())
           |> assign(flags: AsyncResult.loading())
           |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
@@ -145,11 +138,7 @@ defmodule AniminaWeb.ProfileLive do
           </div>
         </div>
 
-        <.height_visualization
-          current_user={@current_user}
-          average_potential_partner_height={@average_potential_partner_height}
-          user={@user}
-        />
+        <.height_visualization current_user={@current_user} profile_user={@user} />
 
         <div class="mt-8 space-y-4">
           <h2 class="font-bold dark:text-white text-xl">My Stories</h2>

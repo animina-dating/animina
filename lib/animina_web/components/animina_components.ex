@@ -181,7 +181,7 @@ defmodule AniminaWeb.AniminaComponents do
 
   def height_visualization(assigns) do
     ~H"""
-    <%= if @current_user.gender == "male"  || @current_user== "female" do %>
+    <%= if @current_user.gender != "diverse"  &&  @profile_user != "diverse" do %>
       <div class="flex gap-16 p-4  py-8 justify-start items-end">
         <div class="flex gap-0">
           <p class="h-[200px] dark:bg-white bg-black w-[2px] " />
@@ -204,10 +204,11 @@ defmodule AniminaWeb.AniminaComponents do
 
         <div class="flex items-end gap-12">
           <.current_user_figure gender={@current_user.gender} height={@current_user.height} />
+
           <.potential_partner_figure
-            partner_gender={@current_user.partner_gender}
-            gender={@current_user.gender}
-            height={@average_potential_partner_height}
+            partner_gender={@profile_user.gender}
+            gender={@profile_user.gender}
+            height={@profile_user.height}
           />
         </div>
       </div>
@@ -229,12 +230,7 @@ defmodule AniminaWeb.AniminaComponents do
     ~H"""
     <%= if @partner_gender == "male" do %>
       <.male_figure height={@height} />
-    <% end %>
-    <%= if @partner_gender == "female" do %>
-      <.female_figure height={@height} />
-    <% end %>
-    <%= if @partner_gender == "diverse" do %>
-      <.male_figure height={@height} />
+    <% else %>
       <.female_figure height={@height} />
     <% end %>
     """
