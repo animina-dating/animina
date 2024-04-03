@@ -170,4 +170,20 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
+  @doc """
+  Flag card loading.
+
+  ## Examples
+
+    <.flag_card_loading />
+  """
+
+  def current_user_stick_figure(assigns) do
+    ~H"""
+    <%!-- <%= if @current_user.gender == male  do %>
+    <% else %>
+    <% end %> --%>
+    """
+  end
 end

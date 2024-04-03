@@ -16,6 +16,8 @@ defmodule AniminaWeb.RootLive do
       |> assign(trigger_action: false)
       |> assign(:errors, [])
 
+    IO.inspect(Registration.get_current_basic_user(session))
+
     {:ok, socket}
   end
 

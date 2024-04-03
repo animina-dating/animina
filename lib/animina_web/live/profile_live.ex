@@ -16,6 +16,8 @@ defmodule AniminaWeb.ProfileLive do
       socket.assigns.current_user.minimum_partner_height +
         socket.assigns.current_user.maximum_partner_height / 2
 
+    IO.inspect(socket.assigns.current_user)
+
     socket =
       Accounts.User.by_username(username)
       |> case do
@@ -143,32 +145,53 @@ defmodule AniminaWeb.ProfileLive do
           </div>
         </div>
 
-        <div class="flex gap-2 p-4   py-8 justify-end items-end">
-          <svg width="180px"
-            height="180px" fill="#000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <path d="M9.5,7H15a1,1,0,0,1,.949.684l2,6a1,1,0,0,1-1.9.632L14.5,9.662V22a1,1,0,0,1-2,0V16h-1v6a1,1,0,0,1-2,0V9.662L7.949,14.316a1,1,0,0,1-1.9-.632l2-6A1,1,0,0,1,9,7Zm0-3.5A2.5,2.5,0,1,0,12,1,2.5,2.5,0,0,0,9.5,3.5Z">
-              </path>
-            </g>
-          </svg>
-          <svg
-            fill="#000000"
-            width="142px"
-            height="142px"
-            viewBox="0 0 512 512"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-              <title>ionicons-v5-r</title>
-              <circle cx="255.75" cy="56" r="56"></circle>
-              <path d="M394.63,277.9,384.3,243.49s0-.07,0-.11l-22.46-74.86h-.05l-2.51-8.45a44.87,44.87,0,0,0-43-32.08h-120a44.84,44.84,0,0,0-43,32.08l-2.51,8.45h-.06l-22.46,74.86s0,.07,0,.11L117.88,277.9c-3.12,10.39,2.3,21.66,12.57,25.14a20,20,0,0,0,25.6-13.18l25.58-85.25h0l2.17-7.23A8,8,0,0,1,199.33,200a7.78,7.78,0,0,1-.17,1.61v0L155.43,347.4A16,16,0,0,0,170.75,368h29V482.69c0,16.46,10.53,29.31,24,29.31s24-12.85,24-29.31V368h16V482.69c0,16.46,10.53,29.31,24,29.31s24-12.85,24-29.31V368h30a16,16,0,0,0,15.33-20.6L313.34,201.59a7.52,7.52,0,0,1-.16-1.59,8,8,0,0,1,15.54-2.63l2.17,7.23h0l25.57,85.25A20,20,0,0,0,382.05,303C392.32,299.56,397.74,288.29,394.63,277.9Z">
-              </path>
-            </g>
-          </svg>
+        <div class="flex gap-24 p-4  py-8 justify-start items-end">
+          <div class="flex gap-0">
+            <p class="h-[200px] bg-black w-[2px] " />
+            <div class="h-[100%] flex  relative">
+              <p class="absolute -top-[20px] pb-2">200cm</p>
+
+              <p class="w-[400px] absolute top-[2px] mb-[180px] h-[1px] bg-black" />
+              <p class="absolute top-[35px] pb-3">150cm</p>
+              <p class="w-[400px] absolute top-[54px]  h-[1px] bg-black"></p>
+
+              <p class="absolute top-[80px] pb-3">100cm</p>
+              <p class="w-[400px] absolute top-[103px] h-[1px] bg-black"></p>
+              <p class="absolute top-[132px] pb-3">50cm</p>
+              <p class="w-[400px] absolute top-[152px] h-[1px] bg-black"></p>
+            </div>
+          </div>
+          <div class="h-[200px] w-[50px] flex flex-col  items-center ">
+            <p class="h-[20px] w-[20px] my-1  rounded-full bg-black" />
+            <div class="h-[40%]  flex gap-0">
+              <p class="h-[100%] bg-black rotate-12 w-[10px]" />
+              <p class="h-[100%] bg-black w-[50px]" />
+              <p class="h-[100%] bg-black -rotate-12 w-[10px]" />
+            </div>
+            <div class="h-[45%]  flex gap-0">
+              <div class="w-[50px] flex justify-between">
+                <p class="h-[100%] bg-black w-[40%]" />
+                <p class="h-[100%] bg-black w-[40%]" />
+              </div>
+            </div>
+          </div>
+          <div class="h-[150px] w-[50px] flex justify-between flex-col  items-center ">
+            <p class="h-[20px] w-[20px] my-1  rounded-full bg-black" />
+            <div class="h-[30%]  flex gap-0">
+              <p class="h-[100%] bg-black rotate-12 w-[10px]" />
+              <p class="h-[100%] bg-black w-[50px]" />
+              <p class="h-[100%] bg-black -rotate-12 w-[10px]" />
+            </div>
+            <div class="h-[5%] w-[50px] bg-black " />
+            <div class="h-[25%] bg-black w-[80px]  flex gap-0" />
+
+            <div class="h-[25%]  flex gap-0">
+              <div class="w-[50px] flex justify-between">
+                <p class="h-[100%] bg-black w-[40%]" />
+                <p class="h-[100%] bg-black w-[40%]" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="mt-8 space-y-4">
