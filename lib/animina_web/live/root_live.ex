@@ -503,7 +503,6 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: gettext("alice@example.net"),
               value: f[:email].value,
-              type: :email,
               required: true,
               autocomplete: :email,
               "phx-debounce": "200"

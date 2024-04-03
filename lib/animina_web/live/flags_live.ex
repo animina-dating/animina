@@ -34,7 +34,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
-    |> assign(navigate_to: "/profile/green-flags")
+    |> assign(navigate_to: "/profile/flags/green")
     |> assign(title: gettext("Choose Your Own Flags"))
     |> assign(
       info_text:
@@ -66,7 +66,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
-    |> assign(navigate_to: "/profile/red-flags")
+    |> assign(navigate_to: "/profile/flags/red")
     |> assign(title: gettext("Choose Your Green Flags"))
     |> assign(
       info_text:
@@ -250,10 +250,9 @@ defmodule AniminaWeb.FlagsLive do
           </div>
         </div>
 
-        <div class="pb-8">
-          <button
-            phx-click="add_flags"
-            class={
+        <button
+          phx-click="add_flags"
+          class={
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@selected == 0,
                   do: " ",

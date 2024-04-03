@@ -32,6 +32,10 @@ We use the [Ash Framework](https://ash-hq.org).
 
 Basic seeding is been automatically done by special migrations.
 
+### Dummy Accounts
+
+`mix create_dummy_accounts 10` creates 10 dummy accounts for your development environment.
+
 ## Local Phoenix Server
 
 To start your Phoenix server:
