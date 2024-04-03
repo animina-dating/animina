@@ -4,8 +4,8 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   """
 
   use Mix.Task
-  alias Animina.Accounts.User
   alias Animina.Accounts.Photo
+  alias Animina.Accounts.User
   alias Faker.Person
   alias Faker.Phone
 
