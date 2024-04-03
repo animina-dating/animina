@@ -11,12 +11,10 @@ defmodule AniminaWeb.RootLive do
     socket =
       socket
       |> assign(language: language)
-      |> assign(current_user: Registration.get_current_basic_user(session))
+      |> assign(current_user: Registration.get_current_user(session))
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
       |> assign(:errors, [])
-
-    IO.inspect(Registration.get_current_basic_user(session))
 
     {:ok, socket}
   end

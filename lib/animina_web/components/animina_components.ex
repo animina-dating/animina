@@ -179,11 +179,107 @@ defmodule AniminaWeb.AniminaComponents do
     <.flag_card_loading />
   """
 
-  def current_user_stick_figure(assigns) do
+  def height_visualization(assigns) do
     ~H"""
-    <%!-- <%= if @current_user.gender == male  do %>
+    <%= if @current_user.gender == "male"  || @current_user== "female" do %>
+      <div class="flex gap-16 p-4  py-8 justify-start items-end">
+        <div class="flex gap-0">
+          <p class="h-[200px] dark:bg-white bg-black w-[2px] " />
+          <div class="h-[100%] flex  relative">
+            <p class="absolute dark:text-white -top-[20px]  pb-2">200cm</p>
+
+            <p class="md:w-[400px] w-[300px] absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
+            <p class="absolute top-[32px] dark:text-white  pb-3">150cm</p>
+            <p class="md:w-[400px] w-[300px]  absolute top-[52px]  h-[1px] dark:bg-white bg-black">
+            </p>
+
+            <p class="absolute top-[80px] dark:text-white  pb-3">100cm</p>
+            <p class="md:w-[400px] w-[300px]  absolute top-[103px] h-[1px] dark:bg-white bg-black">
+            </p>
+            <p class="absolute top-[132px] dark:text-white  pb-3">50cm</p>
+            <p class="md:w-[400px] w-[300px]  absolute top-[152px] h-[1px] dark:bg-white bg-black">
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-end gap-12">
+          <.current_user_figure gender={@current_user.gender} height={@current_user.height} />
+          <.potential_partner_figure
+            partner_gender={@current_user.partner_gender}
+            gender={@current_user.gender}
+            height={@average_potential_partner_height}
+          />
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  def current_user_figure(assigns) do
+    ~H"""
+    <%= if @gender == "male" do %>
+      <.male_figure height={@height} />
     <% else %>
-    <% end %> --%>
+      <.female_figure height={@height} />
+    <% end %>
+    """
+  end
+
+  def potential_partner_figure(assigns) do
+    ~H"""
+    <%= if @partner_gender == "male" do %>
+      <.male_figure height={@height} />
+    <% end %>
+    <%= if @partner_gender == "female" do %>
+      <.female_figure height={@height} />
+    <% end %>
+    <%= if @partner_gender == "diverse" do %>
+      <.male_figure height={@height} />
+      <.female_figure height={@height} />
+    <% end %>
+    """
+  end
+
+  def male_figure(assigns) do
+    ~H"""
+    <div class={"h-[#{@height}px] md:w-[40px] w-[35px] flex flex-col justify-between  items-center "}>
+      <p class="h-[15px] w-[15px] my-1  rounded-full dark:bg-white bg-black" />
+
+      <div class="h-[55%]  flex gap-0">
+        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[10px]" />
+        <p class="h-[100%] dark:bg-white bg-black w-[35px] md:w-[40px]" />
+        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[10px]" />
+      </div>
+      <div class="h-[50%]  flex gap-0">
+        <div class="md:w-[40px] w-[35px] flex justify-between">
+          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
+          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def female_figure(assigns) do
+    ~H"""
+    <div class={"h-[#{@height}px]  md:w-[40px] w-[35px] flex justify-between flex-col  items-center"}>
+      <p class="h-[15px] w-[15px] my-1   rounded-full dark:bg-white bg-black" />
+
+      <div class="h-[30%]  flex gap-0">
+        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[10px]" />
+        <p class="h-[100%] dark:bg-white bg-black w-[35px] md:w-[40px]" />
+        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[10px]" />
+      </div>
+      <div class="h-[10%] w-[35px] md:w-[40px] dark:bg-white bg-black " />
+      <div class="h-[25%] dark:bg-white bg-black md:w-[70px] w-[55px] flex gap-0" />
+
+      <div class="h-[25%]  flex gap-0">
+        <div class="w-[50px] flex justify-between">
+          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
+          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
+        </div>
+      </div>
+    </div>
     """
   end
 end

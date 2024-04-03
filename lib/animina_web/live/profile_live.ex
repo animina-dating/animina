@@ -13,10 +13,12 @@ defmodule AniminaWeb.ProfileLive do
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
     average_potential_partner_height =
-      socket.assigns.current_user.minimum_partner_height +
-        socket.assigns.current_user.maximum_partner_height / 2
+      trunc(
+        (socket.assigns.current_user.minimum_partner_height +
+           socket.assigns.current_user.maximum_partner_height) / 2
+      )
 
-    IO.inspect(socket.assigns.current_user)
+
 
     socket =
       Accounts.User.by_username(username)
@@ -145,54 +147,11 @@ defmodule AniminaWeb.ProfileLive do
           </div>
         </div>
 
-        <div class="flex gap-24 p-4  py-8 justify-start items-end">
-          <div class="flex gap-0">
-            <p class="h-[200px] bg-black w-[2px] " />
-            <div class="h-[100%] flex  relative">
-              <p class="absolute -top-[20px] pb-2">200cm</p>
-
-              <p class="w-[400px] absolute top-[2px] mb-[180px] h-[1px] bg-black" />
-              <p class="absolute top-[35px] pb-3">150cm</p>
-              <p class="w-[400px] absolute top-[54px]  h-[1px] bg-black"></p>
-
-              <p class="absolute top-[80px] pb-3">100cm</p>
-              <p class="w-[400px] absolute top-[103px] h-[1px] bg-black"></p>
-              <p class="absolute top-[132px] pb-3">50cm</p>
-              <p class="w-[400px] absolute top-[152px] h-[1px] bg-black"></p>
-            </div>
-          </div>
-          <div class="h-[200px] w-[50px] flex flex-col  items-center ">
-            <p class="h-[20px] w-[20px] my-1  rounded-full bg-black" />
-            <div class="h-[40%]  flex gap-0">
-              <p class="h-[100%] bg-black rotate-12 w-[10px]" />
-              <p class="h-[100%] bg-black w-[50px]" />
-              <p class="h-[100%] bg-black -rotate-12 w-[10px]" />
-            </div>
-            <div class="h-[45%]  flex gap-0">
-              <div class="w-[50px] flex justify-between">
-                <p class="h-[100%] bg-black w-[40%]" />
-                <p class="h-[100%] bg-black w-[40%]" />
-              </div>
-            </div>
-          </div>
-          <div class="h-[150px] w-[50px] flex justify-between flex-col  items-center ">
-            <p class="h-[20px] w-[20px] my-1  rounded-full bg-black" />
-            <div class="h-[30%]  flex gap-0">
-              <p class="h-[100%] bg-black rotate-12 w-[10px]" />
-              <p class="h-[100%] bg-black w-[50px]" />
-              <p class="h-[100%] bg-black -rotate-12 w-[10px]" />
-            </div>
-            <div class="h-[5%] w-[50px] bg-black " />
-            <div class="h-[25%] bg-black w-[80px]  flex gap-0" />
-
-            <div class="h-[25%]  flex gap-0">
-              <div class="w-[50px] flex justify-between">
-                <p class="h-[100%] bg-black w-[40%]" />
-                <p class="h-[100%] bg-black w-[40%]" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <.height_visualization
+          current_user={@current_user}
+          average_potential_partner_height={@average_potential_partner_height}
+          user={@user}
+        />
 
         <div class="mt-8 space-y-4">
           <h2 class="font-bold dark:text-white text-xl">My Stories</h2>
