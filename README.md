@@ -41,6 +41,14 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Thoughts about the Frontend
+
+Keep it simple. Let's not use JavaScript everywhere. Better ask sw@wintermeyer-consulting.de first 
+before diving into a JavaScript driven feature. Use Phoenix tools when possible.
+
+We are doing a mobile first approach and use [Tailwind CSS](https://tailwindui.com). Please don't 
+forget a dark mode version when implimenting a new feature.
+
 ## Docker Compose
 
 Alternatively you may want to run the application using Docker-Compose.

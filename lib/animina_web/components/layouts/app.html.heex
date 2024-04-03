@@ -1,6 +1,14 @@
-<.top_navigation :if={@current_user != nil} active_tab={@active_tab} current_user={@current_user} />
-
-<main class="py-3 space-y-5 px-3">
-  <.flash_group flash={@flash} />
-  <%= @inner_content %>
+<main class="md:hidden block">
+  <.top_navigation active_tab={@active_tab} current_user={@current_user} />
 </main>
+
+<.desktop_top_text />
+
+<div class="w-[100%] pt-4  flex justify-start items-start">
+  <.desktop_sidebar active_tab={@active_tab} current_user={@current_user} />
+  <main class="md:w-[78%] w-[100%]  space-y-5 px-3">
+    <.flash_group flash={@flash} />
+    <%= @inner_content %>
+  </main>
+  <p class="bg-[#C1C6D5] dark:bg-[#414753] hidden md:block w-[1px] h-[100vh]" />
+</div>

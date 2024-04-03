@@ -27,6 +27,9 @@ defmodule Animina.Accounts.Photo do
       default :pending_review
       allow_nil? false
     end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   state_machine do
@@ -64,6 +67,8 @@ defmodule Animina.Accounts.Photo do
 
     read :user_profile_photo do
       argument :user_id, :uuid, allow_nil?: false
+
+      pagination offset?: true, keyset?: true, required?: false
 
       filter expr(is_nil(story_id) == ^true and user_id == ^arg(:user_id))
     end

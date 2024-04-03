@@ -41,6 +41,7 @@ defmodule AniminaWeb.Router do
       live "/profile/create-story", StoryLive, :new
       live "/profile/edit-story/:id", StoryLive, :edit
       live "/profile/about-me", StoryLive, :about_me
+      live "/:username", ProfileLive
     end
 
     get "/demo", PageController, :demo
