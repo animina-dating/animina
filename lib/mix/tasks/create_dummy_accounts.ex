@@ -177,7 +177,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     }
   end
 
-  defp get_about_me_headline() do
+  defp get_about_me_headline do
     Headline
     |> Ash.Query.for_read(:by_subject, %{subject: "About me"})
     |> Narratives.read_one()
