@@ -6,6 +6,9 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   use Mix.Task
   alias Animina.Accounts.Photo
   alias Animina.Accounts.User
+  alias Animina.Narratives
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
   alias Faker.Person
   alias Faker.Phone
 
@@ -24,6 +27,8 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   end
 
   def generate_users(counter) do
+    about_me_headline = get_about_me_headline()
+
     1..counter
     |> Enum.each(fn _ ->
       height = Enum.take_random(Enum.to_list(150..210), 1) |> hd
@@ -54,7 +59,20 @@ defmodule Mix.Tasks.CreateDummyAccounts do
           search_range: hd(Enum.take_random([5, 10, 20, 50, 100, 250], 1))
         })
 
+      # create profile photo
       Photo.create!(Map.merge(photo, %{user_id: user.id}))
+
+      # create about me story
+      story =
+        Story.create!(%{
+          headline_id: about_me_headline,
+          user_id: user.id,
+          content: "This is my first story on animina",
+          position: 1
+        })
+
+      # create about me story photo
+      Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
     end)
   end
 
@@ -157,5 +175,15 @@ defmodule Mix.Tasks.CreateDummyAccounts do
       mime: "image/png",
       size: size
     }
+  end
+
+  defp get_about_me_headline() do
+    Headline
+    |> Ash.Query.for_read(:by_subject, %{subject: "About me"})
+    |> Narratives.read_one()
+    |> case do
+      {:ok, headline} -> headline.id
+      _ -> nil
+    end
   end
 end
