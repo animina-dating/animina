@@ -65,7 +65,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
              :form,
              Form.for_create(Photo, :create, api: Accounts, as: "photo")
            )
-           |> push_navigate(to: ~p"/profile/flags/white")}
+           |> push_navigate(to: ~p"/profile/white-flags")}
         else
           {:error, form} ->
             {:noreply, socket |> assign(:form, form)}
