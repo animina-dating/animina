@@ -18,8 +18,6 @@ defmodule AniminaWeb.ProfileLive do
            socket.assigns.current_user.maximum_partner_height) / 2
       )
 
-
-
     socket =
       Accounts.User.by_username(username)
       |> case do

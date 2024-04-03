@@ -10,8 +10,6 @@ defmodule AniminaWeb.FlagsLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
-  
-
     socket =
       socket
       |> assign(max_selected: @max_flags)
