@@ -365,7 +365,7 @@ defmodule AniminaWeb.StoryLive do
               :headline_id,
               @headlines,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -386,7 +386,7 @@ defmodule AniminaWeb.StoryLive do
               :headline_id,
               [[key: gettext("About me"), value: @default_headline, selected: "selected"]],
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -415,7 +415,7 @@ defmodule AniminaWeb.StoryLive do
               f,
               :content,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -443,7 +443,7 @@ defmodule AniminaWeb.StoryLive do
           </p>
 
           <img
-            class="object-cover h-200 drop-shadow border rounded-lg"
+            class="object-cover h-200 drop-shadow border w-[100%] rounded-lg"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @photo.filename}
           />
         </div>
@@ -469,11 +469,13 @@ defmodule AniminaWeb.StoryLive do
             for={@uploads.photos.ref}
             data-upload-target="photos"
             data-input={@uploads.photos.ref}
-            class="flex flex-col items-center  w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  rounded-md"
+            class="flex flex-col items-center  w-full py-8 px-6 mx-auto  text-center border-2 border-gray-300 border-dashed cursor-pointer bg-gray-50  dark:bg-gray-700 rounded-md"
           >
             <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
-            <p class="text-sm">Upload or drag & drop your photo file JPG, JPEG, PNG</p>
+            <p class="text-sm dark:text-white">
+              Upload or drag & drop your photo file JPG, JPEG, PNG
+            </p>
           </div>
 
           <%= for entry <- @uploads.photos.entries do %>

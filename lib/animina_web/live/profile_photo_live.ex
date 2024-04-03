@@ -119,11 +119,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
           for={@uploads.photos.ref}
           data-upload-target="photos"
           data-input={@uploads.photos.ref}
-          class="flex flex-col items-center w-full max-w-2xl px-6 py-8 mx-auto text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer bg-gray-50"
+          class="flex flex-col items-center w-full px-6 py-8 mx-auto text-center border-2 border-gray-300 border-dashed rounded-md cursor-pointer dark:bg-gray-700 bg-gray-50"
         >
           <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
-          <p class="text-sm">Upload or drag & drop your photo file JPG, JPEG, PNG</p>
+          <p class="text-sm dark:text-white">Upload or drag & drop your photo file JPG, JPEG, PNG</p>
         </div>
 
         <%= for entry <- @uploads.photos.entries do %>
