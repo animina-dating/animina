@@ -22,10 +22,10 @@ defmodule AniminaWeb.StoryComponent do
   def render(assigns) do
     ~H"""
     <div class="rounded-lg border border-gray-100 shadow-sm pb-4">
-      <div class="h-200">
+      <div class="h-200 w-full">
         <img
           :if={@story.photo != nil}
-          class="object-cover rounded-t-lg"
+          class="object-fit w-full rounded-t-lg"
           src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
         />
       </div>

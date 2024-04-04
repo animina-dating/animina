@@ -141,7 +141,7 @@ defmodule AniminaWeb.ProfileLive do
         <.height_visualization current_user={@current_user} profile_user={@user} />
 
         <div class="mt-8 space-y-4">
-          <h2 class="font-bold dark:text-white text-xl">My Stories</h2>
+          <h2 class="font-bold dark:text-white text-xl"><%= gettext("My Stories") %></h2>
           <.async_result :let={_stories} assign={@stories}>
             <:loading>
               <div class="space-y-4">
@@ -167,7 +167,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
-          <h2 class="font-bold dark:text-white text-xl">My White Flags</h2>
+          <h2 class="font-bold dark:text-white text-xl"><%= gettext("My White Flags") %></h2>
 
           <.async_result :let={_flags} assign={@flags}>
             <:loading>
