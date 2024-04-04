@@ -164,7 +164,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     |> hd
   end
 
-  def random_landscape_photo_url() do
+  def random_landscape_photo_url do
     Enum.take_random(
       [
         "https://images.unsplash.com/photo-1610552050890-fe99536c2615?q=80&w=2707&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -211,7 +211,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     end
   end
 
-  defp get_random_headline() do
+  defp get_random_headline do
     Headline.read!()
     |> Enum.filter(fn headline ->
       headline.subject != "About me"
@@ -235,7 +235,7 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
   end
 
-  defp random_lorem_ipsum() do
+  defp random_lorem_ipsum do
     lorem_ipsum =
       """
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
