@@ -7,14 +7,47 @@ defmodule AniminaWeb.PotentialPartner do
   alias Animina.Accounts.User
 
   require Ash.Query
+  require Ash.Sort
 
   @doc """
-  Gets random users by the given limit.
+  Gets potential partners for the given user.
   """
-  def get_random_users(limit \\ 10) do
+  def potential_partners(user, limit \\ 10) do
     User
     |> Ash.Query.for_read(:random_users)
+    |> partner_age_query(user)
+    |> partner_height_query(user)
+    |> partner_gender_query(user)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
+  end
+
+  defp partner_height_query(query, user) do
+    query
+    |> Ash.Query.filter(
+      or: [
+        height: [less_than_or_equal: user.maximum_partner_height],
+        height: [greater_than_or_equal: user.minimum_partner_height]
+      ]
+    )
+  end
+
+  # We use a fragment query to calculate the age of the user as
+  # ash does not support using calculations defined with calculate/3 in filter queries
+  defp partner_age_query(query, user) do
+    query
+    |> Ash.Query.filter(
+      fragment("date_part('year', age(current_date, ?))", birthday) <= ^user.maximum_partner_age and
+        fragment("date_part('year', age(current_date, ?))", birthday) >= ^user.minimum_partner_age
+    )
+  end
+
+  defp partner_gender_query(query, user) do
+    query
+    |> Ash.Query.filter(
+      or: [
+        gender: [eq: user.partner_gender]
+      ]
+    )
   end
 end
