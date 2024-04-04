@@ -138,6 +138,8 @@ defmodule AniminaWeb.ProfileLive do
           </div>
         </div>
 
+        <.height_visualization current_user={@current_user} profile_user={@user} />
+
         <div class="mt-8 space-y-4">
           <h2 class="font-bold dark:text-white text-xl"><%= gettext("My Stories") %></h2>
           <.async_result :let={_stories} assign={@stories}>
