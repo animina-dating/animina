@@ -4,7 +4,11 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   """
 
   use Mix.Task
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.User
+  alias Animina.Narratives
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
   alias Faker.Person
   alias Faker.Phone
 
@@ -23,33 +27,52 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   end
 
   def generate_users(counter) do
+    about_me_headline = get_about_me_headline()
+
     1..counter
     |> Enum.each(fn _ ->
       height = Enum.take_random(Enum.to_list(150..210), 1) |> hd
       birthday = Faker.Date.date_of_birth()
       age = (Date.diff(Date.utc_today(), birthday) / 365) |> round
       gender = Enum.take_random(["male", "female"], 1) |> hd
+      photo = random_photo_url(gender) |> download_photo("#{Faker.UUID.v4()}.png")
 
-      User.create!(%{
-        email: Faker.Internet.email(),
-        username: Faker.Internet.user_name() |> String.slice(0..14),
-        name: Faker.Person.name(),
-        zip_code: random_zip_code(),
-        language: "DE-de",
-        legal_terms_accepted: true,
-        gender: gender,
-        height: height,
-        mobile_phone: random_mobile_phone_number(),
-        birthday: birthday,
-        hashed_password: Faker.UUID.v4(),
-        occupation: Person.En.title_descriptor(),
-        minimum_partner_height: height - 30,
-        maximum_partner_height: height + 15,
-        minimum_partner_age: minimum_partner_age(age),
-        maximum_partner_age: age + 10,
-        partner_gender: opposite_gender(gender),
-        search_range: hd(Enum.take_random([5, 10, 20, 50, 100, 250], 1))
-      })
+      user =
+        User.create!(%{
+          email: Faker.Internet.email(),
+          username: Faker.Internet.user_name() |> String.slice(0..14),
+          name: Faker.Person.name(),
+          zip_code: random_zip_code(),
+          language: "DE-de",
+          legal_terms_accepted: true,
+          gender: gender,
+          height: height,
+          mobile_phone: random_mobile_phone_number(),
+          birthday: birthday,
+          hashed_password: Faker.UUID.v4(),
+          occupation: Person.En.title_descriptor(),
+          minimum_partner_height: height - 30,
+          maximum_partner_height: height + 15,
+          minimum_partner_age: minimum_partner_age(age),
+          maximum_partner_age: age + 10,
+          partner_gender: opposite_gender(gender),
+          search_range: hd(Enum.take_random([5, 10, 20, 50, 100, 250], 1))
+        })
+
+      # create profile photo
+      Photo.create!(Map.merge(photo, %{user_id: user.id}))
+
+      # create about me story
+      story =
+        Story.create!(%{
+          headline_id: about_me_headline,
+          user_id: user.id,
+          content: "This is my first story on animina",
+          position: 1
+        })
+
+      # create about me story photo
+      Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
     end)
   end
 
@@ -134,5 +157,33 @@ defmodule Mix.Tasks.CreateDummyAccounts do
       1
     )
     |> hd
+  end
+
+  def download_photo(url, filename) do
+    %HTTPoison.Response{body: body} = HTTPoison.get!(url)
+
+    dest =
+      Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+
+    File.write!(dest, body)
+    %{size: size} = File.stat!(dest)
+
+    %{
+      filename: filename,
+      original_filename: filename,
+      ext: "png",
+      mime: "image/png",
+      size: size
+    }
+  end
+
+  defp get_about_me_headline do
+    Headline
+    |> Ash.Query.for_read(:by_subject, %{subject: "About me"})
+    |> Narratives.read_one()
+    |> case do
+      {:ok, headline} -> headline.id
+      _ -> nil
+    end
   end
 end
