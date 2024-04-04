@@ -11,6 +11,8 @@ defmodule Animina.Accounts.User do
   alias Animina.Traits
   alias Animina.Validations
 
+  require Ash.Sort
+
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false
@@ -104,6 +106,12 @@ defmodule Animina.Accounts.User do
 
   actions do
     defaults [:create, :read, :update]
+
+    read :random_users do
+      prepare fn query, _ ->
+        Ash.Query.sort(query, Ash.Sort.expr_sort(fragment("RANDOM()")))
+      end
+    end
   end
 
   code_interface do
