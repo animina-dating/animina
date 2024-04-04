@@ -287,7 +287,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
-          <h2 class="font-bold dark:text-white text-xl">My Stories</h2>
+          <h2 class="font-bold dark:text-white text-xl"><%= gettext("My Stories") %></h2>
           <.async_result :let={_stories} assign={@stories}>
             <:loading>
               <div class="space-y-4">
