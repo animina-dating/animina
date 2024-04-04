@@ -14,7 +14,8 @@ defmodule AniminaWeb.PotentialPartner do
   """
   def potential_partners(user, limit \\ 10) do
     User
-    |> Ash.Query.for_read(:random_users)
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
     |> partner_age_query(user)
     |> partner_height_query(user)
     |> partner_gender_query(user)
@@ -33,7 +34,7 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   # We use a fragment query to calculate the age of the user as
-  # ash does not support using calculations defined with calculate/3 in filter queries
+  # ash does not support using module calculations defined with calculate/3 in filter queries
   defp partner_age_query(query, user) do
     query
     |> Ash.Query.filter(
@@ -44,10 +45,6 @@ defmodule AniminaWeb.PotentialPartner do
 
   defp partner_gender_query(query, user) do
     query
-    |> Ash.Query.filter(
-      or: [
-        gender: [eq: user.partner_gender]
-      ]
-    )
+    |> Ash.Query.filter(gender: [eq: user.partner_gender])
   end
 end
