@@ -166,14 +166,13 @@ defmodule AniminaWeb.RootLive do
             <div phx-feedback-for={f[:email].name} class="mt-2">
               <%= text_input(f, :email,
                 class:
-                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700  dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                     unless(get_field_errors(f[:email], :email) == [],
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
                 placeholder: gettext("alice@example.net"),
                 value: f[:email].value,
-                type: :email,
                 required: true,
                 autocomplete: :email,
                 "phx-debounce": "200"
