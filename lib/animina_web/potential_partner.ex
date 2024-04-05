@@ -116,7 +116,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> GeoData.read!()
   end
 
-  def get_user_flags(user_id, color) do
+  defp get_user_flags(user_id, color) do
     UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
     |> Traits.read!()
