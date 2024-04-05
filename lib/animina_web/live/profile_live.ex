@@ -145,11 +145,11 @@ defmodule AniminaWeb.ProfileLive do
             />
           </div>
           <div class="p-4 flex flex-col gap-2  w-[100%] md:w-[65%]">
-            <h3 class="text-lg dark:text-white font-semibold"><%= @user.name %></h3>
-            <p class="text-sm dark:text-gray-100 font-medium text-gray-500"><%= @user.username %></p>
+            <h3 class="text-lg font-semibold dark:text-white"><%= @user.name %></h3>
+            <p class="text-sm font-medium text-gray-500 dark:text-gray-100">@<%= @user.username %></p>
 
-            <div class="grid grid-cols-2 mt-2 gap-4">
-              <div class="dark:text-gray-100 flex gap-2 items-center   text-gray-600">
+            <div class="grid grid-cols-2 gap-4 mt-2">
+              <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
                 <svg
                   width="20px"
                   height="20px"
@@ -180,9 +180,9 @@ defmodule AniminaWeb.ProfileLive do
                     </path>
                   </g>
                 </svg>
-                <%= @user.city.zip_code %> <%= @user.city.name %>.
+                <%= @user.city.zip_code %> <%= @user.city.name %>
               </div>
-              <div class="dark:text-gray-100 flex gap-2 items-center  text-gray-600">
+              <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
                 <svg
                   width="20px"
                   height="20px"
@@ -202,11 +202,11 @@ defmodule AniminaWeb.ProfileLive do
                     </path>
                   </g>
                 </svg>
-                <%= gettext("Age: ") %> <%= @user.age %>
+                <%= @user.age %> <%= gettext("years") %>
               </div>
             </div>
-            <div class="grid grid-cols-2 mt-2 gap-4">
-              <div class=" dark:text-gray-100 flex gap-2 items-center  text-gray-600">
+            <div class="grid grid-cols-2 gap-4 mt-2">
+              <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
                 <svg
                   width="20px"
                   height="20px"
@@ -227,9 +227,9 @@ defmodule AniminaWeb.ProfileLive do
                     </path>
                   </g>
                 </svg>
-                <%= gettext("I'm a ") %> <%= @user.occupation %>
+                <%= @user.occupation %>
               </div>
-              <div class=" dark:text-gray-100 flex gap-2 items-center  text-gray-600">
+              <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
                 <svg
                   height="20px"
                   width="20px"
@@ -270,7 +270,7 @@ defmodule AniminaWeb.ProfileLive do
               <div class="md:w-[48%] w-[100%] flex flex-col gap-2">
                 <div class="w-[100%] flex justify-between items-center">
                   <p class="dark:text-gray-100 text-[#414753] font-semibold">
-                    Height (in cm)
+                    Height
                   </p>
 
                   <div class="border-[1px] border-[#004EA0]   text-sm p-1 rounded-md text-[#004EA0] ">
@@ -286,7 +286,7 @@ defmodule AniminaWeb.ProfileLive do
               </div>
               <div :if={@about_story != nil} class="md:w-[48%] w-[100%] flex flex-col gap-2">
                 <p class="dark:text-gray-100 text-[#414753]  font-semibold">
-                  <%= gettext("Description/Bio") %>
+                  <%= gettext("About me") %>
                 </p>
                 <p class="text-sm dark:text-white ">
                   <%= @about_story.content %>
@@ -297,7 +297,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
-          <h2 class="font-bold dark:text-white text-xl"><%= gettext("My Stories") %></h2>
+          <h2 class="text-xl font-bold dark:text-white"><%= gettext("My Stories") %></h2>
           <.async_result :let={_stories} assign={@stories}>
             <:loading>
               <div class="space-y-4">
@@ -308,11 +308,7 @@ defmodule AniminaWeb.ProfileLive do
             </:loading>
             <:failed :let={_failure}><%= gettext("There was an error loading stories") %></:failed>
 
-            <div
-              class="items-start  gap-5   grid md:grid-cols-3"
-              id="stream_stories"
-              phx-update="stream"
-            >
+            <div class="grid items-start gap-5 md:grid-cols-3" id="stream_stories" phx-update="stream">
               <div :for={{dom_id, story} <- @streams.stories} id={"#{dom_id}"}>
                 <.live_component
                   module={StoryComponent}
@@ -327,7 +323,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
 
         <div class="mt-8 space-y-4">
-          <h2 class="font-bold dark:text-white text-xl"><%= gettext("My White Flags") %></h2>
+          <h2 class="text-xl font-bold dark:text-white"><%= gettext("My White Flags") %></h2>
 
           <.async_result :let={_flags} assign={@flags}>
             <:loading>
