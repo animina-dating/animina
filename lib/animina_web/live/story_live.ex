@@ -352,10 +352,7 @@ defmodule AniminaWeb.StoryLive do
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <div>
-          <label
-            for="story_headline"
-            class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-          >
+          <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
             <%= gettext("Headline") %>
           </label>
 
@@ -365,7 +362,7 @@ defmodule AniminaWeb.StoryLive do
               :headline_id,
               @headlines,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -386,7 +383,7 @@ defmodule AniminaWeb.StoryLive do
               :headline_id,
               [[key: gettext("About me"), value: @default_headline, selected: "selected"]],
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
