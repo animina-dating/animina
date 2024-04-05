@@ -20,6 +20,11 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(language: language)
           |> assign(active_tab: :home)
           |> assign(user: user)
+          |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
+          |> assign(
+            :current_user_height_for_figure,
+            (socket.assigns.current_user.height / 2) |> trunc()
+          )
           |> assign(:about_story, fetch_about_story(user.id))
           |> assign(stories: AsyncResult.loading())
           |> assign(flags: AsyncResult.loading())
@@ -132,14 +137,14 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user != nil}>
-        <div class="flex     w-[100%] flex md:flex-row flex-col justify-center ">
+        <div class="flex      w-[100%] flex md:flex-row flex-col justify-between ">
           <div class="py-4 md:w-[30%] w-[100%] flex-grow border-[4px] rounded-md border-[#1672DF]">
             <img
               src={"/uploads/#{@user.profile_photo.filename}"}
               class="object-cover h-[100%] w-[100%] "
             />
           </div>
-          <div class="py-4 fle flex-col gap-2  w-[100%] md:w-[68%]">
+          <div class="p-4 flex flex-col gap-2  w-[100%] md:w-[65%]">
             <h3 class="text-lg dark:text-white font-semibold"><%= @user.name %></h3>
             <p class="text-sm dark:text-gray-100 font-medium text-gray-500"><%= @user.username %></p>
 
@@ -272,9 +277,14 @@ defmodule AniminaWeb.ProfileLive do
                     <%= @user.height %> <%= gettext("cm") %>
                   </div>
                 </div>
-                <.height_visualization current_user={@current_user} profile_user={@user} />
+                <.height_visualization
+                  current_user={@current_user}
+                  profile_user_height_for_figure={@profile_user_height_for_figure}
+                  current_user_height_for_figure={@current_user_height_for_figure}
+                  profile_user={@user}
+                />
               </div>
-              <div class="md:w-[48%] w-[100%] flex flex-col gap-2">
+              <div :if={@about_story != nil} class="md:w-[48%] w-[100%] flex flex-col gap-2">
                 <p class="dark:text-gray-100 text-[#414753]  font-semibold">
                   <%= gettext("Description/Bio") %>
                 </p>
