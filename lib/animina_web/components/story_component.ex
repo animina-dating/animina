@@ -21,27 +21,22 @@ defmodule AniminaWeb.StoryComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg border border-gray-100 shadow-sm pb-4">
-      <div class="h-200 w-full">
+    <div class="rounded-lg   w-[100%]   pb-4">
+      <div class="h-[250px]">
         <img
           :if={@story.photo != nil}
-          class="object-fit w-full rounded-t-lg"
+          class="object-cover h-[100%] w-[100%] rounded-lg"
           src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
         />
       </div>
+      <div>
+        <div :if={@story.headline != nil} class="pt-4 px-4">
+          <h3 class="text-lg dark:text-white font-semibold"><%= @story.headline.subject %></h3>
+        </div>
 
-      <div :if={@story.headline != nil} class="pt-4 px-4">
-        <h3 class="text-lg dark:text-white font-semibold"><%= @story.headline.subject %></h3>
-      </div>
-
-      <%!-- <p class="truncate text-sm text-gray-300">
-        <time phx-hook="LocalTime" id={"#{@story.id}-story-time"} class="invisible">
-          <%= DateTime.to_string(@story.created_at) %>
-        </time>
-      </p> --%>
-
-      <div :if={@story.content != nil} class="pt-1 px-4">
-        <p class="text-gray-600 dark:text-gray-100"><%= @story.content %></p>
+        <div :if={@story.content != nil} class="pt-1 px-4">
+          <p class="text-gray-600 dark:text-gray-100"><%= @story.content %></p>
+        </div>
       </div>
     </div>
     """

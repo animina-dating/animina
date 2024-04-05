@@ -182,33 +182,34 @@ defmodule AniminaWeb.AniminaComponents do
   def height_visualization(assigns) do
     ~H"""
     <%= if @current_user.gender != "diverse"  &&  @profile_user != "diverse" do %>
-      <div class="flex gap-16 p-4  py-8 justify-start items-end">
+      <div class="flex gap-16 bg-[#B2CCEF] dark:bg-gray-800 rounded-md p-4 py-8 justify-start items-end">
         <div class="flex gap-0">
-          <p class="h-[200px] dark:bg-white bg-black w-[2px] " />
+          <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
           <div class="h-[100%] flex  relative">
-            <p class="absolute dark:text-white -top-[20px]  pb-2">200cm</p>
+            <p class="absolute dark:text-white -top-[12px] text-xs  pb-2">200cm</p>
 
-            <p class="md:w-[400px] w-[300px] absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
-            <p class="absolute top-[32px] dark:text-white  pb-3">150cm</p>
-            <p class="md:w-[400px] w-[300px]  absolute top-[52px]  h-[1px] dark:bg-white bg-black">
-            </p>
+            <p class="w-[250px]  absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
+            <p class="absolute top-[16px] dark:text-white text-xs  pb-3">150cm</p>
+            <p class="w-[250px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
 
-            <p class="absolute top-[80px] dark:text-white  pb-3">100cm</p>
-            <p class="md:w-[400px] w-[300px]  absolute top-[103px] h-[1px] dark:bg-white bg-black">
-            </p>
-            <p class="absolute top-[132px] dark:text-white  pb-3">50cm</p>
-            <p class="md:w-[400px] w-[300px]  absolute top-[152px] h-[1px] dark:bg-white bg-black">
-            </p>
+            <p class="absolute top-[40px] dark:text-white  text-xs pb-3">100cm</p>
+            <p class="w-[250px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
+
+            <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
+            <p class="w-[250px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
           </div>
         </div>
 
-        <div class="flex items-end gap-12">
-          <.current_user_figure gender={@current_user.gender} height={@current_user.height} />
+        <div class="flex items-end gap-8">
+          <.current_user_figure
+            gender={@current_user.gender}
+            height={(@current_user.height / 2) |> trunc}
+          />
 
           <.potential_partner_figure
             partner_gender={@profile_user.gender}
             gender={@profile_user.gender}
-            height={@profile_user.height}
+            height={(@profile_user.height / 2) |> trunc}
           />
         </div>
       </div>
@@ -238,18 +239,18 @@ defmodule AniminaWeb.AniminaComponents do
 
   def male_figure(assigns) do
     ~H"""
-    <div class={"h-[#{@height}px] md:w-[40px] w-[35px] flex flex-col justify-between  items-center "}>
-      <p class="h-[15px] w-[15px] my-1  rounded-full dark:bg-white bg-black" />
+    <div class={"h-[#{@height}px] md:w-[25px] w-[20px] flex flex-col justify-between  items-center "}>
+      <p class="h-[13px] w-[13px] my-1  rounded-full dark:bg-white bg-black" />
 
       <div class="h-[55%]  flex gap-0">
-        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[10px]" />
-        <p class="h-[100%] dark:bg-white bg-black w-[35px] md:w-[40px]" />
-        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[10px]" />
+        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[8px] rounded-b-full" />
+        <p class="h-[100%] dark:bg-white bg-black w-[20px] md:w-[25px]" />
+        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[8px] rounded-b-full" />
       </div>
       <div class="h-[50%]  flex gap-0">
-        <div class="md:w-[40px] w-[35px] flex justify-between">
-          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
-          <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
+        <div class="md:w-[25px] w-[20px] flex justify-between">
+          <p class="h-[100%] dark:bg-white bg-black rounded-b-full w-[40%]" />
+          <p class="h-[100%] dark:bg-white bg-black rounded-b-full w-[40%]" />
         </div>
       </div>
     </div>
@@ -262,15 +263,15 @@ defmodule AniminaWeb.AniminaComponents do
       <p class="h-[15px] w-[15px] my-1   rounded-full dark:bg-white bg-black" />
 
       <div class="h-[30%]  flex gap-0">
-        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[10px]" />
-        <p class="h-[100%] dark:bg-white bg-black w-[35px] md:w-[40px]" />
-        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[10px]" />
+        <p class="h-[100%] dark:bg-white bg-black rotate-12 w-[8px] rounded-b-full" />
+        <p class="h-[100%] dark:bg-white bg-black w-[20px] md:w-[25px]" />
+        <p class="h-[100%] dark:bg-white bg-black -rotate-12 w-[8px] rounded-b-full" />
       </div>
-      <div class="h-[10%] w-[35px] md:w-[40px] dark:bg-white bg-black " />
-      <div class="h-[25%] dark:bg-white bg-black md:w-[70px] w-[55px] flex gap-0" />
+      <div class="h-[5%] w-[20px] md:w-[25px] dark:bg-white bg-black " />
+      <div class="h-[30%] dark:bg-white bg-black  w-[35px] md:w-[40px] flex gap-0" />
 
       <div class="h-[25%]  flex gap-0">
-        <div class="w-[50px] flex justify-between">
+        <div class="md:w-[25px] w-[20px] flex justify-between">
           <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
           <p class="h-[100%] dark:bg-white bg-black w-[40%]" />
         </div>
