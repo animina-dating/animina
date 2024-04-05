@@ -7,6 +7,8 @@ defmodule AniminaWeb.PotentialPartner do
   alias Animina.Accounts.User
   alias Animina.GeoData
   alias Animina.GeoData.City
+  alias Animina.Traits
+  alias Animina.Traits.UserFlags
 
   require Ash.Query
   require Ash.Sort
@@ -22,6 +24,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_height_query(user)
     |> partner_gender_query(user)
     |> partner_geo_query(user)
+    |> partner_green_flags_query(user)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
   end
@@ -57,11 +60,25 @@ defmodule AniminaWeb.PotentialPartner do
       |> Enum.map(fn city -> city.zip_code end)
 
     query
-    |> Ash.Query.filter(
-      or: [
-        zip_code: [in: nearby_zip_codes]
-      ]
-    )
+    |> Ash.Query.filter(zip_code: [in: nearby_zip_codes])
+  end
+
+  defp partner_green_flags_query(query, user) do
+    green_flags =
+      get_user_flags(user.id, :green)
+      |> Enum.map(fn flag -> flag.flag_id end)
+
+    query
+    |> Ash.Query.filter(flags.color == :white and flags.flag_id in ^green_flags)
+  end
+
+  def partner_red_flags_query(query, user) do
+    red_flags =
+      get_user_flags(user.id, :red)
+      |> Enum.map(fn flag -> flag.flag_id end)
+
+    query
+    |> Ash.Query.filter(flags.color == :white and flags.flag_id not in ^red_flags)
   end
 
   # We use the haversine formula to get locations
@@ -80,5 +97,11 @@ defmodule AniminaWeb.PotentialPartner do
       )
     )
     |> GeoData.read!()
+  end
+
+  def get_user_flags(user_id, color) do
+    UserFlags
+    |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
+    |> Traits.read!()
   end
 end
