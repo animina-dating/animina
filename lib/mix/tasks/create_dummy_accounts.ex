@@ -9,8 +9,12 @@ defmodule Mix.Tasks.CreateDummyAccounts do
   alias Animina.Narratives
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
+  alias Animina.Traits.Flag
+  alias Animina.Traits.UserFlags
   alias Faker.Person
   alias Faker.Phone
+
+  require Ash.Query
 
   def run(args) do
     Mix.Task.run("app.start", [])
@@ -77,6 +81,21 @@ defmodule Mix.Tasks.CreateDummyAccounts do
       # create random stories
       Enum.each(2..Enum.random(2..8), fn i ->
         create_random_story(user, i)
+      end)
+
+      # create random white flags
+      Enum.each(1..Enum.random(5..20), fn _i ->
+        create_random_flag(user, :white)
+      end)
+
+      # create random white flags
+      Enum.each(1..Enum.random(5..10), fn _i ->
+        create_random_flag(user, :white)
+      end)
+
+      # create random red flags
+      Enum.each(1..Enum.random(3..10), fn _i ->
+        create_random_flag(user, :red)
       end)
     end)
   end
@@ -255,5 +274,26 @@ defmodule Mix.Tasks.CreateDummyAccounts do
 
     # Join the selected sentences back into a string if needed
     Enum.join(selected_sentences, ". ") <> "."
+  end
+
+  def create_random_flag(user, color) do
+    flag = Flag.read!() |> Enum.take_random(1) |> hd
+
+    position =
+      case UserFlags.read!()
+           |> Enum.filter(fn %{user_id: id} -> id == user.id end) do
+        [] -> 1
+        list -> length(list) + 1
+      end
+
+    case UserFlags.create(%{
+           user_id: user.id,
+           flag_id: flag.id,
+           position: position,
+           color: color
+         }) do
+      {:ok, user_flag} -> {:ok, user_flag}
+      _ -> {:error, nil}
+    end
   end
 end
