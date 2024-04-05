@@ -15,8 +15,20 @@ defmodule AniminaWeb.PotentialPartner do
 
   @doc """
   Gets potential partners for the given user.
+
+  ## Options
+
+    * `"limit"` -
+      The number of potential partners to return from the query. Defaults to `10`
+
+    * `"strict_red_flags"` -
+      Whether to filter the potential partners by eliminating those that have red flags defined by the user. Defaults to `false`
+
   """
-  def potential_partners(user, limit \\ 10) do
+  def potential_partners(user, options \\ []) do
+    limit = Keyword.get(options, :limit, 10)
+    strict_red_flags = Keyword.get(options, :strict_red_flags, false)
+
     User
     |> Ash.Query.for_read(:read)
     |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
@@ -25,6 +37,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_gender_query(user)
     |> partner_geo_query(user)
     |> partner_green_flags_query(user)
+    |> partner_red_flags_query(user, strict_red_flags)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
   end
@@ -72,13 +85,17 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.Query.filter(flags.color == :green and flags.flag_id in ^white_flags)
   end
 
-  def partner_red_flags_query(query, user) do
+  defp partner_red_flags_query(query, user, strict_red_flags) when strict_red_flags == true do
     red_flags =
       get_user_flags(user.id, :red)
       |> Enum.map(fn flag -> flag.flag_id end)
 
     query
     |> Ash.Query.filter(flags.color == :white and flags.flag_id not in ^red_flags)
+  end
+
+  defp partner_red_flags_query(query, _user, _strict_red_flags) do
+    query
   end
 
   # We use the haversine formula to get locations
