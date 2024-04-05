@@ -188,15 +188,15 @@ defmodule AniminaWeb.AniminaComponents do
           <div class="h-[100%] flex  relative">
             <p class="absolute dark:text-white -top-[12px] text-xs  pb-2">200cm</p>
 
-            <p class="w-[250px]  absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[200px]  absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
             <p class="absolute top-[16px] dark:text-white text-xs  pb-3">150cm</p>
-            <p class="w-[250px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
+            <p class="w-[200px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
 
             <p class="absolute top-[40px] dark:text-white  text-xs pb-3">100cm</p>
-            <p class="w-[250px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[200px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
 
             <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
-            <p class="w-[250px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[200px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
           </div>
         </div>
 
