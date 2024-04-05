@@ -5,6 +5,8 @@ defmodule AniminaWeb.PotentialPartner do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
+  alias Animina.GeoData
+  alias Animina.GeoData.City
 
   require Ash.Query
   require Ash.Sort
@@ -19,6 +21,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_age_query(user)
     |> partner_height_query(user)
     |> partner_gender_query(user)
+    |> partner_geo_query(user)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
   end
@@ -46,5 +49,36 @@ defmodule AniminaWeb.PotentialPartner do
   defp partner_gender_query(query, user) do
     query
     |> Ash.Query.filter(gender: [eq: user.partner_gender])
+  end
+
+  defp partner_geo_query(query, user) do
+    nearby_zip_codes =
+      get_nearby_cities(user.zip_code, user.search_range)
+      |> Enum.map(fn city -> city.zip_code end)
+
+    query
+    |> Ash.Query.filter(
+      or: [
+        zip_code: [in: nearby_zip_codes]
+      ]
+    )
+  end
+
+  # We use the haversine formula to get locations
+  # near the current city in the search range radius
+  defp get_nearby_cities(zip_code, search_range) do
+    current_city = City.by_zip_code!(zip_code)
+
+    City
+    |> Ash.Query.filter(
+      fragment(
+        "acos(sin(radians(?)) * sin(radians(lat)) + cos(radians(?)) * cos(radians(lat)) * cos(radians(?) - radians(lon))) * 6731 <= ?",
+        ^current_city.lat,
+        ^current_city.lat,
+        ^current_city.lon,
+        ^search_range
+      )
+    )
+    |> GeoData.read!()
   end
 end
