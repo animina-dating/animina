@@ -137,8 +137,8 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user != nil}>
-        <div class="flex      w-[100%] flex md:flex-row flex-col justify-between ">
-          <div class="py-4 md:w-[30%] w-[100%] flex-grow border-[4px] rounded-md border-[#1672DF]">
+        <div class="flex  w-[100%] flex md:flex-row flex-col justify-between ">
+          <div class="md:w-[400px] md:h-[400px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
             <img
               src={"/uploads/#{@user.profile_photo.filename}"}
               class="object-cover h-[100%] w-[100%] "
