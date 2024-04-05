@@ -64,12 +64,12 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   defp partner_green_flags_query(query, user) do
-    green_flags =
-      get_user_flags(user.id, :green)
+    white_flags =
+      get_user_flags(user.id, :white)
       |> Enum.map(fn flag -> flag.flag_id end)
 
     query
-    |> Ash.Query.filter(flags.color == :white and flags.flag_id in ^green_flags)
+    |> Ash.Query.filter(flags.color == :green and flags.flag_id in ^white_flags)
   end
 
   def partner_red_flags_query(query, user) do
