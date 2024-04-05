@@ -67,12 +67,17 @@ defmodule Mix.Tasks.CreateDummyAccounts do
         Story.create!(%{
           headline_id: about_me_headline,
           user_id: user.id,
-          content: "This is my first story on animina",
+          content: random_lorem_ipsum(),
           position: 1
         })
 
       # create about me story photo
       Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
+
+      # create random stories
+      Enum.each(2..Enum.random(2..8), fn i ->
+        create_random_story(user, i)
+      end)
     end)
   end
 
@@ -159,6 +164,25 @@ defmodule Mix.Tasks.CreateDummyAccounts do
     |> hd
   end
 
+  def random_landscape_photo_url do
+    Enum.take_random(
+      [
+        "https://images.unsplash.com/photo-1610552050890-fe99536c2615?q=80&w=2707&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1621847468516-1ed5d0df56fe?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://plus.unsplash.com/premium_photo-1711514424957-fdf4d4f45dac?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1620301598483-f872a86a58af?q=80&w=2622&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1628087234845-254f15abd82a?q=80&w=2529&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1616445404301-7433dc521d1f?q=80&w=2649&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=2673&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1509233725247-49e657c54213?q=80&w=2549&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://plus.unsplash.com/premium_photo-1673893476811-e8d1389870b3?q=80&w=2572&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1519046904884-53103b34b206?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      ],
+      1
+    )
+    |> hd
+  end
+
   def download_photo(url, filename) do
     %HTTPoison.Response{body: body} = HTTPoison.get!(url)
 
@@ -185,5 +209,51 @@ defmodule Mix.Tasks.CreateDummyAccounts do
       {:ok, headline} -> headline.id
       _ -> nil
     end
+  end
+
+  defp get_random_headline do
+    Headline.read!()
+    |> Enum.filter(fn headline ->
+      headline.subject != "About me"
+    end)
+    |> Enum.take_random(1)
+    |> hd
+  end
+
+  defp create_random_story(user, position) do
+    headline = get_random_headline()
+
+    story =
+      Story.create!(%{
+        headline_id: headline.id,
+        user_id: user.id,
+        content: random_lorem_ipsum(),
+        position: position
+      })
+
+    photo = random_landscape_photo_url() |> download_photo("#{Faker.UUID.v4()}.png")
+    Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
+  end
+
+  defp random_lorem_ipsum do
+    lorem_ipsum =
+      """
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      """
+
+    # Step 1: Split the text into sentences
+    sentences = String.split(lorem_ipsum, ". ")
+
+    # Step 2: Generate a random number of sentences to take
+    # Make sure to add 1 because Enum.take/2 can take negative values for taking from the end
+    random_count = :rand.uniform(length(sentences))
+
+    # Step 3: Take that many sentences randomly
+    selected_sentences = Enum.take(sentences, random_count)
+
+    # Join the selected sentences back into a string if needed
+    Enum.join(selected_sentences, ". ") <> "."
   end
 end
