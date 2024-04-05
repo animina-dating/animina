@@ -203,13 +203,13 @@ defmodule AniminaWeb.AniminaComponents do
         <div class="flex items-end gap-8">
           <.current_user_figure
             gender={@current_user.gender}
-            height={(@current_user.height / 2) |> trunc}
+            height={@current_user_height_for_figure}
           />
 
           <.potential_partner_figure
             partner_gender={@profile_user.gender}
             gender={@profile_user.gender}
-            height={(@profile_user.height / 2) |> trunc}
+            height={@profile_user_height_for_figure}
           />
         </div>
       </div>
@@ -239,7 +239,10 @@ defmodule AniminaWeb.AniminaComponents do
 
   def male_figure(assigns) do
     ~H"""
-    <div class={"h-[#{@height}px] md:w-[25px] w-[20px] flex flex-col justify-between  items-center "}>
+    <div
+      class="md:w-[25px] w-[20px] flex flex-col justify-between  items-center "
+      style={"height:#{@height}px"}
+    >
       <p class="h-[13px] w-[13px] my-1  rounded-full dark:bg-white bg-black" />
 
       <div class="h-[55%]  flex gap-0">
@@ -259,7 +262,10 @@ defmodule AniminaWeb.AniminaComponents do
 
   def female_figure(assigns) do
     ~H"""
-    <div class={"h-[#{@height}px]  md:w-[40px] w-[35px] flex justify-between flex-col  items-center"}>
+    <div
+      class=" md:w-[40px] w-[35px] flex justify-between flex-col  items-center"
+      style={"height:#{@height}px"}
+    >
       <p class="h-[15px] w-[15px] my-1   rounded-full dark:bg-white bg-black" />
 
       <div class="h-[30%]  flex gap-0">
