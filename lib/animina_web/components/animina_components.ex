@@ -196,14 +196,25 @@ defmodule AniminaWeb.AniminaComponents do
             <p class="w-[230px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
 
             <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
-            <p class="w-[230px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
+            <p
+              class="w-[230px]   absolute top-[80px] h-[1px] dark:bg-white bg-black"
+              style="z-index:1"
+            />
           </div>
         </div>
 
         <div class="flex items-end gap-8">
-          <.figure height={@current_user_height_for_figure} username={@current_user.username} />
+          <.figure
+            height={@current_user_height_for_figure}
+            avatar={@current_user.profile_photo.filename}
+            username={@current_user.username}
+          />
 
-          <.figure height={@profile_user_height_for_figure} username={@profile_user.username} />
+          <.figure
+            height={@profile_user_height_for_figure}
+            username={@profile_user.username}
+            avatar={@profile_user.profile_photo.filename}
+          />
         </div>
       </div>
     <% end %>
@@ -213,15 +224,11 @@ defmodule AniminaWeb.AniminaComponents do
   def figure(assigns) do
     ~H"""
     <div class="flex gap-2 items-end justify-end" style={"height:#{@height}px"}>
-      <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-between  items-center ">
-      </div>
-      <div class="h-[100%] flex justify-end items-end ">
-        <div class="dark:bg-white bg-black flex text-white dark:text-black  justify-end flex-col gap-0 px-1 text-xs">
-          <%= for letter <- get_shortened_username(@username) do %>
-            <p class="rotate-90">
-              <%= letter %>
-            </p>
-          <% end %>
+      <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-end   items-center ">
+        <div style="z-index:2" class="w-[100%]  pb-1 flex justify-center items-center">
+          <div class="border-[1px] rounded-full bg-white h-[24px] w-[24px] border-[#1672DF]">
+            <img src={"/uploads/#{@avatar}"} class="object-cover h-[100%]  w-[100%] object-cover  " />
+          </div>
         </div>
       </div>
     </div>
@@ -296,10 +303,5 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
-
-  defp get_shortened_username(username) do
-    "#{username}"
-    |> String.slice(0, 4)
-    |> String.graphemes()
-  end
 end
+
