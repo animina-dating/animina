@@ -137,14 +137,14 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user != nil}>
-        <div class="flex  w-[100%] flex md:flex-row flex-col justify-between ">
+        <div class="flex  w-[100%] flex xl:flex-row flex-col justify-between ">
           <div class="md:w-[400px] md:h-[400px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
             <img
               src={"/uploads/#{@user.profile_photo.filename}"}
               class="object-cover h-[100%] w-[100%] "
             />
           </div>
-          <div class="p-4 flex flex-col gap-2  w-[100%] md:w-[65%]">
+          <div class="p-4 flex flex-col gap-2  w-[100%] xl:w-[65%]">
             <h3 class="text-lg font-semibold dark:text-white"><%= @user.name %></h3>
             <p class="text-sm font-medium text-gray-500 dark:text-gray-100">@<%= @user.username %></p>
 
