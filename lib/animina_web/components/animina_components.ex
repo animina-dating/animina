@@ -304,4 +304,3 @@ defmodule AniminaWeb.AniminaComponents do
     """
   end
 end
-
