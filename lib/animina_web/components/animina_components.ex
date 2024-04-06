@@ -216,10 +216,10 @@ defmodule AniminaWeb.AniminaComponents do
       <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-between  items-center ">
       </div>
       <div class="h-[100%] flex justify-end items-end ">
-        <div class="bg-white flex  justify-end flex-col gap-0 px-1 text-xs">
-          <%= for i<- get_shortened_username(@username) do %>
+        <div class="dark:bg-white bg-black flex text-white dark:text-black  justify-end flex-col gap-0 px-1 text-xs">
+          <%= for letter <- get_shortened_username(@username) do %>
             <p class="rotate-90">
-              <%= i %>
+              <%= letter %>
             </p>
           <% end %>
         </div>
