@@ -181,49 +181,60 @@ defmodule AniminaWeb.AniminaComponents do
 
   def height_visualization(assigns) do
     ~H"""
-    <%= if @current_user.gender != "diverse"  &&  @profile_user != "diverse" do %>
-      <div class="flex gap-12 bg-[#B2CCEF] dark:bg-gray-800 rounded-md p-4 py-8 justify-start items-end">
-        <div class="flex z0 gap-0">
-          <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
-          <div class="h-[100%] flex  relative">
-            <p class="absolute  dark:text-white -top-[12px] text-xs  pb-2">200cm</p>
+    <div class="flex  bg-[#B2CCEF] gap-8 w-[100%] dark:bg-gray-800 items-start rounded-md p-4 py-8">
+      <div class="flex w-[100%]   gap-0">
+        <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
+        <div class="h-[100%] w-[100%] flex  relative">
+          <p class="absolute  dark:text-white -top-[12px] text-xs  pb-2">200cm</p>
 
-            <p class="w-[230px]   absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
-            <p class="absolute top-[16px] dark:text-white text-xs  pb-3">150cm</p>
-            <p class="w-[230px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
+          <p class="w-[100%]   absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
+          <p class="absolute top-[16px] dark:text-white text-xs  pb-3">150cm</p>
+          <p class="w-[100%]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
 
-            <p class="absolute top-[40px] dark:text-white  text-xs pb-3">100cm</p>
-            <p class="w-[230px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
+          <p class="absolute top-[40px] dark:text-white  text-xs pb-3">100cm</p>
+          <p class="w-[100%]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
 
-            <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
-            <p class="w-[230px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
-          </div>
-        </div>
-
-        <div class="flex items-end gap-8">
-          <.figure height={@current_user_height_for_figure} username={@current_user.username} />
-
-          <.figure height={@profile_user_height_for_figure} username={@profile_user.username} />
+          <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
+          <p class="w-[100%]   absolute top-[80px] h-[1px] dark:bg-white bg-black" style="z-index:1" />
         </div>
       </div>
-    <% end %>
+
+      <div class="flex md:-ml-48  -ml-40 items-end gap-8">
+        <.figure
+          height={@current_user_height_for_figure}
+          avatar={@current_user.profile_photo.filename}
+          username={@current_user.username}
+        />
+
+        <.figure
+          height={@profile_user_height_for_figure}
+          username={@profile_user.username}
+          avatar={@profile_user.profile_photo.filename}
+        />
+      </div>
+    </div>
     """
   end
 
   def figure(assigns) do
     ~H"""
     <div class="flex gap-2 items-end justify-end" style={"height:#{@height}px"}>
-      <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-between  items-center ">
-      </div>
-      <div class="h-[100%] flex justify-end items-end ">
-        <div class="dark:bg-white bg-black flex text-white dark:text-black  justify-end flex-col gap-0 px-1 text-xs">
-          <%= for letter <- get_shortened_username(@username) do %>
-            <p class="rotate-90">
-              <%= letter %>
-            </p>
-          <% end %>
+      <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-end   items-center ">
+        <div style="z-index:2" class="w-[100%]  pb-1 flex justify-center items-center">
+          <.user_mini_avatar avatar={@avatar} />
         </div>
       </div>
+    </div>
+    """
+  end
+
+  def user_mini_avatar(assigns) do
+    ~H"""
+    <div class="border-[1px] rounded-full bg-white h-[24px] w-[24px] border-[#1672DF]">
+      <img
+        src={"/uploads/#{@avatar}"}
+        class="object-cover h-[100%] rounded-full  w-[100%] object-cover  "
+      />
     </div>
     """
   end
@@ -295,11 +306,5 @@ defmodule AniminaWeb.AniminaComponents do
       </div>
     </div>
     """
-  end
-
-  defp get_shortened_username(username) do
-    "#{username}"
-    |> String.slice(0, 4)
-    |> String.graphemes()
   end
 end
