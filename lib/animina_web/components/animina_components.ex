@@ -182,21 +182,21 @@ defmodule AniminaWeb.AniminaComponents do
   def height_visualization(assigns) do
     ~H"""
     <%= if @current_user.gender != "diverse"  &&  @profile_user != "diverse" do %>
-      <div class="flex gap-16 bg-[#B2CCEF] dark:bg-gray-800 rounded-md p-4 py-8 justify-start items-end">
+      <div class="flex gap-12 bg-[#B2CCEF] dark:bg-gray-800 rounded-md p-4 py-8 justify-start items-end">
         <div class="flex z0 gap-0">
           <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
           <div class="h-[100%] flex  relative">
             <p class="absolute  dark:text-white -top-[12px] text-xs  pb-2">200cm</p>
 
-            <p class="w-[200px]   absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[230px]   absolute top-[2px] mb-[180px] h-[1px] dark:bg-white bg-black" />
             <p class="absolute top-[16px] dark:text-white text-xs  pb-3">150cm</p>
-            <p class="w-[200px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
+            <p class="w-[230px]   absolute top-[30px]  h-[1px] dark:bg-white bg-black" />
 
             <p class="absolute top-[40px] dark:text-white  text-xs pb-3">100cm</p>
-            <p class="w-[200px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[230px]   absolute top-[54px] h-[1px] dark:bg-white bg-black" />
 
             <p class="absolute top-[64px] dark:text-white text-xs  pb-3">50cm</p>
-            <p class="w-[200px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
+            <p class="w-[230px]   absolute top-[80px] h-[1px] dark:bg-white bg-black" />
           </div>
         </div>
 
@@ -217,7 +217,7 @@ defmodule AniminaWeb.AniminaComponents do
       </div>
       <div class="h-[100%] flex justify-end items-end ">
         <div class="bg-white flex  justify-end flex-col gap-0 px-1 text-xs">
-          <%= for i<- String.graphemes("#{@username}") do %>
+          <%= for i<- get_shortened_username(@username) do %>
             <p class="rotate-90">
               <%= i %>
             </p>
@@ -295,5 +295,11 @@ defmodule AniminaWeb.AniminaComponents do
       </div>
     </div>
     """
+  end
+
+  defp get_shortened_username(username) do
+    "#{username}"
+    |> String.slice(0, 4)
+    |> String.graphemes()
   end
 end
