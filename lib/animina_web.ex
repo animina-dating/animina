@@ -86,6 +86,7 @@ defmodule AniminaWeb do
       # Core UI components and translation
       import AniminaWeb.CoreComponents
       import AniminaWeb.AniminaComponents
+      import AniminaWeb.ProfileComponents
       import AniminaWeb.TopNavigationCompontents
       import AniminaWeb.Gettext
 
