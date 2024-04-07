@@ -179,7 +179,6 @@ defmodule AniminaWeb.AniminaComponents do
     <.flag_card_loading />
   """
 
- 
   def current_user_figure(assigns) do
     ~H"""
     <%= if @gender == "male" do %>
