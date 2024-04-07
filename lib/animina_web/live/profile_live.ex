@@ -104,10 +104,6 @@ defmodule AniminaWeb.ProfileLive do
         }
       }
     end)
-    |> Enum.group_by(fn flag -> {flag.category.id, flag.category.name} end)
-    |> Enum.map(fn {{category_id, category_name}, v} ->
-      %{id: category_id, name: category_name, flags: v}
-    end)
   end
 
   defp fetch_stories(user_id) do

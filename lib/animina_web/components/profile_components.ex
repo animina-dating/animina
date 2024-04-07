@@ -261,8 +261,10 @@ defmodule AniminaWeb.ProfileComponents do
   def flags_card(assigns) do
     ~H"""
     <div class="space-y-4" id="stream_flags" phx-update="stream">
-      <div :for={{dom_id, category} <- @streams.flags} class="space-y-2" id={"#{dom_id}"}>
-        <.each_flag_card category={category} />
+      <div class="flex w-[100%] gap-4 flex-wrap">
+        <%= for {dom_id, category} <- @streams.flags do %>
+          <.each_flag_card id={dom_id} category={category} />
+        <% end %>
       </div>
     </div>
     """
@@ -270,21 +272,17 @@ defmodule AniminaWeb.ProfileComponents do
 
   def each_flag_card(assigns) do
     ~H"""
-    <h3 class="dark:text-white text-[#414753] dark:text-white  truncate">
-      <%= @category.name %>
-    </h3>
+    <div
+      id={@id}
+      class="cursor-pointer text-indigo-500 shadow-sm rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-white/80  dark:bg-gray-800 bg-white  shadow-black/50 focus-visible:outline-white  "
+    >
+      <span :if={@category.flag.emoji} class="pr-1.5">
+        <%= @category.flag.emoji %>
+      </span>
 
-    <ol class="flex flex-wrap w-full gap-2">
-      <li :for={user_flag <- @category.flags}>
-        <div class="cursor-pointer text-indigo-500 shadow-sm rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-white/80  dark:bg-gray-800 bg-white  shadow-black/50 focus-visible:outline-white  ">
-          <span :if={user_flag.flag.emoji} class="pr-1.5">
-            <%= user_flag.flag.emoji %>
-          </span>
-
-          <%= user_flag.flag.name %>
-        </div>
-      </li>
-    </ol>
+      <%= @category.flag.name %>
+    </div>
     """
   end
 end
+
