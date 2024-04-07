@@ -3,23 +3,6 @@ defmodule AniminaWeb.ProfileComponents do
   Provides Profile UI components.
   """
   use Phoenix.Component
-  alias AniminaWeb.StoryComponent
-
-  def stories_component(assigns) do
-    ~H"""
-    <div class="grid items-start gap-5 md:grid-cols-3" id="stream_stories" phx-update="stream">
-      <div :for={{dom_id, story} <- @streams.stories} id={"#{dom_id}"}>
-        <.live_component
-          module={StoryComponent}
-          id={"story_#{story.id}"}
-          story={story}
-          language={@language}
-          for_current_user={@current_user.id == @user.id}
-        />
-      </div>
-    </div>
-    """
-  end
 
   def profile_location_card(assigns) do
     ~H"""
@@ -218,7 +201,7 @@ defmodule AniminaWeb.ProfileComponents do
         </div>
       </div>
 
-      <div class="flex md:-ml-48  -ml-40 items-end gap-8">
+      <div class="flex items-end gap-8 -ml-40 md:-ml-48">
         <.figure
           height={@current_user_height_for_figure}
           avatar={@current_user.profile_photo.filename}
@@ -237,7 +220,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def figure(assigns) do
     ~H"""
-    <div class="flex gap-2 items-end justify-end" style={"height:#{@height}px"}>
+    <div class="flex items-end justify-end gap-2" style={"height:#{@height}px"}>
       <div class="md:w-[40px] dark:bg-white h-[100%] bg-black w-[35px] flex flex-col justify-end   items-center ">
         <div style="z-index:2" class="w-[100%]  pb-1 flex justify-center items-center">
           <.user_mini_avatar avatar={@avatar} />
