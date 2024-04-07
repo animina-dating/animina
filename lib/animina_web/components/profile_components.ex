@@ -140,7 +140,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def square_user_profile_photo(assigns) do
     ~H"""
-    <div class="md:w-[470px] md:h-[470px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
+    <div class="md:w-[400px] md:h-[400px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
       <img src={"/uploads/#{@user.profile_photo.filename}"} class="object-cover h-[100%] w-[100%] " />
     </div>
     """
@@ -148,7 +148,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def profile_about_story_card(assigns) do
     ~H"""
-    <div :if={@about_story != nil} class="md:w-[48%] w-[100%] flex flex-col gap-2">
+    <div :if={@about_story != nil} class="flex flex-col gap-2">
       <p class="dark:text-gray-100 text-[#414753]  font-semibold">
         <%= @title %>
       </p>
@@ -161,7 +161,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def height_visualization_card(assigns) do
     ~H"""
-    <div class="md:w-[48%] w-[100%] flex flex-col gap-2">
+    <div class="flex flex-col gap-4">
       <div class="w-[100%] flex justify-between items-center">
         <p class="dark:text-gray-100 text-[#414753] font-semibold">
           <%= @title %>
