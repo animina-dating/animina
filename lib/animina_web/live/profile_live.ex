@@ -26,7 +26,7 @@ defmodule AniminaWeb.ProfileLive do
             (socket.assigns.current_user.height / 2) |> trunc()
           )
           |> assign(about_story: fetch_about_story(user.id))
-          |> assign(stories: fetch_non_about_stories(user.id))
+          |> assign(stories: fetch_non_about_me_stories(user.id))
           |> assign(flags: AsyncResult.loading())
           |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
 
@@ -38,25 +38,6 @@ defmodule AniminaWeb.ProfileLive do
       end
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_async(:fetch_stories, {:ok, fetched_stories}, socket) do
-    %{stories: stories} = socket.assigns
-
-    {:noreply,
-     socket
-     |> assign(
-       :stories,
-       AsyncResult.ok(stories, fetched_stories)
-     )
-     |> stream(:stories, fetched_stories)}
-  end
-
-  @impl true
-  def handle_async(:fetch_stories, {:exit, reason}, socket) do
-    %{stories: stories} = socket.assigns
-    {:noreply, assign(socket, :stories, AsyncResult.failed(stories, {:exit, reason}))}
   end
 
   @impl true
@@ -114,18 +95,13 @@ defmodule AniminaWeb.ProfileLive do
     |> then(& &1.results)
   end
 
-  def fetch_all_stories_apart_from_about_story(user_id) do
-    fetch_stories(user_id)
-    |> Enum.filter(fn story -> story.headline.subject != "About me" end)
-  end
-
-  def fetch_about_story(user_id) do
+  defp fetch_about_story(user_id) do
     fetch_stories(user_id)
     |> Enum.filter(fn story -> story.headline.subject == "About me" end)
     |> List.first()
   end
 
-  def fetch_non_about_stories(user_id) do
+  def fetch_non_about_me_stories(user_id) do
     fetch_stories(user_id)
     |> Enum.filter(fn story -> story.headline.subject != "About me" end)
   end
