@@ -21,22 +21,6 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-  def height_visualization_and_about_component(assigns) do
-    ~H"""
-    <div class="w-[100%] mt-2 flex md:flex-row  gap-4 flex-col justify-between">
-      <.height_visualization_card
-        user={@user}
-        current_user={@current_user}
-        title={@title}
-        measurement_unit={@measurement_unit}
-        current_user_height_for_figure={@current_user_height_for_figure}
-        profile_user_height_for_figure={@profile_user_height_for_figure}
-      />
-      <.profile_about_story_card title={@about_title} about_story={@about_story} />
-    </div>
-    """
-  end
-
   def profile_location_card(assigns) do
     ~H"""
     <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
@@ -173,7 +157,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def square_user_profile_photo(assigns) do
     ~H"""
-    <div class="md:w-[400px] md:h-[400px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
+    <div class="md:w-[470px] md:h-[470px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
       <img src={"/uploads/#{@user.profile_photo.filename}"} class="object-cover h-[100%] w-[100%] " />
     </div>
     """
@@ -216,7 +200,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def height_visualization_image(assigns) do
     ~H"""
-    <div class="flex  bg-[#B2CCEF] gap-8 w-[100%] dark:bg-gray-800 items-start rounded-md p-4 py-8">
+    <div class="flex  bg-[#B2CCEF] gap-8 w-[100%] dark:bg-gray-800 items-start rounded-md p-4 py-6">
       <div class="flex w-[100%]   gap-0">
         <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
         <div class="h-[100%] w-[100%] flex  relative">
