@@ -241,22 +241,19 @@ defmodule Mix.Tasks.CreateDummyAccounts do
 
   defp create_random_story(user, position) do
     headline = get_random_headline()
-    content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
+    random_content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
 
-    photo =
+    random_photo =
       if :rand.uniform() > 0.5,
         do: random_landscape_photo_url() |> download_photo("#{Faker.UUID.v4()}.png"),
         else: nil
 
-    # Ensure there is either content or a photo or both
-    if content == nil and photo == nil do
-      # Choose randomly between generating content or a photo
-      if :rand.uniform() > 0.5 do
-        content = random_lorem_ipsum()
-      else
-        photo = random_landscape_photo_url() |> download_photo("#{Faker.UUID.v4()}.png")
+    {content, photo} =
+      case {random_content, random_photo} do
+        {nil, nil} -> {random_lorem_ipsum(), nil}
+        {nil, photo} -> {nil, photo}
+        {content, photo} -> {content, photo}
       end
-    end
 
     story =
       Story.create!(%{
