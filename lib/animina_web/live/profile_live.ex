@@ -25,8 +25,7 @@ defmodule AniminaWeb.ProfileLive do
             :current_user_height_for_figure,
             (socket.assigns.current_user.height / 2) |> trunc()
           )
-          |> assign(about_story: fetch_about_story(user.id))
-          |> assign(stories: fetch_non_about_me_stories(user.id))
+          |> assign(stories: fetch_stories(user.id))
           |> assign(flags: AsyncResult.loading())
           |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
 
@@ -109,64 +108,64 @@ defmodule AniminaWeb.ProfileLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-5 pb-8 space-y-4">
+    <div class="px-5">
       <div :if={@user == nil}>
         <%= gettext("There was an error loading the user's profile") %>
       </div>
 
-      <div :if={@user != nil}>
-        <div class="flex  w-[100%] flex xl:flex-row flex-col justify-between ">
-          <.square_user_profile_photo user={@user} />
-          <div class="p-4 flex flex-col gap-2  w-[100%] xl:w-[65%]">
-            <h3 class="text-lg font-semibold dark:text-white"><%= @user.name %></h3>
-            <p class="text-sm font-medium text-gray-500 dark:text-gray-100">@<%= @user.username %></p>
-            <div class="w-[100%] flex md:flex-row flex-col gap-4 justify-between ">
-              <div class="flex xl:w-[48%] w-[100%] flex-col gap-4">
-                <div class="flex flex-col gap-1">
-                  <.profile_location_card user={@user} />
-                  <.profile_occupation_card user={@user} />
-                  <.profile_age_card user={@user} />
-                  <.profile_gender_card user={@user} />
-                </div>
-
-                <.height_visualization_card
-                  user={@user}
-                  current_user={@current_user}
-                  title={gettext("Height")}
-                  measurement_unit={gettext("cm")}
-                  current_user_height_for_figure={@current_user_height_for_figure}
-                  profile_user_height_for_figure={@profile_user_height_for_figure}
-                />
-              </div>
-              <div class="xl:w-[48%] w-[100%]">
-                <.profile_about_story_card title={gettext("About Me")} about_story={@about_story} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-8 space-y-4">
-          <h2 class="text-xl font-bold dark:text-white"><%= gettext("My Stories") %></h2>
-          <.stories_display stories={@stories} current_user={@current_user} />
-        </div>
-
-        <div class="mt-8 space-y-4">
-          <h2 class="text-xl font-bold dark:text-white"><%= gettext("My White Flags") %></h2>
-
-          <.async_result :let={_flags} assign={@flags}>
-            <:loading>
-              <div class="pt-4 space-y-4">
-                <.flag_card_loading />
-                <.flag_card_loading />
-                <.flag_card_loading />
-                <.flag_card_loading />
-              </div>
-            </:loading>
-            <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
-            <.flags_card streams={@streams} />
-          </.async_result>
+      <div :if={@user} class="pb-4">
+        <h1 class="text-2xl font-semibold dark:text-white"><%= @user.name %></h1>
+        <div class="pt-2">
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            @<%= @user.username %>
+          </span>
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @user.age %> <%= gettext("years") %>
+          </span>
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @user.height %> cm
+          </span>
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @user.city.name %>
+          </span>
+          <span
+            :if={@user.occupation}
+            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
+            <%= @user.occupation %>
+          </span>
         </div>
       </div>
+
+      <.stories_display stories={@stories} current_user={@current_user} />
+
+      <div class="mt-8 space-y-4">
+        <h2 class="text-xl font-bold dark:text-white"><%= gettext("Flags") %></h2>
+
+        <.async_result :let={_flags} assign={@flags}>
+          <:loading>
+            <div class="pt-4 space-y-4">
+              <.flag_card_loading />
+              <.flag_card_loading />
+              <.flag_card_loading />
+              <.flag_card_loading />
+            </div>
+          </:loading>
+          <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
+          <.flags_card streams={@streams} />
+        </.async_result>
+      </div>
+    </div>
+
+    <div>
+      <.height_visualization_card
+        user={@user}
+        current_user={@current_user}
+        title={gettext("Height")}
+        measurement_unit={gettext("cm")}
+        current_user_height_for_figure={@current_user_height_for_figure}
+        profile_user_height_for_figure={@profile_user_height_for_figure}
+      />
     </div>
     """
   end
