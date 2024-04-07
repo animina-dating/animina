@@ -25,13 +25,10 @@ defmodule AniminaWeb.ProfileLive do
             :current_user_height_for_figure,
             (socket.assigns.current_user.height / 2) |> trunc()
           )
-          |> assign(:about_story, fetch_about_story(user.id))
-          |> assign(stories: AsyncResult.loading())
+          |> assign(about_story: fetch_about_story(user.id))
+          |> assign(stories: fetch_non_about_stories(user.id))
           |> assign(flags: AsyncResult.loading())
           |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
-          |> start_async(:fetch_stories, fn ->
-            fetch_all_stories_apart_from_about_story(user.id)
-          end)
 
         _ ->
           socket
@@ -128,6 +125,11 @@ defmodule AniminaWeb.ProfileLive do
     |> List.first()
   end
 
+  def fetch_non_about_stories(user_id) do
+    fetch_stories(user_id)
+    |> Enum.filter(fn story -> story.headline.subject != "About me" end)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -169,23 +171,7 @@ defmodule AniminaWeb.ProfileLive do
 
         <div class="mt-8 space-y-4">
           <h2 class="text-xl font-bold dark:text-white"><%= gettext("My Stories") %></h2>
-          <.async_result :let={_stories} assign={@stories}>
-            <:loading>
-              <div class="space-y-4">
-                <.story_card_loading />
-                <.story_card_loading />
-                <.story_card_loading />
-              </div>
-            </:loading>
-            <:failed :let={_failure}><%= gettext("There was an error loading stories") %></:failed>
-
-            <.stories_component
-              streams={@streams}
-              language={@language}
-              current_user={@current_user}
-              user={@user}
-            />
-          </.async_result>
+          <.stories_display stories={@stories} current_user={@current_user} />
         </div>
 
         <div class="mt-8 space-y-4">
