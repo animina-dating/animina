@@ -142,24 +142,28 @@ defmodule AniminaWeb.ProfileLive do
           <div class="p-4 flex flex-col gap-2  w-[100%] xl:w-[65%]">
             <h3 class="text-lg font-semibold dark:text-white"><%= @user.name %></h3>
             <p class="text-sm font-medium text-gray-500 dark:text-gray-100">@<%= @user.username %></p>
+            <div class="w-[100%] flex md:flex-row flex-col gap-4 justify-between ">
+              <div class="flex xl:w-[48%] w-[100%] flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                  <.profile_location_card user={@user} />
+                  <.profile_occupation_card user={@user} />
+                  <.profile_age_card user={@user} />
+                  <.profile_gender_card user={@user} />
+                </div>
 
-            <div class="grid grid-cols-2 gap-4 mt-2">
-              <.profile_location_card user={@user} />
-              <.profile_age_card user={@user} />
-
-              <.profile_occupation_card user={@user} />
-              <.profile_gender_card user={@user} />
+                <.height_visualization_card
+                  user={@user}
+                  current_user={@current_user}
+                  title={gettext("Height")}
+                  measurement_unit={gettext("cm")}
+                  current_user_height_for_figure={@current_user_height_for_figure}
+                  profile_user_height_for_figure={@profile_user_height_for_figure}
+                />
+              </div>
+              <div class="xl:w-[48%] w-[100%]">
+                <.profile_about_story_card title={gettext("About Me")} about_story={@about_story} />
+              </div>
             </div>
-            <.height_visualization_and_about_component
-              user={@user}
-              current_user={@current_user}
-              title={gettext("Height")}
-              about_title={gettext("About me")}
-              measurement_unit={gettext("cm")}
-              about_story={@about_story}
-              current_user_height_for_figure={@current_user_height_for_figure}
-              profile_user_height_for_figure={@profile_user_height_for_figure}
-            />
           </div>
         </div>
 

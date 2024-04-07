@@ -21,22 +21,6 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-  def height_visualization_and_about_component(assigns) do
-    ~H"""
-    <div class="w-[100%] mt-2 flex md:flex-row  gap-4 flex-col justify-between">
-      <.height_visualization_card
-        user={@user}
-        current_user={@current_user}
-        title={@title}
-        measurement_unit={@measurement_unit}
-        current_user_height_for_figure={@current_user_height_for_figure}
-        profile_user_height_for_figure={@profile_user_height_for_figure}
-      />
-      <.profile_about_story_card title={@about_title} about_story={@about_story} />
-    </div>
-    """
-  end
-
   def profile_location_card(assigns) do
     ~H"""
     <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
@@ -181,7 +165,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def profile_about_story_card(assigns) do
     ~H"""
-    <div :if={@about_story != nil} class="md:w-[48%] w-[100%] flex flex-col gap-2">
+    <div :if={@about_story != nil} class="flex flex-col gap-2">
       <p class="dark:text-gray-100 text-[#414753]  font-semibold">
         <%= @title %>
       </p>
@@ -194,7 +178,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def height_visualization_card(assigns) do
     ~H"""
-    <div class="md:w-[48%] w-[100%] flex flex-col gap-2">
+    <div class="flex flex-col gap-4">
       <div class="w-[100%] flex justify-between items-center">
         <p class="dark:text-gray-100 text-[#414753] font-semibold">
           <%= @title %>
@@ -216,7 +200,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def height_visualization_image(assigns) do
     ~H"""
-    <div class="flex  bg-[#B2CCEF] gap-8 w-[100%] dark:bg-gray-800 items-start rounded-md p-4 py-8">
+    <div class="flex  bg-[#B2CCEF] gap-8 w-[100%] dark:bg-gray-800 items-start rounded-md p-4 py-6">
       <div class="flex w-[100%]   gap-0">
         <p class="h-[100px] dark:bg-white bg-black w-[2px] " />
         <div class="h-[100%] w-[100%] flex  relative">
