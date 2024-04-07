@@ -23,19 +23,19 @@ defmodule AniminaWeb.StoriesComponents do
   def story(assigns) do
     ~H"""
     <div class="pb-4">
-      <div :if={@story.photo}>
+      <div :if={@story.photo} class="pb-4">
         <img
           class="object-cover rounded-lg"
           src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
         />
       </div>
-      <div :if={@story.headline} class="pt-4">
+      <div :if={@story.headline} class="pb-4">
         <h3 class="text-lg font-semibold dark:text-white"><%= @story.headline.subject %></h3>
       </div>
-      <div :if={@story.content} class="pt-1 pb-4">
+      <div :if={@story.content} class="pb-4">
         <p class="text-justify text-gray-600 dark:text-gray-100"><%= @story.content %></p>
       </div>
-      <hr class="pt-4" />
+      <hr />
     </div>
     """
   end
