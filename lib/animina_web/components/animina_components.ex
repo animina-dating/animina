@@ -28,11 +28,11 @@ defmodule AniminaWeb.AniminaComponents do
     ~H"""
     <div class="rotate-[24deg] w-[100%] rotate-[12deg] rotate-[0deg]" />
     <div
-      class="border border-purple-400 md:w-[50%] w-[100%] mx-auto  rounded-lg bg-blue-100 px-4 py-3.5 flex items-start justify-between gap-8 drop-shadow xs:justify-start "
+      class="border border-purple-400 md:w-[100%] w-[100%] mx-auto  rounded-lg bg-blue-100 px-4 py-3.5 flex items-start justify-between gap-8 drop-shadow xs:justify-start "
       phx-no-format
     >
       <%= unless Enum.empty?(@avatars_urls) do %>
-        <div class="flex  xs:w-[25%] w-[20%]  -space-x-4">
+        <div class="flex  xl:w-[10%] w-[20%]  -space-x-4">
           <%= for {avatar_url, index} <- Enum.with_index(@avatars_urls) do %>
             <% rotate_by = Integer.to_string(index * 12) %>
             <img
