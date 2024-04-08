@@ -74,11 +74,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :profile}>
       <%= if @current_user && @current_user.profile_photo  do %>
-        <img class="w-6 h-6 rounded-full object-cover"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
+        <img class="object-cover w-6 h-6 rounded-full"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
       <% else %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current w-6 h-6 shrink-0"
+          class="w-6 h-6 stroke-current shrink-0"
           width="25" height="24" viewBox="0 0 25 24"
           fill="none"
         >
@@ -116,7 +116,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="fill-current w-6 h-6 shrink-0"
+        class="w-6 h-6 fill-current shrink-0"
         width="25" height="24" viewBox="0 0 25 24"
         fill="none"
       >
@@ -152,7 +152,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={@active_tab == :chat}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="stroke-current w-6 h-6 shrink-0"
+        class="w-6 h-6 stroke-current shrink-0"
         width="25" height="24" viewBox="0 0 25 24"
         fill="none"
       >
@@ -165,11 +165,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <span>Chat</span>
       <div class="flex -space-x-1.5 absolute top-2 left-1/2">
         <div
-          class="w-4 h-4 shrink-0 rounded-full overflow-hidden"
+          class="w-4 h-4 overflow-hidden rounded-full shrink-0"
           aria-hidden="true"
         >
           <img
-            class="w-full h-full object-cover"
+            class="object-cover w-full h-full"
             alt=" "
             src="https://www.wintermeyer.de/assets/images/avatar.jpg"
           />
@@ -205,30 +205,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </svg>
     <span>Bookmarks</span>
     </.top_navigation_entry>
-    """
-  end
-
-  @doc """
-  Desktop top text
-
-  ## Examples
-
-      <.desktop_top_text />
-  """
-
-  def desktop_top_text(assigns) do
-    ~H"""
-    <div class="w-[100%] hidden  md:flex flex-col gap-4">
-      <div class="flex flex-col dark:text-[#E0E2EB] py-2 text-[#191C22] gap-1">
-        <p class="text-2xl">
-          Animina
-        </p>
-        <p class="text-lg">
-          Dating Platform
-        </p>
-      </div>
-      <p class="h-[1px] w-[100%] bg-gray-500" />
-    </div>
     """
   end
 

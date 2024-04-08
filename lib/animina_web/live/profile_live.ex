@@ -99,11 +99,11 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user} class="pb-4">
-        <h1 class="text-2xl font-semibold dark:text-white"><%= @user.name %></h1>
+        <h1 class="text-2xl font-semibold dark:text-white">
+          <%= @user.name %> <span class="text-base">@<%= @user.username %></span>
+        </h1>
+
         <div class="pt-2">
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            @<%= @user.username %>
-          </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @user.age %> <%= gettext("years") %>
           </span>
