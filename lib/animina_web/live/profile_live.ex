@@ -148,7 +148,7 @@ defmodule AniminaWeb.ProfileLive do
             </div>
           </:loading>
           <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
-          <.flags_card streams={@streams} />
+          <.flags_display streams={@streams} />
         </.async_result>
       </div>
     </div>
