@@ -81,10 +81,6 @@ defmodule AniminaWeb.ProfileLive do
         }
       }
     end)
-    |> Enum.group_by(fn flag -> {flag.category.id, flag.category.name} end)
-    |> Enum.map(fn {{category_id, category_name}, v} ->
-      %{id: category_id, name: category_name, flags: v}
-    end)
   end
 
   defp fetch_stories(user_id) do
@@ -152,7 +148,7 @@ defmodule AniminaWeb.ProfileLive do
             </div>
           </:loading>
           <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
-          <.flags_card streams={@streams} />
+          <.flags_display streams={@streams} />
         </.async_result>
       </div>
     </div>

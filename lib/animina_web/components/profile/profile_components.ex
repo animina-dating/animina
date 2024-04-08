@@ -241,33 +241,49 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-  def flags_card(assigns) do
+  def flags_display(assigns) do
     ~H"""
     <div class="space-y-4" id="stream_flags" phx-update="stream">
-      <div :for={{dom_id, category} <- @streams.flags} class="space-y-2" id={"#{dom_id}"}>
-        <.each_flag_card category={category} />
+      <div class="flex w-[100%] gap-4 flex-wrap">
+        <%= for {dom_id, category} <- @streams.flags do %>
+          <.flag_card id={dom_id} category={category} />
+        <% end %>
       </div>
     </div>
     """
   end
 
-  def each_flag_card(assigns) do
+  def flag_card(assigns) do
     ~H"""
-    <h3 class="dark:text-white text-[#414753] dark:text-white  truncate">
-      <%= @category.name %>
-    </h3>
+    <div class="pt-8">
+      <div
+        id={@id}
+        data-tooltip-target="tooltip-default"
+        class="cursor-pointer relative group text-indigo-500 shadow-sm  rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 dark:hover:bg-white/80 hover:bg-gray-800  dark:bg-gray-800 bg-white  shadow-black/50 focus-visible:outline-white  "
+      >
+        <span :if={@category.flag.emoji} class="pr-1.5">
+          <%= @category.flag.emoji %>
+        </span>
 
-    <ol class="flex flex-wrap w-full gap-2">
-      <li :for={user_flag <- @category.flags}>
-        <div class="cursor-pointer text-indigo-500 shadow-sm rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-white/80  dark:bg-gray-800 bg-white  shadow-black/50 focus-visible:outline-white  ">
-          <span :if={user_flag.flag.emoji} class="pr-1.5">
-            <%= user_flag.flag.emoji %>
-          </span>
+        <%= @category.flag.name %>
 
-          <%= user_flag.flag.name %>
-        </div>
-      </li>
-    </ol>
+        <.tooltip name={@category.category.name} />
+      </div>
+    </div>
+    """
+  end
+
+  defp tooltip(assigns) do
+    ~H"""
+    <div class="hidden absolute  left-1/2 transform -translate-x-1/2 -top-10 group-hover:flex justify-center items-center w-[100%] flex-col">
+      <div class="cursor-pointer text-indigo-500 shadow-sm rounded-md flex justify-center items-center text-center px-3 py-1.5 text-xs  w-[100%]  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 hover:bg-white/80  dark:bg-gray-800 bg-white  shadow-black/50 focus-visible:outline-white ">
+        <%= @name %>
+      </div>
+      <div class="w-0 h-0 border-l-[20px]  border-l-transparent
+        border-t-[15px] dark:border-t-gray-800   border-t-white
+         border-r-[20px] border-r-transparent">
+      </div>
+    </div>
     """
   end
 end
