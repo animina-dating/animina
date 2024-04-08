@@ -8,55 +8,40 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts
   alias Animina.Narratives
   alias Animina.Traits
-  alias Phoenix.LiveView.AsyncResult
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
     socket =
-      Accounts.User.by_username(username)
-      |> case do
+      socket
+      |> assign(language: language)
+      |> assign(active_tab: :home)
+
+    socket =
+      case Accounts.User.by_username(username) do
         {:ok, user} ->
+          stories = fetch_stories(user.id)
+
+          chunks_flags =
+            fetch_flags(user.id, :white, language)
+            |> Enum.chunk_every(5)
+
+          stories_and_flags = Enum.zip(stories, chunks_flags)
+
           socket
-          |> assign(language: language)
-          |> assign(active_tab: :home)
           |> assign(user: user)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
           |> assign(
             :current_user_height_for_figure,
             (socket.assigns.current_user.height / 2) |> trunc()
           )
-          |> assign(stories: fetch_stories(user.id))
-          |> assign(flags: AsyncResult.loading())
-          |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
+          |> assign(stories_and_flags: stories_and_flags)
 
         _ ->
           socket
-          |> assign(language: language)
-          |> assign(active_tab: :home)
           |> assign(user: nil)
       end
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_async(:fetch_flags, {:ok, fetched_flags}, socket) do
-    %{flags: flags} = socket.assigns
-
-    {:noreply,
-     socket
-     |> assign(
-       :flags,
-       AsyncResult.ok(flags, fetched_flags)
-     )
-     |> stream(:flags, fetched_flags)}
-  end
-
-  @impl true
-  def handle_async(:fetch_flags, {:exit, reason}, socket) do
-    %{flags: flags} = socket.assigns
-
-    {:noreply, assign(socket, :flags, AsyncResult.failed(flags, {:exit, reason}))}
   end
 
   defp fetch_flags(user_id, color, language) do
@@ -122,24 +107,7 @@ defmodule AniminaWeb.ProfileLive do
         </div>
       </div>
 
-      <.stories_display stories={@stories} current_user={@current_user} />
-
-      <div class="mt-8 space-y-4">
-        <h2 class="text-xl font-bold dark:text-white"><%= gettext("Flags") %></h2>
-
-        <.async_result :let={_flags} assign={@flags}>
-          <:loading>
-            <div class="pt-4 space-y-4">
-              <.flag_card_loading />
-              <.flag_card_loading />
-              <.flag_card_loading />
-              <.flag_card_loading />
-            </div>
-          </:loading>
-          <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
-          <.flags_display streams={@streams} />
-        </.async_result>
-      </div>
+      <.stories_display stories_and_flags={@stories_and_flags} current_user={@current_user} />
     </div>
 
     <.height_visualization_card
