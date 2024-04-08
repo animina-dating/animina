@@ -1,16 +1,16 @@
-<main class="md:hidden block">
+<main class="block md:hidden">
   <.top_navigation active_tab={@active_tab} current_user={@current_user} />
 </main>
 
 <.desktop_top_text />
 
-<div class="w-[100%] pt-4  flex justify-center">
+<div class="w-[100%] pt-2 flex justify-center">
   <.desktop_sidebar active_tab={@active_tab} current_user={@current_user} />
-  <main class="md:w-[78%] w-[100%] flex flex-col gap-2 flex-grow  space-y-5 px-3">
+  <main class="md:w-[78%] w-[100%] flex flex-col gap-2 flex-grow space-y-5 px-3">
     <.flash_group flash={@flash} />
     <%= @inner_content %>
   </main>
-  <div class="hidden md:flex  flex-grow justify-end">
+  <div class="justify-end flex-grow hidden md:flex">
     <p class="bg-[#C1C6D5] dark:bg-[#414753]  w-[1px] " />
   </div>
 </div>
