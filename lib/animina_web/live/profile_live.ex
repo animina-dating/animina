@@ -90,17 +90,6 @@ defmodule AniminaWeb.ProfileLive do
     |> then(& &1.results)
   end
 
-  defp fetch_about_story(user_id) do
-    fetch_stories(user_id)
-    |> Enum.filter(fn story -> story.headline.subject == "About me" end)
-    |> List.first()
-  end
-
-  def fetch_non_about_me_stories(user_id) do
-    fetch_stories(user_id)
-    |> Enum.filter(fn story -> story.headline.subject != "About me" end)
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -153,16 +142,14 @@ defmodule AniminaWeb.ProfileLive do
       </div>
     </div>
 
-    <div>
-      <.height_visualization_card
-        user={@user}
-        current_user={@current_user}
-        title={gettext("Height")}
-        measurement_unit={gettext("cm")}
-        current_user_height_for_figure={@current_user_height_for_figure}
-        profile_user_height_for_figure={@profile_user_height_for_figure}
-      />
-    </div>
+    <.height_visualization_card
+      user={@user}
+      current_user={@current_user}
+      title={gettext("Height")}
+      measurement_unit={gettext("cm")}
+      current_user_height_for_figure={@current_user_height_for_figure}
+      profile_user_height_for_figure={@profile_user_height_for_figure}
+    />
     """
   end
 

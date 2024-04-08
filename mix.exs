@@ -64,7 +64,8 @@ defmodule Animina.MixProject do
       {:ash_state_machine, "~> 0.2.2"},
       {:ex_phone_number, "~> 0.4.3"},
       {:httpoison, "~> 2.0"},
-      {:faker, "~> 0.18", only: [:dev, :test]}
+      {:faker, "~> 0.18", only: [:dev, :test]},
+      {:mdex, "~> 0.1"}
     ]
   end
 
