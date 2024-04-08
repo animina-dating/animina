@@ -39,6 +39,9 @@ defmodule AniminaWeb.StoriesComponents do
       <.story_body story={@story} />
       <hr />
     </div>
+    <%= if @story.headline.subject == "About me" do %>
+      <div class="break-after-column" />
+    <% end %>
     """
   end
 
@@ -57,8 +60,12 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_content(assigns) do
     ~H"""
-    <div :if={@story.content} class="pb-4">
-      <p class="text-justify text-gray-600 dark:text-gray-100"><%= @story.content %></p>
+    <div :if={@story.content} class="pb-4 text-justify text-gray-600 dark:text-gray-100">
+      <%= MDEx.to_html(@story.content,
+        render: [unsafe_: true],
+        features: [sanitize: true, syntax_highlight_theme: "github_light"]
+      )
+      |> Phoenix.HTML.raw() %>
     </div>
     """
   end
