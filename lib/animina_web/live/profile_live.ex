@@ -8,55 +8,40 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts
   alias Animina.Narratives
   alias Animina.Traits
-  alias Phoenix.LiveView.AsyncResult
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
     socket =
-      Accounts.User.by_username(username)
-      |> case do
+      socket
+      |> assign(language: language)
+      |> assign(active_tab: :home)
+
+    socket =
+      case Accounts.User.by_username(username) do
         {:ok, user} ->
+          stories = fetch_stories(user.id)
+
+          chunks_flags =
+            fetch_flags(user.id, :white, language)
+            |> Enum.chunk_every(5)
+
+          stories_and_flags = Enum.zip(stories, chunks_flags)
+
           socket
-          |> assign(language: language)
-          |> assign(active_tab: :home)
           |> assign(user: user)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
           |> assign(
             :current_user_height_for_figure,
             (socket.assigns.current_user.height / 2) |> trunc()
           )
-          |> assign(stories: fetch_stories(user.id))
-          |> assign(flags: AsyncResult.loading())
-          |> start_async(:fetch_flags, fn -> fetch_flags(user.id, :white, language) end)
+          |> assign(stories_and_flags: stories_and_flags)
 
         _ ->
           socket
-          |> assign(language: language)
-          |> assign(active_tab: :home)
           |> assign(user: nil)
       end
 
     {:ok, socket}
-  end
-
-  @impl true
-  def handle_async(:fetch_flags, {:ok, fetched_flags}, socket) do
-    %{flags: flags} = socket.assigns
-
-    {:noreply,
-     socket
-     |> assign(
-       :flags,
-       AsyncResult.ok(flags, fetched_flags)
-     )
-     |> stream(:flags, fetched_flags)}
-  end
-
-  @impl true
-  def handle_async(:fetch_flags, {:exit, reason}, socket) do
-    %{flags: flags} = socket.assigns
-
-    {:noreply, assign(socket, :flags, AsyncResult.failed(flags, {:exit, reason}))}
   end
 
   defp fetch_flags(user_id, color, language) do
@@ -90,17 +75,6 @@ defmodule AniminaWeb.ProfileLive do
     |> then(& &1.results)
   end
 
-  defp fetch_about_story(user_id) do
-    fetch_stories(user_id)
-    |> Enum.filter(fn story -> story.headline.subject == "About me" end)
-    |> List.first()
-  end
-
-  def fetch_non_about_me_stories(user_id) do
-    fetch_stories(user_id)
-    |> Enum.filter(fn story -> story.headline.subject != "About me" end)
-  end
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -110,11 +84,11 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user} class="pb-4">
-        <h1 class="text-2xl font-semibold dark:text-white"><%= @user.name %></h1>
+        <h1 class="text-2xl font-semibold dark:text-white">
+          <%= @user.name %> <span class="text-base">@<%= @user.username %></span>
+        </h1>
+
         <div class="pt-2">
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            @<%= @user.username %>
-          </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @user.age %> <%= gettext("years") %>
           </span>
@@ -133,36 +107,17 @@ defmodule AniminaWeb.ProfileLive do
         </div>
       </div>
 
-      <.stories_display stories={@stories} current_user={@current_user} />
-
-      <div class="mt-8 space-y-4">
-        <h2 class="text-xl font-bold dark:text-white"><%= gettext("Flags") %></h2>
-
-        <.async_result :let={_flags} assign={@flags}>
-          <:loading>
-            <div class="pt-4 space-y-4">
-              <.flag_card_loading />
-              <.flag_card_loading />
-              <.flag_card_loading />
-              <.flag_card_loading />
-            </div>
-          </:loading>
-          <:failed :let={_failure}><%= gettext("There was an error loading flags") %></:failed>
-          <.flags_display streams={@streams} />
-        </.async_result>
-      </div>
+      <.stories_display stories_and_flags={@stories_and_flags} current_user={@current_user} />
     </div>
 
-    <div>
-      <.height_visualization_card
-        user={@user}
-        current_user={@current_user}
-        title={gettext("Height")}
-        measurement_unit={gettext("cm")}
-        current_user_height_for_figure={@current_user_height_for_figure}
-        profile_user_height_for_figure={@profile_user_height_for_figure}
-      />
-    </div>
+    <.height_visualization_card
+      user={@user}
+      current_user={@current_user}
+      title={gettext("Height")}
+      measurement_unit={gettext("cm")}
+      current_user_height_for_figure={@current_user_height_for_figure}
+      profile_user_height_for_figure={@profile_user_height_for_figure}
+    />
     """
   end
 
