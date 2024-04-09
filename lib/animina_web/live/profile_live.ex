@@ -29,11 +29,11 @@ defmodule AniminaWeb.ProfileLive do
 
           current_user_green_flags =
             fetch_flags(socket.assigns.current_user.id, :green, language)
-            |> Enum.map(& &1.flag.name)
+            |> Enum.map(& &1.flag.id)
 
           current_user_red_flags =
             fetch_flags(socket.assigns.current_user.id, :red, language)
-            |> Enum.map(& &1.flag.name)
+            |> Enum.map(& &1.flag.id)
 
           socket
           |> assign(user: user)
