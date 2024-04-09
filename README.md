@@ -6,6 +6,21 @@ Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
+## I have no time for this! Tell me how to setup a dev system!
+
+I assume that you have a locally hosted PostgreSQL database.
+
+- Install [asdf](https://asdf-vm.com)
+- Git clone the project
+- cd into the local project directory
+- `asdf install` installs the needed Elixir and Erlang versions
+- `mix deps.get`
+- `mix ash_postgres.create` to create the database
+- `mix ash_postgres.migrate` to run migrations
+- `mix create_dummy_accounts 10` creates 10 dummy accounts and lists them. http://localhost:4000/username will display the profile for that username
+- `iex -S mix phx.server`
+- open http://localhost:4000 in your browser
+
 ## Development
 
 We use:
@@ -52,20 +67,6 @@ before diving into a JavaScript driven feature. Use Phoenix tools when possible.
 
 We are doing a mobile first approach and use [Tailwind CSS](https://tailwindui.com). Please don't 
 forget a dark mode version when implimenting a new feature.
-
-## Docker Compose
-
-Alternatively you may want to run the application using Docker-Compose.
-
-&#x26a0;&#xfe0f; For development only. Don't use in production!
-
-On a Mac, please install [Docker Desktop](https://docs.docker.com/desktop/install/mac-install/) first. (Other variants of Docker and Docker-Compose may or may not work.)
-
-Build the images: `docker-compose build`
-
-Run the containers: `docker-compose up`
-
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Submiting Code
 
