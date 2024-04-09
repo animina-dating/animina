@@ -128,11 +128,11 @@ defmodule AniminaWeb.StoriesComponents do
   def get_styling_for_matching_flags(assigns) do
     ~H"""
     <div class="pl-2">
-      <div :if={@flag.flag.name in @current_user_green_flags}>
+      <div :if={@flag.flag.id in @current_user_green_flags}>
         <p class="h-3 w-3 rounded-full bg-green-500" />
       </div>
 
-      <div :if={@flag.flag.name in @current_user_red_flags}>
+      <div :if={@flag.flag.id in @current_user_red_flags}>
         <p class="h-3 w-3 rounded-full bg-red-500" />
       </div>
     </div>
