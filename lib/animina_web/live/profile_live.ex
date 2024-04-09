@@ -27,8 +27,18 @@ defmodule AniminaWeb.ProfileLive do
 
           stories_and_flags = Enum.zip(stories, chunks_flags)
 
+          current_user_green_flags =
+            fetch_flags(socket.assigns.current_user.id, :green, language)
+            |> Enum.map(& &1.flag.name)
+
+          current_user_red_flags =
+            fetch_flags(socket.assigns.current_user.id, :red, language)
+            |> Enum.map(& &1.flag.name)
+
           socket
           |> assign(user: user)
+          |> assign(current_user_green_flags: current_user_green_flags)
+          |> assign(current_user_red_flags: current_user_red_flags)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
           |> assign(
             :current_user_height_for_figure,
@@ -107,7 +117,12 @@ defmodule AniminaWeb.ProfileLive do
         </div>
       </div>
 
-      <.stories_display stories_and_flags={@stories_and_flags} current_user={@current_user} />
+      <.stories_display
+        stories_and_flags={@stories_and_flags}
+        current_user={@current_user}
+        current_user_green_flags={@current_user_green_flags}
+        current_user_red_flags={@current_user_red_flags}
+      />
     </div>
 
     <.height_visualization_card
