@@ -1,4 +1,6 @@
 defmodule Animina.Narratives.Story do
+  alias Animina.Validations
+
   @moduledoc """
   This is the story resource.
   """
@@ -28,6 +30,10 @@ defmodule Animina.Narratives.Story do
     has_one :photo, Animina.Accounts.Photo do
       api Animina.Accounts
     end
+  end
+
+  validations do
+    validate {Validations.AboutStory, headline: :headline_id, user: :user_id}
   end
 
   actions do
