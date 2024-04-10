@@ -17,10 +17,12 @@ defmodule Animina.Validations.AboutStory do
 
   @impl true
   def validate(changeset, opts) do
-    stories = Story.read!()
-
     headline_id =
-      Ash.Changeset.get_attribute(changeset, opts[:attribute])
+      Ash.Changeset.get_attribute(changeset, opts[:headline])
+
+    user_id = Ash.Changeset.get_attribute(changeset, opts[:user])
+
+    stories = get_stories_for_user(user_id)
 
     case Headline.by_id(headline_id) do
       {:ok, headline} ->
@@ -33,5 +35,10 @@ defmodule Animina.Validations.AboutStory do
       _ ->
         :ok
     end
+  end
+
+  defp get_stories_for_user(user_id) do
+    Story.read!()
+    |> Enum.filter(fn story -> story.user_id == user_id end)
   end
 end

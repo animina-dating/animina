@@ -33,7 +33,7 @@ defmodule Animina.Narratives.Story do
   end
 
   validations do
-    validate {Validations.AboutStory, attribute: :headline_id}
+    validate {Validations.AboutStory, headline: :headline_id, user: :user_id}
   end
 
   actions do
