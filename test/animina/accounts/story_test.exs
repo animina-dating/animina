@@ -2,7 +2,6 @@ defmodule Animina.Accounts.StoryTest do
   use Animina.DataCase, async: true
 
   alias Animina.Accounts.BasicUser
-  alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
 
@@ -15,17 +14,38 @@ defmodule Animina.Accounts.StoryTest do
       ]
     end
 
-    test "calculates the gravatar_hash correctly", %{
-      user: user,
-      get_about_me_headline: get_about_me_headline,
-      get_non_about_me_headline: get_non_about_me_headline
-    } do
-      # IO.inspect(user)
-      # IO.inspect(get_about_me_headline)
-      # IO.inspect(get_non_about_me_headline)
-      # IO.inspect(create_about_me_story(user.id, get_about_me_headline.id))
+    test "The first story you can create is the 'About me' story",
+         %{
+           user: user,
+           get_about_me_headline: get_about_me_headline,
+           get_non_about_me_headline: get_non_about_me_headline
+         } do
+      # when we try to add the first story with a headline that is not 'About me', we should get an error
+      assert {:error, _} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
 
-      assert {:ok, _} = Story.destroy(create_about_me_story(user.id, get_about_me_headline.id))
+      # when we try to add the first story with the 'About me' headline, we should be able to do so
+      assert {:ok, _about_me_story} = create_about_me_story(user.id, get_about_me_headline.id)
+      # now we can add another story with a different headline
+      assert {:ok, _} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
+    end
+
+    test "You cannot delete a story with the 'About me' headline if it is the last one remaining ",
+         %{
+           user: user,
+           get_about_me_headline: get_about_me_headline,
+           get_non_about_me_headline: get_non_about_me_headline
+         } do
+      # insert about me story as the first story
+      {:ok, about_me_story} = create_about_me_story(user.id, get_about_me_headline.id)
+
+      # when you try to delete the story with the 'About me' headline, you should get an error
+      assert {:error, _} = Story.destroy(about_me_story)
+
+      # insert another story
+      create_non_about_me_story(user.id, get_non_about_me_headline.id)
+
+      # now when there is another story with a different headline, you should be able to delete the story with the 'About me' headline
+      assert :ok = Story.destroy(about_me_story)
     end
   end
 
@@ -64,14 +84,20 @@ defmodule Animina.Accounts.StoryTest do
   end
 
   defp create_about_me_story(user_id, headline_id) do
-    {:ok, story} =
-      Story.create(%{
-        user_id: user_id,
-        headline_id: headline_id,
-        content: "This is a story about me",
-        position: 1
-      })
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: 1
+    })
+  end
 
-    story
+  defp create_non_about_me_story(user_id, headline_id) do
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: 2
+    })
   end
 end
