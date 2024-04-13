@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfileLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Credit
   alias Animina.Narratives
   alias Animina.Traits
 
@@ -19,6 +20,15 @@ defmodule AniminaWeb.ProfileLive do
     socket =
       case Accounts.User.by_username(username) do
         {:ok, user} ->
+          socket
+          |> assign(:user, user)
+
+          # prevent the points to be added when a user is viewing this or her own profile
+
+          if connected?(socket) && user.id != socket.assigns.current_user.id do
+            :timer.send_interval(5000, self(), :add_points_for_viewing)
+          end
+
           stories = fetch_stories(user.id)
 
           chunks_flags =
@@ -52,6 +62,20 @@ defmodule AniminaWeb.ProfileLive do
       end
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_info(:add_points_for_viewing, socket) do
+    add_credit_on_profile_view(1, socket.assigns.user)
+    {:noreply, socket}
+  end
+
+  defp add_credit_on_profile_view(points, user) do
+    Credit.create!(%{
+      user_id: user.id,
+      points: points,
+      subject: "Profile View"
+    })
   end
 
   defp fetch_flags(user_id, color, language) do
