@@ -66,7 +66,7 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def handle_info(:add_points_for_viewing, socket) do
-    add_credit_on_profile_view(10, socket.assigns.user)
+    add_credit_on_profile_view(1, socket.assigns.user)
     {:noreply, socket}
   end
 
