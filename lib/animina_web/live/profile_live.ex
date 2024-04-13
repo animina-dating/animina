@@ -36,7 +36,7 @@ defmodule AniminaWeb.ProfileLive do
           stories_and_flags = fetch_stories_and_flags(user, language)
 
           {current_user_green_flags, current_user_red_flags} =
-            fetch_current_user_flags(current_user, language)
+            fetch_green_and_red_flags(current_user.id, language)
 
           socket
           |> assign(user: user)
@@ -109,33 +109,34 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-  def handle_info(:add_points_for_viewing, socket) do
-    add_viewing_credits(socket.assigns.user, socket.assigns.current_user)
+  def handle_info(:create_credit_for_viewing, socket) do
+    user = socket.assigns.user
+    current_user = socket.assigns.current_user
+
+    Credit.create(%{
+      user_id: user.id,
+      donor_id: current_user.id,
+      points: 1,
+      subject: "Profile view by #{current_user.username}"
+    })
+
     {:noreply, socket}
   end
 
-  defp add_viewing_credits(user, current_user, points \\ 1) do
-    Credit.create!(%{
-      user_id: user.id,
-      donor_id: current_user.id,
-      points: points,
-      subject: "Profile View by #{current_user.username}"
-    })
-  end
-
   defp setup_points_timer(current_user, current_user), do: nil
+  defp setup_points_timer(_user, nil), do: nil
 
   defp setup_points_timer(_user, _current_user) do
-    :timer.send_interval(2000, self(), :add_points_for_viewing)
+    :timer.send_interval(2000, self(), :create_credit_for_viewing)
   end
 
-  defp fetch_current_user_flags(current_user, language) do
+  defp fetch_green_and_red_flags(user_id, language) do
     green_flags =
-      fetch_flags(current_user.id, :green, language)
+      fetch_flags(user_id, :green, language)
       |> Enum.map(& &1.flag.id)
 
     red_flags =
-      fetch_flags(current_user.id, :red, language)
+      fetch_flags(user_id, :red, language)
       |> Enum.map(& &1.flag.id)
 
     {green_flags, red_flags}
