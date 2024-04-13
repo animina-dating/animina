@@ -11,6 +11,9 @@ defmodule Animina.Accounts.Credit do
 
     attribute :points, :integer, allow_nil?: false
     attribute :subject, :string, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
