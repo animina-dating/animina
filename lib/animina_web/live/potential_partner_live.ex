@@ -61,6 +61,18 @@ defmodule AniminaWeb.PotentialPartnerLive do
     end
   end
 
+  def handle_info({:added, credits}, socket) do
+    current_user_credit_points =
+      case Enum.find(credits, fn credit -> credit["user_id"] == socket.assigns.current_user.id end) do
+        nil -> socket.assigns.user.credit_points
+        credit -> credit["points"]
+      end
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
   @impl true
   def handle_event("validate_user", %{"form" => form_params}, socket) do
     form = Form.validate(socket.assigns.update_form, form_params, errors: true)

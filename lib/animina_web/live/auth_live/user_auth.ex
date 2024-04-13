@@ -10,11 +10,17 @@ defmodule AniminaWeb.LiveUserAuth do
 
   def on_mount(:live_user_optional, _params, session, socket) do
     if socket.assigns[:current_user] do
+      current_user = Registration.get_current_user(session)
+
       {:cont,
        socket
-       |> assign(:current_user, Registration.get_current_user(session))}
+       |> assign(:current_user, current_user)
+       |> assign(:current_user_credit_points, current_user.credit_points)}
     else
-      {:cont, assign(socket, :current_user, nil)}
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:current_user, nil)}
     end
   end
 
@@ -38,9 +44,12 @@ defmodule AniminaWeb.LiveUserAuth do
       end
 
     if socket.assigns[:current_user] do
+      current_user = Registration.get_current_user(session)
+
       {:cont,
        socket
-       |> assign(:current_user, Registration.get_current_user(session))}
+       |> assign(:current_user, current_user)
+       |> assign(:current_user_credit_points, current_user.credit_points)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: "/#{path}")}
     end
@@ -50,7 +59,10 @@ defmodule AniminaWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
     else
-      {:cont, assign(socket, :current_user, nil)}
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:current_user, nil)}
     end
   end
 end

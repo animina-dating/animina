@@ -10,7 +10,6 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Narratives
   alias Animina.Traits
   alias Phoenix.PubSub
-  alias Animina.Accounts.BasicUser
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
@@ -25,11 +24,9 @@ defmodule AniminaWeb.ProfileLive do
           socket
           |> assign(:user, user)
 
-          # prevent the points to be added when a user is viewing this or her own profile
-
           if connected?(socket) do
             PubSub.subscribe(Animina.PubSub, "credits")
-
+            # prevent the points to be added when a user is viewing this or her own profile
             if user.id != socket.assigns.current_user.id do
               :timer.send_interval(5000, self(), :add_points_for_viewing)
             end
@@ -53,7 +50,6 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
-          |> assign(credit: user.credit_points)
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
@@ -73,15 +69,15 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def handle_info({:added, credits}, socket) do
-    credit =
-      case Enum.find(credits, fn credit -> credit["user_id"] == socket.assigns.user.id end) do
+    current_user_credit_points =
+      case Enum.find(credits, fn credit -> credit["user_id"] == socket.assigns.current_user.id end) do
         nil -> socket.assigns.user.credit_points
         credit -> credit["points"]
       end
 
     {:noreply,
      socket
-     |> assign(credit: credit)}
+     |> assign(current_user_credit_points: current_user_credit_points)}
   end
 
   def handle_info(:add_points_for_viewing, socket) do
@@ -151,7 +147,6 @@ defmodule AniminaWeb.ProfileLive do
         <%= gettext("There was an error loading the user's profile") %>
       </div>
 
-      <p class="text-white"><%= @credit %></p>
       <div :if={@user} class="pb-4">
         <h1 class="text-2xl font-semibold dark:text-white">
           <%= @user.name %> <span class="text-base">@<%= @user.username %></span>

@@ -5,9 +5,14 @@ defmodule AniminaWeb.RootLive do
   alias Animina.Accounts.BasicUser
   alias AniminaWeb.Registration
   alias AshPhoenix.Form
+  alias Phoenix.PubSub
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits")
+    end
+
     socket =
       socket
       |> assign(language: language)
@@ -53,6 +58,28 @@ defmodule AniminaWeb.RootLive do
     form = Form.validate(socket.assigns.form, user, errors: true)
 
     {:noreply, socket |> assign(form: form)}
+  end
+
+  def handle_info({:added, credits}, socket) do
+    current_user_credit_points =
+      if socket.assigns.current_user do
+        case Enum.find(credits, fn credit ->
+               credit["user_id"] == socket.assigns.current_user.id
+             end) do
+          nil -> socket.assigns.user.credit_points
+          credit -> credit["points"]
+        end
+      else
+        0
+      end
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  def handle_info({:credit_updated, _updated_credit}, socket) do
+    {:noreply, socket}
   end
 
   @impl true

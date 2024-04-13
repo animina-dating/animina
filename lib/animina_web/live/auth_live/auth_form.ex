@@ -20,6 +20,24 @@ defmodule AniminaWeb.AuthLive.AuthForm do
     {:noreply, assign(socket, form: form)}
   end
 
+  def handle_info({:added, credits}, socket) do
+    current_user_credit_points =
+      if socket.assigns.current_user do
+        case Enum.find(credits, fn credit ->
+               credit["user_id"] == socket.assigns.current_user.id
+             end) do
+          nil -> socket.assigns.user.credit_points
+          credit -> credit["points"]
+        end
+      else
+        0
+      end
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
   @impl true
   def handle_event("submit", %{"user" => params}, socket) do
     form = socket.assigns.form |> Form.validate(params)
