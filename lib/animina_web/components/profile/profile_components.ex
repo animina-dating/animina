@@ -204,14 +204,14 @@ defmodule AniminaWeb.ProfileComponents do
       <div class="flex items-end gap-8 -ml-40 md:-ml-48">
         <.figure
           height={@current_user_height_for_figure}
-          avatar={@current_user.profile_photo.filename}
+          avatar={@current_user}
           username={@current_user.username}
         />
 
         <.figure
           height={@profile_user_height_for_figure}
           username={@profile_user.username}
-          avatar={@profile_user.profile_photo.filename}
+          avatar={@profile_user}
         />
       </div>
     </div>
@@ -233,10 +233,31 @@ defmodule AniminaWeb.ProfileComponents do
   def user_mini_avatar(assigns) do
     ~H"""
     <div class="border-[1px] rounded-full bg-white h-[24px] w-[24px] border-[#1672DF]">
-      <img
-        src={"/uploads/#{@avatar}"}
-        class="object-cover h-[100%] rounded-full  w-[100%] object-cover  "
-      />
+      <%= if @avatar.profile_photo do %>
+        <img
+          src={"/uploads/#{@avatar.profile_photo.filename}"}
+          class="object-cover h-[100%] rounded-full  w-[100%] object-cover  "
+        />
+      <% else %>
+        <div class="flex justify-center w-[100%] h-[100%] items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0"
+            width="12"
+            height="12"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+              stroke="stroke-current"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      <% end %>
     </div>
     """
   end
