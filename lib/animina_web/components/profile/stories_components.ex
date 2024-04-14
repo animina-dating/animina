@@ -33,8 +33,8 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_with_flags(assigns) do
     ~H"""
-    <div class="pb-4">
-      <div :if={@story.photo} class="pb-4">
+    <div class="pb-2">
+      <div :if={@story.photo} class="">
         <%= if @story.headline.subject == "About me" do %>
           <img
             class="object-cover rounded-lg aspect-square"
@@ -48,23 +48,22 @@ defmodule AniminaWeb.StoriesComponents do
         <% end %>
       </div>
       <.story_body story={@story} />
-      <div class="pt-2 ">
-        <%= for flag <- @flags do %>
-          <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-base font-medium text-blue-700 bg-blue-100 rounded-md">
-            <%= flag.flag.emoji %> <%= flag.flag.name %>
-
-            <.get_styling_for_matching_flags
-              flag={flag}
-              current_user_green_flags={@current_user_green_flags}
-              current_user_red_flags={@current_user_red_flags}
-            />
-          </span>
-        <% end %>
+      <div class="bg-green-100 rounded-md">
+        <div class="flex flex-wrap justify-center p-2">
+          <%= for flag <- @flags do %>
+            <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+              <%= flag.flag.emoji %> <%= flag.flag.name %>
+              <.get_styling_for_matching_flags
+                flag={flag}
+                current_user_green_flags={@current_user_green_flags}
+                current_user_red_flags={@current_user_red_flags}
+              />
+            </span>
+          <% end %>
+        </div>
       </div>
     </div>
-    <%= if @story.headline.subject == "About me" do %>
-      <div class="break-after-column" />
-    <% end %>
+    <div class="pb-4" />
     """
   end
 
@@ -90,9 +89,6 @@ defmodule AniminaWeb.StoriesComponents do
       <.story_body story={@story} />
       <hr />
     </div>
-    <%= if @story.headline.subject == "About me" do %>
-      <div class="break-after-column" />
-    <% end %>
     """
   end
 
@@ -100,11 +96,11 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_body(assigns) do
     ~H"""
-    <%= if @story.headline.subject != "About me" do %>
-      <div :if={@story.headline} class="pb-4">
+    <div :if={@story.headline} class="pb-4">
+      <%= if @story.headline && @story.headline.subject != "About me" do %>
         <h3 class="text-lg font-semibold dark:text-white"><%= @story.headline.subject %></h3>
-      </div>
-    <% end %>
+      <% end %>
+    </div>
     <.story_content story={@story} />
     """
   end
@@ -127,14 +123,11 @@ defmodule AniminaWeb.StoriesComponents do
 
   def get_styling_for_matching_flags(assigns) do
     ~H"""
-    <div class="pl-2">
-      <div :if={@flag.flag.id in @current_user_green_flags}>
-        <p class="w-3 h-3 bg-green-500 rounded-full" />
-      </div>
-
-      <div :if={@flag.flag.id in @current_user_red_flags}>
-        <p class="w-3 h-3 bg-red-500 rounded-full" />
-      </div>
+    <div :if={@flag.flag.id in @current_user_green_flags} class="pl-2">
+      <p class="w-3 h-3 bg-green-500 rounded-full" />
+    </div>
+    <div :if={@flag.flag.id in @current_user_red_flags} class="pl-2">
+      <p class="w-3 h-3 bg-red-500 rounded-full" />
     </div>
     """
   end

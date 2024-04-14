@@ -135,6 +135,7 @@ defmodule AniminaWeb.ProfileLive do
       <div :if={@user} class="pb-4">
         <h1 class="text-2xl font-semibold dark:text-white">
           <%= @user.name %> <span class="text-base">@<%= @user.username %></span>
+          <span class="w-3 h-3 bg-green-500 rounded-full" />
         </h1>
 
         <div class="pt-2">
