@@ -113,6 +113,7 @@ defmodule AniminaWeb.StoriesComponents do
         features: [sanitize: true, syntax_highlight_theme: "github_light"]
       )
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
+      |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
       |> Phoenix.HTML.raw() %>
     </div>
     """
