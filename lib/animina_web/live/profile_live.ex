@@ -46,6 +46,7 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
+          |> assign(profile_points: user.credit_points)
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
@@ -68,8 +69,14 @@ defmodule AniminaWeb.ProfileLive do
     current_user_credit_points =
       ProfileViewCredits.get_updated_credit_for_user(socket, credits)
 
+    {:ok, profile} = Accounts.User.by_id(socket.assigns.user.id)
+
+    profile_points =
+      ProfileViewCredits.get_updated_credit_for_profile(profile, credits)
+
     {:noreply,
      socket
+     |> assign(:profile_points, profile_points)
      |> assign(current_user_credit_points: current_user_credit_points)}
   end
 
@@ -145,6 +152,9 @@ defmodule AniminaWeb.ProfileLive do
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             <%= @user.occupation %>
+          </span>
+          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @profile_points %>
           </span>
         </div>
       </div>
