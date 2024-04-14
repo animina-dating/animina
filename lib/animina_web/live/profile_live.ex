@@ -31,14 +31,12 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(:user, user)
 
           if connected?(socket) do
-
             PubSub.subscribe(Animina.PubSub, "credits")
           end
 
           if connected?(socket) && socket.assigns.current_user.id != user.id do
             # prevent the points to be added when a user is viewing this or her own profile
             :timer.send_interval(5000, self(), :add_points_for_viewing)
-
           end
 
           stories_and_flags = fetch_stories_and_flags(user, language)
@@ -85,6 +83,20 @@ defmodule AniminaWeb.ProfileLive do
     {:noreply, socket}
   end
 
+  def handle_info(:create_credit_for_viewing, socket) do
+    user = socket.assigns.user
+    current_user = socket.assigns.current_user
+
+    Credit.create(%{
+      user_id: user.id,
+      donor_id: current_user.id,
+      points: 1,
+      subject: "Profile view by #{current_user.username}"
+    })
+
+    {:noreply, socket}
+  end
+
   defp add_credit_on_profile_view(points, user) do
     Credit.create!(%{
       user_id: user.id,
@@ -97,37 +109,6 @@ defmodule AniminaWeb.ProfileLive do
       "credits",
       {:credit_updated, %{"points" => get_points_for_a_user(user.id), "user_id" => user.id}}
     )
-  end
-
-  defp fetch_flags(user_id, color, language) do
-    user_flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-      |> Ash.Query.load(flag: [:category])
-      |> Traits.read!()
-
-    Enum.map(user_flags, fn user_flag ->
-      %{
-        id: user_flag.id,
-        position: user_flag.position,
-        flag: %{
-          id: user_flag.flag.id,
-          name: get_translation(user_flag.flag.flag_translations, language),
-          emoji: user_flag.flag.emoji
-        },
-        category: %{
-          id: user_flag.flag.category.id,
-          name: get_translation(user_flag.flag.category.category_translations, language)
-        }
-      }
-    end)
-  end
-
-  defp fetch_stories(user_id) do
-    Narratives.Story
-    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-    |> Narratives.read!(page: [limit: 20])
-    |> then(& &1.results)
   end
 
   defp get_points_for_a_user(user_id) do
@@ -187,23 +168,6 @@ defmodule AniminaWeb.ProfileLive do
     """
   end
 
-  @impl true
-  def handle_info(:create_credit_for_viewing, socket) do
-    user = socket.assigns.user
-    current_user = socket.assigns.current_user
-
-    Credit.create(%{
-      user_id: user.id,
-      donor_id: current_user.id,
-      points: 1,
-      subject: "Profile view by #{current_user.username}"
-    })
-
-    {:noreply, socket}
-  end
-
-
-
   defp fetch_green_and_red_flags(user_id, language) do
     green_flags =
       fetch_flags(user_id, :green, language)
@@ -240,13 +204,6 @@ defmodule AniminaWeb.ProfileLive do
     end)
   end
 
-  defp fetch_stories(user_id) do
-    Narratives.Story
-    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-    |> Narratives.read!(page: [limit: 20])
-    |> then(& &1.results)
-  end
-
   defp fetch_stories_and_flags(user, language) do
     stories = fetch_stories(user.id)
 
@@ -264,5 +221,12 @@ defmodule AniminaWeb.ProfileLive do
       Enum.find(translations, nil, fn translation -> translation.language == language end)
 
     translation.name
+  end
+
+  defp fetch_stories(user_id) do
+    Narratives.Story
+    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
+    |> Narratives.read!(page: [limit: 20])
+    |> then(& &1.results)
   end
 end
