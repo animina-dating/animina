@@ -53,7 +53,7 @@ defmodule Animina.GenServers.ProfileViewCredits do
     case Enum.find(credits, fn credit ->
            credit["user_id"] == socket.assigns.current_user.id
          end) do
-      nil -> socket.assigns.user.credit_points
+      nil -> socket.assigns.current_user.credit_points
       credit -> credit["points"]
     end
   end
