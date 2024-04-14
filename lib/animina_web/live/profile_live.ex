@@ -18,6 +18,12 @@ defmodule AniminaWeb.ProfileLive do
       |> assign(language: language)
       |> assign(active_tab: :home)
 
+    current_user =
+      case socket.assigns.current_user do
+        nil -> nil
+        _ -> socket.assigns.current_user
+      end
+
     socket =
       case Accounts.User.by_username(username) do
         {:ok, user} ->
@@ -25,29 +31,20 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(:user, user)
 
           if connected?(socket) do
+
             PubSub.subscribe(Animina.PubSub, "credits")
           end
 
           if connected?(socket) && socket.assigns.current_user.id != user.id do
             # prevent the points to be added when a user is viewing this or her own profile
             :timer.send_interval(5000, self(), :add_points_for_viewing)
+
           end
 
-          stories = fetch_stories(user.id)
+          stories_and_flags = fetch_stories_and_flags(user, language)
 
-          chunks_flags =
-            fetch_flags(user.id, :white, language)
-            |> Enum.chunk_every(5)
-
-          stories_and_flags = Enum.zip(stories, chunks_flags)
-
-          current_user_green_flags =
-            fetch_flags(socket.assigns.current_user.id, :green, language)
-            |> Enum.map(& &1.flag.id)
-
-          current_user_red_flags =
-            fetch_flags(socket.assigns.current_user.id, :red, language)
-            |> Enum.map(& &1.flag.id)
+          {current_user_green_flags, current_user_red_flags} =
+            fetch_green_and_red_flags(current_user.id, language)
 
           socket
           |> assign(user: user)
@@ -56,7 +53,7 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
           |> assign(
             :current_user_height_for_figure,
-            (socket.assigns.current_user.height / 2) |> trunc()
+            (current_user.height / 2) |> trunc()
           )
           |> assign(stories_and_flags: stories_and_flags)
 
@@ -139,6 +136,7 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
+
   def render(assigns) do
     ~H"""
     <div class="px-5">
@@ -187,6 +185,76 @@ defmodule AniminaWeb.ProfileLive do
       profile_user_height_for_figure={@profile_user_height_for_figure}
     />
     """
+  end
+
+  @impl true
+  def handle_info(:create_credit_for_viewing, socket) do
+    user = socket.assigns.user
+    current_user = socket.assigns.current_user
+
+    Credit.create(%{
+      user_id: user.id,
+      donor_id: current_user.id,
+      points: 1,
+      subject: "Profile view by #{current_user.username}"
+    })
+
+    {:noreply, socket}
+  end
+
+
+
+  defp fetch_green_and_red_flags(user_id, language) do
+    green_flags =
+      fetch_flags(user_id, :green, language)
+      |> Enum.map(& &1.flag.id)
+
+    red_flags =
+      fetch_flags(user_id, :red, language)
+      |> Enum.map(& &1.flag.id)
+
+    {green_flags, red_flags}
+  end
+
+  defp fetch_flags(user_id, color, language) do
+    user_flags =
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
+      |> Ash.Query.load(flag: [:category])
+      |> Traits.read!()
+
+    Enum.map(user_flags, fn user_flag ->
+      %{
+        id: user_flag.id,
+        position: user_flag.position,
+        flag: %{
+          id: user_flag.flag.id,
+          name: get_translation(user_flag.flag.flag_translations, language),
+          emoji: user_flag.flag.emoji
+        },
+        category: %{
+          id: user_flag.flag.category.id,
+          name: get_translation(user_flag.flag.category.category_translations, language)
+        }
+      }
+    end)
+  end
+
+  defp fetch_stories(user_id) do
+    Narratives.Story
+    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
+    |> Narratives.read!(page: [limit: 20])
+    |> then(& &1.results)
+  end
+
+  defp fetch_stories_and_flags(user, language) do
+    stories = fetch_stories(user.id)
+
+    chunks_flags =
+      fetch_flags(user.id, :white, language)
+      |> Enum.chunk_every(5)
+
+    Enum.zip(stories, chunks_flags)
   end
 
   defp get_translation(translations, language) do
