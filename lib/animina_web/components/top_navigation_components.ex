@@ -16,6 +16,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
 
   def top_navigation(assigns) do
     ~H"""
@@ -24,7 +25,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <.home_nav_item active_tab={@active_tab} />
         <.bookmarks_nav_item active_tab={@active_tab} />
         <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.user_profile_item current_user={@current_user} active_tab={@active_tab} />
+        <.user_profile_item
+          current_user={@current_user}
+          active_tab={@active_tab}
+          current_user_credit_points={@current_user_credit_points}
+        />
       </nav>
     </div>
     """
@@ -69,6 +74,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
 
   def user_profile_item(assigns) do
     ~H"""
@@ -91,7 +97,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% end %>
         <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= if @current_user do %>
-          <%= gettext("Points") %>: <%= humanized_points(@current_user.credit_points) %>
+          <%= gettext("Points") %>: <%= humanized_points(@current_user_credit_points) %>
         <% else %>
           <%= gettext("Points") %>: 0
         <% end %>
@@ -221,7 +227,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <.home_nav_item active_tab={@active_tab} />
       <.bookmarks_nav_item active_tab={@active_tab} />
       <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.user_profile_item current_user={@current_user} active_tab={@active_tab} />
+      <.user_profile_item
+        current_user={@current_user}
+        active_tab={@active_tab}
+        current_user_credit_points={@current_user_credit_points}
+      />
     </div>
     """
   end

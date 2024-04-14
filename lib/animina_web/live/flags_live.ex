@@ -2,14 +2,20 @@ defmodule AniminaWeb.FlagsLive do
   require Ash.Query
   use AniminaWeb, :live_view
 
+  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits
   alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
+  alias Phoenix.PubSub
 
   @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits")
+    end
+
     socket =
       socket
       |> assign(max_selected: @max_flags)
@@ -110,46 +116,6 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   @impl true
-  def handle_info({:flag_selected, flag_id}, socket) do
-    selected = socket.assigns.selected + 1
-    can_select = selected < socket.assigns.max_selected
-    user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
-
-    for category_id <- socket.assigns.categories.result do
-      send_update(SelectFlagsComponent,
-        id: "flags_#{category_id}",
-        can_select: can_select,
-        user_flags: user_flags
-      )
-    end
-
-    {:noreply,
-     socket
-     |> assign(:user_flags, user_flags)
-     |> assign(:selected, selected)}
-  end
-
-  @impl true
-  def handle_info({:flag_unselected, flag_id}, socket) do
-    selected = max(socket.assigns.selected - 1, 0)
-    can_select = selected < socket.assigns.max_selected
-    user_flags = List.delete(socket.assigns.user_flags, flag_id)
-
-    for category_id <- socket.assigns.categories.result do
-      send_update(SelectFlagsComponent,
-        id: "flags_#{category_id}",
-        can_select: can_select,
-        user_flags: user_flags
-      )
-    end
-
-    {:noreply,
-     socket
-     |> assign(:user_flags, user_flags)
-     |> assign(:selected, selected)}
-  end
-
-  @impl true
   def handle_event("add_flags", _params, socket) do
     interests =
       Enum.with_index(socket.assigns.user_flags, fn element, index -> {index, element} end)
@@ -194,6 +160,61 @@ defmodule AniminaWeb.FlagsLive do
              |> put_flash(:info, gettext("Your flags have been added successfully"))}
         end
     end
+  end
+
+  @impl true
+  def handle_info({:flag_selected, flag_id}, socket) do
+    selected = socket.assigns.selected + 1
+    can_select = selected < socket.assigns.max_selected
+    user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
+
+    for category_id <- socket.assigns.categories.result do
+      send_update(SelectFlagsComponent,
+        id: "flags_#{category_id}",
+        can_select: can_select,
+        user_flags: user_flags
+      )
+    end
+
+    {:noreply,
+     socket
+     |> assign(:user_flags, user_flags)
+     |> assign(:selected, selected)}
+  end
+
+  @impl true
+  def handle_info({:flag_unselected, flag_id}, socket) do
+    selected = max(socket.assigns.selected - 1, 0)
+    can_select = selected < socket.assigns.max_selected
+    user_flags = List.delete(socket.assigns.user_flags, flag_id)
+
+    for category_id <- socket.assigns.categories.result do
+      send_update(SelectFlagsComponent,
+        id: "flags_#{category_id}",
+        can_select: can_select,
+        user_flags: user_flags
+      )
+    end
+
+    {:noreply,
+     socket
+     |> assign(:user_flags, user_flags)
+     |> assign(:selected, selected)}
+  end
+
+  @impl true
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points =
+      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  @impl true
+  def handle_info({:credit_updated, _updated_credit}, socket) do
+    {:noreply, socket}
   end
 
   defp fetch_categories do
