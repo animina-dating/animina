@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Points
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Traits
@@ -46,7 +47,7 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
-          |> assign(profile_points: user.credit_points)
+          |> assign(profile_points: Points.humanized_points(user.credit_points))
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
           |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
@@ -76,7 +77,7 @@ defmodule AniminaWeb.ProfileLive do
 
     {:noreply,
      socket
-     |> assign(:profile_points, profile_points)
+     |> assign(profile_points: Points.humanized_points(profile_points))
      |> assign(current_user_credit_points: current_user_credit_points)}
   end
 
