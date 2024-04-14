@@ -16,6 +16,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
 
   def top_navigation(assigns) do
     ~H"""
@@ -73,6 +74,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
 
   def user_profile_item(assigns) do
     ~H"""

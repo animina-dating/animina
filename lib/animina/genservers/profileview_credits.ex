@@ -1,6 +1,10 @@
-defmodule Animina.Genservers.Credits do
+defmodule Animina.GenServers.ProfileViewCredits do
   use GenServer
   alias Phoenix.PubSub
+
+  @moduledoc """
+  This is the genserver that handles the credits added for the profile view
+  """
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
@@ -17,7 +21,7 @@ defmodule Animina.Genservers.Credits do
   def handle_info(:credits_update, state) do
     schedule_credits_update()
 
-    PubSub.broadcast(Animina.PubSub, "credits", {:added, state})
+    PubSub.broadcast(Animina.PubSub, "credits", {:display_updated_credits, state})
 
     {:noreply, state}
   end
@@ -26,7 +30,7 @@ defmodule Animina.Genservers.Credits do
     {:noreply, update_array(state, updated_credit)}
   end
 
-  def handle_info({:added, _updated_credit}, state) do
+  def handle_info({:display_updated_credits, _updated_credit}, state) do
     {:noreply, state}
   end
 
@@ -42,6 +46,15 @@ defmodule Animina.Genservers.Credits do
       _ ->
         Enum.drop_while(state, fn x -> x["user_id"] == map["user_id"] end)
         |> List.insert_at(0, map)
+    end
+  end
+
+  def get_updated_credit_for_user(socket, credits) do
+    case Enum.find(credits, fn credit ->
+           credit["user_id"] == socket.assigns.current_user.id
+         end) do
+      nil -> socket.assigns.user.credit_points
+      credit -> credit["points"]
     end
   end
 

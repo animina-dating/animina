@@ -3,6 +3,7 @@ defmodule AniminaWeb.RootLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.BasicUser
+  alias Animina.GenServers.ProfileViewCredits
   alias AniminaWeb.Registration
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -60,28 +61,6 @@ defmodule AniminaWeb.RootLive do
     {:noreply, socket |> assign(form: form)}
   end
 
-  def handle_info({:added, credits}, socket) do
-    current_user_credit_points =
-      if socket.assigns.current_user do
-        case Enum.find(credits, fn credit ->
-               credit["user_id"] == socket.assigns.current_user.id
-             end) do
-          nil -> socket.assigns.user.credit_points
-          credit -> credit["points"]
-        end
-      else
-        0
-      end
-
-    {:noreply,
-     socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
-  end
-
-  def handle_info({:credit_updated, _updated_credit}, socket) do
-    {:noreply, socket}
-  end
-
   @impl true
   def handle_event("submit", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user)
@@ -92,6 +71,24 @@ defmodule AniminaWeb.RootLive do
       |> assign(:errors, Form.errors(form))
       |> assign(:trigger_action, form.valid?)
 
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points =
+      if socket.assigns.current_user do
+        ProfileViewCredits.get_updated_credit_for_user(socket, credits)
+      else
+        0
+      end
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  def handle_info({:credit_updated, _updated_credit}, socket) do
     {:noreply, socket}
   end
 

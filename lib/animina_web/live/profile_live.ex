@@ -4,9 +4,9 @@ defmodule AniminaWeb.ProfileLive do
   """
 
   use AniminaWeb, :live_view
-
   alias Animina.Accounts
   alias Animina.Accounts.Credit
+  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Traits
   alias Phoenix.PubSub
@@ -26,10 +26,11 @@ defmodule AniminaWeb.ProfileLive do
 
           if connected?(socket) do
             PubSub.subscribe(Animina.PubSub, "credits")
+          end
+
+          if connected?(socket) && socket.assigns.current_user.id != user.id do
             # prevent the points to be added when a user is viewing this or her own profile
-            if user.id != socket.assigns.current_user.id do
-              :timer.send_interval(5000, self(), :add_points_for_viewing)
-            end
+            :timer.send_interval(5000, self(), :add_points_for_viewing)
           end
 
           stories = fetch_stories(user.id)
@@ -68,20 +69,22 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-  def handle_info({:added, credits}, socket) do
+  def handle_info({:display_updated_credits, credits}, socket) do
     current_user_credit_points =
-      case Enum.find(credits, fn credit -> credit["user_id"] == socket.assigns.current_user.id end) do
-        nil -> socket.assigns.user.credit_points
-        credit -> credit["points"]
-      end
+      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
 
     {:noreply,
      socket
      |> assign(current_user_credit_points: current_user_credit_points)}
   end
 
+  @impl true
   def handle_info(:add_points_for_viewing, socket) do
     add_credit_on_profile_view(1, socket.assigns.user)
+    {:noreply, socket}
+  end
+
+  def handle_info({:credit_updated, _updated_credit}, socket) do
     {:noreply, socket}
   end
 
@@ -97,10 +100,6 @@ defmodule AniminaWeb.ProfileLive do
       "credits",
       {:credit_updated, %{"points" => get_points_for_a_user(user.id), "user_id" => user.id}}
     )
-  end
-
-  def handle_info({:credit_updated, _updated_credit}, socket) do
-    {:noreply, socket}
   end
 
   defp fetch_flags(user_id, color, language) do
