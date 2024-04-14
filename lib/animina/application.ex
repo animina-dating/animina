@@ -12,8 +12,10 @@ defmodule Animina.Application do
       Animina.Repo,
       {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Animina.PubSub},
+
       # Start the Finch HTTP client for sending emails
       {Finch, name: Animina.Finch},
+      {Animina.GenServers.ProfileViewCredits, []},
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
       # Start to serve requests, typically the last entry

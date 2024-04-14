@@ -10,19 +10,19 @@ defmodule Animina.Accounts.Credit do
     uuid_primary_key :id
 
     attribute :points, :integer, allow_nil?: false
-
     attribute :subject, :string, allow_nil?: false
-    # attribute :subject, :string do
-    #   constraints max_length: 255,
-    #               min_length: 1,
-    #               trim?: true,
-    #               allow_empty?: false
-    # end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
       allow_nil? false
+      attribute_writable? true
+    end
+
+    belongs_to :donor, Animina.Accounts.User do
       attribute_writable? true
     end
   end

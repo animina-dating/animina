@@ -48,13 +48,18 @@ defmodule Animina.Accounts.BasicUser do
       allow_nil? false
 
       constraints max: 250,
-                  min: 50
+                  min: 40
     end
 
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
     attribute :legal_terms_accepted, :boolean, default: false
-    attribute :occupation, :string
+
+    attribute :occupation, :string do
+      constraints max_length: 40,
+                  trim?: true,
+                  allow_empty?: false
+    end
 
     create_timestamp :created_at
     update_timestamp :updated_at

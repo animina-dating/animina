@@ -3,13 +3,19 @@ defmodule AniminaWeb.StoryLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Photo
+  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
   alias AshPhoenix.Form
+  alias Phoenix.PubSub
 
   @impl true
   def mount(%{"id" => story_id}, %{"language" => language} = _session, socket) do
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits")
+    end
+
     story = Story.by_id!(story_id)
 
     socket =
@@ -30,6 +36,10 @@ defmodule AniminaWeb.StoryLive do
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits")
+    end
+
     socket =
       socket
       |> assign(language: language)
@@ -57,6 +67,20 @@ defmodule AniminaWeb.StoryLive do
   @impl true
   def handle_params(params, _uri, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  @impl true
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points = ProfileViewCredits.get_updated_credit_for_user(socket, credits)
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  @impl true
+  def handle_info({:credit_updated, _updated_credit}, socket) do
+    {:noreply, socket}
   end
 
   defp apply_action(socket, :edit, _params) do

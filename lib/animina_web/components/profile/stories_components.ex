@@ -50,7 +50,7 @@ defmodule AniminaWeb.StoriesComponents do
       <.story_body story={@story} />
       <div class="pt-2 ">
         <%= for flag <- @flags do %>
-          <span class="inline-flex  items-center px-2 py-1 text-base my-1 mx-1 font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-base font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= flag.flag.emoji %> <%= flag.flag.name %>
 
             <.get_styling_for_matching_flags
@@ -129,11 +129,11 @@ defmodule AniminaWeb.StoriesComponents do
     ~H"""
     <div class="pl-2">
       <div :if={@flag.flag.id in @current_user_green_flags}>
-        <p class="h-3 w-3 rounded-full bg-green-500" />
+        <p class="w-3 h-3 bg-green-500 rounded-full" />
       </div>
 
       <div :if={@flag.flag.id in @current_user_red_flags}>
-        <p class="h-3 w-3 rounded-full bg-red-500" />
+        <p class="w-3 h-3 bg-red-500 rounded-full" />
       </div>
     </div>
     """
