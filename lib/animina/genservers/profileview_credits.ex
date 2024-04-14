@@ -58,6 +58,15 @@ defmodule Animina.GenServers.ProfileViewCredits do
     end
   end
 
+  def get_updated_credit_for_profile(profile, credits) do
+    case Enum.find(credits, fn credit ->
+           credit["user_id"] == profile.credit_points
+         end) do
+      nil -> profile.credit_points
+      credit -> credit["points"]
+    end
+  end
+
   @impl true
   def handle_call(:get, _from, state) do
     {:reply, state, state}
