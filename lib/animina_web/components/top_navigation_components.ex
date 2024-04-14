@@ -5,6 +5,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   use Phoenix.Component
 
   import AniminaWeb.Gettext
+  alias Animina.Accounts.Points
 
   # -------------------------------------------------------------
   @doc """
@@ -97,7 +98,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% end %>
         <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= if @current_user do %>
-          <%= gettext("Points") %>: <%= humanized_points(@current_user_credit_points) %>
+          <%= gettext("Points") %>: <%= Points.humanized_points(@current_user_credit_points) %>
         <% else %>
           <%= gettext("Points") %>: 0
         <% end %>
@@ -234,21 +235,5 @@ defmodule AniminaWeb.TopNavigationCompontents do
       />
     </div>
     """
-  end
-
-  defp humanized_points(nil) do
-    "0"
-  end
-
-  defp humanized_points(points) when is_integer(points) and points < 1_000 do
-    Integer.to_string(points)
-  end
-
-  defp humanized_points(points) when is_integer(points) and points < 1_000_000 do
-    Integer.to_string(div(points, 1_000)) <> "\u{00a0}k"
-  end
-
-  defp humanized_points(points) when is_integer(points) do
-    Integer.to_string(div(points, 1_000_000)) <> "\u{00a0}M"
   end
 end
