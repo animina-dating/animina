@@ -103,10 +103,6 @@ defmodule Animina.Accounts.StoryTest do
         |> Enum.filter(&(&1.subject != "About me"))
         |> Enum.random()
     end
-
-    headlines
-    |> Enum.filter(&(&1.subject != "About me"))
-    |> Enum.random()
   end
 
   defp create_about_me_story(user_id, headline_id) do
