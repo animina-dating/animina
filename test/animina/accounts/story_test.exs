@@ -70,14 +70,39 @@ defmodule Animina.Accounts.StoryTest do
   end
 
   defp get_about_me_headline do
-    {:ok, about_me_headline} =
-      Headline.by_subject("About me")
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
 
-    about_me_headline
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
   end
 
   defp get_non_about_me_headline do
     {:ok, headlines} = Headline.read()
+
+    case headlines do
+      [] ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "Non About me",
+            position: 91
+          })
+
+        headline
+
+      _ ->
+        headlines
+        |> Enum.filter(&(&1.subject != "About me"))
+        |> Enum.random()
+    end
 
     headlines
     |> Enum.filter(&(&1.subject != "About me"))
