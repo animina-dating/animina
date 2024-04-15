@@ -156,8 +156,7 @@ defmodule AniminaWeb.ProfileLive do
 
       <div :if={@user} class="pb-4">
         <h1 class="text-2xl font-semibold dark:text-white">
-          <%= @user.name %> <span class="text-base">@<%= @user.username %></span>
-          <span class="w-3 h-3 bg-green-500 rounded-full" />
+          <%= @user.name %>
         </h1>
 
         <div class="pt-2">
@@ -168,21 +167,27 @@ defmodule AniminaWeb.ProfileLive do
             <%= @user.height %> cm
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            <%= @user.city.name %>
+            📍 <%= @user.city.name %>
           </span>
           <span
             :if={@user.occupation}
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
-            <%= @user.occupation %>
+            🔧 <%= @user.occupation %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @profile_points %>
           </span>
-          <span class="inline-flex gap-2 items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span
+            :if={@intersecting_green_flags_count != 0}
+            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
             <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
           </span>
-          <span class="inline-flex gap-2 items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span
+            :if={@intersecting_red_flags_count != 0}
+            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
             <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
           </span>
         </div>
