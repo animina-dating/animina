@@ -45,8 +45,22 @@ defmodule AniminaWeb.ProfileLive do
           {current_user_green_flags, current_user_red_flags} =
             fetch_green_and_red_flags(current_user.id, language)
 
+          intersecting_green_flags_count =
+            get_intersecting_flags(
+              fetch_flags(current_user.id, :green, language),
+              fetch_flags(user.id, :white, language)
+            )
+
+          intersecting_red_flags_count =
+            get_intersecting_flags(
+              fetch_flags(current_user.id, :red, language),
+              fetch_flags(user.id, :white, language)
+            )
+
           socket
           |> assign(user: user)
+          |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+          |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
           |> assign(profile_points: Points.humanized_points(user.credit_points))
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
@@ -124,6 +138,13 @@ defmodule AniminaWeb.ProfileLive do
     user.credit_points
   end
 
+  defp get_intersecting_flags(first_flag_array, second_flag_array) do
+    first_flag_array = Enum.map(first_flag_array, fn x -> x.flag.id end)
+    second_flag_array = Enum.map(second_flag_array, fn x -> x.flag.id end)
+
+    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
+  end
+
   @impl true
 
   def render(assigns) do
@@ -157,6 +178,12 @@ defmodule AniminaWeb.ProfileLive do
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @profile_points %>
+          </span>
+          <span class="inline-flex gap-2 items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
+          </span>
+          <span class="inline-flex gap-2 items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
           </span>
         </div>
       </div>
