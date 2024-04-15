@@ -49,6 +49,10 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> assign(
+      :opposite_color_flags_selected,
+      []
+    )
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
   end
 
