@@ -168,13 +168,13 @@ defmodule AniminaWeb.ProfileLive do
             <%= @user.height %> cm
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            <%= @user.city.name %>
+            📍 <%= @user.city.name %>
           </span>
           <span
             :if={@user.occupation}
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
-            <%= @user.occupation %>
+            🔧 <%= @user.occupation %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @profile_points %>
