@@ -79,24 +79,28 @@ defmodule AniminaWeb.SelectFlagsComponent do
             aria-label="button"
             phx-click={
               if(
-                get_cursor_styling(
+                get_flag_styling(
                   @can_select,
                   @selected_flags,
                   flag.id,
-                  @opposite_color_flags_selected
+                  @opposite_color_flags_selected,
+                  flag,
+                  @color
                 ) == "cursor-pointer",
                 do: "select_flag",
                 else: nil
               )
             }
-            class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_cursor_styling(
+            class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_flag_styling(
               @can_select,
               @selected_flags,
               flag.id,
-              @opposite_color_flags_selected
+              @opposite_color_flags_selected,
+              flag,
+              @color
 
-            )} "  <>
-              if(Map.get(@selected_flags, flag.id) != nil, do: "#{get_active_button_colors(@color)} text-white shadow-sm", else: "#{get_inactive_button_colors(@color)} shadow-none")
+            )} "
+
             }
           >
             <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
@@ -128,18 +132,20 @@ defmodule AniminaWeb.SelectFlagsComponent do
     translation.name
   end
 
-  defp get_cursor_styling(
+  defp get_flag_styling(
          can_select,
          selected_flags,
          flag_id,
-         opposite_color_flags_selected
+         opposite_color_flags_selected,
+         flag,
+         color
        ) do
     if (can_select && !Enum.member?(opposite_color_flags_selected, flag_id)) ||
          (can_select == false && Map.get(selected_flags, flag_id) != nil &&
             !Enum.member?(opposite_color_flags_selected, flag_id)) do
-      "cursor-pointer"
+      "cursor-pointer #{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
     else
-      "cursor-not-allowed"
+      "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
     end
   end
 
