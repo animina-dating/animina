@@ -1,4 +1,6 @@
 defmodule Animina.Traits.UserFlags do
+  alias Animina.Validations
+
   @moduledoc """
   This is the UserFlags module which we use to manage a user's flags.
   """
@@ -33,6 +35,11 @@ defmodule Animina.Traits.UserFlags do
       source_attribute :flag_id
       destination_attribute :id
     end
+  end
+
+  validations do
+    validate {Validations.UniqueColorUserFlags,
+              user_id: :user_id, color: :color, flag_id: :flag_id}
   end
 
   actions do
