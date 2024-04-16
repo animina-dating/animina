@@ -49,6 +49,10 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> assign(
+      :opposite_color_flags_selected,
+      []
+    )
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
   end
 
@@ -65,6 +69,11 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
+    |> assign(
+      :opposite_color_flags_selected,
+      fetch_flags(socket.assigns.current_user.id, :green)
+      |> Enum.map(fn flag -> flag.flag.id end)
+    )
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :red) end)
   end
 
@@ -80,6 +89,11 @@ defmodule AniminaWeb.FlagsLive do
           "Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important.",
           number_of_flags: @max_flags
         )
+    )
+    |> assign(
+      :opposite_color_flags_selected,
+      fetch_flags(socket.assigns.current_user.id, :red)
+      |> Enum.map(fn flag -> flag.flag.id end)
     )
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :green) end)
   end
@@ -286,6 +300,7 @@ defmodule AniminaWeb.FlagsLive do
               language={@language}
               can_select={@selected < @max_selected}
               user_flags={@user_flags}
+              opposite_color_flags_selected={@opposite_color_flags_selected}
               color={@color}
             />
           </div>

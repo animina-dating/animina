@@ -78,15 +78,25 @@ defmodule AniminaWeb.SelectFlagsComponent do
             phx-target={@myself}
             aria-label="button"
             phx-click={
-              if(@can_select || Map.get(@selected_flags, flag.id) != nil,
+              if(
+                get_cursor_styling(
+                  @can_select,
+                  @selected_flags,
+                  flag.id,
+                  @opposite_color_flags_selected
+                ) == "cursor-pointer",
                 do: "select_flag",
                 else: nil
               )
             }
-            class={
-              if(@can_select || (@can_select == false && Map.get(@selected_flags, flag.id) != nil), do: "cursor-pointer ", else: "cursor-not-allowed ") <>
-              "rounded-full px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
-              <> if(Map.get(@selected_flags, flag.id) != nil, do: "#{get_active_button_colors(@color)} text-white shadow-sm", else: "#{get_inactive_button_colors(@color)} shadow-none")
+            class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_cursor_styling(
+              @can_select,
+              @selected_flags,
+              flag.id,
+              @opposite_color_flags_selected
+
+            )} "  <>
+              if(Map.get(@selected_flags, flag.id) != nil, do: "#{get_active_button_colors(@color)} text-white shadow-sm", else: "#{get_inactive_button_colors(@color)} shadow-none")
             }
           >
             <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
@@ -98,6 +108,10 @@ defmodule AniminaWeb.SelectFlagsComponent do
             >
               <%= get_flag_index(@user_flags, flag.id) %>
             </span>
+
+            <%= if Enum.member?(@opposite_color_flags_selected, flag.id) do %>
+              <p class={get_dot_for_selected_opposite_selected_flag(@color)} />
+            <% end %>
           </div>
         </li>
       </ol>
@@ -114,6 +128,21 @@ defmodule AniminaWeb.SelectFlagsComponent do
     translation.name
   end
 
+  defp get_cursor_styling(
+         can_select,
+         selected_flags,
+         flag_id,
+         opposite_color_flags_selected
+       ) do
+    if (can_select && !Enum.member?(opposite_color_flags_selected, flag_id)) ||
+         (can_select == false && Map.get(selected_flags, flag_id) != nil &&
+            !Enum.member?(opposite_color_flags_selected, flag_id)) do
+      "cursor-pointer"
+    else
+      "cursor-not-allowed"
+    end
+  end
+
   defp get_flag_index(flags, flag_id) do
     case Enum.find_index(flags, fn id -> id == flag_id end) do
       nil -> 1
@@ -126,6 +155,14 @@ defmodule AniminaWeb.SelectFlagsComponent do
       color == :green -> "hover:bg-green-500  bg-green-600 focus-visible:outline-green-600"
       color == :red -> "hover:bg-rose-500  bg-rose-600 focus-visible:outline-rose-600"
       true -> "hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600"
+    end
+  end
+
+  defp get_dot_for_selected_opposite_selected_flag(color) do
+    cond do
+      color == :green -> "w-3 h-3 bg-red-500 rounded-full"
+      color == :red -> "w-3 h-3 bg-green-500 rounded-full"
+      true -> ""
     end
   end
 
