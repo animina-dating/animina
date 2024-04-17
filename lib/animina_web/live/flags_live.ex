@@ -167,14 +167,10 @@ defmodule AniminaWeb.FlagsLive do
       _ ->
         case socket.assigns.selected do
           0 ->
-            {:noreply,
-             successful_socket
-             |> put_flash(:info, gettext("You have proceeded without selecting any flags"))}
+            {:noreply, successful_socket}
 
           _ ->
-            {:noreply,
-             successful_socket
-             |> put_flash(:info, gettext("Your flags have been added successfully"))}
+            {:noreply, successful_socket}
         end
     end
   end
@@ -258,8 +254,8 @@ defmodule AniminaWeb.FlagsLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-4 relative px-5">
-      <div class="flex justify-between   items-center">
+    <div class="relative px-5 space-y-4">
+      <div class="flex items-center justify-between">
         <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
 
         <div>
@@ -285,7 +281,7 @@ defmodule AniminaWeb.FlagsLive do
 
       <.async_result :let={_categories} assign={@categories}>
         <:loading>
-          <div class="space-y-4 pt-4">
+          <div class="pt-4 space-y-4">
             <.flag_card_loading />
             <.flag_card_loading />
             <.flag_card_loading />
