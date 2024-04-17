@@ -86,8 +86,7 @@ defmodule AniminaWeb.ProfileLive do
          |> assign(
            :stories_and_flags,
            fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
-         )
-         |> put_flash(:info, gettext("Story deleted successfully"))}
+         )}
 
       {:error, %Ash.Error.Invalid{} = changeset} ->
         case changeset.errors do
@@ -101,8 +100,7 @@ defmodule AniminaWeb.ProfileLive do
              |> assign(
                :stories_and_flags,
                fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
-             )
-             |> put_flash(:info, gettext("Story deleted successfully"))}
+             )}
 
           _ ->
             {:noreply,
