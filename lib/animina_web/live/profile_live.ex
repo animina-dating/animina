@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
@@ -97,7 +98,7 @@ defmodule AniminaWeb.ProfileLive do
         case changeset.errors do
           [%Ash.Error.Changes.InvalidAttribute{message: message}]
           when message == "would leave records behind" ->
-            Animina.Accounts.Photo.destroy(story.photo)
+            Photo.destroy(story.photo)
             Narratives.Story.destroy(story)
 
             {:noreply,
