@@ -64,6 +64,7 @@ defmodule Animina.Traits.UserFlags do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
+    define :destroy
   end
 
   preparations do

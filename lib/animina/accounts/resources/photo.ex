@@ -58,7 +58,7 @@ defmodule Animina.Accounts.Photo do
   end
 
   actions do
-    defaults [:create, :update]
+    defaults [:create, :update, :destroy]
 
     read :read do
       primary? true
@@ -100,6 +100,7 @@ defmodule Animina.Accounts.Photo do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
+    define :destroy
   end
 
   changes do

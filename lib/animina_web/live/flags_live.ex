@@ -4,6 +4,7 @@ defmodule AniminaWeb.FlagsLive do
 
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits
+  alias Animina.Traits.UserFlags
   alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
   alias Phoenix.PubSub
@@ -51,7 +52,8 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      []
+      fetch_flags(socket.assigns.current_user.id, :white)
+      |> Enum.map(fn flag -> flag.flag.id end)
     )
     |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
   end
@@ -146,7 +148,8 @@ defmodule AniminaWeb.FlagsLive do
     |> Ash.Query.filter(
       user_id == ^socket.assigns.current_user.id and color == ^socket.assigns.color
     )
-    |> Traits.bulk_destroy(:destroy, %{})
+    |> Traits.read!()
+    |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
     bulk_result =
       Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)

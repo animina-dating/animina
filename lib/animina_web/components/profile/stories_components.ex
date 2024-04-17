@@ -8,19 +8,30 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user, :any, required: true
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
+  attr :add_new_story_title, :string, required: true
+  attr :user, :any, required: false
 
   def stories_display(assigns) do
     ~H"""
-    <div class="gap-8 columns-1 md:columns-2 lg:columns-3">
-      <%= for {story, flags} <- @stories_and_flags do %>
-        <.story_with_flags
-          story={story}
-          current_user={@current_user}
-          flags={flags}
-          current_user_green_flags={@current_user_green_flags}
-          current_user_red_flags={@current_user_red_flags}
-        />
-      <% end %>
+    <div class="flex flex-col gap-4">
+      <div class="gap-8 columns-1 md:columns-2 lg:columns-3">
+        <%= for {story, flags} <- @stories_and_flags do %>
+          <.story_with_flags
+            story={story}
+            current_user={@current_user}
+            flags={flags}
+            user={@user}
+            current_user_green_flags={@current_user_green_flags}
+            current_user_red_flags={@current_user_red_flags}
+          />
+        <% end %>
+      </div>
+
+      <div class="w-[100%]">
+        <.link navigate="/profile/stories/new" class="text-blue-700 bg-blue-100 rounded-md p-2">
+          <%= @add_new_story_title %>
+        </.link>
+      </div>
     </div>
     """
   end
@@ -28,6 +39,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :story, :any, required: true
   attr :flags, :list, required: true
   attr :current_user, :any, required: true
+  attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
 
@@ -47,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} />
+      <.story_body story={@story} user={@user} current_user={@current_user} />
       <div class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
@@ -86,13 +98,15 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} />
+      <.story_body story={@story} user={@user} current_user={@current_user} />
       <hr />
     </div>
     """
   end
 
   attr :story, :any, required: true
+  attr :user, :any, required: false
+  attr :current_user, :any, required: true
 
   def story_body(assigns) do
     ~H"""
@@ -102,12 +116,13 @@ defmodule AniminaWeb.StoriesComponents do
       <% end %>
     </div>
     <.story_content story={@story} />
+    <.story_action_icons story={@story} user={@user} current_user={@current_user} />
     """
   end
 
   def story_content(assigns) do
     ~H"""
-    <div :if={@story.content} class="pb-4 text-justify text-gray-600 dark:text-gray-100">
+    <div :if={@story.content} class="pb-2 text-justify text-gray-600 dark:text-gray-100">
       <%= MDEx.to_html(@story.content,
         render: [unsafe_: true],
         features: [sanitize: true, syntax_highlight_theme: "github_light"]
@@ -115,6 +130,47 @@ defmodule AniminaWeb.StoriesComponents do
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
       |> Phoenix.HTML.raw() %>
+    </div>
+    """
+  end
+
+  def story_action_icons(assigns) do
+    ~H"""
+    <div
+      :if={@user.id == @current_user.id}
+      class="pb-4 text-justify flex gap-4 cursor-pointer  text-gray-600 dark:text-gray-100"
+    >
+      <.link navigate={"/profile/stories/#{@story.id}/edit" }>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="24"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+          fcvgbhj
+        </svg>
+      </.link>
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        width="25"
+        height="24"
+        fill="currentColor"
+        aria-hidden="true"
+        phx-click="destroy_story"
+        phx-value-id={@story.id}
+        data-confirm="Are you sure?"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z"
+          clip-rule="evenodd"
+        />
+      </svg>
     </div>
     """
   end
