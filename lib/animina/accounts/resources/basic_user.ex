@@ -109,12 +109,11 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   calculations do
-    calculate :gravatar_hash, :string, {Animina.Calculations.Md5, field: :email}
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
   preparations do
-    prepare build(load: [:gravatar_hash, :age, :credit_points])
+    prepare build(load: [:age, :credit_points])
   end
 
   authentication do
