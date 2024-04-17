@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
@@ -72,6 +73,43 @@ defmodule AniminaWeb.ProfileLive do
       end
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("destroy_story", %{"id" => id}, socket) do
+    {:ok, story} = Narratives.Story.by_id(id)
+
+    case Narratives.Story.destroy(story) do
+      :ok ->
+        {:noreply,
+         socket
+         |> assign(
+           :stories_and_flags,
+           fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
+         )
+         |> put_flash(:info, gettext("Story deleted successfully"))}
+
+      {:error, %Ash.Error.Invalid{} = changeset} ->
+        case changeset.errors do
+          [%Ash.Error.Changes.InvalidAttribute{message: message}]
+          when message == "would leave records behind" ->
+            Photo.destroy(story.photo)
+            Narratives.Story.destroy(story)
+
+            {:noreply,
+             socket
+             |> assign(
+               :stories_and_flags,
+               fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
+             )
+             |> put_flash(:info, gettext("Story deleted successfully"))}
+
+          _ ->
+            {:noreply,
+             socket
+             |> put_flash(:error, gettext("An error occurred while deleting the story"))}
+        end
+    end
   end
 
   @impl true
@@ -193,6 +231,8 @@ defmodule AniminaWeb.ProfileLive do
         current_user={@current_user}
         current_user_green_flags={@current_user_green_flags}
         current_user_red_flags={@current_user_red_flags}
+        add_new_story_title={gettext("Add a new story")}
+        user={@user}
       />
     </div>
     """
