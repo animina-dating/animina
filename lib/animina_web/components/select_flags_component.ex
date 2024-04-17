@@ -153,7 +153,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
     "#{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(:white)} text-white shadow-sm", else: "#{get_inactive_button_colors(:white)} shadow-none")}"
   end
 
-  defp get_styling_if_flag_is_white(_color, _selected_flags, flag) do
+  defp get_styling_if_flag_is_white(_color, _selected_flags, _flag) do
     "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
   end
 
