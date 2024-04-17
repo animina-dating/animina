@@ -8,6 +8,8 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user, :any, required: true
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
+  attr :add_new_story_title, :string, required: true
+  attr :user, :any, required: false
 
   def stories_display(assigns) do
     ~H"""
@@ -18,6 +20,7 @@ defmodule AniminaWeb.StoriesComponents do
             story={story}
             current_user={@current_user}
             flags={flags}
+            user={@user}
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
           />
@@ -36,6 +39,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :story, :any, required: true
   attr :flags, :list, required: true
   attr :current_user, :any, required: true
+  attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
 
@@ -55,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} />
+      <.story_body story={@story} story={@story} user={@user} current_user={@current_user} />
       <div class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
@@ -94,7 +98,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} />
+      <.story_body />
       <hr />
     </div>
     """
@@ -110,7 +114,7 @@ defmodule AniminaWeb.StoriesComponents do
       <% end %>
     </div>
     <.story_content story={@story} />
-    <.story_action_icons story={@story} />
+    <.story_action_icons story={@story} user={@current_user} current_user={@current_user} />
     """
   end
 
@@ -130,7 +134,10 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_action_icons(assigns) do
     ~H"""
-    <div class="pb-4 text-justify flex gap-4 cursor-pointer  text-gray-600 dark:text-gray-100">
+    <div
+      :if={@user.id == @current_user.id}
+      class="pb-4 text-justify flex gap-4 cursor-pointer  text-gray-600 dark:text-gray-100"
+    >
       <.link navigate={"/profile/stories/#{@story.id}/edit" }>
         <svg
           xmlns="http://www.w3.org/2000/svg"

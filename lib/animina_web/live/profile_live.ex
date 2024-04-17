@@ -236,6 +236,7 @@ defmodule AniminaWeb.ProfileLive do
         current_user_green_flags={@current_user_green_flags}
         current_user_red_flags={@current_user_red_flags}
         add_new_story_title={gettext("Add a new story")}
+        user={@user}
       />
     </div>
 
