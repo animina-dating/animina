@@ -28,7 +28,7 @@ defmodule AniminaWeb.StoriesComponents do
       </div>
 
       <div class="w-[100%]">
-        <.link navigate="/profile/stories/new" class="text-blue-700 bg-blue-100 rounded-md p-2">
+        <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
           <%= @add_new_story_title %>
         </.link>
       </div>
@@ -59,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} story={@story} user={@user} current_user={@current_user} />
+      <.story_body story={@story} current_user={@current_user} />
       <div class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
@@ -98,13 +98,14 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body />
+      <.story_body story={@story} current_user={@current_user} />
       <hr />
     </div>
     """
   end
 
   attr :story, :any, required: true
+  attr :current_user, :any, required: false
 
   def story_body(assigns) do
     ~H"""
@@ -136,7 +137,7 @@ defmodule AniminaWeb.StoriesComponents do
     ~H"""
     <div
       :if={@user.id == @current_user.id}
-      class="pb-4 text-justify flex gap-4 cursor-pointer  text-gray-600 dark:text-gray-100"
+      class="flex gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100"
     >
       <.link navigate={"/profile/stories/#{@story.id}/edit" }>
         <svg
