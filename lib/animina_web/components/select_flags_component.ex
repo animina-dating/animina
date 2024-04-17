@@ -86,7 +86,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
                   @opposite_color_flags_selected,
                   flag,
                   @color
-                ) == "cursor-pointer",
+                ) != "cursor-not-allowed bg-gray-200 dark:bg-gray-100",
                 do: "select_flag",
                 else: nil
               )
@@ -145,7 +145,11 @@ defmodule AniminaWeb.SelectFlagsComponent do
             !Enum.member?(opposite_color_flags_selected, flag_id)) do
       "cursor-pointer #{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
     else
-      "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
+      if color == :white do
+        "#{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
+      else
+        "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
+      end
     end
   end
 
