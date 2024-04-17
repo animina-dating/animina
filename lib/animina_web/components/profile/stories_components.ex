@@ -59,11 +59,16 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
+
       <.story_body story={@story} user={@user} current_user={@current_user} />
-      <div class="bg-green-100 rounded-md">
+
+      <div :if={!empty_flags_array?(@flags)} class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
-            <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+            <span
+              :if={flag != %{}}
+              class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            >
               <%= flag.flag.emoji %> <%= flag.flag.name %>
               <.get_styling_for_matching_flags
                 flag={flag}
@@ -77,6 +82,10 @@ defmodule AniminaWeb.StoriesComponents do
     </div>
     <div class="pb-4" />
     """
+  end
+
+  def empty_flags_array?(array) when is_list(array) do
+    Enum.all?(array, fn x -> is_map(x) && Map.values(x) == [] end)
   end
 
   attr :story, :any, required: true

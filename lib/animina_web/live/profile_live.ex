@@ -277,11 +277,19 @@ defmodule AniminaWeb.ProfileLive do
   defp fetch_stories_and_flags(user, language) do
     stories = fetch_stories(user.id)
 
-    chunks_flags =
+    flags =
       fetch_flags(user.id, :white, language)
+
+    array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
+
+    flags =
+      (flags ++ array)
       |> Enum.chunk_every(5)
 
-    Enum.zip(stories, chunks_flags)
+    IO.inspect(flags)
+
+    Enum.zip(stories, flags)
+    |> IO.inspect()
   end
 
   defp get_translation(translations, language) do
