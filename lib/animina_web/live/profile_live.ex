@@ -288,10 +288,7 @@ defmodule AniminaWeb.ProfileLive do
       (flags ++ array)
       |> Enum.chunk_every(5)
 
-    IO.inspect(flags)
-
     Enum.zip(stories, flags)
-    |> IO.inspect()
   end
 
   defp get_translation(translations, language) do
