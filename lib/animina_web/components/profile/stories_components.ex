@@ -137,6 +137,7 @@ defmodule AniminaWeb.StoriesComponents do
         features: [sanitize: true, syntax_highlight_theme: "github_light"]
       )
       |> HtmlSanitizeEx.basic_html()
+      |> String.replace(~r/\<img.*>/, "")
       |> String.replace(~r/\<p/, "<p class='pt-2'")
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
