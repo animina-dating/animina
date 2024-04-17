@@ -155,7 +155,6 @@ defmodule AniminaWeb.SelectFlagsComponent do
 
 
   defp get_styling_if_flag_is_white(_color, _selected_flags, _flag) do
-
     "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
   end
 
