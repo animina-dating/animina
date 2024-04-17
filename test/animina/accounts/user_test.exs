@@ -4,8 +4,8 @@ defmodule Animina.Accounts.UserTest do
   alias Animina.Accounts.BasicUser
   alias Animina.Accounts.User
 
-  describe "gravatar_hash calculation" do
-    test "calculates the gravatar_hash correctly" do
+  describe "create BasicUser" do
+    test "create a new user" do
       assert {:error, _} = User.by_email("bob@example.com")
 
       assert {:ok, _} =
