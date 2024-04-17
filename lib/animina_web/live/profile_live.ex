@@ -64,11 +64,6 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(profile_points: Points.humanized_points(user.credit_points))
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
-          |> assign(profile_user_height_for_figure: (user.height / 2) |> trunc())
-          |> assign(
-            :current_user_height_for_figure,
-            (current_user.height / 2) |> trunc()
-          )
           |> assign(stories_and_flags: stories_and_flags)
 
         _ ->
@@ -200,15 +195,6 @@ defmodule AniminaWeb.ProfileLive do
         current_user_red_flags={@current_user_red_flags}
       />
     </div>
-
-    <.height_visualization_card
-      user={@user}
-      current_user={@current_user}
-      title={gettext("Height")}
-      measurement_unit={gettext("cm")}
-      current_user_height_for_figure={@current_user_height_for_figure}
-      profile_user_height_for_figure={@profile_user_height_for_figure}
-    />
     """
   end
 
