@@ -145,12 +145,16 @@ defmodule AniminaWeb.SelectFlagsComponent do
             !Enum.member?(opposite_color_flags_selected, flag_id)) do
       "cursor-pointer #{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
     else
-      if color == :white do
-        "#{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
-      else
-        "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
-      end
+      get_styling_if_flag_is_white(color, selected_flags, flag)
     end
+  end
+
+  defp get_styling_if_flag_is_white(:white, selected_flags, flag) do
+    "#{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(:white)} text-white shadow-sm", else: "#{get_inactive_button_colors(:white)} shadow-none")}"
+  end
+
+  defp get_styling_if_flag_is_white(_color, _selected_flags, flag) do
+    "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
   end
 
   defp get_flag_index(flags, flag_id) do

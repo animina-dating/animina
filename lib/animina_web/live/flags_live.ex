@@ -4,10 +4,10 @@ defmodule AniminaWeb.FlagsLive do
 
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits
+  alias Animina.Traits.UserFlags
   alias AniminaWeb.SelectFlagsComponent
   alias Phoenix.LiveView.AsyncResult
   alias Phoenix.PubSub
-  alias Animina.Traits.UserFlags
 
   @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
 

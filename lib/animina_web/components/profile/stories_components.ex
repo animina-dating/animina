@@ -59,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} story={@story} user={@user} current_user={@current_user} />
+      <.story_body story={@story} user={@user} current_user={@current_user} />
       <div class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
@@ -98,13 +98,15 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body />
+      <.story_body story={@story} user={@user} current_user={@current_user} />
       <hr />
     </div>
     """
   end
 
   attr :story, :any, required: true
+  attr :user, :any, required: false
+  attr :current_user, :any, required: true
 
   def story_body(assigns) do
     ~H"""
@@ -114,7 +116,7 @@ defmodule AniminaWeb.StoriesComponents do
       <% end %>
     </div>
     <.story_content story={@story} />
-    <.story_action_icons story={@story} user={@current_user} current_user={@current_user} />
+    <.story_action_icons story={@story} user={@user} current_user={@current_user} />
     """
   end
 
