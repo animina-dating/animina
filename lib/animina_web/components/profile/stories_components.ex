@@ -25,12 +25,11 @@ defmodule AniminaWeb.StoriesComponents do
             current_user_red_flags={@current_user_red_flags}
           />
         <% end %>
-      </div>
-
-      <div class="w-[100%]">
-        <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
-          <%= @add_new_story_title %>
-        </.link>
+        <div>
+          <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
+            <%= @add_new_story_title %>
+          </.link>
+        </div>
       </div>
     </div>
     """
@@ -137,6 +136,7 @@ defmodule AniminaWeb.StoriesComponents do
         render: [unsafe_: true],
         features: [sanitize: true, syntax_highlight_theme: "github_light"]
       )
+      |> HtmlSanitizeEx.basic_html()
       |> String.replace(~r/\<p/, "<p class='pt-2'")
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")

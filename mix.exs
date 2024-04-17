@@ -65,7 +65,8 @@ defmodule Animina.MixProject do
       {:ex_phone_number, "~> 0.4.3"},
       {:httpoison, "~> 2.0"},
       {:faker, "~> 0.18", only: [:dev, :test]},
-      {:mdex, "~> 0.1"}
+      {:mdex, "~> 0.1"},
+      {:html_sanitize_ex, "~> 1.4"}
     ]
   end
 
