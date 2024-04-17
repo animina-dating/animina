@@ -25,12 +25,11 @@ defmodule AniminaWeb.StoriesComponents do
             current_user_red_flags={@current_user_red_flags}
           />
         <% end %>
-      </div>
-
-      <div class="w-[100%]">
-        <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
-          <%= @add_new_story_title %>
-        </.link>
+        <div :if={@current_user == @user}>
+          <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
+            <%= @add_new_story_title %>
+          </.link>
+        </div>
       </div>
     </div>
     """
