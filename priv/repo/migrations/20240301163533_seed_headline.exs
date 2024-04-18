@@ -66,7 +66,8 @@ defmodule Animina.Repo.Migrations.SeedHeadline do
       %{subject: "Summer", position: 41},
       %{subject: "Fall", position: 42},
       %{subject: "Winter", position: 43},
-      %{subject: "About me", position: 44}
+      %{subject: "About me", position: 44},
+      %{subject: "My family", position: 45}
     ]
   end
 end
