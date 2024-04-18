@@ -195,7 +195,7 @@ defmodule AniminaWeb.ProfileLive do
             <%= @user.age %> <%= gettext("years") %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            <%= @user.height %> cm
+            <%= @user.height %>   <%= gettext("cm") %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             📍 <%= @user.city.name %>
@@ -232,6 +232,7 @@ defmodule AniminaWeb.ProfileLive do
         current_user_green_flags={@current_user_green_flags}
         current_user_red_flags={@current_user_red_flags}
         add_new_story_title={gettext("Add a new story")}
+        delete_story_modal_text={gettext("Are you sure?")}
         user={@user}
       />
     </div>
