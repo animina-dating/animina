@@ -9,6 +9,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
   attr :add_new_story_title, :string, required: true
+  attr :delete_story_modal_text, :string, required: true
   attr :user, :any, required: false
 
   def stories_display(assigns) do
@@ -20,6 +21,7 @@ defmodule AniminaWeb.StoriesComponents do
             story={story}
             current_user={@current_user}
             flags={flags}
+            delete_story_modal_text={@delete_story_modal_text}
             user={@user}
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
@@ -41,6 +43,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story_with_flags(assigns) do
     ~H"""
@@ -59,7 +62,12 @@ defmodule AniminaWeb.StoriesComponents do
         <% end %>
       </div>
 
-      <.story_body story={@story} user={@user} current_user={@current_user} />
+      <.story_body
+        story={@story}
+        user={@user}
+        current_user={@current_user}
+        delete_story_modal_text={@delete_story_modal_text}
+      />
 
       <div :if={!empty_flags_array?(@flags)} class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
@@ -89,6 +97,7 @@ defmodule AniminaWeb.StoriesComponents do
 
   attr :story, :any, required: true
   attr :current_user, :any, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story(assigns) do
     ~H"""
@@ -106,7 +115,12 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} user={@user} current_user={@current_user} />
+      <.story_body
+        story={@story}
+        user={@user}
+        current_user={@current_user}
+        delete_story_modal_text={@delete_story_modal_text}
+      />
       <hr />
     </div>
     """
@@ -115,6 +129,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :story, :any, required: true
   attr :user, :any, required: false
   attr :current_user, :any, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story_body(assigns) do
     ~H"""
@@ -124,7 +139,12 @@ defmodule AniminaWeb.StoriesComponents do
       <% end %>
     </div>
     <.story_content story={@story} />
-    <.story_action_icons story={@story} user={@user} current_user={@current_user} />
+    <.story_action_icons
+      story={@story}
+      user={@user}
+      current_user={@current_user}
+      delete_story_modal_text={@delete_story_modal_text}
+    />
     """
   end
 
@@ -183,7 +203,7 @@ defmodule AniminaWeb.StoriesComponents do
         aria-hidden="true"
         phx-click="destroy_story"
         phx-value-id={@story.id}
-        data-confirm="Are you sure?"
+        data-confirm={@delete_story_modal_text}
       >
         <path
           fill-rule="evenodd"

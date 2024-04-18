@@ -227,7 +227,7 @@ defmodule AniminaWeb.RootLive do
                     ),
                 placeholder: gettext("Password"),
                 value: f[:password].value,
-                autocomplete: "new-password",
+                autocomplete: gettext("new password"),
                 "phx-debounce": "blur"
               ) %>
 
@@ -257,7 +257,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: "",
               value: f[:birthday].value,
-              autocomplete: "bday",
+              autocomplete: gettext("bday"),
               "phx-debounce": "blur"
             ) %>
 
@@ -375,7 +375,7 @@ defmodule AniminaWeb.RootLive do
                 placeholder: "11011",
                 value: f[:zip_code].value,
                 inputmode: "numeric",
-                autocomplete: "postal-code",
+                autocomplete: gettext("postal code"),
                 "phx-debounce": "blur"
               ) %>
 
@@ -556,7 +556,7 @@ defmodule AniminaWeb.RootLive do
                   ),
               placeholder: gettext("Password"),
               value: f[:password].value,
-              autocomplete: "new-password",
+              autocomplete: gettext("new password"),
               "phx-debounce": "blur"
             ) %>
 

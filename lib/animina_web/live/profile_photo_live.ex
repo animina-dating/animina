@@ -171,7 +171,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
                   phx-value-ref={entry.ref}
                   aria-label="cancel"
                 >
-                  Cancel
+                  <%= gettext("Cancel") %>
                 </button>
               </div>
             </div>
