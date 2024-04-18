@@ -138,7 +138,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           fill="fill-current"
         />
       </svg>
-      <span>Home</span>
+      <span><%= gettext("Home") %></span>
     </.top_navigation_entry>
     """
   end
@@ -169,7 +169,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           stroke-linecap="round" stroke-linejoin="round"
         />
       </svg>
-      <span>Chat</span>
+      <span><%= gettext("Chat") %></span>
       <div class="flex -space-x-1.5 absolute top-2 left-1/2">
         <div
           class="w-4 h-4 overflow-hidden rounded-full shrink-0"
@@ -210,7 +210,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         Fonticons, Inc.-->
     <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
     </svg>
-    <span>Bookmarks</span>
+    <span><%= gettext("Bookmarks") %></span>
     </.top_navigation_entry>
     """
   end

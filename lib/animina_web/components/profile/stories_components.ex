@@ -9,6 +9,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
   attr :add_new_story_title, :string, required: true
+  attr :delete_story_modal_text, :string, required: true
   attr :user, :any, required: false
 
   def stories_display(assigns) do
@@ -20,6 +21,7 @@ defmodule AniminaWeb.StoriesComponents do
             story={story}
             current_user={@current_user}
             flags={flags}
+            delete_story_modal_text={@delete_story_modal_text}
             user={@user}
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
@@ -41,6 +43,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story_with_flags(assigns) do
     ~H"""
@@ -59,7 +62,12 @@ defmodule AniminaWeb.StoriesComponents do
         <% end %>
       </div>
 
-      <.story_body story={@story} user={@user} current_user={@current_user} />
+      <.story_body
+        story={@story}
+        user={@user}
+        current_user={@current_user}
+        delete_story_modal_text={@delete_story_modal_text}
+      />
 
       <div :if={!empty_flags_array?(@flags)} class="bg-green-100 rounded-md">
         <div class="flex flex-wrap justify-center p-2">
@@ -89,6 +97,7 @@ defmodule AniminaWeb.StoriesComponents do
 
   attr :story, :any, required: true
   attr :current_user, :any, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story(assigns) do
     ~H"""
@@ -106,7 +115,12 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
       </div>
-      <.story_body story={@story} user={@user} current_user={@current_user} />
+      <.story_body
+        story={@story}
+        user={@user}
+        current_user={@current_user}
+        delete_story_modal_text={@delete_story_modal_text}
+      />
       <hr />
     </div>
     """
@@ -115,6 +129,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :story, :any, required: true
   attr :user, :any, required: false
   attr :current_user, :any, required: true
+  attr :delete_story_modal_text, :string, required: true
 
   def story_body(assigns) do
     ~H"""
@@ -124,7 +139,12 @@ defmodule AniminaWeb.StoriesComponents do
       <% end %>
     </div>
     <.story_content story={@story} />
-    <.story_action_icons story={@story} user={@user} current_user={@current_user} />
+    <.story_action_icons
+      story={@story}
+      user={@user}
+      current_user={@current_user}
+      delete_story_modal_text={@delete_story_modal_text}
+    />
     """
   end
 
@@ -141,14 +161,20 @@ defmodule AniminaWeb.StoriesComponents do
       |> String.replace(~r/\<p/, "<p class='pt-2'")
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
-      |> String.replace(~r/\<h1/, "<h1 class='pt-4 text-xl font-bold'")
-      |> String.replace(~r/\<h2/, "<h2 class='pt-4 text-base font-bold'")
-      |> String.replace(~r/\<h3/, "<h3 class='pt-4 text-base font-bold'")
+      |> String.replace(~r/\<ol/, "<ol class='p-2 pl-8 list-decimal'")
+      |> String.replace(~r/\<h1/, "<h2 class='pt-4 text-xl font-bold'")
+      |> String.replace(~r/\<h2/, "<h3 class='pt-4 text-base font-bold'")
+      |> String.replace(~r/\<h3/, "<h4 class='pt-4 text-base font-bold'")
+      |> String.replace(
+        ~r/\<blockquote/,
+        "<blockquote class='p-2 my-2 border-gray-300 border-s-4 bg-gray-50 dark:border-gray-500 dark:bg-gray-800'"
+      )
       |> Phoenix.HTML.raw() %>
     </div>
     """
   end
 
+  @spec story_action_icons(any()) :: Phoenix.LiveView.Rendered.t()
   def story_action_icons(assigns) do
     ~H"""
     <div
@@ -177,7 +203,7 @@ defmodule AniminaWeb.StoriesComponents do
         aria-hidden="true"
         phx-click="destroy_story"
         phx-value-id={@story.id}
-        data-confirm="Are you sure?"
+        data-confirm={@delete_story_modal_text}
       >
         <path
           fill-rule="evenodd"
