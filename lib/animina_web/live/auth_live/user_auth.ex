@@ -3,9 +3,9 @@ defmodule AniminaWeb.LiveUserAuth do
   Helpers for authenticating users in liveviews
   """
 
-  alias AniminaWeb.Registration
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
+  alias AniminaWeb.Registration
   import Phoenix.Component
 
   use AniminaWeb, :verified_routes
