@@ -35,6 +35,7 @@ defmodule Animina.Narratives.Story do
   validations do
     validate {Validations.AboutStory, headline: :headline_id, user: :user_id}
     validate {Validations.DeleteAboutStory, headline: :headline_id, user: :user_id}, on: :destroy
+    validate present(:headline_id)
   end
 
   actions do
