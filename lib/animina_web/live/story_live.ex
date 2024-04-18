@@ -385,9 +385,6 @@ defmodule AniminaWeb.StoryLive do
     ~H"""
     <div class="space-y-4 px-5">
       <h2 class="font-bold dark:text-white text-xl"><%= @title %></h2>
-      <p class="text-white">
-        <%= @either_content_or_photo_added %>
-      </p>
 
       <p class="dark:text-white"><%= @info_text %></p>
 
