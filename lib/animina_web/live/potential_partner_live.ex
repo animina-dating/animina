@@ -333,13 +333,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
         </div>
 
         <div class="flex gap-2 items-center mb-4">
-          <p>
-            Receive messages only from users who I reapproved with a like.
-          </p>
           <%= checkbox(f, :preapproved_communication_only,
             id: "preapproved_communication_only",
             class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
           ) %>
+          <p>
+            Receive messages only from users who I reapproved with a like.
+          </p>
         </div>
 
         <div>

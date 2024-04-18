@@ -211,17 +211,19 @@ defmodule AniminaWeb.ProfileLive do
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @profile_points %>
           </span>
-          <span
-            :if={@intersecting_green_flags_count != 0}
-            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-          >
-            <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
-          </span>
-          <span
-            :if={@intersecting_red_flags_count != 0}
-            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-          >
-            <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
+          <span :if={@current_user != @user}>
+            <span
+              :if={@intersecting_green_flags_count != 0}
+              class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            >
+              <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
+            </span>
+            <span
+              :if={@intersecting_red_flags_count != 0}
+              class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            >
+              <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
+            </span>
           </span>
         </div>
       </div>
@@ -277,11 +279,16 @@ defmodule AniminaWeb.ProfileLive do
   defp fetch_stories_and_flags(user, language) do
     stories = fetch_stories(user.id)
 
-    chunks_flags =
+    flags =
       fetch_flags(user.id, :white, language)
+
+    array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
+
+    flags =
+      (flags ++ array)
       |> Enum.chunk_every(5)
 
-    Enum.zip(stories, chunks_flags)
+    Enum.zip(stories, flags)
   end
 
   defp get_translation(translations, language) do
