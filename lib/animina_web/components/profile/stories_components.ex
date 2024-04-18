@@ -141,9 +141,10 @@ defmodule AniminaWeb.StoriesComponents do
       |> String.replace(~r/\<p/, "<p class='pt-2'")
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
-      |> String.replace(~r/\<h1/, "<h1 class='pt-4 text-xl font-bold'")
-      |> String.replace(~r/\<h2/, "<h2 class='pt-4 text-base font-bold'")
-      |> String.replace(~r/\<h3/, "<h3 class='pt-4 text-base font-bold'")
+      |> String.replace(~r/\<ol/, "<ol class='p-2 pl-8 list-decimal'")
+      |> String.replace(~r/\<h1/, "<h2 class='pt-4 text-xl font-bold'")
+      |> String.replace(~r/\<h2/, "<h3 class='pt-4 text-base font-bold'")
+      |> String.replace(~r/\<h3/, "<h4 class='pt-4 text-base font-bold'")
       |> Phoenix.HTML.raw() %>
     </div>
     """
