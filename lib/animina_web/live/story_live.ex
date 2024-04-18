@@ -27,6 +27,8 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:story_position, nil)
       |> assign(:headline_position, nil)
       |> assign(:errors, [])
+      |> assign(:content, "")
+      |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, nil)
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
@@ -57,6 +59,8 @@ defmodule AniminaWeb.StoryLive do
         get_user_headline_position(socket)
       )
       |> assign(:errors, [])
+      |> assign(:content, "")
+      |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
@@ -168,11 +172,31 @@ defmodule AniminaWeb.StoryLive do
     |> assign(form: form)
   end
 
+  def handle_event("cancel_upload", %{"ref" => ref}, socket) do
+    {:noreply,
+     socket
+     |> cancel_upload(:photos, ref)
+     |> assign(
+       :either_content_or_photo_added,
+       either_content_or_photo_added(socket.assigns.content, [])
+     )}
+  end
+
   @impl true
   def handle_event("validate", %{"story" => story}, socket) do
     form = Form.validate(socket.assigns.form, story, errors: true)
 
-    {:noreply, socket |> assign(form: form)}
+    content =
+      Map.get(story, "content")
+
+    {:noreply,
+     socket
+     |> assign(:form, form)
+     |> assign(
+       :either_content_or_photo_added,
+       either_content_or_photo_added(content, socket.assigns.uploads.photos.entries)
+     )
+     |> assign(:content, content)}
   end
 
   @impl true
@@ -346,6 +370,14 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_default_headline(_socket) do
     nil
+  end
+
+  defp either_content_or_photo_added(content, uploads) do
+    if content == "" && uploads == [] do
+      false
+    else
+      true
+    end
   end
 
   @impl true
@@ -549,11 +581,11 @@ defmodule AniminaWeb.StoryLive do
           <%= submit(@cta,
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.source.valid? == false,
+                unless(@form.source.source.valid? == false || @either_content_or_photo_added == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.source.source.valid? == false
+            disabled: @form.source.source.valid? == false || @either_content_or_photo_added == false
           ) %>
         </div>
       </.form>
