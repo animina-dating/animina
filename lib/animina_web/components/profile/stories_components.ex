@@ -25,12 +25,11 @@ defmodule AniminaWeb.StoriesComponents do
             current_user_red_flags={@current_user_red_flags}
           />
         <% end %>
-      </div>
-
-      <div class="w-[100%]">
-        <.link navigate="/profile/stories/new" class="text-blue-700 bg-blue-100 rounded-md p-2">
-          <%= @add_new_story_title %>
-        </.link>
+        <div>
+          <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
+            <%= @add_new_story_title %>
+          </.link>
+        </div>
       </div>
     </div>
     """
@@ -131,13 +130,20 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_content(assigns) do
     ~H"""
-    <div :if={@story.content} class="pb-2 text-justify text-gray-600 dark:text-gray-100">
+    <div :if={@story.content} class="pb-2 text-justify text-gray-600 text-ellipsis dark:text-gray-100">
       <%= MDEx.to_html(@story.content,
+        extension: [strikethrough: true, autolink: true],
         render: [unsafe_: true],
         features: [sanitize: true, syntax_highlight_theme: "github_light"]
       )
+      |> HtmlSanitizeEx.basic_html()
+      |> String.replace(~r/\<img.*>/, "")
+      |> String.replace(~r/\<p/, "<p class='pt-2'")
       |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
       |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 list-disc'")
+      |> String.replace(~r/\<h1/, "<h1 class='pt-4 text-xl font-bold'")
+      |> String.replace(~r/\<h2/, "<h2 class='pt-4 text-base font-bold'")
+      |> String.replace(~r/\<h3/, "<h3 class='pt-4 text-base font-bold'")
       |> Phoenix.HTML.raw() %>
     </div>
     """
@@ -147,7 +153,7 @@ defmodule AniminaWeb.StoriesComponents do
     ~H"""
     <div
       :if={@user.id == @current_user.id}
-      class="pb-4 text-justify flex gap-4 cursor-pointer  text-gray-600 dark:text-gray-100"
+      class="flex justify-end gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100"
     >
       <.link navigate={"/profile/stories/#{@story.id}/edit" }>
         <svg

@@ -10,7 +10,11 @@ defmodule Animina.Narratives.Story do
 
   attributes do
     uuid_primary_key :id
-    attribute :content, :string
+
+    attribute :content, :string do
+      constraints max_length: 1_024
+    end
+
     attribute :position, :integer, allow_nil?: false
 
     create_timestamp :created_at
