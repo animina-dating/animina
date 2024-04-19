@@ -87,6 +87,14 @@ defmodule Animina.Accounts.User do
     has_many :flags, Traits.UserFlags do
       api Traits
     end
+
+    has_many :received_reactions, Animina.Accounts.Reaction do
+      destination_attribute :receiver_id
+    end
+
+    has_many :send_reactions, Animina.Accounts.Reaction do
+      destination_attribute :sender_id
+    end
   end
 
   validations do
