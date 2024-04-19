@@ -105,16 +105,17 @@ defmodule AniminaWeb.LiveUserAuth do
     # we then check if a user has been using has a streak of 10 days
     # we add 150 extra points so that they can have a total of 250 points
 
-    if user.streak == 10 do
+    if is_multiple_of_ten(user.streak) do
       Credit.create(%{
         user_id: user.id,
         points: 150,
         subject: "Daily Bonus"
       })
-
-      # reset the streak to 1
-      {:ok, _user} = User.update(user, %{streak: 1})
     end
+  end
+
+  def is_multiple_of_ten(streak) when is_integer(streak) do
+    rem(streak, 10) == 0
   end
 
   defp add_daily_points_for_user(_user, _points, _) do
