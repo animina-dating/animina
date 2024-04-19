@@ -69,6 +69,7 @@ defmodule Animina.Accounts.User do
     attribute :language, :string, allow_nil?: true
     attribute :legal_terms_accepted, :boolean, default: false
     attribute :preapproved_communication_only, :boolean, default: false
+    attribute :streak, :integer, default: 0
 
     attribute :occupation, :string do
       constraints max_length: 40,
