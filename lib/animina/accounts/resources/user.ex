@@ -89,13 +89,13 @@ defmodule Animina.Accounts.User do
       api Traits
     end
 
-
     has_many :sent_messages, Accounts.Message do
       destination_attribute :sender_id
     end
 
     has_many :received_messages, Accounts.Message do
       destination_attribute :receiver_id
+    end
 
     has_many :received_reactions, Animina.Accounts.Reaction do
       destination_attribute :receiver_id
@@ -103,7 +103,6 @@ defmodule Animina.Accounts.User do
 
     has_many :send_reactions, Animina.Accounts.Reaction do
       destination_attribute :sender_id
-
     end
   end
 
