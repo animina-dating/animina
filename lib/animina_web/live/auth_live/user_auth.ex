@@ -75,23 +75,6 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
-  def check_if_user_has_daily_bonus_added_for_the_day(user_id) do
-    {:ok, credits} = Credit.read()
-
-    credits
-    |> Enum.filter(fn credit ->
-      credit.user_id == user_id and
-        format_date(credit.created_at) == format_date(DateTime.utc_now()) and
-        credit.subject == "Daily Bonus"
-    end)
-    |> List.first()
-  end
-
-  defp format_date(date) do
-    {:ok, date} = Timex.format(date, "{YYYY}-{0M}-{0D}")
-    date
-  end
-
   # in this case the user does not have a daily bonus added for the day , so we add one
   defp add_daily_points_for_user(user, points, nil) do
     Credit.create(%{
@@ -114,11 +97,28 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
-  def is_multiple_of_ten(streak) when is_integer(streak) do
-    rem(streak, 10) == 0
+  defp add_daily_points_for_user(_user, _points, _) do
   end
 
-  defp add_daily_points_for_user(_user, _points, _) do
+  def check_if_user_has_daily_bonus_added_for_the_day(user_id) do
+    {:ok, credits} = Credit.read()
+
+    credits
+    |> Enum.filter(fn credit ->
+      credit.user_id == user_id and
+        format_date(credit.created_at) == format_date(DateTime.utc_now()) and
+        credit.subject == "Daily Bonus"
+    end)
+    |> List.first()
+  end
+
+  defp format_date(date) do
+    {:ok, date} = Timex.format(date, "{YYYY}-{0M}-{0D}")
+    date
+  end
+
+  def is_multiple_of_ten(streak) when is_integer(streak) do
+    rem(streak, 10) == 0
   end
 
   def current_day do
