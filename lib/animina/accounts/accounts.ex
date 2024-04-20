@@ -13,5 +13,6 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.Token
     resource Animina.Accounts.Photo
     resource Animina.Accounts.Reaction
+    resource Animina.Accounts.Message
   end
 end
