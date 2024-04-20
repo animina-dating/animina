@@ -4,7 +4,7 @@ defmodule AniminaWeb.LiveUserAuth do
   """
 
   alias Animina.Accounts.Credit
-  alias Animina.Accounts.Points
+  alias Animina.Accounts.User
   alias AniminaWeb.Registration
   import Phoenix.Component
 
@@ -46,7 +46,8 @@ defmodule AniminaWeb.LiveUserAuth do
       end
 
     if socket.assigns[:current_user] do
-      current_user = Registration.get_current_user(session)
+      current_user =
+        Registration.get_current_user(session)
 
       add_daily_points_for_user(
         current_user,
@@ -99,19 +100,22 @@ defmodule AniminaWeb.LiveUserAuth do
       subject: "Daily Bonus"
     })
 
-    # we then check if a user has been using the system for 10 days straight if so ,
+    update_streak_depending_on_whether_used_the_system_a_day_before(user)
+
+    # we then check if a user has been using has a streak of 10 days
     # we add 150 extra points so that they can have a total of 250 points
 
-    if Points.has_daily_bonus_for_the_past_ten_days(
-         daily_bonus_credits_for_a_user(user.id),
-         current_day()
-       ) do
+    if is_multiple_of_ten(user.streak) do
       Credit.create(%{
         user_id: user.id,
         points: 150,
         subject: "Daily Bonus"
       })
     end
+  end
+
+  def is_multiple_of_ten(streak) when is_integer(streak) do
+    rem(streak, 10) == 0
   end
 
   defp add_daily_points_for_user(_user, _points, _) do
@@ -121,6 +125,10 @@ defmodule AniminaWeb.LiveUserAuth do
     Timex.now()
   end
 
+  def previous_day do
+    Timex.shift(Timex.now(), days: -1)
+  end
+
   def daily_bonus_credits_for_a_user(user_id) do
     {:ok, credits} = Credit.read()
 
@@ -128,5 +136,21 @@ defmodule AniminaWeb.LiveUserAuth do
     |> Enum.filter(fn credit ->
       credit.user_id == user_id and credit.subject == "Daily Bonus"
     end)
+  end
+
+  def update_streak_depending_on_whether_used_the_system_a_day_before(user) do
+    daily_bonus_credits =
+      daily_bonus_credits_for_a_user(user.id)
+      |> Enum.filter(fn credit ->
+        format_date(credit.created_at) == format_date(previous_day())
+      end)
+
+    # if a user used the system before , we add the streak and if they did not , we reset it to 1
+
+    if Enum.count(daily_bonus_credits) > 0 do
+      {:ok, _user} = User.update(user, %{streak: user.streak + 1})
+    else
+      {:ok, _user} = User.update(user, %{streak: 1})
+    end
   end
 end

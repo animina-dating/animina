@@ -69,6 +69,7 @@ defmodule Animina.Accounts.User do
     attribute :language, :string, allow_nil?: true
     attribute :legal_terms_accepted, :boolean, default: false
     attribute :preapproved_communication_only, :boolean, default: false
+    attribute :streak, :integer, default: 0
 
     attribute :occupation, :string do
       constraints max_length: 40,
@@ -88,12 +89,21 @@ defmodule Animina.Accounts.User do
       api Traits
     end
 
+
     has_many :sent_messages, Accounts.Message do
       destination_attribute :sender_id
     end
 
     has_many :received_messages, Accounts.Message do
       destination_attribute :receiver_id
+
+    has_many :received_reactions, Animina.Accounts.Reaction do
+      destination_attribute :receiver_id
+    end
+
+    has_many :send_reactions, Animina.Accounts.Reaction do
+      destination_attribute :sender_id
+
     end
   end
 
