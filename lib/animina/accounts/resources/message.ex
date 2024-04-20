@@ -14,7 +14,6 @@ defmodule Animina.Accounts.Message do
 
     attribute :read_at, :utc_datetime_usec do
       allow_nil? true
-
     end
 
     create_timestamp :created_at
@@ -34,7 +33,7 @@ defmodule Animina.Accounts.Message do
   end
 
   actions do
-    defaults [:create, :read, :update, :destroy]
+    defaults [:create, :read]
   end
 
   code_interface do
