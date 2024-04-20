@@ -1,9 +1,9 @@
 defmodule Animina.Accounts.MessageTest do
   use Animina.DataCase, async: true
 
-  alias Animina.Accounts.User
   alias Animina.Accounts.Message
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
 
   describe "Tests for the Message Resource" do
     setup do

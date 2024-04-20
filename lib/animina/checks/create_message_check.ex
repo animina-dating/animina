@@ -1,7 +1,10 @@
 defmodule Animina.Checks.CreateMessageCheck do
+  @moduledoc """
+  Policy for The Message Resource
+  """
   use Ash.Policy.SimpleCheck
-  alias Animina.Accounts.User
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
 
   def describe(_opts) do
     "Check that the sender can only send messages to receivers who have preapproved communication as false and if they have it as true , the receiver has to have liked me as the sender. We also ensure the user cannot send messages to themselves"

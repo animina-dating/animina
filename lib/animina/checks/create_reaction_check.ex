@@ -1,6 +1,9 @@
 defmodule Animina.Checks.CreateReactionCheck do
-  use Ash.Policy.SimpleCheck
+  @moduledoc """
+  Policy for The Reaction Resource
+  """
   alias Animina.Accounts.User
+  use Ash.Policy.SimpleCheck
 
   def describe(_opts) do
     "Check a user cannot add a reaction to their own profiles"

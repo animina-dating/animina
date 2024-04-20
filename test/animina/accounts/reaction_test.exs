@@ -1,8 +1,8 @@
 defmodule Animina.Accounts.ReactionTest do
   use Animina.DataCase, async: true
 
-  alias Animina.Accounts.User
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
 
   describe "Tests for the Message Resource" do
     setup do
@@ -14,8 +14,7 @@ defmodule Animina.Accounts.ReactionTest do
 
     test "A user cannot create reactions for their own profiles",
          %{
-           user_one: user_one,
-           user_two: user_two
+           user_one: user_one
          } do
       assert {:error, _} =
                create_like_reaction(
