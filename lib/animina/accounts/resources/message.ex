@@ -49,7 +49,7 @@ defmodule Animina.Accounts.Message do
 
   policies do
     policy action_type(:create) do
-      authorize_if Animina.Checks.ActorHasPermission
+      authorize_if Animina.Checks.CreateMessageCheck
     end
   end
 
