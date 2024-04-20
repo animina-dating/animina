@@ -40,8 +40,6 @@ defmodule Animina.Accounts.Message do
     define_for Animina.Accounts
     define :read
     define :create
-    define :update
-    define :destroy
     define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
   end
 
