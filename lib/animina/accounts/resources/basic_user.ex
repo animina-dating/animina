@@ -54,6 +54,7 @@ defmodule Animina.Accounts.BasicUser do
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
     attribute :legal_terms_accepted, :boolean, default: false
+    
 
     attribute :occupation, :string do
       constraints max_length: 40,

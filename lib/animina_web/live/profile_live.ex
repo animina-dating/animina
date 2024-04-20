@@ -8,6 +8,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
+  alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Traits
@@ -66,6 +67,10 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(current_user_green_flags: current_user_green_flags)
           |> assign(current_user_red_flags: current_user_red_flags)
           |> assign(stories_and_flags: stories_and_flags)
+          |> assign(
+            current_user_has_liked_profile?:
+              current_user_has_liked_profile(socket.assigns.current_user.id, user.id)
+          )
 
         _ ->
           socket
@@ -108,6 +113,40 @@ defmodule AniminaWeb.ProfileLive do
              |> put_flash(:error, gettext("An error occurred while deleting the story"))}
         end
     end
+  end
+
+  @impl true
+  def handle_event("add_like", _params, socket) do
+    Reaction.create(
+      %{
+        sender_id: socket.assigns.current_user.id,
+        receiver_id: socket.assigns.user.id,
+        name: :like
+      },
+      actor: socket.assigns.current_user
+    )
+
+    {:noreply,
+     socket
+     |> assign(
+       current_user_has_liked_profile?:
+         current_user_has_liked_profile(socket.assigns.current_user.id, socket.assigns.user.id)
+     )}
+  end
+
+  @impl true
+  def handle_event("remove_like", _params, socket) do
+    reaction =
+      get_reaction_for_sender_and_receiver(socket.assigns.current_user.id, socket.assigns.user.id)
+
+    Reaction.destroy(reaction)
+
+    {:noreply,
+     socket
+     |> assign(
+       current_user_has_liked_profile?:
+         current_user_has_liked_profile(socket.assigns.current_user.id, socket.assigns.user.id)
+     )}
   end
 
   @impl true
@@ -176,6 +215,23 @@ defmodule AniminaWeb.ProfileLive do
     Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
   end
 
+  defp current_user_has_liked_profile(user_id, current_user_id) do
+    case Reaction.by_sender_and_receiver_id(user_id, current_user_id) do
+      {:ok, _user} ->
+        true
+
+      {:error, _} ->
+        false
+    end
+  end
+
+  defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
+    {:ok, reaction} =
+      Reaction.by_sender_and_receiver_id(user_id, current_user_id)
+
+    reaction
+  end
+
   @impl true
 
   def render(assigns) do
@@ -186,16 +242,24 @@ defmodule AniminaWeb.ProfileLive do
       </div>
 
       <div :if={@user} class="pb-4">
-        <h1 class="text-2xl font-semibold dark:text-white">
-          <%= @user.name %>
-        </h1>
+        <div class="w-[100%] flex justify-between items-center">
+          <h1 class="text-2xl font-semibold dark:text-white">
+            <%= @user.name %>
+          </h1>
+
+          <.like_reaction_button
+            current_user_has_liked_profile?={@current_user_has_liked_profile?}
+            current_user={@current_user}
+            user={@user}
+          />
+        </div>
 
         <div class="pt-2">
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @user.age %> <%= gettext("years") %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-            <%= @user.height %>   <%= gettext("cm") %>
+            <%= @user.height %> <%= gettext("cm") %>
           </span>
           <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             📍 <%= @user.city.name %>

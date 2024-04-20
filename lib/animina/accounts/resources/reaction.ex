@@ -4,7 +4,8 @@ defmodule Animina.Accounts.Reaction do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer
 
   attributes do
     uuid_primary_key :id
@@ -29,6 +30,10 @@ defmodule Animina.Accounts.Reaction do
     end
   end
 
+  identities do
+    identity :unique_reaction, [:sender_id, :receiver_id, :name]
+  end
+
   actions do
     defaults [:create, :read, :destroy]
   end
@@ -42,8 +47,10 @@ defmodule Animina.Accounts.Reaction do
     define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
   end
 
-  identities do
-    identity :unique_reaction, [:sender_id, :receiver_id, :name]
+  policies do
+    policy action_type(:create) do
+      authorize_if Animina.Checks.CreateReactionCheck
+    end
   end
 
   postgres do
