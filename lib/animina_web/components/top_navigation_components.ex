@@ -203,7 +203,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def bookmarks_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :chat, do: true, else: false}>
+    <.top_navigation_entry
+      phx-no-format
+      is_active={if @active_tab == :bookmarks, do: true, else: false}
+    >
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
         License - https://fontawesome.com/license/free Copyright 2024
