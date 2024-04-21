@@ -67,7 +67,7 @@ defmodule Animina.Accounts.Message do
       authorize_if Animina.Checks.CreateMessageCheck
     end
 
-    policy action_type(:messages_for_sender_and_receiver) do
+    policy action(:messages_for_sender_and_receiver) do
       authorize_if Animina.Checks.ReadMessageCheck
     end
   end
