@@ -61,22 +61,6 @@ defmodule AniminaWeb.ChatComponents do
     """
   end
 
-  defp get_message_box_styling(sender_id, message) do
-    if sender_id == message.sender_id do
-      "flex justify-end   text-white  "
-    else
-      "flex justify-start   text-black "
-    end
-  end
-
-  defp get_each_message_styling(sender_id, message) do
-    if sender_id == message.sender_id do
-      " w-[300px] bg-blue-500 flex text-white p-2 items-end  rounded-md "
-    else
-      " w-[300px]   bg-white text-black  flex p-2 items-end rounded-md"
-    end
-  end
-
   def receiver_profile_box(assigns) do
     ~H"""
     <div class="bg-indigo-500 text-white h-[100%] flex gap-4 items-center">
@@ -113,5 +97,21 @@ defmodule AniminaWeb.ChatComponents do
       </svg>
     <% end %>
     """
+  end
+
+  defp get_message_box_styling(sender_id, message) do
+    if sender_id == message.sender_id do
+      "flex justify-end   text-white  "
+    else
+      "flex justify-start   text-black "
+    end
+  end
+
+  defp get_each_message_styling(sender_id, message) do
+    if sender_id == message.sender_id do
+      " w-[300px] bg-blue-500 flex text-white p-2 items-end  rounded-md "
+    else
+      " w-[300px]   bg-white text-black  flex p-2 items-end rounded-md"
+    end
   end
 end
