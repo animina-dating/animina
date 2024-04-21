@@ -38,18 +38,39 @@ defmodule Animina.Accounts.Message do
 
   actions do
     defaults [:create, :read]
+
+    read :messages_for_sender_and_receiver do
+      argument :sender_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:sender, :receiver])
+
+      argument :receiver_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(
+               (sender_id == ^arg(:sender_id) and receiver_id == ^arg(:receiver_id)) or
+                 (sender_id == ^arg(:receiver_id) and receiver_id == ^arg(:sender_id))
+             )
+    end
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
-    define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
+    define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
   end
 
   policies do
     policy action_type(:create) do
       authorize_if Animina.Checks.CreateMessageCheck
+    end
+
+    policy action(:messages_for_sender_and_receiver) do
+      authorize_if Animina.Checks.ReadMessageCheck
     end
   end
 

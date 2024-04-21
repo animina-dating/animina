@@ -87,6 +87,7 @@ defmodule AniminaWeb do
       import AniminaWeb.CoreComponents
       import AniminaWeb.AniminaComponents
       import AniminaWeb.ProfileComponents
+      import AniminaWeb.ChatComponents
       import AniminaWeb.StoriesComponents
       import AniminaWeb.TopNavigationCompontents
       import AniminaWeb.Gettext
