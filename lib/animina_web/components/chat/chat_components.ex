@@ -32,11 +32,11 @@ defmodule AniminaWeb.ChatComponents do
     ~H"""
     <div class="h-[80vh]  w-[100%] ">
       <div class="w-[100%] h-[100%] flex flex-col justify-between">
-        <div class="h-[5%] w-[100%]">
+        <div class="h-[7%] w-[100%]">
           <.receiver_profile_box receiver={@receiver} />
         </div>
-        <div class="h-[95%]  w-[100%]">
-          <.messages_box messages={@messages} sender={@sender} />
+        <div class="h-[93%]  w-[100%]">
+          <.messages_box messages={@messages} sender={@sender} receiver={@receiver} />
         </div>
       </div>
     </div>
@@ -49,11 +49,8 @@ defmodule AniminaWeb.ChatComponents do
       <div class="flex flex-col w-[100%] md:p-4 p-2    overflow-y-scroll  gap-2">
         <%= for message <-@messages do %>
           <div class="w-[100%]">
-            <div class={get_message_box_styling(@sender.id, message)}>
-              <p class={get_each_message_styling(@sender.id, message)}>
-                <%= message.content %>
-              </p>
-            </div>
+            <.sent_message message={message} sender={@sender} receiver={@receiver} />
+            <.received_message message={message} sender={@sender} receiver={@receiver} />
           </div>
         <% end %>
       </div>
@@ -61,9 +58,49 @@ defmodule AniminaWeb.ChatComponents do
     """
   end
 
+  def sent_message(assigns) do
+    ~H"""
+    <%= if @sender.id == @message.sender_id do %>
+      <div class="flex justify-end items-start  gap-4 text-white  ">
+        <div class="justify-end flex items-end flex-col">
+          <p>
+            You
+          </p>
+          <div class="md:w-[300px] w-[250px] bg-blue-500 flex text-white p-2 items-end  rounded-md">
+            <p>
+              <%= @message.content %>
+            </p>
+          </div>
+        </div>
+        <.user_image user={@sender} />
+      </div>
+    <% end %>
+    """
+  end
+
+  def received_message(assigns) do
+    ~H"""
+    <%= if @sender.id != @message.sender_id do %>
+      <div class="flex justify-start gap-4  item-start text-black">
+        <.user_image user={@receiver} />
+        <div class="justify-start flex items-start flex-col">
+          <p class="dark:text-white">
+            <%= @receiver.username %>
+          </p>
+          <div class="md:w-[300px w-[250px]   dark:bg-white bg-gray-300 text-black  flex p-2 items-end rounded-md">
+            <p>
+              <%= @message.content %>
+            </p>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
   def receiver_profile_box(assigns) do
     ~H"""
-    <div class="bg-indigo-500 text-white h-[100%] flex gap-4 items-center">
+    <div class="bg-indigo-500 p-4 text-white h-[100%] flex gap-4 items-center">
       <div class="flex items-center gap-2">
         <.user_image user={@receiver} />
         <p>
@@ -77,41 +114,23 @@ defmodule AniminaWeb.ChatComponents do
   def user_image(assigns) do
     ~H"""
     <%= if @user && @user.profile_photo  do %>
-      <img class="object-cover w-6 h-6 rounded-full" src={"/uploads/#{@user.profile_photo.filename}"} />
+      <img class="object-cover w-8 h-8 rounded-full" src={"/uploads/#{@user.profile_photo.filename}"} />
     <% else %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        class="w-6 h-6 stroke-current shrink-0"
-        width="25"
-        height="24"
-        viewBox="0 0 25 24"
         fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 dark:text-white text-black"
       >
         <path
-          d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
-          stroke="stroke-current"
-          stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
         />
       </svg>
     <% end %>
     """
-  end
-
-  defp get_message_box_styling(sender_id, message) do
-    if sender_id == message.sender_id do
-      "flex justify-end   text-white  "
-    else
-      "flex justify-start   text-black "
-    end
-  end
-
-  defp get_each_message_styling(sender_id, message) do
-    if sender_id == message.sender_id do
-      " w-[300px] bg-blue-500 flex text-white p-2 items-end  rounded-md "
-    else
-      " w-[300px]   bg-white text-black  flex p-2 items-end rounded-md"
-    end
   end
 end

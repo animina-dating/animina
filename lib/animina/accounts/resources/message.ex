@@ -44,6 +44,8 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
+      prepare build(load: [:sender, :receiver])
+
       argument :receiver_id, :uuid do
         allow_nil? false
       end

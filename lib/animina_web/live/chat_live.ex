@@ -95,7 +95,7 @@ defmodule AniminaWeb.ChatLive do
           phx-submit="submit"
           class="w-[100%] flex justify-between items-end"
         >
-          <div phx-feedback-for={f[:content].name} class="w-[93%]">
+          <div phx-feedback-for={f[:content].name} class="md:w-[93%] w-[90%]">
             <%= textarea(
               f,
               :content,
@@ -118,7 +118,7 @@ defmodule AniminaWeb.ChatLive do
             <%= hidden_input(f, :receiver_id, value: @receiver.id) %>
           </div>
 
-          <div class="w-[5%] flex justify-center items-center">
+          <div class="md:w-[5%] w-[8%] flex justify-center items-center">
             <%= submit(
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
