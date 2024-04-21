@@ -1,6 +1,6 @@
 defmodule Animina.Checks.ReadMessageCheck do
   @moduledoc """
-  Policy for The Message Resource
+  Policy for The Read By Sender and Receiver Action
   """
   use Ash.Policy.SimpleCheck
 
