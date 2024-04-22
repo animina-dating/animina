@@ -117,11 +117,10 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def handle_event("add_like", _params, socket) do
-    Reaction.create(
+    Reaction.like(
       %{
         sender_id: socket.assigns.current_user.id,
-        receiver_id: socket.assigns.user.id,
-        name: :like
+        receiver_id: socket.assigns.user.id
       },
       actor: socket.assigns.current_user
     )
@@ -139,7 +138,7 @@ defmodule AniminaWeb.ProfileLive do
     reaction =
       get_reaction_for_sender_and_receiver(socket.assigns.current_user.id, socket.assigns.user.id)
 
-    Reaction.destroy(reaction)
+    Reaction.unlike(reaction, actor: socket.assigns.current_user)
 
     {:noreply,
      socket
