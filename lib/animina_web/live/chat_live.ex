@@ -40,6 +40,7 @@ defmodule AniminaWeb.ChatLive do
     |> to_form()
   end
 
+  @impl true
   def handle_event("validate", %{"message" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.form, params)
 
