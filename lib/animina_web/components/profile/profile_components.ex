@@ -307,7 +307,7 @@ defmodule AniminaWeb.ProfileComponents do
       <div
         :if={!@current_user_has_liked_profile?}
         phx-click="add_like"
-        class="cursor-pointer text-white"
+        class="cursor-pointer dark:text-white  text-gray-300"
       >
         <.like_button />
       </div>
