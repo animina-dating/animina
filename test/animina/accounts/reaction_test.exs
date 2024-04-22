@@ -54,7 +54,25 @@ defmodule Animina.Accounts.ReactionTest do
       assert reaction.name == :hide
     end
 
-    test "The unlike action deletes a reaction", %{
+    test "The unlike action deletes a reaction if the actor created it", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_like_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert :ok =
+               Reaction.unlike(reaction, actor: user_one)
+
+      assert {:error, _} =
+               Reaction.unlike(reaction, actor: user_two)
+    end
+
+    test "The unblock action deletes a reaction if the actor created it", %{
       user_one: user_one,
       user_two: user_two
     } do
@@ -66,13 +84,33 @@ defmodule Animina.Accounts.ReactionTest do
                )
 
       assert :ok =
-               Reaction.unlike(reaction)
+               Reaction.unblock(reaction, actor: user_one)
+
+      assert {:error, _} =
+               Reaction.unblock(reaction, actor: user_two)
+    end
+
+    test "The unhide action deletes a reaction if the actor created it", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_hide_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert :ok =
+               Reaction.unhide(reaction, actor: user_one)
+
+      assert {:error, _} =
+               Reaction.unhide(reaction, actor: user_two)
     end
 
     test "A user cannot create reactions for their own profiles",
          %{
-           user_one: user_one,
-           user_two: user_two
+           user_one: user_one
          } do
       assert {:error, _} =
                create_like_reaction(

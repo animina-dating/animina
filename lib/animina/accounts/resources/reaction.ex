@@ -35,14 +35,21 @@ defmodule Animina.Accounts.Reaction do
   end
 
   actions do
-    defaults [:read]
+    defaults [:read, :destroy]
 
     create :like do
       accept [:sender_id, :receiver_id]
       change set_attribute(:name, :like)
     end
 
-    destroy :unlike
+    destroy :unlike do
+    end
+
+    destroy :unblock do
+    end
+
+    destroy :unhide do
+    end
 
     create :block do
       accept [:sender_id, :receiver_id]
@@ -60,8 +67,11 @@ defmodule Animina.Accounts.Reaction do
     define :read
     define :like
     define :unlike
+    define :unblock
+    define :unhide
     define :block
     define :hide
+    define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
   end

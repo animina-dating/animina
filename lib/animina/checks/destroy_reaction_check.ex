@@ -2,7 +2,7 @@ defmodule Animina.Checks.DestroyReactionCheck do
   @moduledoc """
   Policy for The Reaction Resource
   """
-  alias Animina.Accounts.User
+
   use Ash.Policy.SimpleCheck
 
   def describe(_opts) do
@@ -10,6 +10,10 @@ defmodule Animina.Checks.DestroyReactionCheck do
   end
 
   def match?(actor, params, _opts) do
-    true
+    if actor.id == params.changeset.data.sender_id do
+      true
+    else
+      false
+    end
   end
 end
