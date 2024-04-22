@@ -3,6 +3,7 @@ defmodule AniminaWeb.ChatComponents do
   Provides Chat UI components.
   """
   use Phoenix.Component
+  alias Animina.Markdown
 
   def send_message_button(assigns) do
     ~H"""
@@ -49,8 +50,18 @@ defmodule AniminaWeb.ChatComponents do
       <div class="flex flex-col w-[100%] md:p-4 p-2    overflow-y-scroll  gap-2">
         <%= for message <-@messages do %>
           <div class="w-[100%]">
-            <.sent_message message={message} sender={@sender} receiver={@receiver} />
-            <.received_message message={message} sender={@sender} receiver={@receiver} />
+            <.sent_message
+              message={message}
+              content={message.content}
+              sender={@sender}
+              receiver={@receiver}
+            />
+            <.received_message
+              message={message}
+              content={message.content}
+              sender={@sender}
+              receiver={@receiver}
+            />
           </div>
         <% end %>
       </div>
@@ -68,7 +79,7 @@ defmodule AniminaWeb.ChatComponents do
           </p>
           <div class="md:w-[300px] w-[250px] bg-blue-500 flex text-white p-2 items-end  rounded-md">
             <p>
-              <%= @message.content %>
+              <%= Markdown.format(@content) %>
             </p>
           </div>
         </div>
@@ -89,7 +100,7 @@ defmodule AniminaWeb.ChatComponents do
           </p>
           <div class="md:w-[300px w-[250px]   dark:bg-white bg-gray-300 text-black  flex p-2 items-end rounded-md">
             <p>
-              <%= @message.content %>
+              <%= Markdown.format(@content) %>
             </p>
           </div>
         </div>
