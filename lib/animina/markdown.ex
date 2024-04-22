@@ -1,4 +1,7 @@
 defmodule Animina.Markdown do
+   @moduledoc """
+  This is the markdown module that converts markdown to html
+  """
   def format(text) do
     MDEx.to_html(text,
       extension: [strikethrough: true, autolink: true],
