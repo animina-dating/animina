@@ -12,9 +12,67 @@ defmodule Animina.Accounts.ReactionTest do
       ]
     end
 
+    test "The like action creates a reaction with the name :like", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_like_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert reaction.name == :like
+    end
+
+    test "The block action creates a reaction with the name :block", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_block_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert reaction.name == :block
+    end
+
+    test "The hide action creates a reaction with the name :hide", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_hide_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert reaction.name == :hide
+    end
+
+    test "The unlike action deletes a reaction", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      assert {:ok, reaction} =
+               create_block_reaction(
+                 user_one.id,
+                 user_two.id,
+                 user_one
+               )
+
+      assert :ok =
+               Reaction.unlike(reaction)
+    end
+
     test "A user cannot create reactions for their own profiles",
          %{
-           user_one: user_one
+           user_one: user_one,
+           user_two: user_two
          } do
       assert {:error, _} =
                create_like_reaction(
@@ -77,11 +135,30 @@ defmodule Animina.Accounts.ReactionTest do
   end
 
   defp create_like_reaction(sender_id, receiver_id, actor) do
-    Reaction.create(
+    Reaction.like(
       %{
         sender_id: sender_id,
-        receiver_id: receiver_id,
-        name: :like
+        receiver_id: receiver_id
+      },
+      actor: actor
+    )
+  end
+
+  defp create_block_reaction(sender_id, receiver_id, actor) do
+    Reaction.block(
+      %{
+        sender_id: sender_id,
+        receiver_id: receiver_id
+      },
+      actor: actor
+    )
+  end
+
+  defp create_hide_reaction(sender_id, receiver_id, actor) do
+    Reaction.hide(
+      %{
+        sender_id: sender_id,
+        receiver_id: receiver_id
       },
       actor: actor
     )
