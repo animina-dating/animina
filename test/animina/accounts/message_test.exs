@@ -108,6 +108,25 @@ defmodule Animina.Accounts.MessageTest do
                  actor: fifth_user
                )
     end
+
+    test "A user can only change the read_at field of a message that they are the receiver of" do
+      third_user = create_third_user()
+      fourth_user = create_fourth_user()
+      fifth_user = create_fifth_user()
+
+      {:ok, message} =
+        create_message(
+          third_user.id,
+          fourth_user.id,
+          third_user
+        )
+
+      assert {:error, _} =
+               Message.has_been_read(message, actor: fifth_user)
+
+      assert {:ok, _} =
+               Message.has_been_read(message, actor: fourth_user)
+    end
   end
 
   # for this user , other users can send messages to them without needing the user to like that profile

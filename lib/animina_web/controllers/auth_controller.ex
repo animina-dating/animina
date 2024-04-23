@@ -9,7 +9,7 @@ defmodule AniminaWeb.AuthController do
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
-          get_session(conn, :return_to) || ~p"/profile/potential-partner"
+          get_session(conn, :return_to) || ~p"/current_user/potential-partner"
 
         path ->
           path

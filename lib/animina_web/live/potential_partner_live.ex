@@ -102,7 +102,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         {:noreply,
          socket
          |> assign(current_user: current_user)
-         |> push_navigate(to: "/profile/profile-photo")}
+         |> push_navigate(to: "/current_user/profile-photo")}
 
       _ ->
         {:noreply, assign(socket, update_form: form)}
