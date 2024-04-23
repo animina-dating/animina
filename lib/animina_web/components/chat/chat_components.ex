@@ -47,7 +47,11 @@ defmodule AniminaWeb.ChatComponents do
   def messages_box(assigns) do
     ~H"""
     <div class="flex h-[100%] flex-col-reverse">
-      <div class="flex flex-col w-[100%] md:p-4 p-2    overflow-y-scroll  gap-2">
+      <div
+        id="ChatMessagesBox"
+        phx-hook="ScrollToBottom"
+        class="flex flex-col w-[100%] md:p-4 p-2  py-8 transition-all duration-500  overflow-y-scroll  gap-2"
+      >
         <%= for message <-@messages do %>
           <div class="w-[100%]">
             <.sent_message

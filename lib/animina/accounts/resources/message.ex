@@ -39,6 +39,16 @@ defmodule Animina.Accounts.Message do
   actions do
     defaults [:create, :read]
 
+    read :by_id do
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:sender, :receiver])
+
+      filter expr(id == ^arg(:id))
+    end
+
     read :messages_for_sender_and_receiver do
       argument :sender_id, :uuid do
         allow_nil? false
@@ -61,6 +71,9 @@ defmodule Animina.Accounts.Message do
     define_for Animina.Accounts
     define :read
     define :create
+
+    define :by_id, args: [:id]
+
     define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
   end
 

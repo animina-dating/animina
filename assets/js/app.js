@@ -25,9 +25,23 @@ import topbar from "../vendor/topbar";
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
+
+let Hooks = {};
+
+Hooks.ScrollToBottom = {
+  mounted() {
+    var div = document.getElementById("ChatMessagesBox");
+    div.scrollTop = div.scrollHeight;
+  },
+  updated() {
+    var div = document.getElementById("ChatMessagesBox");
+    div.scrollTop = div.scrollHeight;
+  },
+};
+
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
-  hooks: {},
+  hooks: Hooks,
 });
 
 // Show progress bar on live navigation and form submits
