@@ -85,7 +85,12 @@ defmodule AniminaWeb.ChatComponents do
             <p>
               <%= Markdown.format(@content) %>
             </p>
-            <div class="text-xs px-2 flex justify-start">
+
+            <div :if={@message.read_at != nil} class="text-xs px-2 flex justify-end">
+              <%= format_time(@message.read_at) %>
+              <.already_read_ticks />
+            </div>
+            <div :if={@message.read_at == nil} class="text-xs px-2 flex justify-end">
               <%= format_time(@message.created_at) %>
             </div>
           </div>
@@ -111,8 +116,7 @@ defmodule AniminaWeb.ChatComponents do
             </p>
 
             <div :if={@message.read_at != nil} class="text-xs px-2 flex justify-end">
-              <%= format_time(@message.read_at) %>
-              <.already_read_ticks />
+              <%= format_time(@message.created_at) %>
             </div>
           </div>
         </div>
@@ -163,10 +167,11 @@ defmodule AniminaWeb.ChatComponents do
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
-        fill="green"
+        class="text-green-500"
         aria-hidden="true"
         width="12"
         height="12"
+        fill="#52A35D"
       >
         <path
           fill-rule="evenodd"
@@ -177,11 +182,11 @@ defmodule AniminaWeb.ChatComponents do
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
-        fill="green"
         aria-hidden="true"
         width="12"
         height="12"
-        class="absolute left-1/2"
+        fill="#52A35D"
+        class="absolute  left-1/2"
       >
         <path
           fill-rule="evenodd"
