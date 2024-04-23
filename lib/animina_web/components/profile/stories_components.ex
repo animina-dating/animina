@@ -29,7 +29,7 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
         <div>
-          <.link navigate="/profile/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
+          <.link navigate="/current_user/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
             <%= @add_new_story_title %>
           </.link>
         </div>
@@ -164,7 +164,7 @@ defmodule AniminaWeb.StoriesComponents do
       :if={@user.id == @current_user.id}
       class="flex justify-end gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100"
     >
-      <.link navigate={"/profile/stories/#{@story.id}/edit" }>
+      <.link navigate={"/current_user/stories/#{@story.id}/edit" }>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"

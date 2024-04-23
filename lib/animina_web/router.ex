@@ -33,14 +33,14 @@ defmodule AniminaWeb.Router do
 
     ash_authentication_live_session :authentication_required,
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_required} do
-      live "/profile/potential-partner", PotentialPartnerLive, :index
-      live "/profile/profile-photo", ProfilePhotoLive, :index
-      live "/profile/stories/new", StoryLive, :new
-      live "/profile/stories/:id/edit", StoryLive, :edit
-      live "/profile/flags/white", FlagsLive, :white
-      live "/profile/flags/green", FlagsLive, :green
-      live "/profile/flags/red", FlagsLive, :red
-      live "/profile/about-me", StoryLive, :about_me
+      live "/current_user/potential-partner", PotentialPartnerLive, :index
+      live "/current_user/profile-photo", ProfilePhotoLive, :index
+      live "/current_user/stories/new", StoryLive, :new
+      live "/current_user/stories/:id/edit", StoryLive, :edit
+      live "/current_user/flags/white", FlagsLive, :white
+      live "/current_user/flags/green", FlagsLive, :green
+      live "/current_user/flags/red", FlagsLive, :red
+      live "/current_user/about-me", StoryLive, :about_me
       live "/current_user/messages/:profile", ChatLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
       live "/:username", ProfileLive
