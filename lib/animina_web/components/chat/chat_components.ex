@@ -81,10 +81,13 @@ defmodule AniminaWeb.ChatComponents do
           <p>
             You
           </p>
-          <div class="md:w-[300px] w-[250px] bg-blue-500 flex text-white p-2 items-end  rounded-md">
+          <div class="md:w-[300px] w-[250px] bg-blue-500 flex text-white p-1 items-end flex flex-col gap-2  rounded-md">
             <p>
               <%= Markdown.format(@content) %>
             </p>
+            <div class="text-xs px-2 flex justify-start">
+              <%= format_time(@message.created_at) %>
+            </div>
           </div>
         </div>
         <.user_image user={@sender} />
@@ -102,10 +105,15 @@ defmodule AniminaWeb.ChatComponents do
           <p class="dark:text-white">
             <%= @receiver.username %>
           </p>
-          <div class="md:w-[300px w-[250px]   dark:bg-white bg-gray-300 text-black  flex p-2 items-end rounded-md">
+          <div class="md:w-[300px w-[250px]   dark:bg-white bg-gray-300 text-black   flex flex-col gap-2 justify-between p-1 items-end rounded-md">
             <p>
               <%= Markdown.format(@content) %>
             </p>
+
+            <div :if={@message.read_at != nil} class="text-xs px-2 flex justify-end">
+              <%= format_time(@message.read_at) %>
+              <.already_read_ticks />
+            </div>
           </div>
         </div>
       </div>
@@ -147,5 +155,45 @@ defmodule AniminaWeb.ChatComponents do
       </svg>
     <% end %>
     """
+  end
+
+  def already_read_ticks(assigns) do
+    ~H"""
+    <div class="flex  gap-0 relative">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="green"
+        aria-hidden="true"
+        width="12"
+        height="12"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+          clip-rule="evenodd"
+        />
+      </svg>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+        fill="green"
+        aria-hidden="true"
+        width="12"
+        height="12"
+        class="absolute left-1/2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </div>
+    """
+  end
+
+  def format_time(time) do
+    NaiveDateTime.from_erl!({{2000, 1, 1}, Time.to_erl(time)}) |> Timex.format!("{h12}:{0m} {am}")
   end
 end

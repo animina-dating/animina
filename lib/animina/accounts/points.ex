@@ -39,4 +39,8 @@ defmodule Animina.Accounts.Points do
     {:ok, date} = Timex.format(date, "{YYYY}-{0M}-{0D}")
     date
   end
+
+  def format_time(time) do
+    NaiveDateTime.from_erl!({{2000, 1, 1}, Time.to_erl(time)}) |> Timex.format!("{h12}:{0m} {am}")
+  end
 end

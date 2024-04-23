@@ -39,6 +39,10 @@ defmodule Animina.Accounts.Message do
   actions do
     defaults [:create, :read]
 
+    update :has_been_read do
+      change set_attribute(:read_at, DateTime.utc_now())
+    end
+
     read :by_id do
       argument :id, :uuid do
         allow_nil? false
@@ -73,6 +77,7 @@ defmodule Animina.Accounts.Message do
     define :create
 
     define :by_id, args: [:id]
+    define :has_been_read
 
     define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
   end
@@ -84,6 +89,10 @@ defmodule Animina.Accounts.Message do
 
     policy action(:messages_for_sender_and_receiver) do
       authorize_if Animina.Checks.ReadMessageCheck
+    end
+
+    policy action(:has_been_read) do
+      authorize_if Animina.Checks.UpdateReadAtCheck
     end
   end
 
