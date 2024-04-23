@@ -18,6 +18,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   attr :current_user, :any, default: nil, doc: "current user"
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
+  attr :number_of_unread_messages, :integer, default: 0, doc: "number of unread messages"
 
   def top_navigation(assigns) do
     ~H"""
@@ -25,7 +26,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <nav class="grid grid-cols-4 gap-1">
         <.home_nav_item active_tab={@active_tab} />
         <.bookmarks_nav_item active_tab={@active_tab} />
-        <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.chat_nav_item
+          current_user={@current_user}
+          active_tab={@active_tab}
+          number_of_unread_messages={@number_of_unread_messages}
+        />
         <.user_profile_item
           current_user={@current_user}
           active_tab={@active_tab}
@@ -75,7 +80,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
-  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
+  attr :current_user_credit_points, :integer, doc: "current user credit points"
 
   def user_profile_item(assigns) do
     ~H"""
@@ -153,6 +158,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :number_of_unread_messages, :integer, doc: "number of unread messages"
 
   def chat_nav_item(assigns) do
     ~H"""
@@ -175,14 +181,25 @@ defmodule AniminaWeb.TopNavigationCompontents do
           class="w-4 h-4 overflow-hidden rounded-full shrink-0"
           aria-hidden="true"
         >
-          <img
-            class="object-cover w-full h-full"
-            alt=" "
-            src="https://www.wintermeyer.de/assets/images/avatar.jpg"
+        <%= if @current_user && @current_user.profile_photo  do %>
+        <img class="object-cover w-full h-full rounded-full"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
+      <% else %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-full h-full stroke-current shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+            stroke="stroke-current" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
           />
+        </svg>
+      <% end %>
         </div>
         <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center font-medium">
-          +1
+          <%= @number_of_unread_messages %>
         </div>
       </div>
     </.top_navigation_entry>
@@ -230,7 +247,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div class="w-[15%] hidden md:flex flex-grow  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
       <.home_nav_item active_tab={@active_tab} />
       <.bookmarks_nav_item active_tab={@active_tab} />
-      <.chat_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.chat_nav_item
+        current_user={@current_user}
+        active_tab={@active_tab}
+        number_of_unread_messages={@number_of_unread_messages}
+      />
       <.user_profile_item
         current_user={@current_user}
         active_tab={@active_tab}

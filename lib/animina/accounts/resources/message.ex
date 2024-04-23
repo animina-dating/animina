@@ -69,6 +69,14 @@ defmodule Animina.Accounts.Message do
                  (sender_id == ^arg(:receiver_id) and receiver_id == ^arg(:sender_id))
              )
     end
+
+    read :unread_messages_for_user do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(receiver_id == ^arg(:user_id))
+    end
   end
 
   code_interface do
@@ -78,6 +86,7 @@ defmodule Animina.Accounts.Message do
 
     define :by_id, args: [:id]
     define :has_been_read
+    define :unread_messages_for_user, args: [:user_id]
 
     define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
   end

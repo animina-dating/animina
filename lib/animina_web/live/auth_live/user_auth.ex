@@ -6,6 +6,7 @@ defmodule AniminaWeb.LiveUserAuth do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
+  alias Animina.Accounts.Message
   import Phoenix.Component
 
   use AniminaWeb, :verified_routes
@@ -14,14 +15,24 @@ defmodule AniminaWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       current_user = Registration.get_current_user(session)
 
+      {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
+
+      unread_messages =
+        unread_messages
+        |> Enum.filter(fn message -> message.read_at == nil end)
+
       {:cont,
        socket
        |> assign(:current_user, current_user)
+       |> assign(:unread_messages, unread_messages)
+       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
        |> assign(:current_user_credit_points, current_user.credit_points)}
     else
       {:cont,
        socket
        |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
        |> assign(:current_user, nil)}
     end
   end
@@ -55,9 +66,17 @@ defmodule AniminaWeb.LiveUserAuth do
         check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
       )
 
+      {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
+
+      unread_messages =
+        unread_messages
+        |> Enum.filter(fn message -> message.read_at == nil end)
+
       {:cont,
        socket
        |> assign(:current_user, current_user)
+       |> assign(:unread_messages, unread_messages)
+       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
        |> assign(:current_user_credit_points, current_user.credit_points)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: "/#{path}")}

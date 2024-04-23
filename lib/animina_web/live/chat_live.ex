@@ -36,6 +36,8 @@ defmodule AniminaWeb.ChatLive do
       |> assign(sender: sender)
       |> assign(:messages, messages_between_sender_and_receiver)
       |> assign(receiver: receiver)
+      |> assign(:unread_messages, [])
+      |> assign(:number_of_unread_messages, 0)
       |> assign(form: create_message_form())
       |> assign(page_title: gettext("Chat"))
 
