@@ -27,6 +27,9 @@ defmodule AniminaWeb.ChatLive do
     {:ok, messages_between_sender_and_receiver} =
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
+    # we make sure that the messages are marked as read when the user visits the chat page
+    update_read_at_messages(messages_between_sender_and_receiver, sender)
+
     socket =
       socket
       |> assign(active_tab: :chat)
@@ -37,6 +40,14 @@ defmodule AniminaWeb.ChatLive do
       |> assign(page_title: gettext("Chat"))
 
     {:ok, socket}
+  end
+
+  defp update_read_at_messages(messages, sender) do
+    Enum.each(messages, fn message ->
+      if message.receiver_id == sender.id and message.read_at == nil do
+        Message.has_been_read(message, actor: sender)
+      end
+    end)
   end
 
   defp create_message_form do
