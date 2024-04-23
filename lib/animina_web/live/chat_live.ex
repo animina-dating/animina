@@ -8,12 +8,20 @@ defmodule AniminaWeb.ChatLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(%{"current_user" => current_user, "profile" => profile}, _session, socket) do
+  def mount(%{"profile" => profile} = params, _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
-    {:ok, sender} = Accounts.User.by_username(current_user)
+    sender =
+      if params["current_user"] do
+        {:ok, sender} = Accounts.User.by_username(params["current_user"])
+        sender
+      else
+        socket.assigns.current_user
+      end
+
     {:ok, receiver} = Accounts.User.by_username(profile)
 
     {:ok, messages_between_sender_and_receiver} =
@@ -55,6 +63,8 @@ defmodule AniminaWeb.ChatLive do
             actor: socket.assigns.sender
           )
 
+        PubSub.broadcast(Animina.PubSub, "messages", {:new_message, message})
+
         {:noreply,
          socket
          |> assign(messages: messages_between_sender_and_receiver)
@@ -62,6 +72,33 @@ defmodule AniminaWeb.ChatLive do
 
       {:error, _} ->
         {:noreply, assign(socket, form: socket.assigns.form)}
+    end
+  end
+
+  defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
+    if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
+         (message.sender_id == profile.id and message.receiver_id == current_user.id) do
+      true
+    else
+      false
+    end
+  end
+
+  def handle_info({:new_message, message}, socket) do
+    {:ok, message} = Message.by_id(message.id)
+
+    messages =
+      (socket.assigns.messages ++ message)
+      |> Enum.uniq()
+
+    if message_belongs_to_current_user_or_profile(
+         List.first(message),
+         socket.assigns.sender,
+         socket.assigns.receiver
+       ) do
+      {:noreply, socket |> assign(messages: messages)}
+    else
+      {:noreply, socket}
     end
   end
 
@@ -86,7 +123,11 @@ defmodule AniminaWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
+    <div
+      phx-hook="Test"
+      id="test"
+      class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen"
+    >
       <.chat_messages_component sender={@sender} receiver={@receiver} messages={@messages} />
       <div class="w-[100%]  absolute bottom-0">
         <.form

@@ -41,6 +41,7 @@ defmodule AniminaWeb.Router do
       live "/current_user/flags/green", FlagsLive, :green
       live "/current_user/flags/red", FlagsLive, :red
       live "/current_user/about-me", StoryLive, :about_me
+      live "/current_user/messages/:profile", ChatLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
       live "/:username", ProfileLive
     end
