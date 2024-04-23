@@ -223,10 +223,9 @@ defmodule Animina.Accounts.MessageTest do
   end
 
   defp create_like_reaction(sender_id, receiver_id) do
-    Reaction.create(%{
+    Reaction.like(%{
       sender_id: sender_id,
-      receiver_id: receiver_id,
-      name: :like
+      receiver_id: receiver_id
     })
   end
 end
