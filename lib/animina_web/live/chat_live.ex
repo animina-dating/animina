@@ -75,6 +75,15 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
+  defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
+    if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
+         (message.sender_id == profile.id and message.receiver_id == current_user.id) do
+      true
+    else
+      false
+    end
+  end
+
   def handle_info({:new_message, message}, socket) do
     {:ok, message} = Message.by_id(message.id)
 
@@ -90,15 +99,6 @@ defmodule AniminaWeb.ChatLive do
       {:noreply, socket |> assign(messages: messages)}
     else
       {:noreply, socket}
-    end
-  end
-
-  defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
-    if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
-         (message.sender_id == profile.id and message.receiver_id == current_user.id) do
-      true
-    else
-      false
     end
   end
 
