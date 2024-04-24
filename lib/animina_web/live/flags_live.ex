@@ -15,6 +15,7 @@ defmodule AniminaWeb.FlagsLive do
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     socket =
@@ -230,6 +231,15 @@ defmodule AniminaWeb.FlagsLive do
     {:noreply, socket}
   end
 
+  def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
+    {:noreply,
+     socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
+  end
+
   defp fetch_categories do
     Traits.Category
     |> Ash.Query.for_read(:read)
@@ -255,6 +265,7 @@ defmodule AniminaWeb.FlagsLive do
   def render(assigns) do
     ~H"""
     <div class="relative px-5 space-y-4">
+      <p class="text-white"><%= @number_of_unread_messages %></p>
       <div class="flex items-center justify-between">
         <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
 

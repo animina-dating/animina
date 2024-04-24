@@ -35,6 +35,7 @@ defmodule AniminaWeb.ProfileLive do
 
           if connected?(socket) do
             PubSub.subscribe(Animina.PubSub, "credits")
+            PubSub.subscribe(Animina.PubSub, "messages")
           end
 
           if connected?(socket) && socket.assigns.current_user.id != user.id do
@@ -186,6 +187,15 @@ defmodule AniminaWeb.ProfileLive do
     })
 
     {:noreply, socket}
+  end
+
+  def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
+    {:noreply,
+     socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
   defp add_credit_on_profile_view(points, user) do

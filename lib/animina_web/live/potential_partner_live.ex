@@ -15,6 +15,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     user =
@@ -75,6 +76,15 @@ defmodule AniminaWeb.PotentialPartnerLive do
     {:noreply,
      socket
      |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
+    {:noreply,
+     socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
   @impl true
