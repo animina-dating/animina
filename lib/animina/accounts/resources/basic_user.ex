@@ -16,7 +16,7 @@ defmodule Animina.Accounts.BasicUser do
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
-    attribute :username, :ci_string do
+    attribute :username, :string do
       allow_nil? false
 
       constraints max_length: 15,
@@ -54,7 +54,7 @@ defmodule Animina.Accounts.BasicUser do
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
     attribute :language, :string, allow_nil?: false
     attribute :legal_terms_accepted, :boolean, default: false
-    
+
 
     attribute :occupation, :string do
       constraints max_length: 40,
