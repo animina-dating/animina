@@ -77,7 +77,8 @@ defmodule AniminaWeb.LiveUserAuth do
 
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+      {:halt,
+       Phoenix.LiveView.redirect(socket, to: ~p"/#{socket.assigns[:current_user].username}")}
     else
       {:cont,
        socket
