@@ -55,7 +55,6 @@ defmodule Animina.Accounts.BasicUser do
     attribute :language, :string, allow_nil?: false
     attribute :legal_terms_accepted, :boolean, default: false
 
-
     attribute :occupation, :string do
       constraints max_length: 40,
                   trim?: true,
