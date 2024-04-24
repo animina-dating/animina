@@ -97,6 +97,15 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
+  defp get_page_title(message, sender, receiver) do
+    # if I am the one who has received the new message it should add the chat icon
+    if message.receiver_id == sender.id do
+      "💬 #{sender.username} <-> #{receiver.username} (animina chat)"
+    else
+      "#{sender.username} <-> #{receiver.username} (animina chat)"
+    end
+  end
+
   def handle_info({:new_message, message}, socket) do
     {:ok, message} = Message.by_id(message.id)
 
@@ -111,11 +120,12 @@ defmodule AniminaWeb.ChatLive do
          socket.assigns.sender,
          socket.assigns.receiver
        ) do
+      page_title =
+        get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
+
       {:noreply,
        socket
-       |> assign(
-         page_title:
-           "💬 #{socket.assigns.sender.username} <-> #{socket.assigns.receiver.username} (animina chat)")
+       |> assign(page_title: page_title)
        |> assign(unread_messages: unread_messages)
        |> assign(number_of_unread_messages: Enum.count(unread_messages))
        |> assign(messages: messages)}
