@@ -37,7 +37,7 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:messages, messages_between_sender_and_receiver)
       |> assign(receiver: receiver)
       |> assign(form: create_message_form())
-      |> assign(page_title: gettext("Chat"))
+      |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
     {:ok, socket}
   end
@@ -107,7 +107,13 @@ defmodule AniminaWeb.ChatLive do
          socket.assigns.sender,
          socket.assigns.receiver
        ) do
-      {:noreply, socket |> assign(messages: messages)}
+      {:noreply,
+       socket
+       |> assign(
+         page_title:
+           "💬 #{socket.assigns.sender.username} <-> #{socket.assigns.receiver.username} (animina chat)"
+       )
+       |> assign(messages: messages)}
     else
       {:noreply, socket}
     end
