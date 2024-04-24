@@ -12,6 +12,7 @@ defmodule AniminaWeb.RootLive do
   def mount(_params, %{"language" => language} = session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     socket =
@@ -90,6 +91,15 @@ defmodule AniminaWeb.RootLive do
 
   def handle_info({:credit_updated, _updated_credit}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
+    {:noreply,
+     socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
   @impl true
