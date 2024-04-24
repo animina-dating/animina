@@ -39,7 +39,7 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:unread_messages, [])
       |> assign(:number_of_unread_messages, 0)
       |> assign(form: create_message_form())
-      |> assign(page_title: gettext("Chat"))
+      |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
     {:ok, socket}
   end
@@ -113,6 +113,9 @@ defmodule AniminaWeb.ChatLive do
        ) do
       {:noreply,
        socket
+       |> assign(
+         page_title:
+           "💬 #{socket.assigns.sender.username} <-> #{socket.assigns.receiver.username} (animina chat)")
        |> assign(unread_messages: unread_messages)
        |> assign(number_of_unread_messages: Enum.count(unread_messages))
        |> assign(messages: messages)}
