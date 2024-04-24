@@ -36,8 +36,10 @@ defmodule AniminaWeb.ChatLive do
       |> assign(sender: sender)
       |> assign(:messages, messages_between_sender_and_receiver)
       |> assign(receiver: receiver)
+      |> assign(:unread_messages, [])
+      |> assign(:number_of_unread_messages, 0)
       |> assign(form: create_message_form())
-      |> assign(page_title: gettext("Chat"))
+      |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
     {:ok, socket}
   end
@@ -95,6 +97,15 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
+  defp get_page_title(message, sender, receiver) do
+    # if I am the one who has received the new message it should add the chat icon
+    if message.receiver_id == sender.id do
+      "💬 #{sender.username} <-> #{receiver.username} (animina chat)"
+    else
+      "#{sender.username} <-> #{receiver.username} (animina chat)"
+    end
+  end
+
   def handle_info({:new_message, message}, socket) do
     {:ok, message} = Message.by_id(message.id)
 
@@ -102,12 +113,22 @@ defmodule AniminaWeb.ChatLive do
       (socket.assigns.messages ++ message)
       |> Enum.uniq()
 
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
     if message_belongs_to_current_user_or_profile(
          List.first(message),
          socket.assigns.sender,
          socket.assigns.receiver
        ) do
-      {:noreply, socket |> assign(messages: messages)}
+      page_title =
+        get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
+
+      {:noreply,
+       socket
+       |> assign(page_title: page_title)
+       |> assign(unread_messages: unread_messages)
+       |> assign(number_of_unread_messages: Enum.count(unread_messages))
+       |> assign(messages: messages)}
     else
       {:noreply, socket}
     end
@@ -134,11 +155,7 @@ defmodule AniminaWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      phx-hook="Test"
-      id="test"
-      class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen"
-    >
+    <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
       <.chat_messages_component sender={@sender} receiver={@receiver} messages={@messages} />
       <div class="w-[100%]  absolute bottom-0">
         <.form

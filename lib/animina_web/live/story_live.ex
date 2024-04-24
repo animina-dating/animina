@@ -14,6 +14,7 @@ defmodule AniminaWeb.StoryLive do
   def mount(%{"id" => story_id}, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     story = Story.by_id!(story_id)
@@ -40,6 +41,7 @@ defmodule AniminaWeb.StoryLive do
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     socket =
@@ -85,6 +87,15 @@ defmodule AniminaWeb.StoryLive do
   @impl true
   def handle_info({:credit_updated, _updated_credit}, socket) do
     {:noreply, socket}
+  end
+
+  def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
+    {:noreply,
+     socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
   defp apply_action(socket, :edit, _params) do
