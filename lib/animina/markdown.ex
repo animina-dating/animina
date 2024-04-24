@@ -1,5 +1,5 @@
 defmodule Animina.Markdown do
-   @moduledoc """
+  @moduledoc """
   This is the markdown module that converts markdown to html
   """
   def format(text) do
