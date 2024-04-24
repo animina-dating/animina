@@ -4,9 +4,9 @@ defmodule AniminaWeb.LiveUserAuth do
   """
 
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Message
   alias Animina.Accounts.User
   alias AniminaWeb.Registration
-  alias Animina.Accounts.Message
   import Phoenix.Component
 
   use AniminaWeb, :verified_routes
@@ -16,10 +16,6 @@ defmodule AniminaWeb.LiveUserAuth do
       current_user = Registration.get_current_user(session)
 
       {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
-
-      unread_messages =
-        unread_messages
-        |> Enum.filter(fn message -> message.read_at == nil end)
 
       {:cont,
        socket
@@ -68,10 +64,6 @@ defmodule AniminaWeb.LiveUserAuth do
 
       {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
 
-      unread_messages =
-        unread_messages
-        |> Enum.filter(fn message -> message.read_at == nil end)
-
       {:cont,
        socket
        |> assign(:current_user, current_user)
@@ -90,6 +82,8 @@ defmodule AniminaWeb.LiveUserAuth do
       {:cont,
        socket
        |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
        |> assign(:current_user, nil)}
     end
   end

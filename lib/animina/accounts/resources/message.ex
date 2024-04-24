@@ -75,7 +75,7 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
-      filter expr(receiver_id == ^arg(:user_id))
+      filter expr(receiver_id == ^arg(:user_id) and is_nil(read_at))
     end
   end
 

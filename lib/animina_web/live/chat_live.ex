@@ -104,12 +104,18 @@ defmodule AniminaWeb.ChatLive do
       (socket.assigns.messages ++ message)
       |> Enum.uniq()
 
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
     if message_belongs_to_current_user_or_profile(
          List.first(message),
          socket.assigns.sender,
          socket.assigns.receiver
        ) do
-      {:noreply, socket |> assign(messages: messages)}
+      {:noreply,
+       socket
+       |> assign(unread_messages: unread_messages)
+       |> assign(number_of_unread_messages: Enum.count(unread_messages))
+       |> assign(messages: messages)}
     else
       {:noreply, socket}
     end
