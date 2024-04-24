@@ -4,6 +4,7 @@ defmodule AniminaWeb.ChatComponents do
   """
   use Phoenix.Component
   alias Animina.Markdown
+  alias AniminaWeb.ProfileComponents
 
   def send_message_button(assigns) do
     ~H"""
@@ -33,10 +34,19 @@ defmodule AniminaWeb.ChatComponents do
     ~H"""
     <div class="h-[80vh]  w-[100%] ">
       <div class="w-[100%] h-[100%] flex flex-col justify-between">
-        <div class="h-[7%] w-[100%]">
-          <.receiver_profile_box receiver={@receiver} />
+        <div class="h-[10%] w-[100%] z-50">
+          <ProfileComponents.profile_details
+            user={@receiver}
+            current_user={@sender}
+            current_user_has_liked_profile?={@current_user_has_liked_profile?}
+            profile_points={@profile_points}
+            intersecting_green_flags_count={@intersecting_green_flags_count}
+            intersecting_red_flags_count={@intersecting_red_flags_count}
+            years_text={@years_text}
+            centimeters_text={@centimeters_text}
+          />
         </div>
-        <div class="h-[93%]  w-[100%]">
+        <div class="h-[93%] z-0  w-[100%]">
           <.messages_box messages={@messages} sender={@sender} receiver={@receiver} />
         </div>
       </div>
@@ -50,7 +60,7 @@ defmodule AniminaWeb.ChatComponents do
       <div
         id="ChatMessagesBox"
         phx-hook="ScrollToBottom"
-        class="flex flex-col w-[100%] md:p-4 p-2  py-8 transition-all duration-500  overflow-y-scroll  gap-2"
+        class="flex flex-col w-[100%]   py-12 transition-all duration-500  overflow-y-scroll  gap-2"
       >
         <%= for message <-@messages do %>
           <div class="w-[100%]">
