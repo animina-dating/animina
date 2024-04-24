@@ -3,12 +3,15 @@ defmodule AniminaWeb.ChatLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Message
+  alias Animina.Accounts.Points
+  alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Traits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
   @impl true
-  def mount(%{"profile" => profile} = params, _session, socket) do
+  def mount(%{"profile" => profile} = params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -27,6 +30,18 @@ defmodule AniminaWeb.ChatLive do
     {:ok, messages_between_sender_and_receiver} =
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
+    intersecting_green_flags_count =
+      get_intersecting_flags(
+        fetch_flags(sender.id, :green, language),
+        fetch_flags(receiver.id, :white, language)
+      )
+
+    intersecting_red_flags_count =
+      get_intersecting_flags(
+        fetch_flags(sender.id, :red, language),
+        fetch_flags(receiver.id, :white, language)
+      )
+
     # we make sure that the messages are marked as read when the user visits the chat page
     update_read_at_messages(messages_between_sender_and_receiver, sender)
 
@@ -37,11 +52,24 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:messages, messages_between_sender_and_receiver)
       |> assign(receiver: receiver)
       |> assign(:unread_messages, [])
+      |> assign(profile_points: Points.humanized_points(receiver.credit_points))
+      |> assign(:intersecting_green_flags_count, intersecting_green_flags_count)
+      |> assign(:intersecting_red_flags_count, intersecting_red_flags_count)
       |> assign(:number_of_unread_messages, 0)
       |> assign(form: create_message_form())
+      |> assign(
+        current_user_has_liked_profile?: current_user_has_liked_profile(sender.id, receiver.id)
+      )
       |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
     {:ok, socket}
+  end
+
+  defp get_intersecting_flags(first_flag_array, second_flag_array) do
+    first_flag_array = Enum.map(first_flag_array, fn x -> x.flag.id end)
+    second_flag_array = Enum.map(second_flag_array, fn x -> x.flag.id end)
+
+    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
   end
 
   defp update_read_at_messages(messages, sender) do
@@ -52,13 +80,36 @@ defmodule AniminaWeb.ChatLive do
     end)
   end
 
-  defp create_message_form do
-    Form.for_create(Message, :create,
-      api: Accounts,
-      as: "message",
-      forms: [auto?: true]
+  def handle_event("add_like", _params, socket) do
+    Reaction.like(
+      %{
+        sender_id: socket.assigns.sender.id,
+        receiver_id: socket.assigns.receiver.id
+      },
+      actor: socket.assigns.sender
     )
-    |> to_form()
+
+    {:noreply,
+     socket
+     |> assign(
+       current_user_has_liked_profile?:
+         current_user_has_liked_profile(socket.assigns.sender.id, socket.assigns.receiver.id)
+     )}
+  end
+
+  @impl true
+  def handle_event("remove_like", _params, socket) do
+    reaction =
+      get_reaction_for_sender_and_receiver(socket.assigns.sender.id, socket.assigns.receiver.id)
+
+    Reaction.unlike(reaction, actor: socket.assigns.sender)
+
+    {:noreply,
+     socket
+     |> assign(
+       current_user_has_liked_profile?:
+         current_user_has_liked_profile(socket.assigns.sender.id, socket.assigns.receiver.id)
+     )}
   end
 
   @impl true
@@ -88,6 +139,37 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
+  defp fetch_flags(user_id, color, language) do
+    user_flags =
+      Traits.UserFlags
+      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
+      |> Ash.Query.load(flag: [:category])
+      |> Traits.read!()
+
+    Enum.map(user_flags, fn user_flag ->
+      %{
+        id: user_flag.id,
+        position: user_flag.position,
+        flag: %{
+          id: user_flag.flag.id,
+          name: get_translation(user_flag.flag.flag_translations, language),
+          emoji: user_flag.flag.emoji
+        },
+        category: %{
+          id: user_flag.flag.category.id,
+          name: get_translation(user_flag.flag.category.category_translations, language)
+        }
+      }
+    end)
+  end
+
+  defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
+    {:ok, reaction} =
+      Reaction.by_sender_and_receiver_id(user_id, current_user_id)
+
+    reaction
+  end
+
   defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
     if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
          (message.sender_id == profile.id and message.receiver_id == current_user.id) do
@@ -103,6 +185,25 @@ defmodule AniminaWeb.ChatLive do
       "💬 #{sender.username} <-> #{receiver.username} (animina chat)"
     else
       "#{sender.username} <-> #{receiver.username} (animina chat)"
+    end
+  end
+
+  defp get_translation(translations, language) do
+    language = String.split(language, "-") |> Enum.at(0)
+
+    translation =
+      Enum.find(translations, nil, fn translation -> translation.language == language end)
+
+    translation.name
+  end
+
+  defp current_user_has_liked_profile(user_id, current_user_id) do
+    case Reaction.by_sender_and_receiver_id(user_id, current_user_id) do
+      {:ok, _user} ->
+        true
+
+      {:error, _} ->
+        false
     end
   end
 
@@ -152,11 +253,30 @@ defmodule AniminaWeb.ChatLive do
     Enum.map(field.errors, &translate_error(&1))
   end
 
+  defp create_message_form do
+    Form.for_create(Message, :create,
+      api: Accounts,
+      as: "message",
+      forms: [auto?: true]
+    )
+    |> to_form()
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
     <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
-      <.chat_messages_component sender={@sender} receiver={@receiver} messages={@messages} />
+      <.chat_messages_component
+        sender={@sender}
+        receiver={@receiver}
+        messages={@messages}
+        profile_points={@profile_points}
+        current_user_has_liked_profile?={@current_user_has_liked_profile?}
+        intersecting_green_flags_count={@intersecting_green_flags_count}
+        intersecting_red_flags_count={@intersecting_red_flags_count}
+        years_text={gettext("years")}
+        centimeters_text={gettext("cm")}
+      />
       <div class="w-[100%]  absolute bottom-0">
         <.form
           :let={f}

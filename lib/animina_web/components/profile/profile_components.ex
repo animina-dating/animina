@@ -4,6 +4,67 @@ defmodule AniminaWeb.ProfileComponents do
   """
   use Phoenix.Component
 
+  def test(assigns) do
+    ~H"""
+    <div>
+      qwef
+    </div>
+    """
+  end
+
+  def profile_details(assigns) do
+    ~H"""
+    <div :if={@user} class="pb-4">
+      <div class="w-[100%] flex justify-between items-center">
+        <h1 class="text-2xl font-semibold dark:text-white">
+          <%= @user.name %>
+        </h1>
+
+        <.like_reaction_button
+          current_user_has_liked_profile?={@current_user_has_liked_profile?}
+          current_user={@current_user}
+          user={@user}
+        />
+      </div>
+
+      <div class="pt-2">
+        <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <%= @user.age %> <%= @years_text %>
+        </span>
+        <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <%= @user.height %> <%= @centimeters_text %>
+        </span>
+        <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          📍 <%= @user.city.name %>
+        </span>
+        <span
+          :if={@user.occupation}
+          class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+        >
+          🔧 <%= @user.occupation %>
+        </span>
+        <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <%= @profile_points %>
+        </span>
+        <span :if={@current_user != @user}>
+          <span
+            :if={@intersecting_green_flags_count != 0}
+            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
+            <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
+          </span>
+          <span
+            :if={@intersecting_red_flags_count != 0}
+            class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
+            <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
+          </span>
+        </span>
+      </div>
+    </div>
+    """
+  end
+
   def profile_location_card(assigns) do
     ~H"""
     <div class="flex items-center gap-2 text-gray-600 dark:text-gray-100">
