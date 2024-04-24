@@ -155,11 +155,7 @@ defmodule AniminaWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div
-      phx-hook="Test"
-      id="test"
-      class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen"
-    >
+    <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
       <.chat_messages_component sender={@sender} receiver={@receiver} messages={@messages} />
       <div class="w-[100%]  absolute bottom-0">
         <.form
