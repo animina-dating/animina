@@ -16,7 +16,7 @@ defmodule Animina.Accounts.User do
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
-    attribute :username, :string do
+    attribute :username, :ci_string do
       allow_nil? false
 
       constraints max_length: 15,

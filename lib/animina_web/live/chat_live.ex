@@ -62,7 +62,16 @@ defmodule AniminaWeb.ChatLive do
       )
       |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
-    {:ok, socket}
+    if profile != Ash.CiString.value(socket.assigns.receiver.username) or
+         params["current_user"] != Ash.CiString.value(socket.assigns.sender.username) do
+      {:ok,
+       socket
+       |> push_redirect(
+         to: ~p"/#{socket.assigns.sender.username}/messages/#{socket.assigns.receiver.username}"
+       )}
+    else
+      {:ok, socket}
+    end
   end
 
   defp get_intersecting_flags(first_flag_array, second_flag_array) do
