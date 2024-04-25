@@ -7,8 +7,8 @@ defmodule Animina.Accounts.User do
     data_layer: AshPostgres.DataLayer,
     extensions: [AshAuthentication]
 
-  alias Animina.Narratives
   alias Animina.Accounts
+  alias Animina.Narratives
   alias Animina.Traits
   alias Animina.Validations
 
