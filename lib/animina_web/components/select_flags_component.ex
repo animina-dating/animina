@@ -123,13 +123,17 @@ defmodule AniminaWeb.SelectFlagsComponent do
     """
   end
 
-  defp get_translation(translations, language) do
+  defp get_translation(translations, language) when translations != [] do
     language = String.split(language, "-") |> Enum.at(0)
 
     translation =
       Enum.find(translations, nil, fn translation -> translation.language == language end)
 
     translation.name
+  end
+
+  defp get_translation(_, _) do
+    nil
   end
 
   defp get_flag_styling(
