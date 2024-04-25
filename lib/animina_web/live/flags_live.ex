@@ -42,7 +42,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
-    |> assign(navigate_to: "/current_user/flags/green")
+    |> assign(navigate_to: "/my/flags/green")
     |> assign(title: gettext("Choose Your Own Flags"))
     |> assign(
       info_text:
@@ -63,7 +63,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
-    |> assign(navigate_to: "/current_user/about-me")
+    |> assign(navigate_to: "/my/about-me")
     |> assign(title: gettext("Choose Your Red Flags"))
     |> assign(
       info_text:
@@ -84,7 +84,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
-    |> assign(navigate_to: "/current_user/flags/red")
+    |> assign(navigate_to: "/my/flags/red")
     |> assign(title: gettext("Choose Your Green Flags"))
     |> assign(
       info_text:
