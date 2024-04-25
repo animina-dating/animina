@@ -85,8 +85,14 @@ defmodule Animina.Accounts.User do
     has_many :credits, Accounts.Credit
     has_many :photos, Accounts.Photo
 
-    has_many :flags, Traits.UserFlags do
-      api Traits
+    # has_many :flags, Traits.UserFlags do
+    #   api Traits
+    # end
+
+    many_to_many :flags, Traits.Flag do
+      through Traits.UserFlags
+      source_attribute_on_join_resource :flag_id
+      destination_attribute_on_join_resource :user_id
     end
 
     has_many :sent_messages, Accounts.Message do
