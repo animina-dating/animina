@@ -78,7 +78,13 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(user: nil)
       end
 
-    {:ok, socket}
+    if username != Ash.CiString.value(socket.assigns.user.username) do
+      {:ok,
+       socket
+       |> push_redirect(to: ~p"/#{socket.assigns.user.username}")}
+    else
+      {:ok, socket}
+    end
   end
 
   @impl true
@@ -256,6 +262,7 @@ defmodule AniminaWeb.ProfileLive do
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         profile_points={@profile_points}
         intersecting_green_flags_count={@intersecting_green_flags_count}
+        intersecting_red_flags_count={@intersecting_red_flags_count}
         years_text={gettext("years")}
         centimeters_text={gettext("cm")}
       />
