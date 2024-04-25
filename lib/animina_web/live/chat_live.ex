@@ -6,7 +6,6 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
-  alias Animina.Traits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -32,14 +31,14 @@ defmodule AniminaWeb.ChatLive do
 
     intersecting_green_flags_count =
       get_intersecting_flags(
-        fetch_flags(sender, :green, language),
-        fetch_flags(receiver, :white, language)
+        filter_flags(sender, :green, language),
+        filter_flags(receiver, :white, language)
       )
 
     intersecting_red_flags_count =
       get_intersecting_flags(
-        fetch_flags(sender, :red, language),
-        fetch_flags(receiver, :white, language)
+        filter_flags(sender, :red, language),
+        filter_flags(receiver, :white, language)
       )
 
     # we make sure that the messages are marked as read when the user visits the chat page
@@ -148,7 +147,7 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
-  defp fetch_flags(user, color, language) do
+  defp filter_flags(user, color, language) do
     user_flags =
       user.flags
       |> Enum.filter(fn x -> x.color == color end)

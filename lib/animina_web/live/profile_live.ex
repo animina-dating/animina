@@ -50,14 +50,14 @@ defmodule AniminaWeb.ProfileLive do
 
           intersecting_green_flags_count =
             get_intersecting_flags(
-              fetch_flags(current_user, :green, language),
-              fetch_flags(user, :white, language)
+              filter_flags(current_user, :green, language),
+              filter_flags(user, :white, language)
             )
 
           intersecting_red_flags_count =
             get_intersecting_flags(
-              fetch_flags(current_user, :red, language),
-              fetch_flags(user, :white, language)
+              filter_flags(current_user, :red, language),
+              filter_flags(user, :white, language)
             )
 
           socket
@@ -282,17 +282,17 @@ defmodule AniminaWeb.ProfileLive do
 
   defp fetch_green_and_red_flags(user, language) do
     green_flags =
-      fetch_flags(user, :green, language)
+      filter_flags(user, :green, language)
       |> Enum.map(& &1.flag.id)
 
     red_flags =
-      fetch_flags(user, :red, language)
+      filter_flags(user, :red, language)
       |> Enum.map(& &1.flag.id)
 
     {green_flags, red_flags}
   end
 
-  defp fetch_flags(user, color, language) do
+  defp filter_flags(user, color, language) do
     user_flags =
       user.flags
       |> Enum.filter(fn x -> x.color == color end)
@@ -314,7 +314,7 @@ defmodule AniminaWeb.ProfileLive do
     stories = user.stories
 
     flags =
-      fetch_flags(user, :white, language)
+      filter_flags(user, :white, language)
 
     array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
 
