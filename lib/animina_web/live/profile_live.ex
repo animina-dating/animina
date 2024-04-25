@@ -46,18 +46,18 @@ defmodule AniminaWeb.ProfileLive do
           stories_and_flags = fetch_stories_and_flags(user, language)
 
           {current_user_green_flags, current_user_red_flags} =
-            fetch_green_and_red_flags(current_user.id, language)
+            fetch_green_and_red_flags(current_user, language)
 
           intersecting_green_flags_count =
             get_intersecting_flags(
-              fetch_flags(current_user.id, :green, language),
-              fetch_flags(user.id, :white, language)
+              filter_flags(current_user, :green, language),
+              filter_flags(user, :white, language)
             )
 
           intersecting_red_flags_count =
             get_intersecting_flags(
-              fetch_flags(current_user.id, :red, language),
-              fetch_flags(user.id, :white, language)
+              filter_flags(current_user, :red, language),
+              filter_flags(user, :white, language)
             )
 
           socket
@@ -280,24 +280,22 @@ defmodule AniminaWeb.ProfileLive do
     """
   end
 
-  defp fetch_green_and_red_flags(user_id, language) do
+  defp fetch_green_and_red_flags(user, language) do
     green_flags =
-      fetch_flags(user_id, :green, language)
+      filter_flags(user, :green, language)
       |> Enum.map(& &1.flag.id)
 
     red_flags =
-      fetch_flags(user_id, :red, language)
+      filter_flags(user, :red, language)
       |> Enum.map(& &1.flag.id)
 
     {green_flags, red_flags}
   end
 
-  defp fetch_flags(user_id, color, language) do
+  defp filter_flags(user, color, language) do
     user_flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-      |> Ash.Query.load(flag: [:category])
-      |> Traits.read!()
+      user.flags
+      |> Enum.filter(fn x -> x.color == color end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
@@ -307,20 +305,16 @@ defmodule AniminaWeb.ProfileLive do
           id: user_flag.flag.id,
           name: get_translation(user_flag.flag.flag_translations, language),
           emoji: user_flag.flag.emoji
-        },
-        category: %{
-          id: user_flag.flag.category.id,
-          name: get_translation(user_flag.flag.category.category_translations, language)
         }
       }
     end)
   end
 
   defp fetch_stories_and_flags(user, language) do
-    stories = fetch_stories(user.id)
+    stories = user.stories
 
     flags =
-      fetch_flags(user.id, :white, language)
+      filter_flags(user, :white, language)
 
     array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
 
@@ -338,12 +332,5 @@ defmodule AniminaWeb.ProfileLive do
       Enum.find(translations, nil, fn translation -> translation.language == language end)
 
     translation.name
-  end
-
-  defp fetch_stories(user_id) do
-    Narratives.Story
-    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-    |> Narratives.read!(page: [limit: 20])
-    |> then(& &1.results)
   end
 end
