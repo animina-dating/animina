@@ -32,14 +32,14 @@ defmodule AniminaWeb.ChatLive do
 
     intersecting_green_flags_count =
       get_intersecting_flags(
-        fetch_flags(sender.id, :green, language),
-        fetch_flags(receiver.id, :white, language)
+        fetch_flags(sender, :green, language),
+        fetch_flags(receiver, :white, language)
       )
 
     intersecting_red_flags_count =
       get_intersecting_flags(
-        fetch_flags(sender.id, :red, language),
-        fetch_flags(receiver.id, :white, language)
+        fetch_flags(sender, :red, language),
+        fetch_flags(receiver, :white, language)
       )
 
     # we make sure that the messages are marked as read when the user visits the chat page
@@ -148,12 +148,10 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
-  defp fetch_flags(user_id, color, language) do
+  defp fetch_flags(user, color, language) do
     user_flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-      |> Ash.Query.load(flag: [:category])
-      |> Traits.read!()
+      user.flags
+      |> Enum.filter(fn x -> x.color == color end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
@@ -163,10 +161,6 @@ defmodule AniminaWeb.ChatLive do
           id: user_flag.flag.id,
           name: get_translation(user_flag.flag.flag_translations, language),
           emoji: user_flag.flag.emoji
-        },
-        category: %{
-          id: user_flag.flag.category.id,
-          name: get_translation(user_flag.flag.category.category_translations, language)
         }
       }
     end)

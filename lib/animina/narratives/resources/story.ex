@@ -48,6 +48,8 @@ defmodule Animina.Narratives.Story do
     read :read do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
+
+      prepare build(load: [:headline, :photo])
     end
 
     read :by_user_id do
@@ -57,6 +59,8 @@ defmodule Animina.Narratives.Story do
         allow_nil? false
       end
 
+      prepare build(load: [:headline, :photo, :user])
+
       prepare build(sort: [position: :asc])
 
       filter expr(user_id == ^arg(:user_id))
@@ -64,6 +68,8 @@ defmodule Animina.Narratives.Story do
 
     read :user_headlines do
       argument :user_id, :uuid, allow_nil?: false
+
+      prepare build(load: [:headline, :photo, :user])
 
       filter expr(is_nil(headline_id) == ^false and user_id == ^arg(:user_id))
     end
@@ -76,14 +82,11 @@ defmodule Animina.Narratives.Story do
     define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
+    define :by_user_id, args: [:user_id]
   end
 
   identities do
     identity :unique_position, [:position, :user_id]
-  end
-
-  preparations do
-    prepare build(load: [:headline, :photo, :user])
   end
 
   postgres do
