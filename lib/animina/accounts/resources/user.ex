@@ -8,6 +8,7 @@ defmodule Animina.Accounts.User do
     extensions: [AshAuthentication]
 
   alias Animina.Accounts
+  alias Animina.Narratives
   alias Animina.Traits
   alias Animina.Validations
 
@@ -95,6 +96,10 @@ defmodule Animina.Accounts.User do
       destination_attribute_on_join_resource :user_id
     end
 
+    has_many :stories, Narratives.Story do
+      api Narratives
+    end
+
     has_many :sent_messages, Accounts.Message do
       destination_attribute :sender_id
     end
@@ -156,7 +161,7 @@ defmodule Animina.Accounts.User do
   end
 
   preparations do
-    prepare build(load: [:age, :credit_points, :profile_photo, :city])
+    prepare build(load: [:age, :credit_points, :profile_photo, :city, :flags, :stories])
   end
 
   authentication do
