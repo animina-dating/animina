@@ -92,8 +92,8 @@ defmodule Animina.Accounts.User do
 
     many_to_many :flags, Traits.Flag do
       through Traits.UserFlags
-      source_attribute_on_join_resource :flag_id
-      destination_attribute_on_join_resource :user_id
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :flag_id
     end
 
     has_many :stories, Narratives.Story do
