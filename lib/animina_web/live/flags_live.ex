@@ -265,7 +265,7 @@ defmodule AniminaWeb.FlagsLive do
   def render(assigns) do
     ~H"""
     <div class="relative px-5 space-y-4">
-      <p class="text-white"><%= @number_of_unread_messages %></p>
+
       <div class="flex items-center justify-between">
         <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
 
