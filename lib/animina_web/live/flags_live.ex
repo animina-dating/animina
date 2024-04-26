@@ -53,10 +53,10 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user.id, :white)
-      |> Enum.map(fn flag -> flag.flag.id end)
+      filter_flags(socket.assigns.current_user, :white)
+      |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :white) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :white) end)
   end
 
   defp apply_action(socket, :red, _params) do
@@ -74,10 +74,10 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user.id, :green)
-      |> Enum.map(fn flag -> flag.flag.id end)
+      filter_flags(socket.assigns.current_user, :green)
+      |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :red) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :red) end)
   end
 
   defp apply_action(socket, :green, _params) do
@@ -95,21 +95,21 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user.id, :red)
-      |> Enum.map(fn flag -> flag.flag.id end)
+      filter_flags(socket.assigns.current_user, :red)
+      |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user.id, :green) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :green) end)
   end
 
   @impl true
-  def handle_async(:fetch_flags, {:ok, flags}, socket) do
-    flags = Enum.map(flags, fn flag -> flag.flag_id end)
+  def handle_async(:filter_flags, {:ok, flags}, socket) do
+    flags = Enum.map(flags, fn flag -> flag.id end)
 
     {:noreply, socket |> assign(user_flags: flags) |> assign(selected: Enum.count(flags))}
   end
 
   @impl true
-  def handle_async(:fetch_flags, {:exit, _reason}, socket) do
+  def handle_async(:filter_flags, {:exit, _reason}, socket) do
     {:noreply, socket}
   end
 
@@ -145,11 +145,8 @@ defmodule AniminaWeb.FlagsLive do
         }
       end)
 
-    Traits.UserFlags
-    |> Ash.Query.filter(
-      user_id == ^socket.assigns.current_user.id and color == ^socket.assigns.color
-    )
-    |> Traits.read!()
+    socket.assigns.current_user.flags_join_assoc
+    |> Enum.filter(fn x -> x.color == socket.assigns.color end)
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
     bulk_result =
@@ -246,26 +243,31 @@ defmodule AniminaWeb.FlagsLive do
     |> Traits.read!()
   end
 
-  defp fetch_flags(current_user_id, color) do
+  defp filter_flags(current_user, color) do
     flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: color})
-      |> Traits.read!()
+      current_user.flags
+      |> Enum.filter(fn x ->
+        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == color
+      end)
 
     if Enum.empty?(flags) && color == :green do
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: current_user_id, color: :white})
-      |> Traits.read!()
+      current_user.flags
+      |> Enum.filter(fn x ->
+        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == :white
+      end)
     else
       flags
     end
+  end
+
+  defp find_user_flag_for_a_flag(user_flags, flag) do
+    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="relative px-5 space-y-4">
-      <p class="text-white"><%= @number_of_unread_messages %></p>
       <div class="flex items-center justify-between">
         <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
 
