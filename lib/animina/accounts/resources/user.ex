@@ -93,7 +93,7 @@ defmodule Animina.Accounts.User do
     end
 
     has_many :user_flags, Traits.UserFlags do
-      api Traits
+      destination_attribute :user_id
     end
 
     has_many :stories, Narratives.Story do
