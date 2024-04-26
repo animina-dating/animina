@@ -226,8 +226,7 @@ defmodule AniminaWeb.ProfileLive do
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
-    Enum.filter(first_flag_array, &(&1 in second_flag_array))
-    |> Enum.count()
+    Enum.count(first_flag_array, &(&1 in second_flag_array))
   end
 
   defp current_user_has_liked_profile(user_id, current_user_id) do
