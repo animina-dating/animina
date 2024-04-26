@@ -92,6 +92,8 @@ defmodule Animina.Accounts.User do
       destination_attribute_on_join_resource :flag_id
     end
 
+    has_many :user_flags, Traits.UserFlags
+
     has_many :stories, Narratives.Story do
       api Narratives
     end
@@ -157,7 +159,9 @@ defmodule Animina.Accounts.User do
   end
 
   preparations do
-    prepare build(load: [:age, :credit_points, :profile_photo, :city, :flags, :stories])
+    prepare build(
+              load: [:age, :credit_points, :profile_photo, :city, :flags, :stories, :user_flags]
+            )
   end
 
   authentication do

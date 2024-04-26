@@ -48,18 +48,20 @@ defmodule AniminaWeb.ProfileLive do
           {current_user_green_flags, current_user_red_flags} =
             fetch_green_and_red_flags(current_user, language)
 
+
           intersecting_green_flags_count =
             get_intersecting_flags(
               filter_flags(current_user, :green, language),
               filter_flags(user, :white, language)
             )
 
+
           intersecting_red_flags_count =
             get_intersecting_flags(
               filter_flags(current_user, :red, language),
               filter_flags(user, :white, language)
             )
-
+           
           socket
           |> assign(user: user)
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
@@ -224,8 +226,8 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_intersecting_flags(first_flag_array, second_flag_array) do
-    first_flag_array = Enum.map(first_flag_array, fn x -> x.flag.id end)
-    second_flag_array = Enum.map(second_flag_array, fn x -> x.flag.id end)
+    first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
+    second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
     Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
   end
@@ -283,11 +285,11 @@ defmodule AniminaWeb.ProfileLive do
   defp fetch_green_and_red_flags(user, language) do
     green_flags =
       filter_flags(user, :green, language)
-      |> Enum.map(& &1.flag.id)
+      |> Enum.map(fn x -> x.id end)
 
     red_flags =
       filter_flags(user, :red, language)
-      |> Enum.map(& &1.flag.id)
+      |> Enum.map(fn x -> x.id end)
 
     {green_flags, red_flags}
   end
@@ -295,19 +297,19 @@ defmodule AniminaWeb.ProfileLive do
   defp filter_flags(user, color, language) do
     user_flags =
       user.flags
-      |> Enum.filter(fn x -> x.color == color end)
+      |> Enum.filter(fn x -> find_user_flag_for_a_flag(user.user_flags, x).color == color end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
         id: user_flag.id,
-        position: user_flag.position,
-        flag: %{
-          id: user_flag.flag.id,
-          name: get_translation(user_flag.flag.flag_translations, language),
-          emoji: user_flag.flag.emoji
-        }
+        name: get_translation(user_flag.flag_translations, language),
+        emoji: user_flag.emoji
       }
     end)
+  end
+
+  defp find_user_flag_for_a_flag(user_flags, flag) do
+    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   defp fetch_stories_and_flags(user, language) do
