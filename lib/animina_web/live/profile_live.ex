@@ -11,7 +11,6 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
-  alias Animina.Traits
   alias Phoenix.PubSub
 
   @impl true
@@ -46,18 +45,18 @@ defmodule AniminaWeb.ProfileLive do
           stories_and_flags = fetch_stories_and_flags(user, language)
 
           {current_user_green_flags, current_user_red_flags} =
-            fetch_green_and_red_flags(current_user.id, language)
+            fetch_green_and_red_flags_ids(current_user, language)
 
           intersecting_green_flags_count =
-            get_intersecting_flags(
-              fetch_flags(current_user.id, :green, language),
-              fetch_flags(user.id, :white, language)
+            get_intersecting_flags_count(
+              filter_flags(current_user, :green, language),
+              filter_flags(user, :white, language)
             )
 
           intersecting_red_flags_count =
-            get_intersecting_flags(
-              fetch_flags(current_user.id, :red, language),
-              fetch_flags(user.id, :white, language)
+            get_intersecting_flags_count(
+              filter_flags(current_user, :red, language),
+              filter_flags(user, :white, language)
             )
 
           socket
@@ -223,11 +222,11 @@ defmodule AniminaWeb.ProfileLive do
     user.credit_points
   end
 
-  defp get_intersecting_flags(first_flag_array, second_flag_array) do
-    first_flag_array = Enum.map(first_flag_array, fn x -> x.flag.id end)
-    second_flag_array = Enum.map(second_flag_array, fn x -> x.flag.id end)
+  defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
+    first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
+    second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
-    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
+    Enum.count(first_flag_array, &(&1 in second_flag_array))
   end
 
   defp current_user_has_liked_profile(user_id, current_user_id) do
@@ -280,47 +279,43 @@ defmodule AniminaWeb.ProfileLive do
     """
   end
 
-  defp fetch_green_and_red_flags(user_id, language) do
+  defp fetch_green_and_red_flags_ids(user, language) do
     green_flags =
-      fetch_flags(user_id, :green, language)
-      |> Enum.map(& &1.flag.id)
+      filter_flags(user, :green, language)
+      |> Enum.map(fn x -> x.id end)
 
     red_flags =
-      fetch_flags(user_id, :red, language)
-      |> Enum.map(& &1.flag.id)
+      filter_flags(user, :red, language)
+      |> Enum.map(fn x -> x.id end)
 
     {green_flags, red_flags}
   end
 
-  defp fetch_flags(user_id, color, language) do
+  defp filter_flags(user, color, language) do
     user_flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-      |> Ash.Query.load(flag: [:category])
-      |> Traits.read!()
+      user.flags
+      |> Enum.filter(fn x ->
+        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+      end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
         id: user_flag.id,
-        position: user_flag.position,
-        flag: %{
-          id: user_flag.flag.id,
-          name: get_translation(user_flag.flag.flag_translations, language),
-          emoji: user_flag.flag.emoji
-        },
-        category: %{
-          id: user_flag.flag.category.id,
-          name: get_translation(user_flag.flag.category.category_translations, language)
-        }
+        name: get_translation(user_flag.flag_translations, language),
+        emoji: user_flag.emoji
       }
     end)
   end
 
+  defp find_user_flag_for_a_flag(user_flags, flag) do
+    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
+  end
+
   defp fetch_stories_and_flags(user, language) do
-    stories = fetch_stories(user.id)
+    stories = user.stories
 
     flags =
-      fetch_flags(user.id, :white, language)
+      filter_flags(user, :white, language)
 
     array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
 
@@ -338,12 +333,5 @@ defmodule AniminaWeb.ProfileLive do
       Enum.find(translations, nil, fn translation -> translation.language == language end)
 
     translation.name
-  end
-
-  defp fetch_stories(user_id) do
-    Narratives.Story
-    |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-    |> Narratives.read!(page: [limit: 20])
-    |> then(& &1.results)
   end
 end

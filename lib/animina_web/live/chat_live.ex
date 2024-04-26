@@ -6,7 +6,6 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
-  alias Animina.Traits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -31,15 +30,15 @@ defmodule AniminaWeb.ChatLive do
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
     intersecting_green_flags_count =
-      get_intersecting_flags(
-        fetch_flags(sender.id, :green, language),
-        fetch_flags(receiver.id, :white, language)
+      get_intersecting_flags_count(
+        filter_flags(sender, :green, language),
+        filter_flags(receiver, :white, language)
       )
 
     intersecting_red_flags_count =
-      get_intersecting_flags(
-        fetch_flags(sender.id, :red, language),
-        fetch_flags(receiver.id, :white, language)
+      get_intersecting_flags_count(
+        filter_flags(sender, :red, language),
+        filter_flags(receiver, :white, language)
       )
 
     # we make sure that the messages are marked as read when the user visits the chat page
@@ -72,13 +71,6 @@ defmodule AniminaWeb.ChatLive do
     else
       {:ok, socket}
     end
-  end
-
-  defp get_intersecting_flags(first_flag_array, second_flag_array) do
-    first_flag_array = Enum.map(first_flag_array, fn x -> x.flag.id end)
-    second_flag_array = Enum.map(second_flag_array, fn x -> x.flag.id end)
-
-    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
   end
 
   defp update_read_at_messages(messages, sender) do
@@ -148,28 +140,24 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
-  defp fetch_flags(user_id, color, language) do
+  defp filter_flags(user, color, language) do
     user_flags =
-      Traits.UserFlags
-      |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-      |> Ash.Query.load(flag: [:category])
-      |> Traits.read!()
+      user.flags
+      |> Enum.filter(fn x ->
+        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+      end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
         id: user_flag.id,
-        position: user_flag.position,
-        flag: %{
-          id: user_flag.flag.id,
-          name: get_translation(user_flag.flag.flag_translations, language),
-          emoji: user_flag.flag.emoji
-        },
-        category: %{
-          id: user_flag.flag.category.id,
-          name: get_translation(user_flag.flag.category.category_translations, language)
-        }
+        name: get_translation(user_flag.flag_translations, language),
+        emoji: user_flag.emoji
       }
     end)
+  end
+
+  defp find_user_flag_for_a_flag(user_flags, flag) do
+    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
@@ -260,6 +248,13 @@ defmodule AniminaWeb.ChatLive do
 
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
+  end
+
+  defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
+    first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
+    second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
+
+    Enum.count(first_flag_array, &(&1 in second_flag_array))
   end
 
   defp create_message_form do
