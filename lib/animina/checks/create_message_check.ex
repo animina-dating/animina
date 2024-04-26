@@ -3,6 +3,7 @@ defmodule Animina.Checks.CreateMessageCheck do
   Policy for The Message Resource
   """
   use Ash.Policy.SimpleCheck
+  alias Animina.Accounts.Message
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
 
@@ -19,7 +20,26 @@ defmodule Animina.Checks.CreateMessageCheck do
       if receiver.id == actor.id do
         false
       else
-        true
+        check_messages_within_minutes(
+          Message.messages_sent_to_a_user_by_sender!(actor.id, receiver.id),
+          1,
+          10
+        ) &&
+          check_messages_within_minutes(
+            Message.messages_sent_by_user!(actor.id),
+            1,
+            20
+          ) &&
+          check_messages_within_minutes(
+            Message.messages_sent_to_a_user_by_sender!(actor.id, receiver.id),
+            60,
+            50
+          ) &&
+          check_messages_within_minutes(
+            Message.messages_sent_by_user!(actor.id),
+            1440,
+            250
+          )
       end
     end
   end
@@ -35,6 +55,25 @@ defmodule Animina.Checks.CreateMessageCheck do
 
       {:error, _} ->
         false
+    end
+  end
+
+  defp check_messages_within_minutes(messages, minutes, limit) do
+    current_time = DateTime.utc_now()
+
+    previous_time = DateTime.add(current_time, -minutes, :minute)
+
+    messages =
+      messages
+      |> Enum.filter(fn message ->
+        DateTime.compare(message.created_at, previous_time) == :gt and
+          DateTime.compare(message.created_at, current_time) == :lt
+      end)
+
+    if Enum.count(messages) > limit do
+      false
+    else
+      true
     end
   end
 end
