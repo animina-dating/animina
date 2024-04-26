@@ -92,7 +92,9 @@ defmodule Animina.Accounts.User do
       destination_attribute_on_join_resource :flag_id
     end
 
-    has_many :user_flags, Traits.UserFlags
+    has_many :user_flags, Traits.UserFlags do
+      api Traits
+    end
 
     has_many :stories, Narratives.Story do
       api Narratives

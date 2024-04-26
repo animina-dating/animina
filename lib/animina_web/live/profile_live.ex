@@ -11,7 +11,6 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
-  alias Animina.Traits
   alias Phoenix.PubSub
 
   @impl true
