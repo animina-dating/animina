@@ -145,7 +145,7 @@ defmodule AniminaWeb.FlagsLive do
         }
       end)
 
-    socket.assigns.current_user.user_flags
+    socket.assigns.current_user.flags_join_assoc
     |> Enum.filter(fn x -> x.color == socket.assigns.color end)
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
@@ -247,13 +247,13 @@ defmodule AniminaWeb.FlagsLive do
     flags =
       current_user.flags
       |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(current_user.user_flags, x).color == color
+        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == color
       end)
 
     if Enum.empty?(flags) && color == :green do
       current_user.flags
       |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(current_user.user_flags, x).color == :white
+        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == :white
       end)
     else
       flags

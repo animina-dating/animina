@@ -150,7 +150,9 @@ defmodule AniminaWeb.ChatLive do
   defp filter_flags(user, color, language) do
     user_flags =
       user.flags
-      |> Enum.filter(fn x -> find_user_flag_for_a_flag(user.user_flags, x).color == color end)
+      |> Enum.filter(fn x ->
+        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+      end)
 
     Enum.map(user_flags, fn user_flag ->
       %{
