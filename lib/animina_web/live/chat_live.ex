@@ -30,13 +30,13 @@ defmodule AniminaWeb.ChatLive do
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
     intersecting_green_flags_count =
-      get_intersecting_flags(
+      _count(
         filter_flags(sender, :green, language),
         filter_flags(receiver, :white, language)
       )
 
     intersecting_red_flags_count =
-      get_intersecting_flags(
+      _count(
         filter_flags(sender, :red, language),
         filter_flags(receiver, :white, language)
       )
@@ -73,11 +73,12 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
-  defp get_intersecting_flags(first_flag_array, second_flag_array) do
+  defp _count(first_flag_array, second_flag_array) do
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
-    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
+    Enum.filter(first_flag_array, &(&1 in second_flag_array))
+    |> Enum.count()
   end
 
   defp update_read_at_messages(messages, sender) do

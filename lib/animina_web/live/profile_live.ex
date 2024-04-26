@@ -45,16 +45,16 @@ defmodule AniminaWeb.ProfileLive do
           stories_and_flags = fetch_stories_and_flags(user, language)
 
           {current_user_green_flags, current_user_red_flags} =
-            fetch_green_and_red_flags(current_user, language)
+            fetch_green_and_red_flags_ids(current_user, language)
 
           intersecting_green_flags_count =
-            get_intersecting_flags(
+            get_intersecting_flags_count(
               filter_flags(current_user, :green, language),
               filter_flags(user, :white, language)
             )
 
           intersecting_red_flags_count =
-            get_intersecting_flags(
+            get_intersecting_flags_count(
               filter_flags(current_user, :red, language),
               filter_flags(user, :white, language)
             )
@@ -222,11 +222,12 @@ defmodule AniminaWeb.ProfileLive do
     user.credit_points
   end
 
-  defp get_intersecting_flags(first_flag_array, second_flag_array) do
+  defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
-    Enum.count(first_flag_array, fn x -> Enum.member?(second_flag_array, x) end)
+    Enum.filter(first_flag_array, &(&1 in second_flag_array))
+    |> Enum.count()
   end
 
   defp current_user_has_liked_profile(user_id, current_user_id) do
@@ -279,7 +280,7 @@ defmodule AniminaWeb.ProfileLive do
     """
   end
 
-  defp fetch_green_and_red_flags(user, language) do
+  defp fetch_green_and_red_flags_ids(user, language) do
     green_flags =
       filter_flags(user, :green, language)
       |> Enum.map(fn x -> x.id end)

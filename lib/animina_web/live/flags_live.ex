@@ -53,10 +53,10 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user, :white)
+      filter_flags(socket.assigns.current_user, :white)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user, :white) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :white) end)
   end
 
   defp apply_action(socket, :red, _params) do
@@ -74,10 +74,10 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user, :green)
+      filter_flags(socket.assigns.current_user, :green)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user, :red) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :red) end)
   end
 
   defp apply_action(socket, :green, _params) do
@@ -95,21 +95,21 @@ defmodule AniminaWeb.FlagsLive do
     )
     |> assign(
       :opposite_color_flags_selected,
-      fetch_flags(socket.assigns.current_user, :red)
+      filter_flags(socket.assigns.current_user, :red)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:fetch_flags, fn -> fetch_flags(socket.assigns.current_user, :green) end)
+    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :green) end)
   end
 
   @impl true
-  def handle_async(:fetch_flags, {:ok, flags}, socket) do
+  def handle_async(:filter_flags, {:ok, flags}, socket) do
     flags = Enum.map(flags, fn flag -> flag.id end)
 
     {:noreply, socket |> assign(user_flags: flags) |> assign(selected: Enum.count(flags))}
   end
 
   @impl true
-  def handle_async(:fetch_flags, {:exit, _reason}, socket) do
+  def handle_async(:filter_flags, {:exit, _reason}, socket) do
     {:noreply, socket}
   end
 
@@ -243,7 +243,7 @@ defmodule AniminaWeb.FlagsLive do
     |> Traits.read!()
   end
 
-  defp fetch_flags(current_user, color) do
+  defp filter_flags(current_user, color) do
     flags =
       current_user.flags
       |> Enum.filter(fn x ->
