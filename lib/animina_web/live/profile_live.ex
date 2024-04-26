@@ -48,20 +48,18 @@ defmodule AniminaWeb.ProfileLive do
           {current_user_green_flags, current_user_red_flags} =
             fetch_green_and_red_flags(current_user, language)
 
-
           intersecting_green_flags_count =
             get_intersecting_flags(
               filter_flags(current_user, :green, language),
               filter_flags(user, :white, language)
             )
 
-
           intersecting_red_flags_count =
             get_intersecting_flags(
               filter_flags(current_user, :red, language),
               filter_flags(user, :white, language)
             )
-           
+
           socket
           |> assign(user: user)
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
