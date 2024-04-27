@@ -16,11 +16,12 @@ defmodule Animina.Validations.BadUsername do
 
   @impl true
   def validate(changeset, opts) do
-    username = changeset.attributes.username
+    username =
+      Ash.Changeset.get_attribute(changeset, opts[:attribute])
 
     bad_usernames = ["my", "current_user"]
 
-    if Ash.CiString.value(username) in bad_usernames do
+    if username && Ash.CiString.value(username) in bad_usernames do
       {:error, field: :username, message: "This is a bad username"}
     else
       :ok
