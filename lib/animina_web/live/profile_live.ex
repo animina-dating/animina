@@ -92,11 +92,13 @@ defmodule AniminaWeb.ProfileLive do
 
     case Narratives.Story.destroy(story) do
       :ok ->
+        {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
+
         {:noreply,
          socket
          |> assign(
            :stories_and_flags,
-           fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
+           fetch_stories_and_flags(current_user, socket.assigns.language)
          )}
 
       {:error, %Ash.Error.Invalid{} = changeset} ->
@@ -105,12 +107,13 @@ defmodule AniminaWeb.ProfileLive do
           when message == "would leave records behind" ->
             Photo.destroy(story.photo)
             Narratives.Story.destroy(story)
+            {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
 
             {:noreply,
              socket
              |> assign(
                :stories_and_flags,
-               fetch_stories_and_flags(socket.assigns.user, socket.assigns.language)
+               fetch_stories_and_flags(current_user, socket.assigns.language)
              )}
 
           _ ->
@@ -321,9 +324,20 @@ defmodule AniminaWeb.ProfileLive do
 
     flags =
       (flags ++ array)
-      |> Enum.chunk_every(5)
+      |> Enum.chunk_every(get_amount_to_chunk(stories, flags))
 
     Enum.zip(stories, flags)
+  end
+
+  defp get_amount_to_chunk(stories, flags) do
+    length_of_stories = length(stories)
+    length_of_flags = length(flags)
+
+    if 5 * length_of_stories >= length_of_flags do
+      5
+    else
+      5 + length_of_flags
+    end
   end
 
   defp get_translation(translations, language) do

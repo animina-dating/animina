@@ -128,6 +128,8 @@ defmodule Animina.Accounts.User do
     validate {Validations.BadPassword,
               where: [action_is([:register_with_password, :change_password])],
               attribute: :password}
+
+    validate {Validations.BadUsername, attribute: :username}
   end
 
   identities do
