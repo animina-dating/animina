@@ -72,6 +72,8 @@ defmodule Animina.Accounts.User do
     attribute :preapproved_communication_only, :boolean, default: false
     attribute :streak, :integer, default: 0
 
+    attribute :last_registration_page_visited, :string, allow_nil?: true
+
     attribute :occupation, :string do
       constraints max_length: 40,
                   trim?: true,
@@ -140,6 +142,10 @@ defmodule Animina.Accounts.User do
 
   actions do
     defaults [:create, :read, :update]
+
+    update :update_last_registration_page_visited do
+      accept [:last_registration_page_visited]
+    end
   end
 
   code_interface do
@@ -147,6 +153,7 @@ defmodule Animina.Accounts.User do
     define :read
     define :create
     define :update
+    define :update_last_registration_page_visited, action: :update
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read

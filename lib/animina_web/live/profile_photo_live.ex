@@ -3,6 +3,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Photo
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -13,6 +14,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
     end
+
+    update_last_registration_page_visited(socket.assigns.current_user, "/my/profile-photo")
 
     socket =
       socket
@@ -28,6 +31,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
       )
 
     {:ok, socket}
+  end
+
+  defp update_last_registration_page_visited(user, page) do
+    {:ok, _} =
+      User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
   @impl true

@@ -37,6 +37,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
         socket.assigns.current_user
       end
 
+    update_last_registration_page_visited(user, "/my/potential-partner")
+
     socket =
       socket
       |> assign(update_form: AshPhoenix.Form.for_update(user, :update) |> to_form())
@@ -66,6 +68,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
           nil
       end
     end
+  end
+
+  defp update_last_registration_page_visited(user, page) do
+    {:ok, _} =
+      User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
   @impl true
