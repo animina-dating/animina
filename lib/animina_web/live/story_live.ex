@@ -3,6 +3,7 @@ defmodule AniminaWeb.StoryLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Photo
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Narratives.Headline
