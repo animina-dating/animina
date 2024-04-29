@@ -2,7 +2,7 @@ defmodule Animina.Servings.NsfwDetectionServing do
   @moduledoc """
   Nsfw photo detection serving
   """
-  def serving() do
+  def serving do
     {:ok, model_info} = Bumblebee.load_model({:hf, "Falconsai/nsfw_image_detection"})
 
     {:ok, featurizer} =
