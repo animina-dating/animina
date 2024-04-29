@@ -17,6 +17,11 @@ defmodule AniminaWeb.FlagsLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.username}"
+      )
     end
 
     socket =
@@ -113,6 +118,27 @@ defmodule AniminaWeb.FlagsLive do
       User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
+  def handle_info({:user, current_user}, socket) do
+    flags = current_user.flags |> Enum.map(fn x -> x.id end)
+
+    {:noreply,
+     socket
+     |> assign(current_user: current_user)
+     |> assign(
+       :opposite_color_flags_selected,
+       filter_flags(current_user, socket.assigns.color)
+       |> Enum.map(fn flag -> flag.id end)
+     )
+     |> assign(
+       :user_flags,
+       flags
+     )
+     |> assign(
+       :selected,
+       Enum.count(flags)
+     )}
+  end
+
   @impl true
   def handle_async(:filter_flags, {:ok, flags}, socket) do
     flags = Enum.map(flags, fn flag -> flag.id end)
@@ -177,9 +203,13 @@ defmodule AniminaWeb.FlagsLive do
       _ ->
         case socket.assigns.selected do
           0 ->
+            broadcast_user(socket)
+
             {:noreply, successful_socket}
 
           _ ->
+            broadcast_user(socket)
+
             {:noreply, successful_socket}
         end
     end
@@ -274,6 +304,16 @@ defmodule AniminaWeb.FlagsLive do
 
   defp find_user_flag_for_a_flag(user_flags, flag) do
     Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true

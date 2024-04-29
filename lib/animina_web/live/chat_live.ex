@@ -4,6 +4,7 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
+  alias Animina.Accounts.User
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
@@ -14,6 +15,11 @@ defmodule AniminaWeb.ChatLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.username}"
+      )
     end
 
     sender =
@@ -50,6 +56,7 @@ defmodule AniminaWeb.ChatLive do
       |> assign(sender: sender)
       |> assign(:messages, messages_between_sender_and_receiver)
       |> assign(receiver: receiver)
+      |> assign(:language, language)
       |> assign(:unread_messages, [])
       |> assign(profile_points: Points.humanized_points(receiver.credit_points))
       |> assign(:intersecting_green_flags_count, intersecting_green_flags_count)
@@ -81,6 +88,41 @@ defmodule AniminaWeb.ChatLive do
     end)
   end
 
+  def handle_info({:user, current_user}, socket) do
+    intersecting_green_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :green, socket.assigns.language),
+        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+      )
+
+    intersecting_red_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :red, socket.assigns.language),
+        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+      )
+
+    if current_user.id == socket.assigns.receiver.id do
+      {:noreply,
+       socket
+       |> assign(sender: current_user)
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
+       )}
+    else
+      {:noreply,
+       socket
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
+       )
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)}
+    end
+  end
+
   def handle_event("add_like", _params, socket) do
     Reaction.like(
       %{
@@ -89,6 +131,8 @@ defmodule AniminaWeb.ChatLive do
       },
       actor: socket.assigns.sender
     )
+
+    broadcast_user(socket)
 
     {:noreply,
      socket
@@ -104,6 +148,7 @@ defmodule AniminaWeb.ChatLive do
       get_reaction_for_sender_and_receiver(socket.assigns.sender.id, socket.assigns.receiver.id)
 
     Reaction.unlike(reaction, actor: socket.assigns.sender)
+    broadcast_user(socket)
 
     {:noreply,
      socket
@@ -264,6 +309,16 @@ defmodule AniminaWeb.ChatLive do
       forms: [auto?: true]
     )
     |> to_form()
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true
