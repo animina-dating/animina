@@ -16,6 +16,10 @@ defmodule Animina.Accounts.BasicUser do
     attribute :email, :ci_string, allow_nil?: false
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
+    attribute :last_registration_page_visited, :string,
+      allow_nil?: true,
+      default: "/my/potential-partner"
+
     attribute :username, :ci_string do
       allow_nil? false
 
