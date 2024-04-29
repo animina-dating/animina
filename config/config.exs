@@ -7,6 +7,20 @@
 # General application configuration
 import Config
 
+# Configures nx default backend
+config :nx, default_backend: EXLA.Backend
+
+# Configures Oban jobs
+config :animina, Oban,
+  repo: Animina.Repo,
+  queues: [default: 10, photos: 10],
+  prefix: System.get_env("DATABASE_SCHEMA", "public"),
+  plugins: [
+    {Oban.Plugins.Cron, []},
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 60},
+    {Oban.Plugins.Lifeline, rescue_after: :timer.minutes(30)}
+  ]
+
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]

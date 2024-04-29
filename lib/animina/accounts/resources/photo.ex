@@ -2,12 +2,11 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
-
   alias Animina.Accounts
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshStateMachine]
+    extensions: [AshStateMachine, AshOban]
 
   attributes do
     uuid_primary_key :id
@@ -42,6 +41,26 @@ defmodule Animina.Accounts.Photo do
       transition(:report, from: :approved, to: :in_review)
       transition(:reject, from: :in_review, to: :rejected)
       transition(:error, from: [:pending_review, :in_review, :approved, :rejected], to: :error)
+    end
+  end
+
+  oban do
+    api Accounts
+
+    triggers do
+      trigger :process do
+        action :process
+
+        where expr(state == :pending_review)
+
+        scheduler_cron "* * * * *"
+
+        queue :photos
+
+        debug? true
+
+        on_error :error
+      end
     end
   end
 
@@ -93,12 +112,17 @@ defmodule Animina.Accounts.Photo do
       accept [:error_state, :error]
       change transition_state(:error)
     end
+
+    update :process do
+      manual Animina.Actions.ProcessPhoto
+    end
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
+    define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
   end

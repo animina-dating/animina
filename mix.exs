@@ -67,7 +67,12 @@ defmodule Animina.MixProject do
       {:faker, "~> 0.18", only: [:dev, :test]},
       {:mdex, "~> 0.1"},
       {:html_sanitize_ex, "~> 1.4"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:bumblebee, "~> 0.5.3"},
+      {:exla, ">= 0.0.0"},
+      {:stb_image, "~> 0.6.3"},
+      {:oban, "~> 2.17"},
+      {:ash_oban, "~> 0.2.2"}
     ]
   end
 
