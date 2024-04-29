@@ -98,7 +98,6 @@ defmodule AniminaWeb.AuthController do
     end
   end
 
-
   defp get_last_registration_page_visited(nil) do
     "/my/potential-partner"
   end

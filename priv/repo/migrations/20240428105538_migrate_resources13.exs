@@ -20,6 +20,3 @@ defmodule Animina.Repo.Migrations.MigrateResources13 do
   end
 
 end
-
-
-

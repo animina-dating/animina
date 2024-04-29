@@ -72,13 +72,9 @@ defmodule Animina.Accounts.User do
     attribute :preapproved_communication_only, :boolean, default: false
     attribute :streak, :integer, default: 0
 
-
     attribute :last_registration_page_visited, :string,
       allow_nil?: true,
       default: "/my/potential-partner"
-
-    attribute :last_registration_page_visited, :string, allow_nil?: true , default: "/my/potential-partner"
-
 
     attribute :occupation, :string do
       constraints max_length: 40,
