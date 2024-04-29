@@ -18,4 +18,8 @@ defmodule Animina.Repo.Migrations.MigrateResources13 do
       remove :last_registration_page_visited
     end
   end
+
 end
+
+
+

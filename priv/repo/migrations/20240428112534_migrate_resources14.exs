@@ -18,4 +18,5 @@ defmodule Animina.Repo.Migrations.MigrateResources14 do
       modify :last_registration_page_visited, :text, default: nil
     end
   end
+
 end
