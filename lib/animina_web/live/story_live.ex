@@ -236,6 +236,8 @@ defmodule AniminaWeb.StoryLive do
       )
       |> Accounts.create()
 
+      broadcast_user(socket)
+
       {:noreply,
        socket
        |> assign(:errors, [])
@@ -288,6 +290,8 @@ defmodule AniminaWeb.StoryLive do
         )
         |> Accounts.create()
 
+        broadcast_user(socket)
+
         {:noreply,
          socket
          |> assign(:errors, [])
@@ -297,6 +301,8 @@ defmodule AniminaWeb.StoryLive do
          )
          |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
       else
+        broadcast_user(socket)
+
         {:noreply,
          socket
          |> assign(:errors, [])
@@ -397,6 +403,16 @@ defmodule AniminaWeb.StoryLive do
     else
       true
     end
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true

@@ -80,7 +80,9 @@ defmodule AniminaWeb.AuthController do
     if user_has_an_about_me_story?(user) do
       "/#{user.username}"
     else
-      user.last_registration_page_visited
+
+      get_last_registration_page_visited(user.last_registration_page_visited)
+
     end
   end
 
@@ -95,4 +97,13 @@ defmodule AniminaWeb.AuthController do
         end)
     end
   end
+
+  defp get_last_registration_page_visited(nil) do
+    "/my/potential-partner"
+  end
+
+  defp get_last_registration_page_visited(last_registration_page_visited) do
+    last_registration_page_visited
+  end
+
 end

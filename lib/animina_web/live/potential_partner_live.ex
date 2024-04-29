@@ -16,6 +16,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.username}"
+      )
     end
 
     user =
@@ -99,6 +104,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
     {:noreply, socket}
   end
 
+  def handle_info({:user, current_user}, socket) do
+    socket =
+      socket
+      |> assign(update_form: AshPhoenix.Form.for_update(current_user, :update) |> to_form())
+      |> assign(city_name: City.by_zip_code!(current_user.zip_code))
+      |> assign(current_user: current_user)
+
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_event("validate_user", %{"form" => form_params}, socket) do
     form = Form.validate(socket.assigns.update_form, form_params, errors: true)
@@ -116,6 +131,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
           User.by_id!(socket.assigns.current_user.id)
           |> User.update!(form_params)
 
+        broadcast_user(socket)
+
         {:noreply,
          socket
          |> assign(current_user: current_user)
@@ -124,6 +141,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
       _ ->
         {:noreply, assign(socket, update_form: form)}
     end
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true

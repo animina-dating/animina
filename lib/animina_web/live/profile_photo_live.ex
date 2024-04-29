@@ -13,6 +13,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.username}"
+      )
     end
 
     update_last_registration_page_visited(socket.assigns.current_user, "/my/profile-photo")
@@ -46,6 +51,12 @@ defmodule AniminaWeb.ProfilePhotoLive do
     {:noreply,
      socket
      |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  def handle_info({:user, current_user}, socket) do
+    {:noreply,
+     socket
+     |> assign(current_user: current_user)}
   end
 
   @impl true
@@ -97,6 +108,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
         form = Form.validate(socket.assigns.form, params, errors: true)
 
         with [] <- Form.errors(form), {:ok, _photo} <- Form.submit(form, params: params) do
+          broadcast_user(socket)
+
           {:noreply,
            socket
            |> assign(:errors, [])
@@ -124,6 +137,16 @@ defmodule AniminaWeb.ProfilePhotoLive do
        :form,
        Form.for_create(Photo, :create, api: Accounts, as: "photo")
      )}
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true

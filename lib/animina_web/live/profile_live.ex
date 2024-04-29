@@ -9,6 +9,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Phoenix.PubSub
@@ -35,6 +36,11 @@ defmodule AniminaWeb.ProfileLive do
           if connected?(socket) do
             PubSub.subscribe(Animina.PubSub, "credits")
             PubSub.subscribe(Animina.PubSub, "messages")
+
+            PubSub.subscribe(
+              Animina.PubSub,
+              "#{socket.assigns.current_user.username}"
+            )
           end
 
           if connected?(socket) && socket.assigns.current_user.id != user.id do
@@ -94,6 +100,8 @@ defmodule AniminaWeb.ProfileLive do
       :ok ->
         {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
 
+        broadcast_user(socket)
+
         {:noreply,
          socket
          |> assign(
@@ -108,6 +116,8 @@ defmodule AniminaWeb.ProfileLive do
             Photo.destroy(story.photo)
             Narratives.Story.destroy(story)
             {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
+
+            broadcast_user(socket)
 
             {:noreply,
              socket
@@ -134,6 +144,8 @@ defmodule AniminaWeb.ProfileLive do
       actor: socket.assigns.current_user
     )
 
+    broadcast_user(socket)
+
     {:noreply,
      socket
      |> assign(
@@ -148,6 +160,7 @@ defmodule AniminaWeb.ProfileLive do
       get_reaction_for_sender_and_receiver(socket.assigns.current_user.id, socket.assigns.user.id)
 
     Reaction.unlike(reaction, actor: socket.assigns.current_user)
+    broadcast_user(socket)
 
     {:noreply,
      socket
@@ -171,6 +184,51 @@ defmodule AniminaWeb.ProfileLive do
      socket
      |> assign(profile_points: Points.humanized_points(profile_points))
      |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
+  def handle_info({:user, current_user}, socket) do
+    stories_and_flags = fetch_stories_and_flags(current_user, socket.assigns.language)
+
+    {current_user_green_flags, current_user_red_flags} =
+      fetch_green_and_red_flags_ids(current_user, socket.assigns.language)
+
+    intersecting_green_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :green, socket.assigns.language),
+        filter_flags(socket.assigns.user, :white, socket.assigns.language)
+      )
+
+    intersecting_red_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :red, socket.assigns.language),
+        filter_flags(socket.assigns.user, :white, socket.assigns.language)
+      )
+
+    if current_user.id == socket.assigns.user.id do
+      {:noreply,
+       socket
+       |> assign(current_user: current_user)
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(current_user_green_flags: current_user_green_flags)
+       |> assign(current_user_red_flags: current_user_red_flags)
+       |> assign(stories_and_flags: stories_and_flags)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.user.id)
+       )}
+    else
+      {:noreply,
+       socket
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(current_user_green_flags: current_user_green_flags)
+       |> assign(current_user_red_flags: current_user_red_flags)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.user.id)
+       )}
+    end
   end
 
   @impl true
@@ -247,6 +305,16 @@ defmodule AniminaWeb.ProfileLive do
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
 
     reaction
+  end
+
+  defp broadcast_user(socket) do
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
   end
 
   @impl true
