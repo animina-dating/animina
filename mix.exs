@@ -70,7 +70,9 @@ defmodule Animina.MixProject do
       {:timex, "~> 3.0"},
       {:bumblebee, "~> 0.5.3"},
       {:exla, ">= 0.0.0"},
-      {:stb_image, "~> 0.6.3"}
+      {:stb_image, "~> 0.6.3"},
+      {:oban, "~> 2.17"},
+      {:ash_oban, "~> 0.2.2"}
     ]
   end
 
