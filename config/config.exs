@@ -7,6 +7,8 @@
 # General application configuration
 import Config
 
+config :nx, default_backend: EXLA.Backend
+
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
