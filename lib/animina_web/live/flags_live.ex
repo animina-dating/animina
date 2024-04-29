@@ -118,27 +118,6 @@ defmodule AniminaWeb.FlagsLive do
       User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
-  def handle_info({:user, current_user}, socket) do
-    flags = current_user.flags |> Enum.map(fn x -> x.id end)
-
-    {:noreply,
-     socket
-     |> assign(current_user: current_user)
-     |> assign(
-       :opposite_color_flags_selected,
-       filter_flags(current_user, socket.assigns.color)
-       |> Enum.map(fn flag -> flag.id end)
-     )
-     |> assign(
-       :user_flags,
-       flags
-     )
-     |> assign(
-       :selected,
-       Enum.count(flags)
-     )}
-  end
-
   @impl true
   def handle_async(:filter_flags, {:ok, flags}, socket) do
     flags = Enum.map(flags, fn flag -> flag.id end)
@@ -213,6 +192,28 @@ defmodule AniminaWeb.FlagsLive do
             {:noreply, successful_socket}
         end
     end
+  end
+
+  @impl true
+  def handle_info({:user, current_user}, socket) do
+    flags = current_user.flags |> Enum.map(fn x -> x.id end)
+
+    {:noreply,
+     socket
+     |> assign(current_user: current_user)
+     |> assign(
+       :opposite_color_flags_selected,
+       filter_flags(current_user, socket.assigns.color)
+       |> Enum.map(fn flag -> flag.id end)
+     )
+     |> assign(
+       :user_flags,
+       flags
+     )
+     |> assign(
+       :selected,
+       Enum.count(flags)
+     )}
   end
 
   @impl true

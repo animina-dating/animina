@@ -15,7 +15,7 @@ defmodule Animina.Application do
 
       # Start the Finch HTTP client for sending emails
       {Finch, name: Animina.Finch},
-      # {Animina.GenServers.ProfileViewCredits, []},
+      {Animina.GenServers.ProfileViewCredits, []},
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
       # Start to serve requests, typically the last entry

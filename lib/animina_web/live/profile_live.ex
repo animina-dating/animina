@@ -7,9 +7,9 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Photo
-  alias Animina.Accounts.User
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Phoenix.PubSub

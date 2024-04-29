@@ -4,8 +4,8 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
-  alias Animina.Accounts.User
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -86,41 +86,6 @@ defmodule AniminaWeb.ChatLive do
         Message.has_been_read(message, actor: sender)
       end
     end)
-  end
-
-  def handle_info({:user, current_user}, socket) do
-    intersecting_green_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :green, socket.assigns.language),
-        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
-      )
-
-    intersecting_red_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :red, socket.assigns.language),
-        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
-      )
-
-    if current_user.id == socket.assigns.receiver.id do
-      {:noreply,
-       socket
-       |> assign(sender: current_user)
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
-       |> assign(
-         current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
-       )}
-    else
-      {:noreply,
-       socket
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-       |> assign(
-         current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
-       )
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)}
-    end
   end
 
   def handle_event("add_like", _params, socket) do
@@ -246,6 +211,41 @@ defmodule AniminaWeb.ChatLive do
 
       {:error, _} ->
         false
+    end
+  end
+
+  def handle_info({:user, current_user}, socket) do
+    intersecting_green_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :green, socket.assigns.language),
+        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+      )
+
+    intersecting_red_flags_count =
+      get_intersecting_flags_count(
+        filter_flags(current_user, :red, socket.assigns.language),
+        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+      )
+
+    if current_user.id == socket.assigns.receiver.id do
+      {:noreply,
+       socket
+       |> assign(sender: current_user)
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
+       )}
+    else
+      {:noreply,
+       socket
+       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
+       )
+       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)}
     end
   end
 
