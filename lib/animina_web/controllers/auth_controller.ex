@@ -9,7 +9,7 @@ defmodule AniminaWeb.AuthController do
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
-          get_session(conn, :return_to) || ~p"/my/potential-partner"
+          get_session(conn, :return_to) || redirect_url(user)
 
         path ->
           path
@@ -74,5 +74,25 @@ defmodule AniminaWeb.AuthController do
     conn
     |> clear_session()
     |> redirect(to: return_to)
+  end
+
+  defp redirect_url(user) do
+    if user_has_an_about_me_story?(user) do
+      "/#{user.username}"
+    else
+      user.last_registration_page_visited
+    end
+  end
+
+  defp user_has_an_about_me_story?(user) do
+    case user.stories do
+      [] ->
+        false
+
+      stories ->
+        Enum.any?(stories, fn story ->
+          story.headline.subject == "About me"
+        end)
+    end
   end
 end

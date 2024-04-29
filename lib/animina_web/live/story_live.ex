@@ -3,6 +3,7 @@ defmodule AniminaWeb.StoryLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Photo
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
   alias Animina.Narratives.Headline
@@ -149,6 +150,8 @@ defmodule AniminaWeb.StoryLive do
         ]
       )
       |> to_form()
+
+    update_last_registration_page_visited(socket.assigns.current_user, "/my/about-me")
 
     socket
     |> assign(page_title: gettext("Create your first story"))
@@ -310,6 +313,11 @@ defmodule AniminaWeb.StoryLive do
       errors ->
         {:noreply, socket |> assign(:errors, errors)}
     end
+  end
+
+  defp update_last_registration_page_visited(user, page) do
+    {:ok, _} =
+      User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
   defp get_user_default_photo(socket) when socket.assigns.live_action == :about_me do

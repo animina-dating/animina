@@ -2,6 +2,7 @@ defmodule AniminaWeb.FlagsLive do
   require Ash.Query
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits
   alias Animina.Traits.UserFlags
@@ -39,6 +40,8 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp apply_action(socket, :white, _params) do
+    update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/white")
+
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
@@ -60,6 +63,8 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp apply_action(socket, :red, _params) do
+    update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/red")
+
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
@@ -81,6 +86,8 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp apply_action(socket, :green, _params) do
+    update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/green")
+
     socket
     |> assign(page_title: gettext("Select your green flags"))
     |> assign(color: :green)
@@ -99,6 +106,11 @@ defmodule AniminaWeb.FlagsLive do
       |> Enum.map(fn flag -> flag.id end)
     )
     |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :green) end)
+  end
+
+  defp update_last_registration_page_visited(user, page) do
+    {:ok, _} =
+      User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
   @impl true
