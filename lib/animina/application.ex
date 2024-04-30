@@ -4,6 +4,7 @@ defmodule Animina.Application do
   @moduledoc false
 
   use Application
+  alias Animina.Servings
 
   @impl true
   def start(_type, _args) do
@@ -25,7 +26,7 @@ defmodule Animina.Application do
       {Animina.GenServers.ProfileViewCredits, []},
       {Nx.Serving,
        name: NsfwDetectionServing,
-       serving: Animina.Servings.NsfwDetectionServing.serving(),
+       serving: Servings.NsfwDetectionServing.serving(),
        batch_timeout: 100},
 
       # Start a worker by calling: Animina.Worker.start_link(arg)
