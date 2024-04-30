@@ -60,6 +60,12 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Enable Machine Learning features and servings
+
+To enable running ML features:
+  * set `ENABLE_ML_FEATURES` environment variable to true
+  * For example to start the phoenix server in dev mode with ML features run `ENABLE_ML_FEATURES=true iex -S mix phx.server`
+
 ## Thoughts about the Frontend
 
 Keep it simple. Let's not use JavaScript everywhere. Better ask sw@wintermeyer-consulting.de first 

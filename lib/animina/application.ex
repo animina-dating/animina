@@ -24,10 +24,6 @@ defmodule Animina.Application do
       # Start the Finch HTTP client for sending emails
       {Finch, name: Animina.Finch},
       {Animina.GenServers.ProfileViewCredits, []},
-      {Nx.Serving,
-       name: NsfwDetectionServing,
-       serving: Servings.NsfwDetectionServing.serving(),
-       batch_timeout: 100},
 
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
@@ -35,6 +31,19 @@ defmodule Animina.Application do
       AniminaWeb.Endpoint,
       {AshAuthentication.Supervisor, otp_app: :animina}
     ]
+
+    children =
+      if is_nil(System.get_env("ENABLE_ML_FEATURES")) do
+        children
+      else
+        children ++
+          [
+            {Nx.Serving,
+             name: NsfwDetectionServing,
+             serving: Servings.NsfwDetectionServing.serving(),
+             batch_timeout: 100}
+          ]
+      end
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options

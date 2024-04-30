@@ -29,6 +29,9 @@ defmodule Animina.MixProject do
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
+  # Enable dependency conditionally
+  def dep_enabled?(key), do: not is_nil(System.get_env(key))
+
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -68,9 +71,9 @@ defmodule Animina.MixProject do
       {:mdex, "~> 0.1"},
       {:html_sanitize_ex, "~> 1.4"},
       {:timex, "~> 3.0"},
-      {:bumblebee, "~> 0.5.3"},
-      {:exla, ">= 0.0.0"},
-      {:stb_image, "~> 0.6.3"},
+      {:bumblebee, "~> 0.5.3", optional: dep_enabled?("ENABLE_ML_FEATURES")},
+      {:exla, ">= 0.0.0", optional: dep_enabled?("ENABLE_ML_FEATURES")},
+      {:stb_image, "~> 0.6.3", optional: dep_enabled?("ENABLE_ML_FEATURES")},
       {:oban, "~> 2.17"},
       {:ash_oban, "~> 0.2.2"}
     ]
