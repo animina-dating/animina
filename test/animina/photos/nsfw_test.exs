@@ -5,11 +5,15 @@ defmodule Animina.Photos.NsfwTest do
 
   describe "Tests for Nsfw photos detection using AI" do
     setup do
-      [
-        serving: load_serving(),
-        nsfw_photo: load_nsfw_photo(),
-        sfw_photo: load_sfw_photo()
-      ]
+      if is_nil(System.get_env("ENABLE_ML_FEATURES")) do
+        {:ok, skip: true}
+      else
+        [
+          serving: load_serving(),
+          nsfw_photo: load_nsfw_photo(),
+          sfw_photo: load_sfw_photo()
+        ]
+      end
     end
 
     test "The following photo is not safe for work.", %{
