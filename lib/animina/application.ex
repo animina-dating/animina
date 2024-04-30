@@ -4,6 +4,7 @@ defmodule Animina.Application do
   @moduledoc false
 
   use Application
+  alias Animina.Servings
 
   @impl true
   def start(_type, _args) do
@@ -13,9 +14,21 @@ defmodule Animina.Application do
       {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Animina.PubSub},
 
+      # Start Oban
+      {Oban,
+       AshOban.config(
+         Application.fetch_env!(:animina, :ash_apis),
+         Application.fetch_env!(:animina, Oban)
+       )},
+
       # Start the Finch HTTP client for sending emails
       {Finch, name: Animina.Finch},
       {Animina.GenServers.ProfileViewCredits, []},
+      {Nx.Serving,
+       name: NsfwDetectionServing,
+       serving: Servings.NsfwDetectionServing.serving(),
+       batch_timeout: 100},
+
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
       # Start to serve requests, typically the last entry
