@@ -37,7 +37,7 @@ defmodule Animina.MixProject do
   # Type `mix help deps` for examples and options.
   #
   defp deps do
-    [
+    deps = [
       {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -71,12 +71,20 @@ defmodule Animina.MixProject do
       {:mdex, "~> 0.1"},
       {:html_sanitize_ex, "~> 1.4"},
       {:timex, "~> 3.0"},
-      {:bumblebee, "~> 0.5.3", optional: dep_enabled?("ENABLE_ML_FEATURES")},
-      {:exla, ">= 0.0.0", optional: dep_enabled?("ENABLE_ML_FEATURES")},
-      {:stb_image, "~> 0.6.3", optional: dep_enabled?("ENABLE_ML_FEATURES")},
       {:oban, "~> 2.17"},
       {:ash_oban, "~> 0.2.2"}
     ]
+
+    if dep_enabled?("ENABLE_ML_FEATURES") do
+      deps ++
+        [
+          {:bumblebee, "~> 0.5.3"},
+          {:exla, ">= 0.0.0"},
+          {:stb_image, "~> 0.6.3"}
+        ]
+    else
+      deps
+    end
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
