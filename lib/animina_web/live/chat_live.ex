@@ -24,13 +24,12 @@ defmodule AniminaWeb.ChatLive do
 
     sender =
       if params["current_user"] do
-        {:ok, sender} = Accounts.User.by_username(params["current_user"])
-        sender
+        Accounts.User.by_username!(params["current_user"])
       else
         socket.assigns.current_user
       end
 
-    {:ok, receiver} = Accounts.User.by_username(profile)
+    receiver = Accounts.User.by_username!(profile)
 
     {:ok, messages_between_sender_and_receiver} =
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
@@ -68,15 +67,21 @@ defmodule AniminaWeb.ChatLive do
       )
       |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
 
-    if profile != Ash.CiString.value(socket.assigns.receiver.username) or
-         params["current_user"] != Ash.CiString.value(socket.assigns.sender.username) do
+    if receiver == nil or sender == nil do
       {:ok,
        socket
-       |> push_redirect(
-         to: ~p"/#{socket.assigns.sender.username}/messages/#{socket.assigns.receiver.username}"
-       )}
+       |> push_redirect(to: ~p"/")}
     else
-      {:ok, socket}
+      if profile != Ash.CiString.value(socket.assigns.receiver.username) or
+           params["current_user"] != Ash.CiString.value(socket.assigns.sender.username) do
+        {:ok,
+         socket
+         |> push_redirect(
+           to: ~p"/#{socket.assigns.sender.username}/messages/#{socket.assigns.receiver.username}"
+         )}
+      else
+        {:ok, socket}
+      end
     end
   end
 
