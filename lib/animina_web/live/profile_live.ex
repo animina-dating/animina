@@ -77,14 +77,7 @@ defmodule AniminaWeb.ProfileLive do
             current_user_has_liked_profile?:
               current_user_has_liked_profile(socket.assigns.current_user.id, user.id)
           )
-
-          socket =
-            if username != Ash.CiString.value(socket.assigns.user.username) do
-              socket
-              |> push_redirect(to: ~p"/#{socket.assigns.user.username}")
-            else
-              socket
-            end
+          |> redirect_if_username_is_different(username, user)
 
         _ ->
           socket
@@ -93,6 +86,15 @@ defmodule AniminaWeb.ProfileLive do
       end
 
     {:ok, socket}
+  end
+
+  defp redirect_if_username_is_different(socket, username, user) do
+    if username != Ash.CiString.value(user.username) do
+      socket
+      |> push_redirect(to: ~p"/#{user.username}")
+    else
+      socket
+    end
   end
 
   @impl true

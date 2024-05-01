@@ -135,9 +135,14 @@ defmodule Animina.Accounts.RegistrationTest do
   end
 
   defp create_category do
-    {:ok, category} = Category.create(%{name: "Drinks"})
+    case Category.by_name("Drinks") do
+      {:ok, category} ->
+        category
 
-    category
+      _ ->
+        {:ok, category} = Category.create(%{name: "Drinks"})
+        category
+    end
   end
 
   defp create_flags(category) do
