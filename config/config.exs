@@ -6,9 +6,10 @@
 
 # General application configuration
 import Config
-
+if System.get_env("ENABLE_ML_FEATURES") do
 # Configures nx default backend
 config :nx, default_backend: EXLA.Backend
+end
 
 # Configures Oban jobs
 config :animina, Oban,
