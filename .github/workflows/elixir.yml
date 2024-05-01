@@ -72,6 +72,7 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
+          DISABLE_ML_FEATURES: false
         run: |
           . $HOME/.asdf/asdf.sh
           mix ecto.create
