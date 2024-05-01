@@ -3,6 +3,7 @@ defmodule AniminaWeb.AuthController do
   use AshAuthentication.Phoenix.Controller
 
   alias Animina.Accounts.Token
+  alias Animina.Narratives.Story
   alias AshAuthentication.TokenResource
 
   def success(conn, _activity, user, _token) do
@@ -80,14 +81,12 @@ defmodule AniminaWeb.AuthController do
     if user_has_an_about_me_story?(user) do
       "/#{user.username}"
     else
-
       get_last_registration_page_visited(user.last_registration_page_visited)
-
     end
   end
 
   defp user_has_an_about_me_story?(user) do
-    case user.stories do
+    case get_stories_for_a_user(user) do
       [] ->
         false
 
@@ -106,4 +105,8 @@ defmodule AniminaWeb.AuthController do
     last_registration_page_visited
   end
 
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+    stories
+  end
 end
