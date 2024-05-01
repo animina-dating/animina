@@ -47,6 +47,8 @@ defmodule AniminaWeb.FlagsLive do
   defp apply_action(socket, :white, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/white")
 
+    current_user = socket.assigns.current_user
+
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
@@ -64,11 +66,13 @@ defmodule AniminaWeb.FlagsLive do
       filter_flags(socket.assigns.current_user, :white)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :white) end)
+    |> start_async(:filter_flags, fn -> filter_flags(current_user, :white) end)
   end
 
   defp apply_action(socket, :red, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/red")
+
+    current_user = socket.assigns.current_user
 
     socket
     |> assign(page_title: gettext("Select your red flags"))
@@ -87,11 +91,12 @@ defmodule AniminaWeb.FlagsLive do
       filter_flags(socket.assigns.current_user, :green)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :red) end)
+    |> start_async(:filter_flags, fn -> filter_flags(current_user, :red) end)
   end
 
   defp apply_action(socket, :green, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/green")
+    current_user = socket.assigns.current_user
 
     socket
     |> assign(page_title: gettext("Select your green flags"))
@@ -110,7 +115,7 @@ defmodule AniminaWeb.FlagsLive do
       filter_flags(socket.assigns.current_user, :red)
       |> Enum.map(fn flag -> flag.id end)
     )
-    |> start_async(:filter_flags, fn -> filter_flags(socket.assigns.current_user, :green) end)
+    |> start_async(:filter_flags, fn -> filter_flags(current_user, :green) end)
   end
 
   defp update_last_registration_page_visited(user, page) do
