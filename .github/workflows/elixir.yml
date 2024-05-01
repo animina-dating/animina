@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies
         env:
-          ENABLE_ML_FEATURES: true
+          DISABLE_ML_FEATURES: false
         run: |
           . $HOME/.asdf/asdf.sh
           mix local.hex --force
@@ -84,7 +84,7 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
-          ENABLE_ML_FEATURES: true
+          DISABLE_ML_FEATURES: false
         run: |
           . $HOME/.asdf/asdf.sh
           mix test

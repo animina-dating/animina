@@ -14,11 +14,11 @@ I assume that you have a locally hosted PostgreSQL database.
 - Git clone the project
 - cd into the local project directory
 - `asdf install` installs the needed Elixir and Erlang versions
-- `mix deps.get`
+- `mix deps.get` or `DISABLE_ML_FEATURES=true mix deps.get` if you wish to not install the ML dependencies
 - `mix ash_postgres.create` to create the database
 - `mix ash_postgres.migrate` to run migrations
 - `mix create_dummy_accounts 10` creates 10 dummy accounts and lists them. http://localhost:4000/username will display the profile for that username
-- `iex -S mix phx.server`
+- `iex -S mix phx.server` or `DISABLE_ML_FEATURES=true iex -S mix phx.server` if you wish to start the server without ML features
 - open http://localhost:4000 in your browser
 
 ## Development
@@ -62,9 +62,10 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Enable Machine Learning features and servings
 
-To enable running ML features:
-  * set `ENABLE_ML_FEATURES` environment variable to true
-  * For example to start the phoenix server in dev mode with ML features run `ENABLE_ML_FEATURES=true iex -S mix phx.server`
+By default the server starts with ML features enabled. To disable running ML features:
+  * set `DISABLE_ML_FEATURES` environment variable to true
+  * ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
+  * For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
 
 ## Thoughts about the Frontend
 
