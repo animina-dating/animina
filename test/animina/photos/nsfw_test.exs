@@ -5,7 +5,7 @@ defmodule Animina.Photos.NsfwTest do
 
   describe "Tests for Nsfw photos detection using AI" do
     setup do
-      if is_nil(System.get_env("ENABLE_ML_FEATURES")) do
+      if System.get_env("DISABLE_ML_FEATURES") do
         {:ok, skip: true}
       else
         [

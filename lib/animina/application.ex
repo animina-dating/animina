@@ -33,7 +33,7 @@ defmodule Animina.Application do
     ]
 
     children =
-      if is_nil(System.get_env("ENABLE_ML_FEATURES")) do
+      if System.get_env("DISABLE_ML_FEATURES") do
         children
       else
         children ++

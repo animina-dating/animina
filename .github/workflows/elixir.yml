@@ -56,8 +56,6 @@ jobs:
           asdf global  elixir $elixir_version
 
       - name: Install dependencies
-        env:
-          ENABLE_ML_FEATURES: true
         run: |
           . $HOME/.asdf/asdf.sh
           mix local.hex --force
@@ -84,7 +82,6 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
-          ENABLE_ML_FEATURES: true
         run: |
           . $HOME/.asdf/asdf.sh
           mix test

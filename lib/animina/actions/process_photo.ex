@@ -10,7 +10,7 @@ defmodule Animina.Actions.ProcessPhoto do
 
   @impl true
   def update(changeset, _, _) do
-    with false <- is_nil(System.get_env("ENABLE_ML_FEATURES")),
+    with false <- System.get_env("DISABLE_ML_FEATURES", false),
          {:ok, photo} <-
            changeset.data
            |> Ash.Changeset.for_update(:review, %{})
