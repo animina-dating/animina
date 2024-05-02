@@ -60,9 +60,13 @@ defmodule Animina.Accounts.Message do
 
       prepare build(load: [:sender, :receiver])
 
+      prepare build(sort: [created_at: :desc])
+
       argument :receiver_id, :uuid do
         allow_nil? false
       end
+
+      pagination offset?: true , default_limit: 400
 
       filter expr(
                (sender_id == ^arg(:sender_id) and receiver_id == ^arg(:receiver_id)) or
