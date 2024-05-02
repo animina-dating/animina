@@ -32,7 +32,7 @@ defmodule AniminaWeb.ChatLive do
     receiver = Accounts.User.by_username!(profile)
 
     {:ok, messages_between_sender_and_receiver} =
-      Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
+      Message.messages_for_sender_and_receiver(sender.id, receiver.id, page: [limit: 200], actor: sender)
 
     intersecting_green_flags_count =
       get_intersecting_flags_count(
@@ -47,13 +47,13 @@ defmodule AniminaWeb.ChatLive do
       )
 
     # we make sure that the messages are marked as read when the user visits the chat page
-    update_read_at_messages(messages_between_sender_and_receiver, sender)
+    update_read_at_messages(messages_between_sender_and_receiver.results, sender)
 
     socket =
       socket
       |> assign(active_tab: :chat)
       |> assign(sender: sender)
-      |> assign(:messages, messages_between_sender_and_receiver)
+      |> assign(:messages, messages_between_sender_and_receiver.results)
       |> assign(receiver: receiver)
       |> assign(:language, language)
       |> assign(:unread_messages, [])
@@ -140,6 +140,7 @@ defmodule AniminaWeb.ChatLive do
       {:ok, message} ->
         {:ok, messages_between_sender_and_receiver} =
           Message.messages_for_sender_and_receiver(message.sender_id, message.receiver_id,
+          page: [limit: 200],
             actor: socket.assigns.sender
           )
 
@@ -147,7 +148,7 @@ defmodule AniminaWeb.ChatLive do
 
         {:noreply,
          socket
-         |> assign(messages: messages_between_sender_and_receiver)
+         |> assign(messages: messages_between_sender_and_receiver.results)
          |> assign(form: create_message_form())}
 
       {:error, _} ->
@@ -258,7 +259,7 @@ defmodule AniminaWeb.ChatLive do
     {:ok, message} = Message.by_id(message.id)
 
     messages =
-      (socket.assigns.messages ++ message)
+      (message ++ socket.assigns.messages)
       |> Enum.uniq()
 
     unread_messages = socket.assigns.unread_messages ++ [message]
