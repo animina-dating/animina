@@ -98,7 +98,6 @@ defmodule Animina.Accounts.MessageTest do
                Message.messages_for_sender_and_receiver(
                  third_user.id,
                  fourth_user.id,
-                 page: [limit: 200],
                  actor: third_user
                )
 
@@ -106,7 +105,6 @@ defmodule Animina.Accounts.MessageTest do
                Message.messages_for_sender_and_receiver(
                  third_user.id,
                  fourth_user.id,
-                 page: [limit: 200],
                  actor: fifth_user
                )
     end

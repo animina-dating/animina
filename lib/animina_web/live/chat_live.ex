@@ -32,7 +32,7 @@ defmodule AniminaWeb.ChatLive do
     receiver = Accounts.User.by_username!(profile)
 
     {:ok, messages_between_sender_and_receiver} =
-      Message.messages_for_sender_and_receiver(sender.id, receiver.id, page: [limit: 200], actor: sender)
+      Message.messages_for_sender_and_receiver(sender.id, receiver.id,  actor: sender)
 
     intersecting_green_flags_count =
       get_intersecting_flags_count(
@@ -140,7 +140,6 @@ defmodule AniminaWeb.ChatLive do
       {:ok, message} ->
         {:ok, messages_between_sender_and_receiver} =
           Message.messages_for_sender_and_receiver(message.sender_id, message.receiver_id,
-          page: [limit: 200],
             actor: socket.assigns.sender
           )
 

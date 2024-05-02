@@ -66,7 +66,7 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
-      pagination offset?: true
+      pagination offset?: true , default_limit: 400
 
       filter expr(
                (sender_id == ^arg(:sender_id) and receiver_id == ^arg(:receiver_id)) or
