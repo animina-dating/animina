@@ -172,9 +172,7 @@ defmodule Animina.Accounts.User do
   end
 
   preparations do
-
     prepare build(load: [:age, :credit_points, :profile_photo, :city, :flags, :stories, :traits])
-
   end
 
   authentication do
