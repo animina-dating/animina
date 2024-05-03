@@ -170,7 +170,6 @@ defmodule AniminaWeb.ChatLive do
     end)
   end
 
-
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
     {:ok, reaction} =
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
