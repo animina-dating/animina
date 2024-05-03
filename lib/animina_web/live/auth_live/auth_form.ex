@@ -1,16 +1,11 @@
 defmodule AniminaWeb.AuthLive.AuthForm do
   use AniminaWeb, :live_component
   use Phoenix.HTML
-  alias Animina.GenServers.ProfileViewCredits
+
   alias AshPhoenix.Form
-  alias Phoenix.PubSub
 
   @impl true
   def update(assigns, socket) do
-    if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits")
-    end
-
     socket =
       socket
       |> assign(assigns)
@@ -36,23 +31,6 @@ defmodule AniminaWeb.AuthLive.AuthForm do
       |> assign(:errors, Form.errors(form))
       |> assign(:trigger_action, form.valid?)
 
-    {:noreply, socket}
-  end
-
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      if socket.assigns.current_user do
-        ProfileViewCredits.get_updated_credit_for_user(socket, credits)
-      else
-        0
-      end
-
-    {:noreply,
-     socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
-  end
-
-  def handle_info({:credit_updated, _updated_credit}, socket) do
     {:noreply, socket}
   end
 
