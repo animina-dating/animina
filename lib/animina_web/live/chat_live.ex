@@ -31,7 +31,7 @@ defmodule AniminaWeb.ChatLive do
     receiver = Accounts.User.by_username!(profile)
 
     {:ok, messages_between_sender_and_receiver} =
-      Message.messages_for_sender_and_receiver(sender.id, receiver.id,  actor: sender)
+      Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
     intersecting_green_flags_count =
       get_intersecting_flags_count(
@@ -155,17 +155,17 @@ defmodule AniminaWeb.ChatLive do
   end
 
   defp filter_flags(user, color, language) do
-    user_flags =
-      user.flags
-      |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+    traits =
+      user.traits
+      |> Enum.filter(fn trait ->
+        trait.color == color and trait.flag != nil
       end)
 
-    Enum.map(user_flags, fn user_flag ->
+    Enum.map(traits, fn trait ->
       %{
-        id: user_flag.id,
-        name: get_translation(user_flag.flag_translations, language),
-        emoji: user_flag.emoji
+        id: trait.flag.id,
+        name: get_translation(trait.flag.flag_translations, language),
+        emoji: trait.flag.emoji
       }
     end)
   end
