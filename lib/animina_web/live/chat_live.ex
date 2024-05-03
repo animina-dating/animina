@@ -170,9 +170,6 @@ defmodule AniminaWeb.ChatLive do
     end)
   end
 
-  defp find_user_flag_for_a_flag(user_flags, flag) do
-    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
-  end
 
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
     {:ok, reaction} =
