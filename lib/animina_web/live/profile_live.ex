@@ -5,14 +5,17 @@ defmodule AniminaWeb.ProfileLive do
 
   use AniminaWeb, :live_view
   alias Animina.Accounts
+  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
+
   alias Animina.Narratives
   alias Phoenix.PubSub
+
+  require Ash.Query
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
@@ -34,7 +37,7 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(:user, user)
 
           if connected?(socket) do
-            PubSub.subscribe(Animina.PubSub, "credits")
+            PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
             PubSub.subscribe(Animina.PubSub, "messages")
 
             PubSub.subscribe(
@@ -176,19 +179,17 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
+  def handle_info({:display_updated_credits, %{"points" => points, "user_id" => user_id}}, socket) do
+    socket =
+      if user_id == socket.assigns.current_user.id do
+        socket
+        |> assign(current_user_credit_points: points)
+      else
+        socket
+        |> assign(profile_points: Points.humanized_points(points))
+      end
 
-    {:ok, profile} = Accounts.User.by_id(socket.assigns.user.id)
-
-    profile_points =
-      ProfileViewCredits.get_updated_credit_for_profile(profile, credits)
-
-    {:noreply,
-     socket
-     |> assign(profile_points: Points.humanized_points(profile_points))
-     |> assign(current_user_credit_points: current_user_credit_points)}
+    {:noreply, socket}
   end
 
   def handle_info({:user, current_user}, socket) do
@@ -284,7 +285,8 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_points_for_a_user(user_id) do
-    {:ok, user} = Accounts.User.by_id(user_id)
+    {:ok, user} = BasicUser.by_id(user_id)
+
     user.credit_points
   end
 
