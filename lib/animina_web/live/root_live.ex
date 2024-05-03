@@ -3,24 +3,29 @@ defmodule AniminaWeb.RootLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.BasicUser
-  alias Animina.GenServers.ProfileViewCredits
+
   alias AniminaWeb.Registration
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
+    current_user = Registration.get_current_user(session)
+
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits")
+      if current_user != nil,
+        do: PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
+
       PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     socket =
       socket
       |> assign(language: language)
-      |> assign(current_user: Registration.get_current_user(session))
+      |> assign(current_user: current_user)
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
+      |> assign(current_user_credit_points: 0)
       |> assign(:errors, [])
 
     {:ok, socket}
@@ -76,17 +81,13 @@ defmodule AniminaWeb.RootLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      if socket.assigns.current_user do
-        ProfileViewCredits.get_updated_credit_for_user(socket, credits)
-      else
-        0
-      end
-
+  def handle_info(
+        {:display_updated_credits, %{"points" => points, "user_id" => _user_id}},
+        socket
+      ) do
     {:noreply,
      socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
+     |> assign(current_user_credit_points: points)}
   end
 
   def handle_info({:credit_updated, _updated_credit}, socket) do

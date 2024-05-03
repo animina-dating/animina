@@ -21,7 +21,16 @@ defmodule Animina.GenServers.ProfileViewCredits do
   def handle_info(:credits_update, state) do
     schedule_credits_update()
 
-    PubSub.broadcast(Animina.PubSub, "credits", {:display_updated_credits, state})
+    Enum.each(
+      state,
+      fn %{"points" => points, "user_id" => user_id} ->
+        PubSub.broadcast(
+          Animina.PubSub,
+          "credits:" <> user_id,
+          {:display_updated_credits, %{"points" => points, "user_id" => user_id}}
+        )
+      end
+    )
 
     {:noreply, state}
   end
@@ -46,24 +55,6 @@ defmodule Animina.GenServers.ProfileViewCredits do
       _ ->
         Enum.drop_while(state, fn x -> x["user_id"] == map["user_id"] end)
         |> List.insert_at(0, map)
-    end
-  end
-
-  def get_updated_credit_for_user(socket, credits) do
-    case Enum.find(credits, fn credit ->
-           credit["user_id"] == socket.assigns.current_user.id
-         end) do
-      nil -> socket.assigns.current_user.credit_points
-      credit -> credit["points"]
-    end
-  end
-
-  def get_updated_credit_for_profile(profile, credits) do
-    case Enum.find(credits, fn credit ->
-           credit["user_id"] == profile.credit_points
-         end) do
-      nil -> profile.credit_points
-      credit -> credit["points"]
     end
   end
 
