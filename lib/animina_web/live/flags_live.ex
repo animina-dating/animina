@@ -297,12 +297,14 @@ defmodule AniminaWeb.FlagsLive do
       |> Enum.filter(fn x ->
         find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == color
       end)
+      |> Enum.uniq()
 
     if Enum.empty?(flags) && color == :green do
       current_user.flags
       |> Enum.filter(fn x ->
         find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == :white
       end)
+      |> Enum.uniq()
     else
       flags
     end

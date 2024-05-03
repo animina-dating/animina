@@ -373,6 +373,7 @@ defmodule AniminaWeb.ProfileLive do
       |> Enum.filter(fn x ->
         find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
       end)
+      |> Enum.uniq()
 
     Enum.map(user_flags, fn user_flag ->
       %{
