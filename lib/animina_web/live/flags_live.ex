@@ -73,8 +73,6 @@ defmodule AniminaWeb.FlagsLive do
 
     current_user = socket.assigns.current_user
 
-    IO.inspect(filter_flags(socket.assigns.current_user, :green), label: "malia")
-
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
