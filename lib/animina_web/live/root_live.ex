@@ -10,15 +10,19 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
+    current_user = Registration.get_current_user(session)
+
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
+      if current_user != nil,
+        do: PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
+
       PubSub.subscribe(Animina.PubSub, "messages")
     end
 
     socket =
       socket
       |> assign(language: language)
-      |> assign(current_user: Registration.get_current_user(session))
+      |> assign(current_user: current_user)
       |> assign(active_tab: :home)
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
