@@ -297,14 +297,7 @@ defmodule AniminaWeb.FlagsLive do
         trait.color == color
       end)
 
-    if Enum.empty?(traits) && color == :green do
-      current_user.traits
-      |> Enum.filter(fn trait ->
-        trait.color == :white
-      end)
-    else
-      traits
-    end
+    
   end
 
   defp broadcast_user(socket) do
