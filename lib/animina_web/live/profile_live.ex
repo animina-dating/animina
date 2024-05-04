@@ -36,22 +36,7 @@ defmodule AniminaWeb.ProfileLive do
           socket
           |> assign(:user, user)
 
-          if connected?(socket) do
-            PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
-            PubSub.subscribe(Animina.PubSub, "messages")
-          end
-
-          if connected?(socket) && current_user do
-            PubSub.subscribe(
-              Animina.PubSub,
-              "#{socket.assigns.current_user.username}"
-            )
-          end
-
-          if connected?(socket) && current_user != nil && current_user.id != user.id do
-            # prevent the points to be added when a user is viewing this or her own profile
-            :timer.send_interval(5000, self(), :add_points_for_viewing)
-          end
+          subscribe(socket, current_user, user)
 
           stories_and_flags = fetch_stories_and_flags(user, language)
 
@@ -103,23 +88,43 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  defp subscribe(socket, current_user, user) do
+    if connected?(socket) && current_user do
+      PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
+      PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.username}"
+      )
+
+      add_points_for_viewing_to_profile(socket.assigns.current_user.id, user.id)
+    end
+  end
+
+  defp add_points_for_viewing_to_profile(current_user_id, user_id) do
+    if current_user_id != user_id do
+      :timer.send_interval(5000, self(), :add_points_for_viewing)
+    end
+  end
+
   defp show_optional_404_page(nil, nil) do
     true
   end
 
-  defp show_optional_404_page(nil, current_user) do
+  defp show_optional_404_page(nil, _current_user) do
     true
   end
 
   defp show_optional_404_page(user, nil) do
-    if user.is_public do
-      false
-    else
+    if user.is_private do
       true
+    else
+      false
     end
   end
 
-  defp show_optional_404_page(user, current_user) do
+  defp show_optional_404_page(_user, _current_user) do
     false
   end
 
