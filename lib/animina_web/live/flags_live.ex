@@ -295,11 +295,8 @@ defmodule AniminaWeb.FlagsLive do
       current_user.traits
       |> Enum.filter(fn trait ->
         trait.color == color
-        end)
-
-   
+      end)
   end
-
 
   defp broadcast_user(socket) do
     current_user = User.by_id!(socket.assigns.current_user.id)
