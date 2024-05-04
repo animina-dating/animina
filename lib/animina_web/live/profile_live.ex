@@ -39,14 +39,16 @@ defmodule AniminaWeb.ProfileLive do
           if connected?(socket) do
             PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
             PubSub.subscribe(Animina.PubSub, "messages")
+          end
 
+          if connected?(socket) && current_user do
             PubSub.subscribe(
               Animina.PubSub,
               "#{socket.assigns.current_user.username}"
             )
           end
 
-          if connected?(socket) && socket.assigns.current_user.id != user.id do
+          if connected?(socket) && current_user != nil && current_user.id != user.id do
             # prevent the points to be added when a user is viewing this or her own profile
             :timer.send_interval(5000, self(), :add_points_for_viewing)
           end
@@ -70,6 +72,7 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
+          |> assign(show_404_page: show_optional_404_page(user, current_user))
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
           |> assign(profile_points: Points.humanized_points(user.credit_points))
@@ -78,14 +81,14 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(stories_and_flags: stories_and_flags)
           |> assign(
             current_user_has_liked_profile?:
-              current_user_has_liked_profile(socket.assigns.current_user.id, user.id)
+              current_user_has_liked_profile(socket.assigns.current_user, user.id)
           )
           |> redirect_if_username_is_different(username, user)
 
         _ ->
           socket
           |> assign(user: nil)
-          |> push_redirect(to: ~p"/")
+          |> assign(show_404_page: true)
       end
 
     {:ok, socket}
@@ -98,6 +101,26 @@ defmodule AniminaWeb.ProfileLive do
     else
       socket
     end
+  end
+
+  defp show_optional_404_page(nil, nil) do
+    true
+  end
+
+  defp show_optional_404_page(nil, current_user) do
+    true
+  end
+
+  defp show_optional_404_page(user, nil) do
+    if user.is_public do
+      false
+    else
+      true
+    end
+  end
+
+  defp show_optional_404_page(user, current_user) do
+    false
   end
 
   @impl true
@@ -158,7 +181,7 @@ defmodule AniminaWeb.ProfileLive do
      socket
      |> assign(
        current_user_has_liked_profile?:
-         current_user_has_liked_profile(socket.assigns.current_user.id, socket.assigns.user.id)
+         current_user_has_liked_profile(socket.assigns.current_user, socket.assigns.user.id)
      )}
   end
 
@@ -174,7 +197,7 @@ defmodule AniminaWeb.ProfileLive do
      socket
      |> assign(
        current_user_has_liked_profile?:
-         current_user_has_liked_profile(socket.assigns.current_user.id, socket.assigns.user.id)
+         current_user_has_liked_profile(socket.assigns.current_user, socket.assigns.user.id)
      )}
   end
 
@@ -221,7 +244,7 @@ defmodule AniminaWeb.ProfileLive do
        |> assign(stories_and_flags: stories_and_flags)
        |> assign(
          current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user.id, socket.assigns.user.id)
+           current_user_has_liked_profile(current_user, socket.assigns.user.id)
        )}
     else
       {:noreply,
@@ -232,7 +255,7 @@ defmodule AniminaWeb.ProfileLive do
        |> assign(current_user_red_flags: current_user_red_flags)
        |> assign(
          current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user.id, socket.assigns.user.id)
+           current_user_has_liked_profile(current_user, socket.assigns.user.id)
        )}
     end
   end
@@ -297,8 +320,12 @@ defmodule AniminaWeb.ProfileLive do
     Enum.count(first_flag_array, &(&1 in second_flag_array))
   end
 
-  defp current_user_has_liked_profile(user_id, current_user_id) do
-    case Reaction.by_sender_and_receiver_id(user_id, current_user_id) do
+  defp current_user_has_liked_profile(nil, _current_user_id) do
+    false
+  end
+
+  defp current_user_has_liked_profile(user, current_user_id) do
+    case Reaction.by_sender_and_receiver_id(user.id, current_user_id) do
       {:ok, _user} ->
         true
 
@@ -329,30 +356,34 @@ defmodule AniminaWeb.ProfileLive do
   def render(assigns) do
     ~H"""
     <div class="px-5">
-      <div :if={@user == nil}>
-        <%= gettext("There was an error loading the user's profile") %>
-      </div>
+      <%= if @show_404_page  do %>
+        <.error_profile_component error_text={
+          gettext(
+            "This account profile either doesn't exist or you don't have the needed privileges to access it."
+          )
+        } />
+      <% else %>
+        <.profile_details
+          user={@user}
+          current_user={@current_user}
+          current_user_has_liked_profile?={@current_user_has_liked_profile?}
+          profile_points={@profile_points}
+          intersecting_green_flags_count={@intersecting_green_flags_count}
+          intersecting_red_flags_count={@intersecting_red_flags_count}
+          years_text={gettext("years")}
+          centimeters_text={gettext("cm")}
+        />
 
-      <.profile_details
-        user={@user}
-        current_user={@current_user}
-        current_user_has_liked_profile?={@current_user_has_liked_profile?}
-        profile_points={@profile_points}
-        intersecting_green_flags_count={@intersecting_green_flags_count}
-        intersecting_red_flags_count={@intersecting_red_flags_count}
-        years_text={gettext("years")}
-        centimeters_text={gettext("cm")}
-      />
-
-      <.stories_display
-        stories_and_flags={@stories_and_flags}
-        current_user={@current_user}
-        current_user_green_flags={@current_user_green_flags}
-        current_user_red_flags={@current_user_red_flags}
-        add_new_story_title={gettext("Add a new story")}
-        delete_story_modal_text={gettext("Are you sure?")}
-        user={@user}
-      />
+        <.stories_display
+          stories_and_flags={@stories_and_flags}
+          current_user={@current_user}
+          current_user_green_flags={@current_user_green_flags}
+          current_user_red_flags={@current_user_red_flags}
+          add_new_story_title={gettext("Add a new story")}
+          delete_story_modal_text={gettext("Are you sure?")}
+          user={@user}
+        />
+      <% end %>
     </div>
     """
   end
@@ -369,6 +400,10 @@ defmodule AniminaWeb.ProfileLive do
     {green_flags, red_flags}
   end
 
+  defp filter_flags(nil, _color, _language) do
+    []
+  end
+
   defp filter_flags(user, color, language) do
     traits =
       user.traits
@@ -383,6 +418,10 @@ defmodule AniminaWeb.ProfileLive do
         emoji: trait.flag.emoji
       }
     end)
+  end
+
+  defp fetch_stories_and_flags(nil, _language) do
+    []
   end
 
   defp fetch_stories_and_flags(user, language) do

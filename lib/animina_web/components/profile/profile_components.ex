@@ -355,23 +355,39 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
+  def error_profile_component(assigns) do
+    ~H"""
+    <div class="h-[50vh] md:w-[60%] w-[90%] flex justify-center m-auto dark:text-gray-100 text-gray-900 text-center items-center">
+      <%= @error_text %>
+    </div>
+    """
+  end
+
   def like_reaction_button(assigns) do
     ~H"""
-    <div :if={@current_user.id != @user.id}>
-      <div
-        :if={@current_user_has_liked_profile?}
-        phx-click="remove_like"
-        class="cursor-pointer text-red-500"
-      >
-        <.unlike_button />
-      </div>
-      <div
-        :if={!@current_user_has_liked_profile?}
-        phx-click="add_like"
-        class="cursor-pointer dark:text-white  text-gray-300"
-      >
-        <.like_button />
-      </div>
+    <div>
+      <%= if @current_user do %>
+        <div :if={@current_user.id != @user.id}>
+          <div
+            :if={@current_user_has_liked_profile?}
+            phx-click="remove_like"
+            class="cursor-pointer text-red-500"
+          >
+            <.unlike_button />
+          </div>
+          <div
+            :if={!@current_user_has_liked_profile?}
+            phx-click="add_like"
+            class="cursor-pointer dark:text-white  text-gray-300"
+          >
+            <.like_button />
+          </div>
+        </div>
+      <% else %>
+        <.link navigate="/" class="cursor-pointer dark:text-white  text-gray-300">
+          <.like_button />
+        </.link>
+      <% end %>
     </div>
     """
   end
