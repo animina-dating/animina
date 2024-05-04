@@ -386,6 +386,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
           </p>
         </div>
 
+        <div class="flex gap-2 items-center mb-4">
+          <%= checkbox(f, :is_private,
+            id: "is_private",
+            class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          ) %>
+          <p>
+            <%= gettext("Is only accessible for logged in animina users?") %>
+          </p>
+        </div>
+
         <div>
           <%= submit(gettext("Save"),
             class:
