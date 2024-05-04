@@ -82,6 +82,8 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
+    attribute :is_public, :boolean, default: true
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
