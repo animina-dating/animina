@@ -5,14 +5,17 @@ defmodule AniminaWeb.ProfileLive do
 
   use AniminaWeb, :live_view
   alias Animina.Accounts
+  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
+
   alias Animina.Narratives
   alias Phoenix.PubSub
+
+  require Ash.Query
 
   @impl true
   def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
@@ -34,7 +37,7 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(:user, user)
 
           if connected?(socket) do
-            PubSub.subscribe(Animina.PubSub, "credits")
+            PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
             PubSub.subscribe(Animina.PubSub, "messages")
 
             PubSub.subscribe(
@@ -176,19 +179,17 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
+  def handle_info({:display_updated_credits, %{"points" => points, "user_id" => user_id}}, socket) do
+    socket =
+      if user_id == socket.assigns.current_user.id do
+        socket
+        |> assign(current_user_credit_points: points)
+      else
+        socket
+        |> assign(profile_points: Points.humanized_points(points))
+      end
 
-    {:ok, profile} = Accounts.User.by_id(socket.assigns.user.id)
-
-    profile_points =
-      ProfileViewCredits.get_updated_credit_for_profile(profile, credits)
-
-    {:noreply,
-     socket
-     |> assign(profile_points: Points.humanized_points(profile_points))
-     |> assign(current_user_credit_points: current_user_credit_points)}
+    {:noreply, socket}
   end
 
   def handle_info({:user, current_user}, socket) do
@@ -284,7 +285,8 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_points_for_a_user(user_id) do
-    {:ok, user} = Accounts.User.by_id(user_id)
+    {:ok, user} = BasicUser.by_id(user_id)
+
     user.credit_points
   end
 
@@ -368,23 +370,19 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp filter_flags(user, color, language) do
-    user_flags =
-      user.flags
-      |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+    traits =
+      user.traits
+      |> Enum.filter(fn trait ->
+        trait.color == color and trait.flag != nil
       end)
 
-    Enum.map(user_flags, fn user_flag ->
+    Enum.map(traits, fn trait ->
       %{
-        id: user_flag.id,
-        name: get_translation(user_flag.flag_translations, language),
-        emoji: user_flag.emoji
+        id: trait.flag.id,
+        name: get_translation(trait.flag.flag_translations, language),
+        emoji: trait.flag.emoji
       }
     end)
-  end
-
-  defp find_user_flag_for_a_flag(user_flags, flag) do
-    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   defp fetch_stories_and_flags(user, language) do

@@ -3,7 +3,6 @@ defmodule AniminaWeb.FlagsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits
   alias Animina.Traits.UserFlags
   alias AniminaWeb.SelectFlagsComponent
@@ -15,7 +14,7 @@ defmodule AniminaWeb.FlagsLive do
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(
@@ -64,7 +63,7 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(
       :opposite_color_flags_selected,
       filter_flags(socket.assigns.current_user, :white)
-      |> Enum.map(fn flag -> flag.id end)
+      |> Enum.map(fn trait -> trait.flag.id end)
     )
     |> start_async(:filter_flags, fn -> filter_flags(current_user, :white) end)
   end
@@ -89,7 +88,7 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(
       :opposite_color_flags_selected,
       filter_flags(socket.assigns.current_user, :green)
-      |> Enum.map(fn flag -> flag.id end)
+      |> Enum.map(fn trait -> trait.flag.id end)
     )
     |> start_async(:filter_flags, fn -> filter_flags(current_user, :red) end)
   end
@@ -113,7 +112,7 @@ defmodule AniminaWeb.FlagsLive do
     |> assign(
       :opposite_color_flags_selected,
       filter_flags(socket.assigns.current_user, :red)
-      |> Enum.map(fn flag -> flag.id end)
+      |> Enum.map(fn trait -> trait.flag.id end)
     )
     |> start_async(:filter_flags, fn -> filter_flags(current_user, :green) end)
   end
@@ -125,7 +124,7 @@ defmodule AniminaWeb.FlagsLive do
 
   @impl true
   def handle_async(:filter_flags, {:ok, flags}, socket) do
-    flags = Enum.map(flags, fn flag -> flag.id end)
+    flags = Enum.map(flags, fn trait -> trait.flag.id end)
 
     {:noreply, socket |> assign(user_flags: flags) |> assign(selected: Enum.count(flags))}
   end
@@ -167,7 +166,7 @@ defmodule AniminaWeb.FlagsLive do
         }
       end)
 
-    socket.assigns.current_user.flags_join_assoc
+    socket.assigns.current_user.traits
     |> Enum.filter(fn x -> x.color == socket.assigns.color end)
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
@@ -209,7 +208,7 @@ defmodule AniminaWeb.FlagsLive do
      |> assign(
        :opposite_color_flags_selected,
        filter_flags(current_user, socket.assigns.color)
-       |> Enum.map(fn flag -> flag.id end)
+       |> Enum.map(fn trait -> trait.flag.id end)
      )
      |> assign(
        :user_flags,
@@ -262,13 +261,13 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
-
+  def handle_info(
+        {:display_updated_credits, %{"points" => points, "user_id" => _user_id}},
+        socket
+      ) do
     {:noreply,
      socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
+     |> assign(current_user_credit_points: points)}
   end
 
   @impl true
@@ -292,24 +291,20 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp filter_flags(current_user, color) do
-    flags =
-      current_user.flags
-      |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == color
+    traits =
+      current_user.traits
+      |> Enum.filter(fn trait ->
+        trait.color == color
       end)
 
-    if Enum.empty?(flags) && color == :green do
-      current_user.flags
-      |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(current_user.flags_join_assoc, x).color == :white
+    if Enum.empty?(traits) && color == :green do
+      current_user.traits
+      |> Enum.filter(fn trait ->
+        trait.color == :white
       end)
     else
-      flags
+      traits
     end
-  end
-
-  defp find_user_flag_for_a_flag(user_flags, flag) do
-    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   defp broadcast_user(socket) do

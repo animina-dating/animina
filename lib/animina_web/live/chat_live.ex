@@ -6,14 +6,13 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
   @impl true
   def mount(%{"profile" => profile} = params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(
@@ -32,7 +31,7 @@ defmodule AniminaWeb.ChatLive do
     receiver = Accounts.User.by_username!(profile)
 
     {:ok, messages_between_sender_and_receiver} =
-      Message.messages_for_sender_and_receiver(sender.id, receiver.id,  actor: sender)
+      Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
 
     intersecting_green_flags_count =
       get_intersecting_flags_count(
@@ -156,23 +155,19 @@ defmodule AniminaWeb.ChatLive do
   end
 
   defp filter_flags(user, color, language) do
-    user_flags =
-      user.flags
-      |> Enum.filter(fn x ->
-        find_user_flag_for_a_flag(user.flags_join_assoc, x).color == color
+    traits =
+      user.traits
+      |> Enum.filter(fn trait ->
+        trait.color == color and trait.flag != nil
       end)
 
-    Enum.map(user_flags, fn user_flag ->
+    Enum.map(traits, fn trait ->
       %{
-        id: user_flag.id,
-        name: get_translation(user_flag.flag_translations, language),
-        emoji: user_flag.emoji
+        id: trait.flag.id,
+        name: get_translation(trait.flag.flag_translations, language),
+        emoji: trait.flag.emoji
       }
     end)
-  end
-
-  defp find_user_flag_for_a_flag(user_flags, flag) do
-    Enum.find(user_flags, fn x -> x.flag_id == flag.id end)
   end
 
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
@@ -282,13 +277,14 @@ defmodule AniminaWeb.ChatLive do
     end
   end
 
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
-
+  @impl true
+  def handle_info(
+        {:display_updated_credits, %{"points" => points, "user_id" => _user_id}},
+        socket
+      ) do
     {:noreply,
      socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
+     |> assign(current_user_credit_points: points)}
   end
 
   @impl true

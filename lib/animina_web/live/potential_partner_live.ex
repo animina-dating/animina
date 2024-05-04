@@ -4,7 +4,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
+
   alias Animina.GeoData.City
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -14,7 +14,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
     add_registration_bonus(socket, socket.assigns.current_user)
 
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(
@@ -81,13 +81,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_user(socket, credits)
-
+  def handle_info(
+        {:display_updated_credits, %{"points" => points, "user_id" => _user_id}},
+        socket
+      ) do
     {:noreply,
      socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
+     |> assign(current_user_credit_points: points)}
   end
 
   def handle_info({:new_message, message}, socket) do
