@@ -29,7 +29,16 @@ defmodule AniminaWeb.StoriesComponents do
           />
         <% end %>
         <div>
-          <.link navigate="/my/stories/new" class="p-2 text-blue-700 bg-blue-100 rounded-md">
+          <.link
+            navigate={
+              if @current_user do
+                "/my/stories/new"
+              else
+                "/"
+              end
+            }
+            class="p-2 text-blue-700 bg-blue-100 rounded-md"
+          >
             <%= @add_new_story_title %>
           </.link>
         </div>
@@ -161,7 +170,7 @@ defmodule AniminaWeb.StoriesComponents do
   def story_action_icons(assigns) do
     ~H"""
     <div
-      :if={@user.id == @current_user.id}
+      :if={@current_user && @user.id == @current_user.id}
       class="flex justify-end gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100"
     >
       <.link navigate={"/my/stories/#{@story.id}/edit" }>

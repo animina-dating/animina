@@ -46,6 +46,8 @@ defmodule Animina.Accounts.BasicUser do
                   allow_empty?: false
     end
 
+    attribute :is_private, :boolean, default: false
+
     attribute :gender, :string, allow_nil?: false
 
     attribute :height, :integer do

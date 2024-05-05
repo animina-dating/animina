@@ -291,11 +291,10 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp filter_flags(current_user, color) do
-    traits =
-      current_user.traits
-      |> Enum.filter(fn trait ->
-        trait.color == color
-      end)
+    current_user.traits
+    |> Enum.filter(fn trait ->
+      trait.color == color
+    end)
   end
 
   defp broadcast_user(socket) do
