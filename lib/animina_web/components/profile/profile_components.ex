@@ -384,7 +384,10 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
         </div>
       <% else %>
-        <.link navigate="/" class="cursor-pointer dark:text-white  text-gray-300">
+        <.link
+          navigate={"/?action=like&user=#{@user.username}"}
+          class="cursor-pointer dark:text-white  text-gray-300"
+        >
           <.like_button />
         </.link>
       <% end %>
