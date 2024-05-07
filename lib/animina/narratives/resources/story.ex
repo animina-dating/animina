@@ -6,7 +6,8 @@ defmodule Animina.Narratives.Story do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    notifiers: [Ash.Notifier.PubSub]
 
   attributes do
     uuid_primary_key :id
@@ -19,6 +20,15 @@ defmodule Animina.Narratives.Story do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  pub_sub do
+    module Animina
+    prefix "story"
+
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
   end
 
   relationships do

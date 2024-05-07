@@ -12,8 +12,14 @@ defmodule Animina.Markdown do
     |> String.replace(~r/\<img.*>/, "")
     |> String.replace(~r/\<p/, "<p class='pt-2'")
     |> String.replace(~r/\<a/, "<a class='text-blue-800 underline decoration-blue-800'")
-    |> String.replace(~r/\<ul/, "<ul class='p-2 pl-8 ' style='list-style-type: disc; padding: 10px 10px 10px 30px;'")
-    |> String.replace(~r/\<ol/, "<ol class='p-2 pl-8 ' style='list-style-type: dedimal; padding: 10px 10px 10px 30px;' ")
+    |> String.replace(
+      ~r/\<ul/,
+      "<ul class='p-2 pl-8 ' style='list-style-type: disc; padding: 10px 10px 10px 30px;'"
+    )
+    |> String.replace(
+      ~r/\<ol/,
+      "<ol class='p-2 pl-8 ' style='list-style-type: dedimal; padding: 10px 10px 10px 30px;' "
+    )
     |> String.replace(~r/\<h1/, "<h2 class='pt-4 text-xl font-bold'")
     |> String.replace(~r/\<h2/, "<h3 class='pt-4 text-base font-bold'")
     |> String.replace(~r/\<h3/, "<h4 class='pt-4 text-base font-bold'")

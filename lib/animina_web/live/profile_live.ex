@@ -92,6 +92,7 @@ defmodule AniminaWeb.ProfileLive do
     if connected?(socket) && current_user do
       PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
+      # PubSub.subscribe(Animina.PubSub, "photo:updated:" <> current_user.photo.id)
 
       PubSub.subscribe(
         Animina.PubSub,
@@ -379,7 +380,7 @@ defmodule AniminaWeb.ProfileLive do
           centimeters_text={gettext("cm")}
         />
 
-        <.stories_display
+        <%!-- <.stories_display
           stories_and_flags={@stories_and_flags}
           current_user={@current_user}
           current_user_green_flags={@current_user_green_flags}
@@ -387,7 +388,19 @@ defmodule AniminaWeb.ProfileLive do
           add_new_story_title={gettext("Add a new story")}
           delete_story_modal_text={gettext("Are you sure?")}
           user={@user}
-        />
+        /> --%>
+
+        <%= live_render(
+          @socket,
+          AniminaWeb.ProfileStoriesLive,
+          session: %{
+            "user_id" => @user.id,
+            "current_user_id" => @current_user.id,
+            "language" => @language
+          },
+          id: "profile_stories_live:#{@user.id}",
+          sticky: true
+        ) %>
       <% end %>
     </div>
     """

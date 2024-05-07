@@ -48,6 +48,7 @@ defmodule AniminaWeb.StoriesComponents do
   end
 
   attr :story, :any, required: true
+  attr :photo, :any, required: false
   attr :flags, :list, required: true
   attr :current_user, :any, required: true
   attr :user, :any, required: false
@@ -61,15 +62,81 @@ defmodule AniminaWeb.StoriesComponents do
       <div :if={@story.photo} class="">
         <%= if @story.headline.subject == "About me" do %>
           <img
+            :if={
+              @story.user_id == @current_user.id ||
+                @story.photo.state == :approved
+            }
             class="object-cover rounded-lg aspect-square"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
           />
+
+          <div
+            :if={
+              @story.user_id != @current_user.id &&
+                @story.photo.state != :approved
+            }
+            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
+          >
+            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+
+              <p>Photo not available</p>
+            </div>
+          </div>
         <% else %>
           <img
+            :if={
+              @story.user_id == @current_user.id ||
+                @story.photo.state == :approved
+            }
             class="object-cover rounded-lg"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
           />
+
+          <div
+            :if={
+              @story.user_id != @current_user.id &&
+                @story.photo.state != :approved
+            }
+            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
+          >
+            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+
+              <p>Photo not available</p>
+            </div>
+          </div>
         <% end %>
+
+        <div class="flex w-full justify-end">
+          <p class="text-red-500"><%= @story.photo.state %></p>
+        </div>
       </div>
 
       <.story_body
