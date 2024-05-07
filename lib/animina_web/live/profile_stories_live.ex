@@ -154,8 +154,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     stories_and_flags = Enum.zip(stories, flags)
 
-    IO.inspect(stories_and_flags)
-
     Enum.reduce(stories_and_flags, [], fn {story, story_flags}, acc ->
       acc ++ [%{id: story.id, story: story, photo: story.photo, flags: story_flags}]
     end)
