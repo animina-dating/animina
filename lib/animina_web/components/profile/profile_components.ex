@@ -4,14 +4,6 @@ defmodule AniminaWeb.ProfileComponents do
   """
   use Phoenix.Component
 
-  def test(assigns) do
-    ~H"""
-    <div>
-      qwef
-    </div>
-    """
-  end
-
   def profile_details(assigns) do
     ~H"""
     <div :if={@user} class="pb-4 flex justify-between items-center">
@@ -401,9 +393,12 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
         </div>
       <% else %>
-        <.link navigate="/" class="cursor-pointer dark:text-white  text-gray-300">
+        <div
+          phx-click="redirect_to_login_with_action"
+          class="cursor-pointer dark:text-white  text-gray-300"
+        >
           <.like_button />
-        </.link>
+        </div>
       <% end %>
     </div>
     """

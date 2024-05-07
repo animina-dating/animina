@@ -36,12 +36,13 @@ defmodule AniminaWeb.RootLive do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :register, _params) do
+  defp apply_action(socket, :register, params) do
     socket
     |> assign(page_title: gettext("Animina dating app"))
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, gettext("Register new account"))
-    |> assign(:action, ~p"/auth/user/password/register")
+    |> assign(:action, get_link("/auth/user/password/register/", params))
+    |> assign(:sign_in_link, get_link("/sign-in/", params))
     |> assign(:hidden_points, 100)
     |> assign(
       :form,
@@ -49,11 +50,12 @@ defmodule AniminaWeb.RootLive do
     )
   end
 
-  defp apply_action(socket, :sign_in, _params) do
+  defp apply_action(socket, :sign_in, params) do
     socket
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, gettext("Sign in"))
-    |> assign(:action, ~p"/auth/user/password/sign_in")
+    |> assign(:sign_up_link, get_link("/", params))
+    |> assign(:action, get_link("/auth/user/password/sign_in/", params))
     |> assign(
       :form,
       Form.for_action(BasicUser, :sign_in_with_password, api: Accounts, as: "user")
@@ -488,7 +490,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <.link navigate={~p"/sign-in"}>
+          <.link navigate={@sign_in_link}>
             <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
               <%= gettext("Already have an account? Sign in") %>
             </p>
@@ -578,7 +580,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div>
-          <.link navigate={~p"/"}>
+          <.link navigate={@sign_up_link}>
             <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
               <%= gettext("Don't have an account? Sign up") %>
             </p>
@@ -598,5 +600,13 @@ defmodule AniminaWeb.RootLive do
 
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
+  end
+
+  defp get_link(route, params) do
+    if params == %{} do
+      route
+    else
+      "#{route}?#{URI.encode_query(params)}"
+    end
   end
 end
