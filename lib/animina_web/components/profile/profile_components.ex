@@ -4,8 +4,6 @@ defmodule AniminaWeb.ProfileComponents do
   """
   use Phoenix.Component
 
-
-
   def profile_details(assigns) do
     ~H"""
     <div :if={@user} class="pb-4">
@@ -13,10 +11,6 @@ defmodule AniminaWeb.ProfileComponents do
         <h1 class="text-2xl font-semibold dark:text-white">
           <%= @user.name %>
         </h1>
-
-        <p class="text-white" phx-click="Test" phx-value-id="Hey">
-        Test
-        </p>
 
         <.like_reaction_button
           current_user_has_liked_profile?={@current_user_has_liked_profile?}
@@ -383,7 +377,7 @@ defmodule AniminaWeb.ProfileComponents do
         </div>
       <% else %>
         <div
-          phx-click="redirect_to_login"
+          phx-click="redirect_to_login_with_action"
           class="cursor-pointer dark:text-white  text-gray-300"
         >
           <.like_button />

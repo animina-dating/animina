@@ -88,20 +88,6 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-
-  def handle_event(%{"action" => "like" , "user"=> user}, _uri, socket) do
-
-
-  {:noreply , socket |> push_redirect(to: "/sign-in/?action=like&user=#{socket.assigns.user.username}")}
-  end
-
-  def handle_event(_params, _uri, socket) do
-
-
-    {:noreply , socket }
-    end
-
-
   defp subscribe(socket, current_user, user) do
     if connected?(socket) && current_user do
       PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
@@ -184,9 +170,7 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-
   def handle_event("add_like", _params, socket) do
-
     Reaction.like(
       %{
         sender_id: socket.assigns.current_user.id,
@@ -221,14 +205,12 @@ defmodule AniminaWeb.ProfileLive do
      )}
   end
 
-
-
-  def handle_event("redirect_to_login_after_action",_params, socket) do
-    IO.inspect("lalla")
-end
-
-
-
+  def handle_event("redirect_to_login_with_action", _params, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, "You have to register or log in before liking a profile.")
+     |> push_redirect(to: ~p"/?action=like&user=#{socket.assigns.user.username}")}
+  end
 
   @impl true
   def handle_info({:display_updated_credits, %{"points" => points, "user_id" => user_id}}, socket) do
@@ -380,8 +362,6 @@ end
     )
   end
 
-
-
   @impl true
 
   def render(assigns) do
@@ -394,8 +374,6 @@ end
           )
         } />
       <% else %>
-
-
         <.profile_details
           user={@user}
           current_user={@current_user}
