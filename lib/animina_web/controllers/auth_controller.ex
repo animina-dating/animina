@@ -2,7 +2,9 @@ defmodule AniminaWeb.AuthController do
   use AniminaWeb, :controller
   use AshAuthentication.Phoenix.Controller
 
+  alias Animina.Accounts.Reaction
   alias Animina.Accounts.Token
+  alias Animina.Accounts.User
   alias Animina.Narratives.Story
   alias AshAuthentication.TokenResource
 
@@ -16,11 +18,34 @@ defmodule AniminaWeb.AuthController do
           path
       end
 
+    get_actions_to_perform(conn.query_params, user)
+
     conn
     |> delete_session(:return_to)
     |> store_in_session(user)
     |> assign(:current_user, user)
     |> redirect(to: return_to)
+  end
+
+  defp get_actions_to_perform(%{"action" => action, "user" => username}, actor) do
+    case User.by_username(username) do
+      {:ok, user} ->
+        if action == "like" do
+          Reaction.like(
+            %{
+              sender_id: actor.id,
+              receiver_id: user.id
+            },
+            actor: actor
+          )
+        end
+
+      _ ->
+        :error
+    end
+  end
+
+  defp get_actions_to_perform(_, _user_id) do
   end
 
   def failure(
