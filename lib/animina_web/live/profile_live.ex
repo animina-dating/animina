@@ -170,7 +170,6 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  @impl true
   def handle_event("add_like", _params, socket) do
     Reaction.like(
       %{
@@ -204,6 +203,13 @@ defmodule AniminaWeb.ProfileLive do
        current_user_has_liked_profile?:
          current_user_has_liked_profile(socket.assigns.current_user, socket.assigns.user.id)
      )}
+  end
+
+  def handle_event("redirect_to_login_with_action", _params, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, "You have to register or log in before liking a profile.")
+     |> push_redirect(to: ~p"/?action=like&user=#{socket.assigns.user.username}")}
   end
 
   @impl true
