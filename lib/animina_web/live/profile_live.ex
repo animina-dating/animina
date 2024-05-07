@@ -7,12 +7,9 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts
   alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Credit
-  alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-
-  alias Animina.Narratives
   alias Phoenix.PubSub
 
   require Ash.Query
@@ -38,11 +35,6 @@ defmodule AniminaWeb.ProfileLive do
 
           subscribe(socket, current_user, user)
 
-          stories_and_flags = fetch_stories_and_flags(user, language)
-
-          {current_user_green_flags, current_user_red_flags} =
-            fetch_green_and_red_flags_ids(current_user, language)
-
           intersecting_green_flags_count =
             get_intersecting_flags_count(
               filter_flags(current_user, :green, language),
@@ -61,9 +53,6 @@ defmodule AniminaWeb.ProfileLive do
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
           |> assign(profile_points: Points.humanized_points(user.credit_points))
-          |> assign(current_user_green_flags: current_user_green_flags)
-          |> assign(current_user_red_flags: current_user_red_flags)
-          |> assign(stories_and_flags: stories_and_flags)
           |> assign(
             current_user_has_liked_profile?:
               current_user_has_liked_profile(socket.assigns.current_user, user.id)
@@ -92,7 +81,6 @@ defmodule AniminaWeb.ProfileLive do
     if connected?(socket) && current_user do
       PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
-      # PubSub.subscribe(Animina.PubSub, "photo:updated:" <> current_user.photo.id)
 
       PubSub.subscribe(
         Animina.PubSub,
@@ -127,48 +115,6 @@ defmodule AniminaWeb.ProfileLive do
 
   defp show_optional_404_page(_user, _current_user) do
     false
-  end
-
-  @impl true
-  def handle_event("destroy_story", %{"id" => id}, socket) do
-    {:ok, story} = Narratives.Story.by_id(id)
-
-    case Narratives.Story.destroy(story) do
-      :ok ->
-        {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
-
-        broadcast_user(socket)
-
-        {:noreply,
-         socket
-         |> assign(
-           :stories_and_flags,
-           fetch_stories_and_flags(current_user, socket.assigns.language)
-         )}
-
-      {:error, %Ash.Error.Invalid{} = changeset} ->
-        case changeset.errors do
-          [%Ash.Error.Changes.InvalidAttribute{message: message}]
-          when message == "would leave records behind" ->
-            Photo.destroy(story.photo)
-            Narratives.Story.destroy(story)
-            {:ok, current_user} = Accounts.User.by_id(socket.assigns.current_user.id)
-
-            broadcast_user(socket)
-
-            {:noreply,
-             socket
-             |> assign(
-               :stories_and_flags,
-               fetch_stories_and_flags(current_user, socket.assigns.language)
-             )}
-
-          _ ->
-            {:noreply,
-             socket
-             |> put_flash(:error, gettext("An error occurred while deleting the story"))}
-        end
-    end
   end
 
   @impl true
@@ -222,11 +168,6 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    stories_and_flags = fetch_stories_and_flags(current_user, socket.assigns.language)
-
-    {current_user_green_flags, current_user_red_flags} =
-      fetch_green_and_red_flags_ids(current_user, socket.assigns.language)
-
     intersecting_green_flags_count =
       get_intersecting_flags_count(
         filter_flags(current_user, :green, socket.assigns.language),
@@ -245,9 +186,6 @@ defmodule AniminaWeb.ProfileLive do
        |> assign(current_user: current_user)
        |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
        |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
-       |> assign(current_user_green_flags: current_user_green_flags)
-       |> assign(current_user_red_flags: current_user_red_flags)
-       |> assign(stories_and_flags: stories_and_flags)
        |> assign(
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user, socket.assigns.user.id)
@@ -257,8 +195,6 @@ defmodule AniminaWeb.ProfileLive do
        socket
        |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
        |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
-       |> assign(current_user_green_flags: current_user_green_flags)
-       |> assign(current_user_red_flags: current_user_red_flags)
        |> assign(
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user, socket.assigns.user.id)
@@ -358,7 +294,6 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-
   def render(assigns) do
     ~H"""
     <div class="px-5">
@@ -378,6 +313,7 @@ defmodule AniminaWeb.ProfileLive do
           intersecting_red_flags_count={@intersecting_red_flags_count}
           years_text={gettext("years")}
           centimeters_text={gettext("cm")}
+          add_new_story_title={gettext("Add a new story")}
         />
 
         <%!-- <.stories_display
@@ -406,18 +342,6 @@ defmodule AniminaWeb.ProfileLive do
     """
   end
 
-  defp fetch_green_and_red_flags_ids(user, language) do
-    green_flags =
-      filter_flags(user, :green, language)
-      |> Enum.map(fn x -> x.id end)
-
-    red_flags =
-      filter_flags(user, :red, language)
-      |> Enum.map(fn x -> x.id end)
-
-    {green_flags, red_flags}
-  end
-
   defp filter_flags(nil, _color, _language) do
     []
   end
@@ -436,36 +360,6 @@ defmodule AniminaWeb.ProfileLive do
         emoji: trait.flag.emoji
       }
     end)
-  end
-
-  defp fetch_stories_and_flags(nil, _language) do
-    []
-  end
-
-  defp fetch_stories_and_flags(user, language) do
-    stories = user.stories
-
-    flags =
-      filter_flags(user, :white, language)
-
-    array = Enum.map(1..(5 * length(stories)), fn _ -> %{} end)
-
-    flags =
-      (flags ++ array)
-      |> Enum.chunk_every(get_amount_to_chunk(stories, flags))
-
-    Enum.zip(stories, flags)
-  end
-
-  defp get_amount_to_chunk(stories, flags) do
-    length_of_stories = length(stories)
-    length_of_flags = length(flags)
-
-    if 5 * length_of_stories >= length_of_flags do
-      5
-    else
-      5 + length_of_flags
-    end
   end
 
   defp get_translation(translations, language) do

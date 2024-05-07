@@ -9,6 +9,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
   alias Animina.Narratives
   alias Animina.Traits
   alias Phoenix.LiveView.AsyncResult
+  alias Phoenix.PubSub
 
   require Ash.Query
 
@@ -63,6 +64,39 @@ defmodule AniminaWeb.ProfileStoriesLive do
   end
 
   @impl true
+  def handle_event("destroy_story", %{"id" => id, "dom_id" => dom_id}, socket) do
+    {:ok, story} = Narratives.Story.by_id(id)
+
+    case Narratives.Story.destroy(story) do
+      :ok ->
+        broadcast_user(socket)
+
+        {:noreply,
+         socket
+         |> delete_story_by_dom_id(dom_id)}
+
+      {:error, %Ash.Error.Invalid{} = changeset} ->
+        case changeset.errors do
+          [%Ash.Error.Changes.InvalidAttribute{message: message}]
+          when message == "would leave records behind" ->
+            Accounts.Photo.destroy(story.photo)
+            Narratives.Story.destroy(story)
+
+            broadcast_user(socket)
+
+            {:noreply,
+             socket
+             |> delete_story_by_dom_id(dom_id)}
+
+          _ ->
+            {:noreply,
+             socket
+             |> put_flash(:error, gettext("An error occurred while deleting the story"))}
+        end
+    end
+  end
+
+  @impl true
   def handle_info(
         %{event: "update", payload: %{data: %Accounts.Photo{} = photo}},
         socket
@@ -94,6 +128,14 @@ defmodule AniminaWeb.ProfileStoriesLive do
     {:noreply, update_story(socket, story)}
   end
 
+  @impl true
+  def handle_info(
+        %{event: "destroy", payload: %{data: %Narratives.Story{} = story}},
+        socket
+      ) do
+    {:noreply, delete_story_by_dom_id(socket, "stories_and_flags-" <> story.id)}
+  end
+
   defp update_photo(socket, photo) do
     item =
       Enum.find(socket.assigns.stories_and_flags_items, fn item ->
@@ -116,6 +158,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     socket
     |> stream_insert(:stories_and_flags, item, at: -1)
+  end
+
+  defp delete_story_by_dom_id(socket, dom_id) do
+    socket
+    |> stream_delete_by_dom_id(:stories_and_flags, dom_id)
   end
 
   defp fetch_flags(user_id, color) do
@@ -190,6 +237,16 @@ defmodule AniminaWeb.ProfileStoriesLive do
     end)
   end
 
+  defp broadcast_user(socket) do
+    current_user = Accounts.User.by_id!(socket.assigns.current_user.id)
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "#{current_user.username}",
+      {:user, current_user}
+    )
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -233,6 +290,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
               photo={photo}
               flags={flags}
               user={@user}
+              dom_id={dom_id}
               current_user={@current_user}
               current_user_green_flags={@current_user_green_flags}
               current_user_red_flags={@current_user_red_flags}

@@ -28,7 +28,11 @@ defmodule Animina.Narratives.Story do
 
     broadcast_type :phoenix_broadcast
 
+    publish :create, ["created", [:user_id, nil]]
     publish :update, ["updated", :id]
+    publish :destroy, ["deleted", [:id]]
+
+    publish_all :destroy, ["deleted", [:user_id, :id]]
   end
 
   relationships do

@@ -48,7 +48,7 @@ defmodule AniminaWeb.Router do
 
     get "/demo", PageController, :demo
 
-    sign_out_route AuthController
+    sign_out_route AuthController, "/auth/user/sign-out"
     auth_routes_for Animina.Accounts.User, to: AuthController
     reset_route []
   end

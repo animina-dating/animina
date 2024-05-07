@@ -14,6 +14,7 @@ defmodule AniminaWeb.StoryComponent do
   def update(assigns, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "story:updated:#{assigns.story.id}")
+      PubSub.subscribe(Animina.PubSub, "story:deleted:#{assigns.story.id}")
       if(assigns.photo, do: PubSub.subscribe(Animina.PubSub, "photo:updated:#{assigns.photo.id}"))
     end
 
@@ -32,6 +33,7 @@ defmodule AniminaWeb.StoryComponent do
         story={@story}
         current_user={@current_user}
         flags={@flags}
+        dom_id={@dom_id}
         user={@user}
         current_user_green_flags={@current_user_green_flags}
         current_user_red_flags={@current_user_red_flags}
