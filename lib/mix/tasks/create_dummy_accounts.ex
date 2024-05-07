@@ -1,4 +1,4 @@
-if Mix.env() == :dev || Mix.env() == :test do
+if  Enum.member?([:dev, :test], Mix.env()) do
   defmodule Mix.Tasks.CreateDummyAccounts do
     @moduledoc """
     This task creates dummy accounts for development.
@@ -54,7 +54,7 @@ if Mix.env() == :dev || Mix.env() == :test do
             height: height,
             mobile_phone: random_mobile_phone_number(),
             birthday: birthday,
-            hashed_password: "test",
+            hashed_password: Bcrypt.hash_pwd_salt("test"),
             occupation: Person.En.title_descriptor(),
             minimum_partner_height: height - 30,
             maximum_partner_height: height + 15,
