@@ -2,7 +2,7 @@ defmodule Animina.Checks.CreateUserRoleCheck do
   @moduledoc """
   Policy for The Checking that only a user with the admin role can add a user to the admin role group
   """
-  alias Animina.Accounts.User
+
   alias Animina.Accounts.Role
   use Ash.Policy.SimpleCheck
 

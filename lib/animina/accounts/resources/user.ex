@@ -151,10 +151,22 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read, :update]
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
+    end
+
+    create :create do
+      change after_action(fn changeset, record ->
+               if Mix.env() == :dev && length(Accounts.User.read!()) == 0 do
+                 create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
+               else
+                 create_user_role_for_user(changeset)
+               end
+
+               {:ok, record}
+             end)
     end
   end
 
@@ -231,6 +243,35 @@ defmodule Animina.Accounts.User do
     repo Animina.Repo
   end
 
+  defp create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset) do
+    user_role = Animina.Accounts.Role.by_name!(:user)
+    admin_role = Animina.Accounts.Role.by_name!(:admin)
+
+    [
+      %{user_id: changeset.attributes.id, role_id: user_role.id},
+      %{user_id: changeset.attributes.id, role_id: admin_role.id}
+    ]
+    |> Animina.Accounts.bulk_create(Animina.Accounts.UserRole, :create,
+      return_stream?: false,
+      return_records?: false,
+      batch_size: 100
+    )
+  end
+
+  def create_user_role_for_user(changeset) do
+    user_role = Animina.Accounts.Role.by_name!(:user)
+
+    Animina.Accounts.UserRole.create(%{
+      user_id: changeset.attributes.id,
+      role_id: user_role.id
+    })
+  end
+
+
+  def get_number_of_users do
+    Accounts.User.read!()
+    |> length()
+  end
   # TODO: Uncomment this if you want to use policies
   # If using policies, add the following bypass:
   # policies do
