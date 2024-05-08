@@ -19,18 +19,18 @@ defmodule Animina.Checks.CreateUserRoleCheck do
 
       _ ->
         if role.name == :admin do
-          is_user_an_admin?(actor.roles)
+          user_an_admin?(actor.roles)
         else
           true
         end
     end
   end
 
-  defp is_user_an_admin?([]) do
+  defp user_an_admin?([]) do
     false
   end
 
-  defp is_user_an_admin?(roles) do
+  defp user_an_admin?(roles) do
     roles
     |> Enum.map(fn role -> role.name end)
     |> Enum.any?(fn role -> role == :admin end)

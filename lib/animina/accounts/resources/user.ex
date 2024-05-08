@@ -159,7 +159,7 @@ defmodule Animina.Accounts.User do
 
     create :create do
       change after_action(fn changeset, record ->
-               if Mix.env() == :dev && length(Accounts.User.read!()) == 0 do
+               if Mix.env() == :dev && Enum.empty?(Accounts.User.read!())  do
                  create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
                else
                  create_user_role_for_user(changeset)
@@ -267,11 +267,11 @@ defmodule Animina.Accounts.User do
     })
   end
 
-
   def get_number_of_users do
     Accounts.User.read!()
     |> length()
   end
+
   # TODO: Uncomment this if you want to use policies
   # If using policies, add the following bypass:
   # policies do
