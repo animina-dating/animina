@@ -1,9 +1,9 @@
 defmodule AniminaWeb.RootTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias Animina.Accounts.UserRole
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
+  alias Animina.Accounts.UserRole
 
   @valid_attrs %{
     email: "michael@example.com",

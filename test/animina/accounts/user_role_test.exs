@@ -1,8 +1,7 @@
 defmodule Animina.Accounts.UserRoleTest do
   use Animina.DataCase, async: true
-
-  alias Animina.Accounts.User
   alias Animina.Accounts.Role
+  alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
 
   describe "Tests for User Role Resource" do

@@ -2,9 +2,9 @@ defmodule Animina.Accounts.UserTest do
   use Animina.DataCase, async: true
 
   alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
-  alias Animina.Accounts.Role
 
   describe "create BasicUser" do
     test "create a new user" do
