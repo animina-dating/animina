@@ -4,7 +4,8 @@ defmodule Animina.Accounts.UserRole do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer
 
   attributes do
     uuid_primary_key :id
@@ -33,6 +34,12 @@ defmodule Animina.Accounts.UserRole do
     define_for Animina.Accounts
     define :read
     define :create
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if Animina.Checks.CreateUserRoleCheck
+    end
   end
 
   postgres do
