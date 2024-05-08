@@ -1,6 +1,9 @@
 defmodule AniminaWeb.RootTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.UserRole
+  alias Animina.Accounts.Role
+  alias Animina.Accounts.User
 
   @valid_attrs %{
     email: "michael@example.com",
@@ -52,6 +55,24 @@ defmodule AniminaWeb.RootTest do
         conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")
 
       assert html =~ "Criteria for your new partner"
+    end
+
+    test "Once we add correct user details , a user is added and given the 'user' role",
+         %{conn: conn} do
+      if Role.by_name!(:user) == nil do
+        Role.create(%{name: :user})
+      end
+
+      {:ok, _view, _html} = live(conn, "/")
+
+      {:ok, _index_live, _html} =
+        conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")
+
+      user = User.by_username!(@valid_attrs.username)
+
+      assert {:ok, user_roles} = UserRole.by_user_id(user.id)
+
+      assert Enum.any?(user_roles, fn user_role -> user_role.role.name == :user end)
     end
   end
 

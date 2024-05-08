@@ -4,6 +4,7 @@ defmodule Animina.Checks.CreateUserRoleCheck do
   """
 
   alias Animina.Accounts.Role
+  alias Animina.Accounts.UserRole
   use Ash.Policy.SimpleCheck
 
   def describe(_opts) do
@@ -13,13 +14,15 @@ defmodule Animina.Checks.CreateUserRoleCheck do
   def match?(actor, %{changeset: %Ash.Changeset{} = changeset}, _opts) do
     role = Role.by_id!(changeset.attributes.role_id)
 
+    user_roles = UserRole.by_user_id!(actor.id)
+
     case role do
       nil ->
         false
 
       _ ->
         if role.name == :admin do
-          user_an_admin?(actor.roles)
+          user_an_admin?(user_roles)
         else
           true
         end
@@ -30,9 +33,9 @@ defmodule Animina.Checks.CreateUserRoleCheck do
     false
   end
 
-  defp user_an_admin?(roles) do
-    roles
-    |> Enum.map(fn role -> role.name end)
+  defp user_an_admin?(user_roles) do
+    user_roles
+    |> Enum.map(fn user_role -> user_role.role.name end)
     |> Enum.any?(fn role -> role == :admin end)
   end
 end

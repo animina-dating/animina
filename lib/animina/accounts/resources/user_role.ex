@@ -28,12 +28,26 @@ defmodule Animina.Accounts.UserRole do
 
   actions do
     defaults [:create, :read]
+
+    read :by_user_id do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:role])
+      filter expr(user_id == ^arg(:user_id))
+    end
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
+    define :by_user_id, args: [:user_id]
+  end
+
+  preparations do
+    prepare build(load: [:role])
   end
 
   policies do

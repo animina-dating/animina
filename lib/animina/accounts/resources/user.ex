@@ -92,16 +92,16 @@ defmodule Animina.Accounts.User do
     has_many :credits, Accounts.Credit
     has_many :photos, Accounts.Photo
 
-    many_to_many :flags, Traits.Flag do
-      through Traits.UserFlags
-      source_attribute_on_join_resource :user_id
-      destination_attribute_on_join_resource :flag_id
-    end
-
     many_to_many :roles, Accounts.Role do
       through Accounts.UserRole
       source_attribute_on_join_resource :user_id
       destination_attribute_on_join_resource :role_id
+    end
+
+    many_to_many :flags, Traits.Flag do
+      through Traits.UserFlags
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :flag_id
     end
 
     has_many :traits, Traits.UserFlags do
@@ -151,22 +151,10 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read, :update]
+    defaults [:read, :update, :create]
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
-    end
-
-    create :create do
-      change after_action(fn changeset, record ->
-               if Mix.env() == :dev && Enum.empty?(Accounts.User.read!())  do
-                 create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
-               else
-                 create_user_role_for_user(changeset)
-               end
-
-               {:ok, record}
-             end)
     end
   end
 
@@ -185,6 +173,19 @@ defmodule Animina.Accounts.User do
     sum :credit_points, :credits, :points, default: 0
   end
 
+  changes do
+    change after_action(fn changeset, record ->
+             if Mix.env() == :dev && Enum.empty?(Accounts.User.read!()) do
+               create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
+             else
+               create_user_role_for_user(changeset)
+             end
+
+             {:ok, record}
+           end),
+           on: [:create]
+  end
+
   calculations do
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
     calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
@@ -200,8 +201,7 @@ defmodule Animina.Accounts.User do
                 :city,
                 :flags,
                 :stories,
-                :traits,
-                :roles
+                :traits
               ]
             )
   end

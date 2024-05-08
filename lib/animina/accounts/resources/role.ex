@@ -27,6 +27,7 @@ defmodule Animina.Accounts.Role do
     define :read
     define :create
     define :by_name, get_by: [:name], action: :read
+    define :by_id, get_by: [:id], action: :read
   end
 
   postgres do
