@@ -98,6 +98,12 @@ defmodule Animina.Accounts.User do
       destination_attribute_on_join_resource :flag_id
     end
 
+    many_to_many :roles, Accounts.Role do
+      through Accounts.UserRole
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :role_id
+    end
+
     has_many :traits, Traits.UserFlags do
       destination_attribute :user_id
     end
@@ -174,7 +180,18 @@ defmodule Animina.Accounts.User do
   end
 
   preparations do
-    prepare build(load: [:age, :credit_points, :profile_photo, :city, :flags, :stories, :traits])
+    prepare build(
+              load: [
+                :age,
+                :credit_points,
+                :profile_photo,
+                :city,
+                :flags,
+                :stories,
+                :traits,
+                :roles
+              ]
+            )
   end
 
   authentication do
