@@ -14,10 +14,13 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.Photo
     resource Animina.Accounts.Reaction
     resource Animina.Accounts.Message
+    resource Animina.Accounts.Role
+    resource Animina.Accounts.UserRole
     resource Animina.Traits.UserFlags
     resource Animina.Traits.Flag
     resource Animina.Traits.FlagTranslation
     resource Animina.Traits.Category
     resource Animina.Traits.CategoryTranslation
+
   end
 end
