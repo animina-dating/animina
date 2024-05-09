@@ -2,6 +2,10 @@ defmodule Animina.Accounts.Message do
   @moduledoc """
   This is the Message module which we use to manage messages between users.
   """
+
+  alias Phoenix.PubSub
+  alias Animina.Accounts.User
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer
@@ -116,6 +120,15 @@ defmodule Animina.Accounts.Message do
     define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
 
     define :messages_sent_by_user, args: [:sender_id]
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             PubSub.broadcast(Animina.PubSub, "messages", {:new_message, record})
+
+             {:ok, record}
+           end),
+           on: [:create]
   end
 
   policies do

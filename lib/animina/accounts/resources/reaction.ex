@@ -3,6 +3,9 @@ defmodule Animina.Accounts.Reaction do
   This is the Reaction module which we use to manage likes, block, etc.
   """
 
+  alias Phoenix.PubSub
+  alias Animina.Accounts.User
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer
@@ -74,6 +77,35 @@ defmodule Animina.Accounts.Reaction do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             sender_username =
+               User.by_id!(record.sender_id)
+               |> Map.get(:username)
+               |> Ash.CiString.value()
+
+             receiver_username =
+               User.by_id!(record.receiver_id)
+               |> Map.get(:username)
+               |> Ash.CiString.value()
+
+             PubSub.broadcast(
+               Animina.PubSub,
+               sender_username,
+               {:user, User.by_id!(record.sender_id)}
+             )
+
+             PubSub.broadcast(
+               Animina.PubSub,
+               receiver_username,
+               {:user, User.by_id!(record.receiver_id)}
+             )
+
+             {:ok, record}
+           end),
+           on: [:create, :destroy]
   end
 
   policies do

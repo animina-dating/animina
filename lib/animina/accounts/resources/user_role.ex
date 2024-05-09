@@ -3,6 +3,9 @@ defmodule Animina.Accounts.UserRole do
   This is the User Role module which we use to manage user roles.
   """
 
+  alias Phoenix.PubSub
+  alias Animina.Accounts.User
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer
@@ -44,6 +47,20 @@ defmodule Animina.Accounts.UserRole do
     define :read
     define :create
     define :by_user_id, args: [:user_id]
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             username =
+               User.by_id!(record.user_id)
+               |> Map.get(:username)
+               |> Ash.CiString.value()
+
+             PubSub.broadcast(Animina.PubSub, username, {:user, User.by_id!(record.user_id)})
+
+             {:ok, record}
+           end),
+           on: [:create]
   end
 
   preparations do
