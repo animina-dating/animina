@@ -1,4 +1,4 @@
-if  Enum.member?([:dev, :test], Mix.env()) do
+if Enum.member?([:dev, :test], Mix.env()) do
   defmodule Mix.Tasks.CreateDummyAccounts do
     @moduledoc """
     This task creates dummy accounts for development.

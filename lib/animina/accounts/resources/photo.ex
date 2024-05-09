@@ -6,6 +6,7 @@ defmodule Animina.Accounts.Photo do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    notifiers: [Ash.Notifier.PubSub],
     extensions: [AshStateMachine, AshOban]
 
   attributes do
@@ -29,6 +30,17 @@ defmodule Animina.Accounts.Photo do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  pub_sub do
+    module Animina
+    prefix "photo"
+
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
+    publish :reject, ["updated", :id]
+    publish :approve, ["updated", :id]
   end
 
   state_machine do

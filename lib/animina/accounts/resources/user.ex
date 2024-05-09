@@ -92,6 +92,12 @@ defmodule Animina.Accounts.User do
     has_many :credits, Accounts.Credit
     has_many :photos, Accounts.Photo
 
+    many_to_many :roles, Accounts.Role do
+      through Accounts.UserRole
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :role_id
+    end
+
     many_to_many :flags, Traits.Flag do
       through Traits.UserFlags
       source_attribute_on_join_resource :user_id
@@ -145,7 +151,7 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read, :update, :create]
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
@@ -167,6 +173,19 @@ defmodule Animina.Accounts.User do
     sum :credit_points, :credits, :points, default: 0
   end
 
+  changes do
+    change after_action(fn changeset, record ->
+             if Mix.env() == :dev && Enum.empty?(Accounts.User.read!()) do
+               create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
+             else
+               create_user_role_for_user(changeset)
+             end
+
+             {:ok, record}
+           end),
+           on: [:create]
+  end
+
   calculations do
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
     calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
@@ -174,7 +193,17 @@ defmodule Animina.Accounts.User do
   end
 
   preparations do
-    prepare build(load: [:age, :credit_points, :profile_photo, :city, :flags, :stories, :traits])
+    prepare build(
+              load: [
+                :age,
+                :credit_points,
+                :profile_photo,
+                :city,
+                :flags,
+                :stories,
+                :traits
+              ]
+            )
   end
 
   authentication do
@@ -212,6 +241,35 @@ defmodule Animina.Accounts.User do
   postgres do
     table "users"
     repo Animina.Repo
+  end
+
+  defp create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset) do
+    user_role = Animina.Accounts.Role.by_name!(:user)
+    admin_role = Animina.Accounts.Role.by_name!(:admin)
+
+    [
+      %{user_id: changeset.attributes.id, role_id: user_role.id},
+      %{user_id: changeset.attributes.id, role_id: admin_role.id}
+    ]
+    |> Animina.Accounts.bulk_create(Animina.Accounts.UserRole, :create,
+      return_stream?: false,
+      return_records?: false,
+      batch_size: 100
+    )
+  end
+
+  def create_user_role_for_user(changeset) do
+    user_role = Animina.Accounts.Role.by_name!(:user)
+
+    Animina.Accounts.UserRole.create(%{
+      user_id: changeset.attributes.id,
+      role_id: user_role.id
+    })
+  end
+
+  def get_number_of_users do
+    Accounts.User.read!()
+    |> length()
   end
 
   # TODO: Uncomment this if you want to use policies

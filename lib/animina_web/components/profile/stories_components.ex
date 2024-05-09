@@ -28,26 +28,14 @@ defmodule AniminaWeb.StoriesComponents do
             current_user_red_flags={@current_user_red_flags}
           />
         <% end %>
-        <div>
-          <.link
-            navigate={
-              if @current_user do
-                "/my/stories/new"
-              else
-                "/"
-              end
-            }
-            class="p-2 text-blue-700 bg-blue-100 rounded-md"
-          >
-            <%= @add_new_story_title %>
-          </.link>
-        </div>
       </div>
     </div>
     """
   end
 
   attr :story, :any, required: true
+  attr :photo, :any, required: false
+  attr :dom_id, :any, required: false
   attr :flags, :list, required: true
   attr :current_user, :any, required: true
   attr :user, :any, required: false
@@ -58,23 +46,90 @@ defmodule AniminaWeb.StoriesComponents do
   def story_with_flags(assigns) do
     ~H"""
     <div class="pb-2">
-      <div :if={@story.photo} class="">
+      <div :if={@story.photo} class="pb-2">
         <%= if @story.headline.subject == "About me" do %>
           <img
+            :if={
+              @story.user_id == @current_user.id ||
+                @story.photo.state == :approved
+            }
             class="object-cover rounded-lg aspect-square"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
           />
+
+          <div
+            :if={
+              @story.user_id != @current_user.id &&
+                @story.photo.state != :approved
+            }
+            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
+          >
+            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+
+              <p>Photo not available</p>
+            </div>
+          </div>
         <% else %>
           <img
+            :if={
+              @story.user_id == @current_user.id ||
+                @story.photo.state == :approved
+            }
             class="object-cover rounded-lg"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
           />
+
+          <div
+            :if={
+              @story.user_id != @current_user.id &&
+                @story.photo.state != :approved
+            }
+            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
+          >
+            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-6 h-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+                />
+              </svg>
+
+              <p>Photo not available</p>
+            </div>
+          </div>
         <% end %>
+
+        <%!-- <div class="flex w-full justify-end">
+          <p class="text-red-500"><%= @story.photo.state %></p>
+        </div> --%>
       </div>
 
       <.story_body
         story={@story}
         user={@user}
+        dom_id={@dom_id}
         current_user={@current_user}
         delete_story_modal_text={@delete_story_modal_text}
       />
@@ -107,6 +162,7 @@ defmodule AniminaWeb.StoriesComponents do
 
   attr :story, :any, required: true
   attr :current_user, :any, required: true
+  attr :dom_id, :string, required: false
   attr :delete_story_modal_text, :string, required: true
 
   def story(assigns) do
@@ -128,6 +184,7 @@ defmodule AniminaWeb.StoriesComponents do
       <.story_body
         story={@story}
         user={@user}
+        dom_id={@dom_id}
         current_user={@current_user}
         delete_story_modal_text={@delete_story_modal_text}
       />
@@ -138,6 +195,7 @@ defmodule AniminaWeb.StoriesComponents do
 
   attr :story, :any, required: true
   attr :user, :any, required: false
+  attr :dom_id, :any, required: false
   attr :current_user, :any, required: true
   attr :delete_story_modal_text, :string, required: true
 
@@ -152,6 +210,7 @@ defmodule AniminaWeb.StoriesComponents do
     <.story_action_icons
       story={@story}
       user={@user}
+      dom_id={@dom_id}
       current_user={@current_user}
       delete_story_modal_text={@delete_story_modal_text}
     />
@@ -195,6 +254,7 @@ defmodule AniminaWeb.StoriesComponents do
         aria-hidden="true"
         phx-click="destroy_story"
         phx-value-id={@story.id}
+        phx-value-dom_id={@dom_id}
         data-confirm={@delete_story_modal_text}
       >
         <path
