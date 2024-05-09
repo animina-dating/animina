@@ -3,6 +3,9 @@ defmodule Animina.Accounts.Credit do
   This is the Credit module which we use to manage points.
   """
 
+  alias Animina.Accounts.User
+  alias Phoenix.PubSub
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer
 
@@ -36,6 +39,20 @@ defmodule Animina.Accounts.Credit do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             username =
+               User.by_id!(record.user_id)
+               |> Map.get(:username)
+               |> Ash.CiString.value()
+
+             PubSub.broadcast(Animina.PubSub, username, {:user, User.by_id!(record.user_id)})
+
+             {:ok, record}
+           end),
+           on: [:create]
   end
 
   postgres do
