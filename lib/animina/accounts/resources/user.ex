@@ -11,6 +11,7 @@ defmodule Animina.Accounts.User do
   alias Animina.Narratives
   alias Animina.Traits
   alias Animina.Validations
+  alias Phoenix.PubSub
 
   attributes do
     uuid_primary_key :id
@@ -184,6 +185,15 @@ defmodule Animina.Accounts.User do
              {:ok, record}
            end),
            on: [:create]
+
+    change after_action(fn changeset, record ->
+             username = Ash.CiString.value(record.username)
+
+             PubSub.broadcast(Animina.PubSub, username, {:user, record})
+
+             {:ok, record}
+           end),
+           on: [:update]
   end
 
   calculations do

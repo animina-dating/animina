@@ -175,33 +175,46 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    intersecting_green_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :green, socket.assigns.language),
-        filter_flags(socket.assigns.user, :white, socket.assigns.language)
-      )
-
-    intersecting_red_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :red, socket.assigns.language),
-        filter_flags(socket.assigns.user, :white, socket.assigns.language)
-      )
-
     if current_user.id == socket.assigns.user.id do
       {:noreply,
        socket
        |> assign(current_user: current_user)
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(user: current_user)
+       |> assign(
+         intersecting_green_flags_count:
+           get_intersecting_flags_count(
+             filter_flags(current_user, :green, socket.assigns.language),
+             filter_flags(current_user, :white, socket.assigns.language)
+           )
+       )
+       |> assign(
+         intersecting_red_flags_count:
+           get_intersecting_flags_count(
+             filter_flags(current_user, :red, socket.assigns.language),
+             filter_flags(current_user, :white, socket.assigns.language)
+           )
+       )
        |> assign(
          current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user, socket.assigns.user.id)
+           current_user_has_liked_profile(current_user, current_user.id)
        )}
     else
       {:noreply,
        socket
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+       |> assign(
+         intersecting_green_flags_count:
+           get_intersecting_flags_count(
+             filter_flags(current_user, :green, socket.assigns.language),
+             filter_flags(socket.assigns.user, :white, socket.assigns.language)
+           )
+       )
+       |> assign(
+         intersecting_red_flags_count:
+           get_intersecting_flags_count(
+             filter_flags(current_user, :red, socket.assigns.language),
+             filter_flags(socket.assigns.user, :white, socket.assigns.language)
+           )
+       )
        |> assign(
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user, socket.assigns.user.id)
