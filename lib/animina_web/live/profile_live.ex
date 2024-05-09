@@ -10,6 +10,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
+  alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
 
   require Ash.Query
@@ -49,6 +50,10 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
+          |> assign(
+            current_user_profile_points:
+              Points.humanized_points(socket.assigns.current_user.credit_points)
+          )
           |> assign(show_404_page: show_optional_404_page(user, current_user))
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
@@ -79,7 +84,7 @@ defmodule AniminaWeb.ProfileLive do
 
   defp subscribe(socket, current_user, user) do
     if connected?(socket) && current_user do
-      PubSub.subscribe(Animina.PubSub, "credits:" <> user.id)
+      PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(
@@ -161,17 +166,19 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   @impl true
-  def handle_info({:display_updated_credits, %{"points" => points, "user_id" => user_id}}, socket) do
-    socket =
-      if user_id == socket.assigns.current_user.id do
-        socket
-        |> assign(current_user_credit_points: points)
-      else
-        socket
-        |> assign(profile_points: Points.humanized_points(points))
-      end
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points =
+      ProfileViewCredits.get_updated_credit_for_current_user(socket.assigns.current_user, credits)
+      |> Points.humanized_points()
 
-    {:noreply, socket}
+    profile_points =
+      ProfileViewCredits.get_updated_credit_for_user_profile(socket.assigns.user, credits)
+      |> Points.humanized_points()
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)
+     |> assign(profile_points: profile_points)}
   end
 
   def handle_info({:user, current_user}, socket) do
@@ -229,20 +236,6 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   def handle_info({:credit_updated, _updated_credit}, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_info(:create_credit_for_viewing, socket) do
-    user = socket.assigns.user
-    current_user = socket.assigns.current_user
-
-    Credit.create(%{
-      user_id: user.id,
-      donor_id: current_user.id,
-      points: 1,
-      subject: "Profile view by #{current_user.username}"
-    })
-
     {:noreply, socket}
   end
 
@@ -329,6 +322,7 @@ defmodule AniminaWeb.ProfileLive do
           current_user={@current_user}
           current_user_has_liked_profile?={@current_user_has_liked_profile?}
           profile_points={@profile_points}
+          current_user_profile_points={@current_user_profile_points}
           intersecting_green_flags_count={@intersecting_green_flags_count}
           intersecting_red_flags_count={@intersecting_red_flags_count}
           years_text={gettext("years")}

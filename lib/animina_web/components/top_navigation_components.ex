@@ -103,7 +103,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% end %>
         <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= if @current_user do %>
-          <%= gettext("Points") %>: <%= Points.humanized_points(@current_user_credit_points) %>
+          <%= gettext("Points") %>: <%= if is_number @current_user_credit_points  do  Points.humanized_points(@current_user_credit_points) else @current_user_credit_points end  %>
         <% else %>
           <%= gettext("Points") %>: 0
         <% end %>
