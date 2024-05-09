@@ -3,8 +3,8 @@ defmodule Animina.Accounts.UserRole do
   This is the User Role module which we use to manage user roles.
   """
 
-  alias Phoenix.PubSub
   alias Animina.Accounts.User
+  alias Phoenix.PubSub
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,

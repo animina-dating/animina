@@ -3,8 +3,8 @@ defmodule Animina.Accounts.Credit do
   This is the Credit module which we use to manage points.
   """
 
-  alias Phoenix.PubSub
   alias Animina.Accounts.User
+  alias Phoenix.PubSub
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer

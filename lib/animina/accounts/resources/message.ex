@@ -3,8 +3,8 @@ defmodule Animina.Accounts.Message do
   This is the Message module which we use to manage messages between users.
   """
 
-  alias Phoenix.PubSub
   alias Animina.Accounts.User
+  alias Phoenix.PubSub
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,

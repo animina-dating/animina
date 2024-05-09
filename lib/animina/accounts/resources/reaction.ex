@@ -3,8 +3,8 @@ defmodule Animina.Accounts.Reaction do
   This is the Reaction module which we use to manage likes, block, etc.
   """
 
-  alias Phoenix.PubSub
   alias Animina.Accounts.User
+  alias Phoenix.PubSub
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
