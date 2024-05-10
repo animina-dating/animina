@@ -4,14 +4,14 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Animina.Accounts
   alias Animina.Accounts.Photo
   alias Animina.Accounts.User
-
+  alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
+      PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(
@@ -44,13 +44,13 @@ defmodule AniminaWeb.ProfilePhotoLive do
   end
 
   @impl true
-  def handle_info(
-        {:display_updated_credits, %{"points" => points, "user_id" => _user_id}},
-        socket
-      ) do
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points =
+      ProfileViewCredits.get_updated_credit_for_current_user(socket.assigns.current_user, credits)
+
     {:noreply,
      socket
-     |> assign(current_user_credit_points: points)}
+     |> assign(current_user_credit_points: current_user_credit_points)}
   end
 
   def handle_info({:user, current_user}, socket) do
