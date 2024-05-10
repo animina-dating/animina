@@ -231,7 +231,7 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def handle_info(:add_points_for_viewing, socket) do
-    add_credit_on_profile_view(1, socket.assigns.user)
+    add_credit_on_profile_view(1, socket.assigns.user, socket.assigns.current_user)
     {:noreply, socket}
   end
 
@@ -248,11 +248,12 @@ defmodule AniminaWeb.ProfileLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
-  defp add_credit_on_profile_view(points, user) do
-    Credit.create!(%{
+  defp add_credit_on_profile_view(points, user, current_user) do
+   Credit.create!(%{
       user_id: user.id,
       points: points,
-      subject: "Profile View"
+      subject: "Profile View",
+      donor_id: current_user.id
     })
 
     PubSub.broadcast(

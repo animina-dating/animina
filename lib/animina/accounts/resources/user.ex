@@ -5,6 +5,7 @@ defmodule Animina.Accounts.User do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer,
     extensions: [AshAuthentication]
 
   alias Animina.Accounts
@@ -151,12 +152,32 @@ defmodule Animina.Accounts.User do
     identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 
+  aggregates do
+    sum :credit_points, :credits, :points, default: 0
+  end
+
   actions do
     defaults [:read, :update, :create]
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
     end
+
+
+    read :by_username_as_an_actor do
+      argument :username, :ci_string do
+        allow_nil? false
+      end
+
+      get? true
+
+
+      filter expr(username == ^arg(:username))
+    end
+
+
+
+
   end
 
   code_interface do
@@ -168,10 +189,13 @@ defmodule Animina.Accounts.User do
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
+    define :by_username_as_an_actor,  args: [:username]
   end
 
-  aggregates do
-    sum :credit_points, :credits, :points, default: 0
+  calculations do
+    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
+    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
+    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
   end
 
   changes do
@@ -196,12 +220,6 @@ defmodule Animina.Accounts.User do
            on: [:update]
   end
 
-  calculations do
-    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
-    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
-    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
-  end
-
   preparations do
     prepare build(
               load: [
@@ -214,6 +232,12 @@ defmodule Animina.Accounts.User do
                 :traits
               ]
             )
+  end
+
+  policies do
+    policy action(:by_username_as_an_actor) do
+      authorize_if Animina.Checks.ReadProfileCheck
+    end
   end
 
   authentication do
