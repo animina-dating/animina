@@ -36,9 +36,20 @@ defmodule AniminaWeb.ProfileComponents do
           >
             🔧 <%= @user.occupation %>
           </span>
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span
+            :if={@current_user.id != @user.id}
+            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
             <%= @profile_points %>
           </span>
+
+          <span
+            :if={@current_user.id == @user.id}
+            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+          >
+            <%= @current_user_profile_points %>
+          </span>
+
           <span :if={@current_user != @user}>
             <span
               :if={@intersecting_green_flags_count != 0}
