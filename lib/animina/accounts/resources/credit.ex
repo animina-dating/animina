@@ -38,12 +38,14 @@ defmodule Animina.Accounts.Credit do
         allow_nil? false
       end
 
-      argument :profile_id, :uuid do
+      argument :donor_id, :uuid do
         allow_nil? false
       end
 
-
-      filter expr(donor_id == ^arg(:donor_id) and user_id == ^arg(:user_id) and subject == "Profile View")
+      filter expr(
+               donor_id == ^arg(:donor_id) and user_id == ^arg(:user_id) and
+                 subject == "Profile View"
+             )
     end
   end
 

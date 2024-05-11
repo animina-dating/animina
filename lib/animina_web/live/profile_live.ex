@@ -16,7 +16,8 @@ defmodule AniminaWeb.ProfileLive do
   require Ash.Query
 
   @impl true
-  def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
+  def mount(%{"username" => username}, %{"language" => language} = session, socket) do
+    IO.inspect session
     socket =
       socket
       |> assign(language: language)
@@ -36,6 +37,8 @@ defmodule AniminaWeb.ProfileLive do
 
           subscribe(socket, current_user, user)
 
+          IO.inspect(deduct_points_for_first_profile_view(current_user, user))
+
           intersecting_green_flags_count =
             get_intersecting_flags_count(
               filter_flags(current_user, :green, language),
@@ -48,11 +51,19 @@ defmodule AniminaWeb.ProfileLive do
               filter_flags(user, :white, language)
             )
 
+
+            current_user_profile_points = if socket.assigns.current_user do
+              Points.humanized_points(socket.assigns.current_user.credit_points)
+
+            else
+              0
+            end
+
           socket
           |> assign(user: user)
           |> assign(
             current_user_profile_points:
-              Points.humanized_points(socket.assigns.current_user.credit_points)
+              current_user_profile_points
           )
           |> assign(show_404_page: show_optional_404_page(user, current_user))
           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
@@ -96,10 +107,43 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  defp deduct_points_for_first_profile_view(nil, user) do
+  end
+
+  defp deduct_points_for_first_profile_view(current_user, user) do
+    if current_user.id != user.id do
+      case Credits.profile_view_credits_by_donor_and_user!(current_user.id, user.id) do
+        [] ->
+          if user_has_liked_current_user_profile(user, current_user.id) do
+            deduct_points_for_first_profile_view(current_user, -10)
+          else
+            deduct_points_for_first_profile_view(current_user, -20)
+          end
+
+        _ ->
+          :ok
+      end
+    end
+  end
+
   defp add_points_for_viewing_to_profile(current_user_id, user_id) do
     if current_user_id != user_id do
       :timer.send_interval(5000, self(), :add_points_for_viewing)
     end
+  end
+
+  defp deduct_points_for_first_profile_view(user, points) do
+    Credit.create!(%{
+      user_id: user.id,
+      points: -points,
+      subject: "Profile View Deduction"
+    })
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "credits",
+      {:credit_updated, %{"points" => get_points_for_a_user(user.id), "user_id" => user.id}}
+    )
   end
 
   defp show_optional_404_page(nil, nil) do
@@ -249,7 +293,7 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp add_credit_on_profile_view(points, user, current_user) do
-   Credit.create!(%{
+    Credit.create!(%{
       user_id: user.id,
       points: points,
       subject: "Profile View",
@@ -281,6 +325,16 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp current_user_has_liked_profile(user, current_user_id) do
+    case Reaction.by_sender_and_receiver_id(user.id, current_user_id) do
+      {:ok, _user} ->
+        true
+
+      {:error, _} ->
+        false
+    end
+  end
+
+  defp user_has_liked_current_user_profile(user, current_user_id) do
     case Reaction.by_sender_and_receiver_id(user.id, current_user_id) do
       {:ok, _user} ->
         true
