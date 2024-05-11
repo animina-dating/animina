@@ -16,7 +16,7 @@ defmodule AniminaWeb.ProfileLive do
   require Ash.Query
 
   @impl true
-  def mount(%{"username" => username}, %{"language" => language, "user" => _} = session, socket) do
+  def mount(%{"username" => username}, %{"language" => language, "user" => _} , socket) do
     socket =
       socket
       |> assign(language: language)
@@ -80,7 +80,7 @@ defmodule AniminaWeb.ProfileLive do
     {:ok, socket}
   end
 
-  def mount(%{"username" => username}, %{"language" => language} = session, socket) do
+  def mount(%{"username" => username}, %{"language" => language} , socket) do
     socket =
       socket
       |> assign(language: language)
@@ -117,7 +117,7 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp subscribe(socket, current_user, user) do
+  defp subscribe(socket, _current_user, _user) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -144,7 +144,7 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp deduct_points_for_first_profile_view(current_user, user) do
+  defp deduct_points_for_first_profile_view(_current_user, _user) do
     :ok
   end
 
@@ -173,7 +173,7 @@ defmodule AniminaWeb.ProfileLive do
 
   defp get_error_when_viewing_profile_page(username) do
     case User.by_username(username) do
-      {:ok, user} ->
+      {:ok, _user} ->
         :not_enough_points
 
       {:error, _} ->
