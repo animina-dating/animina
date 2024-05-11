@@ -56,8 +56,6 @@ defmodule AniminaWeb.LiveUserAuth do
       current_user =
         Registration.get_current_user(session)
 
-      
-
       add_daily_points_for_user(
         current_user,
         100,

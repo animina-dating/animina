@@ -186,12 +186,6 @@ defmodule Animina.Accounts.User do
     define :by_username_as_an_actor, args: [:username]
   end
 
-  policies do
-    policy action(:by_username_as_an_actor) do
-      authorize_if Animina.Checks.ReadProfileCheck
-    end
-  end
-
   calculations do
     calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
     calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
@@ -229,13 +223,17 @@ defmodule Animina.Accounts.User do
                 :city,
                 :flags,
                 :stories,
-                :traits
-
+                :traits,
+                :roles
               ]
             )
   end
 
-
+  policies do
+    policy action_type(:read) do
+      authorize_if Animina.Checks.ReadProfileCheck
+    end
+  end
 
   authentication do
     api Accounts

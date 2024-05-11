@@ -12,11 +12,16 @@ defmodule Animina.Checks.ReadProfileCheck do
   end
 
   def match?(actor, params, _opts) do
-    case IO.inspect User.by_username(params.query.arguments.username) do
+    check_if_user_can_view_profile(actor, params, params.query.arguments)
+  end
 
+  defp check_if_user_can_view_profile(actor, params , %{}) do
+    true
+  end
 
+  defp check_if_user_can_view_profile(actor, params , _) do
+    case User.by_username(params.query.arguments.username) do
       {:ok, profile} ->
-        IO.inspect("here")
         if actor.username == profile.username || profile.is_private == false do
           true
         else

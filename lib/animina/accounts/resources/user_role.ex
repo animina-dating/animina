@@ -71,6 +71,10 @@ defmodule Animina.Accounts.UserRole do
     policy action(:create) do
       authorize_if Animina.Checks.CreateUserRoleCheck
     end
+
+    policy action(:read) do
+      authorize_if Animina.Checks.ReadUserRoleCheck
+    end
   end
 
   postgres do

@@ -86,6 +86,8 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
+      prepare build(load: [:sender, :receiver])
+
       filter expr(sender_id == ^arg(:sender_id) and receiver_id == ^arg(:receiver_id))
     end
 

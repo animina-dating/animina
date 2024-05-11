@@ -26,7 +26,7 @@ defmodule AniminaWeb.ProfileLive do
       socket.assigns.current_user
 
     socket =
-      case IO.inspect Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+      case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
         {:ok, user} ->
           socket
           |> assign(:user, user)
@@ -34,8 +34,7 @@ defmodule AniminaWeb.ProfileLive do
           subscribe(socket, current_user, user)
 
           if connected?(socket) do
-
-          deduct_points_for_first_profile_view(current_user, user, socket)
+            deduct_points_for_first_profile_view(current_user, user)
           end
 
           add_points_for_viewing_to_profile(current_user.id, user.id, socket)
@@ -70,7 +69,7 @@ defmodule AniminaWeb.ProfileLive do
 
         _ ->
           # an error means 2 things , either the profile  is not found or
-          #the user does not have enough points to view the profile
+          # the user does not have enough points to view the profile
           socket
           |> assign(
             error_when_viewing_profile_page: get_error_when_viewing_profile_page(username)
@@ -130,21 +129,19 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp deduct_points_for_first_profile_view(current_user, user, socket)
+  defp deduct_points_for_first_profile_view(current_user, user)
        when current_user.id != user.id and user.is_private do
+    case Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id) do
+      [] ->
+        if user_has_liked_current_user_profile(user, current_user.id) do
+          deduct_points(current_user, -10)
+        else
+          deduct_points(current_user, -20)
+        end
 
-      case (Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id)) do
-        [] ->
-          if user_has_liked_current_user_profile(user, current_user.id) do
-            deduct_points(current_user, -10)
-          else
-            deduct_points(current_user, -20)
-          end
-
-        _ ->
-          :ok
-      end
-
+      _ ->
+        :ok
+    end
   end
 
   defp deduct_points_for_first_profile_view(current_user, user) do
@@ -172,7 +169,7 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   # we check if the profile exists , if they do , that means the error is because
-  #the user does not have enough points to view the profile
+  # the user does not have enough points to view the profile
 
   defp get_error_when_viewing_profile_page(username) do
     case User.by_username(username) do
