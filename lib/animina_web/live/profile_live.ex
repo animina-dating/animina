@@ -162,7 +162,6 @@ defmodule AniminaWeb.ProfileLive do
     )
   end
 
-
   defp show_optional_404_page(nil, nil) do
     true
   end
