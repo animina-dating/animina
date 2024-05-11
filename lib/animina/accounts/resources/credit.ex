@@ -34,18 +34,15 @@ defmodule Animina.Accounts.Credit do
     defaults [:create, :read]
 
     read :profile_view_credits_by_donor_and_user do
-      argument :user_id, :uuid do
-        allow_nil? false
-      end
-
       argument :donor_id, :uuid do
         allow_nil? false
       end
 
-      filter expr(
-               donor_id == ^arg(:donor_id) and user_id == ^arg(:user_id) and
-                 subject == "Profile View"
-             )
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(donor_id == ^arg(:donor_id) and user_id == ^arg(:user_id))
     end
   end
 
@@ -54,7 +51,7 @@ defmodule Animina.Accounts.Credit do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
-    define :profile_view_credits_by_donor_and_user, args: [:user_id, :donor_id]
+    define :profile_view_credits_by_donor_and_user, args: [:donor_id, :user_id]
   end
 
   changes do

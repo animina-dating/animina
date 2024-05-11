@@ -47,7 +47,7 @@ defmodule AniminaWeb.ProfileComponents do
             :if={@current_user.id == @user.id}
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
-            <%= @current_user_profile_points %>
+            <%= @current_user_credit_points %>
           </span>
 
           <span :if={@current_user != @user}>
@@ -378,7 +378,11 @@ defmodule AniminaWeb.ProfileComponents do
   def error_profile_component(assigns) do
     ~H"""
     <div class="h-[50vh] md:w-[60%] w-[90%] flex justify-center m-auto dark:text-gray-100 text-gray-900 text-center items-center">
-      <%= @error_text %>
+      <%= if @error_when_viewing_profile_page == :profile_not_found do %>
+        <%= @error_text_for_profile_not_found %>
+      <% else %>
+        <%= @error_text_for_not_enough_points %>
+      <% end %>
     </div>
     """
   end

@@ -26,14 +26,17 @@ defmodule AniminaWeb.ProfileLive do
       socket.assigns.current_user
 
     socket =
-      case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+      case IO.inspect Accounts.User.by_username_as_an_actor(username, actor: current_user) do
         {:ok, user} ->
           socket
           |> assign(:user, user)
 
           subscribe(socket, current_user, user)
 
-          IO.inspect(deduct_points_for_first_profile_view(current_user, user))
+          if connected?(socket) do
+
+          deduct_points_for_first_profile_view(current_user, user, socket)
+          end
 
           add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
@@ -52,7 +55,7 @@ defmodule AniminaWeb.ProfileLive do
           socket
           |> assign(user: user)
           |> assign(
-            current_user_profile_points:
+            current_user_credit_points:
               Points.humanized_points(socket.assigns.current_user.credit_points)
           )
           |> assign(show_404_page: show_optional_404_page(user, current_user))
@@ -66,8 +69,12 @@ defmodule AniminaWeb.ProfileLive do
           |> redirect_if_username_is_different(username, user)
 
         _ ->
+          # an error means 2 things , either the profile  is not found or
+          #the user does not have enough points to view the profile
           socket
-          |> assign(user: nil)
+          |> assign(
+            error_when_viewing_profile_page: get_error_when_viewing_profile_page(username)
+          )
           |> assign(show_404_page: true)
       end
 
@@ -85,7 +92,7 @@ defmodule AniminaWeb.ProfileLive do
         {:ok, user} ->
           socket
           |> assign(user: user)
-          |> assign(current_user_profile_points: 0)
+          |> assign(current_user_credit_points: 0)
           |> assign(show_404_page: show_optional_404_page(user, nil))
           |> assign(intersecting_green_flags_count: 0)
           |> assign(intersecting_red_flags_count: 0)
@@ -95,7 +102,7 @@ defmodule AniminaWeb.ProfileLive do
 
         _ ->
           socket
-          |> assign(user: nil)
+          |> assign(error_when_viewing_profile_page: :profile_not_found)
           |> assign(show_404_page: true)
       end
 
@@ -123,18 +130,25 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp deduct_points_for_first_profile_view(current_user, user) when current_user.id != user.id do
-    case IO.inspect(Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id)) do
-      [] ->
-        if user_has_liked_current_user_profile(user, current_user.id) do
-          deduct_points_for_first_profile_view(current_user, -10)
-        else
-          deduct_points_for_first_profile_view(current_user, -20)
-        end
+  defp deduct_points_for_first_profile_view(current_user, user, socket)
+       when current_user.id != user.id and user.is_private do
 
-      _ ->
-        :ok
-    end
+      case (Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id)) do
+        [] ->
+          if user_has_liked_current_user_profile(user, current_user.id) do
+            deduct_points(current_user, -10)
+          else
+            deduct_points(current_user, -20)
+          end
+
+        _ ->
+          :ok
+      end
+
+  end
+
+  defp deduct_points_for_first_profile_view(current_user, user) do
+    :ok
   end
 
   defp add_points_for_viewing_to_profile(current_user_id, user_id, socket) do
@@ -143,10 +157,10 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp deduct_points_for_first_profile_view(user, points) do
+  defp deduct_points(user, points) do
     Credit.create!(%{
       user_id: user.id,
-      points: -points,
+      points: points,
       subject: "Profile View Deduction"
     })
 
@@ -155,6 +169,19 @@ defmodule AniminaWeb.ProfileLive do
       "credits",
       {:credit_updated, %{"points" => get_points_for_a_user(user.id), "user_id" => user.id}}
     )
+  end
+
+  # we check if the profile exists , if they do , that means the error is because
+  #the user does not have enough points to view the profile
+
+  defp get_error_when_viewing_profile_page(username) do
+    case User.by_username(username) do
+      {:ok, user} ->
+        :not_enough_points
+
+      {:error, _} ->
+        :profile_not_found
+    end
   end
 
   defp show_optional_404_page(nil, nil) do
@@ -377,18 +404,24 @@ defmodule AniminaWeb.ProfileLive do
     ~H"""
     <div class="px-5">
       <%= if @show_404_page  do %>
-        <.error_profile_component error_text={
-          gettext(
-            "This account profile either doesn't exist or you don't have the needed privileges to access it."
-          )
-        } />
+        <.error_profile_component
+          error_when_viewing_profile_page={@error_when_viewing_profile_page}
+          error_text_for_profile_not_found={
+            gettext(
+              "This account profile either doesn't exist or you don't have the needed privileges to access it."
+            )
+          }
+          error_text_for_not_enough_points={
+            gettext("You do not have enough points to view this profile")
+          }
+        />
       <% else %>
         <.profile_details
           user={@user}
           current_user={@current_user}
           current_user_has_liked_profile?={@current_user_has_liked_profile?}
           profile_points={@profile_points}
-          current_user_profile_points={@current_user_profile_points}
+          current_user_credit_points={@current_user_credit_points}
           intersecting_green_flags_count={@intersecting_green_flags_count}
           intersecting_red_flags_count={@intersecting_red_flags_count}
           years_text={gettext("years")}

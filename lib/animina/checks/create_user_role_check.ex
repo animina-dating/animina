@@ -12,6 +12,8 @@ defmodule Animina.Checks.CreateUserRoleCheck do
   end
 
   def match?(actor, %{changeset: %Ash.Changeset{} = changeset}, _opts) do
+
+    IO.inspect("I also pass here")
     role = Role.by_id!(changeset.attributes.role_id)
 
     user_roles = UserRole.by_user_id!(actor.id)
@@ -27,6 +29,8 @@ defmodule Animina.Checks.CreateUserRoleCheck do
           true
         end
     end
+
+
   end
 
   defp user_an_admin?([]) do

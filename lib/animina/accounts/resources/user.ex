@@ -163,7 +163,6 @@ defmodule Animina.Accounts.User do
       accept [:last_registration_page_visited]
     end
 
-
     read :by_username_as_an_actor do
       argument :username, :ci_string do
         allow_nil? false
@@ -171,13 +170,8 @@ defmodule Animina.Accounts.User do
 
       get? true
 
-
       filter expr(username == ^arg(:username))
     end
-
-
-
-
   end
 
   code_interface do
@@ -189,7 +183,13 @@ defmodule Animina.Accounts.User do
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
-    define :by_username_as_an_actor,  args: [:username]
+    define :by_username_as_an_actor, args: [:username]
+  end
+
+  policies do
+    policy action(:by_username_as_an_actor) do
+      authorize_if Animina.Checks.ReadProfileCheck
+    end
   end
 
   calculations do
@@ -230,15 +230,12 @@ defmodule Animina.Accounts.User do
                 :flags,
                 :stories,
                 :traits
+
               ]
             )
   end
 
-  policies do
-    policy action(:by_username_as_an_actor) do
-      authorize_if Animina.Checks.ReadProfileCheck
-    end
-  end
+
 
   authentication do
     api Accounts

@@ -68,7 +68,7 @@ defmodule Animina.Accounts.UserRole do
   end
 
   policies do
-    policy action_type(:create) do
+    policy action(:create) do
       authorize_if Animina.Checks.CreateUserRoleCheck
     end
   end
