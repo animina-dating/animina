@@ -378,11 +378,7 @@ defmodule AniminaWeb.ProfileComponents do
   def error_profile_component(assigns) do
     ~H"""
     <div class="h-[50vh] md:w-[60%] w-[90%] flex justify-center m-auto dark:text-gray-100 text-gray-900 text-center items-center">
-      <%= if @error_when_viewing_profile_page == :profile_not_found do %>
-        <%= @error_text_for_profile_not_found %>
-      <% else %>
-        <%= @error_text_for_not_enough_points %>
-      <% end %>
+      <%= @text %>
     </div>
     """
   end

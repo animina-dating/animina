@@ -68,12 +68,7 @@ defmodule AniminaWeb.ProfileLive do
           |> redirect_if_username_is_different(username, user)
 
         _ ->
-          # an error means 2 things , either the profile  is not found or
-          # the user does not have enough points to view the profile
           socket
-          |> assign(
-            error_when_viewing_profile_page: get_error_when_viewing_profile_page(username)
-          )
           |> assign(show_404_page: true)
       end
 
@@ -101,7 +96,6 @@ defmodule AniminaWeb.ProfileLive do
 
         _ ->
           socket
-          |> assign(error_when_viewing_profile_page: :profile_not_found)
           |> assign(show_404_page: true)
       end
 
@@ -168,18 +162,6 @@ defmodule AniminaWeb.ProfileLive do
     )
   end
 
-  # we check if the profile exists , if they do , that means the error is because
-  # the user does not have enough points to view the profile
-
-  defp get_error_when_viewing_profile_page(username) do
-    case User.by_username(username) do
-      {:ok, _user} ->
-        :not_enough_points
-
-      {:error, _} ->
-        :profile_not_found
-    end
-  end
 
   defp show_optional_404_page(nil, nil) do
     true
@@ -402,15 +384,7 @@ defmodule AniminaWeb.ProfileLive do
     <div class="px-5">
       <%= if @show_404_page  do %>
         <.error_profile_component
-          error_when_viewing_profile_page={@error_when_viewing_profile_page}
-          error_text_for_profile_not_found={
-            gettext(
-              "This account profile either doesn't exist or you don't have the needed privileges to access it."
-            )
-          }
-          error_text_for_not_enough_points={
-            gettext("You do not have enough points to view this profile")
-          }
+          text={gettext("This profile either doesn't exist or you don't have enough points to access it. You need 20 points to access a profile page.")}
         />
       <% else %>
         <.profile_details
