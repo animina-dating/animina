@@ -16,7 +16,7 @@ defmodule AniminaWeb.ProfileLive do
   require Ash.Query
 
   @impl true
-  def mount(%{"username" => username}, %{"language" => language, "user" => _} , socket) do
+  def mount(%{"username" => username}, %{"language" => language, "user" => _}, socket) do
     socket =
       socket
       |> assign(language: language)
@@ -75,7 +75,7 @@ defmodule AniminaWeb.ProfileLive do
     {:ok, socket}
   end
 
-  def mount(%{"username" => username}, %{"language" => language} , socket) do
+  def mount(%{"username" => username}, %{"language" => language}, socket) do
     socket =
       socket
       |> assign(language: language)
@@ -382,9 +382,11 @@ defmodule AniminaWeb.ProfileLive do
     ~H"""
     <div class="px-5">
       <%= if @show_404_page  do %>
-        <.error_profile_component
-          text={gettext("This profile either doesn't exist or you don't have enough points to access it. You need 20 points to access a profile page.")}
-        />
+        <.error_profile_component text={
+          gettext(
+            "This profile either doesn't exist or you don't have enough points to access it. You need 20 points to access a profile page."
+          )
+        } />
       <% else %>
         <.profile_details
           user={@user}
@@ -414,7 +416,7 @@ defmodule AniminaWeb.ProfileLive do
           AniminaWeb.ProfileStoriesLive,
           session: %{
             "user_id" => @user.id,
-            "current_user_id" => @current_user.id,
+            "current_user" => @current_user,
             "language" => @language
           },
           id: "profile_stories_live:#{@user.id}",
