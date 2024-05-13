@@ -55,7 +55,7 @@ defmodule Animina.GenServers.ProfileViewCredits do
            credit["user_id"] == current_user.id
          end) do
       nil -> current_user.credit_points
-      credit -> (credit["points"])
+      credit -> credit["points"]
     end
   end
 
@@ -64,7 +64,7 @@ defmodule Animina.GenServers.ProfileViewCredits do
            credit["user_id"] == user_profile.id
          end) do
       nil -> user_profile.credit_points
-      credit -> (credit["points"])
+      credit -> credit["points"]
     end
   end
 
