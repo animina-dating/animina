@@ -12,7 +12,6 @@ defmodule Animina.Repo.Migrations.SeedRoles do
   def down do
   end
 
-
   defp seed_roles do
     roles()
     |> Animina.Accounts.bulk_create(Animina.Accounts.Role, :create,
@@ -28,7 +27,4 @@ defmodule Animina.Repo.Migrations.SeedRoles do
       %{name: :admin}
     ]
   end
-
-
-
 end
