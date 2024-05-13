@@ -419,8 +419,7 @@ defmodule AniminaWeb.ProfileLive do
             "current_user" => @current_user,
             "language" => @language
           },
-          id: "profile_stories_live:#{@user.id}",
-          sticky: true
+          id: "profile_stories_live"
         ) %>
       <% end %>
     </div>
