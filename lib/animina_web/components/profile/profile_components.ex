@@ -37,14 +37,14 @@ defmodule AniminaWeb.ProfileComponents do
             🔧 <%= @user.occupation %>
           </span>
           <span
-            :if={@current_user.id != @user.id}
+            :if={@current_user && @current_user.id != @user.id}
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             <%= @profile_points %>
           </span>
 
           <span
-            :if={@current_user.id == @user.id}
+            :if={@current_user && @current_user.id == @user.id}
             class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             <%= @current_user_credit_points %>
@@ -67,15 +67,9 @@ defmodule AniminaWeb.ProfileComponents do
         </div>
       </div>
 
-      <div :if={@current_user.id == @user.id} class="flex-shrink-0">
+      <div :if={@current_user && @current_user.id == @user.id} class="flex-shrink-0">
         <.link
-          navigate={
-            if @current_user do
-              "/my/stories/new"
-            else
-              "/"
-            end
-          }
+          navigate="/my/stories/new"
           class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <%= @add_new_story_title %>
