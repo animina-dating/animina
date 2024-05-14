@@ -46,7 +46,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:hidden_points, 100)
     |> assign(
       :form,
-      Form.for_create(BasicUser, :register_with_username_and_password, api: Accounts, as: "user")
+      Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
     )
   end
 

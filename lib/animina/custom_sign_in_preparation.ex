@@ -21,9 +21,7 @@ defmodule Animina.MyCustomSignInPreparation do
   @impl true
   @spec prepare(Query.t(), keyword, Preparation.Context.t()) :: Query.t()
   def prepare(query, options, context) do
-    # {:ok, strategy} = Info.find_strategy(query, context, options)
-    # identity_field = strategy.identity_field
-    # identity = Query.get_argument(query, identity_field)
+
 if  query.arguments != %{} && query.arguments.password && query.arguments.username_or_email do
     password =
       query.arguments.password
@@ -38,6 +36,19 @@ if  query.arguments != %{} && query.arguments.password && query.arguments.userna
       Ash.Query.ensure_selected(query, :hashed_password)
     end)
     |> Query.after_action(fn
+      query, [] ->
+
+        # If record is empty, return an error
+        {:error,
+         AuthenticationFailed.exception(
+           query: query,
+           caused_by: %{
+             module: __MODULE__,
+             action: query.action,
+             resource: query.resource,
+             message: "Username or password is incorrect"
+           }
+         )}
       query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
         password = query.arguments.password
 
@@ -61,6 +72,9 @@ if  query.arguments != %{} && query.arguments.password && query.arguments.userna
              }
            )}
         end
+
+
+
     end)
   else
     query
