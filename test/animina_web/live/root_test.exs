@@ -20,6 +20,21 @@ defmodule AniminaWeb.RootTest do
     legal_terms_accepted: true
   }
 
+  @valid_create_user_attrs %{
+    email: "michael@example.com",
+    username: "MichaelMunavu",
+    name: "Michael",
+    hashed_password: Bcrypt.hash_pwd_salt("MichaelTheEngineer"),
+    birthday: "1950-01-01",
+    height: 180,
+    zip_code: "56068",
+    gender: "male",
+    mobile_phone: "0151-12345678",
+    occupation: "Software Engineer",
+    language: "en",
+    legal_terms_accepted: true
+  }
+
   describe "Tests the Registration flow" do
     test "The registration form is displayed", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/")
@@ -74,6 +89,28 @@ defmodule AniminaWeb.RootTest do
 
       assert Enum.any?(user_roles, fn user_role -> user_role.role.name == :user end)
     end
+
+    test "A user can login with their email and password", %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert html =~ "Criteria for your new partner"
+    end
+
+    test "A user can login with their username and password", %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.username, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert html =~ "Criteria for your new partner"
+    end
   end
 
   defp sign_in_user(conn, attributes) do
@@ -81,6 +118,15 @@ defmodule AniminaWeb.RootTest do
 
     form =
       form(lv, "#basic_user_form", user: attributes)
+
+    submit_form(form, conn)
+  end
+
+  defp login_user(conn, attributes) do
+    {:ok, lv, _html} = live(conn, ~p"/sign-in/")
+
+    form =
+      form(lv, "#basic_user_sign_in_form", user: attributes)
 
     submit_form(form, conn)
   end
