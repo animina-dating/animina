@@ -7,6 +7,7 @@ defmodule AniminaWeb.RootLive do
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
+
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
     current_user = Registration.get_current_user(session)
@@ -57,7 +58,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:action, get_link("/auth/user/email_and_password/sign_in/", params))
     |> assign(
       :form,
-      Form.for_action(BasicUser, :sign_in_with_email_and_password, api: Accounts, as: "user")
+      Form.for_action(BasicUser, :custom_sign_in, api: Accounts, as: "user")
     )
   end
 
@@ -70,17 +71,38 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def handle_event("submit", %{"user" => user}, socket) do
-    form = Form.validate(socket.assigns.form, user)
+    form =  Form.validate(socket.assigns.form,  user)
+    #   {:ok , user} ->
+    #     user = List.first(user)
+    #     PhoenixLiveSession.put_session(socket, "current_user", user)
+    #     IO.inspect user
+    #     {:noreply, socket
 
-    IO.inspect(form)
+    #     |> redirect(to: "/my/potential-partner")}
 
-    socket =
-      socket
-      |> assign(:form, form)
-      |> assign(:errors, Form.errors(form))
-      |> assign(:trigger_action, form.valid?)
+    #   {:error, form} ->
+    #     {:noreply, socket |> assign(form: form) |> assign(errors: Form.errors(form)) |> put_flash(:error, gettext("Please correct the errors below"))}
 
-    {:noreply, socket}
+
+    # end
+
+
+
+    # socket =
+    #   socket
+    #   |> assign(:form, form)
+    #   |> assign(:errors, Form.errors(form))
+    #   |> assign(:trigger_action, form.valid?)
+
+    # {:noreply, socket}
+  end
+
+
+  defp store_in_session(socket, user) do
+    socket
+    |> assign(:current_user, user)
+    |> assign(:errors, [])
+    |> store_in_session(user)
   end
 
   @impl true
@@ -530,22 +552,22 @@ defmodule AniminaWeb.RootLive do
           >
             <%= gettext("E-mail address") %>
           </label>
-          <div phx-feedback-for={f[:email].name} class="mt-2">
-            <%= text_input(f, :email,
+          <div phx-feedback-for={f[:username_or_email].name} class="mt-2">
+            <%= text_input(f, :username_or_email,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white  shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:email], :email) == [],
+                  unless(get_field_errors(f[:username_or_email], :username_or_email) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("alice@example.net"),
-              value: f[:email].value,
+              value: f[:username_or_email].value,
               required: true,
-              autocomplete: :email,
+              autocomplete: :username_or_email,
               "phx-debounce": "200"
             ) %>
 
-            <.error :for={msg <- get_field_errors(f[:email], :email)}>
+            <.error :for={msg <- get_field_errors(f[:username_or_email], :username_or_email)}>
               <%= gettext("E-mail address") <> " " <> msg %>
             </.error>
           </div>

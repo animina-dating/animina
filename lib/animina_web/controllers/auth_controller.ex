@@ -9,6 +9,7 @@ defmodule AniminaWeb.AuthController do
   alias AshAuthentication.TokenResource
 
   def success(conn, _activity, user, _token) do
+    IO.inspect user
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
@@ -53,6 +54,8 @@ defmodule AniminaWeb.AuthController do
         {:email_and_password, :sign_in},
         %AshAuthentication.Errors.AuthenticationFailed{} = reason
       ) do
+
+        IO.inspect reason
     conn
     |> assign(:errors, reason)
     |> put_flash(
