@@ -26,14 +26,23 @@ defmodule AniminaWeb.BookmarksListLive do
       |> assign(current_user: current_user)
       |> assign(reason: reason)
       |> assign(active_tab: :bookmarks)
-      |> start_async(:fetch_bookmarks, fn -> fetch_bookmarks(current_user) end)
+      |> start_async(:fetch_bookmarks, fn -> fetch_bookmarks(current_user, reason) end)
 
     {:ok, socket, layout: false}
   end
 
   @impl true
   def handle_async(:fetch_bookmarks, {:ok, data}, socket) do
-    {:noreply, socket}
+    %{bookmarks: bookmarks} =
+      socket.assigns
+
+    {:noreply,
+     socket
+     |> assign(
+       :bookmarks,
+       AsyncResult.ok(bookmarks, data)
+     )
+     |> stream(:bookmarks, data)}
   end
 
   @impl true
@@ -43,10 +52,11 @@ defmodule AniminaWeb.BookmarksListLive do
     {:noreply, assign(socket, :bookmarks, AsyncResult.failed(bookmarks, {:exit, reason}))}
   end
 
-  defp fetch_bookmarks(current_user) do
+  defp fetch_bookmarks(current_user, reason) do
     Accounts.Bookmark
-    |> Ash.Query.for_read(:read, %{owner_id: current_user.id})
-    |> Accounts.read(actor: current_user)
+    |> Ash.Query.for_read(:by_reason, %{owner_id: current_user.id, reason: reason})
+    |> Accounts.read!(actor: current_user, page: [limit: 50])
+    |> then(& &1.results)
   end
 
   @impl true

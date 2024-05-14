@@ -58,7 +58,26 @@ defmodule Animina.Accounts.Bookmark do
   end
 
   actions do
-    defaults [:read, :destroy]
+    defaults [:destroy]
+
+    read :read do
+      primary? true
+      pagination offset?: true, keyset?: true, required?: false
+    end
+
+    read :by_reason do
+      argument :owner_id, :uuid do
+        allow_nil? false
+      end
+
+      argument :reason, :atom do
+        allow_nil? false
+      end
+
+      filter expr(owner_id == ^arg(:owner_id) and reason == ^arg(:reason))
+
+      pagination offset?: true, keyset?: true, required?: false
+    end
 
     create :like do
       accept [:owner_id, :user_id]
@@ -105,6 +124,14 @@ defmodule Animina.Accounts.Bookmark do
     references do
       reference :owner, on_delete: :delete
       reference :user, on_delete: :delete
+    end
+
+    custom_indexes do
+      index [:owner_id]
+      index [:reason]
+      index [:user_id]
+      index [:owner_id, :user_id]
+      index [:owner_id, :reason]
     end
   end
 end
