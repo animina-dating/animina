@@ -45,7 +45,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:hidden_points, 100)
     |> assign(
       :form,
-      Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
+      Form.for_create(BasicUser, :register_with_username_and_password, api: Accounts, as: "user")
     )
   end
 
@@ -54,10 +54,10 @@ defmodule AniminaWeb.RootLive do
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, gettext("Sign in"))
     |> assign(:sign_up_link, get_link("/", params))
-    |> assign(:action, get_link("/auth/user/password/sign_in/", params))
+    |> assign(:action, get_link("/auth/user/email_and_password/sign_in/", params))
     |> assign(
       :form,
-      Form.for_action(BasicUser, :sign_in_with_password, api: Accounts, as: "user")
+      Form.for_action(BasicUser, :sign_in_with_email_and_password, api: Accounts, as: "user")
     )
   end
 
@@ -73,6 +73,7 @@ defmodule AniminaWeb.RootLive do
     form = Form.validate(socket.assigns.form, user)
 
     IO.inspect(form)
+
     socket =
       socket
       |> assign(:form, form)
@@ -529,22 +530,22 @@ defmodule AniminaWeb.RootLive do
           >
             <%= gettext("E-mail address") %>
           </label>
-          <div phx-feedback-for={f[:username].name} class="mt-2">
-            <%= text_input(f, :username,
+          <div phx-feedback-for={f[:email].name} class="mt-2">
+            <%= text_input(f, :email,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white  shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:username], :username) == [],
+                  unless(get_field_errors(f[:email], :email) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("alice@example.net"),
-              value: f[:username].value,
+              value: f[:email].value,
               required: true,
-              autocomplete: :username,
+              autocomplete: :email,
               "phx-debounce": "200"
             ) %>
 
-            <.error :for={msg <- get_field_errors(f[:username], :username)}>
+            <.error :for={msg <- get_field_errors(f[:email], :email)}>
               <%= gettext("E-mail address") <> " " <> msg %>
             </.error>
           </div>

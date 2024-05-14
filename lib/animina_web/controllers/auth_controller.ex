@@ -50,7 +50,7 @@ defmodule AniminaWeb.AuthController do
 
   def failure(
         conn,
-        {:password, :sign_in},
+        {:email_and_password, :sign_in},
         %AshAuthentication.Errors.AuthenticationFailed{} = reason
       ) do
     conn
@@ -64,7 +64,7 @@ defmodule AniminaWeb.AuthController do
 
   def failure(
         conn,
-        {:password, :register},
+        {:email_and_password, :register},
         reason
       ) do
     conn
