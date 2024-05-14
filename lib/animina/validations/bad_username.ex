@@ -21,10 +21,15 @@ defmodule Animina.Validations.BadUsername do
 
     bad_usernames = ["my", "current_user"]
 
-    if username && Ash.CiString.value(username) in bad_usernames do
+    if username &&
+         (Ash.CiString.value(username) in bad_usernames or has_at?(Ash.CiString.value(username))) do
       {:error, field: :username, message: "This is a bad username"}
     else
       :ok
     end
+  end
+
+  def has_at?(string) do
+    String.contains?(string, "@")
   end
 end
