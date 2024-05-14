@@ -55,7 +55,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, gettext("Sign in"))
     |> assign(:sign_up_link, get_link("/", params))
-    |> assign(:action, get_link("/auth/user/email_and_password/sign_in/", params))
+    |> assign(:action, get_link("/auth/user/sign_in/", params))
     |> assign(
       :form,
       Form.for_action(BasicUser, :custom_sign_in, api: Accounts, as: "user")
@@ -71,20 +71,18 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def handle_event("submit", %{"user" => user}, socket) do
-    form =  Form.validate(socket.assigns.form,  user)
-    #   {:ok , user} ->
-    #     user = List.first(user)
-    #     PhoenixLiveSession.put_session(socket, "current_user", user)
-    #     IO.inspect user
-    #     {:noreply, socket
+    form = Form.validate(socket.assigns.form,  user)
+    IO.inspect form
 
-    #     |> redirect(to: "/my/potential-partner")}
-
-    #   {:error, form} ->
-    #     {:noreply, socket |> assign(form: form) |> assign(errors: Form.errors(form)) |> put_flash(:error, gettext("Please correct the errors below"))}
+        {:noreply,  socket
+          |> assign(:form, form)
+          |> assign(:errors, Form.errors(form))
+          |> assign(:trigger_action, form.valid?)}
 
 
-    # end
+
+
+
 
 
 

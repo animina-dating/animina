@@ -46,6 +46,10 @@ defmodule AniminaWeb.Router do
       live "/:current_user/messages/:profile", ChatLive, :index
     end
 
+
+
+    post "/auth/user/sign_in/" , AuthController, :sign_in
+
     get "/demo", PageController, :demo
 
     sign_out_route AuthController, "/auth/user/sign-out"

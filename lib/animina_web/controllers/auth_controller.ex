@@ -83,6 +83,50 @@ defmodule AniminaWeb.AuthController do
     |> redirect(to: "/")
   end
 
+
+  def sign_in(conn, params) do
+   case User.custom_sign_in(%{
+      "username_or_email" => params["user"]["username_or_email"],
+      "password" => params["user"]["password"]
+    }) do
+      {:ok , user} ->
+        return_to =
+        case Map.get(conn.query_params, "redirect_to") do
+          nil ->
+            get_session(conn, :return_to) || redirect_url(user)
+
+          path ->
+            path
+        end
+
+
+
+
+
+
+
+
+
+      get_actions_to_perform(conn.query_params, user)
+
+      conn
+      |> delete_session(:return_to)
+      |> store_in_session(user)
+      |> assign(:current_user, user)
+      |> redirect(to: return_to)
+      _ ->
+        conn
+        |> put_flash(
+          :error,
+          gettext("Username or password is incorrect")
+        )
+        |> redirect(to: "/sign-in")
+    end
+
+  end
+
+
+
   def sign_out(conn, _params) do
     return_to = get_session(conn, :return_to) || ~p"/sign-in"
 
