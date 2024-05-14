@@ -163,6 +163,12 @@ defmodule Animina.Accounts.User do
       accept [:last_registration_page_visited]
     end
 
+    read :custom_sign_in do
+      argument :username_or_email, :string, allow_nil?: false
+      argument :password, :string, allow_nil?: false, sensitive?: true
+      prepare Animina.MyCustomSignInPreparation
+    end
+
     read :by_username_as_an_actor do
       argument :username, :ci_string do
         allow_nil? false
@@ -184,6 +190,7 @@ defmodule Animina.Accounts.User do
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
     define :by_username_as_an_actor, args: [:username]
+    define :custom_sign_in, get?: true
   end
 
   calculations do
@@ -245,6 +252,7 @@ defmodule Animina.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
+          :email,
           :username,
           :name,
           :zip_code,

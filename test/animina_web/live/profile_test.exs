@@ -46,8 +46,7 @@ defmodule AniminaWeb.ProfileTest do
 
     test "Anonymous Users Cannot view a Public Users Page", %{
       conn: conn,
-      public_user: public_user,
-      public_user_story: public_user_story
+      public_user: public_user
     } do
       {:ok, view, _html} = live(conn, "/#{public_user.username}")
 
