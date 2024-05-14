@@ -72,6 +72,7 @@ defmodule AniminaWeb.RootLive do
   def handle_event("submit", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user)
 
+    IO.inspect(form)
     socket =
       socket
       |> assign(:form, form)
@@ -528,22 +529,22 @@ defmodule AniminaWeb.RootLive do
           >
             <%= gettext("E-mail address") %>
           </label>
-          <div phx-feedback-for={f[:email].name} class="mt-2">
-            <%= text_input(f, :email,
+          <div phx-feedback-for={f[:username].name} class="mt-2">
+            <%= text_input(f, :username,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white  shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:email], :email) == [],
+                  unless(get_field_errors(f[:username], :username) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("alice@example.net"),
-              value: f[:email].value,
+              value: f[:username].value,
               required: true,
-              autocomplete: :email,
+              autocomplete: :username,
               "phx-debounce": "200"
             ) %>
 
-            <.error :for={msg <- get_field_errors(f[:email], :email)}>
+            <.error :for={msg <- get_field_errors(f[:username], :username)}>
               <%= gettext("E-mail address") <> " " <> msg %>
             </.error>
           </div>

@@ -240,7 +240,9 @@ defmodule Animina.Accounts.User do
 
     strategies do
       password :password do
-        identity_field :email
+
+        identity_field :username
+        
         sign_in_tokens_enabled? true
         confirmation_required?(false)
 

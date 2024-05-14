@@ -124,11 +124,15 @@ defmodule Animina.Accounts.BasicUser do
     prepare build(load: [:age, :credit_points])
   end
 
+
+  
+
   authentication do
     api Accounts
 
     strategies do
       password :password do
+        identity_field :username
         identity_field :email
         sign_in_tokens_enabled? true
         confirmation_required?(false)
