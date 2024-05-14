@@ -192,6 +192,33 @@ defmodule AniminaWeb.AniminaComponents do
   end
 
   @doc """
+  Bookmark card loading.
+
+  ## Examples
+
+    <.bookmark_card_loading />
+  """
+
+  def bookmark_card_loading(assigns) do
+    ~H"""
+    <div class="animate-pulse">
+      <div class="w-full p-4">
+        <div class="h-4 w-[80%] bg-gray-100 dark:bg-gray-700 rounded-md"></div>
+
+        <div class="mt-4 flex items-center justify-between space-x-4">
+          <div class="h-12 w-12 flex-shrink-0 bg-gray-100 dark:bg-gray-700 rounded-md"></div>
+
+          <div class="w-full space-y-2">
+            <div class="h-3 w-[40%] bg-gray-100 dark:bg-gray-700 rounded-md"></div>
+            <div class="h-3 w-[60%] bg-gray-100 dark:bg-gray-700 rounded-md"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
   Flag card loading.
 
   ## Examples

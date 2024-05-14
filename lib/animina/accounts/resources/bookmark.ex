@@ -100,7 +100,7 @@ defmodule Animina.Accounts.Bookmark do
     define :unlike
     define :destroy
     define :by_id, get_by: [:id], action: :read
-    define :by_owner_and_user_id, get_by: [:owner_id, :user_id], action: :read
+    define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
   end
 
   policies do

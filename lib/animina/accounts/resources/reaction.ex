@@ -4,6 +4,7 @@ defmodule Animina.Accounts.Reaction do
   """
 
   alias Animina.Accounts.User
+  alias Animina.Accounts.Bookmark
   alias Phoenix.PubSub
 
   use Ash.Resource,
@@ -106,6 +107,46 @@ defmodule Animina.Accounts.Reaction do
              {:ok, record}
            end),
            on: [:create, :destroy]
+
+    change after_transaction(fn
+             _changeset, {:ok, result} ->
+               if result.name == :like do
+                 Bookmark.like(
+                   %{
+                     owner_id: result.sender_id,
+                     user_id: result.receiver_id
+                   },
+                   authorize?: false
+                 )
+               end
+
+               {:ok, result}
+
+             _changeset, {:error, error} ->
+               {:error, error}
+           end),
+           on: :create
+
+    change after_transaction(fn
+             _changeset, {:ok, result} ->
+               if result.name == :like do
+                 {:ok, bookmark} =
+                   Bookmark.by_owner_user_and_reason(
+                     result.sender_id,
+                     result.receiver_id,
+                     :liked,
+                     authorize?: false
+                   )
+
+                 Bookmark.unlike(bookmark, authorize?: false)
+               end
+
+               {:ok, result}
+
+             _changeset, {:error, error} ->
+               {:error, error}
+           end),
+           on: :destroy
   end
 
   policies do
