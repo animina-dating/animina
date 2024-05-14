@@ -7,7 +7,6 @@ defmodule AniminaWeb.RootLive do
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
-
   @impl true
   def mount(_params, %{"language" => language} = session, socket) do
     current_user = Registration.get_current_user(session)
@@ -71,36 +70,13 @@ defmodule AniminaWeb.RootLive do
 
   @impl true
   def handle_event("submit", %{"user" => user}, socket) do
-    form = Form.validate(socket.assigns.form,  user)
-    IO.inspect form
+    form = Form.validate(socket.assigns.form, user)
 
-        {:noreply,  socket
-          |> assign(:form, form)
-          |> assign(:errors, Form.errors(form))
-          |> assign(:trigger_action, form.valid?)}
-
-
-
-
-
-
-
-
-    # socket =
-    #   socket
-    #   |> assign(:form, form)
-    #   |> assign(:errors, Form.errors(form))
-    #   |> assign(:trigger_action, form.valid?)
-
-    # {:noreply, socket}
-  end
-
-
-  defp store_in_session(socket, user) do
-    socket
-    |> assign(:current_user, user)
-    |> assign(:errors, [])
-    |> store_in_session(user)
+    {:noreply,
+     socket
+     |> assign(:form, form)
+     |> assign(:errors, Form.errors(form))
+     |> assign(:trigger_action, form.valid?)}
   end
 
   @impl true

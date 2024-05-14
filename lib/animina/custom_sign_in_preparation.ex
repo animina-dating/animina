@@ -13,54 +13,25 @@ defmodule Animina.MyCustomSignInPreparation do
   an authentication failed error.
   """
   use Ash.Resource.Preparation
-  alias AshAuthentication.{Errors.AuthenticationFailed, Info, Jwt}
-  alias Ash.{Error.Unknown, Query, Resource.Preparation}
+  alias Ash.Query
   require Ash.Query
+  alias AshAuthentication.{Errors.AuthenticationFailed, Jwt}
 
   @doc false
   @impl true
-  @spec prepare(Query.t(), keyword, Preparation.Context.t()) :: Query.t()
-  def prepare(query, options, context) do
-
-if  query.arguments != %{} && query.arguments.password && query.arguments.username_or_email do
-    password =
-      query.arguments.password
-
-
-    query
-    |> Query.filter(
-      email == ^query.arguments.username_or_email or
-        username == ^query.arguments.username_or_email
-    )
-    |> Query.before_action(fn query ->
-      Ash.Query.ensure_selected(query, :hashed_password)
-    end)
-    |> Query.after_action(fn
-      query, [] ->
-
-        # If record is empty, return an error
-        {:error,
-         AuthenticationFailed.exception(
-           query: query,
-           caused_by: %{
-             module: __MODULE__,
-             action: query.action,
-             resource: query.resource,
-             message: "Username or password is incorrect"
-           }
-         )}
-      query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
-        password = query.arguments.password
-
-        if Bcrypt.verify_pass(password, Map.get(record, :hashed_password)) do
-          {:ok,
-           [
-             maybe_generate_token(
-               query.context[:token_type] || :user,
-               record
-             )
-           ]}
-        else
+  def prepare(query, _options, _context) do
+    if query.arguments != %{} && query.arguments.password && query.arguments.username_or_email do
+      query
+      |> Query.filter(
+        email == ^query.arguments.username_or_email or
+          username == ^query.arguments.username_or_email
+      )
+      |> Query.before_action(fn query ->
+        Ash.Query.ensure_selected(query, :hashed_password)
+      end)
+      |> Query.after_action(fn
+        query, [] ->
+          # If record is empty, return an error
           {:error,
            AuthenticationFailed.exception(
              query: query,
@@ -68,39 +39,45 @@ if  query.arguments != %{} && query.arguments.password && query.arguments.userna
                module: __MODULE__,
                action: query.action,
                resource: query.resource,
-               message: "Password is not valid"
+               message: "Username or password is incorrect"
              }
            )}
-        end
 
-
-
-    end)
-  else
-    query
-  end
-  end
-
-  defp check_sign_in_token_configuration(query, strategy)
-       when query.context.token_type == :sign_in and not strategy.sign_in_tokens_enabled? do
-    Query.add_error(
-      query,
-      Unknown.exception(
-        message: """
-        Invalid configuration detected. A sign in token was requested for the #{strategy.name} strategy on #{inspect(query.resource)}, but that strategy
-        does not support sign in tokens. See `sign_in_tokens_enabled?` for more.
-        """
-      )
-    )
+        query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
+          validate_password(record, query)
+      end)
+    else
+      query
+    end
   end
 
-  defp check_sign_in_token_configuration(query, _) do
-    query
+  defp validate_password(record, query) do
+    password = query.arguments.password
+
+    if Bcrypt.verify_pass(password, Map.get(record, :hashed_password)) do
+      {:ok,
+       [
+         maybe_generate_token(
+           query.context[:token_type] || :user,
+           record
+         )
+       ]}
+    else
+      {:error,
+       AuthenticationFailed.exception(
+         query: query,
+         caused_by: %{
+           module: __MODULE__,
+           action: query.action,
+           resource: query.resource,
+           message: "Password is not valid"
+         }
+       )}
+    end
   end
 
   defp maybe_generate_token(purpose, record) when purpose in [:user, :sign_in] do
     if AshAuthentication.Info.authentication_tokens_enabled?(record.__struct__) do
-
       generate_token(purpose, record)
     else
       record
@@ -116,7 +93,7 @@ if  query.arguments != %{} && query.arguments.password && query.arguments.userna
   end
 
   defp generate_token(purpose, record) do
-    {:ok, token, _claims} =  Jwt.token_for_user(record, %{"purpose" => to_string(purpose)})
+    {:ok, token, _claims} = Jwt.token_for_user(record, %{"purpose" => to_string(purpose)})
 
     Ash.Resource.put_metadata(record, :token, token)
   end

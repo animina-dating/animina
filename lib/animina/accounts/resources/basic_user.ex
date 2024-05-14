@@ -104,13 +104,11 @@ defmodule Animina.Accounts.BasicUser do
   actions do
     defaults [:create, :read]
 
-
-      read :custom_sign_in do
-        argument :username_or_email, :string, allow_nil?: false
-        argument :password, :string, allow_nil?: false, sensitive?: true
-        prepare  Animina.MyCustomSignInPreparation
-      end
-
+    read :custom_sign_in do
+      argument :username_or_email, :string, allow_nil?: false
+      argument :password, :string, allow_nil?: false, sensitive?: true
+      prepare Animina.MyCustomSignInPreparation
+    end
   end
 
   code_interface do
@@ -118,7 +116,7 @@ defmodule Animina.Accounts.BasicUser do
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
-    define :custom_sign_in , get?: true
+    define :custom_sign_in, get?: true
   end
 
   aggregates do
@@ -144,6 +142,7 @@ defmodule Animina.Accounts.BasicUser do
 
         register_action_accept([
           :email,
+          :username,
           :name,
           :zip_code,
           :birthday,
@@ -155,8 +154,6 @@ defmodule Animina.Accounts.BasicUser do
           :occupation
         ])
       end
-
-
     end
 
     tokens do

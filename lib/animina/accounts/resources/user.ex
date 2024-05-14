@@ -162,10 +162,11 @@ defmodule Animina.Accounts.User do
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
     end
+
     read :custom_sign_in do
       argument :username_or_email, :string, allow_nil?: false
       argument :password, :string, allow_nil?: false, sensitive?: true
-      prepare  Animina.MyCustomSignInPreparation
+      prepare Animina.MyCustomSignInPreparation
     end
 
     read :by_username_as_an_actor do
@@ -251,6 +252,7 @@ defmodule Animina.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
+          :email,
           :username,
           :name,
           :zip_code,
@@ -263,8 +265,6 @@ defmodule Animina.Accounts.User do
           :occupation
         ])
       end
-
-
     end
 
     tokens do

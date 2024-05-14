@@ -9,7 +9,6 @@ defmodule AniminaWeb.AuthController do
   alias AshAuthentication.TokenResource
 
   def success(conn, _activity, user, _token) do
-    IO.inspect user
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
@@ -54,8 +53,6 @@ defmodule AniminaWeb.AuthController do
         {:password, :sign_in},
         %AshAuthentication.Errors.AuthenticationFailed{} = reason
       ) do
-
-       
     conn
     |> assign(:errors, reason)
     |> put_flash(
@@ -83,37 +80,29 @@ defmodule AniminaWeb.AuthController do
     |> redirect(to: "/")
   end
 
-
   def sign_in(conn, params) do
-   case User.custom_sign_in(%{
-      "username_or_email" => params["user"]["username_or_email"],
-      "password" => params["user"]["password"]
-    }) do
-      {:ok , user} ->
+    case User.custom_sign_in(%{
+           "username_or_email" => params["user"]["username_or_email"],
+           "password" => params["user"]["password"]
+         }) do
+      {:ok, user} ->
         return_to =
-        case Map.get(conn.query_params, "redirect_to") do
-          nil ->
-            get_session(conn, :return_to) || redirect_url(user)
+          case Map.get(conn.query_params, "redirect_to") do
+            nil ->
+              get_session(conn, :return_to) || redirect_url(user)
 
-          path ->
-            path
-        end
+            path ->
+              path
+          end
 
+        get_actions_to_perform(conn.query_params, user)
 
+        conn
+        |> delete_session(:return_to)
+        |> store_in_session(user)
+        |> assign(:current_user, user)
+        |> redirect(to: return_to)
 
-
-
-
-
-
-
-      get_actions_to_perform(conn.query_params, user)
-
-      conn
-      |> delete_session(:return_to)
-      |> store_in_session(user)
-      |> assign(:current_user, user)
-      |> redirect(to: return_to)
       _ ->
         conn
         |> put_flash(
@@ -122,10 +111,7 @@ defmodule AniminaWeb.AuthController do
         )
         |> redirect(to: "/sign-in")
     end
-
   end
-
-
 
   def sign_out(conn, _params) do
     return_to = get_session(conn, :return_to) || ~p"/sign-in"
