@@ -65,6 +65,14 @@ defmodule Animina.Accounts.Bookmark do
       pagination offset?: true, keyset?: true, required?: false
     end
 
+    update :update_visited do
+      argument :updated_at, :utc_datetime do
+        allow_nil? false
+      end
+
+      change set_attribute(:updated_at, arg(:updated_at))
+    end
+
     read :by_reason do
       argument :owner_id, :uuid do
         allow_nil? false
@@ -73,6 +81,10 @@ defmodule Animina.Accounts.Bookmark do
       argument :reason, :atom do
         allow_nil? false
       end
+
+      prepare build(load: [:user])
+
+      prepare build(sort: [created_at: :desc])
 
       filter expr(owner_id == ^arg(:owner_id) and reason == ^arg(:reason))
 
@@ -97,13 +109,19 @@ defmodule Animina.Accounts.Bookmark do
     define_for Animina.Accounts
     define :read
     define :like
+    define :visit
     define :unlike
+    define :update_visited
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
   end
 
   policies do
+    policy action_type(:create) do
+      authorize_if actor_present()
+    end
+
     policy action_type(:read) do
       authorize_if relates_to_actor_via(:owner)
     end
@@ -111,10 +129,6 @@ defmodule Animina.Accounts.Bookmark do
     policy action_type(:destroy) do
       authorize_if Animina.Checks.DestroyBookmarkCheck
     end
-
-    # policy action_type(:create) do
-    #   authorize_if Animina.Checks.CreateBookmarkCheck
-    # end
   end
 
   postgres do

@@ -28,7 +28,12 @@ defmodule AniminaWeb.BookmarkComponent do
   def render(assigns) do
     ~H"""
     <div>
-      I'm a bookmark
+      <.bookmark
+        bookmark={@bookmark}
+        dom_id={@dom_id}
+        reason={@reason}
+        delete_bookmark_modal_text={gettext("Are you sure?")}
+      />
     </div>
     """
   end

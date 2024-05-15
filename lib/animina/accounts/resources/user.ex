@@ -214,7 +214,6 @@ defmodule Animina.Accounts.User do
                 :profile_photo,
                 :city,
                 :flags,
-                :stories,
                 :traits
               ]
             )

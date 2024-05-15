@@ -3,8 +3,8 @@ defmodule Animina.Accounts.Reaction do
   This is the Reaction module which we use to manage likes, block, etc.
   """
 
-  alias Animina.Accounts.User
   alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.User
   alias Phoenix.PubSub
 
   use Ash.Resource,
@@ -130,15 +130,18 @@ defmodule Animina.Accounts.Reaction do
     change after_transaction(fn
              _changeset, {:ok, result} ->
                if result.name == :like do
-                 {:ok, bookmark} =
-                   Bookmark.by_owner_user_and_reason(
-                     result.sender_id,
-                     result.receiver_id,
-                     :liked,
-                     authorize?: false
-                   )
+                 case Bookmark.by_owner_user_and_reason(
+                        result.sender_id,
+                        result.receiver_id,
+                        :liked,
+                        authorize?: false
+                      ) do
+                   {:ok, bookmark} ->
+                     Bookmark.unlike(bookmark, authorize?: false)
 
-                 Bookmark.unlike(bookmark, authorize?: false)
+                   {:error, _error} ->
+                     :ok
+                 end
                end
 
                {:ok, result}

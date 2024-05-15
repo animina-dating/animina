@@ -11,10 +11,10 @@ defmodule Animina.Checks.DestroyBookmarkCheck do
 
   def match?(actor, params, _opts) do
     cond do
-      params.changeset.data.reason == :visited && actor.id != params.changeset.data.owner_id ->
+      params.changeset.data.reason == :visited ->
         false
 
-      actor.id != params.changeset.data.owner_id ->
+      params.changeset.data.reason == :liked && actor.id == params.changeset.data.owner_id ->
         true
 
       true ->

@@ -58,6 +58,23 @@ defmodule AniminaWeb.BookmarksListLive do
   end
 
   @impl true
+  def handle_event("destroy_bookmark", %{"id" => id, "dom_id" => dom_id}, socket) do
+    {:ok, bookmark} = Accounts.Bookmark.by_id(id)
+
+    case Accounts.Bookmark.unlike(bookmark, actor: socket.assigns.current_user) do
+      :ok ->
+        {:noreply,
+         socket
+         |> delete_bookmark_by_dom_id(dom_id)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("An error occurred while deleting the bookmark"))}
+    end
+  end
+
+  @impl true
   def handle_info(
         %{event: "create", payload: %{data: %Accounts.Bookmark{} = bookmark}},
         socket
@@ -125,12 +142,16 @@ defmodule AniminaWeb.BookmarksListLive do
           id={"stream_bookmarks_#{@reason}"}
           phx-update="stream"
         >
+          <div class="last:block hidden">
+            <p class="text-lg dark:text-white"><%= gettext("No bookmarks found") %></p>
+          </div>
           <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
             <.live_component
               module={AniminaWeb.BookmarkComponent}
               id={"bookmark_#{bookmark.id}"}
               bookmark={bookmark}
               dom_id={dom_id}
+              reason={@reason}
             />
           </div>
         </div>
