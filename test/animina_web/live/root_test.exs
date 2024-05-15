@@ -111,6 +111,46 @@ defmodule AniminaWeb.RootTest do
 
       assert html =~ "Criteria for your new partner"
     end
+
+    test "Once a user logs in for the first time , if they visit the potential partner page
+    , they are given 100 credit points as Registration Bonus and 100 as Daily Bonus",
+         %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      current_points = User.by_username!(user.username).credit_points
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.username, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      # if you go to /my/potential-partner after signing up,
+      #you get a registration bonus and a daily bonus so now 200 points
+
+      updated_points = current_points + 200
+
+      assert has_element?(index_live, "#current-user-credit-points", "#{updated_points}")
+    end
+
+    test "Once a user logs in and they are taken to their page or any other page apart from the
+    potential partner page for the first time of the day , they get 100 daily bonus points",
+         %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      current_points = User.by_username!(user.username).credit_points
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.username, "password" => @valid_attrs.password})
+        |> live(~p"/#{user.username}")
+
+      # if you go to /my/potential-partner after signing up, you
+      #get a registration bonus and a daily bonus so now 200 points
+
+      updated_points = current_points + 100
+
+      assert has_element?(index_live, "#current-user-credit-points", "#{updated_points}")
+    end
   end
 
   defp sign_in_user(conn, attributes) do
