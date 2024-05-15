@@ -103,7 +103,7 @@ defmodule AniminaWeb.LiveUserAuth do
       subject: "Daily Bonus"
     })
 
-    update_streak_depending_on_whether_used_the_system_a_day_before(user)
+    user = update_streak_depending_on_whether_used_the_system_a_day_before(user)
 
     # we then check if a user has been using has a streak of 10 days
     # we add 150 extra points so that they can have a total of 250 points
@@ -168,9 +168,11 @@ defmodule AniminaWeb.LiveUserAuth do
     # if a user used the system before , we add the streak and if they did not , we reset it to 1
 
     if Enum.count(daily_bonus_credits) > 0 do
-      {:ok, _user} = User.update(user, %{streak: user.streak + 1})
+      {:ok, user} = User.update(user, %{streak: user.streak + 1})
+      user
     else
-      {:ok, _user} = User.update(user, %{streak: 1})
+      {:ok, user} = User.update(user, %{streak: 1})
+      user
     end
   end
 end
