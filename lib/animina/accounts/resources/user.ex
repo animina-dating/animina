@@ -129,6 +129,10 @@ defmodule Animina.Accounts.User do
     has_many :send_reactions, Animina.Accounts.Reaction do
       destination_attribute :sender_id
     end
+
+    has_many :bookmarks, Accounts.Bookmark do
+      destination_attribute :owner_id
+    end
   end
 
   validations do
@@ -229,7 +233,6 @@ defmodule Animina.Accounts.User do
                 :profile_photo,
                 :city,
                 :flags,
-                :stories,
                 :traits,
                 :roles
               ]
