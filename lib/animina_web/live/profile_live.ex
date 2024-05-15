@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.Bookmark
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
@@ -30,6 +31,8 @@ defmodule AniminaWeb.ProfileLive do
         {:ok, user} ->
           socket
           |> assign(:user, user)
+
+          create_or_update_visited_bookmark(current_user, user)
 
           subscribe(socket, current_user, user)
 
@@ -100,6 +103,32 @@ defmodule AniminaWeb.ProfileLive do
       end
 
     {:ok, socket}
+  end
+
+  defp create_or_update_visited_bookmark(current_user, user) do
+    case Bookmark.by_owner_user_and_reason(
+           current_user.id,
+           user.id,
+           :visited,
+           actor: current_user
+         ) do
+      {:ok, bookmark} ->
+        Bookmark.update_last_visit(bookmark, %{
+          last_visit_at: DateTime.utc_now()
+        })
+
+      {:error, _error} ->
+        if current_user.id != user.id do
+          Bookmark.visit(
+            %{
+              owner_id: current_user.id,
+              user_id: user.id,
+              last_visit_at: DateTime.utc_now()
+            },
+            actor: current_user
+          )
+        end
+    end
   end
 
   defp redirect_if_username_is_different(socket, username, user) do
