@@ -17,20 +17,17 @@ defmodule AniminaWeb.ProfileLive do
   require Ash.Query
 
   @impl true
-  def mount(%{"username" => username}, %{"language" => language} = _session, socket) do
+  def mount(%{"username" => username}, %{"language" => language, "user" => _}, socket) do
     socket =
       socket
       |> assign(language: language)
       |> assign(active_tab: :home)
 
     current_user =
-      case socket.assigns.current_user do
-        nil -> nil
-        _ -> socket.assigns.current_user
-      end
+      socket.assigns.current_user
 
     socket =
-      case Accounts.User.by_username(username) do
+      case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
         {:ok, user} ->
           socket
           |> assign(:user, user)
@@ -38,6 +35,12 @@ defmodule AniminaWeb.ProfileLive do
           create_or_update_visited_bookmark(current_user, user)
 
           subscribe(socket, current_user, user)
+
+          if connected?(socket) do
+            deduct_points_for_first_profile_view(current_user, user)
+          end
+
+          add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
           intersecting_green_flags_count =
             get_intersecting_flags_count(
@@ -54,7 +57,7 @@ defmodule AniminaWeb.ProfileLive do
           socket
           |> assign(user: user)
           |> assign(
-            current_user_profile_points:
+            current_user_credit_points:
               Points.humanized_points(socket.assigns.current_user.credit_points)
           )
           |> assign(show_404_page: show_optional_404_page(user, current_user))
@@ -69,7 +72,33 @@ defmodule AniminaWeb.ProfileLive do
 
         _ ->
           socket
-          |> assign(user: nil)
+          |> assign(show_404_page: true)
+      end
+
+    {:ok, socket}
+  end
+
+  def mount(%{"username" => username}, %{"language" => language}, socket) do
+    socket =
+      socket
+      |> assign(language: language)
+      |> assign(active_tab: :home)
+
+    socket =
+      case Accounts.User.by_username(username) do
+        {:ok, user} ->
+          socket
+          |> assign(user: user)
+          |> assign(current_user_credit_points: 0)
+          |> assign(show_404_page: show_optional_404_page(user, nil))
+          |> assign(intersecting_green_flags_count: 0)
+          |> assign(intersecting_red_flags_count: 0)
+          |> assign(profile_points: Points.humanized_points(user.credit_points))
+          |> assign(current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id))
+          |> redirect_if_username_is_different(username, user)
+
+        _ ->
+          socket
           |> assign(show_404_page: true)
       end
 
@@ -110,8 +139,8 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp subscribe(socket, current_user, user) do
-    if connected?(socket) && current_user do
+  defp subscribe(socket, _current_user, _user) do
+    if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
 
@@ -119,15 +148,46 @@ defmodule AniminaWeb.ProfileLive do
         Animina.PubSub,
         "#{socket.assigns.current_user.username}"
       )
-
-      add_points_for_viewing_to_profile(socket.assigns.current_user.id, user.id)
     end
   end
 
-  defp add_points_for_viewing_to_profile(current_user_id, user_id) do
-    if current_user_id != user_id do
+  defp deduct_points_for_first_profile_view(current_user, user)
+       when current_user.id != user.id and user.is_private do
+    case Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id) do
+      [] ->
+        if user_has_liked_current_user_profile(user, current_user.id) do
+          deduct_points(current_user, -10)
+        else
+          deduct_points(current_user, -20)
+        end
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp deduct_points_for_first_profile_view(_current_user, _user) do
+    :ok
+  end
+
+  defp add_points_for_viewing_to_profile(current_user_id, user_id, socket) do
+    if current_user_id != user_id && connected?(socket) do
       :timer.send_interval(5000, self(), :add_points_for_viewing)
     end
+  end
+
+  defp deduct_points(user, points) do
+    Credit.create!(%{
+      user_id: user.id,
+      points: points,
+      subject: "Profile View Deduction"
+    })
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "credits",
+      {:credit_updated, %{"points" => get_points_for_a_user(user.id), "user_id" => user.id}}
+    )
   end
 
   defp show_optional_404_page(nil, nil) do
@@ -259,7 +319,7 @@ defmodule AniminaWeb.ProfileLive do
 
   @impl true
   def handle_info(:add_points_for_viewing, socket) do
-    add_credit_on_profile_view(1, socket.assigns.user)
+    add_credit_on_profile_view(1, socket.assigns.user, socket.assigns.current_user)
     {:noreply, socket}
   end
 
@@ -276,11 +336,12 @@ defmodule AniminaWeb.ProfileLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
-  defp add_credit_on_profile_view(points, user) do
+  defp add_credit_on_profile_view(points, user, current_user) do
     Credit.create!(%{
       user_id: user.id,
       points: points,
-      subject: "Profile View"
+      subject: "Profile View",
+      donor_id: current_user.id
     })
 
     PubSub.broadcast(
@@ -317,6 +378,16 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  defp user_has_liked_current_user_profile(user, current_user_id) do
+    case Reaction.by_sender_and_receiver_id(user.id, current_user_id) do
+      {:ok, _user} ->
+        true
+
+      {:error, _} ->
+        false
+    end
+  end
+
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
     {:ok, reaction} =
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
@@ -339,9 +410,9 @@ defmodule AniminaWeb.ProfileLive do
     ~H"""
     <div class="px-5">
       <%= if @show_404_page  do %>
-        <.error_profile_component error_text={
+        <.error_profile_component text={
           gettext(
-            "This account profile either doesn't exist or you don't have the needed privileges to access it."
+            "This profile either doesn't exist or you don't have enough points to access it. You need 20 points to access a profile page."
           )
         } />
       <% else %>
@@ -350,7 +421,7 @@ defmodule AniminaWeb.ProfileLive do
           current_user={@current_user}
           current_user_has_liked_profile?={@current_user_has_liked_profile?}
           profile_points={@profile_points}
-          current_user_profile_points={@current_user_profile_points}
+          current_user_credit_points={@current_user_credit_points}
           intersecting_green_flags_count={@intersecting_green_flags_count}
           intersecting_red_flags_count={@intersecting_red_flags_count}
           years_text={gettext("years")}
@@ -373,11 +444,10 @@ defmodule AniminaWeb.ProfileLive do
           AniminaWeb.ProfileStoriesLive,
           session: %{
             "user_id" => @user.id,
-            "current_user_id" => @current_user.id,
+            "current_user" => @current_user,
             "language" => @language
           },
-          id: "profile_stories_live:#{@user.id}",
-          sticky: true
+          id: "profile_stories_live"
         ) %>
       <% end %>
     </div>

@@ -16,14 +16,14 @@ defmodule AniminaWeb.ProfileStoriesLive do
   @impl true
   def mount(
         _params,
-        %{"user_id" => user_id, "current_user_id" => current_user_id, "language" => language},
+        %{"user_id" => user_id, "current_user" => current_user, "language" => language},
         socket
       ) do
     socket =
       socket
       |> assign(stories_and_flags: AsyncResult.loading())
       |> assign(language: language)
-      |> assign(current_user: Accounts.BasicUser.by_id!(current_user_id))
+      |> assign(current_user: current_user)
       |> assign(user: Accounts.BasicUser.by_id!(user_id))
       |> start_async(:fetch_stories_and_flags, fn ->
         fetch_stories_and_flags(user_id, language)
@@ -38,10 +38,18 @@ defmodule AniminaWeb.ProfileStoriesLive do
       socket.assigns
 
     current_user_green_flags =
-      fetch_flags(current_user.id, :green) |> filter_flags(:green, language)
+      if current_user do
+        fetch_flags(current_user.id, :green) |> filter_flags(:green, language)
+      else
+        []
+      end
 
     current_user_red_flags =
-      fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
+      if current_user do
+        fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
+      else
+        []
+      end
 
     {:noreply,
      socket

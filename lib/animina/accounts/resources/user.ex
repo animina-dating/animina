@@ -5,6 +5,7 @@ defmodule Animina.Accounts.User do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer,
     extensions: [AshAuthentication]
 
   alias Animina.Accounts
@@ -155,11 +156,31 @@ defmodule Animina.Accounts.User do
     identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 
+  aggregates do
+    sum :credit_points, :credits, :points, default: 0
+  end
+
   actions do
     defaults [:read, :update, :create]
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
+    end
+
+    read :custom_sign_in do
+      argument :username_or_email, :string, allow_nil?: false
+      argument :password, :string, allow_nil?: false, sensitive?: true
+      prepare Animina.MyCustomSignInPreparation
+    end
+
+    read :by_username_as_an_actor do
+      argument :username, :ci_string do
+        allow_nil? false
+      end
+
+      get? true
+
+      filter expr(username == ^arg(:username))
     end
   end
 
@@ -172,10 +193,14 @@ defmodule Animina.Accounts.User do
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
     define :by_email, get_by: [:email], action: :read
+    define :by_username_as_an_actor, args: [:username]
+    define :custom_sign_in, get?: true
   end
 
-  aggregates do
-    sum :credit_points, :credits, :points, default: 0
+  calculations do
+    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
+    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
+    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
   end
 
   changes do
@@ -200,12 +225,6 @@ defmodule Animina.Accounts.User do
            on: [:update]
   end
 
-  calculations do
-    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
-    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
-    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
-  end
-
   preparations do
     prepare build(
               load: [
@@ -215,8 +234,15 @@ defmodule Animina.Accounts.User do
                 :city,
                 :flags,
                 :traits
+                :roles
               ]
             )
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if Animina.Checks.ReadProfileCheck
+    end
   end
 
   authentication do
@@ -229,6 +255,7 @@ defmodule Animina.Accounts.User do
         confirmation_required?(false)
 
         register_action_accept([
+          :email,
           :username,
           :name,
           :zip_code,
