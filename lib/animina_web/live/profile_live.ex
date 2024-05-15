@@ -113,8 +113,8 @@ defmodule AniminaWeb.ProfileLive do
            actor: current_user
          ) do
       {:ok, bookmark} ->
-        Bookmark.update_visited(bookmark, %{
-          updated_at: DateTime.utc_now()
+        Bookmark.update_last_visit(bookmark, %{
+          last_visit_at: DateTime.utc_now()
         })
 
       {:error, _error} ->
@@ -122,7 +122,8 @@ defmodule AniminaWeb.ProfileLive do
           Bookmark.visit(
             %{
               owner_id: current_user.id,
-              user_id: user.id
+              user_id: user.id,
+              last_visit_at: DateTime.utc_now()
             },
             actor: current_user
           )

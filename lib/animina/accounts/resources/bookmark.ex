@@ -24,6 +24,8 @@ defmodule Animina.Accounts.Bookmark do
       allow_nil? false
     end
 
+    attribute :last_visit_at, :utc_datetime
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -65,12 +67,12 @@ defmodule Animina.Accounts.Bookmark do
       pagination offset?: true, keyset?: true, required?: false
     end
 
-    update :update_visited do
-      argument :updated_at, :utc_datetime do
+    update :update_last_visit do
+      argument :last_visit_at, :utc_datetime do
         allow_nil? false
       end
 
-      change set_attribute(:updated_at, arg(:updated_at))
+      change set_attribute(:last_visit_at, arg(:last_visit_at))
     end
 
     read :by_reason do
@@ -97,7 +99,7 @@ defmodule Animina.Accounts.Bookmark do
     end
 
     create :visit do
-      accept [:owner_id, :user_id]
+      accept [:owner_id, :user_id, :last_visit_at]
       change set_attribute(:reason, :visited)
     end
 
@@ -111,7 +113,7 @@ defmodule Animina.Accounts.Bookmark do
     define :like
     define :visit
     define :unlike
-    define :update_visited
+    define :update_last_visit
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read

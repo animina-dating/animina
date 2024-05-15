@@ -135,7 +135,9 @@ defmodule AniminaWeb.BookmarksListLive do
             <div><.bookmark_card_loading /></div>
           </div>
         </:loading>
-        <:failed :let={_failure}><%= gettext("There was an error loading bookmarks") %></:failed>
+        <:failed :let={_failure}>
+          <p lass="text-lg dark:text-white"><%= gettext("There was an error loading bookmarks") %></p>
+        </:failed>
 
         <div
           class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
@@ -143,7 +145,9 @@ defmodule AniminaWeb.BookmarksListLive do
           phx-update="stream"
         >
           <div class="last:block hidden">
-            <p class="text-lg dark:text-white"><%= gettext("No bookmarks found") %></p>
+            <p class="text-lg dark:text-white">
+              <%= gettext("No %{reason} bookmarks found", reason: @reason) %>
+            </p>
           </div>
           <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
             <.live_component
