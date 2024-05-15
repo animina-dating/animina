@@ -233,7 +233,7 @@ defmodule Animina.Accounts.User do
                 :profile_photo,
                 :city,
                 :flags,
-                :traits
+                :traits,
                 :roles
               ]
             )
