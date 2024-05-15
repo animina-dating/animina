@@ -15,6 +15,12 @@ defmodule AniminaWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       current_user = Registration.get_current_user(session)
 
+      add_daily_points_for_user(
+        current_user,
+        100,
+        check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
+      )
+
       {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
 
       {:cont,
