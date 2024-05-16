@@ -19,15 +19,29 @@ defmodule AniminaWeb.ProfileStoriesLive do
         %{"user_id" => user_id, "current_user" => current_user, "language" => language},
         socket
       ) do
+    current_user_green_flags =
+      if current_user do
+        fetch_flags(current_user.id, :green) |> filter_flags(:green, language)
+      else
+        []
+      end
+
+    current_user_red_flags =
+      if current_user do
+        fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
+      else
+        []
+      end
+
     socket =
       socket
       |> assign(stories_and_flags: AsyncResult.loading())
       |> assign(language: language)
       |> assign(current_user: current_user)
       |> assign(user: Accounts.BasicUser.by_id!(user_id))
-      |> start_async(:fetch_stories_and_flags, fn ->
-        fetch_stories_and_flags(user_id, language)
-      end)
+      |> assign(current_user_green_flags: current_user_green_flags)
+      |> assign(current_user_red_flags: current_user_red_flags)
+      |> stream(:stories_and_flags, fetch_stories_and_flags(user_id, language))
 
     {:ok, socket, layout: false}
   end
@@ -259,17 +273,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
     Enum.zip(flags, stories)
   end
 
-  defp get_amount_to_chunk(stories, flags) do
-    length_of_stories = length(stories)
-    length_of_flags = length(flags)
-
-    if 5 * length_of_stories >= length_of_flags do
-      5
-    else
-      5 + length_of_flags
-    end
-  end
-
   defp filter_flags(nil, _color, _language) do
     []
   end
@@ -304,53 +307,26 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.async_result :let={_stories} assign={@stories_and_flags}>
-        <:loading>
-          <div class="columns md:columns-2 lg:columns-3">
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-            <div class="break-inside-avoid mb-4 px-4 py-4 dark:bg-gray-800 bg-gray-200  rounded-md">
-              <.story_flags_loading />
-            </div>
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-
-            <div class="break-inside-avoid mb-4 px-4 py-4 dark:bg-gray-800 bg-gray-200  rounded-md">
-              <.story_flags_loading />
-            </div>
-
-            <div class="break-inside-avoid mb-4 px-4 py-4 dark:bg-gray-800 bg-gray-200  rounded-md">
-              <.story_flags_loading />
-            </div>
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-            <div class="break-inside-avoid mb-4"><.story_card_loading /></div>
-          </div>
-        </:loading>
-        <:failed :let={_failure}><%= gettext("There was an error loading stories") %></:failed>
-
-        <div class="columns md:columns-2 lg:columns-3 gap-8" id="stream_stories" phx-update="stream">
-          <div
-            :for={{dom_id, %{story: story, photo: photo, flags: flags}} <- @streams.stories_and_flags}
-            class="break-inside-avoid pb-2"
-            id={"#{dom_id}"}
-          >
-            <.live_component
-              module={AniminaWeb.StoryComponent}
-              id={"story_#{story.id}"}
-              story={story}
-              photo={photo}
-              flags={flags}
-              user={@user}
-              dom_id={dom_id}
-              current_user={@current_user}
-              current_user_green_flags={@current_user_green_flags}
-              current_user_red_flags={@current_user_red_flags}
-            />
-          </div>
+      <div class="columns md:columns-2 lg:columns-3 gap-8" id="stream_stories" phx-update="stream">
+        <div
+          :for={{dom_id, %{story: story, photo: photo, flags: flags}} <- @streams.stories_and_flags}
+          class="break-inside-avoid pb-2"
+          id={"#{dom_id}"}
+        >
+          <.live_component
+            module={AniminaWeb.StoryComponent}
+            id={"story_#{story.id}"}
+            story={story}
+            photo={photo}
+            flags={flags}
+            user={@user}
+            dom_id={dom_id}
+            current_user={@current_user}
+            current_user_green_flags={@current_user_green_flags}
+            current_user_red_flags={@current_user_red_flags}
+          />
         </div>
-      </.async_result>
+      </div>
     </div>
     """
   end

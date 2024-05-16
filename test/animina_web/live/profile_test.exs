@@ -46,12 +46,17 @@ defmodule AniminaWeb.ProfileTest do
 
     test "Anonymous Users Cannot view a Public Users Page", %{
       conn: conn,
-      public_user: public_user
+      public_user: public_user,
+      public_user_story: public_user_story
     } do
-      {:ok, view, _html} = live(conn, "/#{public_user.username}")
+      {:ok, _view, html} = live(conn, "/#{public_user.username}")
 
-      assert render_async(view) =~ public_user.name
-      assert render_async(view) =~ public_user.name
+      conn = get(conn, "/#{public_user.username}")
+      assert response(conn, 200)
+      assert html =~ public_user.name
+      assert html =~ public_user.name
+      assert html  =~ public_user_story.content
+
     end
   end
 
