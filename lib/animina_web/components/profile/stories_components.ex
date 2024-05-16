@@ -50,7 +50,7 @@ defmodule AniminaWeb.StoriesComponents do
         <%= if @story.headline.subject == "About me" do %>
           <img
             :if={
-              @story.user_id == @current_user.id ||
+             (@current_user &&  @story.user_id == @current_user.id) ||
                 @story.photo.state == :approved
             }
             class="object-cover rounded-lg aspect-square"
@@ -59,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
 
           <div
             :if={
-              @story.user_id != @current_user.id &&
+              (@current_user &&  @story.user_id != @current_user.id) &&
                 @story.photo.state != :approved
             }
             class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
@@ -86,7 +86,7 @@ defmodule AniminaWeb.StoriesComponents do
         <% else %>
           <img
             :if={
-              @story.user_id == @current_user.id ||
+              (@current_user &&   @story.user_id == @current_user.id) ||
                 @story.photo.state == :approved
             }
             class="object-cover rounded-lg"
@@ -95,7 +95,7 @@ defmodule AniminaWeb.StoriesComponents do
 
           <div
             :if={
-              @story.user_id != @current_user.id &&
+              (@current_user &&   @story.user_id != @current_user.id) &&
                 @story.photo.state != :approved
             }
             class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"

@@ -15,6 +15,12 @@ defmodule AniminaWeb.LiveUserAuth do
     if socket.assigns[:current_user] do
       current_user = Registration.get_current_user(session)
 
+      add_daily_points_for_user(
+        current_user,
+        100,
+        check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
+      )
+
       {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
 
       {:cont,
@@ -97,7 +103,7 @@ defmodule AniminaWeb.LiveUserAuth do
       subject: "Daily Bonus"
     })
 
-    update_streak_depending_on_whether_used_the_system_a_day_before(user)
+    user = update_streak_depending_on_whether_used_the_system_a_day_before(user)
 
     # we then check if a user has been using has a streak of 10 days
     # we add 150 extra points so that they can have a total of 250 points
@@ -162,9 +168,11 @@ defmodule AniminaWeb.LiveUserAuth do
     # if a user used the system before , we add the streak and if they did not , we reset it to 1
 
     if Enum.count(daily_bonus_credits) > 0 do
-      {:ok, _user} = User.update(user, %{streak: user.streak + 1})
+      {:ok, user} = User.update(user, %{streak: user.streak + 1})
+      user
     else
-      {:ok, _user} = User.update(user, %{streak: 1})
+      {:ok, user} = User.update(user, %{streak: 1})
+      user
     end
   end
 end
