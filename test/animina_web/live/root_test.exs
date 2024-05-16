@@ -119,7 +119,7 @@ defmodule AniminaWeb.RootTest do
 
       current_points = User.by_username!(user.username).credit_points
 
-      {:ok, index_live, html} =
+      {:ok, index_live, _html} =
         conn
         |> login_user(%{"username_or_email" => user.username, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
@@ -139,7 +139,7 @@ defmodule AniminaWeb.RootTest do
 
       current_points = User.by_username!(user.username).credit_points
 
-      {:ok, index_live, html} =
+      {:ok, index_live, _html} =
         conn
         |> login_user(%{"username_or_email" => user.username, "password" => @valid_attrs.password})
         |> live(~p"/#{user.username}")
