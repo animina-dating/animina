@@ -55,8 +55,7 @@ defmodule AniminaWeb.ProfileTest do
       assert response(conn, 200)
       assert html =~ public_user.name
       assert html =~ public_user.name
-      assert html  =~ public_user_story.content
-
+      assert html =~ public_user_story.content
     end
   end
 

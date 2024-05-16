@@ -125,7 +125,7 @@ defmodule AniminaWeb.RootTest do
         |> live(~p"/my/potential-partner/")
 
       # if you go to /my/potential-partner after signing up,
-      #you get a registration bonus and a daily bonus so now 200 points
+      # you get a registration bonus and a daily bonus so now 200 points
 
       updated_points = current_points + 200
 
@@ -145,7 +145,7 @@ defmodule AniminaWeb.RootTest do
         |> live(~p"/#{user.username}")
 
       # if you go to /my/potential-partner after signing up, you
-      #get a registration bonus and a daily bonus so now 200 points
+      # get a registration bonus and a daily bonus so now 200 points
 
       updated_points = current_points + 100
 

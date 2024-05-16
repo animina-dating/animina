@@ -6,7 +6,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
 
     use Mix.Task
     alias Animina.Accounts.Photo
-    alias Animina.Accounts.User
+    alias Animina.Accounts.BasicUser
     alias Animina.Narratives
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
@@ -24,7 +24,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       |> String.to_integer()
       |> generate_users()
 
-      User.read!()
+      BasicUser.read!()
       |> print_table()
     end
 
@@ -43,7 +43,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         photo = random_photo_url(gender) |> download_photo("#{Faker.UUID.v4()}.png")
 
         user =
-          User.create!(%{
+          BasicUser.create!(%{
             email: Faker.Internet.email(),
             username: Faker.Internet.user_name() |> String.slice(0..14),
             name: Faker.Person.name(),
