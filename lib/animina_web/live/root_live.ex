@@ -3,12 +3,10 @@ defmodule AniminaWeb.RootLive do
   alias Animina.Accounts
   alias Animina.Accounts.BasicUser
   alias Animina.GenServers.ProfileViewCredits
-  alias AniminaWeb.Registration
   alias AshPhoenix.Form
-  alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, %{"language" => language} = session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     socket =
       socket
       |> assign(language: language)
