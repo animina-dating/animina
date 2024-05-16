@@ -94,9 +94,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
             {:noreply,
              socket
-             |> delete_story_by_dom_id(dom_id)
-
-            }
+             |> delete_story_by_dom_id(dom_id)}
 
           _ ->
             {:noreply,
@@ -173,7 +171,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
   defp delete_story_by_dom_id(socket, dom_id) do
     socket
     |> stream_delete_by_dom_id(:stories_and_flags, dom_id)
-    |> stream(:stories_and_flags, fetch_stories_and_flags(socket.assigns.user.id, socket.assigns.language))
+    |> stream(
+      :stories_and_flags,
+      fetch_stories_and_flags(socket.assigns.user.id, socket.assigns.language),
+      reset: true
+    )
   end
 
   defp fetch_flags(user_id, color) do
@@ -212,9 +214,13 @@ defmodule AniminaWeb.ProfileStoriesLive do
     end)
   end
 
+  def group_flags_with_stories([], []), do: []
+  def group_flags_with_stories([], flags), do: chunk_five_flags_if_stories_are_empty(flags)
+  def group_flags_with_stories(stories, []), do: Enum.map(stories, &{[], &1})
+
   def group_flags_with_stories(stories, flags) do
     flags_per_story =
-      if length(stories) > 0 do
+      if length(flags) > 0 do
         div(length(flags), length(stories))
       else
         0
@@ -224,11 +230,14 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     chunks = chunk(flags, flags_per_story, extra_flags)
 
-    Enum.zip(chunks, stories)
+    Enum.zip(
+      chunks ++ Enum.map(1..(length(stories) - length(chunks)), fn _ -> [] end),
+      stories
+    )
     |> Enum.map(fn {flag_chunk, story} -> {flag_chunk, story} end)
   end
 
-  defp chunk(flags, _count, 0) when length(flags) == 0, do: []
+  defp chunk(flags, _count, 0) when flags == [], do: []
 
   defp chunk(flags, count, extra) do
     if extra > 0 do
@@ -237,6 +246,17 @@ defmodule AniminaWeb.ProfileStoriesLive do
     else
       [Enum.take(flags, count) | chunk(Enum.drop(flags, count), count, extra)]
     end
+  end
+
+  defp chunk_five_flags_if_stories_are_empty(flags) do
+    flags = Enum.chunk_every(flags, 5)
+
+    stories =
+      Enum.map(1..(5 * length(flags)), fn _ ->
+        %{id: System.unique_integer(), photo: nil, headline: nil, content: nil}
+      end)
+
+    Enum.zip(flags, stories)
   end
 
   defp get_amount_to_chunk(stories, flags) do
