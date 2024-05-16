@@ -50,7 +50,7 @@ defmodule AniminaWeb.StoriesComponents do
         <%= if @story.headline.subject == "About me" do %>
           <img
             :if={
-             (@current_user &&  @story.user_id == @current_user.id) ||
+              (@current_user && @story.user_id == @current_user.id) ||
                 @story.photo.state == :approved
             }
             class="object-cover rounded-lg aspect-square"
@@ -59,7 +59,7 @@ defmodule AniminaWeb.StoriesComponents do
 
           <div
             :if={
-              (@current_user &&  @story.user_id != @current_user.id) &&
+              @current_user && @story.user_id != @current_user.id &&
                 @story.photo.state != :approved
             }
             class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
@@ -86,7 +86,7 @@ defmodule AniminaWeb.StoriesComponents do
         <% else %>
           <img
             :if={
-              (@current_user &&   @story.user_id == @current_user.id) ||
+              (@current_user && @story.user_id == @current_user.id) ||
                 @story.photo.state == :approved
             }
             class="object-cover rounded-lg"
@@ -95,7 +95,7 @@ defmodule AniminaWeb.StoriesComponents do
 
           <div
             :if={
-              (@current_user &&   @story.user_id != @current_user.id) &&
+              @current_user && @story.user_id != @current_user.id &&
                 @story.photo.state != :approved
             }
             class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
@@ -229,7 +229,7 @@ defmodule AniminaWeb.StoriesComponents do
   def story_action_icons(assigns) do
     ~H"""
     <div
-      :if={@current_user && @user.id == @current_user.id}
+      :if={@current_user && @user.id == @current_user.id && @story.headline != nil}
       class="flex justify-end gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100"
     >
       <.link navigate={"/my/stories/#{@story.id}/edit" }>
