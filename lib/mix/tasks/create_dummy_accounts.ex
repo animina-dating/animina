@@ -5,8 +5,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
     """
 
     use Mix.Task
-    alias Animina.Accounts.Photo
     alias Animina.Accounts.BasicUser
+    alias Animina.Accounts.Photo
     alias Animina.Narratives
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
