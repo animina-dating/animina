@@ -1,8 +1,8 @@
 defmodule AniminaWeb.ProfileTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias Animina.Accounts.User
   alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
 
@@ -90,7 +90,6 @@ defmodule AniminaWeb.ProfileTest do
       assert bookmark.reason == :visited
     end
 
-    
   end
 
   defp create_public_user do
