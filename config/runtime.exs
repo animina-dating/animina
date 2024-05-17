@@ -33,9 +33,8 @@ if config_env() == :prod do
   config :animina, Animina.Repo,
     # ssl: true,
     url: database_url,
-    socket_options: maybe_ipv6,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "20"),
-    queue_target: String.to_integer(System.get_env("QUEUE_TARGET") || "5000")
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    socket_options: maybe_ipv6
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you

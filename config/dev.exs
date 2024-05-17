@@ -8,8 +8,7 @@ config :animina, Animina.Repo,
   database: System.get_env("DATABASE_NAME") || "animina_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "20"),
-  queue_target: String.to_integer(System.get_env("QUEUE_TARGET") || "5000")
+  pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
