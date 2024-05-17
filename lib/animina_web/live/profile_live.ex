@@ -32,11 +32,11 @@ defmodule AniminaWeb.ProfileLive do
           socket
           |> assign(:user, user)
 
-          create_or_update_visited_bookmark(current_user, user)
-
           subscribe(socket, current_user, user)
 
           if connected?(socket) do
+            create_or_update_visited_bookmark(current_user, user)
+
             deduct_points_for_first_profile_view(current_user, user)
           end
 
@@ -105,7 +105,7 @@ defmodule AniminaWeb.ProfileLive do
     {:ok, socket}
   end
 
-  defp create_or_update_visited_bookmark(current_user, user) do
+  defp create_or_update_visited_bookmark(current_user, user) when current_user.id != nil do
     case Bookmark.by_owner_user_and_reason(
            current_user.id,
            user.id,
@@ -152,6 +152,10 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  defp deduct_points_for_first_profile_view(nil, _user) do
+    :ok
+  end
+
   defp deduct_points_for_first_profile_view(current_user, user)
        when current_user.id != user.id and user.is_private do
     case Credit.profile_view_credits_by_donor_and_user!(current_user.id, user.id) do
@@ -168,6 +172,10 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp deduct_points_for_first_profile_view(_current_user, _user) do
+    :ok
+  end
+
+  defp add_points_for_viewing_to_profile(nil, _user_id, _socket) do
     :ok
   end
 
