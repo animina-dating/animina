@@ -1,6 +1,7 @@
 defmodule AniminaWeb.ProfileTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.Bookmark
   alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
@@ -57,6 +58,38 @@ defmodule AniminaWeb.ProfileTest do
       assert html =~ public_user.name
       assert html =~ public_user_story.content
     end
+
+    test "Once  a logged in user views a profile , a bookmark is created  ", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      # we check that there is no bookmark for the user and the profile
+
+      assert {:error, _} =
+               Bookmark.by_owner_user_and_reason(public_user.id, private_user.id, :visited)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      public_user = User.by_username!(public_user.username)
+      private_user = User.by_username!(private_user.username)
+
+      assert html =~ private_user.name
+
+      assert {:ok, bookmark} =
+               Bookmark.by_owner_user_and_reason(public_user.id, private_user.id, :visited)
+
+      assert bookmark.owner_id == public_user.id
+      assert bookmark.user_id == private_user.id
+      assert bookmark.reason == :visited
+    end
+
   end
 
   defp create_public_user do
@@ -65,7 +98,7 @@ defmodule AniminaWeb.ProfileTest do
         email: "adam@example.com",
         username: "adam",
         name: "Adam Newuser",
-        hashed_password: "zzzzzzzzzzz",
+        hashed_password: Bcrypt.hash_pwd_salt("MichaelTheEngineer"),
         birthday: "1950-01-01",
         height: 180,
         zip_code: "56068",
@@ -84,7 +117,7 @@ defmodule AniminaWeb.ProfileTest do
         email: "private@example.com",
         username: "private",
         name: "Private",
-        hashed_password: "zzzzzzzzzzz",
+        hashed_password: Bcrypt.hash_pwd_salt("MichaelTheEngineer"),
         birthday: "1950-01-01",
         height: 180,
         zip_code: "56068",
@@ -124,5 +157,14 @@ defmodule AniminaWeb.ProfileTest do
       })
 
     story
+  end
+
+  defp login_user(conn, attributes) do
+    {:ok, lv, _html} = live(conn, ~p"/sign-in/")
+
+    form =
+      form(lv, "#basic_user_sign_in_form", user: attributes)
+
+    submit_form(form, conn)
   end
 end
