@@ -216,9 +216,7 @@ defmodule Animina.Accounts.User do
            on: [:create]
 
     change after_action(fn changeset, record ->
-             username = Ash.CiString.value(record.username)
-
-             PubSub.broadcast(Animina.PubSub, username, {:user, record})
+             PubSub.broadcast(Animina.PubSub, record.id, {:user, record})
 
              {:ok, record}
            end),

@@ -16,6 +16,11 @@ defmodule AniminaWeb.StoryLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.id}"
+      )
     end
 
     story = Story.by_id!(story_id)
@@ -43,6 +48,11 @@ defmodule AniminaWeb.StoryLive do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.id}"
+      )
     end
 
     socket =
@@ -237,8 +247,6 @@ defmodule AniminaWeb.StoryLive do
       )
       |> Accounts.create()
 
-      broadcast_user(socket)
-
       {:noreply,
        socket
        |> assign(:errors, [])
@@ -291,8 +299,6 @@ defmodule AniminaWeb.StoryLive do
         )
         |> Accounts.create()
 
-        broadcast_user(socket)
-
         {:noreply,
          socket
          |> assign(:errors, [])
@@ -302,8 +308,6 @@ defmodule AniminaWeb.StoryLive do
          )
          |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
       else
-        broadcast_user(socket)
-
         {:noreply,
          socket
          |> assign(:errors, [])
@@ -404,16 +408,6 @@ defmodule AniminaWeb.StoryLive do
     else
       true
     end
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true

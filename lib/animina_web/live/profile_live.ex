@@ -10,7 +10,6 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
-  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
 
@@ -147,7 +146,7 @@ defmodule AniminaWeb.ProfileLive do
 
       PubSub.subscribe(
         Animina.PubSub,
-        "#{socket.assigns.current_user.username}"
+        "#{socket.assigns.current_user.id}"
       )
     end
   end
@@ -229,8 +228,6 @@ defmodule AniminaWeb.ProfileLive do
       actor: socket.assigns.current_user
     )
 
-    broadcast_user(socket)
-
     {:noreply,
      socket
      |> assign(
@@ -245,7 +242,6 @@ defmodule AniminaWeb.ProfileLive do
       get_reaction_for_sender_and_receiver(socket.assigns.current_user.id, socket.assigns.user.id)
 
     Reaction.unlike(reaction, actor: socket.assigns.current_user)
-    broadcast_user(socket)
 
     {:noreply,
      socket
@@ -402,16 +398,6 @@ defmodule AniminaWeb.ProfileLive do
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
 
     reaction
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true
