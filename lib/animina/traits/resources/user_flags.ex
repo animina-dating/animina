@@ -1,5 +1,7 @@
 defmodule Animina.Traits.UserFlags do
   alias Animina.Validations
+  alias Animina.Accounts.User
+  alias Phoenix.PubSub
 
   @moduledoc """
   This is the UserFlags module which we use to manage a user's flags.
@@ -65,6 +67,19 @@ defmodule Animina.Traits.UserFlags do
     define :create
     define :by_id, get_by: [:id], action: :read
     define :destroy
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             PubSub.broadcast(
+               Animina.PubSub,
+               record.user_id,
+               {:user, User.by_id!(record.user_id)}
+             )
+
+             {:ok, record}
+           end),
+           on: [:create, :destroy]
   end
 
   preparations do

@@ -16,7 +16,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
 
       PubSub.subscribe(
         Animina.PubSub,
-        "#{socket.assigns.current_user.username}"
+        "#{socket.assigns.current_user.id}"
       )
     end
 
@@ -108,8 +108,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
         form = Form.validate(socket.assigns.form, params, errors: true)
 
         with [] <- Form.errors(form), {:ok, _photo} <- Form.submit(form, params: params) do
-          broadcast_user(socket)
-
           {:noreply,
            socket
            |> assign(:errors, [])
@@ -137,16 +135,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
        :form,
        Form.for_create(Photo, :create, api: Accounts, as: "photo")
      )}
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true

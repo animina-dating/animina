@@ -131,8 +131,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
           User.by_id!(socket.assigns.current_user.id)
           |> User.update!(form_params)
 
-        broadcast_user(socket)
-
         {:noreply,
          socket
          |> assign(current_user: current_user)
@@ -141,16 +139,6 @@ defmodule AniminaWeb.PotentialPartnerLive do
       _ ->
         {:noreply, assign(socket, update_form: form)}
     end
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true

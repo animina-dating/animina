@@ -82,25 +82,15 @@ defmodule Animina.Accounts.Reaction do
 
   changes do
     change after_action(fn changeset, record ->
-             sender_username =
-               User.by_id!(record.sender_id)
-               |> Map.get(:username)
-               |> Ash.CiString.value()
-
-             receiver_username =
-               User.by_id!(record.receiver_id)
-               |> Map.get(:username)
-               |> Ash.CiString.value()
-
              PubSub.broadcast(
                Animina.PubSub,
-               sender_username,
+               record.sender_id,
                {:user, User.by_id!(record.sender_id)}
              )
 
              PubSub.broadcast(
                Animina.PubSub,
-               receiver_username,
+               record.receiver_id,
                {:user, User.by_id!(record.receiver_id)}
              )
 

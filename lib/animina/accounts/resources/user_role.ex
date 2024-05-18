@@ -51,12 +51,11 @@ defmodule Animina.Accounts.UserRole do
 
   changes do
     change after_action(fn changeset, record ->
-             username =
-               User.by_id!(record.user_id)
-               |> Map.get(:username)
-               |> Ash.CiString.value()
-
-             PubSub.broadcast(Animina.PubSub, username, {:user, User.by_id!(record.user_id)})
+             PubSub.broadcast(
+               Animina.PubSub,
+               record.user_id,
+               {:user, User.by_id!(record.user_id)}
+             )
 
              {:ok, record}
            end),
