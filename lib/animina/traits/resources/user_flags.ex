@@ -1,6 +1,6 @@
 defmodule Animina.Traits.UserFlags do
-  alias Animina.Validations
   alias Animina.Accounts.User
+  alias Animina.Validations
   alias Phoenix.PubSub
 
   @moduledoc """
