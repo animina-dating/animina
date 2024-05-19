@@ -13,13 +13,6 @@ defmodule AniminaWeb.BookmarksComponents do
   def bookmark(assigns) do
     ~H"""
     <div class="pb-2 px-4">
-      <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
-        <%= gettext("You visited a profile") %>
-      </h3>
-      <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
-        <%= gettext("You liked a profile") %>
-      </h3>
-
       <div class="flex items-center justify-between space-x-4 mt-4">
         <div>
           <img

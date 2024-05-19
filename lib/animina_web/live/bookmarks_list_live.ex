@@ -6,6 +6,7 @@ defmodule AniminaWeb.BookmarksListLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Bookmark
   alias Phoenix.LiveView.AsyncResult
   alias Phoenix.PubSub
 
@@ -113,6 +114,26 @@ defmodule AniminaWeb.BookmarksListLive do
     |> stream_delete_by_dom_id(:bookmarks, dom_id)
   end
 
+  defp fetch_bookmarks(current_user, :most_often_visited) do
+    case Bookmark.most_often_visited_by_user(current_user.id) do
+      {:ok, bookmarks} ->
+        bookmarks.results
+
+      _ ->
+        []
+    end
+  end
+
+  defp fetch_bookmarks(current_user, :longest_overall_visited) do
+    case Bookmark.longest_overall_duration_visited_by_user(current_user.id) do
+      {:ok, bookmarks} ->
+        bookmarks.results
+
+      _ ->
+        []
+    end
+  end
+
   defp fetch_bookmarks(current_user, reason) do
     Accounts.Bookmark
     |> Ash.Query.for_read(:by_reason, %{owner_id: current_user.id, reason: reason})
@@ -139,6 +160,22 @@ defmodule AniminaWeb.BookmarksListLive do
           <p lass="text-lg dark:text-white"><%= gettext("There was an error loading bookmarks") %></p>
         </:failed>
 
+        <div class="pb-2 px-4">
+          <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
+            <%= gettext("Visited Profiles") %>
+          </h3>
+          <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
+            <%= gettext("Liked Profiles") %>
+          </h3>
+
+          <h3 :if={@reason == :most_often_visited} class="text-lg font-medium dark:text-white">
+            <%= gettext("Most Often Visited Profiles") %>
+          </h3>
+          <h3 :if={@reason == :longest_overall_visited} class="text-lg font-medium dark:text-white">
+            <%= gettext("Longest Overall Visited Profiles") %>
+          </h3>
+        </div>
+
         <div
           class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
           id={"stream_bookmarks_#{@reason}"}
@@ -149,6 +186,7 @@ defmodule AniminaWeb.BookmarksListLive do
               <%= gettext("No %{reason} bookmarks found", reason: @reason) %>
             </p>
           </div>
+
           <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
             <.live_component
               module={AniminaWeb.BookmarkComponent}
