@@ -41,10 +41,8 @@ defmodule Animina.Accounts.Bookmark do
       allow_nil? false
     end
 
-
-    has_one :visit_log_entry, Animina.Accounts.VisitLogEntry do
-      api Animina.Accounts
-      allow_nil? false
+    has_many :visit_log_entries, Animina.Accounts.VisitLogEntry do
+      destination_attribute :user_id
     end
   end
 

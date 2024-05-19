@@ -89,7 +89,6 @@ defmodule AniminaWeb.ProfileTest do
       assert bookmark.user_id == private_user.id
       assert bookmark.reason == :visited
     end
-
   end
 
   defp create_public_user do

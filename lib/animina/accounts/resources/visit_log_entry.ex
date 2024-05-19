@@ -14,6 +14,14 @@ defmodule Animina.Accounts.VisitLogEntry do
       allow_nil? false
     end
 
+    attribute :bookmark_id, :uuid do
+      allow_nil? false
+    end
+
+    attribute :user_id, :uuid do
+      allow_nil? false
+    end
+
     create_timestamp :created_at
     update_timestamp :updated_at
   end
@@ -30,18 +38,16 @@ defmodule Animina.Accounts.VisitLogEntry do
     end
   end
 
-  identities do
-    identity :unique_visit_log_entry, [:user_id, :bookmark_id]
-  end
-
   actions do
-    defaults [:create, :read]
+    defaults [:create, :read, :update]
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
+    define :update
+    define :by_id, get_by: [:id], action: :read
   end
 
   postgres do

@@ -10,6 +10,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
 
@@ -41,6 +42,11 @@ defmodule AniminaWeb.ProfileLive do
 
           add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
+          visit_log_entry =
+            create_visit_log_entry_for_bookmark_and_user(current_user, user)
+
+          update_visit_log_entry_for_bookmark_and_user(current_user, user)
+
           intersecting_green_flags_count =
             get_intersecting_flags_count(
               filter_flags(current_user, :green, language),
@@ -55,6 +61,7 @@ defmodule AniminaWeb.ProfileLive do
 
           socket
           |> assign(user: user)
+          |> assign(visit_log_entry: visit_log_entry)
           |> assign(
             current_user_credit_points:
               Points.humanized_points(socket.assigns.current_user.credit_points)
@@ -127,6 +134,46 @@ defmodule AniminaWeb.ProfileLive do
             actor: current_user
           )
         end
+    end
+  end
+
+  defp create_visit_log_entry_for_bookmark_and_user(current_user, user) do
+    case Bookmark.by_owner_user_and_reason(
+           current_user.id,
+           user.id,
+           :visited,
+           actor: current_user
+         ) do
+      {:ok, bookmark} ->
+        VisitLogEntry.create!(%{
+          user_id: current_user.id,
+          bookmark_id: bookmark.id,
+          duration: 1
+        })
+
+      {:error, _error} ->
+        :ok
+    end
+  end
+
+  defp update_visit_log_entry_for_bookmark_and_user(current_user, user)
+       when current_user != nil do
+    :timer.send_interval(1000, self(), :update_visit_log_entry_for_bookmark_and_user)
+  end
+
+  @impl true
+  def handle_info(:update_visit_log_entry_for_bookmark_and_user, socket) do
+    case VisitLogEntry.by_id(socket.assigns.visit_log_entry.id) do
+      {:ok, visit_log_entry} ->
+        VisitLogEntry.update(visit_log_entry, %{
+          duration: visit_log_entry.duration + 1
+        })
+
+        {:noreply, socket}
+
+      _ ->
+        :ok
+        {:noreply, socket}
     end
   end
 
