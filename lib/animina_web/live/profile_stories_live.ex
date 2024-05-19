@@ -4,12 +4,10 @@ defmodule AniminaWeb.ProfileStoriesLive do
   """
 
   use AniminaWeb, :live_view
-
   alias Animina.Accounts
   alias Animina.Narratives
   alias Animina.Traits
   alias Phoenix.LiveView.AsyncResult
-  alias Phoenix.PubSub
 
   require Ash.Query
 
@@ -91,8 +89,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     case Narratives.Story.destroy(story) do
       :ok ->
-        broadcast_user(socket)
-
         {:noreply,
          socket
          |> delete_story_by_dom_id(dom_id)}
@@ -103,8 +99,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
           when message == "would leave records behind" ->
             Accounts.Photo.destroy(story.photo)
             Narratives.Story.destroy(story)
-
-            broadcast_user(socket)
 
             {:noreply,
              socket
@@ -291,16 +285,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
         emoji: trait.flag.emoji
       }
     end)
-  end
-
-  defp broadcast_user(socket) do
-    current_user = Accounts.User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true

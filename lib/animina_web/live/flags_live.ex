@@ -20,7 +20,7 @@ defmodule AniminaWeb.FlagsLive do
 
       PubSub.subscribe(
         Animina.PubSub,
-        "#{socket.assigns.current_user.username}"
+        "#{socket.assigns.current_user.id}"
       )
     end
 
@@ -187,13 +187,9 @@ defmodule AniminaWeb.FlagsLive do
       _ ->
         case socket.assigns.selected do
           0 ->
-            broadcast_user(socket)
-
             {:noreply, successful_socket}
 
           _ ->
-            broadcast_user(socket)
-
             {:noreply, successful_socket}
         end
     end
@@ -296,16 +292,6 @@ defmodule AniminaWeb.FlagsLive do
     |> Enum.filter(fn trait ->
       trait.color == color
     end)
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true

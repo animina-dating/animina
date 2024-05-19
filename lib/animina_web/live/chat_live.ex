@@ -5,7 +5,6 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
-  alias Animina.Accounts.User
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -17,7 +16,7 @@ defmodule AniminaWeb.ChatLive do
 
       PubSub.subscribe(
         Animina.PubSub,
-        "#{socket.assigns.current_user.username}"
+        "#{socket.assigns.current_user.id}"
       )
     end
 
@@ -101,8 +100,6 @@ defmodule AniminaWeb.ChatLive do
       actor: socket.assigns.sender
     )
 
-    broadcast_user(socket)
-
     {:noreply,
      socket
      |> assign(
@@ -117,7 +114,6 @@ defmodule AniminaWeb.ChatLive do
       get_reaction_for_sender_and_receiver(socket.assigns.sender.id, socket.assigns.receiver.id)
 
     Reaction.unlike(reaction, actor: socket.assigns.sender)
-    broadcast_user(socket)
 
     {:noreply,
      socket
@@ -310,16 +306,6 @@ defmodule AniminaWeb.ChatLive do
       forms: [auto?: true]
     )
     |> to_form()
-  end
-
-  defp broadcast_user(socket) do
-    current_user = User.by_id!(socket.assigns.current_user.id)
-
-    PubSub.broadcast(
-      Animina.PubSub,
-      "#{current_user.username}",
-      {:user, current_user}
-    )
   end
 
   @impl true
