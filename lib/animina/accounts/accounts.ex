@@ -15,6 +15,7 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.Reaction
     resource Animina.Accounts.Message
     resource Animina.Accounts.Role
+    resource Animina.Accounts.VisitLogEntry
     resource Animina.Accounts.Bookmark
     resource Animina.Accounts.UserRole
     resource Animina.Traits.UserFlags

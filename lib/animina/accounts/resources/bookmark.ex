@@ -40,6 +40,12 @@ defmodule Animina.Accounts.Bookmark do
       api Animina.Accounts
       allow_nil? false
     end
+
+
+    has_one :visit_log_entry, Animina.Accounts.VisitLogEntry do
+      api Animina.Accounts
+      allow_nil? false
+    end
   end
 
   pub_sub do
