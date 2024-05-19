@@ -2,6 +2,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   @moduledoc """
   This is the VisitLogEntry module which we use to manage visit log entries.
   """
+  alias Phoenix.PubSub
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -39,15 +40,6 @@ defmodule Animina.Accounts.VisitLogEntry do
     end
   end
 
-  pub_sub do
-    module Animina
-    prefix "visit_log_entry"
-
-    broadcast_type :phoenix_broadcast
-
-    publish_all :create, "created"
-  end
-
   actions do
     defaults [:create, :read, :update]
 
@@ -67,6 +59,19 @@ defmodule Animina.Accounts.VisitLogEntry do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :by_bookmark_id, args: [:bookmark_id]
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             PubSub.broadcast(
+               Animina.PubSub,
+               "visit_log_entry:#{record.user_id}",
+               {:visit_log_entry, record}
+             )
+
+             {:ok, record}
+           end),
+           on: [:create, :update]
   end
 
   policies do

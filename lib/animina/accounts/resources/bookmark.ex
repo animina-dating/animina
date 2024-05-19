@@ -41,9 +41,7 @@ defmodule Animina.Accounts.Bookmark do
       allow_nil? false
     end
 
-    has_many :visit_log_entries, Animina.Accounts.VisitLogEntry do
-      destination_attribute :user_id
-    end
+    has_many :visit_log_entries, Animina.Accounts.VisitLogEntry
   end
 
   pub_sub do
@@ -86,6 +84,8 @@ defmodule Animina.Accounts.Bookmark do
 
       pagination offset?: true, default_limit: 10
 
+      prepare build(sort: [visit_log_entries_count: :desc])
+
       filter expr(owner_id == ^arg(:user_id) and reason == :visited)
     end
 
@@ -94,6 +94,7 @@ defmodule Animina.Accounts.Bookmark do
         allow_nil? false
       end
 
+      prepare build(sort: [visit_log_entries_total_duration: :desc])
       pagination offset?: true, default_limit: 10
 
       filter expr(owner_id == ^arg(:user_id) and reason == :visited)
@@ -145,18 +146,13 @@ defmodule Animina.Accounts.Bookmark do
     define :longest_overall_duration_visited_by_user, args: [:user_id]
   end
 
-  calculations do
-    calculate :visit_log_entries_count,
-              :integer,
-              {Animina.Calculations.VisitLogEntriesCount, field: :id}
-
-    calculate :visit_log_entries_total_duration,
-              :integer,
-              {Animina.Calculations.VisitLogEntriesTotalDuration, field: :id}
+  aggregates do
+    sum :visit_log_entries_total_duration, :visit_log_entries, :duration
+    count :visit_log_entries_count, :visit_log_entries
   end
 
   preparations do
-    prepare build(load: [:visit_log_entries_count, :visit_log_entries_total_duration, :user])
+    prepare build(load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user])
   end
 
   policies do
