@@ -5,7 +5,8 @@ defmodule Animina.Accounts.VisitLogEntry do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    authorizers: Ash.Policy.Authorizer
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [Ash.Notifier.PubSub]
 
   attributes do
     uuid_primary_key :id
@@ -36,6 +37,15 @@ defmodule Animina.Accounts.VisitLogEntry do
       api Animina.Accounts
       allow_nil? false
     end
+  end
+
+  pub_sub do
+    module Animina
+    prefix "visit_log_entry"
+
+    broadcast_type :phoenix_broadcast
+
+    publish_all :create, "created"
   end
 
   actions do

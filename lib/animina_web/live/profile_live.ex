@@ -138,34 +138,41 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp create_visit_log_entry_for_bookmark_and_user(current_user, user) do
-    case Bookmark.by_owner_user_and_reason(
-           current_user.id,
-           user.id,
-           :visited,
-           actor: current_user
-         ) do
-      {:ok, bookmark} ->
-        VisitLogEntry.create!(%{
-          user_id: current_user.id,
-          bookmark_id: bookmark.id,
-          duration: 5
-        })
+    if current_user.id != user.id do
+      case  Bookmark.by_owner_user_and_reason(
+             current_user.id,
+             user.id,
+             :visited,
+             actor: current_user
+           ) do
+        {:ok, bookmark} ->
+          VisitLogEntry.create!(%{
+            user_id: current_user.id,
+            bookmark_id: bookmark.id,
+            duration: 5
+          })
 
-      {:error, _error} ->
-        :ok
+
+
+        {:error, _error} ->
+          :ok
+      end
     end
   end
 
   defp update_visit_log_entry_for_bookmark_and_user(current_user, user)
-       when current_user != nil do
-    :timer.send_interval(5000, self(), :update_visit_log_entry_for_bookmark_and_user)
+        do
+    if current_user.id != user.id do
+      :timer.send_interval(5000, self(), :update_visit_log_entry_for_bookmark_and_user)
+    end
   end
 
   @impl true
   def handle_info(:update_visit_log_entry_for_bookmark_and_user, socket) do
+
     case VisitLogEntry.by_id(socket.assigns.visit_log_entry.id) do
       {:ok, visit_log_entry} ->
-        VisitLogEntry.update(visit_log_entry, %{
+         VisitLogEntry.update(visit_log_entry, %{
           duration: visit_log_entry.duration + 5
         })
 

@@ -19,7 +19,7 @@ defmodule Animina.Checks.CreateVisitLogEntryCheck do
   end
 
   defp get_owner_for_bookmark(nil) do
-     nil
+    nil
   end
 
   defp get_owner_for_bookmark(id) do

@@ -32,6 +32,7 @@ defmodule AniminaWeb.BookmarksListLive do
 
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "bookmark:created:#{current_user.id}")
+      PubSub.subscribe(Animina.PubSub, "visit_log_entry:created")
     end
 
     {:ok, socket, layout: false}
@@ -97,6 +98,15 @@ defmodule AniminaWeb.BookmarksListLive do
         socket
       ) do
     {:noreply, delete_bookmark_by_dom_id(socket, "bookmark_" <> bookmark.id)}
+  end
+
+  @impl true
+  def handle_info(
+        %{event: "create", payload: params},
+        socket
+      ) do
+    IO.inspect(params)
+    {:noreply, socket}
   end
 
   defp insert_new_bookmark(socket, bookmark) do
