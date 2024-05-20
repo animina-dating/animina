@@ -133,6 +133,10 @@ defmodule Animina.Accounts.User do
     has_many :bookmarks, Accounts.Bookmark do
       destination_attribute :owner_id
     end
+
+    has_many :visit_log_entries, Accounts.VisitLogEntry do
+      destination_attribute :user_id
+    end
   end
 
   validations do

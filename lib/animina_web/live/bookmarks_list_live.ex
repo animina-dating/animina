@@ -6,6 +6,7 @@ defmodule AniminaWeb.BookmarksListLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Bookmark
   alias Phoenix.LiveView.AsyncResult
   alias Phoenix.PubSub
 
@@ -27,10 +28,11 @@ defmodule AniminaWeb.BookmarksListLive do
       |> assign(current_user: current_user)
       |> assign(reason: reason)
       |> assign(active_tab: :bookmarks)
-      |> start_async(:fetch_bookmarks, fn -> fetch_bookmarks(current_user, reason) end)
+      |> stream(:bookmarks, fetch_bookmarks(current_user, reason))
 
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "bookmark:created:#{current_user.id}")
+      PubSub.subscribe(Animina.PubSub, "visit_log_entry:#{current_user.id}")
     end
 
     {:ok, socket, layout: false}
@@ -98,6 +100,18 @@ defmodule AniminaWeb.BookmarksListLive do
     {:noreply, delete_bookmark_by_dom_id(socket, "bookmark_" <> bookmark.id)}
   end
 
+  @impl true
+  def handle_info(
+        {:visit_log_entry, _},
+        socket
+      ) do
+    {:noreply,
+     socket
+     |> stream(:bookmarks, fetch_bookmarks(socket.assigns.current_user, socket.assigns.reason),
+       reset: true
+     )}
+  end
+
   defp insert_new_bookmark(socket, bookmark) do
     socket
     |> stream_insert(:bookmarks, bookmark, at: 0)
@@ -113,6 +127,26 @@ defmodule AniminaWeb.BookmarksListLive do
     |> stream_delete_by_dom_id(:bookmarks, dom_id)
   end
 
+  defp fetch_bookmarks(current_user, :most_often_visited) do
+    case Bookmark.most_often_visited_by_user(current_user.id) do
+      {:ok, bookmarks} ->
+        bookmarks.results
+
+      _ ->
+        []
+    end
+  end
+
+  defp fetch_bookmarks(current_user, :longest_overall_visited) do
+    case Bookmark.longest_overall_duration_visited_by_user(current_user.id) do
+      {:ok, bookmarks} ->
+        bookmarks.results
+
+      _ ->
+        []
+    end
+  end
+
   defp fetch_bookmarks(current_user, reason) do
     Accounts.Bookmark
     |> Ash.Query.for_read(:by_reason, %{owner_id: current_user.id, reason: reason})
@@ -124,42 +158,37 @@ defmodule AniminaWeb.BookmarksListLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.async_result :let={_bookmarks} assign={@bookmarks}>
-        <:loading>
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-          </div>
-        </:loading>
-        <:failed :let={_failure}>
-          <p lass="text-lg dark:text-white"><%= gettext("There was an error loading bookmarks") %></p>
-        </:failed>
+      <div class="pb-2 px-4">
+        <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Visited Profiles") %>
+        </h3>
+        <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
+          <%= gettext("Liked Profiles") %>
+        </h3>
 
-        <div
-          class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-          id={"stream_bookmarks_#{@reason}"}
-          phx-update="stream"
-        >
-          <div class="last:block hidden">
-            <p class="text-lg dark:text-white">
-              <%= gettext("No %{reason} bookmarks found", reason: @reason) %>
-            </p>
-          </div>
-          <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
-            <.live_component
-              module={AniminaWeb.BookmarkComponent}
-              id={"bookmark_#{bookmark.id}"}
-              bookmark={bookmark}
-              dom_id={dom_id}
-              reason={@reason}
-            />
-          </div>
+        <h3 :if={@reason == :most_often_visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Most Often Visited Profiles") %>
+        </h3>
+        <h3 :if={@reason == :longest_overall_visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Longest Overall Visited Profiles") %>
+        </h3>
+      </div>
+
+      <div
+        class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        id={"stream_bookmarks_#{@reason}"}
+        phx-update="stream"
+      >
+        <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
+          <.live_component
+            module={AniminaWeb.BookmarkComponent}
+            id={"bookmark_#{bookmark.id}"}
+            bookmark={bookmark}
+            dom_id={dom_id}
+            reason={@reason}
+          />
         </div>
-      </.async_result>
+      </div>
     </div>
     """
   end

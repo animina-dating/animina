@@ -3,6 +3,7 @@ defmodule AniminaWeb.ProfileTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Bookmark
   alias Animina.Accounts.User
+  alias Animina.Accounts.VisitLogEntry
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
 
@@ -90,6 +91,47 @@ defmodule AniminaWeb.ProfileTest do
       assert bookmark.reason == :visited
     end
 
+    test "Once  a logged in user views a profile , a bookmark is created  and a visit log entry ",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
+      # we check that there is no bookmark for the user and the profile
+
+      assert {:error, _} =
+               Bookmark.by_owner_user_and_reason(public_user.id, private_user.id, :visited)
+
+      #  we check that there is no visit log entry for the user and the profile
+
+      assert {:ok, []} = VisitLogEntry.by_user_id(public_user.id)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      public_user = User.by_username!(public_user.username)
+      private_user = User.by_username!(private_user.username)
+
+      assert html =~ private_user.name
+
+      assert {:ok, bookmark} =
+               Bookmark.by_owner_user_and_reason(public_user.id, private_user.id, :visited)
+
+      assert bookmark.owner_id == public_user.id
+      assert bookmark.user_id == private_user.id
+      assert bookmark.reason == :visited
+
+      # we then assert a visit log entry is created for the user and the profile
+
+      assert {:ok, [visit_log_entry]} = VisitLogEntry.by_user_id(public_user.id)
+
+      assert visit_log_entry.user_id == public_user.id
+    end
   end
 
   defp create_public_user do

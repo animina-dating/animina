@@ -28,6 +28,7 @@ defmodule AniminaWeb.BookmarksLive do
 
       <div class="mt-4 space-x-2">
         <a
+          id="liked_tab"
           class={
 
             "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "liked", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
@@ -37,17 +38,35 @@ defmodule AniminaWeb.BookmarksLive do
         </a>
 
         <a
+          id="visited_tab"
           class={"cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
           phx-click={JS.push("switch_tab", value: %{tab: "visited"})}
         >
           <%= gettext("Visited") %>
         </a>
+
+        <a
+          id="most_often_visited_tab"
+          class={
+
+            "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "most_often_visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
+          phx-click={JS.push("switch_tab", value: %{tab: "most_often_visited"})}
+        >
+          <%= gettext("Most Often Visited") %>
+        </a>
+
+        <a
+          id="longest_overall_visited_tab"
+          class={
+
+            "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "longest_overall_visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
+          phx-click={JS.push("switch_tab", value: %{tab: "longest_overall_visited"})}
+        >
+          <%= gettext("Longest Overall Visited") %>
+        </a>
       </div>
 
-      <div
-        id="bookmarks_tab_liked"
-        class={"py-8 " <> if(@bookmarks_tab == "liked", do: "", else: "hidden h-0")}
-      >
+      <div :if={@bookmarks_tab == "liked"} id="bookmarks_tab_liked" class="py-8 ">
         <%= live_render(
           @socket,
           AniminaWeb.BookmarksListLive,
@@ -56,15 +75,12 @@ defmodule AniminaWeb.BookmarksLive do
             "current_user_id" => @current_user.id,
             "language" => @language
           },
-          id: "bookmarks_list:liked",
+          id: "bookmarks_list_liked",
           sticky: true
         ) %>
       </div>
 
-      <div
-        id="bookmarks_tab_visited"
-        class={"py-8 " <> if(@bookmarks_tab == "visited", do: "", else: "hidden h-0")}
-      >
+      <div :if={@bookmarks_tab == "visited"} id="bookmarks_tab_visited" class="py-8 ">
         <%= live_render(
           @socket,
           AniminaWeb.BookmarksListLive,
@@ -73,7 +89,43 @@ defmodule AniminaWeb.BookmarksLive do
             "current_user_id" => @current_user.id,
             "language" => @language
           },
-          id: "bookmarks_list:visited",
+          id: "bookmarks_list_visited",
+          sticky: true
+        ) %>
+      </div>
+
+      <div
+        :if={@bookmarks_tab == "most_often_visited"}
+        id="bookmarks_tab_most_often_visited"
+        class="py-8 "
+      >
+        <%= live_render(
+          @socket,
+          AniminaWeb.BookmarksListLive,
+          session: %{
+            "reason" => :most_often_visited,
+            "current_user_id" => @current_user.id,
+            "language" => @language
+          },
+          id: "bookmarks_list_most_often_visited",
+          sticky: true
+        ) %>
+      </div>
+
+      <div
+        :if={@bookmarks_tab == "longest_overall_visited"}
+        id="bookmarks_tab_longest_overall_visited"
+        class="py-8 "
+      >
+        <%= live_render(
+          @socket,
+          AniminaWeb.BookmarksListLive,
+          session: %{
+            "reason" => :longest_overall_visited,
+            "current_user_id" => @current_user.id,
+            "language" => @language
+          },
+          id: "bookmarks_list_longest_overall_visited",
           sticky: true
         ) %>
       </div>
