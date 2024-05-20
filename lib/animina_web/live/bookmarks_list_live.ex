@@ -28,7 +28,7 @@ defmodule AniminaWeb.BookmarksListLive do
       |> assign(current_user: current_user)
       |> assign(reason: reason)
       |> assign(active_tab: :bookmarks)
-      |> start_async(:fetch_bookmarks, fn -> fetch_bookmarks(current_user, reason) end)
+      |> stream(:bookmarks, fetch_bookmarks(current_user, reason))
 
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "bookmark:created:#{current_user.id}")
@@ -158,59 +158,37 @@ defmodule AniminaWeb.BookmarksListLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.async_result :let={_bookmarks} assign={@bookmarks}>
-        <:loading>
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-            <div><.bookmark_card_loading /></div>
-          </div>
-        </:loading>
-        <:failed :let={_failure}>
-          <p lass="text-lg dark:text-white"><%= gettext("There was an error loading bookmarks") %></p>
-        </:failed>
+      <div class="pb-2 px-4">
+        <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Visited Profiles") %>
+        </h3>
+        <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
+          <%= gettext("Liked Profiles") %>
+        </h3>
 
-        <div class="pb-2 px-4">
-          <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
-            <%= gettext("Visited Profiles") %>
-          </h3>
-          <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
-            <%= gettext("Liked Profiles") %>
-          </h3>
+        <h3 :if={@reason == :most_often_visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Most Often Visited Profiles") %>
+        </h3>
+        <h3 :if={@reason == :longest_overall_visited} class="text-lg font-medium dark:text-white">
+          <%= gettext("Longest Overall Visited Profiles") %>
+        </h3>
+      </div>
 
-          <h3 :if={@reason == :most_often_visited} class="text-lg font-medium dark:text-white">
-            <%= gettext("Most Often Visited Profiles") %>
-          </h3>
-          <h3 :if={@reason == :longest_overall_visited} class="text-lg font-medium dark:text-white">
-            <%= gettext("Longest Overall Visited Profiles") %>
-          </h3>
+      <div
+        class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+        id={"stream_bookmarks_#{@reason}"}
+        phx-update="stream"
+      >
+        <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
+          <.live_component
+            module={AniminaWeb.BookmarkComponent}
+            id={"bookmark_#{bookmark.id}"}
+            bookmark={bookmark}
+            dom_id={dom_id}
+            reason={@reason}
+          />
         </div>
-
-        <div
-          class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-          id={"stream_bookmarks_#{@reason}"}
-          phx-update="stream"
-        >
-          <div class="last:block hidden">
-            <p class="text-lg dark:text-white">
-              <%= gettext("No %{reason} bookmarks found", reason: @reason) %>
-            </p>
-          </div>
-
-          <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
-            <.live_component
-              module={AniminaWeb.BookmarkComponent}
-              id={"bookmark_#{bookmark.id}"}
-              bookmark={bookmark}
-              dom_id={dom_id}
-              reason={@reason}
-            />
-          </div>
-        </div>
-      </.async_result>
+      </div>
     </div>
     """
   end
