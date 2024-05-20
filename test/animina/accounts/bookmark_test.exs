@@ -1,8 +1,7 @@
 defmodule Animina.Accounts.BookmarkTest do
   use Animina.DataCase, async: true
-
-  alias Animina.Accounts.User
   alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.User
   alias Animina.Accounts.VisitLogEntry
 
   describe "Tests for the Bookmark Resource" do
@@ -140,16 +139,6 @@ defmodule Animina.Accounts.BookmarkTest do
       %{
         user_id: user_id,
         bookmark_id: bookmark_id,
-        duration: duration
-      },
-      actor: actor
-    )
-  end
-
-  defp update_visit_log_entry(visit_log_entry, duration, actor) do
-    VisitLogEntry.update(
-      visit_log_entry,
-      %{
         duration: duration
       },
       actor: actor

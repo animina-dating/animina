@@ -1,8 +1,7 @@
 defmodule Animina.Accounts.VisitLogEntryTest do
   use Animina.DataCase, async: true
-
-  alias Animina.Accounts.User
   alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.User
   alias Animina.Accounts.VisitLogEntry
 
   describe "Tests for the VisitLogEntry Resource" do

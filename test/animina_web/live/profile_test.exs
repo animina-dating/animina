@@ -3,9 +3,9 @@ defmodule AniminaWeb.ProfileTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Bookmark
   alias Animina.Accounts.User
+  alias Animina.Accounts.VisitLogEntry
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
-  alias Animina.Accounts.VisitLogEntry
 
   describe "Tests the Profile Live" do
     setup do

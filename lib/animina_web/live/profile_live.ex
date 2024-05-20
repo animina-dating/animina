@@ -164,22 +164,6 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  @impl true
-  def handle_info(:update_visit_log_entry_for_bookmark_and_user, socket) do
-    case VisitLogEntry.by_id(socket.assigns.visit_log_entry.id) do
-      {:ok, visit_log_entry} ->
-        VisitLogEntry.update(visit_log_entry, %{
-          duration: visit_log_entry.duration + 5
-        })
-
-        {:noreply, socket}
-
-      _ ->
-        :ok
-        {:noreply, socket}
-    end
-  end
-
   defp redirect_if_username_is_different(socket, username, user) do
     if username != Ash.CiString.value(user.username) do
       socket
@@ -306,6 +290,22 @@ defmodule AniminaWeb.ProfileLive do
      socket
      |> put_flash(:info, "You have to register or log in before liking a profile.")
      |> push_redirect(to: ~p"/?action=like&user=#{socket.assigns.user.username}")}
+  end
+
+  @impl true
+  def handle_info(:update_visit_log_entry_for_bookmark_and_user, socket) do
+    case VisitLogEntry.by_id(socket.assigns.visit_log_entry.id) do
+      {:ok, visit_log_entry} ->
+        VisitLogEntry.update(visit_log_entry, %{
+          duration: visit_log_entry.duration + 5
+        })
+
+        {:noreply, socket}
+
+      _ ->
+        :ok
+        {:noreply, socket}
+    end
   end
 
   @impl true
