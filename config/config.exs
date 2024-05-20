@@ -52,7 +52,6 @@ config :animina,
 
 config :ash, :custom_types, ash_phone_number: Animina.AshPhoneNumber
 
-
 config :ash, :pub_sub, debug?: true
 
 # Configure esbuild (the version is required)

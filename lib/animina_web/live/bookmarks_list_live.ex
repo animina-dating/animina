@@ -105,7 +105,6 @@ defmodule AniminaWeb.BookmarksListLive do
         {:visit_log_entry, _},
         socket
       ) do
-        
     {:noreply,
      socket
      |> stream(:bookmarks, fetch_bookmarks(socket.assigns.current_user, socket.assigns.reason),

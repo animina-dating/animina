@@ -1,8 +1,9 @@
 defmodule Animina.Accounts.VisitLogEntryTest do
   use Animina.DataCase, async: true
 
-  alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
+  alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.VisitLogEntry
 
   describe "Tests for the VisitLogEntry Resource" do
     setup do
@@ -12,125 +13,28 @@ defmodule Animina.Accounts.VisitLogEntryTest do
       ]
     end
 
-    test "The like action creates a reaction with the name :like", %{
+    test "A User Cannot create a visit log entry for a bookmark they do not own", %{
       user_one: user_one,
       user_two: user_two
     } do
-      assert {:ok, reaction} =
-               create_like_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
+      {:ok, bookmark} = create_bookmark(user_one.id, user_two.id)
 
-      assert reaction.name == :like
+      assert {:error, _} = create_visit_log_entry(user_one.id, bookmark.id, user_one)
+
+      assert {:ok, _} = create_visit_log_entry(user_two.id, bookmark.id, user_two)
     end
 
-    test "The block action creates a reaction with the name :block", %{
+    test "A User Cannot update a visit log entry that they did not create", %{
       user_one: user_one,
       user_two: user_two
     } do
-      assert {:ok, reaction} =
-               create_block_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
+      {:ok, bookmark} = create_bookmark(user_one.id, user_two.id)
 
-      assert reaction.name == :block
-    end
+      assert {:ok, visit_log_entry} = create_visit_log_entry(user_two.id, bookmark.id, user_two)
 
-    test "The hide action creates a reaction with the name :hide", %{
-      user_one: user_one,
-      user_two: user_two
-    } do
-      assert {:ok, reaction} =
-               create_hide_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
+      assert {:error, _} = update_visit_log_entry(visit_log_entry, 20, user_one)
 
-      assert reaction.name == :hide
-    end
-
-    test "The unlike action deletes a reaction if the actor created it", %{
-      user_one: user_one,
-      user_two: user_two
-    } do
-      assert {:ok, reaction} =
-               create_like_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
-
-      assert :ok =
-               Reaction.unlike(reaction, actor: user_one)
-
-      assert {:error, _} =
-               Reaction.unlike(reaction, actor: user_two)
-    end
-
-    test "The unblock action deletes a reaction if the actor created it", %{
-      user_one: user_one,
-      user_two: user_two
-    } do
-      assert {:ok, reaction} =
-               create_block_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
-
-      assert :ok =
-               Reaction.unblock(reaction, actor: user_one)
-
-      assert {:error, _} =
-               Reaction.unblock(reaction, actor: user_two)
-    end
-
-    test "The unhide action deletes a reaction if the actor created it", %{
-      user_one: user_one,
-      user_two: user_two
-    } do
-      assert {:ok, reaction} =
-               create_hide_reaction(
-                 user_one.id,
-                 user_two.id,
-                 user_one
-               )
-
-      assert :ok =
-               Reaction.unhide(reaction, actor: user_one)
-
-      assert {:error, _} =
-               Reaction.unhide(reaction, actor: user_two)
-    end
-
-    test "A user cannot create reactions for their own profiles",
-         %{
-           user_one: user_one
-         } do
-      assert {:error, _} =
-               create_like_reaction(
-                 user_one,
-                 user_one,
-                 user_one
-               )
-    end
-
-    test "A user cannot create reactions for other profiles",
-         %{
-           user_one: user_one,
-           user_two: user_two
-         } do
-      assert {:error, _} =
-               create_like_reaction(
-                 user_one,
-                 user_two,
-                 user_two
-               )
+      assert {:ok, _} = update_visit_log_entry(visit_log_entry, 20, user_two)
     end
   end
 
@@ -172,31 +76,30 @@ defmodule Animina.Accounts.VisitLogEntryTest do
     user
   end
 
-  defp create_like_reaction(sender_id, receiver_id, actor) do
-    Reaction.like(
+  defp create_bookmark(user_id, owner_id) do
+    Bookmark.visit(%{
+      user_id: user_id,
+      owner_id: owner_id,
+      last_visit_at: DateTime.utc_now()
+    })
+  end
+
+  defp create_visit_log_entry(user_id, bookmark_id, actor) do
+    VisitLogEntry.create(
       %{
-        sender_id: sender_id,
-        receiver_id: receiver_id
+        user_id: user_id,
+        bookmark_id: bookmark_id,
+        duration: 10
       },
       actor: actor
     )
   end
 
-  defp create_block_reaction(sender_id, receiver_id, actor) do
-    Reaction.block(
+  defp update_visit_log_entry(visit_log_entry, duration, actor) do
+    VisitLogEntry.update(
+      visit_log_entry,
       %{
-        sender_id: sender_id,
-        receiver_id: receiver_id
-      },
-      actor: actor
-    )
-  end
-
-  defp create_hide_reaction(sender_id, receiver_id, actor) do
-    Reaction.hide(
-      %{
-        sender_id: sender_id,
-        receiver_id: receiver_id
+        duration: duration
       },
       actor: actor
     )

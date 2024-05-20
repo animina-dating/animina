@@ -50,6 +50,14 @@ defmodule Animina.Accounts.VisitLogEntry do
 
       filter expr(bookmark_id == ^arg(:bookmark_id))
     end
+
+    read :by_user_id do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(user_id == ^arg(:user_id))
+    end
   end
 
   code_interface do
@@ -59,6 +67,7 @@ defmodule Animina.Accounts.VisitLogEntry do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :by_bookmark_id, args: [:bookmark_id]
+    define :by_user_id, args: [:user_id]
   end
 
   changes do
