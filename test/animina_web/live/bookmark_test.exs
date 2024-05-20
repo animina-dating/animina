@@ -2,6 +2,7 @@ defmodule AniminaWeb.BookmarkTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.User
+
   describe "Tests the Profile Live" do
     setup do
       public_user = create_public_user()

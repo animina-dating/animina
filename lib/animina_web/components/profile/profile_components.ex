@@ -13,11 +13,15 @@ defmodule AniminaWeb.ProfileComponents do
             <%= @user.name %>
           </h1>
 
-          <.like_reaction_button
-            current_user_has_liked_profile?={@current_user_has_liked_profile?}
-            current_user={@current_user}
-            user={@user}
-          />
+          <div class="flex gap-4 items-center">
+            <.chat_with_profile_icon current_user={@current_user} user={@user} />
+
+            <.like_reaction_button
+              current_user_has_liked_profile?={@current_user_has_liked_profile?}
+              current_user={@current_user}
+              user={@user}
+            />
+          </div>
         </div>
 
         <div class="pt-2">
@@ -373,6 +377,34 @@ defmodule AniminaWeb.ProfileComponents do
     ~H"""
     <div class="h-[50vh] md:w-[60%] w-[90%] flex justify-center m-auto dark:text-gray-100 text-gray-900 text-center items-center">
       <%= @text %>
+    </div>
+    """
+  end
+
+  defp chat_with_profile_icon(assigns) do
+    ~H"""
+    <div>
+      <%= if @current_user do %>
+        <div :if={@current_user.id != @user.id} class="cursor-pointer dark:text-white  text-gray-300">
+        <.link navigate={"/my/messages/#{@user.username}"}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            width="40"
+            height="40"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          </.link>
+        </div>
+
+      <% end %>
     </div>
     """
   end
