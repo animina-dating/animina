@@ -279,9 +279,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </.link>
     </div>
 
-
-
-
     </.top_navigation_entry>
     """
   end
