@@ -474,16 +474,6 @@ defmodule AniminaWeb.ProfileLive do
           add_new_story_title={gettext("Add a new story")}
         />
 
-        <%!-- <.stories_display
-          stories_and_flags={@stories_and_flags}
-          current_user={@current_user}
-          current_user_green_flags={@current_user_green_flags}
-          current_user_red_flags={@current_user_red_flags}
-          add_new_story_title={gettext("Add a new story")}
-          delete_story_modal_text={gettext("Are you sure?")}
-          user={@user}
-        /> --%>
-
         <%= live_render(
           @socket,
           AniminaWeb.ProfileStoriesLive,

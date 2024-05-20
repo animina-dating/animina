@@ -26,7 +26,7 @@ defmodule AniminaWeb.BookmarksLive do
         <%= gettext("Bookmarks") %>
       </h1>
 
-      <div class="mt-4 space-x-2">
+      <div class="mt-4 space-x-2 space-y-2">
         <a
           id="liked_tab"
           class={
