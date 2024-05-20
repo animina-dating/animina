@@ -1,0 +1,154 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"uuid_generate_v4()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": true,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "duration",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "created_at",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "fragment(\"now()\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "visit_log_entries_user_id_fkey",
+        "table": "users",
+        "on_delete": "delete",
+        "destination_attribute": "id",
+        "schema": "public",
+        "primary_key?": true,
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "bookmark_id",
+      "references": {
+        "name": "visit_log_entries_bookmark_id_fkey",
+        "table": "bookmarks",
+        "on_delete": "delete",
+        "destination_attribute": "id",
+        "schema": "public",
+        "primary_key?": true,
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "on_update": null,
+        "deferrable": false,
+        "match_with": null,
+        "match_type": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "primary_key?": false,
+      "generated?": false
+    }
+  ],
+  "table": "visit_log_entries",
+  "hash": "016B6CD619ADF4E1365A3CD1F3BBD8A35893873A3FFAC003E9C4CCAC15D84FBE",
+  "repo": "Elixir.Animina.Repo",
+  "identities": [
+    {
+      "name": "unique_visit_log_entry",
+      "keys": [
+        "user_id",
+        "bookmark_id"
+      ],
+      "base_filter": null,
+      "all_tenants?": false,
+      "index_name": "visit_log_entries_unique_visit_log_entry_index"
+    }
+  ],
+  "custom_indexes": [
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "user_id"
+        },
+        {
+          "type": "atom",
+          "value": "bookmark_id"
+        }
+      ],
+      "unique": false,
+      "error_fields": [
+        "user_id",
+        "bookmark_id"
+      ],
+      "concurrently": false,
+      "using": null,
+      "nulls_distinct": true,
+      "all_tenants?": false
+    }
+  ],
+  "schema": null,
+  "check_constraints": [],
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "base_filter": null,
+  "custom_statements": [],
+  "has_create_action": true
+}

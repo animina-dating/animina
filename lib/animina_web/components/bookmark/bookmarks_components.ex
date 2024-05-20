@@ -13,23 +13,16 @@ defmodule AniminaWeb.BookmarksComponents do
   def bookmark(assigns) do
     ~H"""
     <div class="pb-2 px-4">
-      <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
-        <%= gettext("You visited a profile") %>
-      </h3>
-      <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
-        <%= gettext("You liked a profile") %>
-      </h3>
-
       <div class="flex items-center justify-between space-x-4 mt-4">
         <div>
           <img
-            :if={@bookmark.user.profile_photo.state == :approved}
+            :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state == :approved}
             class="object-cover rounded-lg aspect-square h-16 w-16"
             src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
           />
 
           <div
-            :if={@bookmark.user.profile_photo.state != :approved}
+            :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state != :approved}
             class="bg-gray-200 dark:bg-gray-800 h-16 w-16 rounded-lg  flex items-center justify-center"
           >
           </div>
