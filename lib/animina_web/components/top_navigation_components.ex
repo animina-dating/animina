@@ -268,9 +268,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
     <div :if={@current_user != nil}>
      <.link navigate={"/my/bookmarks"} class="flex gap-2 md:flex-row flex-col items-center" >
-
-
-
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
     License - https://fontawesome.com/license/free Copyright 2024
