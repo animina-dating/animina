@@ -6,7 +6,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   import AniminaWeb.Gettext
   alias Animina.Accounts.Points
-  alias AniminaWeb.CoreComponents
 
   # -------------------------------------------------------------
   @doc """
