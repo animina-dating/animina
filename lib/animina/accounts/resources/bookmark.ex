@@ -152,7 +152,9 @@ defmodule Animina.Accounts.Bookmark do
   end
 
   preparations do
-    prepare build(load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user , :owner])
+    prepare build(
+              load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user, :owner]
+            )
   end
 
   policies do

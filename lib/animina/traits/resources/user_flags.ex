@@ -50,11 +50,9 @@ defmodule Animina.Traits.UserFlags do
     read :by_user_id do
       argument :id, :uuid, allow_nil?: false
 
-
-
       prepare build(sort: [position: :asc])
 
-      filter expr(user_id == ^arg(:id) )
+      filter expr(user_id == ^arg(:id))
     end
   end
 
@@ -64,7 +62,7 @@ defmodule Animina.Traits.UserFlags do
     define :create
     define :by_id, get_by: [:id], action: :read
     define :destroy
-    define :by_user_id , args: [:id]
+    define :by_user_id, args: [:id]
   end
 
   changes do
