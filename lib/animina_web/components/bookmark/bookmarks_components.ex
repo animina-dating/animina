@@ -9,49 +9,64 @@ defmodule AniminaWeb.BookmarksComponents do
   attr :dom_id, :any, required: false
   attr :reason, :any, required: true
   attr :delete_bookmark_modal_text, :string, required: true
+  attr :current_user, :any, required: true
 
   def bookmark(assigns) do
     ~H"""
     <div class="pb-2 px-4">
-      <div class="flex items-center justify-between space-x-4 mt-4">
-        <div>
-          <img
-            :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state == :approved}
-            class="object-cover rounded-lg aspect-square h-16 w-16"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
-          />
-
-          <div
-            :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state != :approved}
-            class="bg-gray-200 dark:bg-gray-800 h-16 w-16 rounded-lg  flex items-center justify-center"
-          >
-          </div>
-        </div>
-
-        <div class="space-y-2 flex-1">
-          <h1 class="text-lg font-medium dark:text-white">
-            <%= @bookmark.user.name %>
-          </h1>
-
+      <.link navigate={"/#{@bookmark.user.username}" }>
+        <div class="flex items-start justify-between space-x-4 mt-4">
           <div>
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-              <%= @bookmark.user.age %> <%= gettext("years") %>
-            </span>
+            <img
+              :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state == :approved}
+              class="object-cover rounded-lg aspect-square h-20 w-20"
+              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
+            />
 
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-              <%= @bookmark.user.height %> <%= gettext("cm") %>
-            </span>
+            <div
+              :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state != :approved}
+              class="bg-gray-200 dark:bg-gray-800 h-20 w-20 rounded-lg  flex items-center justify-center"
+            >
+            </div>
+          </div>
 
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-              📍 <%= @bookmark.user.city.name %>
-            </span>
+          <div class="space-y-2 flex-1">
+            <h1 class=" font-medium dark:text-white">
+              <%= @bookmark.user.name %>
+            </h1>
 
-            <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-              <%= @bookmark.user.credit_points %>
+            <div class="flex gap-4 ">
+              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                <%= @bookmark.user.age %> <%= gettext("years") %>
+              </span>
+
+              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                📍 <%= @bookmark.user.city.name %>
+              </span>
+            </div>
+
+           <%=  @intersecting_green_flags_count %>
+           <%= @intersecting_red_flags_count %>
+
+            <div class="flex gap-4">
+              <span :if={@current_user.id != @bookmark.owner.id}>
+                <span
+              :if={@intersecting_green_flags_count != 0}
+              class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            >
+              <%= @intersecting_green_flags_count %> <p class="w-3 h-3 bg-green-500 rounded-full" />
             </span>
+            <span
+              :if={@intersecting_red_flags_count != 0}
+              class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            >
+              <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
+            </span>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </.link>
 
       <div class="mt-4">
         <.bookmark_action_icons
@@ -73,23 +88,6 @@ defmodule AniminaWeb.BookmarksComponents do
   def bookmark_action_icons(assigns) do
     ~H"""
     <div class="flex justify-end gap-4 pb-4 text-justify text-gray-600 cursor-pointer dark:text-gray-100">
-      <.link navigate={"/#{@bookmark.user.username}" }>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="w-6 h-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"
-          />
-        </svg>
-      </.link>
-
       <svg
         :if={@reason == :liked}
         xmlns="http://www.w3.org/2000/svg"
