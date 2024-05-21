@@ -3,7 +3,7 @@ defmodule AniminaWeb.BookmarkTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.User
 
-  describe "Tests the Profile Live" do
+  describe "Tests the Bookmark Live" do
     setup do
       public_user = create_public_user()
 
@@ -15,7 +15,91 @@ defmodule AniminaWeb.BookmarkTest do
       ]
     end
 
-    test "Once  a logged in user views a profile , a bookmark is created and they can see it in the most often visited  tab",
+    test "The  visited tab on the bookmarks page redirect to the '/my/bookmarks/visited' route",
+         %{
+           conn: conn,
+           public_user: public_user
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/bookmarks")
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#visited_tab", "Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/visited"
+    end
+
+    test "The  liked tab on the bookmarks page redirect to the '/my/bookmarks/liked' route",
+         %{
+           conn: conn,
+           public_user: public_user
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/bookmarks")
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#liked_tab", "Liked")
+        |> render_click()
+
+      assert url == "/my/bookmarks/liked"
+    end
+
+    test "The most often visited tab on the bookmarks page redirect to the '/my/bookmarks/most_often_visited' route",
+         %{
+           conn: conn,
+           public_user: public_user
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/bookmarks")
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#most_often_visited_tab", "Most Often Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/most_often_visited"
+    end
+
+    test "The longest overall visited tab on the bookmarks page redirect to the '/my/bookmarks/longest_overall_visited' route",
+         %{
+           conn: conn,
+           public_user: public_user
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/bookmarks")
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#longest_overall_visited_tab", "Longest Overall Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/longest_overall_visited"
+    end
+
+    test "Once  a logged in user views a profile , a bookmark is created and they can see it in the most often visited route for bookmarks",
          %{
            conn: conn,
            public_user: public_user,
@@ -44,10 +128,20 @@ defmodule AniminaWeb.BookmarkTest do
 
       refute html =~ Ash.CiString.value(private_user.username)
 
-      html =
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
         index_live
-        |> element("#most_often_visited_tab")
-        |> render_click(%{tab: "most_often_visited"})
+        |> element("#most_often_visited_tab", "Most Often Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/most_often_visited"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live("#{url}")
 
       assert html =~ "Most Often Visited Profiles"
       refute html =~ "Liked Profiles"
@@ -55,7 +149,7 @@ defmodule AniminaWeb.BookmarkTest do
       assert html =~ Ash.CiString.value(private_user.username)
     end
 
-    test "Once  a logged in user views a profile , a bookmark is created and they can see it in the longest overall visited  tab",
+    test "Once  a logged in user views a profile , a bookmark is created and they can see it in the longest overall visited route for bookmarks",
          %{
            conn: conn,
            public_user: public_user,
@@ -84,10 +178,20 @@ defmodule AniminaWeb.BookmarkTest do
 
       refute html =~ Ash.CiString.value(private_user.username)
 
-      html =
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
         index_live
-        |> element("#longest_overall_visited_tab")
-        |> render_click(%{tab: "longest_overall_visited"})
+        |> element("#longest_overall_visited_tab", "Longest Overall Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/longest_overall_visited"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live("#{url}")
 
       assert html =~ "Longest Overall Visited Profiles"
       refute html =~ "Liked Profiles"
