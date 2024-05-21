@@ -186,6 +186,8 @@ defmodule AniminaWeb.BookmarksListLive do
             bookmark={bookmark}
             dom_id={dom_id}
             reason={@reason}
+            current_user={@current_user}
+            language={@language}
           />
         </div>
       </div>
