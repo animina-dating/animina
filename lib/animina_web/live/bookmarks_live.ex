@@ -37,6 +37,7 @@ defmodule AniminaWeb.BookmarksLive do
       </h1>
 
       <div class="mt-4 space-x-2 space-y-2">
+
         <.link
           navigate={~p"/my/bookmarks/liked"}
           id="liked_tab"
