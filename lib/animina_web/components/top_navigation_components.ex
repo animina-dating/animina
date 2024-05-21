@@ -24,8 +24,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="border-y md:border-r md:border-l border-brand-silver-100">
       <nav class="grid grid-cols-4 gap-1">
-        <.home_nav_item active_tab={@active_tab} />
-        <.bookmarks_nav_item active_tab={@active_tab} />
+        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.chat_nav_item
           current_user={@current_user}
           active_tab={@active_tab}
@@ -122,10 +122,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <.home_nav_item />
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :current_user, :any, doc: "current user"
 
   def home_nav_item(assigns) do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
+    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -144,6 +146,32 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </svg>
       <span><%= gettext("Home") %></span>
+      </div>
+
+
+     <div :if={@current_user != nil}>
+     <.link navigate={"/#{@current_user.username}"} class="flex gap-2 md:flex-row flex-col items-center" >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-6 h-6 fill-current shrink-0"
+        width="25" height="24" viewBox="0 0 25 24"
+        fill="none"
+      >
+        <path
+          fill-rule="evenodd" clip-rule="evenodd"
+          d="M12.2611 1.21065C12.6222 0.929784 13.1278 0.929784 13.4889 1.21065L22.4889 8.21065C22.7325 8.4001 22.875 8.69141 22.875 9V20C22.875 20.7957 22.5589 21.5587 21.9963 22.1213C21.4337 22.6839 20.6707 23 19.875 23H5.875C5.07935 23 4.31629 22.6839 3.75368 22.1213C3.19107 21.5587 2.875 20.7957 2.875 20V9C2.875 8.69141 3.01747 8.4001 3.26106 8.21065L12.2611 1.21065ZM4.875 9.48908V20C4.875 20.2652 4.98036 20.5196 5.16789 20.7071C5.35543 20.8946 5.60978 21 5.875 21H19.875C20.1402 21 20.3946 20.8946 20.5821 20.7071C20.7696 20.5196 20.875 20.2652 20.875 20V9.48908L12.875 3.26686L4.875 9.48908Z"
+          fill="fill-current"
+        />
+        <path
+          fill-rule="evenodd" clip-rule="evenodd"
+          d="M8.875 12C8.875 11.4477 9.32272 11 9.875 11H15.875C16.4273 11 16.875 11.4477 16.875 12V22C16.875 22.5523 16.4273 23 15.875 23C15.3227 23 14.875 22.5523 14.875 22V13H10.875V22C10.875 22.5523 10.4273 23 9.875 23C9.32272 23 8.875 22.5523 8.875 22V12Z"
+          fill="fill-current"
+        />
+      </svg>
+      <span><%= gettext("Home") %></span>
+      </.link>
+      </div>
+
     </.top_navigation_entry>
     """
   end
@@ -224,6 +252,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
       phx-no-format
       is_active={if @active_tab == :bookmarks, do: true, else: false}
     >
+
+    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
+
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
         License - https://fontawesome.com/license/free Copyright 2024
@@ -231,6 +262,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
     </svg>
     <span><%= gettext("Bookmarks") %></span>
+
+    </div>
+
+    <div :if={@current_user != nil}>
+     <.link navigate={"/my/bookmarks"} class="flex gap-2 md:flex-row flex-col items-center" >
+    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
+    <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
+    License - https://fontawesome.com/license/free Copyright 2024
+    Fonticons, Inc.-->
+     <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
+    </svg>
+       <span><%= gettext("Bookmarks") %></span>
+
+    </.link>
+    </div>
+
     </.top_navigation_entry>
     """
   end
@@ -245,8 +292,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def desktop_sidebar(assigns) do
     ~H"""
     <div class="w-[15%] hidden md:flex flex-grow  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
-      <.home_nav_item active_tab={@active_tab} />
-      <.bookmarks_nav_item active_tab={@active_tab} />
+      <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
       <.chat_nav_item
         current_user={@current_user}
         active_tab={@active_tab}
