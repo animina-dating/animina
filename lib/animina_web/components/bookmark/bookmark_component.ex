@@ -3,8 +3,8 @@ defmodule AniminaWeb.BookmarkComponent do
   This component renders the bookmark card.
   """
   use AniminaWeb, :live_component
-  alias Phoenix.PubSub
   alias Animina.Traits.UserFlags
+  alias Phoenix.PubSub
 
   @impl true
   def mount(socket) do
@@ -61,6 +61,7 @@ defmodule AniminaWeb.BookmarkComponent do
       <.bookmark
         bookmark={@bookmark}
         dom_id={@dom_id}
+        language={@language}
         reason={@reason}
         current_user={@current_user}
         delete_bookmark_modal_text={gettext("Are you sure?")}

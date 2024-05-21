@@ -3,7 +3,6 @@ defmodule AniminaWeb.BookmarksComponents do
   Provides Bookmark UI components.
   """
   use Phoenix.Component
-  
 
   attr :bookmark, :any, required: true
   attr :dom_id, :any, required: false
@@ -12,6 +11,7 @@ defmodule AniminaWeb.BookmarksComponents do
   attr :current_user, :any, required: true
   attr :intersecting_green_flags_count, :any, required: true
   attr :intersecting_red_flags_count, :any, required: true
+  attr :language, :any, required: true
 
   def bookmark(assigns) do
     ~H"""
@@ -38,16 +38,16 @@ defmodule AniminaWeb.BookmarksComponents do
             </h1>
 
             <div
-              :if={@bookmark.reason == :visited}
+              :if={@bookmark.last_visit_at}
               class="flex justfiy-between gap-12 w-[100%] items-center"
             >
               <p class="text-sm text-gray-500 text-xs dark:text-gray-400">
-                <%= Timex.from_now(@bookmark.last_visit_at) %>
+                <%= Timex.from_now((@bookmark.last_visit_at), @language) %>
               </p>
 
-              <p class="text-sm text-gray-500 text-xs dark:text-gray-400">
-                x <%= @bookmark.visit_log_entries_count %>
-              </p>
+              <div class="text-sm flex gap-1 items-center text-gray-500 text-xs dark:text-gray-400">
+                <span> x </span><%= @bookmark.visit_log_entries_count %>
+              </div>
             </div>
 
             <div :if={@current_user.id != @bookmark.user.id} class="flex gap-4">
@@ -64,11 +64,7 @@ defmodule AniminaWeb.BookmarksComponents do
                 <%= @intersecting_red_flags_count %> <p class="w-3 h-3 bg-red-500 rounded-full" />
               </span>
             </div>
-          </div>
-        </div>
-      </.link>
-
-      <div class="mt-4">
+            <div>
         <.bookmark_action_icons
           bookmark={@bookmark}
           reason={@reason}
@@ -76,6 +72,11 @@ defmodule AniminaWeb.BookmarksComponents do
           delete_bookmark_modal_text={@delete_bookmark_modal_text}
         />
       </div>
+          </div>
+        </div>
+      </.link>
+
+
     </div>
     """
   end
