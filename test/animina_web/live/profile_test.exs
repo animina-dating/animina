@@ -32,21 +32,16 @@ defmodule AniminaWeb.ProfileTest do
       ]
     end
 
-    test "Anonymous Users Cannot view a Private Users Page", %{
+    test "Anonymous Users Get a 404 Error Page when they visit Private Users Page", %{
       conn: conn,
-      private_user: private_user,
-      private_user_story: private_user_story
+      private_user: private_user
     } do
-      {:ok, _view, html} = live(conn, "/#{private_user.username}")
-
-      assert html =~
-               "This profile either doesn&#39;t exist or you don&#39;t have enough points to access it. You need 20 points to access a profile page."
-
-      refute html =~ private_user_story.content
-      refute html =~ Ash.CiString.value(private_user.username)
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{private_user.username}") |> response(404)
+      end
     end
 
-    test "Anonymous Users Cannot view a Public Users Page", %{
+    test "Anonymous Users Can view a Public Users Page", %{
       conn: conn,
       public_user: public_user,
       public_user_story: public_user_story
@@ -58,6 +53,42 @@ defmodule AniminaWeb.ProfileTest do
       assert html =~ public_user.name
       assert html =~ public_user.name
       assert html =~ public_user_story.content
+    end
+
+    test "Logged in users can view a private user's page", %{
+      conn: conn,
+      private_user: private_user,
+      public_user: public_user
+    } do
+      conn =
+        get(
+          conn
+          |> login_user(%{
+            "username_or_email" => public_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{private_user.username}"
+        )
+
+      assert response(conn, 200)
+    end
+
+    test "Logged in users can view a public user's page", %{
+      conn: conn,
+      private_user: private_user,
+      public_user: public_user
+    } do
+      conn =
+        get(
+          conn
+          |> login_user(%{
+            "username_or_email" => private_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{public_user.username}"
+        )
+
+      assert response(conn, 200)
     end
 
     test "Once  a logged in user views a profile , a bookmark is created  ", %{

@@ -26,62 +26,59 @@ defmodule AniminaWeb.ProfileLive do
     current_user =
       socket.assigns.current_user
 
-    socket =
-      case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
-        {:ok, user} ->
-          socket
-          |> assign(:user, user)
+    case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+      {:ok, user} ->
+        subscribe(socket, current_user, user)
 
-          subscribe(socket, current_user, user)
+        if connected?(socket) do
+          create_or_update_visited_bookmark(current_user, user)
 
-          if connected?(socket) do
-            create_or_update_visited_bookmark(current_user, user)
+          deduct_points_for_first_profile_view(current_user, user)
+        end
 
-            deduct_points_for_first_profile_view(current_user, user)
-          end
+        add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
-          add_points_for_viewing_to_profile(current_user.id, user.id, socket)
+        visit_log_entry =
+          create_visit_log_entry_for_bookmark_and_user(current_user, user)
 
-          visit_log_entry =
-            create_visit_log_entry_for_bookmark_and_user(current_user, user)
+        update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
-          update_visit_log_entry_for_bookmark_and_user(current_user, user)
-
-          intersecting_green_flags_count =
-            get_intersecting_flags_count(
-              filter_flags(current_user, :green, language),
-              filter_flags(user, :white, language)
-            )
-
-          intersecting_red_flags_count =
-            get_intersecting_flags_count(
-              filter_flags(current_user, :red, language),
-              filter_flags(user, :white, language)
-            )
-
-          socket
-          |> assign(user: user)
-          |> assign(visit_log_entry: visit_log_entry)
-          |> assign(
-            current_user_credit_points:
-              Points.humanized_points(socket.assigns.current_user.credit_points)
+        intersecting_green_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :green, language),
+            filter_flags(user, :white, language)
           )
-          |> assign(show_404_page: show_optional_404_page(user, current_user))
-          |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-          |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
-          |> assign(profile_points: Points.humanized_points(user.credit_points))
-          |> assign(
-            current_user_has_liked_profile?:
-              current_user_has_liked_profile(socket.assigns.current_user, user.id)
+
+        intersecting_red_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :red, language),
+            filter_flags(user, :white, language)
           )
-          |> redirect_if_username_is_different(username, user)
 
-        _ ->
-          socket
-          |> assign(show_404_page: true)
-      end
+        if show_optional_404_page(user, current_user) do
+          raise Animina.Fallback
+        else
+          {:ok,
+           socket
+           |> assign(user: user)
+           |> assign(visit_log_entry: visit_log_entry)
+           |> assign(
+             current_user_credit_points:
+               Points.humanized_points(socket.assigns.current_user.credit_points)
+           )
+           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+           |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(
+             current_user_has_liked_profile?:
+               current_user_has_liked_profile(socket.assigns.current_user, user.id)
+           )
+           |> redirect_if_username_is_different(username, user)}
+        end
 
-    {:ok, socket}
+      _ ->
+        raise Animina.Fallback
+    end
   end
 
   def mount(%{"username" => username}, %{"language" => language}, socket) do
@@ -90,25 +87,28 @@ defmodule AniminaWeb.ProfileLive do
       |> assign(language: language)
       |> assign(active_tab: :home)
 
-    socket =
-      case Accounts.User.by_username(username) do
-        {:ok, user} ->
-          socket
-          |> assign(user: user)
-          |> assign(current_user_credit_points: 0)
-          |> assign(show_404_page: show_optional_404_page(user, nil))
-          |> assign(intersecting_green_flags_count: 0)
-          |> assign(intersecting_red_flags_count: 0)
-          |> assign(profile_points: Points.humanized_points(user.credit_points))
-          |> assign(current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id))
-          |> redirect_if_username_is_different(username, user)
+    case Accounts.User.by_username(username) do
+      {:ok, user} ->
+        if show_optional_404_page(user, nil) do
+          raise Animina.Fallback
+        else
+          {:ok,
+           socket
+           |> assign(user: user)
+           |> assign(current_user_credit_points: 0)
+           |> assign(intersecting_green_flags_count: 0)
+           |> assign(intersecting_red_flags_count: 0)
+           |> assign(show_404_page: false)
+           |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(
+             current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id)
+           )
+           |> redirect_if_username_is_different(username, user)}
+        end
 
-        _ ->
-          socket
-          |> assign(show_404_page: true)
-      end
-
-    {:ok, socket}
+      _ ->
+        raise Animina.Fallback
+    end
   end
 
   defp create_or_update_visited_bookmark(current_user, user) when current_user.id != nil do
@@ -454,37 +454,29 @@ defmodule AniminaWeb.ProfileLive do
   def render(assigns) do
     ~H"""
     <div class="px-5">
-      <%= if @show_404_page  do %>
-        <.error_profile_component text={
-          gettext(
-            "This profile either doesn't exist or you don't have enough points to access it. You need 20 points to access a profile page."
-          )
-        } />
-      <% else %>
-        <.profile_details
-          user={@user}
-          current_user={@current_user}
-          current_user_has_liked_profile?={@current_user_has_liked_profile?}
-          profile_points={@profile_points}
-          current_user_credit_points={@current_user_credit_points}
-          intersecting_green_flags_count={@intersecting_green_flags_count}
-          intersecting_red_flags_count={@intersecting_red_flags_count}
-          years_text={gettext("years")}
-          centimeters_text={gettext("cm")}
-          add_new_story_title={gettext("Add a new story")}
-        />
+      <.profile_details
+        user={@user}
+        current_user={@current_user}
+        current_user_has_liked_profile?={@current_user_has_liked_profile?}
+        profile_points={@profile_points}
+        current_user_credit_points={@current_user_credit_points}
+        intersecting_green_flags_count={@intersecting_green_flags_count}
+        intersecting_red_flags_count={@intersecting_red_flags_count}
+        years_text={gettext("years")}
+        centimeters_text={gettext("cm")}
+        add_new_story_title={gettext("Add a new story")}
+      />
 
-        <%= live_render(
-          @socket,
-          AniminaWeb.ProfileStoriesLive,
-          session: %{
-            "user_id" => @user.id,
-            "current_user" => @current_user,
-            "language" => @language
-          },
-          id: "profile_stories_live"
-        ) %>
-      <% end %>
+      <%= live_render(
+        @socket,
+        AniminaWeb.ProfileStoriesLive,
+        session: %{
+          "user_id" => @user.id,
+          "current_user" => @current_user,
+          "language" => @language
+        },
+        id: "profile_stories_live"
+      ) %>
     </div>
     """
   end
