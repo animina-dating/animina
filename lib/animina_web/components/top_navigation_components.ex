@@ -127,7 +127,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def home_nav_item(assigns) do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
-    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
+    <div :if={@current_user == nil}>
+    <.link navigate={"/sign-in/"} class="flex gap-2 md:flex-row flex-col items-center" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -146,6 +147,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </svg>
       <span><%= gettext("Home") %></span>
+      </.link>
       </div>
 
 

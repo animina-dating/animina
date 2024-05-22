@@ -12,10 +12,35 @@
     </script>
   </head>
   <body class="bg-white dark:text-white text-gray-900  dark:bg-gray-900 antialiased">
-    <div class="w-[90%] flex flex-col md:text-xl gap-1 justify-center items-center m-auto text-center pt-24">
+    
+    <main class="block md:hidden">
+  <.top_navigation
+    active_tab={:none}
+    current_user={@current_user}
+    current_user_credit_points={if @current_user do @current_user.credit_points else 0 end}
+    number_of_unread_messages={0}
+  />
+</main>
+
+<div class="w-[100%] pt-2 flex justify-center">
+  <.desktop_sidebar
+    active_tab={:none}
+    current_user={@current_user}
+    current_user_credit_points={if @current_user do @current_user.credit_points else 0 end}
+    number_of_unread_messages={0}
+  />
+  <main class="md:w-[78%] w-[100%] flex flex-col gap-2 flex-grow space-y-5 px-3">
+    <.flash_group flash={@flash} />
+   <div class="w-[90%] flex flex-col md:text-xl gap-1 justify-center items-center m-auto text-center pt-12">
       <p>This profile either doesn't exist or you don't have enough points to access it.</p>
-      
-      <p>You need 20 points to access a profile page.</p>
+     
+      <p>You need 20 points to access a .</p>
     </div>
+  </main>
+  <div class="justify-end flex-grow hidden md:flex">
+    <p class="bg-[#C1C6D5] dark:bg-[#414753]  w-[1px] " />
+  </div>
+</div>
+
   </body>
 </html>
