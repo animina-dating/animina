@@ -42,7 +42,7 @@ defmodule AniminaWeb.BookmarksComponents do
               class="flex justfiy-between gap-12 w-[100%] items-center"
             >
               <p class="text-sm text-gray-500 text-xs dark:text-gray-400">
-                <%= Timex.from_now((@bookmark.last_visit_at), @language) %>
+                <%= Timex.from_now(@bookmark.last_visit_at, @language) %>
               </p>
 
               <div class="text-sm flex gap-1 items-center text-gray-500 text-xs dark:text-gray-400">
@@ -65,18 +65,16 @@ defmodule AniminaWeb.BookmarksComponents do
               </span>
             </div>
             <div>
-        <.bookmark_action_icons
-          bookmark={@bookmark}
-          reason={@reason}
-          dom_id={@dom_id}
-          delete_bookmark_modal_text={@delete_bookmark_modal_text}
-        />
-      </div>
+              <.bookmark_action_icons
+                bookmark={@bookmark}
+                reason={@reason}
+                dom_id={@dom_id}
+                delete_bookmark_modal_text={@delete_bookmark_modal_text}
+              />
+            </div>
           </div>
         </div>
       </.link>
-
-
     </div>
     """
   end
