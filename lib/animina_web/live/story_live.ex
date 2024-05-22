@@ -102,7 +102,7 @@ defmodule AniminaWeb.StoryLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply, socket |> assign(:current_user , current_user)}
+    {:noreply, socket |> assign(:current_user, current_user)}
   end
 
   def handle_info({:new_message, message}, socket) do
