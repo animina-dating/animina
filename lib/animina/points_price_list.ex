@@ -18,7 +18,7 @@ defmodule Animina.PointsPriceList do
   ]
 
 
-  def get_price_for_action(action) do
+  def get_price_for_action(action, _current_user) do
     case Enum.find(@points_price_list, fn x -> x.action == action end) do
       nil -> {:error, "Action not found"}
       action -> {:ok, action.price}
