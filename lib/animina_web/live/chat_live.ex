@@ -2,6 +2,7 @@ defmodule AniminaWeb.ChatLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
@@ -11,16 +12,6 @@ defmodule AniminaWeb.ChatLive do
 
   @impl true
   def mount(%{"profile" => profile} = params, %{"language" => language} = _session, socket) do
-    if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
-      PubSub.subscribe(Animina.PubSub, "messages")
-
-      PubSub.subscribe(
-        Animina.PubSub,
-        "#{socket.assigns.current_user.id}"
-      )
-    end
-
     sender =
       if params["current_user"] do
         Accounts.User.by_username!(params["current_user"])
@@ -29,6 +20,20 @@ defmodule AniminaWeb.ChatLive do
       end
 
     receiver = Accounts.User.by_username!(profile)
+
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
+      PubSub.subscribe(Animina.PubSub, "messages")
+
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.id}"
+      )
+
+      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{sender.id}")
+
+      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{receiver.id}")
+    end
 
     {:ok, messages_between_sender_and_receiver} =
       Message.messages_for_sender_and_receiver(sender.id, receiver.id, actor: sender)
@@ -159,12 +164,12 @@ defmodule AniminaWeb.ChatLive do
           trait.color == color and trait.flag != nil
         end)
         |> Enum.map(fn trait ->
-            %{
-              id: trait.flag.id,
-              name: get_translation(trait.flag.flag_translations, language),
-              emoji: trait.flag.emoji
-            }
-          end)
+          %{
+            id: trait.flag.id,
+            name: get_translation(trait.flag.flag_translations, language),
+            emoji: trait.flag.emoji
+          }
+        end)
 
       _ ->
         []
@@ -216,24 +221,10 @@ defmodule AniminaWeb.ChatLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    intersecting_green_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :green, socket.assigns.language),
-        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
-      )
-
-    intersecting_red_flags_count =
-      get_intersecting_flags_count(
-        filter_flags(current_user, :red, socket.assigns.language),
-        filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
-      )
-
     if current_user.id == socket.assigns.receiver.id do
       {:noreply,
        socket
        |> assign(sender: current_user)
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
        |> assign(
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
@@ -241,12 +232,57 @@ defmodule AniminaWeb.ChatLive do
     else
       {:noreply,
        socket
-       |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
        |> assign(
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
-       )
-       |> assign(intersecting_red_flags_count: intersecting_red_flags_count)}
+       )}
+    end
+  end
+
+  def handle_info(
+        %{event: "create", payload: %{data: %UserFlags{} = user_flag}},
+        socket
+      ) do
+    user_flag_user = BasicUser.by_id!(user_flag.user_id)
+
+    if user_flag.user_id == socket.assigns.current_user.id do
+      intersecting_green_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(user_flag_user, :green, socket.assigns.language),
+          filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+        )
+
+      intersecting_red_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(user_flag_user, :red, socket.assigns.language),
+          filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+        )
+
+      {:noreply,
+       socket
+       |> assign(
+         intersecting_green_flags_count: intersecting_green_flags_count,
+         intersecting_red_flags_count: intersecting_red_flags_count
+       )}
+    else
+      intersecting_green_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(socket.assigns.sender, :green, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+
+      intersecting_red_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(socket.assigns.sender, :red, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+
+      {:noreply,
+       socket
+       |> assign(
+         intersecting_green_flags_count: intersecting_green_flags_count,
+         intersecting_red_flags_count: intersecting_red_flags_count
+       )}
     end
   end
 

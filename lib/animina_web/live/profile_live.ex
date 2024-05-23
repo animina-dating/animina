@@ -10,9 +10,9 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
-  alias Animina.Traits.UserFlags
   alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Traits.UserFlags
   alias Phoenix.PubSub
 
   require Ash.Query
@@ -43,12 +43,6 @@ defmodule AniminaWeb.ProfileLive do
           create_visit_log_entry_for_bookmark_and_user(current_user, user)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
-
-
-
-
-
-
 
         intersecting_green_flags_count =
           get_intersecting_flags_count(
@@ -180,17 +174,19 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp subscribe(socket, current_user, _user) do
+  defp subscribe(socket, current_user, user) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
-
-      
 
       PubSub.subscribe(
         Animina.PubSub,
         "#{socket.assigns.current_user.id}"
       )
+
+      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{user.id}")
+
+      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{current_user.id}")
     end
   end
 
@@ -334,49 +330,57 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    if current_user.id == socket.assigns.user.id do
+    {:noreply,
+     socket
+     |> assign(
+       current_user_has_liked_profile?:
+         current_user_has_liked_profile(current_user, socket.assigns.user.id)
+     )}
+  end
+
+  def handle_info(
+        %{event: "create", payload: %{data: %UserFlags{} = user_flag}},
+        socket
+      ) do
+    user_flag_user = BasicUser.by_id!(user_flag.user_id)
+
+    if user_flag.user_id == socket.assigns.current_user.id do
+      intersecting_green_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(user_flag_user, :green, socket.assigns.language),
+          filter_flags(socket.assigns.user, :white, socket.assigns.language)
+        )
+
+      intersecting_red_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(user_flag_user, :red, socket.assigns.language),
+          filter_flags(socket.assigns.user, :white, socket.assigns.language)
+        )
+
       {:noreply,
        socket
-       |> assign(current_user: current_user)
-       |> assign(user: current_user)
        |> assign(
-         intersecting_green_flags_count:
-           get_intersecting_flags_count(
-             filter_flags(current_user, :green, socket.assigns.language),
-             filter_flags(current_user, :white, socket.assigns.language)
-           )
-       )
-       |> assign(
-         intersecting_red_flags_count:
-           get_intersecting_flags_count(
-             filter_flags(current_user, :red, socket.assigns.language),
-             filter_flags(current_user, :white, socket.assigns.language)
-           )
-       )
-       |> assign(
-         current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user, current_user.id)
+         intersecting_green_flags_count: intersecting_green_flags_count,
+         intersecting_red_flags_count: intersecting_red_flags_count
        )}
     else
+      intersecting_green_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(socket.assigns.current_user, :green, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+
+      intersecting_red_flags_count =
+        get_intersecting_flags_count(
+          filter_flags(socket.assigns.current_user, :red, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+
       {:noreply,
        socket
        |> assign(
-         intersecting_green_flags_count:
-           get_intersecting_flags_count(
-             filter_flags(current_user, :green, socket.assigns.language),
-             filter_flags(socket.assigns.user, :white, socket.assigns.language)
-           )
-       )
-       |> assign(
-         intersecting_red_flags_count:
-           get_intersecting_flags_count(
-             filter_flags(current_user, :red, socket.assigns.language),
-             filter_flags(socket.assigns.user, :white, socket.assigns.language)
-           )
-       )
-       |> assign(
-         current_user_has_liked_profile?:
-           current_user_has_liked_profile(current_user, socket.assigns.user.id)
+         intersecting_green_flags_count: intersecting_green_flags_count,
+         intersecting_red_flags_count: intersecting_red_flags_count
        )}
     end
   end
@@ -422,7 +426,6 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
-
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
@@ -503,12 +506,12 @@ defmodule AniminaWeb.ProfileLive do
           trait.color == color and trait.flag != nil
         end)
         |> Enum.map(fn trait ->
-            %{
-              id: trait.flag.id,
-              name: get_translation(trait.flag.flag_translations, language),
-              emoji: trait.flag.emoji
-            }
-          end)
+          %{
+            id: trait.flag.id,
+            name: get_translation(trait.flag.flag_translations, language),
+            emoji: trait.flag.emoji
+          }
+        end)
 
       _ ->
         []

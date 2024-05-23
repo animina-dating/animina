@@ -197,7 +197,7 @@ defmodule AniminaWeb.FlagsLive do
 
   @impl true
   def handle_info({:user, current_user}, socket) do
-    flags = current_user.flags |> Enum.map(fn x -> x.id end)
+    flags = filter_flags(current_user, socket.assigns.color)
 
     {:noreply,
      socket
@@ -298,7 +298,6 @@ defmodule AniminaWeb.FlagsLive do
       _ ->
         []
     end
-
   end
 
   @impl true
