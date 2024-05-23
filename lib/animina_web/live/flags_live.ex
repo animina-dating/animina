@@ -167,7 +167,7 @@ defmodule AniminaWeb.FlagsLive do
         }
       end)
 
-    socket.assigns.current_user.traits
+    UserFlags.by_user_id!(socket.assigns.current_user.id)
     |> Enum.filter(fn x -> x.color == socket.assigns.color end)
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
@@ -197,7 +197,7 @@ defmodule AniminaWeb.FlagsLive do
 
   @impl true
   def handle_info({:user, current_user}, socket) do
-    flags = current_user.flags |> Enum.map(fn x -> x.id end)
+    flags = filter_flags(current_user, socket.assigns.color)
 
     {:noreply,
      socket
@@ -288,10 +288,16 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp filter_flags(current_user, color) do
-    current_user.traits
-    |> Enum.filter(fn trait ->
-      trait.color == color
-    end)
+    case UserFlags.by_user_id(current_user.id) do
+      {:ok, traits} ->
+        traits
+        |> Enum.filter(fn trait ->
+          trait.color == color
+        end)
+
+      _ ->
+        []
+    end
   end
 
   @impl true
