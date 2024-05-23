@@ -234,8 +234,6 @@ defmodule Animina.Accounts.User do
                 :credit_points,
                 :profile_photo,
                 :city,
-                :flags,
-                :traits,
                 :roles
               ]
             )

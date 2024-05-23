@@ -10,6 +10,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Traits.UserFlags
   alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
@@ -42,6 +43,12 @@ defmodule AniminaWeb.ProfileLive do
           create_visit_log_entry_for_bookmark_and_user(current_user, user)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
+
+
+
+
+
+
 
         intersecting_green_flags_count =
           get_intersecting_flags_count(
@@ -413,6 +420,7 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
+    
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
@@ -486,19 +494,23 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp filter_flags(user, color, language) do
-    traits =
-      user.traits
-      |> Enum.filter(fn trait ->
-        trait.color == color and trait.flag != nil
-      end)
+    case UserFlags.by_user_id(user.id) do
+      {:ok, traits} ->
+        traits
+        |> Enum.filter(fn trait ->
+          trait.color == color and trait.flag != nil
+        end)
+        |> Enum.map(fn trait ->
+            %{
+              id: trait.flag.id,
+              name: get_translation(trait.flag.flag_translations, language),
+              emoji: trait.flag.emoji
+            }
+          end)
 
-    Enum.map(traits, fn trait ->
-      %{
-        id: trait.flag.id,
-        name: get_translation(trait.flag.flag_translations, language),
-        emoji: trait.flag.emoji
-      }
-    end)
+      _ ->
+        []
+    end
   end
 
   defp get_translation(translations, language) do

@@ -5,6 +5,7 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -151,19 +152,23 @@ defmodule AniminaWeb.ChatLive do
   end
 
   defp filter_flags(user, color, language) do
-    traits =
-      user.traits
-      |> Enum.filter(fn trait ->
-        trait.color == color and trait.flag != nil
-      end)
+    case UserFlags.by_user_id(user.id) do
+      {:ok, traits} ->
+        traits
+        |> Enum.filter(fn trait ->
+          trait.color == color and trait.flag != nil
+        end)
+        |> Enum.map(fn trait ->
+            %{
+              id: trait.flag.id,
+              name: get_translation(trait.flag.flag_translations, language),
+              emoji: trait.flag.emoji
+            }
+          end)
 
-    Enum.map(traits, fn trait ->
-      %{
-        id: trait.flag.id,
-        name: get_translation(trait.flag.flag_translations, language),
-        emoji: trait.flag.emoji
-      }
-    end)
+      _ ->
+        []
+    end
   end
 
   defp get_reaction_for_sender_and_receiver(user_id, current_user_id) do
