@@ -24,6 +24,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
         []
       end
 
+
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(Animina.PubSub, "story:created:#{user_id}")
+      end
+
     current_user_red_flags =
       if current_user do
         fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
@@ -128,6 +133,20 @@ defmodule AniminaWeb.ProfileStoriesLive do
     {:noreply, update_photo(socket, photo)}
   end
 
+  @impl true
+  def handle_info(
+        %{event: "create", payload: %{data: %Narratives.Story{} = story}},
+        socket
+      ) do
+
+    {:noreply,
+    socket
+    |> stream(
+      :stories_and_flags,
+      fetch_stories_and_flags(story.user_id, socket.assigns.language),
+      reset: true
+    )}
+  end
   @impl true
   def handle_info(
         %{event: "reject", payload: %{data: %Accounts.Photo{} = photo}},

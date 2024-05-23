@@ -180,10 +180,12 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp subscribe(socket, _current_user, _user) do
+  defp subscribe(socket, current_user, _user) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
+
+      
 
       PubSub.subscribe(
         Animina.PubSub,
@@ -420,7 +422,7 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   defp get_intersecting_flags_count(first_flag_array, second_flag_array) do
-    
+
     first_flag_array = Enum.map(first_flag_array, fn x -> x.id end)
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
