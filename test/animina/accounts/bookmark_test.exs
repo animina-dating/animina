@@ -33,7 +33,10 @@ defmodule Animina.Accounts.BookmarkTest do
         create_visit_log_entry(user_two.id, bookmark_two.id, 10, user_two)
       end)
 
-      assert {:ok, most_visited_bookmarks} = Bookmark.most_often_visited_by_user(user_two.id)
+      bookmark_two = Bookmark.by_id!(bookmark_two.id)
+
+      assert {:ok, most_visited_bookmarks} =
+               Bookmark.most_often_visited_by_user(bookmark.owner_id)
 
       assert length(most_visited_bookmarks.results) == 2
 
@@ -60,12 +63,65 @@ defmodule Animina.Accounts.BookmarkTest do
         create_visit_log_entry(user_two.id, bookmark_two.id, 100, user_two)
       end)
 
+      bookmark_two = Bookmark.by_id!(bookmark_two.id)
+
+      Bookmark.longest_overall_duration_visited_by_user(bookmark_two.owner_id)
+
       assert {:ok, most_visited_bookmarks} =
-               Bookmark.longest_overall_duration_visited_by_user(user_two.id)
+               Bookmark.longest_overall_duration_visited_by_user(bookmark_two.owner_id)
 
       assert length(most_visited_bookmarks.results) == 2
 
       assert Enum.map(most_visited_bookmarks.results, & &1.id) == [bookmark_two.id, bookmark.id]
+    end
+
+    test "like/2 creates a bookmark with liked as the reason after taking owner_id and user_id",
+         %{
+           user_one: user_one,
+           user_two: user_two
+         } do
+      assert {:ok, bookmark} =
+               Bookmark.like(%{
+                 owner_id: user_two.id,
+                 user_id: user_one.id
+               })
+
+      assert bookmark.reason == :liked
+    end
+
+    test "visit/3 creates a bookmark with visited as the reason after taking owner_id and user_id and last visit at",
+         %{
+           user_one: user_one,
+           user_two: user_two
+         } do
+      assert {:ok, bookmark} =
+               Bookmark.visit(%{
+                 owner_id: user_two.id,
+                 user_id: user_one.id,
+                 last_visit_at: DateTime.utc_now()
+               })
+
+      assert bookmark.reason == :visited
+    end
+
+    test "update_last_visit/3 updates the last visit at attribute of a bookmark",
+         %{
+           user_one: user_one,
+           user_two: user_two
+         } do
+      assert {:ok, bookmark} =
+               Bookmark.visit(%{
+                 owner_id: user_two.id,
+                 user_id: user_one.id,
+                 last_visit_at: DateTime.utc_now()
+               })
+
+      assert bookmark.reason == :visited
+
+      assert {:ok, _updated_bookmark} =
+               Bookmark.update_last_visit(bookmark, %{
+                 last_visit_at: DateTime.utc_now()
+               })
     end
   end
 

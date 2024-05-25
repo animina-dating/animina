@@ -11,14 +11,13 @@ defmodule Animina.ActionPointsList do
     %{
       points: 200,
       action: :send_message
-    },
+    }
   ]
-  def get_points_for_action(action, current_user \\ nil) do
+  def get_points_for_action(action, _current_user \\ nil) do
     # if the current user is there do something different
     case Enum.find(@action_points_list, fn x -> x.action == action end) do
       nil -> {:error, "Action not found"}
       action -> {:ok, action.points}
     end
   end
-
 end
