@@ -416,6 +416,7 @@ defmodule AniminaWeb.ProfileComponents do
           <div
             :if={@current_user_has_liked_profile?}
             phx-click="remove_like"
+            id="unlike_button"
             class="cursor-pointer text-red-500"
           >
             <.unlike_button />
@@ -423,6 +424,7 @@ defmodule AniminaWeb.ProfileComponents do
           <div
             :if={!@current_user_has_liked_profile?}
             phx-click="add_like"
+            id="like_button"
             class="cursor-pointer dark:text-white  text-gray-300"
           >
             <.like_button />
