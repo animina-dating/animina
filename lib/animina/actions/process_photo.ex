@@ -43,7 +43,7 @@ defmodule Animina.Actions.ProcessPhoto do
         |> Accounts.update(authorize?: false)
       else
         photo
-        |> Ash.Changeset.for_update(:reject, %{})
+        |> Ash.Changeset.for_update(:nsfw, %{})
         |> Accounts.update(authorize?: false)
       end
 

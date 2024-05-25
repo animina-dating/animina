@@ -48,76 +48,27 @@ defmodule AniminaWeb.StoriesComponents do
     <div class="pb-2">
       <div :if={@story.photo} class="pb-2">
         <%= if @story.headline.subject == "About me" do %>
-          <img
-            :if={
-              (@current_user && @story.user_id == @current_user.id) ||
-                @story.photo.state == :approved
-            }
-            class="object-cover rounded-lg aspect-square"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
-          />
-
-          <div
-            :if={
-              @current_user && @story.user_id != @current_user.id &&
-                @story.photo.state != :approved
-            }
-            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
-          >
-            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                />
-              </svg>
-
-              <p>Photo not available</p>
-            </div>
+          <div class="relative">
+            <img
+              :if={display_image(@story.photo.state, @current_user, @story)}
+              class="object-cover rounded-lg aspect-square"
+              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+            />
           </div>
         <% else %>
-          <img
-            :if={
-              (@current_user && @story.user_id == @current_user.id) ||
-                @story.photo.state == :approved
-            }
-            class="object-cover rounded-lg"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
-          />
+          <div class="relative">
+            <img
+              :if={display_image(@story.photo.state, @current_user, @story)}
+              class="object-cover rounded-lg"
+              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+            />
 
-          <div
-            :if={
-              @current_user && @story.user_id != @current_user.id &&
-                @story.photo.state != :approved
-            }
-            class="bg-gray-200 dark:bg-gray-800 h-[300px] rounded-lg w-full flex items-center justify-center"
-          >
-            <div class="flex space-x-2 items-center text-gray-600 dark:text-gray-300">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
-                />
-              </svg>
-
-              <p>Photo not available</p>
-            </div>
+            <p
+              :if={@story.photo.state == :nsfw}
+              class="p-1 text-sm dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+            >
+              NSFW
+            </p>
           </div>
         <% end %>
 
@@ -158,6 +109,42 @@ defmodule AniminaWeb.StoriesComponents do
 
   def empty_flags_array?(array) when is_list(array) do
     Enum.all?(array, fn x -> is_map(x) && Map.values(x) == [] end)
+  end
+
+  def display_image(:nsfw, current_user, story) do
+    if story.user_id == current_user.id || is_admin?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:pending_review, _, _) do
+    true
+  end
+
+  def display_image(:approved, _, _) do
+    true
+  end
+
+  def display_image(:in_review, _, _) do
+    true
+  end
+
+  def display_image(_, _, _) do
+    false
+  end
+
+  def is_admin?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
+    end
   end
 
   attr :story, :any, required: true
