@@ -78,26 +78,28 @@ defmodule Animina.Accounts.Bookmark do
     end
 
     read :most_often_visited_by_user do
-      argument :user_id, :uuid do
+      argument :owner_id, :uuid do
         allow_nil? false
       end
 
       pagination offset?: true, default_limit: 10
 
+      prepare build(load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user])
+
       prepare build(sort: [visit_log_entries_count: :desc])
 
-      filter expr(owner_id == ^arg(:user_id) and reason == :visited)
+      filter expr(owner_id == ^arg(:owner_id) and reason == :visited)
     end
 
     read :longest_overall_duration_visited_by_user do
-      argument :user_id, :uuid do
+      argument :owner_id, :uuid do
         allow_nil? false
       end
 
       prepare build(sort: [visit_log_entries_total_duration: :desc])
       pagination offset?: true, default_limit: 10
 
-      filter expr(owner_id == ^arg(:user_id) and reason == :visited)
+      filter expr(owner_id == ^arg(:owner_id) and reason == :visited)
     end
 
     read :by_reason do
@@ -142,8 +144,8 @@ defmodule Animina.Accounts.Bookmark do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
-    define :most_often_visited_by_user, args: [:user_id]
-    define :longest_overall_duration_visited_by_user, args: [:user_id]
+    define :most_often_visited_by_user, args: [:owner_id]
+    define :longest_overall_duration_visited_by_user, args: [:owner_id]
   end
 
   aggregates do
