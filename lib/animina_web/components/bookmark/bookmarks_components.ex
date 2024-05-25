@@ -19,11 +19,20 @@ defmodule AniminaWeb.BookmarksComponents do
       <.link navigate={"/#{@bookmark.user.username}" }>
         <div class="flex items-start justify-between space-x-4 mt-4">
           <div :if={@bookmark.user.profile_photo}>
-            <img
-              :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
-              class="object-cover rounded-lg aspect-square h-24 w-24"
-              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
-            />
+            <div class="relative">
+              <img
+                :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
+                class="object-cover rounded-lg aspect-square h-24 w-24"
+                src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
+              />
+
+              <p
+                :if={@bookmark.user.profile_photo.state == :nsfw}
+                class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+              >
+                NSFW
+              </p>
+            </div>
 
             <div
               :if={

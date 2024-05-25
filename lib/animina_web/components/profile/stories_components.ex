@@ -54,6 +54,12 @@ defmodule AniminaWeb.StoriesComponents do
               class="object-cover rounded-lg aspect-square"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
+            <p
+              :if={@story.photo.state == :nsfw}
+              class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+            >
+              NSFW
+            </p>
           </div>
         <% else %>
           <div class="relative">
@@ -65,16 +71,12 @@ defmodule AniminaWeb.StoriesComponents do
 
             <p
               :if={@story.photo.state == :nsfw}
-              class="p-1 text-sm dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+              class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
             >
               NSFW
             </p>
           </div>
         <% end %>
-
-        <%!-- <div class="flex w-full justify-end">
-          <p class="text-red-500"><%= @story.photo.state %></p>
-        </div> --%>
       </div>
 
       <.story_body
