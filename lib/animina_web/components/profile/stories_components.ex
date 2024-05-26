@@ -140,7 +140,7 @@ defmodule AniminaWeb.StoriesComponents do
   end
 
   def display_image(:nsfw, current_user, story) do
-    if story.user_id == current_user.id || is_admin?(current_user) do
+    if story.user_id == current_user.id || admin_user?(current_user) do
       true
     else
       false
@@ -151,7 +151,7 @@ defmodule AniminaWeb.StoriesComponents do
     false
   end
 
-  def is_admin?(current_user) do
+  def admin_user?(current_user) do
     case current_user.roles do
       [] ->
         false

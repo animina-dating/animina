@@ -194,7 +194,7 @@ defmodule AniminaWeb.ChatComponents do
   end
 
   def display_image(:nsfw, current_user, receiver) do
-    if current_user.id == receiver.id || is_admin?(current_user) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
       true
     else
       false
@@ -217,7 +217,7 @@ defmodule AniminaWeb.ChatComponents do
     false
   end
 
-  def is_admin?(current_user) do
+  def admin_user?(current_user) do
     case current_user.roles do
       [] ->
         false

@@ -109,7 +109,7 @@ defmodule AniminaWeb.BookmarksComponents do
   end
 
   def display_image(:nsfw, current_user, bookmark) do
-    if bookmark.owner_id == current_user.id || is_admin?(current_user) do
+    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
       true
     else
       false
@@ -120,7 +120,7 @@ defmodule AniminaWeb.BookmarksComponents do
     false
   end
 
-  def is_admin?(current_user) do
+  def admin_user?(current_user) do
     case current_user.roles do
       [] ->
         false
