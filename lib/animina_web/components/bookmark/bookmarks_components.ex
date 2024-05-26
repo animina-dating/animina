@@ -19,9 +19,11 @@ defmodule AniminaWeb.BookmarksComponents do
       <.link navigate={"/#{@bookmark.user.username}" }>
         <div class="flex items-start justify-between space-x-4 mt-4">
           <div :if={@bookmark.user.profile_photo}>
-            <div class="relative">
+            <div
+              :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
+              class="relative"
+            >
               <img
-                :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
                 class="object-cover rounded-lg aspect-square h-24 w-24"
                 src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
               />
@@ -90,24 +92,28 @@ defmodule AniminaWeb.BookmarksComponents do
     """
   end
 
+  def display_image(:pending_review, nil, _) do
+    true
+  end
+
+  def display_image(:approved, nil, _) do
+    true
+  end
+
+  def display_image(:in_review, nil, _) do
+    true
+  end
+
+  def display_image(_, nil, _) do
+    false
+  end
+
   def display_image(:nsfw, current_user, bookmark) do
     if bookmark.owner_id == current_user.id || is_admin?(current_user) do
       true
     else
       false
     end
-  end
-
-  def display_image(:pending_review, _, _) do
-    true
-  end
-
-  def display_image(:approved, _, _) do
-    true
-  end
-
-  def display_image(:in_review, _, _) do
-    true
   end
 
   def display_image(_, _, _) do

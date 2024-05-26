@@ -105,7 +105,7 @@ defmodule AniminaWeb.ChatComponents do
             </div>
           </div>
         </div>
-        <.user_image user={@sender} />
+        <.sender_user_image user={@sender} />
       </div>
     <% end %>
     """
@@ -115,7 +115,7 @@ defmodule AniminaWeb.ChatComponents do
     ~H"""
     <%= if @sender.id != @message.sender_id do %>
       <div class="flex justify-start gap-4  item-start text-black">
-        <.user_image user={@receiver} />
+        <.receiver_user_image user={@receiver} current_user={@sender} />
         <div class="justify-start flex items-start flex-col">
           <p class="dark:text-white">
             <%= @receiver.username %>
@@ -135,20 +135,7 @@ defmodule AniminaWeb.ChatComponents do
     """
   end
 
-  def receiver_profile_box(assigns) do
-    ~H"""
-    <div class="bg-indigo-500 p-4 text-white h-[100%] flex gap-4 items-center">
-      <div class="flex items-center gap-2">
-        <.user_image user={@receiver} />
-        <p>
-          <%= @receiver.username %>
-        </p>
-      </div>
-    </div>
-    """
-  end
-
-  def user_image(assigns) do
+  def sender_user_image(assigns) do
     ~H"""
     <%= if @user && @user.profile_photo  do %>
       <img class="object-cover w-8 h-8 rounded-full" src={"/uploads/#{@user.profile_photo.filename}"} />
@@ -169,6 +156,77 @@ defmodule AniminaWeb.ChatComponents do
       </svg>
     <% end %>
     """
+  end
+
+  def receiver_user_image(assigns) do
+    ~H"""
+    <%= if @user && @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
+      <div class="relative">
+        <img
+          class="object-cover w-8 h-8 rounded-full"
+          src={"/uploads/#{@user.profile_photo.filename}"}
+        />
+
+        <p
+          :if={@user.profile_photo.state == :nsfw}
+          class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+        >
+          nsfw
+        </p>
+      </div>
+    <% else %>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 dark:text-white text-black"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+        />
+      </svg>
+    <% end %>
+    """
+  end
+
+  def display_image(:nsfw, current_user, receiver) do
+    if current_user.id == receiver.id || is_admin?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:pending_review, _, _) do
+    true
+  end
+
+  def display_image(:approved, _, _) do
+    true
+  end
+
+  def display_image(:in_review, _, _) do
+    true
+  end
+
+  def display_image(_, _, _) do
+    false
+  end
+
+  def is_admin?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
+    end
   end
 
   def already_read_ticks(assigns) do

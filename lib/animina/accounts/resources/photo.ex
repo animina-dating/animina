@@ -6,6 +6,7 @@ defmodule Animina.Accounts.Photo do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer,
     notifiers: [Ash.Notifier.PubSub],
     extensions: [AshStateMachine, AshOban]
 
@@ -30,6 +31,18 @@ defmodule Animina.Accounts.Photo do
 
     create_timestamp :created_at
     update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
+
+    belongs_to :story, Animina.Narratives.Story do
+      api Animina.Narratives
+      attribute_writable? true
+    end
   end
 
   pub_sub do
@@ -74,18 +87,6 @@ defmodule Animina.Accounts.Photo do
 
         on_error :error
       end
-    end
-  end
-
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :story, Animina.Narratives.Story do
-      api Animina.Narratives
-      attribute_writable? true
     end
   end
 
@@ -160,6 +161,12 @@ defmodule Animina.Accounts.Photo do
                |> Accounts.update()
            end),
            on: :update
+  end
+
+  policies do
+    policy action(:read) do
+      authorize_if Animina.Checks.ReadPhotoCheck
+    end
   end
 
   postgres do

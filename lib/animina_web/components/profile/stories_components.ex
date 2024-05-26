@@ -48,9 +48,14 @@ defmodule AniminaWeb.StoriesComponents do
     <div class="pb-2">
       <div :if={@story.photo} class="pb-2">
         <%= if @story.headline.subject == "About me" do %>
-          <div class="relative">
+          <div
+            :if={
+              (@current_user && @story.user_id == @current_user.id) ||
+                display_image(@story.photo.state, @current_user, @story)
+            }
+            class="relative"
+          >
             <img
-              :if={display_image(@story.photo.state, @current_user, @story)}
               class="object-cover rounded-lg aspect-square"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
@@ -62,9 +67,14 @@ defmodule AniminaWeb.StoriesComponents do
             </p>
           </div>
         <% else %>
-          <div class="relative">
+          <div
+            :if={
+              (@current_user && @story.user_id == @current_user.id) ||
+                display_image(@story.photo.state, @current_user, @story)
+            }
+            class="relative"
+          >
             <img
-              :if={display_image(@story.photo.state, @current_user, @story)}
               class="object-cover rounded-lg"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
@@ -113,24 +123,28 @@ defmodule AniminaWeb.StoriesComponents do
     Enum.all?(array, fn x -> is_map(x) && Map.values(x) == [] end)
   end
 
+  def display_image(:pending_review, nil, _) do
+    true
+  end
+
+  def display_image(:approved, nil, _) do
+    true
+  end
+
+  def display_image(:in_review, nil, _) do
+    true
+  end
+
+  def display_image(_, nil, _) do
+    false
+  end
+
   def display_image(:nsfw, current_user, story) do
     if story.user_id == current_user.id || is_admin?(current_user) do
       true
     else
       false
     end
-  end
-
-  def display_image(:pending_review, _, _) do
-    true
-  end
-
-  def display_image(:approved, _, _) do
-    true
-  end
-
-  def display_image(:in_review, _, _) do
-    true
   end
 
   def display_image(_, _, _) do
