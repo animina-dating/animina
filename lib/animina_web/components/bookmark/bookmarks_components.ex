@@ -18,15 +18,28 @@ defmodule AniminaWeb.BookmarksComponents do
     <div class="pb-2 px-4">
       <.link navigate={"/#{@bookmark.user.username}" }>
         <div class="flex items-start justify-between space-x-4 mt-4">
-          <div>
-            <img
-              :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state == :approved}
-              class="object-cover rounded-lg aspect-square h-24 w-24"
-              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
-            />
+          <div :if={@bookmark.user.profile_photo}>
+            <div
+              :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
+              class="relative"
+            >
+              <img
+                class="object-cover rounded-lg aspect-square h-24 w-24"
+                src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
+              />
+
+              <p
+                :if={@bookmark.user.profile_photo.state == :nsfw}
+                class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+              >
+                NSFW
+              </p>
+            </div>
 
             <div
-              :if={@bookmark.user.profile_photo && @bookmark.user.profile_photo.state != :approved}
+              :if={
+                !display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark) == false
+              }
               class="bg-gray-200 dark:bg-gray-800 h-24 w-24 rounded-lg  flex items-center justify-center"
             >
             </div>
@@ -77,6 +90,46 @@ defmodule AniminaWeb.BookmarksComponents do
       </.link>
     </div>
     """
+  end
+
+  def display_image(:pending_review, nil, _) do
+    true
+  end
+
+  def display_image(:approved, nil, _) do
+    true
+  end
+
+  def display_image(:in_review, nil, _) do
+    true
+  end
+
+  def display_image(_, nil, _) do
+    false
+  end
+
+  def display_image(:nsfw, current_user, bookmark) do
+    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(_, _, _) do
+    false
+  end
+
+  def admin_user?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
+    end
   end
 
   attr :bookmark, :any, required: true

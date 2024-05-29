@@ -22,7 +22,7 @@ defmodule Animina.Accounts.Photo do
     attribute :error_state, :string
 
     attribute :state, :atom do
-      constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error]
+      constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
 
       default :pending_review
       allow_nil? false
@@ -52,6 +52,7 @@ defmodule Animina.Accounts.Photo do
       transition(:approve, from: :in_review, to: :approved)
       transition(:report, from: :approved, to: :in_review)
       transition(:reject, from: :in_review, to: :rejected)
+      transition(:nsfw, from: :in_review, to: :nsfw)
       transition(:error, from: [:pending_review, :in_review, :approved, :rejected], to: :error)
     end
   end
@@ -118,6 +119,10 @@ defmodule Animina.Accounts.Photo do
 
     update :reject do
       change transition_state(:rejected)
+    end
+
+    update :nsfw do
+      change transition_state(:nsfw)
     end
 
     update :error do
