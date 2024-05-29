@@ -23,6 +23,19 @@ defmodule AniminaWeb.DashboardLive do
     {:ok, socket}
   end
 
+  def handle_params(params, url, socket) do
+    case URI.parse(url) do
+      %URI{path: "/my/"} ->
+        {:noreply, socket |> push_redirect(to: "/my/dashboard")}
+
+      %URI{path: "/my"} ->
+        {:noreply, socket |> push_redirect(to: "/my/dashboard")}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
   @impl true
   def handle_info({:display_updated_credits, credits}, socket) do
     current_user_credit_points =
@@ -59,6 +72,8 @@ defmodule AniminaWeb.DashboardLive do
       <div class="grid md:grid-cols-3 grid-cols-1 gap-4 ">
         <.dashboard_card_component title={gettext("Likes")} />
         <.dashboard_card_component title={gettext("Messages")} />
+        <.dashboard_card_component title={gettext("Profiles")} />
+
       </div>
     </div>
     """
