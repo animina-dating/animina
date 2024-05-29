@@ -2,9 +2,10 @@ defmodule AniminaWeb.DashboardLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Phoenix.PubSub
   alias Animina.GenServers.ProfileViewCredits
+  alias Phoenix.PubSub
 
+  @impl true
   def mount(params, _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
@@ -23,6 +24,7 @@ defmodule AniminaWeb.DashboardLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_params(params, url, socket) do
     case URI.parse(url) do
       %URI{path: "/my/"} ->
@@ -66,6 +68,7 @@ defmodule AniminaWeb.DashboardLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -73,7 +76,6 @@ defmodule AniminaWeb.DashboardLive do
         <.dashboard_card_component title={gettext("Likes")} />
         <.dashboard_card_component title={gettext("Messages")} />
         <.dashboard_card_component title={gettext("Profiles")} />
-
       </div>
     </div>
     """

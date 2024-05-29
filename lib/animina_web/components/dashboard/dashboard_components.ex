@@ -3,7 +3,6 @@ defmodule AniminaWeb.DashboardComponents do
   Provides Dashboard UI components.
   """
   use Phoenix.Component
-  alias Animina.Markdown
 
   def dashboard_card_component(assigns) do
     ~H"""
