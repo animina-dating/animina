@@ -112,6 +112,75 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  def mount(_params, %{"language" => language, "user" => _}, socket) do
+    socket =
+      socket
+      |> assign(language: language)
+      |> assign(active_tab: :home)
+
+    current_user =
+      socket.assigns.current_user
+
+    username = current_user.username
+
+    case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+      {:ok, user} ->
+        subscribe(socket, current_user, user)
+
+        if connected?(socket) do
+          create_or_update_visited_bookmark(current_user, user)
+
+          deduct_points_for_first_profile_view(current_user, user)
+        end
+
+        add_points_for_viewing_to_profile(current_user.id, user.id, socket)
+
+        visit_log_entry =
+          create_visit_log_entry_for_bookmark_and_user(current_user, user)
+
+        update_visit_log_entry_for_bookmark_and_user(current_user, user)
+
+        intersecting_green_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :green, language),
+            filter_flags(user, :white, language)
+          )
+
+        intersecting_red_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :red, language),
+            filter_flags(user, :white, language)
+          )
+
+        if show_optional_404_page(user, current_user) do
+          raise Animina.Fallback
+        else
+          {:ok,
+           socket
+           |> assign(user: user)
+           |> assign(visit_log_entry: visit_log_entry)
+           |> assign(
+             current_user_credit_points:
+               Points.humanized_points(socket.assigns.current_user.credit_points)
+           )
+           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+           |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(
+             current_user_has_liked_profile?:
+               current_user_has_liked_profile(socket.assigns.current_user, user.id)
+           )}
+        end
+
+      _ ->
+        raise Animina.Fallback
+    end
+  end
+
+  def mount(_params, %{"language" => _language}, _socket) do
+    raise Animina.Fallback
+  end
+
   defp create_or_update_visited_bookmark(current_user, user) when current_user.id != nil do
     case Bookmark.by_owner_user_and_reason(
            current_user.id,

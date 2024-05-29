@@ -19,7 +19,7 @@ defmodule Animina.Validations.BadUsername do
     username =
       Ash.Changeset.get_attribute(changeset, opts[:attribute])
 
-    bad_usernames = ["my", "current_user"]
+    bad_usernames = ["my", "current_user", "profile"]
 
     if username &&
          (Ash.CiString.value(username) in bad_usernames or has_at?(Ash.CiString.value(username))) do
