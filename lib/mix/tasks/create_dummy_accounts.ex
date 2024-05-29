@@ -42,11 +42,20 @@ if Enum.member?([:dev, :test], Mix.env()) do
         gender = Enum.take_random(["male", "female"], 1) |> hd
         photo = random_photo_url(gender) |> download_photo("#{Faker.UUID.v4()}.png")
 
+        first_name =
+          case gender do
+            "male" -> random_male_first_name()
+            _ -> random_female_first_name()
+          end
+
+        last_name = Faker.Person.last_name()
+        full_name = "#{first_name} #{last_name}"
+
         user =
           BasicUser.create!(%{
             email: Faker.Internet.email(),
-            username: Faker.Internet.user_name() |> String.slice(0..14),
-            name: Faker.Person.name(),
+            username: convert_name_to_username(full_name) |> String.slice(0..14),
+            name: full_name,
             zip_code: random_zip_code(),
             language: "DE-de",
             legal_terms_accepted: true,
@@ -115,6 +124,9 @@ if Enum.member?([:dev, :test], Mix.env()) do
       end)
 
       IO.puts("|--------------------------|--------|-----------------|---------|-----|")
+
+      IO.puts("")
+      IO.puts("The default password for these dummy accounts is 'test'.\n")
     end
 
     def random_zip_code do
@@ -289,6 +301,229 @@ if Enum.member?([:dev, :test], Mix.env()) do
 
       # Join the selected sentences back into a string if needed
       Enum.join(selected_sentences, ". ") <> "."
+    end
+
+    def convert_name_to_username(name) do
+      name
+      |> String.replace(~r/Mrs. /, "")
+      |> String.replace(~r/Mr. /, "")
+      |> String.downcase()
+      |> String.replace(~r/[^a-z]/, "_")
+    end
+
+    def random_female_first_name do
+      popular_female_names = [
+        "Olivia",
+        "Emma",
+        "Ava",
+        "Sophia",
+        "Isabella",
+        "Charlotte",
+        "Amelia",
+        "Mia",
+        "Harper",
+        "Evelyn",
+        "Abigail",
+        "Emily",
+        "Ella",
+        "Elizabeth",
+        "Camila",
+        "Luna",
+        "Sofia",
+        "Avery",
+        "Mila",
+        "Aria",
+        "Scarlett",
+        "Penelope",
+        "Layla",
+        "Chloe",
+        "Victoria",
+        "Madison",
+        "Eleanor",
+        "Grace",
+        "Nora",
+        "Riley",
+        "Zoey",
+        "Hannah",
+        "Hazel",
+        "Lily",
+        "Ellie",
+        "Violet",
+        "Lillian",
+        "Zoe",
+        "Stella",
+        "Aurora",
+        "Natalie",
+        "Emilia",
+        "Everly",
+        "Leah",
+        "Aubrey",
+        "Willow",
+        "Addison",
+        "Lucy",
+        "Audrey",
+        "Bella",
+        "Nova",
+        "Brooklyn",
+        "Paisley",
+        "Savannah",
+        "Claire",
+        "Skylar",
+        "Isla",
+        "Genesis",
+        "Naomi",
+        "Elena",
+        "Caroline",
+        "Eliana",
+        "Anna",
+        "Maya",
+        "Valentina",
+        "Ruby",
+        "Kennedy",
+        "Ivy",
+        "Ariana",
+        "Aaliyah",
+        "Cora",
+        "Madelyn",
+        "Alice",
+        "Kinsley",
+        "Hailey",
+        "Gabriella",
+        "Allison",
+        "Gianna",
+        "Serenity",
+        "Samantha",
+        "Sarah",
+        "Autumn",
+        "Quinn",
+        "Eva",
+        "Piper",
+        "Sophie",
+        "Sadie",
+        "Delilah",
+        "Josephine",
+        "Nevaeh",
+        "Adeline",
+        "Arya",
+        "Emery",
+        "Lydia",
+        "Clara",
+        "Vivian",
+        "Madeline",
+        "Peyton",
+        "Julia",
+        "Rylee"
+      ]
+
+      Enum.random(popular_female_names)
+    end
+
+    def random_male_first_name do
+      popular_male_names = [
+        "Liam",
+        "Noah",
+        "Oliver",
+        "Elijah",
+        "William",
+        "James",
+        "Benjamin",
+        "Lucas",
+        "Henry",
+        "Alexander",
+        "Mason",
+        "Michael",
+        "Ethan",
+        "Daniel",
+        "Jacob",
+        "Logan",
+        "Jackson",
+        "Levi",
+        "Sebastian",
+        "Mateo",
+        "Jack",
+        "Owen",
+        "Theodore",
+        "Aiden",
+        "Samuel",
+        "Joseph",
+        "John",
+        "David",
+        "Wyatt",
+        "Matthew",
+        "Luke",
+        "Asher",
+        "Carter",
+        "Julian",
+        "Grayson",
+        "Leo",
+        "Jayden",
+        "Gabriel",
+        "Isaac",
+        "Lincoln",
+        "Anthony",
+        "Hudson",
+        "Dylan",
+        "Ezra",
+        "Thomas",
+        "Charles",
+        "Christopher",
+        "Jaxon",
+        "Maverick",
+        "Josiah",
+        "Isaiah",
+        "Andrew",
+        "Elias",
+        "Joshua",
+        "Nathan",
+        "Caleb",
+        "Ryan",
+        "Adrian",
+        "Miles",
+        "Eli",
+        "Nolan",
+        "Christian",
+        "Aaron",
+        "Cameron",
+        "Ezekiel",
+        "Colton",
+        "Luca",
+        "Landon",
+        "Hunter",
+        "Jonathan",
+        "Santiago",
+        "Axel",
+        "Easton",
+        "Cooper",
+        "Jeremiah",
+        "Angel",
+        "Roman",
+        "Connor",
+        "Jameson",
+        "Robert",
+        "Greyson",
+        "Jordan",
+        "Ian",
+        "Carson",
+        "Jaxson",
+        "Leonardo",
+        "Nicholas",
+        "Dominic",
+        "Austin",
+        "Everett",
+        "Brooks",
+        "Xavier",
+        "Kai",
+        "Jose",
+        "Parker",
+        "Adam",
+        "Jace",
+        "Wesley",
+        "Kayden",
+        "Silas",
+        "Bennett"
+      ]
+
+      Enum.random(popular_male_names)
     end
 
     def create_random_flag(user, color) do
