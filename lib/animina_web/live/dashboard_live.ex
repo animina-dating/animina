@@ -1,7 +1,6 @@
 defmodule AniminaWeb.DashboardLive do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
   alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
 
@@ -25,7 +24,7 @@ defmodule AniminaWeb.DashboardLive do
   end
 
   @impl true
-  def handle_params(params, url, socket) do
+  def handle_params(_params, url, socket) do
     case URI.parse(url) do
       %URI{path: "/my/"} ->
         {:noreply, socket |> push_redirect(to: "/my/dashboard")}

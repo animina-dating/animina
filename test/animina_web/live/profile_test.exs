@@ -163,6 +163,29 @@ defmodule AniminaWeb.ProfileTest do
 
       assert visit_log_entry.user_id == public_user.id
     end
+
+    test "If you are logged in and you visit /my/profile you see your profile", %{
+      conn: conn,
+      public_user: public_user
+    } do
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/profile")
+
+      assert html =~ public_user.name
+    end
+
+    test "Anonymous Users Get a 404 Error Page when they visit `my/profile`", %{
+      conn: conn
+    } do
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/my/profile") |> response(404)
+      end
+    end
   end
 
   defp create_public_user do
