@@ -308,7 +308,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       |> String.replace(~r/Mrs. /, "")
       |> String.replace(~r/Mr. /, "")
       |> String.downcase()
-      |> String.replace(~r/\s+/, "_")
+      |> String.replace(~r/[^a-z]/, "_")
     end
 
     def random_female_first_name do
