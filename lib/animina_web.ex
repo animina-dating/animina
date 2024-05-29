@@ -90,6 +90,7 @@ defmodule AniminaWeb do
       import AniminaWeb.ChatComponents
       import AniminaWeb.StoriesComponents
       import AniminaWeb.BookmarksComponents
+      import AniminaWeb.DashboardComponents
       import AniminaWeb.TopNavigationCompontents
       import AniminaWeb.Gettext
 
