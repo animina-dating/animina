@@ -3,13 +3,13 @@ defmodule Animina.Narratives.Post do
   This is the post resource.
   """
 
-  alias Animina.Changes
   alias Animina.Calculations
+  alias Animina.Changes
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    extensions: [Ash.Policy.Authorizer]
+    authorizers: Ash.Policy.Authorizer
 
   attributes do
     uuid_primary_key :id
