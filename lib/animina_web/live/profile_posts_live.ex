@@ -72,6 +72,10 @@ defmodule AniminaWeb.ProfilePostsLive do
     Narratives.Post
     |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
     |> Narratives.read!(actor: current_user)
+    |> Enum.map(fn post ->
+      Phoenix.PubSub.subscribe(Animina.PubSub, "post:updated:#{post.id}")
+      post
+    end)
   end
 
   defp update_post(socket, post) do
@@ -98,8 +102,12 @@ defmodule AniminaWeb.ProfilePostsLive do
           My Posts
         </h1>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="stream_posts" phx-update="stream">
-        <div :for={{dom_id, post} <- @streams.posts} class="break-inside-avoid pb-2" id={"#{dom_id}"}>
+      <div
+        class="grid md:grid-cols-2 auto-rows-fr lg:grid-cols-3 gap-8"
+        id="stream_posts"
+        phx-update="stream"
+      >
+        <div :for={{dom_id, post} <- @streams.posts} class="" id={"#{dom_id}"}>
           <.post_card
             post={post}
             dom_id={dom_id}

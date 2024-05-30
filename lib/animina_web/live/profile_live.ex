@@ -535,7 +535,7 @@ defmodule AniminaWeb.ProfileLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-5">
+    <div class="px-5 pb-8">
       <.profile_details
         user={@user}
         current_user={@current_user}

@@ -5,6 +5,8 @@ defmodule AniminaWeb.PostsComponents do
   use Phoenix.Component
   alias Animina.Markdown
 
+  use Timex
+
   attr :post, :any, required: true
   attr :current_user, :any, required: true
   attr :user, :any, required: false
@@ -14,18 +16,18 @@ defmodule AniminaWeb.PostsComponents do
 
   def post_card(assigns) do
     ~H"""
-    <div class="pb-2">
-      <h1 class="text-lg dark:text-white font-semibold"><%= @post.title %></h1>
+    <div class="h-full flex flex-col justify-between">
+      <div class="space-y-4">
+        <h1 class="text-lg dark:text-white font-semibold"><%= @post.title %></h1>
 
-      <div class="flex mt-4">
         <p class="dark:text-white">
           <span class="font-medium">By <%= @post.user.name %></span>
           <span class="mx-0.5 font-semibold">·</span>
-          <span class=""><%= @post.created_at %></span>
+          <span class="">Posted <%= Timex.from_now(@post.created_at) %></span>
         </p>
       </div>
 
-      <div class="flex items-center justify-between mt-6">
+      <div class="flex items-center justify-between mt-4">
         <.link
           navigate={@post.url}
           class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -96,7 +98,7 @@ defmodule AniminaWeb.PostsComponents do
 
   def post_body(assigns) do
     ~H"""
-    <div class="pb-2  text-justify text-gray-600 text-ellipsis dark:text-gray-100">
+    <div class="pb-2 text-justify text-gray-600 text-ellipsis dark:text-gray-100">
       <%= Markdown.format(@content) %>
     </div>
     """
@@ -118,7 +120,7 @@ defmodule AniminaWeb.PostsComponents do
           <p class="dark:text-white">
             <span class="font-medium">By <%= @post.user.name %></span>
             <span class="mx-0.5 font-semibold">·</span>
-            <span class=""><%= @post.created_at %></span>
+            <span class="">Posted <%= Timex.from_now(@post.created_at) %></span>
           </p>
         </div>
       </div>
