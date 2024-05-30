@@ -15,11 +15,11 @@ end
 # Configures Oban jobs
 config :animina, Oban,
   repo: Animina.Repo,
-  queues: [default: 2, photos: 2],
+  queues: [default: 4, photos: 2],
   prefix: System.get_env("DATABASE_SCHEMA", "public"),
   plugins: [
     {Oban.Plugins.Cron, []},
-    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 60},
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24},
     {Oban.Plugins.Lifeline, rescue_after: :timer.minutes(30)}
   ]
 
