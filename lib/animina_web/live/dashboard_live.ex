@@ -6,7 +6,7 @@ defmodule AniminaWeb.DashboardLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
