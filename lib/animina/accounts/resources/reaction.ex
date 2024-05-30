@@ -9,7 +9,8 @@ defmodule Animina.Accounts.Reaction do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    authorizers: Ash.Policy.Authorizer
+    authorizers: Ash.Policy.Authorizer,
+    extensions: [Ash.Notifier.PubSub]
 
   attributes do
     uuid_primary_key :id
@@ -32,6 +33,18 @@ defmodule Animina.Accounts.Reaction do
       allow_nil? false
       attribute_writable? true
     end
+  end
+
+  pub_sub do
+    module Animina
+    prefix "reaction"
+
+    broadcast_type :phoenix_broadcast
+
+    publish :create, ["created", [:receiver_id, nil]]
+    publish :create, ["created", [:sender_id, nil]]
+    publish :destroy, ["deleted", [:receiver_id, nil]]
+    publish :destroy, ["deleted", [:sender_id, nil]]
   end
 
   identities do
@@ -64,6 +77,37 @@ defmodule Animina.Accounts.Reaction do
       accept [:sender_id, :receiver_id]
       change set_attribute(:name, :hide)
     end
+
+    read :profiles_liked_by_user do
+      argument :sender_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(name == :like and sender_id == ^arg(:sender_id))
+    end
+
+    read :likes_received_by_user_in_seven_days do
+      argument :receiver_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(
+               name == :like and
+                 receiver_id == ^arg(:receiver_id) and
+                 created_at >= ^DateTime.add(DateTime.utc_now(), -7, :day)
+             )
+    end
+
+    read :total_likes_received_by_user do
+      argument :receiver_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(
+               name == :like and
+                 receiver_id == ^arg(:receiver_id)
+             )
+    end
   end
 
   code_interface do
@@ -76,6 +120,9 @@ defmodule Animina.Accounts.Reaction do
     define :block
     define :hide
     define :destroy
+    define :profiles_liked_by_user, args: [:sender_id]
+    define :likes_received_by_user_in_seven_days, args: [:receiver_id]
+    define :total_likes_received_by_user, args: [:receiver_id]
     define :by_id, get_by: [:id], action: :read
     define :by_sender_and_receiver_id, get_by: [:sender_id, :receiver_id], action: :read
   end
