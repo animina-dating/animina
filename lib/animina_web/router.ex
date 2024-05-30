@@ -26,12 +26,6 @@ defmodule AniminaWeb.Router do
       live "/sign-in", RootLive, :sign_in
     end
 
-    ash_authentication_live_session :user_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
-      live "/", RootLive, :register
-      live "/:username", ProfileLive
-    end
-
     ash_authentication_live_session :authentication_required,
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_required} do
       live "/my/potential-partner", PotentialPartnerLive, :index
@@ -45,7 +39,16 @@ defmodule AniminaWeb.Router do
       live "/my/bookmarks", BookmarksLive, :bookmarks
       live "/my/bookmarks/:filter_type", BookmarksLive, :bookmarks
       live "/my/messages/:profile", ChatLive, :index
+      live "/my", DashboardLive, :index
+      live "/my/dashboard", DashboardLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
+    end
+
+    ash_authentication_live_session :user_optional,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
+      live "/", RootLive, :register
+      live "/:username", ProfileLive
+      live "/my/profile", ProfileLive
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in

@@ -22,7 +22,6 @@ defmodule AniminaWeb.ChatLive do
     receiver = Accounts.User.by_username!(profile)
 
     if connected?(socket) do
-      PubSub.subscribe(Animina.PubSub, "credits:" <> socket.assigns.current_user.id)
       PubSub.subscribe(Animina.PubSub, "messages")
 
       PubSub.subscribe(

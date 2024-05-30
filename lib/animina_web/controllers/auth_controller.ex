@@ -137,7 +137,7 @@ defmodule AniminaWeb.AuthController do
 
   defp redirect_url(user) do
     if user_has_an_about_me_story?(user) do
-      "/#{user.username}"
+      "/my/dashboard"
     else
       get_last_registration_page_visited(user.last_registration_page_visited)
     end
