@@ -37,7 +37,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       1..counter
       |> Enum.each(fn _ ->
         height = Enum.take_random(Enum.to_list(150..210), 1) |> hd
-        birthday = Faker.Date.date_of_birth()
+        birthday = Faker.Date.date_of_birth(18..60)
         age = (Date.diff(Date.utc_today(), birthday) / 365) |> round
         gender = Enum.take_random(["male", "female"], 1) |> hd
         photo = random_photo_url(gender) |> download_photo("#{Faker.UUID.v4()}.png")
@@ -111,19 +111,19 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     def print_table(users) do
-      IO.puts("|--------------------------|--------|-----------------|---------|-----|")
-      IO.puts("| Name                     | Gender | Username        | ZipCode | Age |")
-      IO.puts("|--------------------------|--------|-----------------|---------|-----|")
+      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
+      IO.puts("| Name                  | Gender | Username        | ZipCode | Age |")
+      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
 
       Enum.each(users, fn user ->
         username = "#{user.username}"
 
         IO.puts(
-          "| #{user.name |> String.pad_trailing(24)} | #{user.gender |> String.pad_trailing(6)} | #{String.pad_trailing(username, 15)} | #{String.pad_trailing(user.zip_code, 7)} | #{user.age |> Integer.to_string() |> String.pad_trailing(3)} |"
+          "| #{user.name |> String.pad_trailing(21)} | #{user.gender |> String.pad_trailing(6)} | #{String.pad_trailing(username, 15)} | #{String.pad_trailing(user.zip_code, 7)} | #{user.age |> Integer.to_string() |> String.pad_trailing(3)} |"
         )
       end)
 
-      IO.puts("|--------------------------|--------|-----------------|---------|-----|")
+      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
 
       IO.puts("")
       IO.puts("The default password for these dummy accounts is 'test'.\n")
