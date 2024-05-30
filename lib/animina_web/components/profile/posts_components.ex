@@ -94,10 +94,43 @@ defmodule AniminaWeb.PostsComponents do
 
   attr :content, :string, required: true
 
-  def post_content(assigns) do
+  def post_body(assigns) do
     ~H"""
     <div class="pb-2  text-justify text-gray-600 text-ellipsis dark:text-gray-100">
       <%= Markdown.format(@content) %>
+    </div>
+    """
+  end
+
+  attr :post, :any, required: true
+  attr :current_user, :any, required: true
+  attr :edit_post_title, :string
+
+  def post_header(assigns) do
+    ~H"""
+    <div class="pb-4 flex justify-between items-center">
+      <div class="w-4/5">
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold dark:text-white">
+          <%= @post.title %>
+        </h1>
+
+        <div class="flex mt-4">
+          <p class="dark:text-white">
+            <span class="font-medium">By <%= @post.user.name %></span>
+            <span class="mx-0.5 font-semibold">·</span>
+            <span class=""><%= @post.created_at %></span>
+          </p>
+        </div>
+      </div>
+
+      <div :if={@current_user && @current_user.id == @post.user.id}>
+        <.link
+          navigate={"/my/posts/#{@post.id}/edit" }
+          class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          <%= @edit_post_title %>
+        </.link>
+      </div>
     </div>
     """
   end

@@ -76,6 +76,7 @@ defmodule Animina.Narratives.Post do
     define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
+    define :by_slug, get_by: [:slug], action: :read
     define :by_user_id, args: [:user_id]
   end
 
