@@ -1,15 +1,15 @@
 defmodule AniminaWeb.DashboardLive do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts.Message
   alias Animina.Accounts
+  alias Animina.Accounts.Message
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
-  alias Phoenix.PubSub
   alias AshPhoenix.Form
+  alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language}, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -55,6 +55,7 @@ defmodule AniminaWeb.DashboardLive do
       |> assign(active_tab: :home)
       |> assign(last_unread_message: last_unread_message)
       |> assign(form: create_message_form())
+      |> assign(language: language)
       |> assign(likes_received_by_user_in_seven_days: likes_received_by_user_in_seven_days)
       |> assign(profiles_liked_by_user: profiles_liked_by_user)
       |> assign(total_likes_received_by_user: total_likes_received_by_user)
@@ -107,12 +108,18 @@ defmodule AniminaWeb.DashboardLive do
   end
 
   def handle_info({:new_message, message}, socket) do
-    unread_messages = socket.assigns.unread_messages ++ [message]
+    last_unread_message =
+      case Message.last_unread_message_by_receiver(socket.assigns.current_user.id) do
+        {:ok, message} ->
+          message
+
+        _ ->
+          nil
+      end
 
     {:noreply,
      socket
-     |> assign(unread_messages: unread_messages)
-     |> assign(number_of_unread_messages: Enum.count(unread_messages))}
+     |> assign(last_unread_message: last_unread_message)}
   end
 
   def handle_info(
@@ -159,6 +166,41 @@ defmodule AniminaWeb.DashboardLive do
      |> assign(total_likes_received_by_user: total_likes_received_by_user)}
   end
 
+  def handle_event("validate", %{"message" => params}, socket) do
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
+
+    {:noreply, assign(socket, form: form)}
+  end
+
+  def handle_event("submit", %{"message" => params}, socket) do
+    case Message.create(params, actor: socket.assigns.current_user) do
+      {:ok, message} ->
+        # read the unread message
+        Message.has_been_read(socket.assigns.last_unread_message,
+          actor: socket.assigns.current_user
+        )
+
+        PubSub.broadcast(Animina.PubSub, "messages", {:new_message, message})
+
+        last_unread_message =
+          case Message.last_unread_message_by_receiver(socket.assigns.current_user.id) do
+            {:ok, message} ->
+              message
+
+            _ ->
+              nil
+          end
+
+        {:noreply,
+         socket
+         |> assign(last_unread_message: last_unread_message)
+         |> assign(form: create_message_form())}
+
+      {:error, _} ->
+        {:noreply, assign(socket, form: socket.assigns.form)}
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -174,11 +216,10 @@ defmodule AniminaWeb.DashboardLive do
         <.dashboard_card_chat_component
           title={gettext("Chats")}
           last_unread_message={@last_unread_message}
+          language={@language}
           current_user={@current_user}
           form={@form}
         />
-        <.dashboard_card_component title={gettext("Messages")} />
-        <.dashboard_card_component title={gettext("Profiles")} />
       </div>
     </div>
     """

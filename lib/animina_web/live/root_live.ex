@@ -513,7 +513,7 @@ defmodule AniminaWeb.RootLive do
             for="user_email"
             class="block text-sm font-medium  leading-6 dark:text-white text-gray-900"
           >
-            <%= gettext("E-mail address") %>
+            <%= gettext("E-mail address or Username") %>
           </label>
           <div phx-feedback-for={f[:username_or_email].name} class="mt-2">
             <%= text_input(f, :username_or_email,
@@ -523,7 +523,7 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("alice@example.net"),
+              placeholder: gettext("alice@example.net or alice"),
               value: f[:username_or_email].value,
               required: true,
               autocomplete: :username_or_email,

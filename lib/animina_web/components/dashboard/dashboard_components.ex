@@ -67,6 +67,7 @@ defmodule AniminaWeb.DashboardComponents do
             <.unread_message
               sender={@last_unread_message.sender}
               content={@last_unread_message.content}
+              language={@language}
               message={@last_unread_message}
               receiver={@current_user}
             />
@@ -80,7 +81,9 @@ defmodule AniminaWeb.DashboardComponents do
             </div>
           </div>
         <% else %>
-          <.no_unread_messages_component />
+          <div class="h-[200px]">
+            <.no_unread_messages_component />
+          </div>
         <% end %>
       </div>
     </div>
@@ -96,13 +99,13 @@ defmodule AniminaWeb.DashboardComponents do
           <p class="dark:text-white text-xs">
             <%= @sender.username %>
           </p>
-          <div class=" w-[250px]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-2 justify-between px-1 items-end rounded-md">
+          <div class=" w-[250px]  text-sm  dark:bg-white bg-gray-300 text-black   flex flex-col gap-2 justify-between px-1 items-end rounded-md">
             <p>
               <%= Markdown.format(@content) %>
             </p>
 
-            <div :if={@message.read_at != nil} class="text-xs px-2 flex justify-end">
-              <%= format_time(@message.created_at) %>
+            <div class="text-xs  italic  flex justify-end">
+              <%= Timex.from_now(@message.created_at, @language) %>
             </div>
           </div>
         </div>
@@ -188,7 +191,7 @@ defmodule AniminaWeb.DashboardComponents do
 
   defp no_unread_messages_component(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center gap-4">
+    <div class="flex flex-col justify-center items-center h-[100%] text-white  gap-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
