@@ -1,9 +1,12 @@
 defmodule AniminaWeb.DashboardLive do
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts.Message
+  alias Animina.Accounts
   alias Animina.Accounts.Reaction
   alias Animina.GenServers.ProfileViewCredits
   alias Phoenix.PubSub
+  alias AshPhoenix.Form
 
   @impl true
   def mount(_params, _session, socket) do
@@ -38,14 +41,34 @@ defmodule AniminaWeb.DashboardLive do
       Reaction.total_likes_received_by_user!(socket.assigns.current_user.id)
       |> Enum.count()
 
+    last_unread_message =
+      case Message.last_unread_message_by_receiver(socket.assigns.current_user.id) do
+        {:ok, message} ->
+          message
+
+        _ ->
+          nil
+      end
+
     socket =
       socket
       |> assign(active_tab: :home)
+      |> assign(last_unread_message: last_unread_message)
+      |> assign(form: create_message_form())
       |> assign(likes_received_by_user_in_seven_days: likes_received_by_user_in_seven_days)
       |> assign(profiles_liked_by_user: profiles_liked_by_user)
       |> assign(total_likes_received_by_user: total_likes_received_by_user)
 
     {:ok, socket}
+  end
+
+  defp create_message_form do
+    Form.for_create(Message, :create,
+      api: Accounts,
+      as: "message",
+      forms: [auto?: true]
+    )
+    |> to_form()
   end
 
   @impl true
@@ -146,6 +169,13 @@ defmodule AniminaWeb.DashboardLive do
           likes_received_by_user_in_seven_days={@likes_received_by_user_in_seven_days}
           profiles_liked_by_user={@profiles_liked_by_user}
           total_likes_received_by_user={@total_likes_received_by_user}
+        />
+
+        <.dashboard_card_chat_component
+          title={gettext("Chats")}
+          last_unread_message={@last_unread_message}
+          current_user={@current_user}
+          form={@form}
         />
         <.dashboard_card_component title={gettext("Messages")} />
         <.dashboard_card_component title={gettext("Profiles")} />

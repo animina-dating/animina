@@ -106,6 +106,18 @@ defmodule Animina.Accounts.Message do
 
       filter expr(receiver_id == ^arg(:user_id) and is_nil(read_at))
     end
+
+    read :last_unread_message_by_receiver do
+      argument :receiver_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:sender])
+
+      prepare build(sort: [created_at: :desc], limit: 1)
+
+      filter expr(receiver_id == ^arg(:receiver_id) and is_nil(read_at))
+    end
   end
 
   code_interface do
@@ -116,6 +128,8 @@ defmodule Animina.Accounts.Message do
     define :by_id, args: [:id]
     define :has_been_read
     define :unread_messages_for_user, args: [:user_id]
+
+    define :last_unread_message_by_receiver, args: [:receiver_id], get?: true
 
     define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
     define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
