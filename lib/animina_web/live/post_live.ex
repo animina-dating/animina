@@ -140,7 +140,9 @@ defmodule AniminaWeb.PostLive do
   def handle_event("submit", %{"post" => post}, socket) do
     form = Form.validate(socket.assigns.form, post)
 
-    with [] <- Form.errors(form), {:ok, _post} <- Form.submit(form, params: post) do
+    with [] <- Form.errors(form),
+         {:ok, _post} <-
+           Form.submit(form, params: post, action_opts: [actor: socket.assigns.current_user]) do
       {:noreply,
        socket
        |> assign(:errors, [])

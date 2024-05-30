@@ -8,7 +8,8 @@ defmodule Animina.Narratives.Post do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    extensions: [Ash.Policy.Authorizer]
 
   attributes do
     uuid_primary_key :id
@@ -95,6 +96,20 @@ defmodule Animina.Narratives.Post do
                 :url
               ]
             )
+  end
+
+  policies do
+    policy action_type(:create) do
+      authorize_if actor_present()
+    end
+
+    policy action_type(:update) do
+      authorize_if relates_to_actor_via(:user)
+    end
+
+    policy action_type(:destroy) do
+      authorize_if relates_to_actor_via(:user)
+    end
   end
 
   postgres do
