@@ -3,6 +3,9 @@ defmodule Animina.Narratives.Post do
   This is the post resource.
   """
 
+  alias Animina.Changes
+  alias Animina.Calculations
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub]
@@ -36,14 +39,15 @@ defmodule Animina.Narratives.Post do
   end
 
   relationships do
-    belongs_to :user, Animina.Accounts.User do
+    belongs_to :user, Animina.Accounts.BasicUser do
       api Animina.Accounts
       attribute_writable? true
     end
   end
 
   validations do
-    validate present(:slug)
+    validate present(:content)
+    validate present(:title)
   end
 
   actions do
@@ -52,8 +56,6 @@ defmodule Animina.Narratives.Post do
     read :read do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
-
-      # prepare build(load: [:headline, :photo])
     end
 
     read :by_user_id do
@@ -62,8 +64,6 @@ defmodule Animina.Narratives.Post do
       argument :user_id, :uuid do
         allow_nil? false
       end
-
-      prepare build(load: [:user])
 
       filter expr(user_id == ^arg(:user_id))
     end
@@ -77,6 +77,23 @@ defmodule Animina.Narratives.Post do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_user_id, args: [:user_id]
+  end
+
+  changes do
+    change {Changes.PostSlug, attribute: :title}, on: [:create, :update]
+  end
+
+  calculations do
+    calculate :url, :string, {Calculations.PostUrl, field: :slug}
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :user,
+                :url
+              ]
+            )
   end
 
   postgres do
