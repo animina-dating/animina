@@ -5,7 +5,7 @@ defmodule AniminaWeb.DashboardLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -71,7 +71,7 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="grid md:grid-cols-3 grid-cols-1 gap-4 ">
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-3 ">
         <.dashboard_card_component title={gettext("Likes")} />
         <.dashboard_card_component title={gettext("Messages")} />
         <.dashboard_card_component title={gettext("Profiles")} />
