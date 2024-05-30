@@ -560,6 +560,17 @@ defmodule AniminaWeb.ProfileLive do
         },
         id: "profile_stories_live"
       ) %>
+
+      <%= live_render(
+        @socket,
+        AniminaWeb.ProfilePostsLive,
+        session: %{
+          "user_id" => @user.id,
+          "current_user" => @current_user,
+          "language" => @language
+        },
+        id: "profile_posts_live"
+      ) %>
     </div>
     """
   end
