@@ -40,7 +40,7 @@ defmodule Animina.Narratives.Post do
   end
 
   relationships do
-    belongs_to :user, Animina.Accounts.BasicUser do
+    belongs_to :user, Animina.Accounts.User do
       api Animina.Accounts
       attribute_writable? true
     end
@@ -52,10 +52,13 @@ defmodule Animina.Narratives.Post do
   end
 
   actions do
-    defaults [:create, :update, :destroy]
+    defaults [:destroy]
 
     read :read do
       primary? true
+
+      prepare build(load: [:user, :url])
+
       pagination offset?: true, keyset?: true, required?: false
     end
 
@@ -66,7 +69,21 @@ defmodule Animina.Narratives.Post do
         allow_nil? false
       end
 
+      prepare build(load: [:user, :url])
+
       filter expr(user_id == ^arg(:user_id))
+    end
+
+    create :create do
+      primary? true
+      change relate_actor(:user, allow_nil?: false)
+
+      accept [:title, :content]
+    end
+
+    update :update do
+      primary? true
+      accept [:title, :content]
     end
   end
 
@@ -87,15 +104,6 @@ defmodule Animina.Narratives.Post do
 
   calculations do
     calculate :url, :string, {Calculations.PostUrl, field: :slug}
-  end
-
-  preparations do
-    prepare build(
-              load: [
-                :user,
-                :url
-              ]
-            )
   end
 
   policies do

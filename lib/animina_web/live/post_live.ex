@@ -92,7 +92,8 @@ defmodule AniminaWeb.PostLive do
       Form.for_update(socket.assigns.post, :update,
         api: Narratives,
         as: "post",
-        forms: []
+        forms: [],
+        actor: socket.assigns.current_user
       )
       |> to_form()
 
@@ -110,7 +111,8 @@ defmodule AniminaWeb.PostLive do
       Form.for_create(Post, :create,
         api: Narratives,
         as: "post",
-        forms: []
+        forms: [],
+        actor: socket.assigns.current_user
       )
       |> to_form()
 
@@ -142,7 +144,7 @@ defmodule AniminaWeb.PostLive do
 
     with [] <- Form.errors(form),
          {:ok, _post} <-
-           Form.submit(form, params: post, action_opts: [actor: socket.assigns.current_user]) do
+           Form.submit(form, params: post, api_opts: []) do
       {:noreply,
        socket
        |> assign(:errors, [])
@@ -176,7 +178,7 @@ defmodule AniminaWeb.PostLive do
           <%= text_input(f, :id, type: :hidden, value: f[:id].value) %>
         <% end %>
 
-        <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
+        <%!-- <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %> --%>
 
         <div>
           <label

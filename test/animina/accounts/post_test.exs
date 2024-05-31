@@ -1,7 +1,7 @@
 defmodule Animina.Narratives.PostTest do
   use Animina.DataCase, async: true
 
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
   alias Animina.Narratives.Post
 
   describe "Tests for the Post Resource" do
@@ -82,11 +82,25 @@ defmodule Animina.Narratives.PostTest do
 
       assert {:error, _} = result
     end
+
+    test "Unique slug for post by user", %{
+      user_one: user_one
+    } do
+      title = random_title()
+
+      # create first post
+      {:ok, _post} = create_post_with_title(user_one, title)
+
+      # create second post with same title
+      result = create_post_with_title(user_one, title)
+
+      assert {:error, _} = result
+    end
   end
 
   defp create_user_one do
     {:ok, user} =
-      BasicUser.create(%{
+      User.create(%{
         email: "bob@example.com",
         username: "bob",
         name: "Bob",
@@ -105,7 +119,7 @@ defmodule Animina.Narratives.PostTest do
 
   defp create_user_two do
     {:ok, user} =
-      BasicUser.create(%{
+      User.create(%{
         email: "mike@example.com",
         username: "mike",
         name: "Mike",
@@ -129,8 +143,19 @@ defmodule Animina.Narratives.PostTest do
     Post.create(
       %{
         title: title,
-        content: content,
-        user_id: user.id
+        content: content
+      },
+      actor: user
+    )
+  end
+
+  defp create_post_with_title(user, title) do
+    content = random_lorem_ipsum()
+
+    Post.create(
+      %{
+        title: title,
+        content: content
       },
       actor: user
     )

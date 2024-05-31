@@ -1,6 +1,8 @@
 defmodule Animina.Changes.PostSlug do
   use Ash.Resource.Change
 
+  alias Animina.Narratives.Post
+
   @moduledoc """
   This is a module for creating a slug from a post's title
   """
@@ -22,7 +24,11 @@ defmodule Animina.Changes.PostSlug do
           title_slug =
             String.replace(title, ~r/(?:'s)?[^\p{L}\-\d_]+|\.+$/u, "-") |> String.downcase()
 
-          Ash.Changeset.force_change_attribute(changeset, :slug, title_slug)
+          if Post.by_slug!(title_slug, not_found_error?: false) == nil do
+            Ash.Changeset.force_change_attribute(changeset, :slug, title_slug)
+          else
+            Ash.Changeset.add_error(changeset, field: :title, message: "Already exists")
+          end
         else
           changeset
         end
