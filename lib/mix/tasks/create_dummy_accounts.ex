@@ -36,7 +36,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
 
       1..counter
       |> Enum.each(fn _ ->
-        height = Enum.take_random(Enum.to_list(150..210), 1) |> hd
+        height = Enum.take_random(Enum.to_list(160..190), 1) |> hd
         birthday = Faker.Date.date_of_birth(18..60)
         age = (Date.diff(Date.utc_today(), birthday) / 365) |> round
         gender = Enum.take_random(["male", "female"], 1) |> hd
@@ -196,7 +196,25 @@ if Enum.member?([:dev, :test], Mix.env()) do
       |> hd
     end
 
-    def random_landscape_photo_url do
+    def random_photo_url("hobby") do
+      Enum.take_random(
+        [
+          "https://images.unsplash.com/photo-1502680390469-be75c86b636f?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1563575044224-569da2f35b01?q=80&w=2485&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1515017671634-012cb9dc6ed0?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1605264522799-1996bdbe5f72?q=80&w=2309&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1613085411234-9c83af5562d8?q=80&w=2504&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1632714394522-2916aac896e8?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1556908153-1055164fe2df?q=80&w=2487&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1556909114-44e3e70034e2?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          "https://images.unsplash.com/photo-1556911073-a517e752729c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        ],
+        1
+      )
+      |> hd
+    end
+
+    def random_photo_url("landscape") do
       Enum.take_random(
         [
           "https://images.unsplash.com/photo-1610552050890-fe99536c2615?q=80&w=2707&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -257,9 +275,16 @@ if Enum.member?([:dev, :test], Mix.env()) do
       random_content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
 
       random_photo =
-        if :rand.uniform() > 0.5,
-          do: random_landscape_photo_url() |> download_photo("#{Faker.UUID.v4()}.png"),
-          else: nil
+        case :rand.uniform() do
+          x when x <= 0.33 ->
+            random_photo_url("landscape") |> download_photo("#{Faker.UUID.v4()}.png")
+
+          x when x <= 0.66 ->
+            random_photo_url("hobby") |> download_photo("#{Faker.UUID.v4()}.png")
+
+          _ ->
+            nil
+        end
 
       {content, photo} =
         case {random_content, random_photo} do

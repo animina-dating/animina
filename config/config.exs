@@ -15,7 +15,7 @@ end
 # Configures Oban jobs
 config :animina, Oban,
   repo: Animina.Repo,
-  queues: [default: 4, photos: 2],
+  queues: [default: 6, photos: 6],
   prefix: System.get_env("DATABASE_SCHEMA", "public"),
   plugins: [
     {Oban.Plugins.Cron, []},

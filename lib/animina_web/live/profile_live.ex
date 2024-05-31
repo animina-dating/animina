@@ -22,7 +22,6 @@ defmodule AniminaWeb.ProfileLive do
     socket =
       socket
       |> assign(language: language)
-      |> assign(active_tab: :home)
 
     current_user =
       socket.assigns.current_user
@@ -30,6 +29,8 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
       {:ok, user} ->
         subscribe(socket, current_user, user)
+
+        active_tab = if current_user.id == user.id, do: :profile, else: ""
 
         if connected?(socket) do
           create_or_update_visited_bookmark(current_user, user)
@@ -62,6 +63,7 @@ defmodule AniminaWeb.ProfileLive do
           {:ok,
            socket
            |> assign(user: user)
+           |> assign(active_tab: active_tab)
            |> assign(visit_log_entry: visit_log_entry)
            |> assign(
              current_user_credit_points:
@@ -86,7 +88,7 @@ defmodule AniminaWeb.ProfileLive do
     socket =
       socket
       |> assign(language: language)
-      |> assign(active_tab: :home)
+      |> assign(active_tab: "")
 
     case Accounts.User.by_username(username) do
       {:ok, user} ->
@@ -116,7 +118,7 @@ defmodule AniminaWeb.ProfileLive do
     socket =
       socket
       |> assign(language: language)
-      |> assign(active_tab: :home)
+      |> assign(active_tab: :profile)
 
     current_user =
       socket.assigns.current_user
