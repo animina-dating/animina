@@ -43,3 +43,5 @@ npm-debug.log
 
 /.elixir_ls/
 
+.env.test
+

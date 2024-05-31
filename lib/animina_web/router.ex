@@ -32,6 +32,8 @@ defmodule AniminaWeb.Router do
       live "/my/profile-photo", ProfilePhotoLive, :index
       live "/my/stories/new", StoryLive, :new
       live "/my/stories/:id/edit", StoryLive, :edit
+      live "/my/posts/new", PostLive, :new
+      live "/my/posts/:id/edit", PostLive, :edit
       live "/my/flags/white", FlagsLive, :white
       live "/my/flags/green", FlagsLive, :green
       live "/my/flags/red", FlagsLive, :red
@@ -49,6 +51,7 @@ defmodule AniminaWeb.Router do
       live "/", RootLive, :register
       live "/:username", ProfileLive
       live "/my/profile", ProfileLive
+      live "/:username/:year/:month/:day/:slug", PostViewLive
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in

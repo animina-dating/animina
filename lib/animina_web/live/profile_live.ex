@@ -537,7 +537,7 @@ defmodule AniminaWeb.ProfileLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="px-5">
+    <div class="px-5 pb-8">
       <.profile_details
         user={@user}
         current_user={@current_user}
@@ -549,6 +549,7 @@ defmodule AniminaWeb.ProfileLive do
         years_text={gettext("years")}
         centimeters_text={gettext("cm")}
         add_new_story_title={gettext("Add a new story")}
+        add_new_post_title={gettext("Add a new post")}
       />
 
       <%= live_render(
@@ -560,6 +561,17 @@ defmodule AniminaWeb.ProfileLive do
           "language" => @language
         },
         id: "profile_stories_live"
+      ) %>
+
+      <%= live_render(
+        @socket,
+        AniminaWeb.ProfilePostsLive,
+        session: %{
+          "user_id" => @user.id,
+          "current_user" => @current_user,
+          "language" => @language
+        },
+        id: "profile_posts_live"
       ) %>
     </div>
     """

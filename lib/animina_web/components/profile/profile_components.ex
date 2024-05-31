@@ -7,7 +7,7 @@ defmodule AniminaWeb.ProfileComponents do
   def profile_details(assigns) do
     ~H"""
     <div :if={@user} class="pb-4 flex justify-between items-center">
-      <div class="w-full">
+      <div class="flex-1">
         <div class="w-[100%] flex justify-between items-center">
           <h1 class="text-2xl font-semibold dark:text-white">
             <%= @user.name %>
@@ -71,12 +71,22 @@ defmodule AniminaWeb.ProfileComponents do
         </div>
       </div>
 
-      <div :if={@current_user && @current_user.id == @user.id} class="flex-shrink-0">
+      <div
+        :if={@current_user && @current_user.id == @user.id}
+        class="flex-shrink-0 flex items-center space-x-2"
+      >
         <.link
           navigate="/my/stories/new"
-          class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <%= @add_new_story_title %>
+        </.link>
+
+        <.link
+          navigate="/my/posts/new"
+          class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          <%= @add_new_post_title %>
         </.link>
       </div>
     </div>

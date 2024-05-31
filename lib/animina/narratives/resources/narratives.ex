@@ -8,5 +8,6 @@ defmodule Animina.Narratives do
   resources do
     resource Animina.Narratives.Headline
     resource Animina.Narratives.Story
+    resource Animina.Narratives.Post
   end
 end
