@@ -95,6 +95,19 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
+  def on_mount(:live_user_home_optional, _params, _session, socket) do
+    if socket.assigns[:current_user] do
+      {:halt, Phoenix.LiveView.redirect(socket, to: "/my/dashboard")}
+    else
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
+       |> assign(:current_user, nil)}
+    end
+  end
+
   # in this case the user does not have a daily bonus added for the day , so we add one
   defp add_daily_points_for_user(user, points, nil) do
     Credit.create(%{

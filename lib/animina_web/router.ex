@@ -45,8 +45,12 @@ defmodule AniminaWeb.Router do
     end
 
     ash_authentication_live_session :user_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
       live "/", RootLive, :register
+    end
+
+    ash_authentication_live_session :user_optional_home,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
       live "/:username", ProfileLive
       live "/my/profile", ProfileLive
     end
