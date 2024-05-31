@@ -50,9 +50,19 @@ defmodule AniminaWeb.DashboardLive do
           nil
       end
 
+    unread_messages =
+      case Message.unread_messages_for_user(socket.assigns.current_user.id) do
+        {:ok, messages} ->
+          messages
+
+        _ ->
+          []
+      end
+
     socket =
       socket
       |> assign(active_tab: :home)
+      |> assign(unread_messages: unread_messages)
       |> assign(last_unread_message: last_unread_message)
       |> assign(form: create_message_form())
       |> assign(language: language)
@@ -117,8 +127,18 @@ defmodule AniminaWeb.DashboardLive do
           nil
       end
 
+    unread_messages =
+      case Message.unread_messages_for_user(socket.assigns.current_user.id) do
+        {:ok, messages} ->
+          messages
+
+        _ ->
+          []
+      end
+
     {:noreply,
      socket
+     |> assign(unread_messages: unread_messages)
      |> assign(last_unread_message: last_unread_message)}
   end
 
@@ -214,8 +234,16 @@ defmodule AniminaWeb.DashboardLive do
           total_likes_received_by_user={@total_likes_received_by_user}
         />
 
+        <.dashboard_card_messages_component
+          title={gettext("Unread Chats")}
+          unread_messages={@unread_messages}
+          language={@language}
+          current_user={@current_user}
+          form={@form}
+        />
+
         <.dashboard_card_chat_component
-          title={gettext("Chats")}
+          title={gettext("Latest Chat")}
           last_unread_message={@last_unread_message}
           language={@language}
           current_user={@current_user}

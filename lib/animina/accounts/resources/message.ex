@@ -104,6 +104,9 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
+      prepare build(load: [:sender])
+      prepare build(sort: [created_at: :desc])
+
       filter expr(receiver_id == ^arg(:user_id) and is_nil(read_at))
     end
 

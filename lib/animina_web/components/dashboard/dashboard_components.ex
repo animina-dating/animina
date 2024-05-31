@@ -89,16 +89,50 @@ defmodule AniminaWeb.DashboardComponents do
     """
   end
 
+  def dashboard_card_messages_component(assigns) do
+    ~H"""
+    <div class="flex flex-col rounded-md gap-3 cursor-pointer h-[300px] bg-gray-100 dark:bg-gray-800 p-2">
+      <h1 class="p-2 rounded-md dark:bg-gray-700 bg-white text-black  font-semibod text-xl  dark:text-white text-center">
+        <%= @title %>
+      </h1>
+
+      <div class="flex flex-col  gap-3">
+        <%= if @unread_messages != [] do %>
+          <div class="h-[230px] overflow-y-scroll flex flex-col gap-1 py-1">
+            <%= for message <- @unread_messages do %>
+              <div>
+                <.link navigate={"/my/messages/#{message.sender.username}"} class="mx-auto w-[100%]">
+                  <.unread_message
+                    sender={message.sender}
+                    content={message.content}
+                    language={@language}
+                    message={message}
+                    receiver={@current_user}
+                  />
+                </.link>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="h-[200px]">
+            <.no_unread_messages_component />
+          </div>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
   defp unread_message(assigns) do
     ~H"""
-    <div>
-      <div class="flex justify-start gap-2  w-[70%] item-start text-black">
+    <div class="w-[100%]">
+      <div class="flex justify-start gap-2  m-auto w-[95%] item-start text-black">
         <.sender_user_image user={@sender} current_user={@receiver} />
         <div class="justify-start w-[100%] flex items-start flex-col">
           <p class="dark:text-white text-xs">
             <%= @sender.username %>
           </p>
-          <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-end rounded-md">
+          <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
             <p>
               <%= Markdown.format(@content) %>
             </p>
@@ -218,7 +252,7 @@ defmodule AniminaWeb.DashboardComponents do
 
   def send_message_from_dashboard_box(assigns) do
     ~H"""
-    <div class=" w-[100%] ">
+    <div class=" w-[95%] m-auto ">
       <.form
         :let={f}
         for={@form}
