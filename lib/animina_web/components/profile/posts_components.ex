@@ -13,6 +13,7 @@ defmodule AniminaWeb.PostsComponents do
   attr :dom_id, :any, required: false
   attr :delete_post_modal_text, :string
   attr :read_post_title, :string
+  attr :subtitle, :string
 
   def post_card(assigns) do
     ~H"""
@@ -21,9 +22,7 @@ defmodule AniminaWeb.PostsComponents do
         <h1 class="text-lg dark:text-white font-semibold"><%= @post.title %></h1>
 
         <p class="dark:text-white">
-          <span class="font-medium">By <%= @post.user.name %></span>
-          <span class="mx-0.5 font-semibold">·</span>
-          <span class="">Posted <%= Timex.from_now(@post.created_at) %></span>
+          <span class="font-medium"><%= @subtitle %></span>
         </p>
       </div>
 
@@ -107,6 +106,7 @@ defmodule AniminaWeb.PostsComponents do
   attr :post, :any, required: true
   attr :current_user, :any, required: true
   attr :edit_post_title, :string
+  attr :subtitle, :string
 
   def post_header(assigns) do
     ~H"""
@@ -118,9 +118,7 @@ defmodule AniminaWeb.PostsComponents do
 
         <div class="flex mt-4">
           <p class="dark:text-white">
-            <span class="font-medium">By <%= @post.user.name %></span>
-            <span class="mx-0.5 font-semibold">·</span>
-            <span class="">Posted <%= Timex.from_now(@post.created_at) %></span>
+            <span class="font-medium"><%= @subtitle %></span>
           </p>
         </div>
       </div>

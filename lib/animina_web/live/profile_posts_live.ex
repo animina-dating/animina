@@ -99,7 +99,7 @@ defmodule AniminaWeb.ProfilePostsLive do
     <div class="py-8 space-y-8">
       <div>
         <h1 class="text-2xl font-semibold dark:text-white">
-          My Posts
+          <%= gettext("My Posts") %>
         </h1>
       </div>
       <div
@@ -115,6 +115,7 @@ defmodule AniminaWeb.ProfilePostsLive do
             user={@user}
             delete_post_modal_text={gettext("Are you sure?")}
             read_post_title={gettext("Read Post")}
+            subtitle={"#{gettext("By")} #{post.user.name}"}
           />
         </div>
       </div>

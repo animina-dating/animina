@@ -88,6 +88,7 @@ defmodule AniminaWeb.PostViewLive do
           post={@post}
           current_user={@current_user}
           edit_post_title={gettext("Edit post")}
+          subtitle={"#{gettext("By")} #{@post.user.name}"}
         />
 
         <.post_body content={@post.content} />
