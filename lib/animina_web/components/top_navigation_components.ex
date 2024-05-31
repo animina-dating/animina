@@ -23,8 +23,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def top_navigation(assigns) do
     ~H"""
     <div class="border-y md:border-r md:border-l border-brand-silver-100">
-      <nav class="grid grid-cols-4 gap-1">
+      <nav class="grid grid-cols-5 gap-1">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.chat_nav_item
           current_user={@current_user}
@@ -84,7 +85,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def user_profile_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={@active_tab == :profile}>
+    <.top_navigation_entry phx-no-format is_active={@active_tab == :profile_points}>
       <%= if @current_user && @current_user.profile_photo  do %>
         <img class="object-cover w-6 h-6 rounded-full"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
       <% else %>
@@ -285,6 +286,64 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   @doc """
+  Profile Entry
+
+  ## Examples
+
+      <.profile_nav_item />
+  """
+  attr :active_tab, :atom, default: nil, doc: "active tab"
+  attr :current_user, :any, default: nil, doc: "current user"
+
+  def profile_nav_item(assigns) do
+    ~H"""
+    <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
+
+
+    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
+
+
+
+    <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 stroke-current shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+            stroke="stroke-current" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+          />
+        </svg>
+    <span><%= gettext("Profile") %></span>
+
+    </div>
+
+    <div :if={@current_user != nil}>
+     <.link navigate={"/my/profile"} class="flex gap-2 md:flex-row flex-col items-center" >
+     <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 stroke-current shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+            stroke="stroke-current" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+          />
+        </svg>
+       <span><%= gettext("Profile") %></span>
+
+    </.link>
+    </div>
+
+    </.top_navigation_entry>
+    """
+  end
+
+  @doc """
   Desktop sidebar .
 
   ## Examples
@@ -295,6 +354,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[15%] hidden md:flex flex-grow  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
       <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
       <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
       <.chat_nav_item
         current_user={@current_user}
