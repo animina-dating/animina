@@ -107,7 +107,7 @@ defmodule AniminaWeb.DashboardLive do
     {:noreply, socket}
   end
 
-  def handle_info({:new_message, message}, socket) do
+  def handle_info({:new_message, _message}, socket) do
     last_unread_message =
       case Message.last_unread_message_by_receiver(socket.assigns.current_user.id) do
         {:ok, message} ->
@@ -166,6 +166,7 @@ defmodule AniminaWeb.DashboardLive do
      |> assign(total_likes_received_by_user: total_likes_received_by_user)}
   end
 
+  @impl true
   def handle_event("validate", %{"message" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.form, params)
 
@@ -205,7 +206,7 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="grid md:grid-cols-3 grid-cols-1 gap-6 ">
+      <div class="grid md:grid-cols-2 grid-cols-1 gap-6 ">
         <.dashboard_card_like_component
           title={gettext("Likes")}
           likes_received_by_user_in_seven_days={@likes_received_by_user_in_seven_days}

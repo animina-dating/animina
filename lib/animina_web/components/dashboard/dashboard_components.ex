@@ -6,7 +6,6 @@ defmodule AniminaWeb.DashboardComponents do
   alias Animina.Markdown
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
-  alias AshPhoenix.Form
   import Phoenix.HTML.Form
 
   def dashboard_card_component(assigns) do
@@ -93,13 +92,13 @@ defmodule AniminaWeb.DashboardComponents do
   defp unread_message(assigns) do
     ~H"""
     <div>
-      <div class="flex justify-start gap-4  item-start text-black">
+      <div class="flex justify-start gap-2  w-[70%] item-start text-black">
         <.sender_user_image user={@sender} current_user={@receiver} />
-        <div class="justify-start flex items-start flex-col">
+        <div class="justify-start w-[100%] flex items-start flex-col">
           <p class="dark:text-white text-xs">
             <%= @sender.username %>
           </p>
-          <div class=" w-[250px]  text-sm  dark:bg-white bg-gray-300 text-black   flex flex-col gap-2 justify-between px-1 items-end rounded-md">
+          <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-end rounded-md">
             <p>
               <%= Markdown.format(@content) %>
             </p>
@@ -227,7 +226,7 @@ defmodule AniminaWeb.DashboardComponents do
         phx-submit="submit"
         class="w-[100%] flex justify-between items-end"
       >
-        <div phx-feedback-for={f[:content].name} class="md:w-[83%] w-[80%]">
+        <div phx-feedback-for={f[:content].name} class="md:w-[90%] w-[87%]">
           <%= textarea(
             f,
             :content,
@@ -250,7 +249,7 @@ defmodule AniminaWeb.DashboardComponents do
           <%= hidden_input(f, :receiver_id, value: @receiver.id) %>
         </div>
 
-        <div class="md:w-[15%] w-[18%] flex justify-center items-center">
+        <div class="md:w-[8%] w-[8%] flex justify-center items-center">
           <%= submit(
           class:
             "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
