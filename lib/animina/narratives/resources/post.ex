@@ -6,6 +6,10 @@ defmodule Animina.Narratives.Post do
   alias Animina.Calculations
   alias Animina.Changes
 
+  use Timex
+  require Ash.Query
+  require Ash.Sort
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
@@ -74,6 +78,36 @@ defmodule Animina.Narratives.Post do
       filter expr(user_id == ^arg(:user_id))
     end
 
+    read :by_slug_user_and_date do
+      get? true
+
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      argument :slug, :string do
+        allow_nil? false
+      end
+
+      argument :date, :utc_datetime do
+        allow_nil? false
+      end
+
+      prepare fn query, _context ->
+        date = Ash.Changeset.get_argument(query, :date)
+
+        date_start = Timex.beginning_of_day(date) |> DateTime.to_iso8601()
+        date_end = Timex.end_of_day(date) |> DateTime.to_iso8601()
+
+        Ash.Query.filter(
+          query,
+          created_at >= ^date_start and created_at < ^date_end
+        )
+      end
+
+      filter expr(user_id == ^arg(:user_id) and slug == ^arg(:slug))
+    end
+
     create :create do
       primary? true
       change relate_actor(:user, allow_nil?: false)
@@ -96,6 +130,7 @@ defmodule Animina.Narratives.Post do
     define :by_id, get_by: [:id], action: :read
     define :by_slug, get_by: [:slug], action: :read
     define :by_user_id, args: [:user_id]
+    define :by_slug_user_and_date, args: [:slug, :user_id, :date], action: :by_slug_user_and_date
   end
 
   changes do

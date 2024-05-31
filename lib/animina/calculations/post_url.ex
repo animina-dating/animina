@@ -9,7 +9,7 @@ defmodule Animina.Calculations.PostUrl do
     Enum.map(records, fn record -> calculate_post_url(record) end)
   end
 
-  defp calculate_post_url(record) do
+  def calculate_post_url(record) do
     # get the post creation day, month and year
     date = Map.get(record, :created_at)
     year = date |> Calendar.strftime("%Y")
