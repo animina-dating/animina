@@ -69,7 +69,9 @@ defmodule Animina.MixProject do
       {:html_sanitize_ex, "~> 1.4"},
       {:timex, "~> 3.0"},
       {:oban, "~> 2.17"},
-      {:ash_oban, "~> 0.2.2"}
+      {:ash_oban, "~> 0.2.2"},
+      {:mogrify, "~> 0.9.3"},
+      {:briefly, "~> 0.5.0"}
     ]
 
     if System.get_env("DISABLE_ML_FEATURES") do

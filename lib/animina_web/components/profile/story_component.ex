@@ -37,7 +37,7 @@ defmodule AniminaWeb.StoryComponent do
         user={@user}
         current_user_green_flags={@current_user_green_flags}
         current_user_red_flags={@current_user_red_flags}
-        delete_story_modal_text={gettext("Are you sure?")}
+        delete_story_modal_text={gettext("Do you really want to delete this story?")}
       />
     </div>
     """
