@@ -549,7 +549,6 @@ defmodule AniminaWeb.ProfileLive do
         years_text={gettext("years")}
         centimeters_text={gettext("cm")}
         add_new_story_title={gettext("Add a new story")}
-        add_new_post_title={gettext("Add a new post")}
       />
 
       <%= live_render(

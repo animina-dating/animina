@@ -6,14 +6,14 @@ defmodule AniminaWeb.ProfileComponents do
 
   def profile_details(assigns) do
     ~H"""
-    <div :if={@user} class="pb-4 flex justify-between items-center">
+    <div :if={@user} class="flex items-center justify-between pb-4">
       <div class="flex-1">
         <div class="w-[100%] flex justify-between items-center">
           <h1 class="text-2xl font-semibold dark:text-white">
             <%= @user.name %>
           </h1>
 
-          <div class="flex gap-4 items-center">
+          <div class="flex items-center gap-4">
             <.chat_with_profile_icon current_user={@current_user} user={@user} />
 
             <.like_reaction_button
@@ -73,20 +73,13 @@ defmodule AniminaWeb.ProfileComponents do
 
       <div
         :if={@current_user && @current_user.id == @user.id}
-        class="flex-shrink-0 flex items-center space-x-2"
+        class="flex items-center flex-shrink-0 space-x-2"
       >
         <.link
           navigate="/my/stories/new"
           class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <%= @add_new_story_title %>
-        </.link>
-
-        <.link
-          navigate="/my/posts/new"
-          class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          <%= @add_new_post_title %>
         </.link>
       </div>
     </div>
@@ -395,7 +388,7 @@ defmodule AniminaWeb.ProfileComponents do
     ~H"""
     <div>
       <%= if @current_user do %>
-        <div :if={@current_user.id != @user.id} class="cursor-pointer dark:text-white  text-gray-300">
+        <div :if={@current_user.id != @user.id} class="text-gray-300 cursor-pointer dark:text-white">
           <.link navigate={"/my/messages/#{@user.username}"}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -427,7 +420,7 @@ defmodule AniminaWeb.ProfileComponents do
             :if={@current_user_has_liked_profile?}
             phx-click="remove_like"
             id="unlike_button"
-            class="cursor-pointer text-red-500"
+            class="text-red-500 cursor-pointer"
           >
             <.unlike_button />
           </div>
@@ -435,7 +428,7 @@ defmodule AniminaWeb.ProfileComponents do
             :if={!@current_user_has_liked_profile?}
             phx-click="add_like"
             id="like_button"
-            class="cursor-pointer dark:text-white  text-gray-300"
+            class="text-gray-300 cursor-pointer dark:text-white"
           >
             <.like_button />
           </div>
@@ -443,7 +436,7 @@ defmodule AniminaWeb.ProfileComponents do
       <% else %>
         <div
           phx-click="redirect_to_login_with_action"
-          class="cursor-pointer dark:text-white  text-gray-300"
+          class="text-gray-300 cursor-pointer dark:text-white"
         >
           <.like_button />
         </div>
