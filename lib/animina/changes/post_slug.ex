@@ -19,18 +19,13 @@ defmodule Animina.Changes.PostSlug do
   def change(changeset, opts, _context) do
     case Ash.Changeset.fetch_change(changeset, opts[:attribute]) do
       {:ok, title} ->
-        if title != nil do
-          # slugify post title, replaces special characters with '-'
-          title_slug =
-            String.replace(title, ~r/(?:'s)?[^\p{L}\-\d_]+|\.+$/u, "-") |> String.downcase()
+        title_slug =
+          String.replace(title, ~r/(?:'s)?[^\p{L}\-\d_]+|\.+$/u, "-") |> String.downcase()
 
-          if Post.by_slug!(title_slug, not_found_error?: false) == nil do
-            Ash.Changeset.force_change_attribute(changeset, :slug, title_slug)
-          else
-            Ash.Changeset.add_error(changeset, field: :title, message: "Already exists")
-          end
+        if Post.by_slug!(title_slug, not_found_error?: false) == nil do
+          Ash.Changeset.force_change_attribute(changeset, :slug, title_slug)
         else
-          changeset
+          Ash.Changeset.add_error(changeset, field: :title, message: "Already exists")
         end
 
       :error ->
