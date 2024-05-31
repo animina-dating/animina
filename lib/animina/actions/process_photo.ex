@@ -19,10 +19,26 @@ defmodule Animina.Actions.ProcessPhoto do
            |> Accounts.update(authorize?: false) do
       # Fetch and read the photo file
       dest = get_upload_dir(photo.filename)
-      image = StbImage.read_file!(dest)
-      # Classify image using the Nx.Serving
+
+      # Create a temporary file with the same extension as the original image
+      extname = Path.extname(photo.filename)
+      {:ok, temp_file} = Briefly.create(extname: extname)
+
+      # Resize the image to a width of 224 pixels while maintaining the aspect ratio
+      dest
+      |> Mogrify.open()
+      |> Mogrify.resize("224x")
+      |> Mogrify.save(path: temp_file)
+
+      # Read the resized image from the temporary file
+      image = StbImage.read_file!(temp_file)
+
+      # Classify image using Nx.Serving
       output =
         Nx.Serving.batched_run(NsfwDetectionServing, image)
+
+      # Ensure the temporary file is deleted
+      File.rm(temp_file)
 
       # Get the normal label score
       normal_label_score =
