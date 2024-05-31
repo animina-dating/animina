@@ -97,13 +97,23 @@ defmodule AniminaWeb.ProfilePostsLive do
   def render(assigns) do
     ~H"""
     <div class="py-8 space-y-8">
-      <div>
-        <h1 class="text-2xl font-semibold dark:text-white">
-          <%= gettext("My Posts") %>
-        </h1>
+      <div class="grid grid-cols-2">
+        <div>
+          <h1 class="text-2xl font-semibold dark:text-white">
+            <%= gettext("My Posts") %>
+          </h1>
+        </div>
+        <div>
+          <.link
+            navigate="/my/posts/new"
+            class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            <%= gettext("Add a new post") %>
+          </.link>
+        </div>
       </div>
       <div
-        class="grid md:grid-cols-2 auto-rows-fr lg:grid-cols-3 gap-8"
+        class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
         id="stream_posts"
         phx-update="stream"
       >
