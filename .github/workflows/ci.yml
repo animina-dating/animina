@@ -1,19 +1,31 @@
 name: CI
 
-on: push
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.exs'
+      - '**.ex'
+      - '**/mix.lock'
+      - 'priv/repo/migrations/**/*'
+      - 'priv/repo/seeds.exs'
 
 jobs:
   test:
     runs-on: ubuntu-20.04
-    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    name: OTP ${{ matrix.otp }} / Elixir ${{ matrix.elixir }}
     strategy:
       matrix:
         otp: ['26.2.5']
         elixir: ['1.16.3']
+        include:
+          - otp: '26.2.5'
+            elixir: '1.16.3'
 
     services:
       db:
-        image: postgres:13
+        image: postgres:13-alpine
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: animina_test
@@ -29,8 +41,8 @@ jobs:
 
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache dependencies
         uses: actions/cache@v3
@@ -97,9 +109,7 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
-        run: |
-          mix test
+        run: mix test
 
       - name: Run Credo
-        run: |
-          mix credo --strict
+        run: mix credo --strict
