@@ -10,9 +10,6 @@ jobs:
       matrix:
         otp: ['26.2.5']
         elixir: ['1.16.3']
-        include:
-          - otp: '26.2.5'
-            elixir: '1.16.3'
 
     services:
       db:
@@ -100,6 +97,7 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
+          CI: true  # Set a CI environment variable
         run: mix test
 
       - name: Run Credo
