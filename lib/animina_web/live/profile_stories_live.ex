@@ -35,7 +35,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
       else
         []
       end
-      |> IO.inspect()
+     
 
     socket =
       socket

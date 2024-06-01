@@ -542,6 +542,7 @@ defmodule AniminaWeb.ProfileLive do
         user={@user}
         display_chat_icon={true}
         current_user={@current_user}
+        display_profile_image_next_to_name={false}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         profile_points={@profile_points}
         current_user_credit_points={@current_user_credit_points}

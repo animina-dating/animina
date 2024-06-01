@@ -45,6 +45,7 @@ defmodule AniminaWeb.ChatComponents do
               intersecting_red_flags_count={@intersecting_red_flags_count}
               years_text={@years_text}
               display_chat_icon={false}
+              display_profile_image_next_to_name={true}
               show_intersecting_flags_count={false}
               centimeters_text={@centimeters_text}
             />
