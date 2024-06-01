@@ -93,6 +93,7 @@ jobs:
           PGPASSWORD: postgres
           PGDATABASE: animina_test
           CI: true  # Set a CI environment variable
+          DISABLE_ML_FEATURES: true  # Disable ML features
         run: mix test
 
       - name: Run Credo
