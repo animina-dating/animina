@@ -51,27 +51,7 @@ jobs:
           mix deps.get
           mix compile
 
-      - name: Restore database from cache
-        id: restore-db
-        uses: actions/cache@v3
-        with:
-          path: db_dump.sql
-          key: ${{ runner.os }}-db-${{ hashFiles('priv/repo/migrations/**/*', 'priv/repo/seeds.exs') }}
-          restore-keys: |
-            ${{ runner.os }}-db-
-
-      - name: Restore database from dump
-        if: steps.restore-db.outputs.cache-hit == 'true'
-        env:
-          PGHOST: localhost
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: animina_test
-        run: |
-          pg_restore -U postgres -d animina_test db_dump.sql
-
-      - name: Setup and dump database if no cache
-        if: steps.restore-db.outputs.cache-hit != 'true'
+      - name: Setup database
         env:
           PGHOST: localhost
           PGUSER: postgres
@@ -81,14 +61,6 @@ jobs:
           mix ecto.create
           mix ecto.migrate
           mix run priv/repo/seeds.exs
-          pg_dump -Fc -f db_dump.sql -U postgres animina_test
-
-      - name: Cache database dump
-        if: steps.restore-db.outputs.cache-hit != 'true'
-        uses: actions/cache@v3
-        with:
-          path: db_dump.sql
-          key: ${{ runner.os }}-db-${{ hashFiles('priv/repo/migrations/**/*', 'priv/repo/seeds.exs') }}
 
       - name: Run tests
         env:
