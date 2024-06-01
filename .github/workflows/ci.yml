@@ -8,16 +8,6 @@ jobs:
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
       matrix:
-        otp: ['name: CI
-
-on: push
-
-jobs:
-  test:
-    runs-on: ubuntu-20.04
-    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
-    strategy:
-      matrix:
         otp: ['26.2.5']
         elixir: ['1.16.3']
 
