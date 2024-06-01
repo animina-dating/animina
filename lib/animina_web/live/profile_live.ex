@@ -548,6 +548,7 @@ defmodule AniminaWeb.ProfileLive do
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
         years_text={gettext("years")}
+        show_intersecting_flags_count={true}
         centimeters_text={gettext("cm")}
         add_new_story_title={gettext("Add a new story")}
       />

@@ -70,7 +70,7 @@ defmodule AniminaWeb.ProfileComponents do
             <%= @current_user_credit_points %>
           </span>
 
-          <span :if={@current_user != @user}>
+          <span :if={@current_user != @user && @show_intersecting_flags_count}>
             <span
               :if={@intersecting_green_flags_count != 0}
               class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
