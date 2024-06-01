@@ -103,7 +103,7 @@ defmodule Animina.MixProject do
         "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
         "assets.build": ["tailwind default", "esbuild default"],
         "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-        "ash_postgres.reset": ["ash_postgres.migrate"]
+        "ash_postgres.reset": [""]
       ]
     else
       [
