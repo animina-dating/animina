@@ -125,7 +125,6 @@ defmodule AniminaWeb.ProfilePostsLive do
             user={@user}
             delete_post_modal_text={gettext("Do you really want to delete this post?")}
             read_post_title={gettext("Read Post")}
-            subtitle={"#{gettext("By")} #{post.user.name}"}
           />
         </div>
       </div>
