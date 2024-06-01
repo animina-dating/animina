@@ -105,6 +105,7 @@ defmodule AniminaWeb.StoriesComponents do
               class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
             >
               <%= flag.emoji %> <%= flag.name %>
+
               <.get_styling_for_matching_flags
                 flag={flag}
                 current_user_green_flags={@current_user_green_flags}
@@ -276,11 +277,11 @@ defmodule AniminaWeb.StoriesComponents do
 
   def get_styling_for_matching_flags(assigns) do
     ~H"""
-    <div :if={@flag.id in @current_user_green_flags} class="pl-2">
-      <p class="w-3 h-3 bg-green-500 rounded-full" />
+    <div :if={@flag.id in (@current_user_green_flags |> Enum.map(fn x -> x.id end))} class="pl-2">
+      <p class="w-2 h-2 bg-green-500 rounded-full" />
     </div>
-    <div :if={@flag.id in @current_user_red_flags} class="pl-2">
-      <p class="w-3 h-3 bg-red-500 rounded-full" />
+    <div :if={@flag.id in (@current_user_red_flags |> Enum.map(fn x -> x.id end))} class="pl-2">
+      <p class="w-2 h-2 bg-red-500 rounded-full" />
     </div>
     """
   end

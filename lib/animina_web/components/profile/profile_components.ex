@@ -26,7 +26,11 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
 
           <div :if={@current_user && @current_user.id != @user.id} class="flex items-center gap-4">
-            <.chat_with_profile_icon current_user={@current_user} user={@user} />
+            <.chat_with_profile_icon
+              display_chat_icon={@display_chat_icon}
+              current_user={@current_user}
+              user={@user}
+            />
 
             <.like_reaction_button
               current_user_has_liked_profile?={@current_user_has_liked_profile?}
@@ -399,7 +403,7 @@ defmodule AniminaWeb.ProfileComponents do
   defp chat_with_profile_icon(assigns) do
     ~H"""
     <div>
-      <%= if @current_user do %>
+      <%= if @current_user && @display_chat_icon do %>
         <div :if={@current_user.id != @user.id} class="text-gray-300 cursor-pointer dark:text-white">
           <.link navigate={"/my/messages/#{@user.username}"}>
             <svg

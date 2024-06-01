@@ -35,16 +35,19 @@ defmodule AniminaWeb.ChatComponents do
     <div class="h-[80vh]  w-[100%] ">
       <div class="w-[100%] h-[100%] flex flex-col justify-between">
         <div class="h-[10%] w-[100%] z-50">
-          <ProfileComponents.profile_details
-            user={@receiver}
-            current_user={@sender}
-            current_user_has_liked_profile?={@current_user_has_liked_profile?}
-            profile_points={@profile_points}
-            intersecting_green_flags_count={@intersecting_green_flags_count}
-            intersecting_red_flags_count={@intersecting_red_flags_count}
-            years_text={@years_text}
-            centimeters_text={@centimeters_text}
-          />
+          <.link navigate={"/#{@receiver.username}"}>
+            <ProfileComponents.profile_details
+              user={@receiver}
+              current_user={@sender}
+              current_user_has_liked_profile?={@current_user_has_liked_profile?}
+              profile_points={@profile_points}
+              intersecting_green_flags_count={@intersecting_green_flags_count}
+              intersecting_red_flags_count={@intersecting_red_flags_count}
+              years_text={@years_text}
+              display_chat_icon={false}
+              centimeters_text={@centimeters_text}
+            />
+          </.link>
         </div>
         <div class="h-[93%] z-0  w-[100%]">
           <.messages_box messages={@messages} sender={@sender} receiver={@receiver} />

@@ -49,6 +49,13 @@ defmodule AniminaWeb.ChatLive do
         filter_flags(receiver, :white, language)
       )
 
+    IO.inspect(
+      get_intersecting_flags(
+        filter_flags(sender, :red, language),
+        filter_flags(receiver, :white, language)
+      )
+    )
+
     # we make sure that the messages are marked as read when the user visits the chat page
     update_read_at_messages(messages_between_sender_and_receiver.results, sender)
 
@@ -166,9 +173,11 @@ defmodule AniminaWeb.ChatLive do
           %{
             id: trait.flag.id,
             name: get_translation(trait.flag.flag_translations, language),
-            emoji: trait.flag.emoji
+            emoji: trait.flag.emoji,
+            position: trait.position
           }
         end)
+        |> Enum.sort_by(& &1.position)
 
       _ ->
         []
@@ -337,6 +346,12 @@ defmodule AniminaWeb.ChatLive do
     second_flag_array = Enum.map(second_flag_array, fn x -> x.id end)
 
     Enum.count(first_flag_array, &(&1 in second_flag_array))
+  end
+
+  def get_intersecting_flags(first_flag_array, second_flag_array) do
+    Enum.filter(first_flag_array, fn x ->
+      x.id in Enum.map(second_flag_array, fn x -> x.id end)
+    end)
   end
 
   defp create_message_form do
