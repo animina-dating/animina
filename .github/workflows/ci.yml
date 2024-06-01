@@ -26,10 +26,24 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.mix
+            ~/.hex
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-
+
       - name: Install dependencies
         run: |
           mix local.hex --force
@@ -48,12 +62,16 @@ jobs:
           mix ecto.create
           mix ecto.migrate
 
-      # - name: Run tests
-      #   env:
-      #     MIX_ENV: test
-      #     PGHOST: localhost
-      #     PGUSER: postgres
-      #     PGPASSWORD: postgres
-      #     PGDATABASE: animina_test
-      #   run: |
-      #     mix test']
+      - name: Run tests
+        env:
+          MIX_ENV: test
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: animina_test
+        run: |
+          mix test
+
+      - name: Run Credo
+        run: |
+          mix credo --strict
