@@ -9,11 +9,23 @@ defmodule AniminaWeb.ProfileComponents do
     <div :if={@user} class="flex items-center justify-between pb-4">
       <div class="flex-1">
         <div class="w-[100%] flex justify-between items-center">
-          <h1 class="text-2xl font-semibold dark:text-white">
+          <h1 class="md:text-2xl text-xl font-semibold dark:text-white">
             <%= @user.name %>
           </h1>
 
-          <div class="flex items-center gap-4">
+          <div
+            :if={@current_user && @current_user.id == @user.id}
+            class="flex items-center flex-shrink-0 md:hidden md:block space-x-2"
+          >
+            <.link
+              navigate="/my/stories/new"
+              class="flex justify-center rounded-md bg-indigo-600 px-2 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <%= @add_new_story_title %>
+            </.link>
+          </div>
+
+          <div :if={@current_user && @current_user.id != @user.id} class="flex items-center gap-4">
             <.chat_with_profile_icon current_user={@current_user} user={@user} />
 
             <.like_reaction_button
@@ -73,7 +85,7 @@ defmodule AniminaWeb.ProfileComponents do
 
       <div
         :if={@current_user && @current_user.id == @user.id}
-        class="flex items-center flex-shrink-0 space-x-2"
+        class="flex items-center hidden md:block flex-shrink-0 space-x-2"
       >
         <.link
           navigate="/my/stories/new"
