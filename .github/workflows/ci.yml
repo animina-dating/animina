@@ -8,7 +8,7 @@ jobs:
     name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
       matrix:
-        otp: ['27.0']
+        otp: ['26.2.5']
         elixir: ['1.16.3']
 
     services:
@@ -56,4 +56,4 @@ jobs:
       #     PGPASSWORD: postgres
       #     PGDATABASE: animina_test
       #   run: |
-      #     mix test
+      #     mix test']
