@@ -94,31 +94,30 @@ defmodule Animina.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   #
 
-  # Define the function to conditionally modify the aliases
-  defp test_aliases do
+  defp aliases do
+    # Define aliases for CI environment (skip migrations, use the CI DB cache)
     if System.get_env("CI") do
       [
-        # Define aliases for CI environment (skip migrations)
-        test: ["test"]
+        setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+        "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+        "ecto.reset": ["ecto.drop", "ecto.setup"],
+        test: ["test"],
+        "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+        "assets.build": ["tailwind default", "esbuild default"],
+        "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
+        "ash_postgres.reset": ["ash_postgres.drop", "ash_postgres.create", "ash_postgres.migrate"]
       ]
     else
       [
-        # Define aliases for local environment (include migrations)
-        test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+        setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
+        "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+        "ecto.reset": ["ecto.drop", "ecto.setup"],
+        test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+        "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
+        "assets.build": ["tailwind default", "esbuild default"],
+        "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
+        "ash_postgres.reset": ["ash_postgres.drop", "ash_postgres.create", "ash_postgres.migrate"]
       ]
     end
-  end
-
-  defp aliases do
-    [
-      setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
-      "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: &test_aliases/0,
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-      "ash_postgres.reset": ["ash_postgres.drop", "ash_postgres.create", "ash_postgres.migrate"]
-    ]
   end
 end
