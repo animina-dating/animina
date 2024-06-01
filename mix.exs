@@ -99,11 +99,11 @@ defmodule Animina.MixProject do
         setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
         "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
         "ecto.reset": ["ecto.drop", "ecto.setup"],
-        test: ["test"],
+        test: ["ecto.migrate --quiet", "test"],
         "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
         "assets.build": ["tailwind default", "esbuild default"],
         "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
-        "ash_postgres.reset": []
+        "ash_postgres.reset": ["ash_postgres.migrate"]
       ]
     else
       [
