@@ -11,4 +11,4 @@ else
   Mix.Task.run("run", ["priv/repo/seeds.exs"])
 end
 
-Ecto.Adapters.SQL.Sandbox.mode(YourApp.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(Animina.Repo, :manual)
