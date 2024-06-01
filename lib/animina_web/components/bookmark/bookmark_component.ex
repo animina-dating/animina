@@ -64,7 +64,7 @@ defmodule AniminaWeb.BookmarkComponent do
         language={@language}
         reason={@reason}
         current_user={@current_user}
-        delete_bookmark_modal_text={gettext("Are you sure?")}
+        delete_bookmark_modal_text={gettext("Do you really want to delete this bookmark?")}
         intersecting_green_flags_count={
           get_intersecting_flags_count(
             filter_flags(@current_user.id, :green, @language),

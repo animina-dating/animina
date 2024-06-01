@@ -32,6 +32,8 @@ defmodule AniminaWeb.Router do
       live "/my/profile-photo", ProfilePhotoLive, :index
       live "/my/stories/new", StoryLive, :new
       live "/my/stories/:id/edit", StoryLive, :edit
+      live "/my/posts/new", PostLive, :new
+      live "/my/posts/:id/edit", PostLive, :edit
       live "/my/flags/white", FlagsLive, :white
       live "/my/flags/green", FlagsLive, :green
       live "/my/flags/red", FlagsLive, :red
@@ -45,10 +47,15 @@ defmodule AniminaWeb.Router do
     end
 
     ash_authentication_live_session :user_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
       live "/", RootLive, :register
+    end
+
+    ash_authentication_live_session :user_optional_home,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
       live "/:username", ProfileLive
       live "/my/profile", ProfileLive
+      live "/:username/:year/:month/:day/:slug", PostViewLive
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in

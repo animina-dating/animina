@@ -97,7 +97,7 @@ defmodule AniminaWeb.BookmarksListLive do
         %{event: "destroy", payload: %{data: %Accounts.Bookmark{} = bookmark}},
         socket
       ) do
-    {:noreply, delete_bookmark_by_dom_id(socket, "bookmark_" <> bookmark.id)}
+    {:noreply, delete_bookmark_by_dom_id(socket, "bookmark-" <> bookmark.id)}
   end
 
   @impl true

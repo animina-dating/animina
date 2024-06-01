@@ -442,7 +442,10 @@ defmodule AniminaWeb.StoryLive do
         <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %>
 
         <div>
-          <label for="story_headline" class="block text-sm font-medium leading-6 text-gray-900">
+          <label
+            for="story_headline"
+            class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+          >
             <%= gettext("Headline") %>
           </label>
 
