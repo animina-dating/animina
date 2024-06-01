@@ -93,12 +93,28 @@ defmodule Animina.MixProject do
   #
   # See the documentation for `Mix` for more info on aliases.
   #
+
+  # Define the function to conditionally modify the aliases
+  defp test_aliases do
+    if System.get_env("CI") do
+      [
+        # Define aliases for CI environment (skip migrations)
+        test: ["test"]
+      ]
+    else
+      [
+        # Define aliases for local environment (include migrations)
+        test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      ]
+    end
+  end
+
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      test: test_aliases(),
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"],
