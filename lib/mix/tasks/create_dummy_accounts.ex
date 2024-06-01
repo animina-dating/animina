@@ -20,7 +20,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     def run(args) do
       Mix.Task.run("app.start", [])
 
-      (List.first(args) || "100")
+      (List.first(args) || "5")
       |> String.to_integer()
       |> generate_users()
 
@@ -28,18 +28,15 @@ if Enum.member?([:dev, :test], Mix.env()) do
       |> print_table()
     end
 
-    def generate_users(0) do
-    end
-
-    def generate_users(counter) do
+    def generate_users(counter) when is_integer(counter) and counter > 0 do
       about_me_headline = get_about_me_headline()
 
-      1..counter
-      |> Enum.each(fn _ ->
+      Stream.cycle(["male", "female"])
+      |> Enum.take(counter)
+      |> Enum.each(fn gender ->
         height = Enum.take_random(Enum.to_list(160..190), 1) |> hd
         birthday = Faker.Date.date_of_birth(18..60)
         age = (Date.diff(Date.utc_today(), birthday) / 365) |> round
-        gender = Enum.take_random(["male", "female"], 1) |> hd
         photo = random_photo_url(gender) |> download_photo("#{Faker.UUID.v4()}.png")
 
         first_name =
@@ -110,20 +107,23 @@ if Enum.member?([:dev, :test], Mix.env()) do
       end)
     end
 
+    def generate_users(_) do
+    end
+
     def print_table(users) do
-      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
-      IO.puts("| Name                  | Gender | Username        | ZipCode | Age |")
-      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
+      IO.puts("|-----------------------|--------|---------------------------------------|")
+      IO.puts("| Name                  | Gender | Profile URL                           |")
+      IO.puts("|-----------------------|--------|---------------------------------------|")
 
       Enum.each(users, fn user ->
         username = "#{user.username}"
 
         IO.puts(
-          "| #{user.name |> String.pad_trailing(21)} | #{user.gender |> String.pad_trailing(6)} | #{String.pad_trailing(username, 15)} | #{String.pad_trailing(user.zip_code, 7)} | #{user.age |> Integer.to_string() |> String.pad_trailing(3)} |"
+          "| #{user.name |> String.pad_trailing(21)} | #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 15)} |"
         )
       end)
 
-      IO.puts("|-----------------------|--------|-----------------|---------|-----|")
+      IO.puts("|-----------------------|--------|---------------------------------------|")
 
       IO.puts("")
       IO.puts("The default password for these dummy accounts is 'test'.\n")
