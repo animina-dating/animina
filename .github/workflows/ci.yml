@@ -10,6 +10,7 @@ on:
       - '**/mix.lock'
       - 'priv/repo/migrations/**/*'
       - 'priv/repo/seeds.exs'
+      - '.github/workflows/*'
 
 jobs:
   test:
