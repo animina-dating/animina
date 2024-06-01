@@ -49,6 +49,20 @@ defmodule AniminaWeb.ChatLive do
         filter_flags(receiver, :white, language)
       )
 
+    intersecting_red_flags =
+      get_intersecting_flags(
+        filter_flags(sender, :red, language),
+        filter_flags(receiver, :white, language)
+      )
+      |> Enum.take(5)
+
+    intersecting_green_flags =
+      get_intersecting_flags(
+        filter_flags(sender, :green, language),
+        filter_flags(receiver, :white, language)
+      )
+      |> Enum.take(5)
+
     # we make sure that the messages are marked as read when the user visits the chat page
     update_read_at_messages(messages_between_sender_and_receiver.results, sender)
 
@@ -63,6 +77,8 @@ defmodule AniminaWeb.ChatLive do
       |> assign(profile_points: Points.humanized_points(receiver.credit_points))
       |> assign(:intersecting_green_flags_count, intersecting_green_flags_count)
       |> assign(:intersecting_red_flags_count, intersecting_red_flags_count)
+      |> assign(:intersecting_green_flags, intersecting_green_flags)
+      |> assign(:intersecting_red_flags, intersecting_red_flags)
       |> assign(:number_of_unread_messages, 0)
       |> assign(form: create_message_form())
       |> assign(
@@ -166,9 +182,11 @@ defmodule AniminaWeb.ChatLive do
           %{
             id: trait.flag.id,
             name: get_translation(trait.flag.flag_translations, language),
-            emoji: trait.flag.emoji
+            emoji: trait.flag.emoji,
+            position: trait.position
           }
         end)
+        |> Enum.sort_by(& &1.position)
 
       _ ->
         []
@@ -257,11 +275,29 @@ defmodule AniminaWeb.ChatLive do
           filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
         )
 
+      intersecting_red_flags =
+        get_intersecting_flags(
+          filter_flags(user_flag_user, :red, socket.assigns.language),
+          filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+        )
+        |> Enum.take(5)
+
+      intersecting_green_flags =
+        get_intersecting_flags(
+          filter_flags(user_flag_user, :green, socket.assigns.language),
+          filter_flags(socket.assigns.receiver, :white, socket.assigns.language)
+        )
+        |> Enum.take(5)
+
       {:noreply,
        socket
        |> assign(
          intersecting_green_flags_count: intersecting_green_flags_count,
          intersecting_red_flags_count: intersecting_red_flags_count
+       )
+       |> assign(
+         intersecting_green_flags: intersecting_green_flags,
+         intersecting_red_flags: intersecting_red_flags
        )}
     else
       intersecting_green_flags_count =
@@ -276,11 +312,29 @@ defmodule AniminaWeb.ChatLive do
           filter_flags(user_flag_user, :white, socket.assigns.language)
         )
 
+      intersecting_red_flags =
+        get_intersecting_flags(
+          filter_flags(socket.assigns.sender, :red, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+        |> Enum.take(5)
+
+      intersecting_green_flags =
+        get_intersecting_flags(
+          filter_flags(socket.assigns.sender, :green, socket.assigns.language),
+          filter_flags(user_flag_user, :white, socket.assigns.language)
+        )
+        |> Enum.take(5)
+
       {:noreply,
        socket
        |> assign(
          intersecting_green_flags_count: intersecting_green_flags_count,
          intersecting_red_flags_count: intersecting_red_flags_count
+       )
+       |> assign(
+         intersecting_green_flags: intersecting_green_flags,
+         intersecting_red_flags: intersecting_red_flags
        )}
     end
   end
@@ -339,6 +393,12 @@ defmodule AniminaWeb.ChatLive do
     Enum.count(first_flag_array, &(&1 in second_flag_array))
   end
 
+  def get_intersecting_flags(first_flag_array, second_flag_array) do
+    Enum.filter(first_flag_array, fn x ->
+      x.id in Enum.map(second_flag_array, fn x -> x.id end)
+    end)
+  end
+
   defp create_message_form do
     Form.for_create(Message, :create,
       api: Accounts,
@@ -360,6 +420,8 @@ defmodule AniminaWeb.ChatLive do
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
+        intersecting_green_flags={@intersecting_green_flags}
+        intersecting_red_flags={@intersecting_red_flags}
         years_text={gettext("years")}
         centimeters_text={gettext("cm")}
       />

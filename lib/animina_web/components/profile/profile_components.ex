@@ -9,9 +9,14 @@ defmodule AniminaWeb.ProfileComponents do
     <div :if={@user} class="flex items-center justify-between pb-4">
       <div class="flex-1">
         <div class="w-[100%] flex justify-between items-center">
-          <h1 class="md:text-2xl text-xl font-semibold dark:text-white">
-            <%= @user.name %>
-          </h1>
+          <div class="flex items-center gap-2">
+            <div :if={@display_profile_image_next_to_name}>
+              <.receiver_user_image user={@user} current_user={@current_user} />
+            </div>
+            <h1 class="md:text-2xl text-xl font-semibold dark:text-white">
+              <%= @user.name %>
+            </h1>
+          </div>
 
           <div
             :if={@current_user && @current_user.id == @user.id}
@@ -26,7 +31,11 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
 
           <div :if={@current_user && @current_user.id != @user.id} class="flex items-center gap-4">
-            <.chat_with_profile_icon current_user={@current_user} user={@user} />
+            <.chat_with_profile_icon
+              display_chat_icon={@display_chat_icon}
+              current_user={@current_user}
+              user={@user}
+            />
 
             <.like_reaction_button
               current_user_has_liked_profile?={@current_user_has_liked_profile?}
@@ -66,7 +75,7 @@ defmodule AniminaWeb.ProfileComponents do
             <%= @current_user_credit_points %>
           </span>
 
-          <span :if={@current_user != @user}>
+          <span :if={@current_user != @user && @show_intersecting_flags_count}>
             <span
               :if={@intersecting_green_flags_count != 0}
               class="inline-flex items-center gap-2 px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
@@ -96,6 +105,77 @@ defmodule AniminaWeb.ProfileComponents do
       </div>
     </div>
     """
+  end
+
+  def receiver_user_image(assigns) do
+    ~H"""
+    <%= if @user &&  @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
+      <div class="relative">
+        <img
+          class="object-cover w-8 h-8 rounded-full"
+          src={"/uploads/#{@user.profile_photo.filename}"}
+        />
+
+        <p
+          :if={@user.profile_photo.state == :nsfw}
+          class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+        >
+          nsfw
+        </p>
+      </div>
+    <% else %>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 dark:text-white text-black"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+        />
+      </svg>
+    <% end %>
+    """
+  end
+
+  def display_image(:nsfw, current_user, receiver) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:pending_review, _, _) do
+    true
+  end
+
+  def display_image(:approved, _, _) do
+    true
+  end
+
+  def display_image(:in_review, _, _) do
+    true
+  end
+
+  def display_image(_, _, _) do
+    false
+  end
+
+  def admin_user?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
+    end
   end
 
   def profile_location_card(assigns) do
@@ -399,7 +479,7 @@ defmodule AniminaWeb.ProfileComponents do
   defp chat_with_profile_icon(assigns) do
     ~H"""
     <div>
-      <%= if @current_user do %>
+      <%= if @current_user && @display_chat_icon do %>
         <div :if={@current_user.id != @user.id} class="text-gray-300 cursor-pointer dark:text-white">
           <.link navigate={"/my/messages/#{@user.username}"}>
             <svg
