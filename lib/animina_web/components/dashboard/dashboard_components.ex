@@ -9,22 +9,20 @@ defmodule AniminaWeb.DashboardComponents do
   import Phoenix.HTML.Form
 
   attr :title, :string, required: true
-  attr :subtitle, :string, default: ""
+  attr :subtitle, :string, default: nil
   slot :inner_block
 
   def dashboard_card_component(assigns) do
     ~H"""
-    <div class="overflow-hidden bg-white shadow sm:rounded-lg">
-      <div class="px-4 py-6 sm:px-6">
+    <div class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow">
+      <div class="px-4 py-5 sm:px-6 bg-gray-50">
         <h3 class="text-base font-semibold leading-7 text-gray-900"><%= @title %></h3>
         <p :if={@subtitle} class="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
           <%= @subtitle %>
         </p>
       </div>
-      <div class="border-t border-gray-100">
-        <div class="px-4 py-6 sm:px-6">
-          <%= render_slot(@inner_block) %>
-        </div>
+      <div class="px-4 py-5 sm:p-6">
+        <%= render_slot(@inner_block) %>
       </div>
     </div>
     """
@@ -35,26 +33,42 @@ defmodule AniminaWeb.DashboardComponents do
     <.dashboard_card_component title={@title}>
       <div class="flex flex-col gap-3">
         <div class="flex flex-col gap-1 text-black dark:text-white">
-          <p>
-            <%= gettext("You have received a total of") %> <%= @total_likes_received_by_user %> <%= gettext(
-              "likes"
-            ) %>
-          </p>
-
-          <p :if={@likes_received_by_user_in_seven_days > 0} class="italic">
-            <%= @likes_received_by_user_in_seven_days %> <%= gettext("in the last 7 days.") %>
-          </p>
-        </div>
-
-        <div class="flex flex-col gap-1 text-black dark:text-white">
-          <p>
-            <%= gettext("You liked") %>
-            <.link navigate="/my/bookmarks/liked" class="text-blue-500">
-              <%= @profiles_liked_by_user %>
-              <span :if={@profiles_liked_by_user == 1}><%= gettext("profile") %></span>
-              <span :if={@profiles_liked_by_user != 1}><%= gettext("profiles") %></span>
-            </.link>
-          </p>
+          <div class="overflow-hidden border-b border-gray-200 rounded shadow">
+            <table class="min-w-full text-left bg-white table-auto ">
+              <thead>
+                <tr class="text-white bg-gray-800">
+                  <th class="px-4 py-3"><%= gettext("Type") %></th>
+                  <th class="px-4 py-3"><%= gettext("Period of Time") %></th>
+                  <th class="px-4 py-3"><%= gettext("Count") %></th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-700">
+                <tr>
+                  <td class="px-4 py-3"><%= gettext("Received") %></td>
+                  <td class="px-4 py-3"><%= gettext("Last 7 days") %></td>
+                  <td class="px-4 py-3"><%= @likes_received_by_user_in_seven_days %></td>
+                </tr>
+                <tr class="bg-gray-100">
+                  <td class="px-4 py-3"><%= gettext("Received") %></td>
+                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3"><%= @total_likes_received_by_user %></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3">
+                    <.link navigate="/my/bookmarks/liked" class="text-blue-500">
+                      <%= gettext("Given") %>
+                    </.link>
+                  </td>
+                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3">
+                    <.link navigate="/my/bookmarks/liked" class="text-blue-500">
+                      <%= @profiles_liked_by_user %>
+                    </.link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </.dashboard_card_component>
