@@ -7,6 +7,10 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
+  alias Animina.Accounts.User
+
+  require Ash.Query
+  require Ash.Sort
 
   @impl true
   def mount(_params, %{"language" => language}, socket) do
@@ -225,8 +229,61 @@ defmodule AniminaWeb.DashboardLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
-      <div class="grid md:grid-cols-2 grid-cols-1 gap-6 ">
+    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="max-w-2xl mx-auto lg:mx-0">
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <%= gettext("Members you might be interested in") |> raw() %>
+        </h2>
+        <p class="mt-6 text-lg leading-8 text-gray-600">
+          <%= gettext("Here are other animima members who match your potential partner settings.")
+          |> raw() %>
+        </p>
+      </div>
+      <ul
+        role="list"
+        class="grid max-w-2xl grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-4"
+      >
+        <%= for potential_partner <- potential_partners(@current_user) do %>
+          <li>
+            <.link
+              navigate={~p"/#{potential_partner.username}"}
+              class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+            >
+              <img
+                class="aspect-[1/1] w-full rounded-2xl object-cover"
+                src={"/uploads/#{potential_partner.profile_photo.filename}"}
+                alt={
+                  gettext("Image of %{name}.",
+                    name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()
+                  )
+                  |> raw()
+                }
+              />
+
+              <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">
+                <%= potential_partner.name %>
+              </h3>
+            </.link>
+
+            <p class="text-base leading-7 text-gray-600">
+              Lorepsum Ipsum. This should be the first 200 characters of the "about me" story. ...
+            </p>
+            <div class="pt-2">
+              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                <%= potential_partner.age %> <%= gettext("years") |> raw() %>
+              </span>
+              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                <%= potential_partner.height %> <%= gettext("cm") |> raw() %>
+              </span>
+              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                📍 <%= potential_partner.city.name %>
+              </span>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+
+      <div class="grid grid-cols-1 gap-6 mt-10 md:grid-cols-2">
         <.dashboard_card_like_component
           title={gettext("Likes")}
           likes_received_by_user_in_seven_days={@likes_received_by_user_in_seven_days}
@@ -252,5 +309,13 @@ defmodule AniminaWeb.DashboardLive do
       </div>
     </div>
     """
+  end
+
+  def potential_partners(_current_user) do
+    User
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+    |> Ash.Query.limit(4)
+    |> Accounts.read!()
   end
 end
