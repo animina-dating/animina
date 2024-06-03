@@ -144,7 +144,7 @@ defmodule AniminaWeb.DashboardComponents do
         <.sender_user_image user={@sender} current_user={@receiver} />
         <div class="justify-start w-[100%] flex items-start flex-col">
           <p class="text-xs dark:text-white">
-            <%= @sender.username %>
+            <%= @sender.name %>
           </p>
           <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
             <p>
@@ -274,12 +274,12 @@ defmodule AniminaWeb.DashboardComponents do
         phx-submit="submit"
         class="w-[100%] flex justify-between items-end"
       >
-        <div phx-feedback-for={f[:content].name} class="md:w-[90%] w-[87%]">
+        <div phx-feedback-for={f[:content].name} class="w-[85%] ">
           <%= textarea(
             f,
             :content,
             class:
-              "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              "block w-full h-[50px] rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                 unless(get_field_errors(f[:content], :content) == [],
                   do: "ring-red-600 focus:ring-red-600",
                   else: "ring-gray-300 focus:ring-indigo-600"
@@ -288,7 +288,6 @@ defmodule AniminaWeb.DashboardComponents do
             value: f[:content].value,
             type: :text,
             required: true,
-            rows: 2,
             autocomplete: :content,
             "phx-debounce": "200"
           ) %>
@@ -297,10 +296,10 @@ defmodule AniminaWeb.DashboardComponents do
           <%= hidden_input(f, :receiver_id, value: @receiver.id) %>
         </div>
 
-        <div class="md:w-[8%] w-[8%] flex justify-center items-center">
+        <div class="h-[50px] w-[10%] flex justify-center items-center">
           <%= submit(
           class:
-            "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+            "flex w-full justify-center rounded-md bg-indigo-600 h-[100%] items-center dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
               unless(@form.source.valid? == false,
                 do: "",
                 else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"

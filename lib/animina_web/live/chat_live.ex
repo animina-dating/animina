@@ -84,7 +84,7 @@ defmodule AniminaWeb.ChatLive do
       |> assign(
         current_user_has_liked_profile?: current_user_has_liked_profile(sender.id, receiver.id)
       )
-      |> assign(page_title: "#{sender.username} <-> #{receiver.username} (animina chat)")
+      |> assign(page_title: "Chat: #{sender.username} <-> #{receiver.username}")
 
     if receiver == nil or sender == nil do
       {:ok,
@@ -212,9 +212,9 @@ defmodule AniminaWeb.ChatLive do
   defp get_page_title(message, sender, receiver) do
     # if I am the one who has received the new message it should add the chat icon
     if message.receiver_id == sender.id do
-      "💬 #{sender.username} <-> #{receiver.username} (animina chat)"
+      "Chat: 💬 #{sender.username} <-> #{receiver.username}"
     else
-      "#{sender.username} <-> #{receiver.username} (animina chat)"
+      "Chat#{sender.username} <-> #{receiver.username}"
     end
   end
 
@@ -438,7 +438,7 @@ defmodule AniminaWeb.ChatLive do
               f,
               :content,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full h-[60px] rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
@@ -447,7 +447,6 @@ defmodule AniminaWeb.ChatLive do
               value: f[:content].value,
               type: :text,
               required: true,
-              rows: 2,
               autocomplete: :content,
               "phx-debounce": "200"
             ) %>
@@ -456,10 +455,10 @@ defmodule AniminaWeb.ChatLive do
             <%= hidden_input(f, :receiver_id, value: @receiver.id) %>
           </div>
 
-          <div class="md:w-[5%] w-[8%] flex justify-center items-center">
+          <div class="md:w-[5%] w-[8%] h-[60px] flex justify-center items-center">
             <%= submit(
             class:
-              "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+              "flex w-full justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@form.source.valid? == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
