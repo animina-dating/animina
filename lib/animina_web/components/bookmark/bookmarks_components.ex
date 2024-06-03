@@ -3,6 +3,7 @@ defmodule AniminaWeb.BookmarksComponents do
   Provides Bookmark UI components.
   """
   use Phoenix.Component
+  import AniminaWeb.Gettext
 
   attr :bookmark, :any, required: true
   attr :dom_id, :any, required: false
@@ -29,19 +30,11 @@ defmodule AniminaWeb.BookmarksComponents do
               />
 
               <p
-                :if={@bookmark.user.profile_photo.state == :nsfw}
-                class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+                :if={@current_user && admin_user?(@current_user)}
+                class={"p-1 text-[10px] #{get_photo_state_styling(@bookmark.user.profile_photo.state)} absolute top-2 left-2 rounded-md "}
               >
-                NSFW
+                <%= get_photo_state_name(@bookmark.user.profile_photo.state) %>
               </p>
-            </div>
-
-            <div
-              :if={
-                !display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark) == false
-              }
-              class="bg-gray-200 dark:bg-gray-800 h-24 w-24 rounded-lg  flex items-center justify-center"
-            >
             </div>
           </div>
 
@@ -90,6 +83,50 @@ defmodule AniminaWeb.BookmarksComponents do
       </.link>
     </div>
     """
+  end
+
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
   end
 
   def display_image(:pending_review, nil, _) do

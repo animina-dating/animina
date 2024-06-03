@@ -117,10 +117,13 @@ defmodule AniminaWeb.ProfileComponents do
         />
 
         <p
-          :if={@user.profile_photo.state == :nsfw}
+          :if={
+            @user && @user.profile_photo && @current_user && @user.profile_photo.state != :approved &&
+              (admin_user?(@current_user) || @user.id == @current_user.id)
+          }
           class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
         >
-          nsfw
+          <%= @user.profile_photo.state %>
         </p>
       </div>
     <% else %>

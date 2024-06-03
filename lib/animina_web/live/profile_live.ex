@@ -10,6 +10,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits.UserFlags
@@ -413,7 +414,7 @@ defmodule AniminaWeb.ProfileLive do
         %{event: "create", payload: %{data: %UserFlags{} = user_flag}},
         socket
       ) do
-    user_flag_user = BasicUser.by_id!(user_flag.user_id)
+    user_flag_user = User.by_id!(user_flag.user_id)
 
     if user_flag.user_id == socket.assigns.current_user.id do
       intersecting_green_flags_count =
