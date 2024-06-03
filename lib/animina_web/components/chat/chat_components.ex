@@ -266,20 +266,6 @@ defmodule AniminaWeb.ChatComponents do
     gettext("Error")
   end
 
-
-
-  def display_image(:pending_review, _, _) do
-    true
-  end
-
-  def display_image(:approved, _, _) do
-    true
-  end
-
-  def display_image(:in_review, _, _) do
-    true
-  end
-
   def display_image(:nsfw, current_user, receiver) do
     if current_user.id == receiver.id || admin_user?(current_user) do
       true
@@ -294,6 +280,18 @@ defmodule AniminaWeb.ChatComponents do
     else
       false
     end
+  end
+
+  def display_image(:pending_review, _, _) do
+    true
+  end
+
+  def display_image(:approved, _, _) do
+    true
+  end
+
+  def display_image(:in_review, _, _) do
+    true
   end
 
   def display_image(_, _, _) do

@@ -116,7 +116,6 @@ defmodule AniminaWeb.ProfileComponents do
           class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@user.profile_photo.filename}"}
         />
-
         <p
           :if={
             @user && @user.profile_photo && @user.profile_photo.state != :approved &&
@@ -146,8 +145,6 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-
-
   def display_image(:pending_review, _, _) do
     true
   end
@@ -158,6 +155,14 @@ defmodule AniminaWeb.ProfileComponents do
 
   def display_image(:in_review, _, _) do
     true
+  end
+
+  def display_image(:nsfw, nil, _) do
+    false
+  end
+
+  def display_image(:error, nil, _) do
+    false
   end
 
   def display_image(:nsfw, current_user, receiver) do

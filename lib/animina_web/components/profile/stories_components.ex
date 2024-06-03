@@ -60,6 +60,7 @@ defmodule AniminaWeb.StoriesComponents do
               class="object-cover rounded-lg aspect-square"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
+
             <p
               :if={
                 @current_user && @story.photo.state != :approved &&
@@ -143,11 +144,23 @@ defmodule AniminaWeb.StoriesComponents do
     true
   end
 
-  def display_image(_, nil, _) do
+  def display_image(:error, nil, _) do
+    false
+  end
+
+  def display_image(:nsfw, nil, _) do
     false
   end
 
   def display_image(:nsfw, current_user, story) do
+    if story.user_id == current_user.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, story) do
     if story.user_id == current_user.id || admin_user?(current_user) do
       true
     else

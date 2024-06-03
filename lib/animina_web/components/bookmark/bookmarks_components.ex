@@ -28,7 +28,6 @@ defmodule AniminaWeb.BookmarksComponents do
                 class="object-cover rounded-lg aspect-square h-24 w-24"
                 src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
               />
-
               <p
                 :if={
                   @current_user && @bookmark.user.profile_photo.state != :approved &&
@@ -132,8 +131,6 @@ defmodule AniminaWeb.BookmarksComponents do
     gettext("Error")
   end
 
-
-
   def display_image(:pending_review, nil, _) do
     true
   end
@@ -146,28 +143,29 @@ defmodule AniminaWeb.BookmarksComponents do
     true
   end
 
-  def display_image(_, nil, _) do
+  def display_image(:error, nil, _) do
+    false
+  end
+
+  def display_image(:nsfw, nil, _) do
     false
   end
 
   def display_image(:nsfw, current_user, bookmark) do
-    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
+    if bookmark.owner_id == current_user.id && admin_user?(current_user) do
       true
     else
       false
     end
   end
-
 
   def display_image(:error, current_user, bookmark) do
-    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
+    if bookmark.owner_id == current_user.id && admin_user?(current_user) do
       true
     else
       false
     end
   end
-
-
 
   def display_image(_, _, _) do
     false
