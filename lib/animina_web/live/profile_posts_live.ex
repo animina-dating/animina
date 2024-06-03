@@ -97,13 +97,8 @@ defmodule AniminaWeb.ProfilePostsLive do
   def render(assigns) do
     ~H"""
     <div class="py-8 space-y-8">
-      <div class="flex justify-between w-[100%]">
-        <div>
-          <h1 class="text-2xl font-semibold dark:text-white">
-            <%= gettext("My Posts") %>
-          </h1>
-        </div>
-        <div>
+      <div class="flex  justify-end w-[100%]">
+        <div :if={@current_user && @current_user.id == @user.id}>
           <.link
             navigate="/my/posts/new"
             class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -113,6 +108,12 @@ defmodule AniminaWeb.ProfilePostsLive do
         </div>
       </div>
       <%= if @streams.posts.inserts != [] do %>
+        <div>
+          <h1 class="text-2xl font-semibold dark:text-white">
+            <%= gettext("My Posts") %>
+          </h1>
+        </div>
+
         <div
           class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
           id="stream_posts"
@@ -129,22 +130,6 @@ defmodule AniminaWeb.ProfilePostsLive do
               subtitle={"#{gettext("By")} #{post.user.name}"}
             />
           </div>
-        </div>
-      <% else %>
-        <div class="w-[100%] h-[10vh] flex gap-4 justify-center dark:text-white items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="25"
-            height="24"
-            viewBox="0 0 24 25"
-            style="fill: currentColor;"
-          >
-            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-          </svg>
-
-          <p class="text-lg ">
-            <%= gettext("No Posts Added") %>
-          </p>
         </div>
       <% end %>
     </div>
