@@ -41,7 +41,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
       |> assign(stories_and_flags: AsyncResult.loading())
       |> assign(language: language)
       |> assign(current_user: current_user)
-      |> assign(user: Accounts.BasicUser.by_id!(user_id))
+      |> assign(user: Accounts.User.by_id!(user_id))
       |> assign(current_user_green_flags: current_user_green_flags)
       |> assign(current_user_red_flags: current_user_red_flags)
       |> stream(:stories_and_flags, fetch_stories_and_flags(user_id, language))

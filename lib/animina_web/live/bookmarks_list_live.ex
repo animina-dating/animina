@@ -19,7 +19,7 @@ defmodule AniminaWeb.BookmarksListLive do
           _session,
         socket
       ) do
-    current_user = Accounts.BasicUser.by_id!(current_user_id)
+    current_user = Accounts.User.by_id!(current_user_id)
 
     socket =
       socket

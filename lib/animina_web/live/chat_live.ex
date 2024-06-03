@@ -2,10 +2,10 @@ defmodule AniminaWeb.ChatLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -260,7 +260,7 @@ defmodule AniminaWeb.ChatLive do
         %{event: "create", payload: %{data: %UserFlags{} = user_flag}},
         socket
       ) do
-    user_flag_user = BasicUser.by_id!(user_flag.user_id)
+    user_flag_user = User.by_id!(user_flag.user_id)
 
     if user_flag.user_id == socket.assigns.current_user.id do
       intersecting_green_flags_count =

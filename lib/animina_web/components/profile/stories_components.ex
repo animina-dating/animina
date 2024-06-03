@@ -4,6 +4,7 @@ defmodule AniminaWeb.StoriesComponents do
   """
   use Phoenix.Component
   alias Animina.Markdown
+  import AniminaWeb.Gettext
 
   attr :stories_and_flags, :list, required: true
   attr :current_user, :any, required: true
@@ -59,11 +60,15 @@ defmodule AniminaWeb.StoriesComponents do
               class="object-cover rounded-lg aspect-square"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
+
             <p
-              :if={@story.photo.state == :nsfw}
-              class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+              :if={
+                @current_user && @story.photo.state != :approved &&
+                  (@story.user_id == @current_user.id || admin_user?(@current_user))
+              }
+              class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
             >
-              NSFW
+              <%= get_photo_state_name(@story.photo.state) %>
             </p>
           </div>
         <% else %>
@@ -75,15 +80,18 @@ defmodule AniminaWeb.StoriesComponents do
             class="relative"
           >
             <img
-              class="object-cover rounded-lg"
+              class="object-cover rounded-lg relative"
               src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
             />
 
             <p
-              :if={@story.photo.state == :nsfw}
-              class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+              :if={
+                @current_user && @story.photo.state != :approved &&
+                  (@story.user_id == @current_user.id || admin_user?(@current_user))
+              }
+              class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
             >
-              NSFW
+              <%= get_photo_state_name(@story.photo.state) %>
             </p>
           </div>
         <% end %>
@@ -124,23 +132,35 @@ defmodule AniminaWeb.StoriesComponents do
     Enum.all?(array, fn x -> is_map(x) && Map.values(x) == [] end)
   end
 
-  def display_image(:pending_review, nil, _) do
+  def display_image(:pending_review, _, _) do
     true
   end
 
-  def display_image(:approved, nil, _) do
+  def display_image(:approved, _, _) do
     true
   end
 
-  def display_image(:in_review, nil, _) do
+  def display_image(:in_review, _, _) do
     true
   end
 
-  def display_image(_, nil, _) do
+  def display_image(:error, nil, _) do
+    false
+  end
+
+  def display_image(:nsfw, nil, _) do
     false
   end
 
   def display_image(:nsfw, current_user, story) do
+    if story.user_id == current_user.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, story) do
     if story.user_id == current_user.id || admin_user?(current_user) do
       true
     else
@@ -162,6 +182,50 @@ defmodule AniminaWeb.StoriesComponents do
         |> Enum.map(fn x -> x.name end)
         |> Enum.any?(fn x -> x == :admin end)
     end
+  end
+
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
   end
 
   attr :story, :any, required: true
