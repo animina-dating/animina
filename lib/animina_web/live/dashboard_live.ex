@@ -311,11 +311,23 @@ defmodule AniminaWeb.DashboardLive do
     """
   end
 
-  def potential_partners(_current_user) do
-    User
-    |> Ash.Query.for_read(:read)
-    |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
-    |> Ash.Query.limit(4)
-    |> Accounts.read!()
+  def potential_partners(current_user) do
+    case current_user.gender do
+      "male" ->
+        User
+        |> Ash.Query.for_read(:read)
+        |> Ash.Query.filter(gender == "female")
+        |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+        |> Ash.Query.limit(4)
+        |> Accounts.read!()
+
+      _ ->
+        User
+        |> Ash.Query.for_read(:read)
+        |> Ash.Query.filter(gender == "male")
+        |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+        |> Ash.Query.limit(4)
+        |> Accounts.read!()
+    end
   end
 end
