@@ -7,6 +7,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     use Mix.Task
     alias Animina.Accounts.BasicUser
     alias Animina.Accounts.Photo
+    alias Animina.Accounts.Role
     alias Animina.Accounts.UserRole
     alias Animina.Narratives
     alias Animina.Narratives.Headline
@@ -294,7 +295,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
           search_range: hd(Enum.take_random([5, 10, 20, 50], 1))
         })
 
-      user_role = Animina.Accounts.Role.by_name!(:user)
+      user_role = Role.by_name!(:user)
 
       UserRole.create(%{
         user_id: user.id,
