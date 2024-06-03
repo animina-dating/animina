@@ -5,7 +5,7 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-20.04
-    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    name: OTP ${{ matrix.otp }} / Elixir ${{ matrix.elixir }}
     strategy:
       matrix:
         otp: ['26.2.5']
@@ -13,24 +13,19 @@ jobs:
 
     services:
       db:
-        image: postgres:13
+        image: postgres:13-alpine
         env:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: animina_test
         ports: ["5432:5432"]
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache dependencies
         uses: actions/cache@v3
@@ -51,9 +46,28 @@ jobs:
           mix deps.get
           mix compile
 
-      - name: Create and migrate database
+      - name: Restore database from cache
+        id: restore-db
+        uses: actions/cache@v3
+        with:
+          path: db_dump.sql
+          key: ${{ runner.os }}-db-${{ hashFiles('priv/repo/migrations/**/*', 'priv/repo/seeds.exs') }}
+          restore-keys: |
+            ${{ runner.os }}-db-
+
+      - name: Restore database from dump
+        if: steps.restore-db.outputs.cache-hit == 'true'
         env:
-          MIX_ENV: test
+          PGHOST: localhost
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: animina_test
+        run: |
+          pg_restore -U postgres -d animina_test db_dump.sql
+
+      - name: Setup and dump database if no cache
+        if: steps.restore-db.outputs.cache-hit != 'true'
+        env:
           PGHOST: localhost
           PGUSER: postgres
           PGPASSWORD: postgres
@@ -61,6 +75,15 @@ jobs:
         run: |
           mix ecto.create
           mix ecto.migrate
+          mix run priv/repo/seeds.exs
+          pg_dump -Fc -f db_dump.sql -U postgres animina_test
+
+      - name: Cache database dump
+        if: steps.restore-db.outputs.cache-hit != 'true'
+        uses: actions/cache@v3
+        with:
+          path: db_dump.sql
+          key: ${{ runner.os }}-db-${{ hashFiles('priv/repo/migrations/**/*', 'priv/repo/seeds.exs') }}
 
       - name: Run tests
         env:
@@ -69,9 +92,9 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
-        run: |
-          mix test
+          CI: true  # Set a CI environment variable
+          DISABLE_ML_FEATURES: true  # Disable ML features
+        run: mix test
 
       - name: Run Credo
-        run: |
-          mix credo --strict
+        run: mix credo --strict

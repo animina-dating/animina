@@ -13,20 +13,23 @@ defmodule AniminaWeb.PostsComponents do
   attr :dom_id, :any, required: false
   attr :delete_post_modal_text, :string
   attr :read_post_title, :string
-  attr :subtitle, :string
 
   def post_card(assigns) do
     ~H"""
-    <div class="h-full flex flex-col justify-between">
-      <div class="space-y-4">
-        <h1 class="text-lg dark:text-white font-semibold"><%= @post.title %></h1>
+    <div class="relative z-20 flex flex-col max-w-[365px] gap-1.5 bg-white p-5 rounded-2xl border border-black">
+      <p class="text-xs">
+        Published <%= Timex.format!(@post.created_at, "{0D}.{0M}.{YYYY} {h24}:{m}") %>
+      </p>
+      <h2 class="text-xl font-bold">
+        <.link navigate={@post.url}>
+          <%= @post.title %>
+        </.link>
+      </h2>
+      <p class="text-sm text-gray-400">
+        <%= (String.slice(@post.content, 0..120) <> " ...") |> Markdown.format() %>
+      </p>
 
-        <p class="dark:text-white">
-          <span class="font-medium"><%= @subtitle %></span>
-        </p>
-      </div>
-
-      <div class="flex items-center justify-between mt-4">
+      <div class="flex items-center justify-between">
         <.link
           navigate={@post.url}
           class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -110,9 +113,9 @@ defmodule AniminaWeb.PostsComponents do
 
   def post_header(assigns) do
     ~H"""
-    <div class="pb-4 flex justify-between items-center">
+    <div class="flex items-center justify-between pb-4">
       <div class="w-4/5">
-        <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold dark:text-white">
+        <h1 class="text-2xl font-semibold md:text-3xl lg:text-4xl dark:text-white">
           <%= @post.title %>
         </h1>
 

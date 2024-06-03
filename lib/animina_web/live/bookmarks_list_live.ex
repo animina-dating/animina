@@ -174,23 +174,41 @@ defmodule AniminaWeb.BookmarksListLive do
         </h3>
       </div>
 
-      <div
-        class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-        id={"stream_bookmarks_#{@reason}"}
-        phx-update="stream"
-      >
-        <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
-          <.live_component
-            module={AniminaWeb.BookmarkComponent}
-            id={"bookmark_#{bookmark.id}"}
-            bookmark={bookmark}
-            dom_id={dom_id}
-            reason={@reason}
-            current_user={@current_user}
-            language={@language}
-          />
+      <%= if @streams.bookmarks.inserts != [] do %>
+        <div
+          class="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+          id={"stream_bookmarks_#{@reason}"}
+          phx-update="stream"
+        >
+          <div :for={{dom_id, bookmark} <- @streams.bookmarks} class="pb-2" id={"#{dom_id}"}>
+            <.live_component
+              module={AniminaWeb.BookmarkComponent}
+              id={"bookmark_#{bookmark.id}"}
+              bookmark={bookmark}
+              dom_id={dom_id}
+              reason={@reason}
+              current_user={@current_user}
+              language={@language}
+            />
+          </div>
         </div>
-      </div>
+      <% else %>
+        <div class="w-[100%] h-[30vh] flex gap-4 justify-center dark:text-white items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="25"
+            height="24"
+            viewBox="0 0 384 512"
+            style="fill: currentColor;"
+          >
+            <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
+          </svg>
+
+          <p class="text-lg ">
+            <%= gettext("No bookmarks found") %>
+          </p>
+        </div>
+      <% end %>
     </div>
     """
   end
