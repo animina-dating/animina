@@ -21,7 +21,7 @@ defmodule AniminaWeb.ProfilePostsLive do
       socket
       |> assign(language: language)
       |> assign(current_user: current_user)
-      |> assign(user: Accounts.BasicUser.by_id!(user_id))
+      |> assign(user: Accounts.User.by_id!(user_id))
       |> stream(:posts, fetch_posts(user_id, current_user))
 
     {:ok, socket, layout: false}

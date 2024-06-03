@@ -3,6 +3,7 @@ defmodule AniminaWeb.BookmarksComponents do
   Provides Bookmark UI components.
   """
   use Phoenix.Component
+  import AniminaWeb.Gettext
 
   attr :bookmark, :any, required: true
   attr :dom_id, :any, required: false
@@ -27,21 +28,15 @@ defmodule AniminaWeb.BookmarksComponents do
                 class="object-cover rounded-lg aspect-square h-24 w-24"
                 src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
               />
-
               <p
-                :if={@bookmark.user.profile_photo.state == :nsfw}
-                class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+                :if={
+                  @current_user && @bookmark.user.profile_photo.state != :approved &&
+                    admin_user?(@current_user)
+                }
+                class={"p-1 text-[10px] #{get_photo_state_styling(@bookmark.user.profile_photo.state)} absolute top-2 left-2 rounded-md "}
               >
-                NSFW
+                <%= get_photo_state_name(@bookmark.user.profile_photo.state) %>
               </p>
-            </div>
-
-            <div
-              :if={
-                !display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark) == false
-              }
-              class="bg-gray-200 dark:bg-gray-800 h-24 w-24 rounded-lg  flex items-center justify-center"
-            >
             </div>
           </div>
 
@@ -92,24 +87,80 @@ defmodule AniminaWeb.BookmarksComponents do
     """
   end
 
-  def display_image(:pending_review, nil, _) do
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
+  end
+
+  def display_image(:pending_review, _, _) do
     true
   end
 
-  def display_image(:approved, nil, _) do
+  def display_image(:approved, _, _) do
     true
   end
 
-  def display_image(:in_review, nil, _) do
+  def display_image(:in_review, _, _) do
     true
   end
 
-  def display_image(_, nil, _) do
+  def display_image(:error, nil, _) do
+    false
+  end
+
+  def display_image(:nsfw, nil, _) do
     false
   end
 
   def display_image(:nsfw, current_user, bookmark) do
-    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
+    if bookmark.owner_id == current_user.id && admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, bookmark) do
+    if bookmark.owner_id == current_user.id && admin_user?(current_user) do
       true
     else
       false

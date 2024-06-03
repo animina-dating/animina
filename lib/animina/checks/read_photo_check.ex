@@ -3,7 +3,7 @@ defmodule Animina.Checks.ReadPhotoCheck do
   Policy for The Read Action for a Photo
   """
   use Ash.Policy.SimpleCheck
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
 
   def describe(_opts) do
     "Ensures an actor can only read photos if they are from a public account if the actor is nil"
@@ -22,7 +22,7 @@ defmodule Animina.Checks.ReadPhotoCheck do
   end
 
   defp check_if_user_is_public(user_id) do
-    user = BasicUser.by_id!(user_id)
+    user = User.by_id!(user_id)
 
     if user.public do
       true

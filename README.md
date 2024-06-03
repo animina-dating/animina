@@ -17,7 +17,7 @@ I assume that you have a locally hosted PostgreSQL database.
 - `mix deps.get` or `DISABLE_ML_FEATURES=true mix deps.get` if you wish to not install the ML dependencies
 - `mix ash_postgres.create` to create the database
 - `mix ash_postgres.migrate` to run migrations
-- `mix create_dummy_accounts 10` creates 10 dummy accounts and lists them. http://localhost:4000/username will display the profile for that username
+- `mix seed_demo_system` creates dummy accounts and lists them.
 - `iex -S mix phx.server` or `DISABLE_ML_FEATURES=true iex -S mix phx.server` if you wish to start the server without ML features
 - open http://localhost:4000 in your browser
 
@@ -47,9 +47,10 @@ We use the [Ash Framework](https://ash-hq.org).
 
 Basic seeding is been automatically done by special migrations.
 
-### Dummy Accounts
+### Demo Accounts
 
-`mix create_dummy_accounts 10` creates 10 dummy accounts for your development environment.
+In the development environment you can use `mix seed_demo_system` to create a couple of 
+demo accounts to play around with. It will print all accounts and tell you the password.
 
 ## Local Phoenix Server
 
