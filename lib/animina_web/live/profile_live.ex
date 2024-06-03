@@ -540,13 +540,16 @@ defmodule AniminaWeb.ProfileLive do
     <div class="px-5 pb-8">
       <.profile_details
         user={@user}
+        display_chat_icon={true}
         current_user={@current_user}
+        display_profile_image_next_to_name={false}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         profile_points={@profile_points}
         current_user_credit_points={@current_user_credit_points}
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
         years_text={gettext("years")}
+        show_intersecting_flags_count={true}
         centimeters_text={gettext("cm")}
         add_new_story_title={gettext("Add a new story")}
       />
