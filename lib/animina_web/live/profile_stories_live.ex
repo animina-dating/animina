@@ -323,10 +323,10 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div>
-      <div class="columns md:columns-2 lg:columns-3 gap-8" id="stream_stories" phx-update="stream">
+      <div class="gap-8 columns md:columns-2 lg:columns-3" id="stream_stories" phx-update="stream">
         <div
           :for={{dom_id, %{story: story, photo: photo, flags: flags}} <- @streams.stories_and_flags}
-          class="break-inside-avoid pb-2"
+          class="pb-2 break-inside-avoid"
           id={"#{dom_id}"}
         >
           <.live_component
@@ -341,6 +341,39 @@ defmodule AniminaWeb.ProfileStoriesLive do
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
           />
+        </div>
+        <!-- Show the following part only if there is just one story. -->
+        <div class="pb-2">
+          <div class="p-4 rounded-md bg-blue-50">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg
+                  class="w-5 h-5 text-blue-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">
+                  <%= gettext("Tell us more about yourself!") %>
+                </h3>
+                <div class="mt-2 text-sm text-blue-700">
+                  <p>
+                    <%= gettext(
+                      "You can add more stories to your profile. Actually you should to increase the chances for a match. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. Play with it and see for yourself."
+                    ) %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
