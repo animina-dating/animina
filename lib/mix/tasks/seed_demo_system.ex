@@ -7,6 +7,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     use Mix.Task
     alias Animina.Accounts.BasicUser
     alias Animina.Accounts.Photo
+    alias Animina.Accounts.UserRole
     alias Animina.Narratives
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
@@ -295,7 +296,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
 
       user_role = Animina.Accounts.Role.by_name!(:user)
 
-      Animina.Accounts.UserRole.create(%{
+      UserRole.create(%{
         user_id: user.id,
         role_id: user_role.id
       })
