@@ -131,15 +131,15 @@ defmodule AniminaWeb.BookmarksComponents do
     gettext("Error")
   end
 
-  def display_image(:pending_review, nil, _) do
+  def display_image(:pending_review, _, _) do
     true
   end
 
-  def display_image(:approved, nil, _) do
+  def display_image(:approved, _, _) do
     true
   end
 
-  def display_image(:in_review, nil, _) do
+  def display_image(:in_review, _, _) do
     true
   end
 

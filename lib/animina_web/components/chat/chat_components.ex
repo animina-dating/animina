@@ -190,7 +190,7 @@ defmodule AniminaWeb.ChatComponents do
   def receiver_user_image(assigns) do
     ~H"""
     <%= if @user && @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
-      <div class="flex flex-col gap-1 justify-center items-center">
+      <div class="flex flex-col gap-1  items-center">
         <img
           class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@user.profile_photo.filename}"}
