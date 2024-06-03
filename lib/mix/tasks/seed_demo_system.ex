@@ -27,7 +27,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       |> print_table()
     end
 
-    def generate_demo_data() do
+    def generate_demo_data do
       IO.puts("Seeding demo data...")
 
       raw_seed_data = [
