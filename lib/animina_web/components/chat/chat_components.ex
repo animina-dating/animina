@@ -134,7 +134,7 @@ defmodule AniminaWeb.ChatComponents do
         <.receiver_user_image user={@receiver} current_user={@sender} />
         <div class="justify-start flex items-start flex-col">
           <p class="dark:text-white">
-            <%= @receiver.username %>
+            <%= @receiver.name %>
           </p>
           <div class="md:w-[300px w-[250px]   dark:bg-white bg-gray-300 text-black   flex flex-col gap-2 justify-between p-1 items-end rounded-md">
             <p>
