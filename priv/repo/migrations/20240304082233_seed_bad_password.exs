@@ -6,7 +6,10 @@ defmodule Animina.Repo.Migrations.SeedBadPassword do
   use Ecto.Migration
 
   def up do
-    seed_bad_passwords()
+    # Don't seed bad passwords in CI to speed up the workflow.
+    unless System.get_env("CI") do
+      seed_bad_passwords()
+    end
   end
 
   def down do

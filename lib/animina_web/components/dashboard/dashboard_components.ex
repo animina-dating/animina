@@ -8,59 +8,77 @@ defmodule AniminaWeb.DashboardComponents do
   import AniminaWeb.CoreComponents
   import Phoenix.HTML.Form
 
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+  slot :inner_block
+
   def dashboard_card_component(assigns) do
     ~H"""
-    <div class="flex flex-col rounded-md gap-4 cursor-pointer h-[300px] bg-gray-100 dark:bg-gray-800 p-2">
-      <h1 class="p-2 rounded-md dark:bg-gray-700 bg-white text-black  dark:text-white text-center">
-        <%= @title %>
-      </h1>
+    <div class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow">
+      <div class="px-4 py-5 sm:px-6 bg-gray-50">
+        <h3 class="text-base font-semibold leading-7 text-gray-900"><%= @title %></h3>
+        <p :if={@subtitle} class="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
+          <%= @subtitle %>
+        </p>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <%= render_slot(@inner_block) %>
+      </div>
     </div>
     """
   end
 
   def dashboard_card_like_component(assigns) do
     ~H"""
-    <div class="flex flex-col rounded-md gap-3 cursor-pointer h-[300px] bg-gray-100 dark:bg-gray-800 p-2">
-      <h1 class="p-2 rounded-md dark:bg-gray-700 bg-white text-black  font-semibod text-xl  dark:text-white text-center">
-        <%= @title %>
-      </h1>
-
+    <.dashboard_card_component title={@title}>
       <div class="flex flex-col gap-3">
-        <div class="flex flex-col dark:text-white  text-black gap-1">
-          <p>
-            <%= gettext("You have received a total of") %> <%= @total_likes_received_by_user %> <%= gettext(
-              "likes"
-            ) %>
-          </p>
-
-          <p :if={@likes_received_by_user_in_seven_days > 0} class="italic">
-            <%= @likes_received_by_user_in_seven_days %> <%= gettext("in the last 7 days.") %>
-          </p>
-        </div>
-
-        <div class="flex flex-col dark:text-white  text-black gap-1">
-          <p>
-            <%= gettext("You liked") %>
-            <.link navigate="/my/bookmarks/liked" class="text-blue-500">
-              <%= @profiles_liked_by_user %>
-              <span :if={@profiles_liked_by_user == 1}><%= gettext("profile") %></span>
-              <span :if={@profiles_liked_by_user != 1}><%= gettext("profiles") %></span>
-            </.link>
-          </p>
+        <div class="flex flex-col gap-1 text-black dark:text-white">
+          <div class="overflow-hidden border-b border-gray-200 rounded shadow">
+            <table class="min-w-full text-left bg-white table-auto ">
+              <thead>
+                <tr class="text-white bg-gray-800">
+                  <th class="px-4 py-3"><%= gettext("Type") %></th>
+                  <th class="px-4 py-3"><%= gettext("Period of Time") %></th>
+                  <th class="px-4 py-3"><%= gettext("Count") %></th>
+                </tr>
+              </thead>
+              <tbody class="text-gray-700">
+                <tr>
+                  <td class="px-4 py-3"><%= gettext("Received") %></td>
+                  <td class="px-4 py-3"><%= gettext("Last 7 days") %></td>
+                  <td class="px-4 py-3"><%= @likes_received_by_user_in_seven_days %></td>
+                </tr>
+                <tr class="bg-gray-100">
+                  <td class="px-4 py-3"><%= gettext("Received") %></td>
+                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3"><%= @total_likes_received_by_user %></td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3">
+                    <.link navigate="/my/bookmarks/liked" class="text-blue-500">
+                      <%= gettext("Given") %>
+                    </.link>
+                  </td>
+                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3">
+                    <.link navigate="/my/bookmarks/liked" class="text-blue-500">
+                      <%= @profiles_liked_by_user %>
+                    </.link>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+    </.dashboard_card_component>
     """
   end
 
   def dashboard_card_chat_component(assigns) do
     ~H"""
-    <div class="flex flex-col rounded-md gap-3 cursor-pointer h-[300px] bg-gray-100 dark:bg-gray-800 p-2">
-      <h1 class="p-2 rounded-md dark:bg-gray-700 bg-white text-black  font-semibod text-xl  dark:text-white text-center">
-        <%= @title %>
-      </h1>
-
-      <div class="flex flex-col  gap-3">
+    <.dashboard_card_component title={@title}>
+      <div class="flex flex-col gap-3">
         <%= if @last_unread_message do %>
           <div class="relative h-[200px]">
             <.unread_message
@@ -85,18 +103,14 @@ defmodule AniminaWeb.DashboardComponents do
           </div>
         <% end %>
       </div>
-    </div>
+    </.dashboard_card_component>
     """
   end
 
   def dashboard_card_messages_component(assigns) do
     ~H"""
-    <div class="flex flex-col rounded-md gap-3 cursor-pointer h-[300px] bg-gray-100 dark:bg-gray-800 p-2">
-      <h1 class="p-2 rounded-md dark:bg-gray-700 bg-white text-black  font-semibod text-xl  dark:text-white text-center">
-        <%= @title %>
-      </h1>
-
-      <div class="flex flex-col  gap-3">
+    <.dashboard_card_component title={@title}>
+      <div class="flex flex-col gap-3">
         <%= if @unread_messages != [] do %>
           <div class="h-[230px] overflow-y-scroll flex flex-col gap-1 py-1">
             <%= for message <- @unread_messages do %>
@@ -119,7 +133,7 @@ defmodule AniminaWeb.DashboardComponents do
           </div>
         <% end %>
       </div>
-    </div>
+    </.dashboard_card_component>
     """
   end
 
@@ -129,7 +143,7 @@ defmodule AniminaWeb.DashboardComponents do
       <div class="flex justify-start gap-2  m-auto w-[95%] item-start text-black">
         <.sender_user_image user={@sender} current_user={@receiver} />
         <div class="justify-start w-[100%] flex items-start flex-col">
-          <p class="dark:text-white text-xs">
+          <p class="text-xs dark:text-white">
             <%= @sender.username %>
           </p>
           <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
@@ -137,7 +151,7 @@ defmodule AniminaWeb.DashboardComponents do
               <%= Markdown.format(@content) %>
             </p>
 
-            <div class="text-xs  italic  flex justify-end">
+            <div class="flex justify-end text-xs italic">
               <%= Timex.from_now(@message.created_at, @language) %>
             </div>
           </div>
@@ -158,7 +172,7 @@ defmodule AniminaWeb.DashboardComponents do
 
         <p
           :if={@user.profile_photo.state == :nsfw}
-          class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+          class="absolute p-1 text-xs text-black bg-gray-200 rounded-md dark:bg-gray-800 bottom-2 right-4 dark:text-white"
         >
           nsfw
         </p>
@@ -170,7 +184,7 @@ defmodule AniminaWeb.DashboardComponents do
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="w-6 h-6 dark:text-white text-black"
+        class="w-6 h-6 text-black dark:text-white"
       >
         <path
           stroke-linecap="round"
