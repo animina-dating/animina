@@ -97,7 +97,7 @@ defmodule AniminaWeb.ProfilePostsLive do
   def render(assigns) do
     ~H"""
     <div class="py-8 space-y-8">
-      <div class="grid grid-cols-2">
+      <div class="flex justify-between w-[100%]">
         <div>
           <h1 class="text-2xl font-semibold dark:text-white">
             <%= gettext("My Posts") %>
@@ -112,23 +112,41 @@ defmodule AniminaWeb.ProfilePostsLive do
           </.link>
         </div>
       </div>
-      <div
-        class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
-        id="stream_posts"
-        phx-update="stream"
-      >
-        <div :for={{dom_id, post} <- @streams.posts} class="" id={"#{dom_id}"}>
-          <.post_card
-            post={post}
-            dom_id={dom_id}
-            current_user={@current_user}
-            user={@user}
-            delete_post_modal_text={gettext("Do you really want to delete this post?")}
-            read_post_title={gettext("Read Post")}
-            subtitle={"#{gettext("By")} #{post.user.name}"}
-          />
+      <%= if @streams.posts.inserts != [] do %>
+        <div
+          class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
+          id="stream_posts"
+          phx-update="stream"
+        >
+          <div :for={{dom_id, post} <- @streams.posts} class="" id={"#{dom_id}"}>
+            <.post_card
+              post={post}
+              dom_id={dom_id}
+              current_user={@current_user}
+              user={@user}
+              delete_post_modal_text={gettext("Do you really want to delete this post?")}
+              read_post_title={gettext("Read Post")}
+              subtitle={"#{gettext("By")} #{post.user.name}"}
+            />
+          </div>
         </div>
-      </div>
+      <% else %>
+        <div class="w-[100%] h-[10vh] flex gap-4 justify-center dark:text-white items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="25"
+            height="24"
+            viewBox="0 0 24 25"
+            style="fill: currentColor;"
+          >
+            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+
+          <p class="text-lg ">
+            <%= gettext("No Posts Added") %>
+          </p>
+        </div>
+      <% end %>
     </div>
     """
   end
