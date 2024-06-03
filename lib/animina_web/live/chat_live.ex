@@ -2,10 +2,10 @@ defmodule AniminaWeb.ChatLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.Accounts.User
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
+  alias Animina.Accounts.User
   alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
