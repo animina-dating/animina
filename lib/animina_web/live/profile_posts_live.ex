@@ -97,7 +97,7 @@ defmodule AniminaWeb.ProfilePostsLive do
   def render(assigns) do
     ~H"""
     <div class="py-8 space-y-8">
-      <div class="grid grid-cols-2">
+      <div class="flex justify-between w-[100%]">
         <div>
           <h1 class="text-2xl font-semibold dark:text-white">
             <%= gettext("My Posts") %>
@@ -112,111 +112,41 @@ defmodule AniminaWeb.ProfilePostsLive do
           </.link>
         </div>
       </div>
-
-      <div class="grid grid-cols-1 mx-auto max-w-7xl gap-x-8 gap-y-12 sm:gap-y-16 lg:grid-cols-2 ">
-        <article class="w-full max-w-2xl mx-auto lg:mx-0 lg:max-w-lg">
-          <time datetime="2020-03-16" class="block text-sm leading-6 text-gray-600">
-            23.12.2023
-          </time>
-          <h2
-            id="featured-post"
-            class="mt-4 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl"
+      <%= if @streams.posts.inserts != [] do %>
+        <div
+          class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
+          id="stream_posts"
+          phx-update="stream"
+        >
+          <div :for={{dom_id, post} <- @streams.posts} class="" id={"#{dom_id}"}>
+            <.post_card
+              post={post}
+              dom_id={dom_id}
+              current_user={@current_user}
+              user={@user}
+              delete_post_modal_text={gettext("Do you really want to delete this post?")}
+              read_post_title={gettext("Read Post")}
+              subtitle={"#{gettext("By")} #{post.user.name}"}
+            />
+          </div>
+        </div>
+      <% else %>
+        <div class="w-[100%] h-[10vh] flex gap-4 justify-center dark:text-white items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="25"
+            height="24"
+            viewBox="0 0 24 25"
+            style="fill: currentColor;"
           >
-            <a href="#">
-              We’re incredibly proud to announce we have secured $75m in Series B
-            </a>
-          </h2>
-          <p class="mt-4 text-lg leading-8 text-gray-600">
-            <a href="#">
-              Libero neque aenean tincidunt nec consequat tempor. Viverra odio id velit adipiscing id. Nisi vestibulum orci eget bibendum dictum. Velit viverra posuere vulputate volutpat nunc. Nunc netus sit faucibus. [...]
-            </a>
-          </p>
-          <div class="flex flex-col justify-between gap-6 mt-4 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
-            <div class="flex">
-              <a
-                href="#"
-                class="text-sm font-semibold leading-6 text-indigo-600"
-                aria-describedby="featured-post"
-              >
-                Continue reading <span aria-hidden="true">&rarr;</span>
-              </a>
-            </div>
-          </div>
-        </article>
-        <div class="w-full max-w-2xl pt-12 mx-auto border-t border-gray-900/10 sm:pt-16 lg:mx-0 lg:max-w-none lg:border-t-0 lg:pt-0">
-          <div class="-my-12 divide-y divide-gray-900/10">
-            <article class="py-12">
-              <div class="relative max-w-xl group">
-                <time datetime="2020-03-16" class="block text-sm leading-6 text-gray-600">
-                  23.12.2023
-                </time>
-                <h2 class="mt-2 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                  <a href="#">
-                    <span class="absolute inset-0"></span> Boost your conversion rate
-                  </a>
-                </h2>
-                <p class="mt-4 text-sm leading-6 text-gray-600">
-                  Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel iusto corrupti dicta laboris incididunt. [...]
-                </p>
-              </div>
-              <div class="flex flex-col justify-between gap-6 mt-4 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
-                <div class="flex">
-                  <a
-                    href="#"
-                    class="text-sm font-semibold leading-6 text-indigo-600"
-                    aria-describedby="featured-post"
-                  >
-                    Continue reading <span aria-hidden="true">&rarr;</span>
-                  </a>
-                </div>
-              </div>
-            </article>
-            <article class="py-12">
-              <div class="relative max-w-xl group">
-                <time datetime="2020-03-16" class="block text-sm leading-6 text-gray-600">
-                  23.12.2023
-                </time>
-                <h2 class="mt-2 text-lg font-semibold text-gray-900 group-hover:text-gray-600">
-                  <a href="#">
-                    <span class="absolute inset-0"></span> Boost your conversion rate
-                  </a>
-                </h2>
-                <p class="mt-4 text-sm leading-6 text-gray-600">
-                  Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel iusto corrupti dicta laboris incididunt. [...]
-                </p>
-              </div>
-              <div class="flex flex-col justify-between gap-6 mt-4 sm:mt-8 sm:flex-row-reverse sm:gap-8 lg:mt-4 lg:flex-col">
-                <div class="flex">
-                  <a
-                    href="#"
-                    class="text-sm font-semibold leading-6 text-indigo-600"
-                    aria-describedby="featured-post"
-                  >
-                    Continue reading <span aria-hidden="true">&rarr;</span>
-                  </a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
+            <path d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
 
-      <div
-        class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
-        id="stream_posts"
-        phx-update="stream"
-      >
-        <div :for={{dom_id, post} <- @streams.posts} class="" id={"#{dom_id}"}>
-          <.post_card
-            post={post}
-            dom_id={dom_id}
-            current_user={@current_user}
-            user={@user}
-            delete_post_modal_text={gettext("Do you really want to delete this post?")}
-            read_post_title={gettext("Read Post")}
-          />
+          <p class="text-lg ">
+            <%= gettext("No Posts Added") %>
+          </p>
         </div>
-      </div>
+      <% end %>
     </div>
     """
   end
