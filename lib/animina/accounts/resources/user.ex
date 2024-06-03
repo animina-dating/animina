@@ -209,10 +209,11 @@ defmodule Animina.Accounts.User do
 
   changes do
     change after_action(fn changeset, record ->
-             if Mix.env() == :dev && Enum.empty?(Accounts.User.read!()) do
-               create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset)
-             else
-               create_user_role_for_user(changeset)
+             add_role(changeset, :user)
+
+             # First user in dev becomes admin by default.
+             if Mix.env() == :dev && Enum.count(Accounts.BasicUser.read!()) == 1 do
+               add_role(changeset, :admin)
              end
 
              {:ok, record}
@@ -283,32 +284,12 @@ defmodule Animina.Accounts.User do
     repo Animina.Repo
   end
 
-  defp create_user_and_admin_user_roles_for_first_user_in_dev_env(changeset) do
-    user_role = Animina.Accounts.Role.by_name!(:user)
-    admin_role = Animina.Accounts.Role.by_name!(:admin)
+  defp add_role(changeset, name) do
+    role = Accounts.Role.by_name!(name)
 
-    [
-      %{user_id: changeset.attributes.id, role_id: user_role.id},
-      %{user_id: changeset.attributes.id, role_id: admin_role.id}
-    ]
-    |> Animina.Accounts.bulk_create(Animina.Accounts.UserRole, :create,
-      return_stream?: false,
-      return_records?: false,
-      batch_size: 100
-    )
-  end
-
-  def create_user_role_for_user(changeset) do
-    user_role = Animina.Accounts.Role.by_name!(:user)
-
-    Animina.Accounts.UserRole.create(%{
+    Accounts.UserRole.create(%{
       user_id: changeset.attributes.id,
-      role_id: user_role.id
+      role_id: role.id
     })
-  end
-
-  def get_number_of_users do
-    Accounts.User.read!()
-    |> length()
   end
 end
