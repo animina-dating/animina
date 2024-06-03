@@ -30,7 +30,10 @@ defmodule AniminaWeb.BookmarksComponents do
               />
 
               <p
-                :if={@current_user && admin_user?(@current_user)}
+                :if={
+                  @current_user && @bookmark.user.profile_photo.state != :approved &&
+                    admin_user?(@current_user)
+                }
                 class={"p-1 text-[10px] #{get_photo_state_styling(@bookmark.user.profile_photo.state)} absolute top-2 left-2 rounded-md "}
               >
                 <%= get_photo_state_name(@bookmark.user.profile_photo.state) %>
@@ -129,6 +132,8 @@ defmodule AniminaWeb.BookmarksComponents do
     gettext("Error")
   end
 
+
+
   def display_image(:pending_review, nil, _) do
     true
   end
@@ -152,6 +157,17 @@ defmodule AniminaWeb.BookmarksComponents do
       false
     end
   end
+
+
+  def display_image(:error, current_user, bookmark) do
+    if bookmark.owner_id == current_user.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+
 
   def display_image(_, _, _) do
     false

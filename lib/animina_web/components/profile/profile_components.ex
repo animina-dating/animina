@@ -3,6 +3,7 @@ defmodule AniminaWeb.ProfileComponents do
   Provides Profile UI components.
   """
   use Phoenix.Component
+  import AniminaWeb.Gettext
 
   def profile_details(assigns) do
     ~H"""
@@ -110,7 +111,7 @@ defmodule AniminaWeb.ProfileComponents do
   def receiver_user_image(assigns) do
     ~H"""
     <%= if @user &&  @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
-      <div class="relative">
+      <div class="flex flex-col gap-1">
         <img
           class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@user.profile_photo.filename}"}
@@ -118,12 +119,12 @@ defmodule AniminaWeb.ProfileComponents do
 
         <p
           :if={
-            @user && @user.profile_photo && @current_user && @user.profile_photo.state != :approved &&
-              (admin_user?(@current_user) || @user.id == @current_user.id)
+            @user && @user.profile_photo && @user.profile_photo.state != :approved &&
+              (admin_user?(@current_user) || (@current_user && @user.id == @current_user.id))
           }
-          class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+          class={"p-1 text-[8px] text-center #{get_photo_state_styling(@user.profile_photo.state)} rounded-md "}
         >
-          <%= @user.profile_photo.state %>
+          <%= get_photo_state_name(@user.profile_photo.state) %>
         </p>
       </div>
     <% else %>
@@ -145,13 +146,7 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-  def display_image(:nsfw, current_user, receiver) do
-    if current_user.id == receiver.id || admin_user?(current_user) do
-      true
-    else
-      false
-    end
-  end
+
 
   def display_image(:pending_review, _, _) do
     true
@@ -163,6 +158,22 @@ defmodule AniminaWeb.ProfileComponents do
 
   def display_image(:in_review, _, _) do
     true
+  end
+
+  def display_image(:nsfw, current_user, receiver) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, receiver) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
   end
 
   def display_image(_, _, _) do
@@ -179,6 +190,50 @@ defmodule AniminaWeb.ProfileComponents do
         |> Enum.map(fn x -> x.name end)
         |> Enum.any?(fn x -> x == :admin end)
     end
+  end
+
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
   end
 
   def profile_location_card(assigns) do

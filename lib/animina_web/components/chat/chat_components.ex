@@ -5,6 +5,7 @@ defmodule AniminaWeb.ChatComponents do
   use Phoenix.Component
   alias Animina.Markdown
   alias AniminaWeb.ProfileComponents
+  import AniminaWeb.Gettext
 
   def send_message_button(assigns) do
     ~H"""
@@ -154,7 +155,19 @@ defmodule AniminaWeb.ChatComponents do
   def sender_user_image(assigns) do
     ~H"""
     <%= if @user && @user.profile_photo  do %>
-      <img class="object-cover w-8 h-8 rounded-full" src={"/uploads/#{@user.profile_photo.filename}"} />
+      <div class="flex flex-col justify-center items-center gap-1">
+        <img
+          class="object-cover w-8 h-8 rounded-full"
+          src={"/uploads/#{@user.profile_photo.filename}"}
+        />
+
+        <p
+          :if={@user && @user.profile_photo.state != :approved}
+          class={"p-1 text-[10px] #{get_photo_state_styling(@user.profile_photo.state)}  rounded-md "}
+        >
+          <%= get_photo_state_name(@user.profile_photo.state) %>
+        </p>
+      </div>
     <% else %>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -177,17 +190,17 @@ defmodule AniminaWeb.ChatComponents do
   def receiver_user_image(assigns) do
     ~H"""
     <%= if @user && @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
-      <div class="relative">
+      <div class="flex flex-col gap-1 justify-center items-center">
         <img
           class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@user.profile_photo.filename}"}
         />
 
         <p
-          :if={@user.profile_photo.state == :nsfw}
-          class="p-1 text-xs dark:bg-gray-800 bg-gray-200 text-black absolute bottom-2 right-4 rounded-md dark:text-white"
+          :if={@user.profile_photo.state != :approved}
+          class={"p-1 text-[10px] #{get_photo_state_styling(@user.profile_photo.state)}  rounded-md "}
         >
-          nsfw
+          <%= get_photo_state_name(@user.profile_photo.state) %>
         </p>
       </div>
     <% else %>
@@ -209,13 +222,51 @@ defmodule AniminaWeb.ChatComponents do
     """
   end
 
-  def display_image(:nsfw, current_user, receiver) do
-    if current_user.id == receiver.id || admin_user?(current_user) do
-      true
-    else
-      false
-    end
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
   end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
+  end
+
+
 
   def display_image(:pending_review, _, _) do
     true
@@ -227,6 +278,22 @@ defmodule AniminaWeb.ChatComponents do
 
   def display_image(:in_review, _, _) do
     true
+  end
+
+  def display_image(:nsfw, current_user, receiver) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, receiver) do
+    if current_user.id == receiver.id || admin_user?(current_user) do
+      true
+    else
+      false
+    end
   end
 
   def display_image(_, _, _) do
