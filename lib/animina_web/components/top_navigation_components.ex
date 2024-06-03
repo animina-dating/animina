@@ -23,7 +23,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def top_navigation(assigns) do
     ~H"""
     <div class="border-y md:border-r md:border-l border-brand-silver-100">
-      <nav class="grid grid-cols-5 gap-1">
+      <nav class="grid grid-cols-6 gap-1">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -37,6 +37,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
+        <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
       </nav>
     </div>
     """
@@ -366,7 +367,29 @@ defmodule AniminaWeb.TopNavigationCompontents do
         active_tab={@active_tab}
         current_user_credit_points={@current_user_credit_points}
       />
+      <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
     </div>
+    """
+  end
+
+  def logout_nav_item(assigns) do
+    ~H"""
+    <.top_navigation_entry phx-no-format is_active={if @active_tab == :logout, do: true, else: false}>
+
+    <div  :if={@current_user != nil}>
+      <.link navigate="/auth/user/sign-out"  class="flex gap-2 md:flex-row flex-col items-center" >
+
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-current shrink-0"
+          width="25" height="24" viewBox="0 0 25 24"
+          fill="none">
+       <path  stroke="stroke-current" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+     </svg>
+      <span><%= gettext("Logout") %></span>
+      </.link>
+    </div>
+
+    </.top_navigation_entry>
     """
   end
 end
