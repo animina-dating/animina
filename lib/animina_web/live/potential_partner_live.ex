@@ -144,8 +144,8 @@ defmodule AniminaWeb.PotentialPartnerLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-5 dark:text-white px-5">
-      <h2 class="font-bold  text-xl"><%= gettext("Criteria for your new partner") %></h2>
+    <div class="px-5 space-y-5 dark:text-white">
+      <h2 class="text-xl font-bold"><%= gettext("Criteria for your new partner") %></h2>
       <p>
         <%= gettext("We will use this information to find suitable partners for you.") %>
       </p>
@@ -160,7 +160,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <div class="flex items-center justify-between">
             <label
               for="user_partner_gender"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Gender") %>
             </label>
@@ -215,11 +215,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
       </div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8">
+        <div class="grid gap-8 md:grid-cols-2">
           <div>
             <label
               for="form_minimum_partner_height"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Minimum height") %>
             </label>
@@ -247,7 +247,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <div>
             <label
               for="form_maximum_partner_height"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Maximum height") %>
             </label>
@@ -271,11 +271,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
             </div>
           </div>
         </div>
-        <div class="grid md:grid-cols-2 gap-8">
+        <div class="grid gap-8 md:grid-cols-2">
           <div>
             <label
               for="form_minimum_partner_age"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Minimum age") %>
             </label>
@@ -300,7 +300,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
           <div>
             <label
               for="form_maximum_partner_age"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Maximum age") %>
             </label>
@@ -325,7 +325,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
         <div>
           <label
             for="form_search_range"
-            class="block text-sm font-medium dark:text-white leading-6 text-gray-900"
+            class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
             <%= gettext("Search range") %>
             <span class="text-gray-400">
@@ -364,23 +364,23 @@ defmodule AniminaWeb.PotentialPartnerLive do
           </div>
         </div>
 
-        <div class="flex gap-2 items-center mb-4">
+        <div class="flex items-center gap-2 mb-4">
           <%= checkbox(f, :preapproved_communication_only,
             id: "preapproved_communication_only",
             class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
           ) %>
           <p>
-            <%= gettext("Receive messages only from users who I reapproved with a like.") %>
+            <%= gettext("Only users who I liked can initiate a chat.") %>
           </p>
         </div>
 
-        <div class="flex gap-2 items-center mb-4">
+        <div class="flex items-center gap-2 mb-4">
           <%= checkbox(f, :is_private,
             id: "is_private",
             class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
           ) %>
           <p>
-            <%= gettext("Is only accessible for logged in animina users?") %>
+            <%= gettext("My profile is only visible for animina users.") %>
           </p>
         </div>
 
