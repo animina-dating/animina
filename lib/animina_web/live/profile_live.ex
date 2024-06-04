@@ -552,6 +552,8 @@ defmodule AniminaWeb.ProfileLive do
         display_profile_image_next_to_name={false}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         profile_points={@profile_points}
+        intersecting_green_flags={[]}
+        intersecting_red_flags={[]}
         current_user_credit_points={@current_user_credit_points}
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
