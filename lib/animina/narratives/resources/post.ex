@@ -147,7 +147,7 @@ defmodule Animina.Narratives.Post do
     end
 
     policy action_type(:create) do
-      authorize_if actor_present()
+      authorize_if Animina.Checks.CreatePostCheck
     end
 
     policy action_type(:update) do
