@@ -105,7 +105,23 @@ defmodule AniminaWeb.StoriesComponents do
         delete_story_modal_text={@delete_story_modal_text}
       />
 
-      <div :if={!empty_flags_array?(@flags)} class="bg-green-100 rounded-md">
+      <div :if={!empty_flags_array?(@flags)} class="bg-green-100 relative rounded-md">
+        <.link
+          :if={@current_user.id == @user.id}
+          class="absolute text-blue-700 top-2 right-4"
+          navigate="/my/flags/white"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="16"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
+          </svg>
+        </.link>
         <div class="flex flex-wrap justify-center p-2">
           <%= for flag <- @flags do %>
             <span
