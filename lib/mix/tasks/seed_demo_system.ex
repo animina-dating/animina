@@ -21,10 +21,12 @@ if Enum.member?([:dev, :test], Mix.env()) do
     def run(_args) do
       # Disable ML features to speed up the seeding process
       System.put_env("DISABLE_ML_FEATURES", "true")
+
       Mix.Task.run("app.start", [])
 
       generate_demo_data()
 
+      # Print a list of users
       BasicUser.read!()
       |> print_table()
     end
@@ -326,10 +328,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
           position: 2
         })
 
-      # create random stories
-      Enum.each(3..Enum.random(3..8), fn i ->
-        create_random_story(user, i)
-      end)
+      create_random_stories(user, Enum.random(0..6), 3)
 
       # create random white flags
       Enum.each(1..Enum.random(5..20), fn _i ->
@@ -640,49 +639,108 @@ if Enum.member?([:dev, :test], Mix.env()) do
       end
     end
 
-    defp get_random_headline do
-      Headline.read!()
-      |> Enum.filter(fn headline ->
-        headline.subject != "About me"
-      end)
-      |> Enum.take_random(1)
-      |> hd
+    defp create_random_stories(user, amount_of_stories, next_position) do
+      create_random_stories(user, amount_of_stories, next_position, all_photos())
     end
 
-    defp create_random_story(user, position) do
-      headline = get_random_headline()
-      random_content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
+    defp create_random_stories(_user, 0, _next_position, _available_photos) do
+    end
 
-      random_photo =
-        case :rand.uniform() do
-          x when x <= 0.33 ->
-            random_photo_id("landscape") |> download_photo("#{Faker.UUID.v4()}.png")
+    defp create_random_stories(user, amount_of_stories, next_position, available_photos) do
+      available_headlines =
+        Headline.read!()
+        |> Enum.filter(fn headline ->
+          headline.subject != "About me"
+        end)
 
-          x when x <= 0.66 ->
-            random_photo_id("hobby") |> download_photo("#{Faker.UUID.v4()}.png")
+      create_random_stories(
+        user,
+        amount_of_stories,
+        next_position,
+        available_photos,
+        available_headlines
+      )
+    end
 
-          _ ->
-            nil
-        end
+    defp create_random_stories(_user, 0, _next_position, _available_photos, _available_headlines) do
+    end
 
-      {content, photo} =
-        case {random_content, random_photo} do
-          {nil, nil} -> {random_lorem_ipsum(), nil}
-          {nil, photo} -> {nil, photo}
-          {content, photo} -> {content, photo}
-        end
+    defp create_random_stories(
+           user,
+           amount_of_stories,
+           next_position,
+           available_photos,
+           available_headlines
+         ) do
+      {headline, available_headlines} = pick_a_headline(available_headlines)
+      content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
+      {photo, unused_photos} = pick_a_random_photo(available_photos)
+
+      # {content, photo} =
+      #   case {random_content, random_photo} do
+      #     {nil, nil} -> {random_lorem_ipsum(), nil}
+      #     {nil, photo} -> {nil, photo}
+      #     {content, photo} -> {content, photo}
+      #   end
 
       story =
         Story.create!(%{
           headline_id: headline.id,
           user_id: user.id,
           content: content,
-          position: position
+          position: next_position
         })
 
       if photo do
         Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
       end
+
+      create_random_stories(
+        user,
+        amount_of_stories - 1,
+        next_position + 1,
+        unused_photos,
+        available_headlines
+      )
+    end
+
+    defp pick_a_headline(available_headlines) do
+      headline = available_headlines |> Enum.take_random(1) |> hd
+
+      available_headlines =
+        available_headlines |> Enum.filter(fn h -> h.subject != headline.subject end)
+
+      {headline, available_headlines}
+    end
+
+    defp pick_a_random_photo(available_photos) do
+      random_photo_data =
+        case :rand.uniform() do
+          x when x <= 0.33 ->
+            Enum.filter(available_photos, fn photo -> photo.category == "hobby" end)
+            |> Enum.random()
+
+          x when x <= 0.66 ->
+            Enum.filter(available_photos, fn photo -> photo.category == "landscape" end)
+            |> Enum.random()
+
+          _ ->
+            nil
+        end
+
+      random_photo =
+        case random_photo_data do
+          nil -> nil
+          _ -> download_photo(random_photo_data.id, "#{Faker.UUID.v4()}.png")
+        end
+
+      unused_photos =
+        case random_photo_data do
+          nil -> available_photos
+          _ -> Enum.reject(available_photos, fn photo -> photo.id == random_photo_data.id end)
+        end
+
+      {random_photo, unused_photos}
     end
 
     defp random_lorem_ipsum do
@@ -728,6 +786,88 @@ if Enum.member?([:dev, :test], Mix.env()) do
       end
     end
 
+    def get_random_photo(all_photos, category) do
+      random_photo =
+        Enum.filter(all_photos, fn photo -> photo.category == category end) |> Enum.random()
+
+      unused_photos = Enum.reject(all_photos, fn photo -> photo.id == random_photo.id end)
+
+      {random_photo, unused_photos}
+    end
+
+    def all_photos do
+      [
+        %{
+          id: "photo-1502680390469-be75c86b636f",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1563575044224-569da2f35b01",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1515017671634-012cb9dc6ed0",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1605264522799-1996bdbe5f72",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1613085411234-9c83af5562d8",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1632714394522-2916aac896e8",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1556908153-1055164fe2df",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1556909114-44e3e70034e2",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1556911073-a517e752729c",
+          category: "hobby"
+        },
+        %{
+          id: "photo-1610552050890-fe99536c2615",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1621847468516-1ed5d0df56fe",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1620301598483-f872a86a58af",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1628087234845-254f15abd82a",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1616445404301-7433dc521d1f",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1507525428034-b723cf961d3e",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1509233725247-49e657c54213",
+          category: "landscape"
+        },
+        %{
+          id: "photo-1519046904884-53103b34b206",
+          category: "landscape"
+        }
+      ]
+    end
+
     def random_photo_id("hobby") do
       Enum.take_random(
         [
@@ -764,19 +904,19 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     defp print_table(users) do
-      IO.puts("|-----------------------|--------|---------------------------------------|")
-      IO.puts("| Name                  | Gender | Profile URL                           |")
-      IO.puts("|-----------------------|--------|---------------------------------------|")
+      IO.puts("|--------|----------------------------------------------|")
+      IO.puts("| Gender | Profile URL                                  |")
+      IO.puts("|--------|----------------------------------------------|")
 
       Enum.each(users, fn user ->
         username = "#{user.username}"
 
         IO.puts(
-          "| #{user.name |> String.pad_trailing(21)} | #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 15)} |"
+          "| #{user.name |> String.pad_trailing(28)} | #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 15)} |"
         )
       end)
 
-      IO.puts("|-----------------------|--------|---------------------------------------|")
+      IO.puts("|--------|----------------------------------------------|")
 
       IO.puts("")
       IO.puts("The default password for these dummy accounts is 'test'.\n")
