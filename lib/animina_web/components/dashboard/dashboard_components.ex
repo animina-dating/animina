@@ -14,9 +14,9 @@ defmodule AniminaWeb.DashboardComponents do
 
   def dashboard_card_component(assigns) do
     ~H"""
-    <div class="overflow-hidden bg-white divide-y divide-gray-200 rounded-lg shadow">
-      <div class="px-4 py-5 sm:px-6 bg-gray-50">
-        <h3 class="text-base font-semibold leading-7 text-gray-900"><%= @title %></h3>
+    <div class="overflow-hidden bg-white dark:bg-gray-800 divide-y divide-gray-200 rounded-lg shadow">
+      <div class="px-4  dark:bg-gray-800 py-5 sm:px-6 bg-gray-50">
+        <h3 class="text-base font-semibold leading-7 dark:text-gray-300 text-gray-900"><%= @title %></h3>
         <p :if={@subtitle} class="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
           <%= @subtitle %>
         </p>
@@ -33,22 +33,22 @@ defmodule AniminaWeb.DashboardComponents do
     <.dashboard_card_component title={@title}>
       <div class="flex flex-col gap-3">
         <div class="flex flex-col gap-1 text-black dark:text-white">
-          <div class="overflow-hidden border-b border-gray-200 rounded shadow">
+          <div class="overflow-hidden border-b dark:border-gray-700 border-gray-200 rounded shadow">
             <table class="min-w-full text-left bg-white table-auto ">
               <thead>
-                <tr class="text-white bg-gray-800">
+                <tr class="text-white dark:bg-gray-700 bg-gray-800">
                   <th class="px-4 py-3"><%= gettext("Type") %></th>
                   <th class="px-4 py-3"><%= gettext("Period of Time") %></th>
                   <th class="px-4 py-3"><%= gettext("Count") %></th>
                 </tr>
               </thead>
-              <tbody class="text-gray-700">
+              <tbody class="text-gray-700 dark:bg-gray-300">
                 <tr>
                   <td class="px-4 py-3"><%= gettext("Received") %></td>
                   <td class="px-4 py-3"><%= gettext("Last 7 days") %></td>
                   <td class="px-4 py-3"><%= @likes_received_by_user_in_seven_days %></td>
                 </tr>
-                <tr class="bg-gray-100">
+                <tr class="dark:bg-gray-200 bg-gray-100">
                   <td class="px-4 py-3"><%= gettext("Received") %></td>
                   <td class="px-4 py-3"><%= gettext("Forever") %></td>
                   <td class="px-4 py-3"><%= @total_likes_received_by_user %></td>
@@ -146,12 +146,12 @@ defmodule AniminaWeb.DashboardComponents do
           <p class="text-xs dark:text-white">
             <%= @sender.name %>
           </p>
-          <div class=" w-[100%]  text-xs  dark:bg-white bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
-            <p>
+          <div class=" w-[100%]  text-xs   dark:bg-gray-100 bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
+            <p class="px-1">
               <%= Markdown.format(@content) %>
             </p>
 
-            <div class="flex justify-end text-xs italic">
+            <div class="flex justify-end px-1 text-xs italic">
               <%= Timex.from_now(@message.created_at, @language) %>
             </div>
           </div>
