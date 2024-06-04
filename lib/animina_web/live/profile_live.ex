@@ -172,7 +172,8 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(
              current_user_has_liked_profile?:
                current_user_has_liked_profile(socket.assigns.current_user, user.id)
-           )}
+           )
+           |> redirect_to_username(username)}
         end
 
       _ ->
@@ -244,6 +245,11 @@ defmodule AniminaWeb.ProfileLive do
     else
       socket
     end
+  end
+
+  defp redirect_to_username(socket, username) do
+    socket
+    |> push_redirect(to: ~p"/#{username}")
   end
 
   defp subscribe(socket, current_user, user) do

@@ -2,7 +2,9 @@ defmodule Animina.Narratives.PostTest do
   use Animina.DataCase, async: true
 
   alias Animina.Accounts.User
+  alias Animina.Narratives.Headline
   alias Animina.Narratives.Post
+  alias Animina.Narratives.Story
 
   describe "Tests for the Post Resource" do
     setup do
@@ -12,20 +14,29 @@ defmodule Animina.Narratives.PostTest do
       ]
     end
 
-    test "A user can create a post", %{
+    test "A user can create a post if they have 3 or more stories", %{
       user_one: user_one
     } do
       # create a post
-      post = create_post(user_one)
+      post = create_post_with_three_stories(user_one)
 
       assert {:ok, _} = post
+    end
+
+    test "A user cannot create a post if they less than 3  stories", %{
+      user_one: user_one
+    } do
+      # create a post
+      post = create_post_with_two_stories(user_one)
+
+      assert {:error, _} = post
     end
 
     test "A user can edit their own post", %{
       user_one: user_one
     } do
       # create a post
-      {:ok, post} = create_post(user_one)
+      {:ok, post} = create_post_with_three_stories(user_one)
 
       # update user post title
       result = update_post_title(post, user_one)
@@ -37,7 +48,7 @@ defmodule Animina.Narratives.PostTest do
       user_one: user_one
     } do
       # create a post
-      {:ok, post} = create_post(user_one)
+      {:ok, post} = create_post_with_three_stories(user_one)
 
       # delete user post
       result = delete_post(post, user_one)
@@ -51,7 +62,7 @@ defmodule Animina.Narratives.PostTest do
     } do
       # create some posts for user one
       Enum.each(1..4, fn _ ->
-        create_post(user_one)
+        create_post_with_three_stories(user_one)
       end)
 
       # get user one posts
@@ -70,7 +81,7 @@ defmodule Animina.Narratives.PostTest do
     } do
       # create some posts for user two
       Enum.each(1..4, fn _ ->
-        create_post(user_two)
+        create_post_with_three_stories(user_two)
       end)
 
       # get user two posts
@@ -89,10 +100,10 @@ defmodule Animina.Narratives.PostTest do
       title = random_title()
 
       # create first post
-      {:ok, _post} = create_post_with_title(user_one, title)
+      {:ok, _post} = create_post_with_three_stories_with_title(user_one, title)
 
       # create second post with same title
-      result = create_post_with_title(user_one, title)
+      result = create_post_with_three_stories_with_title(user_one, title)
 
       assert {:error, _} = result
     end
@@ -136,9 +147,11 @@ defmodule Animina.Narratives.PostTest do
     user
   end
 
-  defp create_post(user) do
+  defp create_post_with_three_stories(user) do
     title = random_title()
     content = random_lorem_ipsum()
+
+    create_three_stories(user.id)
 
     Post.create(
       %{
@@ -149,8 +162,24 @@ defmodule Animina.Narratives.PostTest do
     )
   end
 
-  defp create_post_with_title(user, title) do
+  defp create_post_with_two_stories(user) do
+    title = random_title()
     content = random_lorem_ipsum()
+
+    create_two_stories(user.id)
+
+    Post.create(
+      %{
+        title: title,
+        content: content
+      },
+      actor: user
+    )
+  end
+
+  defp create_post_with_three_stories_with_title(user, title) do
+    content = random_lorem_ipsum()
+    create_three_stories(user.id)
 
     Post.create(
       %{
@@ -216,5 +245,74 @@ defmodule Animina.Narratives.PostTest do
 
     # Join the selected sentences back into a string if needed
     Enum.join(selected_sentences, ". ") <> "."
+  end
+
+  defp create_three_stories(user_id) do
+    about_me_headline = get_about_me_headline()
+    non_about_me_headline = get_non_about_me_headline()
+    create_about_me_story(user_id, about_me_headline.id)
+    create_non_about_me_story(user_id, non_about_me_headline.id, 2)
+    create_non_about_me_story(user_id, non_about_me_headline.id, 3)
+  end
+
+  defp create_two_stories(user_id) do
+    about_me_headline = get_about_me_headline()
+    non_about_me_headline = get_non_about_me_headline()
+    create_about_me_story(user_id, about_me_headline.id)
+    create_non_about_me_story(user_id, non_about_me_headline.id, 4)
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
+  end
+
+  defp get_non_about_me_headline do
+    {:ok, headlines} = Headline.read()
+
+    case headlines do
+      [] ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "Non About me",
+            position: 91
+          })
+
+        headline
+
+      _ ->
+        headlines
+        |> Enum.filter(&(&1.subject != "About me"))
+        |> Enum.random()
+    end
+  end
+
+  defp create_about_me_story(user_id, headline_id) do
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: 1
+    })
+  end
+
+  defp create_non_about_me_story(user_id, headline_id, position) do
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: position
+    })
   end
 end
