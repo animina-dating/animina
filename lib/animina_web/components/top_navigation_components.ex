@@ -322,7 +322,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/my/profile"} class="flex gap-2 md:flex-row flex-col items-center" >
+     <.link navigate={"/#{@current_user.username}"} class="flex gap-2 md:flex-row flex-col items-center" >
      <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-6 h-6 stroke-current shrink-0"
