@@ -46,35 +46,44 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
         </div>
 
-        <div class="pt-2">
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+        <div class="pt-2 flex  flex-wrap">
+          <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @user.age %> <%= @years_text %>
           </span>
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             <%= @user.height %> <%= @centimeters_text %>
           </span>
-          <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+          <span class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
             📍 <%= @user.city.name %>
           </span>
           <span
             :if={@user.occupation}
-            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             🔧 <%= @user.occupation %>
           </span>
           <span
             :if={@current_user && @current_user.id != @user.id}
-            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             <%= @profile_points %>
           </span>
 
           <span
             :if={@current_user && @current_user.id == @user.id}
-            class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
           >
             <%= @current_user_credit_points %>
           </span>
+
+          <.intersecting_green_flags
+            green_flags={@intersecting_green_flags}
+            count={@intersecting_green_flags_count}
+          />
+          <.intersecting_red_flags
+            red_flags={@intersecting_red_flags}
+            count={@intersecting_red_flags_count}
+          />
 
           <span :if={@current_user != @user && @show_intersecting_flags_count}>
             <span
@@ -103,6 +112,58 @@ defmodule AniminaWeb.ProfileComponents do
         >
           <%= @add_new_story_title %>
         </.link>
+      </div>
+    </div>
+    """
+  end
+
+  def intersecting_red_flags(assigns) do
+    ~H"""
+    <div class="flex flex-wrap relative ">
+      <%= for flag <- @red_flags do %>
+        <span
+          :if={flag != %{}}
+          class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+        >
+          <%= flag.emoji %> <%= flag.name %>
+
+          <div class="pl-2">
+            <p class="w-2 h-2 bg-red-500 rounded-full" />
+          </div>
+        </span>
+      <% end %>
+
+      <div
+        :if={@count > 5}
+        class="text-blue-700 flex flex-row text-[10px]  justify-center items-center bg-blue-100 h-4 w-4 rounded-full"
+      >
+        <span> + </span> <%= @count - 5 %>
+      </div>
+    </div>
+    """
+  end
+
+  def intersecting_green_flags(assigns) do
+    ~H"""
+    <div class="flex flex-wrap relative ">
+      <%= for flag <- @green_flags do %>
+        <span
+          :if={flag != %{}}
+          class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+        >
+          <%= flag.emoji %> <%= flag.name %>
+
+          <div class="pl-2">
+            <p class="w-2 h-2 bg-green-500 rounded-full" />
+          </div>
+        </span>
+      <% end %>
+
+      <div
+        :if={@count > 5}
+        class="text-blue-700 flex flex-row text-[10px]  justify-center items-center bg-blue-100 h-4 w-4 rounded-full"
+      >
+        <span> + </span> <%= @count - 5 %>
       </div>
     </div>
     """
