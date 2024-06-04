@@ -676,13 +676,6 @@ if Enum.member?([:dev, :test], Mix.env()) do
       content = Enum.take_random([nil, random_lorem_ipsum()], 1) |> hd
       {photo, unused_photos} = pick_a_random_photo(available_photos)
 
-      # {content, photo} =
-      #   case {random_content, random_photo} do
-      #     {nil, nil} -> {random_lorem_ipsum(), nil}
-      #     {nil, photo} -> {nil, photo}
-      #     {content, photo} -> {content, photo}
-      #   end
-
       story =
         Story.create!(%{
           headline_id: headline.id,
@@ -912,7 +905,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         username = "#{user.username}"
 
         IO.puts(
-          "| #{user.name |> String.pad_trailing(28)} | #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 15)} |"
+          "| #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 22)} |"
         )
       end)
 
