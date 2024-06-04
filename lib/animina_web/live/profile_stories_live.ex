@@ -348,7 +348,10 @@ defmodule AniminaWeb.ProfileStoriesLive do
           />
         </div>
       </div>
-      <div :if={Enum.count(@profile_stories) == 1} class="pb-2">
+      <div
+        :if={Enum.count(@profile_stories) == 1 && (@current_user && @current_user.id == @user.id)}
+        class="pb-2"
+      >
         <div class="p-4 rounded-md bg-blue-50">
           <div class="flex">
             <div class="flex-shrink-0">
