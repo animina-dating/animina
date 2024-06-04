@@ -905,7 +905,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         username = "#{user.username}"
 
         IO.puts(
-          "| #{user.name |> String.pad_trailing(28)} | #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 15)} |"
+          "| #{user.gender |> String.pad_trailing(6)} | http://localhost:4000/#{String.pad_trailing(username, 22)} |"
         )
       end)
 
