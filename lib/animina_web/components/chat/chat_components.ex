@@ -42,25 +42,16 @@ defmodule AniminaWeb.ChatComponents do
               current_user={@sender}
               current_user_has_liked_profile?={@current_user_has_liked_profile?}
               profile_points={@profile_points}
-              intersecting_green_flags_count={@intersecting_green_flags_count}
-              intersecting_red_flags_count={@intersecting_red_flags_count}
               years_text={@years_text}
               display_chat_icon={false}
               display_profile_image_next_to_name={true}
               show_intersecting_flags_count={false}
               centimeters_text={@centimeters_text}
+              intersecting_green_flags={@intersecting_green_flags}
+              intersecting_red_flags={@intersecting_red_flags}
+              intersecting_green_flags_count={@intersecting_green_flags_count}
+              intersecting_red_flags_count={@intersecting_red_flags_count}
             />
-
-            <div class="flex items-center flex-wrap mb-2  w-[100%]">
-              <.intersecting_green_flags
-                green_flags={@intersecting_green_flags}
-                count={@intersecting_green_flags_count}
-              />
-              <.intersecting_red_flags
-                red_flags={@intersecting_red_flags}
-                count={@intersecting_red_flags_count}
-              />
-            </div>
           </.link>
         </div>
         <div class="h-[85%] z-0  w-[100%]">
@@ -349,57 +340,5 @@ defmodule AniminaWeb.ChatComponents do
 
   def format_time(time) do
     NaiveDateTime.from_erl!({{2000, 1, 1}, Time.to_erl(time)}) |> Timex.format!("{h12}:{0m} {am}")
-  end
-
-  def intersecting_red_flags(assigns) do
-    ~H"""
-    <div class="flex flex-wrap relative ">
-      <%= for flag <- @red_flags do %>
-        <span
-          :if={flag != %{}}
-          class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-        >
-          <%= flag.emoji %> <%= flag.name %>
-
-          <div class="pl-2">
-            <p class="w-2 h-2 bg-red-500 rounded-full" />
-          </div>
-        </span>
-      <% end %>
-
-      <div
-        :if={@count > 5}
-        class="text-blue-700 flex flex-row text-[10px]  justify-center items-center bg-blue-100 h-4 w-4 rounded-full"
-      >
-        <span> + </span> <%= @count - 5 %>
-      </div>
-    </div>
-    """
-  end
-
-  def intersecting_green_flags(assigns) do
-    ~H"""
-    <div class="flex flex-wrap relative ">
-      <%= for flag <- @green_flags do %>
-        <span
-          :if={flag != %{}}
-          class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-        >
-          <%= flag.emoji %> <%= flag.name %>
-
-          <div class="pl-2">
-            <p class="w-2 h-2 bg-green-500 rounded-full" />
-          </div>
-        </span>
-      <% end %>
-
-      <div
-        :if={@count > 5}
-        class="text-blue-700 flex flex-row text-[10px]  justify-center items-center bg-blue-100 h-4 w-4 rounded-full"
-      >
-        <span> + </span> <%= @count - 5 %>
-      </div>
-    </div>
-    """
   end
 end
