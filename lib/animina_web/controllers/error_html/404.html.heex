@@ -14,7 +14,7 @@
   <body class="bg-white dark:text-white text-gray-900  dark:bg-gray-900 antialiased">
     <main class="block md:hidden">
       <.top_navigation
-        active_tab={:none}
+        active_tab={@active_tab}
         current_user={@current_user}
         current_user_credit_points={
           if @current_user do
@@ -27,29 +27,25 @@
       />
     </main>
 
-    <div class="w-[100%] pt-2 flex justify-center">
-      <.desktop_sidebar
-        active_tab={:none}
+    <div class="w-[100%] flex justify-between">
+      <.desktop_sidebar_navigation
+        active_tab={@active_tab}
         current_user={@current_user}
-        current_user_credit_points={
-          if @current_user do
-            @current_user.credit_points
-          else
-            0
-          end
-        }
-        number_of_unread_messages={0}
+        current_user_credit_points={@current_user_credit_points}
+        number_of_unread_messages={@number_of_unread_messages}
       />
-      <main class="md:w-[78%] w-[100%] flex flex-col gap-2 flex-grow space-y-5 px-3">
+      <div class="w-[100%] md:ml-[20%] md:pt-[70px] pt-[10px] px-[8px] md:px-[20px] ">
+        <.flash_group flash={@flash} />
+        <%= @inner_content %>
+
         <.flash_group flash={@flash} />
         <div class="w-[90%] flex flex-col md:text-xl gap-1 justify-center items-center m-auto text-center pt-12">
           <p>This profile either doesn't exist or you don't have enough points to access it.</p>
 
           <p>You need 20 points to access a .</p>
         </div>
-      </main>
-      <div class="justify-end flex-grow hidden md:flex">
-        <p class="bg-[#C1C6D5] dark:bg-[#414753]  w-[1px] " />
+
+        <.footer />
       </div>
     </div>
   </body>

@@ -234,7 +234,7 @@ defmodule AniminaWeb.DashboardLive do
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           <%= gettext("Members you might be interested in") |> raw() %>
         </h2>
-        <p class="mt-6 text-lg leading-8 text-gray-600">
+        <p class="text-lg leading-8 text-gray-600">
           <%= gettext("Here are other animima members who match your potential partner settings.")
           |> raw() %>
         </p>
