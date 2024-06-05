@@ -165,11 +165,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <button
       type="button"
-      class={[
-        "relative text-xs font-medium flex md:flex-row flex-col items-center md:justify-start  md:rounded-md justify-center gap-1.5 py-3 px-0 md:px-3  shadow-none drop-shadow-none",
-        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: ""),
-        unless(@current_user && @is_active, do: "text-gray-400")
-      ]}
+      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-xs hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500  font-medium flex md:flex-row flex-col items-center md:justify-start  md:rounded-md justify-center gap-1.5 py-3 px-0 md:px-3   shadow-none drop-shadow-none"}
     >
       <%= render_slot(@inner_block) %>
     </button>
