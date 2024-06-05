@@ -87,6 +87,14 @@ defmodule Animina.Narratives.Story do
 
       filter expr(is_nil(headline_id) == ^false and user_id == ^arg(:user_id))
     end
+
+    read :about_story_by_user do
+      argument :user_id, :uuid, allow_nil?: false
+
+      prepare build(load: [:headline])
+
+      filter expr(user_id == ^arg(:user_id) and headline.subject == "About me")
+    end
   end
 
   code_interface do
@@ -97,6 +105,7 @@ defmodule Animina.Narratives.Story do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_user_id, args: [:user_id]
+    define :about_story_by_user, args: [:user_id], get?: true
   end
 
   identities do
