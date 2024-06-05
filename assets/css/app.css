@@ -15,13 +15,6 @@ body {
   }
 }
 
-@media screen and (min-width: 501px) {
-  /* Adjust width for larger screens */
-  body {
-    width: 90%;
-  }
-}
-
 .z0 {
   z-index: 0 !important;
 }

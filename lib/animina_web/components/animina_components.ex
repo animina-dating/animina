@@ -294,4 +294,20 @@ defmodule AniminaWeb.AniminaComponents do
     </div>
     """
   end
+
+  def footer(assigns) do
+    ~H"""
+    <div class="w-[100%] py-2 my-4 border-t-[1px]  border-black text-black  dark:border-white dark:text-white ">
+      Copyright 2024 by
+      <a
+        href="https://www.wintermeyer-consulting.de"
+        rel="noopener noreferrer"
+        target="_blank"
+        class="text-[#0077B6] dark:text-[#00A6D6]"
+      >
+        Wintermeyer Consulting
+      </a>
+    </div>
+    """
+  end
 end

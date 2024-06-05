@@ -16,7 +16,9 @@ defmodule AniminaWeb.DashboardComponents do
     ~H"""
     <div class="overflow-hidden bg-white dark:bg-gray-800 divide-y divide-gray-200 rounded-lg shadow">
       <div class="px-4  dark:bg-gray-800 py-5 sm:px-6 bg-gray-50">
-        <h3 class="text-base font-semibold leading-7 dark:text-gray-300 text-gray-900"><%= @title %></h3>
+        <h3 class="text-base font-semibold leading-7 dark:text-gray-300 text-gray-900">
+          <%= @title %>
+        </h3>
         <p :if={@subtitle} class="max-w-2xl mt-1 text-sm leading-6 text-gray-500">
           <%= @subtitle %>
         </p>

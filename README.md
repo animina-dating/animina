@@ -19,6 +19,7 @@ I assume that you have a locally hosted PostgreSQL database.
 - `mix ash_postgres.migrate` to run migrations
 - `mix seed_demo_system` creates dummy accounts and lists them.
 - `iex -S mix phx.server` or `DISABLE_ML_FEATURES=true iex -S mix phx.server` if you wish to start the server without ML features
+- `cd assets && npm install` to install Alpine.js
 - open http://localhost:4000 in your browser
 
 ## Development
