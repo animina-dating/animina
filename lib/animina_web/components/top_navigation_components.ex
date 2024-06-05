@@ -43,6 +43,44 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
+  def desktop_top_navigation(assigns) do
+    ~H"""
+    <div class="w-[100%] bg-gray-800  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
+      <div>
+        <.top_notification_bell
+          current_user={@current_user}
+          number_of_unread_messages={@number_of_unread_messages}
+        />
+      </div>
+      <div :if={@current_user} class="flex dark:text-white  gap-2 items-center">
+        <.user_avatar_image current_user={@current_user} />
+        <p><%= @current_user.name %></p>
+      </div>
+    </div>
+    """
+  end
+
+  def desktop_sidebar_navigation(assigns) do
+    ~H"""
+    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6  bg-gray-800">
+      <div class="p-4 text-white text-2xl">Animina</div>
+
+      <div class="flex flex-col p-4 gap-2">
+        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
+
+        <.user_profile_item
+          current_user={@current_user}
+          active_tab={@active_tab}
+          current_user_credit_points={@current_user_credit_points}
+        />
+        <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
+      </div>
+    </div>
+    """
+  end
+
   # -------------------------------------------------------------
   @doc """
   Top navigation bar entry.
@@ -111,6 +149,62 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <% end %>
         </span>
       </.top_navigation_entry>
+    """
+  end
+
+  def user_avatar_image(assigns) do
+    ~H"""
+    <div>
+      <%= if @current_user && @current_user.profile_photo  do %>
+        <img
+          class="object-cover w-8 h-8 rounded-full"
+          src={"/uploads/#{@current_user.profile_photo.filename}"}
+        />
+      <% else %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-8 h-8 stroke-current shrink-0"
+          width="25"
+          height="24"
+          viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+            stroke="stroke-current"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      <% end %>
+    </div>
+    """
+  end
+
+  def top_notification_bell(assigns) do
+    ~H"""
+    <div class="flex dark:text-white gap-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+        />
+      </svg>
+      <%= if (@current_user && @number_of_unread_messages > 0) do %>
+        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center font-medium">
+          <%= @number_of_unread_messages %>
+        </div>
+      <% end %>
+    </div>
     """
   end
 

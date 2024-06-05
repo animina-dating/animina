@@ -1,4 +1,4 @@
-<main class="block md:hidden">
+<%!-- <main class="block md:hidden">
   <.top_navigation
     active_tab={@active_tab}
     current_user={@current_user}
@@ -18,19 +18,31 @@
     <.flash_group flash={@flash} />
     <%= @inner_content %>
 
-    <div class="w-[100%] px-3 py-2 border-t-[1px]  border-black text-black  dark:border-white dark:text-white ">
-      Copyright 2024 by
-      <a
-        href="https://www.wintermeyer-consulting.de"
-        rel="noopener noreferrer"
-        target="_blank"
-        class="text-[#0077B6] dark:text-[#00A6D6]"
-      >
-        Wintermeyer Consulting
-      </a>
-    </div>
+    
   </main>
   <div class="justify-end flex-grow hidden md:flex">
     <p class="bg-[#C1C6D5] dark:bg-[#414753]  w-[1px] " />
+  </div>
+</div> --%>
+
+<div>
+  <.desktop_top_navigation
+    active_tab={@active_tab}
+    current_user={@current_user}
+    current_user_credit_points={@current_user_credit_points}
+    number_of_unread_messages={@number_of_unread_messages}
+  />
+  <div class="w-[100%] flex justify-between">
+    <.desktop_sidebar_navigation
+      active_tab={@active_tab}
+      current_user={@current_user}
+      current_user_credit_points={@current_user_credit_points}
+      number_of_unread_messages={@number_of_unread_messages}
+    />
+    <div class="w-[100%] ml-[20%] min-h-[100vh] pt-[70px] px-[20px] ">
+      <.flash_group flash={@flash} />
+      <%= @inner_content %>
+      <.footer />
+    </div>
   </div>
 </div>
