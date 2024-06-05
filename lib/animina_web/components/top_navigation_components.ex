@@ -45,7 +45,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def desktop_top_navigation(assigns) do
     ~H"""
-    <div class="w-[100%] dark:bg-gray-800 bg-[#F4F4F6]  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
+    <div class="w-[100%] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
       <div>
         <.top_notification_bell
           current_user={@current_user}
@@ -53,13 +53,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </div>
       <div
-        :if={@current_user}
         x-data="{ open: false }"
         @click="open = !open"
         class="flex cursor-pointer dark:text-white  gap-2 items-center"
       >
         <.user_avatar_image current_user={@current_user} />
-        <p><%= @current_user.name %></p>
+        <p :if={@current_user}><%= @current_user.name %></p>
 
         <button class="dark:text-white" type="button">
           <.arrow_down />
@@ -72,17 +71,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           x-cloak
           class=" absolute top-6  right-2 p-4"
         >
-          <div class="dark:bg-gray-800 bg-[#F4F4F6] shadow-sm flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-200 dark:text-white  p-4 w-[100%]">
-            <.link navigate="/my/flags/white">
-              Edit White Flags
-            </.link>
-            <.link navigate="/my/flags/green">
-              Edit Green Flags
-            </.link>
-            <.link navigate="/my/flags/red">
-              Edit Red Flags
-            </.link>
-          </div>
+          <.dropdown_items current_user={@current_user} />
         </div>
       </div>
     </div>
@@ -104,11 +93,45 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
+  defp dropdown_items(assigns) do
+    ~H"""
+    <div>
+      <%= if @current_user  do %>
+        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
+          <.link navigate="/my/flags/white">
+            <%= gettext("Edit White Flags") %>
+          </.link>
+          <.link navigate="/my/flags/green">
+            <%= gettext("Edit Green Flags") %>
+          </.link>
+          <.link navigate="/my/flags/red">
+            <%= gettext("Edit Red Flags") %>
+          </.link>
+          <.link navigate="/my/potential-partner">
+            <%= gettext("Potential Partner Preference Link") %>
+          </.link>
+          <p class="bg-black h-[1px] dark:bg-white my-1 w-[100%]"></p>
+          <.link navigate="/auth/user/sign-out">
+            <%= gettext("Sign Out") %>
+          </.link>
+        </div>
+      <% else %>
+        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
+          <.link navigate="/">
+            <%= gettext("Register") %>
+          </.link>
+          <.link navigate="/sign-in">
+            <%= gettext("Login") %>
+          </.link>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
   def desktop_sidebar_navigation(assigns) do
     ~H"""
-    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6 dark:bg-gray-800 bg-[#F4F4F6]">
-      <div class="p-4 dark:text-white text-2xl">Animina</div>
-
+    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
       <div class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -119,7 +142,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
-        <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
       </div>
     </div>
     """
@@ -207,7 +229,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% else %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="w-8 h-8 stroke-current shrink-0"
+          class="w-6 h-6 stroke-current shrink-0"
           width="25"
           height="24"
           viewBox="0 0 25 24"
