@@ -231,17 +231,13 @@ defmodule AniminaWeb.DashboardLive do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
       <div class="max-w-2xl mx-auto lg:mx-0">
-        <h2 class="text-3xl font-bold tracking-tight dark:text-gray-300 text-gray-900 sm:text-4xl">
-          <%= gettext("Members you might be interested in") |> raw() %>
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
+          <%= gettext("Potential Matches") |> raw() %>
         </h2>
-        <p class="text-lg leading-8 text-gray-600">
-          <%= gettext("Here are other animima members who match your potential partner settings.")
-          |> raw() %>
-        </p>
       </div>
       <ul
         role="list"
-        class="grid max-w-2xl grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-4"
+        class="grid max-w-2xl grid-cols-1 grid-cols-2 mx-auto mt-10 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4"
       >
         <%= for potential_partner <- potential_partners(@current_user) do %>
           <li>
