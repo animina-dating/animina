@@ -17,7 +17,15 @@ defmodule Animina.Repo.Migrations.SeedBadPassword do
 
   defp seed_bad_passwords() do
     file_path = Path.join(Application.app_dir(:animina, "priv/repo"), "bad-passwords.txt")
-    stream = File.stream!(file_path)
+
+    # In :dev, :test and CI only use the first 10 passwords to speed up the workflow.
+    stream =
+      if Enum.member?([:dev, :test], Mix.env()) or System.get_env("CI") do
+        File.stream!(file_path)
+        |> Stream.take(10)
+      else
+        File.stream!(file_path)
+      end
 
     stream
     |> Enum.map(&String.trim/1)
