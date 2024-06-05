@@ -45,7 +45,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def desktop_top_navigation(assigns) do
     ~H"""
-    <div class="w-[100%] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
+    <div class="w-[100%] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
+    <div class="md:hidden block">
+    gvhbjnk
+    </div>
+    <div class="flex items-center md:gap-5 gap-3">
       <div>
         <.top_notification_bell
           current_user={@current_user}
@@ -58,9 +62,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
         class="flex cursor-pointer dark:text-white  gap-2 items-center"
       >
         <.user_avatar_image current_user={@current_user} />
-        <p :if={@current_user}><%= @current_user.name %></p>
+        <p class="md:block hidden" :if={@current_user}><%= @current_user.name %></p>
 
-        <button class="dark:text-white" type="button">
+        <button class="dark:text-white md:block hidden"  type="button">
           <.arrow_down />
         </button>
         <div
@@ -73,6 +77,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         >
           <.dropdown_items current_user={@current_user} />
         </div>
+      </div>
       </div>
     </div>
     """
@@ -95,7 +100,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp dropdown_items(assigns) do
     ~H"""
-    <div>
+    <div class="md:text-base text-sm">
       <%= if @current_user  do %>
         <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
           <.link navigate="/my/flags/white">
@@ -131,7 +136,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def desktop_sidebar_navigation(assigns) do
     ~H"""
-    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
+    <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
       <div class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
