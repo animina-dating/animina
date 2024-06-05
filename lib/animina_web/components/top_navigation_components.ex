@@ -179,6 +179,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
         active_tab={@active_tab}
         current_user_credit_points={@current_user_credit_points}
       />
+
+      <div class="flex w-[100%]  flex-col gap-2">
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+
+        <div class="flex w-[100%] flex-col gap-2">
+          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+        </div>
+      </div>
     </div>
     """
   end
@@ -197,7 +205,47 @@ defmodule AniminaWeb.TopNavigationCompontents do
           current_user_credit_points={@current_user_credit_points}
         />
       </div>
+
+      <div class="flex w-[100%]  p-4 flex-col gap-2">
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+
+        <div class="flex w-[100%] flex-col gap-2">
+          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+        </div>
+      </div>
     </div>
+    """
+  end
+
+  defp random_interests(assigns) do
+    ~H"""
+    <div class="w-[100%]">
+      <%= for interest <- @interests do %>
+        <.random_interest interest={interest} />
+      <% end %>
+    </div>
+    """
+  end
+
+  defp random_interest(assigns) do
+    ~H"""
+    <.top_navigation_entry phx-no-format is_active={false}>
+    <div class="flex gap-2 w-[100%] flex-row items-center" >
+
+    <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
+    <%= String.slice(@interest, 0, 1) %>
+    </div>
+    <p>
+    <%= @interest %>
+    </p>
+
+
+
+    </div>
+
+
+
+    </.top_navigation_entry>
     """
   end
 
@@ -219,7 +267,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <button
       type="button"
-      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-xs hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500  font-medium flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
+      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-xs hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]  font-medium flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
     >
       <%= render_slot(@inner_block) %>
     </button>
