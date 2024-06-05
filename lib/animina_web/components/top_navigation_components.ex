@@ -45,25 +45,69 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def desktop_top_navigation(assigns) do
     ~H"""
-    <div class="w-[100%] bg-gray-800  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
+    <div class="w-[100%] dark:bg-gray-800 bg-[#F4F4F6]  flex justify-end items-center py-2 px-4 gap-5  z-40  fixed top-0">
       <div>
         <.top_notification_bell
           current_user={@current_user}
           number_of_unread_messages={@number_of_unread_messages}
         />
       </div>
-      <div :if={@current_user} class="flex dark:text-white  gap-2 items-center">
+      <div
+        :if={@current_user}
+        x-data="{ open: false }"
+        @click="open = !open"
+        class="flex cursor-pointer dark:text-white  gap-2 items-center"
+      >
         <.user_avatar_image current_user={@current_user} />
         <p><%= @current_user.name %></p>
+
+        <button class="dark:text-white" type="button">
+          <.arrow_down />
+        </button>
+        <div
+          @click.outside="open = false"
+          @keydown.escape.window="open = false"
+          x-show="open"
+          x-transition
+          x-cloak
+          class=" absolute top-6  right-2 p-4"
+        >
+          <div class="dark:bg-gray-800 bg-[#F4F4F6] shadow-sm flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-200 dark:text-white  p-4 w-[100%]">
+            <.link navigate="/my/flags/white">
+              Edit White Flags
+            </.link>
+            <.link navigate="/my/flags/green">
+              Edit Green Flags
+            </.link>
+            <.link navigate="/my/flags/red">
+              Edit Red Flags
+            </.link>
+          </div>
+        </div>
       </div>
     </div>
     """
   end
 
+  defp arrow_down(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+    """
+  end
+
   def desktop_sidebar_navigation(assigns) do
     ~H"""
-    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6  bg-gray-800">
-      <div class="p-4 text-white text-2xl">Animina</div>
+    <div class="w-[20%] z-50 h-[100vh] fixed top-0 flex flex-col gap-6 dark:bg-gray-800 bg-[#F4F4F6]">
+      <div class="p-4 dark:text-white text-2xl">Animina</div>
 
       <div class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
