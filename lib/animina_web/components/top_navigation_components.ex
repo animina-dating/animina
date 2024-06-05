@@ -25,7 +25,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         </p>
         <div
           x-show="open"
-          class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start  bg-black/60 left-0 "
+          class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-black/60 left-0 "
         >
           <div
             @click.outside="open = false"
