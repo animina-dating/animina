@@ -5,7 +5,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     """
 
     use Mix.Task
-    alias Animina.Accounts.BasicUser
+    alias Animina.Accounts.User
     alias Animina.Accounts.Photo
     alias Animina.Accounts.Role
     alias Animina.Accounts.UserRole
@@ -27,7 +27,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       generate_demo_data()
 
       # Print a list of users
-      BasicUser.read!()
+      User.read!()
       |> print_table()
     end
 
@@ -276,7 +276,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       age = (Date.diff(Date.utc_today(), birthday) / 365) |> round
 
       user =
-        BasicUser.create!(%{
+        User.create!(%{
           email: Faker.Internet.email(),
           username: convert_name_to_username(full_name) |> String.slice(0..14),
           name: full_name,
