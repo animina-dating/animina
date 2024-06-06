@@ -5,12 +5,12 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Accounts.Message
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-  alias Animina.Narratives.Story
   alias Animina.GenServers.ProfileViewCredits
-  alias AshPhoenix.Form
   alias Animina.Markdown
-  alias Phoenix.PubSub
+  alias Animina.Narratives.Story
   alias AniminaWeb.PotentialPartner
+  alias AshPhoenix.Form
+  alias Phoenix.PubSub
 
   require Ash.Query
   require Ash.Sort
@@ -243,6 +243,7 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div :if={PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) != []}>
       <div class="max-w-2xl mx-auto lg:mx-0">
         <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           <%= gettext("Members you might be interested in") |> raw() %>
@@ -257,7 +258,7 @@ defmodule AniminaWeb.DashboardLive do
         role="list"
         class="grid max-w-2xl grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-4"
       >
-        <%= for potential_partner <- potential_partners(@current_user) do %>
+        <%= for potential_partner <- PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) do %>
           <li>
             <.link
               navigate={~p"/#{potential_partner.username}"}
@@ -321,6 +322,8 @@ defmodule AniminaWeb.DashboardLive do
           </li>
         <% end %>
       </ul>
+
+      </div>
 
       <div class="grid grid-cols-1 gap-6 mt-10 md:grid-cols-2">
         <.dashboard_card_like_component
