@@ -6,6 +6,9 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Markdown
+  alias Animina.Narratives.Story
+  alias AniminaWeb.PotentialPartner
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -75,6 +78,16 @@ defmodule AniminaWeb.DashboardLive do
       |> assign(total_likes_received_by_user: total_likes_received_by_user)
 
     {:ok, socket}
+  end
+
+  defp get_about_me_story_by_user(user_id) do
+    case Story.about_story_by_user(user_id) do
+      {:ok, story} ->
+        story
+
+      _ ->
+        nil
+    end
   end
 
   defp create_message_form do
@@ -230,44 +243,67 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div :if={PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) != []}>
       <div class="max-w-2xl mx-auto lg:mx-0">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-          <%= gettext("Members you might be interested in") |> raw() %>
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
+          <%= gettext("Potential Matches") |> raw() %>
         </h2>
-        <p class="mt-6 text-lg leading-8 text-gray-600">
-          <%= gettext("Here are other animima members who match your potential partner settings.")
-          |> raw() %>
-        </p>
       </div>
+
       <ul
         role="list"
-        class="grid max-w-2xl grid-cols-1 mx-auto mt-10 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none lg:grid-cols-4"
+        class="grid max-w-2xl grid-cols-1 grid-cols-2 mx-auto mt-10 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4"
       >
-        <%= for potential_partner <- potential_partners(@current_user) do %>
+        <%= for potential_partner <- PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) do %>
           <li>
             <.link
               navigate={~p"/#{potential_partner.username}"}
               class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
             >
-              <img
-                class="aspect-[1/1] w-full rounded-2xl object-cover"
-                src={"/uploads/#{potential_partner.profile_photo.filename}"}
-                alt={
-                  gettext("Image of %{name}.",
-                    name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()
-                  )
-                  |> raw()
-                }
-              />
+              <div class="relative">
+                <img
+                  :if={
+                    potential_partner && potential_partner.profile_photo &&
+                      display_potential_partner(
+                        potential_partner.profile_photo.state,
+                        @current_user,
+                        potential_partner
+                      )
+                  }
+                  class="aspect-[1/1] w-full rounded-2xl object-cover"
+                  src={"/uploads/#{potential_partner.profile_photo.filename}"}
+                  alt={
+                    gettext("Image of %{name}.",
+                      name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()
+                    )
+                    |> raw()
+                  }
+                />
+                <p
+                  :if={
+                    @current_user && potential_partner.profile_photo.state != :approved &&
+                      current_user_admin?(@current_user)
+                  }
+                  class={"p-1 text-[10px] #{get_photo_state_styling(potential_partner.profile_photo.state)} absolute top-2 left-2 rounded-md "}
+                >
+                  <%= get_photo_state_name(potential_partner.profile_photo.state) %>
+                </p>
+              </div>
 
-              <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900">
+              <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900 dark:text-gray-300">
                 <%= potential_partner.name %>
               </h3>
             </.link>
 
-            <p class="text-base leading-7 text-gray-600">
-              Lorepsum Ipsum. This should be the first 200 characters of the "about me" story. ...
-            </p>
+            <div
+              :if={get_about_me_story_by_user(potential_partner.id).content != nil}
+              class="text-base leading-7 text-gray-600 dark:text-gray-400"
+            >
+              <%= Markdown.format(
+                get_about_me_story_by_user(potential_partner.id).content
+                |> String.slice(0, 200)
+              ) %>';lknkm'
+            </div>
             <div class="pt-2">
               <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
                 <%= potential_partner.age %> <%= gettext("years") |> raw() %>
@@ -282,6 +318,8 @@ defmodule AniminaWeb.DashboardLive do
           </li>
         <% end %>
       </ul>
+
+      </div>
 
       <div class="grid grid-cols-1 gap-6 mt-10 md:grid-cols-2">
         <.dashboard_card_like_component
@@ -328,6 +366,102 @@ defmodule AniminaWeb.DashboardLive do
         |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
         |> Ash.Query.limit(4)
         |> Accounts.read!()
+    end
+  end
+
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white"
+  end
+
+  defp get_photo_state_name(:error) do
+    gettext("Error")
+  end
+
+  defp get_photo_state_name(:nsfw) do
+    gettext("NSFW")
+  end
+
+  defp get_photo_state_name(:rejected) do
+    gettext("Rejected")
+  end
+
+  defp get_photo_state_name(:pending_review) do
+    gettext("Pending review")
+  end
+
+  defp get_photo_state_name(:in_review) do
+    gettext("In review")
+  end
+
+  defp get_photo_state_name(_) do
+    gettext("Error")
+  end
+
+  def display_potential_partner(:pending_review, _, _) do
+    true
+  end
+
+  def display_potential_partner(:approved, _, _) do
+    true
+  end
+
+  def display_potential_partner(:in_review, _, _) do
+    true
+  end
+
+  def display_potential_partner(:error, nil, _) do
+    false
+  end
+
+  def display_potential_partner(:nsfw, nil, _) do
+    false
+  end
+
+  def display_potential_partner(:nsfw, current_user, user) do
+    if user.id == current_user.id || current_user_admin?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_potential_partner(:error, current_user, user) do
+    if user.id == current_user.id || current_user_admin?(current_user) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_potential_partner(_, _, _) do
+    false
+  end
+
+  def current_user_admin?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
     end
   end
 end
