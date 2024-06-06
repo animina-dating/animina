@@ -132,6 +132,16 @@ defmodule Animina.Accounts.Bookmark do
 
     destroy :unlike do
     end
+
+    read :by_owner do
+      argument :owner_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:user])
+
+      filter expr(owner_id == ^arg(:owner_id))
+    end
   end
 
   code_interface do
@@ -144,6 +154,7 @@ defmodule Animina.Accounts.Bookmark do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
+    define :by_owner, args: [:owner_id]
     define :most_often_visited_by_user, args: [:owner_id]
     define :longest_overall_duration_visited_by_user, args: [:owner_id]
   end
