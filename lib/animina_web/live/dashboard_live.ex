@@ -243,82 +243,86 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
-    <div :if={PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) != []}>
-      <div class="max-w-2xl mx-auto lg:mx-0">
-        <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
-          <%= gettext("Potential Matches") |> raw() %>
-        </h2>
-      </div>
+      <div :if={
+        PotentialPartner.potential_partners(@current_user,
+          limit: 4,
+          remove_bookmarked_potential_users: true
+        ) != []
+      }>
+        <div class="max-w-2xl mx-auto lg:mx-0">
+          <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
+            <%= gettext("Potential Matches") |> raw() %>
+          </h2>
+        </div>
 
-      <ul
-        role="list"
-        class="grid max-w-2xl grid-cols-1 grid-cols-2 mx-auto mt-10 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4"
-      >
-        <%= for potential_partner <- PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) do %>
-          <li>
-            <.link
-              navigate={~p"/#{potential_partner.username}"}
-              class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
-            >
-              <div class="relative">
-                <img
-                  :if={
-                    potential_partner && potential_partner.profile_photo &&
-                      display_potential_partner(
-                        potential_partner.profile_photo.state,
-                        @current_user,
-                        potential_partner
+        <ul
+          role="list"
+          class="grid max-w-2xl grid-cols-1 grid-cols-2 mx-auto mt-10 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4"
+        >
+          <%= for potential_partner <- PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) do %>
+            <li>
+              <.link
+                navigate={~p"/#{potential_partner.username}"}
+                class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+              >
+                <div class="relative">
+                  <img
+                    :if={
+                      potential_partner && potential_partner.profile_photo &&
+                        display_potential_partner(
+                          potential_partner.profile_photo.state,
+                          @current_user,
+                          potential_partner
+                        )
+                    }
+                    class="aspect-[1/1] w-full rounded-2xl object-cover"
+                    src={"/uploads/#{potential_partner.profile_photo.filename}"}
+                    alt={
+                      gettext("Image of %{name}.",
+                        name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()
                       )
-                  }
-                  class="aspect-[1/1] w-full rounded-2xl object-cover"
-                  src={"/uploads/#{potential_partner.profile_photo.filename}"}
-                  alt={
-                    gettext("Image of %{name}.",
-                      name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()
-                    )
-                    |> raw()
-                  }
-                />
-                <p
-                  :if={
-                    @current_user && potential_partner.profile_photo.state != :approved &&
-                      current_user_admin?(@current_user)
-                  }
-                  class={"p-1 text-[10px] #{get_photo_state_styling(potential_partner.profile_photo.state)} absolute top-2 left-2 rounded-md "}
-                >
-                  <%= get_photo_state_name(potential_partner.profile_photo.state) %>
-                </p>
+                      |> raw()
+                    }
+                  />
+                  <p
+                    :if={
+                      @current_user && potential_partner.profile_photo.state != :approved &&
+                        current_user_admin?(@current_user)
+                    }
+                    class={"p-1 text-[10px] #{get_photo_state_styling(potential_partner.profile_photo.state)} absolute top-2 left-2 rounded-md "}
+                  >
+                    <%= get_photo_state_name(potential_partner.profile_photo.state) %>
+                  </p>
+                </div>
+
+                <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900 dark:text-gray-300">
+                  <%= potential_partner.name %>
+                </h3>
+              </.link>
+
+              <div
+                :if={get_about_me_story_by_user(potential_partner.id).content != nil}
+                class="text-base leading-7 text-gray-600 dark:text-gray-400"
+              >
+                <%= Markdown.format(
+                  get_about_me_story_by_user(potential_partner.id).content
+                  |> Animina.StringHelper.slice_at_word_boundary(150, true)
+                ) %>
               </div>
-
-              <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900 dark:text-gray-300">
-                <%= potential_partner.name %>
-              </h3>
-            </.link>
-
-            <div
-              :if={get_about_me_story_by_user(potential_partner.id).content != nil}
-              class="text-base leading-7 text-gray-600 dark:text-gray-400"
-            >
-              <%= Markdown.format(
-                get_about_me_story_by_user(potential_partner.id).content
-                |> String.slice(0, 200)
-              ) %>';lknkm'
-            </div>
-            <div class="pt-2">
-              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-                <%= potential_partner.age %> <%= gettext("years") |> raw() %>
-              </span>
-              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-                <%= potential_partner.height %> <%= gettext("cm") |> raw() %>
-              </span>
-              <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-                📍 <%= potential_partner.city.name %>
-              </span>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-
+              <div class="pt-2">
+                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                  <%= potential_partner.age %> <%= gettext("years") |> raw() %>
+                </span>
+                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                  <%= potential_partner.height %> <%= gettext("cm") |> raw() %>
+                </span>
+                <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
+                  📍 <%= potential_partner.city.name %>
+                </span>
+              </div>
+            </li>
+          <% end %>
+        </ul>
       </div>
 
       <div class="grid grid-cols-1 gap-6 mt-10 md:grid-cols-2">
