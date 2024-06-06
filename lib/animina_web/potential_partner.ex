@@ -26,23 +26,23 @@ defmodule AniminaWeb.PotentialPartner do
 
 
       * `remove_bookmarked_potential_users` -
-      Whether to remove the potential partners that have been bookmarked by the user. Defaults to `false`
+      Whether to remove the potential partners that have been bookmarked by the user. Defaults to `true`
 
   """
   def potential_partners(user, options \\ []) do
     limit = Keyword.get(options, :limit, 10)
     strict_red_flags = Keyword.get(options, :strict_red_flags, false)
-    remove_bookmarked = Keyword.get(options, :remove_bookmarked_potential_users, false)
+    remove_bookmarked = Keyword.get(options, :remove_bookmarked_potential_users, true)
 
     User
     |> Ash.Query.for_read(:read)
     |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
-    |> partner_age_query(user)
-    |> partner_height_query(user)
     |> partner_gender_query(user)
-    |> partner_geo_query(user)
-    |> partner_green_flags_query(user)
-    |> partner_red_flags_query(user, strict_red_flags)
+    # |> partner_age_query(user)
+    # |> partner_height_query(user)
+    # |> partner_geo_query(user)
+    # |> partner_green_flags_query(user)
+    # |> partner_red_flags_query(user, strict_red_flags)
     |> partner_not_self_query(user)
     |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
