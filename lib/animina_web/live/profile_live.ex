@@ -77,6 +77,7 @@ defmodule AniminaWeb.ProfileLive do
              current_user_has_liked_profile?:
                current_user_has_liked_profile(socket.assigns.current_user, user.id)
            )
+           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> redirect_if_username_is_different(username, user)}
         end
 
@@ -107,6 +108,7 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(
              current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id)
            )
+           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> redirect_if_username_is_different(username, user)}
         end
 
@@ -166,6 +168,7 @@ defmodule AniminaWeb.ProfileLive do
              current_user_credit_points:
                Points.humanized_points(socket.assigns.current_user.credit_points)
            )
+           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
