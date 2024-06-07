@@ -133,7 +133,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp dropdown_items(assigns) do
     ~H"""
-    <div class="text-sm md:text-base">
+    <div class="text-base">
       <%= if @current_user  do %>
         <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
           <.link navigate="/my/flags/white">
@@ -231,20 +231,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={false}>
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-
-    <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
-    <%= String.slice(@interest, 0, 1) %>
+      <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
+      <%= String.slice(@interest, 0, 1) %>
+      </div>
+      <p>
+      <%= @interest %>
+      </p>
     </div>
-    <p>
-    <%= @interest %>
-    </p>
-
-
-
-    </div>
-
-
-
     </.top_navigation_entry>
     """
   end
@@ -405,7 +398,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <span><%= gettext("Dashboard") %></span>
       </.link>
       </div>
-
 
      <div :if={@current_user != nil}>
      <.link navigate={"/my/dashboard"} class="flex flex-row items-center gap-2" >
