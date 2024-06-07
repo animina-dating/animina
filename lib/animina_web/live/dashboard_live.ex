@@ -8,6 +8,7 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Markdown
   alias Animina.Narratives.Story
+  alias Animina.Traits.UserFlags
   alias AniminaWeb.PotentialPartner
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -79,6 +80,44 @@ defmodule AniminaWeb.DashboardLive do
       |> assign(page_title: "#{gettext("Animina dashboard for")} #{socket.assigns.current_user.name}")
 
     {:ok, socket}
+  end
+
+  defp filter_flags(user, color, language) do
+    case UserFlags.by_user_id(user.id) do
+      {:ok, traits} ->
+        traits
+        |> Enum.filter(fn trait ->
+          trait.color == color and trait.flag != nil
+        end)
+        |> Enum.map(fn trait ->
+          %{
+            id: trait.flag.id,
+            name: get_translation(trait.flag.flag_translations, language),
+            emoji: trait.flag.emoji,
+            position: trait.position
+          }
+        end)
+        |> Enum.sort_by(& &1.position)
+
+      _ ->
+        []
+    end
+  end
+
+  defp get_translation(translations, language) do
+    language = String.split(language, "-") |> Enum.at(0)
+
+    translation =
+      Enum.find(translations, nil, fn translation -> translation.language == language end)
+
+    translation.name
+  end
+
+  def get_intersecting_flags(first_flag_array, second_flag_array) do
+    Enum.filter(first_flag_array, fn x ->
+      x.id in Enum.map(second_flag_array, fn x -> x.id end)
+    end)
+    |> Enum.take(2)
   end
 
   defp get_about_me_story_by_user(user_id) do
@@ -320,6 +359,12 @@ defmodule AniminaWeb.DashboardLive do
                 <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
                   📍 <%= potential_partner.city.name %>
                 </span>
+                <.potential_users_intersecting_green_flags green_flags={
+                  get_intersecting_flags(
+                    filter_flags(@current_user, :green, @language),
+                    filter_flags(potential_partner, :white, @language)
+                  )
+                } />
               </div>
             </li>
           <% end %>
