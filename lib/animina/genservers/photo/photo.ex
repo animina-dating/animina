@@ -67,7 +67,7 @@ defmodule Animina.GenServers.Photo do
   end
 
   defp schedule_fetch_unprocessed_photos do
-    Process.send_after(self(), {:fetch_unprocessed_photos, self()}, 10_000)
+    Process.send_after(self(), {:fetch_unprocessed_photos, self()}, 30_000)
   end
 
   @doc """
