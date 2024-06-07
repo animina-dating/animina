@@ -24,22 +24,46 @@ defmodule AniminaWeb.PotentialPartner do
     * `"strict_red_flags"` -
       Whether to filter the potential partners by eliminating those that have red flags defined by the user. Defaults to `false`
 
+
+      * `remove_bookmarked_potential_users` -
+      Whether to remove the potential partners that have been bookmarked by the user. Defaults to `true`
+
   """
   def potential_partners(user, options \\ []) do
     limit = Keyword.get(options, :limit, 10)
     strict_red_flags = Keyword.get(options, :strict_red_flags, false)
+    remove_bookmarked = Keyword.get(options, :remove_bookmarked_potential_users, true)
 
     User
     |> Ash.Query.for_read(:read)
     |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
-    |> partner_age_query(user)
-    |> partner_height_query(user)
     |> partner_gender_query(user)
-    |> partner_geo_query(user)
-    |> partner_green_flags_query(user)
-    |> partner_red_flags_query(user, strict_red_flags)
+    # |> partner_age_query(user)
+    # |> partner_height_query(user)
+    # |> partner_geo_query(user)
+    # |> partner_green_flags_query(user)
+    # |> partner_red_flags_query(user, strict_red_flags)
+    |> partner_not_self_query(user)
+    |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
+  end
+
+  defp partner_not_self_query(query, user) do
+    query
+    |> Ash.Query.filter(id: [not_eq: user.id])
+  end
+
+  defp partner_bookmarked_query(query, _user, false) do
+    query
+  end
+
+  defp partner_bookmarked_query(query, user, true) do
+    bookmarked_users =
+      get_bookmarked_users(user.id)
+
+    query
+    |> Ash.Query.filter(id not in ^bookmarked_users)
   end
 
   defp partner_height_query(query, user) do
@@ -55,10 +79,32 @@ defmodule AniminaWeb.PotentialPartner do
   # We use a fragment query to calculate the age of the user as
   # ash does not support using module calculations defined with calculate/3 in filter queries
   defp partner_age_query(query, user) do
+    conditional_partner_age_query(query, user.minimum_partner_age, user.maximum_partner_age)
+  end
+
+  defp conditional_partner_age_query(query, nil, nil) do
+    query
+  end
+
+  defp conditional_partner_age_query(query, minimum_partner_age, nil) do
     query
     |> Ash.Query.filter(
-      fragment("date_part('year', age(current_date, ?))", birthday) <= ^user.maximum_partner_age and
-        fragment("date_part('year', age(current_date, ?))", birthday) >= ^user.minimum_partner_age
+      fragment("date_part('year', age(current_date, ?))", birthday) >= ^minimum_partner_age
+    )
+  end
+
+  defp conditional_partner_age_query(query, nil, maximum_partner_age) do
+    query
+    |> Ash.Query.filter(
+      fragment("date_part('year', age(current_date, ?))", birthday) <= ^maximum_partner_age
+    )
+  end
+
+  defp conditional_partner_age_query(query, minimum_partner_age, maximum_partner_age) do
+    query
+    |> Ash.Query.filter(
+      fragment("date_part('year', age(current_date, ?))", birthday) <= ^maximum_partner_age and
+        fragment("date_part('year', age(current_date, ?))", birthday) >= ^minimum_partner_age
     )
   end
 
@@ -82,7 +128,7 @@ defmodule AniminaWeb.PotentialPartner do
       |> Enum.map(fn flag -> flag.flag_id end)
 
     query
-    |> Ash.Query.filter(flags.color == :green and flags.flag_id in ^white_flags)
+    |> Ash.Query.filter(traits.color == :green and traits.flag_id in ^white_flags)
   end
 
   defp partner_red_flags_query(query, user, strict_red_flags) when strict_red_flags == true do
@@ -91,7 +137,7 @@ defmodule AniminaWeb.PotentialPartner do
       |> Enum.map(fn flag -> flag.flag_id end)
 
     query
-    |> Ash.Query.filter(flags.color == :white and flags.flag_id not in ^red_flags)
+    |> Ash.Query.filter(traits.color == :white and traits.flag_id not in ^red_flags)
   end
 
   defp partner_red_flags_query(query, _user, _strict_red_flags) do
@@ -120,5 +166,15 @@ defmodule AniminaWeb.PotentialPartner do
     UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
     |> Traits.read!()
+  end
+
+  defp get_bookmarked_users(user_id) do
+    case Accounts.Bookmark.by_owner(user_id) do
+      {:ok, bookmarks} ->
+        Enum.map(bookmarks, fn bookmark -> bookmark.user_id end)
+
+      _ ->
+        []
+    end
   end
 end

@@ -15,31 +15,237 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
       <.top_navigation current_user={@current_user} />
   """
-  attr :current_user, :any, default: nil, doc: "current user"
-  attr :active_tab, :atom, default: nil, doc: "active tab"
-  attr :current_user_credit_points, :integer, default: 0, doc: "current user credit points"
-  attr :number_of_unread_messages, :integer, default: 0, doc: "number of unread messages"
 
   def top_navigation(assigns) do
     ~H"""
-    <div class="border-y md:border-r md:border-l border-brand-silver-100">
-      <nav class="grid grid-cols-6 gap-1">
+    <div class="w-[100%] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
+      <div class="md:hidden block" x-data="{ open: false }" @click="open = !open">
+        <p class="dark:text-white text-black">
+          <.menu_bar />
+        </p>
+        <div
+          x-show="open"
+          class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-black/60 left-0 "
+        >
+          <div
+            @click.outside="open = false"
+            @keydown.escape.window="open = false"
+            x-show="open"
+            x-transition
+            x-cloak
+            class="w-[75%]  h-[100%] dark:bg-gray-900 bg-white "
+          >
+            <.mobile_navigation
+              active_tab={@active_tab}
+              current_user={@current_user}
+              current_user_credit_points={@current_user_credit_points}
+              number_of_unread_messages={@number_of_unread_messages}
+            />
+          </div>
+
+          <div class="text-white p-4" @click="open = false" x-show="open" x-transition x-cloak>
+            <.close_icon />
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center md:gap-5 gap-3">
+        <div>
+          <.top_notification_bell
+            current_user={@current_user}
+            number_of_unread_messages={@number_of_unread_messages}
+          />
+        </div>
+        <div
+          x-data="{ open: false }"
+          @click="open = !open"
+          class="flex cursor-pointer dark:text-white  gap-2 items-center"
+        >
+          <.user_avatar_image current_user={@current_user} />
+          <p :if={@current_user} class="md:block hidden"><%= @current_user.name %></p>
+
+          <button class="dark:text-white md:block hidden" type="button">
+            <.arrow_down />
+          </button>
+          <div
+            @click.outside="open = false"
+            @keydown.escape.window="open = false"
+            x-show="open"
+            x-transition
+            x-cloak
+            class=" absolute top-6  right-2 p-4"
+          >
+            <.dropdown_items current_user={@current_user} />
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp arrow_down(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+    </svg>
+    """
+  end
+
+  defp menu_bar(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+      />
+    </svg>
+    """
+  end
+
+  defp close_icon(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+    </svg>
+    """
+  end
+
+  defp dropdown_items(assigns) do
+    ~H"""
+    <div class="md:text-base text-sm">
+      <%= if @current_user  do %>
+        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
+          <.link navigate="/my/flags/white">
+            <%= gettext("Edit White Flags") %>
+          </.link>
+          <.link navigate="/my/flags/green">
+            <%= gettext("Edit Green Flags") %>
+          </.link>
+          <.link navigate="/my/flags/red">
+            <%= gettext("Edit Red Flags") %>
+          </.link>
+          <.link navigate="/my/potential-partner">
+            <%= gettext("Potential Partner Preference Link") %>
+          </.link>
+          <p class="bg-black h-[1px] dark:bg-white my-1 w-[100%]"></p>
+          <.link navigate="/auth/user/sign-out">
+            <%= gettext("Sign Out") %>
+          </.link>
+        </div>
+      <% else %>
+        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
+          <.link navigate="/">
+            <%= gettext("Register") %>
+          </.link>
+          <.link navigate="/sign-in">
+            <%= gettext("Login") %>
+          </.link>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
+  def mobile_navigation(assigns) do
+    ~H"""
+    <div class="flex flex-col p-4 gap-2">
+      <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
+
+      <.user_profile_item
+        current_user={@current_user}
+        active_tab={@active_tab}
+        current_user_credit_points={@current_user_credit_points}
+      />
+
+      <div class="flex w-[100%]  flex-col gap-2">
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+
+        <div class="flex w-[100%] flex-col gap-2">
+          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  def desktop_sidebar_navigation(assigns) do
+    ~H"""
+    <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
+      <div class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.chat_nav_item
-          current_user={@current_user}
-          active_tab={@active_tab}
-          number_of_unread_messages={@number_of_unread_messages}
-        />
+
         <.user_profile_item
           current_user={@current_user}
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
-        <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
-      </nav>
+      </div>
+
+      <div class="flex w-[100%]  p-4 flex-col gap-2">
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+
+        <div class="flex w-[100%] flex-col gap-2">
+          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+        </div>
+      </div>
     </div>
+    """
+  end
+
+  defp random_interests(assigns) do
+    ~H"""
+    <div class="w-[100%]">
+      <%= for interest <- @interests do %>
+        <.random_interest interest={interest} />
+      <% end %>
+    </div>
+    """
+  end
+
+  defp random_interest(assigns) do
+    ~H"""
+    <.top_navigation_entry phx-no-format is_active={false}>
+    <div class="flex gap-2 w-[100%] flex-row items-center" >
+
+    <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
+    <%= String.slice(@interest, 0, 1) %>
+    </div>
+    <p>
+    <%= @interest %>
+    </p>
+
+
+
+    </div>
+
+
+
+    </.top_navigation_entry>
     """
   end
 
@@ -61,11 +267,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <button
       type="button"
-      class={[
-        "relative text-xs font-medium flex md:flex-row flex-col items-center md:justify-start  md:rounded-md justify-center gap-1.5 py-3 px-0 md:px-3  shadow-none drop-shadow-none",
-        if(@is_active, do: "bg-blue-100 text-blue-600 cursor-auto", else: ""),
-        unless(@current_user && @is_active, do: "text-gray-400")
-      ]}
+      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-xs hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]  font-medium flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
     >
       <%= render_slot(@inner_block) %>
     </button>
@@ -114,6 +316,62 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
+  def user_avatar_image(assigns) do
+    ~H"""
+    <div>
+      <%= if @current_user && @current_user.profile_photo  do %>
+        <img
+          class="object-cover w-8 h-8 rounded-full"
+          src={"/uploads/#{@current_user.profile_photo.filename}"}
+        />
+      <% else %>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 stroke-current shrink-0"
+          width="25"
+          height="24"
+          viewBox="0 0 25 24"
+          fill="none"
+        >
+          <path
+            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+            stroke="stroke-current"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      <% end %>
+    </div>
+    """
+  end
+
+  def top_notification_bell(assigns) do
+    ~H"""
+    <div class="flex dark:text-white gap-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="size-6"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+        />
+      </svg>
+      <%= if (@current_user && @number_of_unread_messages > 0) do %>
+        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center font-medium">
+          <%= @number_of_unread_messages %>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
   # -------------------------------------------------------------
   @spec home_nav_item(map()) :: Phoenix.LiveView.Rendered.t()
   @doc """
@@ -130,7 +388,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
     <div :if={@current_user == nil}>
-    <.link navigate={"/sign-in/"} class="flex gap-2 md:flex-row flex-col items-center" >
+    <.link navigate={"/sign-in/"} class="flex gap-2 flex-row items-center" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -154,7 +412,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
 
      <div :if={@current_user != nil}>
-     <.link navigate={"/my/dashboard"} class="flex gap-2 md:flex-row flex-col items-center" >
+     <.link navigate={"/my/dashboard"} class="flex gap-2 flex-row items-center" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -257,7 +515,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       is_active={if @active_tab == :bookmarks, do: true, else: false}
     >
 
-    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
+    <div class="flex gap-2 flex-row items-center" :if={@current_user == nil}>
 
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
@@ -270,7 +528,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/my/bookmarks"} class="flex gap-2 md:flex-row flex-col items-center" >
+     <.link navigate={"/my/bookmarks"} class="flex gap-2 flex-row items-center" >
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
     License - https://fontawesome.com/license/free Copyright 2024
@@ -301,7 +559,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
 
 
-    <div class="flex gap-2 md:flex-row flex-col items-center" :if={@current_user == nil}>
+    <div class="flex gap-2 flex-row items-center" :if={@current_user == nil}>
 
 
 
@@ -322,7 +580,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/#{@current_user.username}"} class="flex gap-2 md:flex-row flex-col items-center" >
+     <.link navigate={"/#{@current_user.username}"} class="flex gap-2 flex-row items-center" >
      <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-6 h-6 stroke-current shrink-0"
@@ -338,55 +596,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
        <span><%= gettext("Profile") %></span>
 
     </.link>
-    </div>
-
-    </.top_navigation_entry>
-    """
-  end
-
-  @doc """
-  Desktop sidebar .
-
-  ## Examples
-
-      <.desktop_sidebar />
-  """
-  def desktop_sidebar(assigns) do
-    ~H"""
-    <div class="w-[15%] hidden md:flex flex-grow  flex-col gap-3 text-white border-r-[1px] border-[#C1C6D5] dark:border-[#414753]">
-      <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.chat_nav_item
-        current_user={@current_user}
-        active_tab={@active_tab}
-        number_of_unread_messages={@number_of_unread_messages}
-      />
-      <.user_profile_item
-        current_user={@current_user}
-        active_tab={@active_tab}
-        current_user_credit_points={@current_user_credit_points}
-      />
-      <.logout_nav_item current_user={@current_user} active_tab={@active_tab} />
-    </div>
-    """
-  end
-
-  def logout_nav_item(assigns) do
-    ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :logout, do: true, else: false}>
-
-    <div  :if={@current_user != nil}>
-      <.link navigate="/auth/user/sign-out"  class="flex gap-2 md:flex-row flex-col items-center" >
-
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 stroke-current shrink-0"
-          width="25" height="24" viewBox="0 0 25 24"
-          fill="none">
-       <path  stroke="stroke-current" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-     </svg>
-      <span><%= gettext("Logout") %></span>
-      </.link>
     </div>
 
     </.top_navigation_entry>
