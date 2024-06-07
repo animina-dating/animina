@@ -30,22 +30,18 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
       {:ok, user} ->
         subscribe(socket, current_user, user)
-
         active_tab = if current_user.id == user.id, do: :profile, else: ""
 
         if connected?(socket) do
           create_or_update_visited_bookmark(current_user, user)
 
           deduct_points_for_first_profile_view(current_user, user)
-
         end
 
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-        create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
-
-
+          create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -80,7 +76,6 @@ defmodule AniminaWeb.ProfileLive do
              current_user_has_liked_profile?:
                current_user_has_liked_profile(socket.assigns.current_user, user.id)
            )
-           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> redirect_if_username_is_different(username, user)}
         end
 
@@ -111,7 +106,6 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(
              current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id)
            )
-           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> redirect_if_username_is_different(username, user)}
         end
 
@@ -144,7 +138,7 @@ defmodule AniminaWeb.ProfileLive do
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-        create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
+          create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -171,7 +165,6 @@ defmodule AniminaWeb.ProfileLive do
              current_user_credit_points:
                Points.humanized_points(socket.assigns.current_user.credit_points)
            )
-           |> assign(page_title: "#{user.name} #{gettext("Animina Profile")} - #{user.age} ,#{gettext("years")} , #{user.height} , #{gettext("cm")} , #{user.city.name}")
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
