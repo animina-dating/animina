@@ -339,4 +339,23 @@ defmodule AniminaWeb.DashboardComponents do
     </div>
     """
   end
+
+  def potential_users_intersecting_green_flags(assigns) do
+    ~H"""
+    <div class="flex flex-wrap relative ">
+      <%= for flag <- @green_flags do %>
+        <span
+          :if={flag != %{}}
+          class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
+        >
+          <%= flag.emoji %> <%= flag.name %>
+
+          <div class="pl-2">
+            <p class="w-2 h-2 bg-green-500 rounded-full" />
+          </div>
+        </span>
+      <% end %>
+    </div>
+    """
+  end
 end
