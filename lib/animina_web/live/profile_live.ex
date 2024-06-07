@@ -37,12 +37,15 @@ defmodule AniminaWeb.ProfileLive do
           create_or_update_visited_bookmark(current_user, user)
 
           deduct_points_for_first_profile_view(current_user, user)
+
         end
 
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-          create_visit_log_entry_for_bookmark_and_user(current_user, user)
+        create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
+
+
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -141,7 +144,7 @@ defmodule AniminaWeb.ProfileLive do
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-          create_visit_log_entry_for_bookmark_and_user(current_user, user)
+        create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -214,8 +217,8 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp create_visit_log_entry_for_bookmark_and_user(current_user, user) do
-    if current_user.id != user.id do
+  defp create_visit_log_entry_for_bookmark_and_user(current_user, user, socket) do
+    if current_user.id != user.id && connected?(socket) do
       case Bookmark.by_owner_user_and_reason(
              current_user.id,
              user.id,
