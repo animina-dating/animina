@@ -13,10 +13,7 @@ defmodule Animina.Actions.ProcessPhoto do
     disable_ml_features = System.get_env("DISABLE_ML_FEATURES", nil)
 
     with false <- disable_ml_features == true,
-         {:ok, photo} <-
-           changeset.data
-           |> Ash.Changeset.for_update(:review, %{})
-           |> Accounts.update(authorize?: false) do
+         {:ok, photo} <- update_photo_to_in_review(changeset.data) do
       # Fetch and read the photo file
       dest = get_upload_dir(photo.filename)
 
@@ -75,6 +72,12 @@ defmodule Animina.Actions.ProcessPhoto do
 
         {:error, changeset.data}
     end
+  end
+
+  defp update_photo_to_in_review(photo) do
+    photo
+    |> Ash.Changeset.for_update(:review, %{})
+    |> Accounts.update(authorize?: false)
   end
 
   defp get_upload_dir(filename) do
