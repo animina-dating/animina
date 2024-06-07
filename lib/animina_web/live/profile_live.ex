@@ -30,7 +30,6 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
       {:ok, user} ->
         subscribe(socket, current_user, user)
-
         active_tab = if current_user.id == user.id, do: :profile, else: ""
 
         if connected?(socket) do
@@ -42,7 +41,7 @@ defmodule AniminaWeb.ProfileLive do
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-          create_visit_log_entry_for_bookmark_and_user(current_user, user)
+          create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -139,7 +138,7 @@ defmodule AniminaWeb.ProfileLive do
         add_points_for_viewing_to_profile(current_user.id, user.id, socket)
 
         visit_log_entry =
-          create_visit_log_entry_for_bookmark_and_user(current_user, user)
+          create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
@@ -211,8 +210,8 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp create_visit_log_entry_for_bookmark_and_user(current_user, user) do
-    if current_user.id != user.id do
+  defp create_visit_log_entry_for_bookmark_and_user(current_user, user, socket) do
+    if current_user.id != user.id && connected?(socket) do
       case Bookmark.by_owner_user_and_reason(
              current_user.id,
              user.id,
