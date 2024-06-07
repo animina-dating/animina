@@ -303,7 +303,7 @@ defmodule AniminaWeb.AniminaComponents do
         <div class="xl:grid xl:grid-cols-3 xl:gap-8">
           <div class="space-y-8">
             <p class="text-sm leading-6 text-gray-600">
-              Animina - Die faire Dating-Plattform.
+              Animina<br />Fair and common sense online-dating.
             </p>
             <div class="flex space-x-6">
               <a href="#" class="text-gray-400 hover:text-gray-500">
