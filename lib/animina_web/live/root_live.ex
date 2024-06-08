@@ -11,7 +11,6 @@ defmodule AniminaWeb.RootLive do
       socket
       |> assign(language: language)
       |> assign(current_user: nil)
-      |> assign(active_tab: :home)
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
       |> assign(:errors, [])
@@ -29,6 +28,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(page_title: gettext("Animina dating app"))
     |> assign(:form_id, "sign-up-form")
     |> assign(:cta, gettext("Register new account"))
+    |> assign(active_tab: :register)
     |> assign(:action, get_link("/auth/user/password/register/", params))
     |> assign(:sign_in_link, get_link("/sign-in/", params))
     |> assign(:hidden_points, 100)
@@ -42,6 +42,7 @@ defmodule AniminaWeb.RootLive do
     socket
     |> assign(:form_id, "sign-in-form")
     |> assign(:cta, gettext("Sign in"))
+    |> assign(active_tab: :sign_in)
     |> assign(:sign_up_link, get_link("/", params))
     |> assign(:action, get_link("/auth/user/sign_in/", params))
     |> assign(
