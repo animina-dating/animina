@@ -348,7 +348,7 @@ defmodule AniminaWeb.DashboardLive do
               >
                 <%= Markdown.format(
                   get_about_me_story_by_user(potential_partner.id).content
-                  |> Animina.StringHelper.slice_at_word_boundary(150, true)
+                  |> Animina.StringHelper.slice_at_word_boundary(150, potential_partner.username, true)
                 ) %>
               </div>
               <div class="pt-2">
