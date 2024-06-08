@@ -48,7 +48,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           </div>
         </div>
       </div>
-      <div class="flex items-center md:gap-5 gap-3">
+      <div :if={@current_user} class="flex items-center md:gap-5 gap-3">
         <div>
           <.top_notification_bell
             current_user={@current_user}
@@ -76,6 +76,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
           >
             <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
           </div>
+        </div>
+      </div>
+
+      <div :if={@current_user == nil} class="flex items-center md:gap-5 gap-3">
+        <div>
+          <.link class=" dark:text-white    text-gray-700" navigate="/sign-in">
+            <%= gettext("Login") %>
+          </.link>
         </div>
       </div>
     </div>
