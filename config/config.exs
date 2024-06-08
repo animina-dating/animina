@@ -12,17 +12,6 @@ if System.get_env("DISABLE_ML_FEATURES") == true do
   config :nx, default_backend: EXLA.Backend
 end
 
-# Configures Oban jobs
-config :animina, Oban,
-  repo: Animina.Repo,
-  queues: [default: 6, photos: 6],
-  prefix: System.get_env("DATABASE_SCHEMA", "public"),
-  plugins: [
-    {Oban.Plugins.Cron, []},
-    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24},
-    {Oban.Plugins.Lifeline, rescue_after: :timer.minutes(30)}
-  ]
-
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]

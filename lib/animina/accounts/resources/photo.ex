@@ -6,7 +6,7 @@ defmodule Animina.Accounts.Photo do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub],
+    notifiers: [Ash.Notifier.PubSub, Animina.Notifiers.Photo],
     extensions: [AshStateMachine, AshOban]
 
   attributes do
@@ -54,26 +54,6 @@ defmodule Animina.Accounts.Photo do
       transition(:reject, from: :in_review, to: :rejected)
       transition(:nsfw, from: :in_review, to: :nsfw)
       transition(:error, from: [:pending_review, :in_review, :approved, :rejected], to: :error)
-    end
-  end
-
-  oban do
-    api Accounts
-
-    triggers do
-      trigger :process do
-        action :process
-
-        where expr(state == :pending_review)
-
-        scheduler_cron "* * * * *"
-
-        queue :photos
-
-        debug? true
-
-        on_error :error
-      end
     end
   end
 
@@ -154,7 +134,7 @@ defmodule Animina.Accounts.Photo do
 
                changeset.data
                |> Ash.Changeset.for_update(:error, %{
-                 message: message,
+                 error: message,
                  error_state: changeset.data.state
                })
                |> Accounts.update()
