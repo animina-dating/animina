@@ -18,7 +18,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def top_navigation(assigns) do
     ~H"""
-    <div class="w-[100%] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
+    <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
       <div class="md:hidden block" x-data="{ open: false }" @click="open = !open">
         <p class="dark:text-white text-black">
           <.menu_bar />
@@ -133,7 +133,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp dropdown_items(assigns) do
     ~H"""
-    <div class="md:text-base text-sm">
+    <div class="text-base">
       <%= if @current_user  do %>
         <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
           <.link navigate="/my/flags/white">
@@ -267,7 +267,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <button
       type="button"
-      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-xs hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]  font-medium flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
+      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]   flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
     >
       <%= render_slot(@inner_block) %>
     </button>
@@ -364,7 +364,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </svg>
       <%= if (@current_user && @number_of_unread_messages > 0) do %>
-        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center font-medium">
+        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center ">
           <%= @number_of_unread_messages %>
         </div>
       <% end %>
@@ -488,7 +488,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         </svg>
       <% end %>
         </div>
-        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center font-medium">
+        <div class="rounded-full bg-blue-600 w-4 h-4 text-[9px] text-white flex items-center justify-center">
           <%= @number_of_unread_messages %>
         </div>
       </div>
