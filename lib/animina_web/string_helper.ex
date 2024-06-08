@@ -16,7 +16,7 @@ defmodule Animina.StringHelper do
       "This is a long string that"
 
       iex> Animina.StringHelper.slice_at_word_boundary("This is a long string that should be sliced properly.", 30, true)
-      "This is a long string that ..."
+      "This is a long string that [...]"
 
   """
   def slice_at_word_boundary(str, max_length, profile_username, add_ellipsis \\ false) do
@@ -29,7 +29,7 @@ defmodule Animina.StringHelper do
         |> ensure_word_boundary()
 
       if add_ellipsis do
-        sliced_str <> "<a href=#{"/#{profile_username}"}>[...]</a>"
+        sliced_str <> " <a href=#{"/#{profile_username}"}>[...]</a>"
       else
         sliced_str
       end
