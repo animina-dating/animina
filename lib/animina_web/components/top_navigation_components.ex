@@ -72,9 +72,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
             x-show="open"
             x-transition
             x-cloak
-            class=" absolute top-6  right-2 p-4"
+            class=" absolute top-8  right-2 py-3"
           >
-            <.dropdown_items current_user={@current_user} />
+            <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
           </div>
         </div>
       </div>
@@ -133,29 +133,39 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp dropdown_items(assigns) do
     ~H"""
-    <div class="text-base">
+    <div>
       <%= if @current_user  do %>
-        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
-          <.link navigate="/my/flags/white">
+        <div class="dark:bg-gray-900    text-gray-700 block w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
+          <div class="border-gray-100 border-b-[1px]  py-1">
+            <p class="text-sm px-2 " role="none"><%= gettext("Signed in as") %></p>
+            <p class="truncate text-sm px-2 font-medium dark:text-gray-400 text-gray-900">
+              <%= @current_user.username %>
+            </p>
+          </div>
+          <.link class="px-2" navigate="/my/flags/white">
             <%= gettext("Edit White Flags") %>
           </.link>
-          <.link navigate="/my/flags/green">
-            <%= gettext("Edit Green Flags") %>
+          <.link class="px-2" navigate="/my/flags/green">
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Green Flags") %> <p class="bg-green-500 w-2 h-2 rounded-full" />
+            </div>
           </.link>
-          <.link navigate="/my/flags/red">
-            <%= gettext("Edit Red Flags") %>
+          <.link class="px-2" navigate="/my/flags/red">
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Red Flags") %> <p class="bg-red-500 w-2 h-2 rounded-full" />
+            </div>
           </.link>
-          <.link navigate="/my/potential-partner">
-            <%= gettext("Potential Partner Preference Link") %>
+          <.link class="px-2" navigate="/my/potential-partner">
+            <%= gettext("Edit Potential Partner Preferences") %>
           </.link>
-          <p class="bg-black h-[1px] dark:bg-white my-1 w-[100%]"></p>
-          <.link navigate="/auth/user/sign-out">
+          <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
+          <.link class="px-2" navigate="/auth/user/sign-out">
             <%= gettext("Sign Out") %>
           </.link>
         </div>
       <% else %>
-        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
-          <.link navigate="/">
+        <div class="dark:bg-gray-900 text-gray-700  text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2 dark:text-white  p-4 ">
+          <.link :if={@active_tab != :register} navigate="/">
             <%= gettext("Register") %>
           </.link>
           <.link navigate="/sign-in">

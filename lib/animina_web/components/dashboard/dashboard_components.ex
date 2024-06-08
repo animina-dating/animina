@@ -240,7 +240,7 @@ defmodule AniminaWeb.DashboardComponents do
 
   defp no_unread_messages_component(assigns) do
     ~H"""
-    <div class="flex flex-col justify-center items-center h-[100%] text-white  gap-4">
+    <div class="flex flex-col justify-center items-center h-[100%] dark:text-white text-black gap-4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
