@@ -21,31 +21,7 @@ defmodule Animina.MyCustomSignInPreparation do
   @impl true
   def prepare(query, _options, _context) do
     if query.arguments != %{} && query.arguments.password && query.arguments.username_or_email do
-      query
-      |> Query.filter(
-        email == ^query.arguments.username_or_email or
-          username == ^query.arguments.username_or_email
-      )
-      |> Query.before_action(fn query ->
-        Ash.Query.ensure_selected(query, :hashed_password)
-      end)
-      |> Query.after_action(fn
-        query, [] ->
-          # If record is empty, return an error
-          {:error,
-           AuthenticationFailed.exception(
-             query: query,
-             caused_by: %{
-               module: __MODULE__,
-               action: query.action,
-               resource: query.resource,
-               message: "Username or password is incorrect"
-             }
-           )}
-
-        query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
-          validate_password(record, query)
-      end)
+      filter_for_username_or_email(query, argument_is_username(query.arguments.username_or_email))
     else
       query
     end
@@ -96,5 +72,74 @@ defmodule Animina.MyCustomSignInPreparation do
     {:ok, token, _claims} = Jwt.token_for_user(record, %{"purpose" => to_string(purpose)})
 
     Ash.Resource.put_metadata(record, :token, token)
+  end
+
+  defp argument_is_username(argument) do
+    if String.contains?(argument, "@") && String.at(argument, 0) != "@" do
+      false
+    else
+      true
+    end
+  end
+
+  #  the second parameter is for when the argument is a username
+  defp filter_for_username_or_email(query, true) do
+    username = format_username(query.arguments.username_or_email)
+
+    query
+    |> Query.filter(username == ^username)
+    |> Query.before_action(fn query ->
+      Ash.Query.ensure_selected(query, :hashed_password)
+    end)
+    |> Query.after_action(fn
+      query, [] ->
+        # If record is empty, return an error
+        {:error,
+         AuthenticationFailed.exception(
+           query: query,
+           caused_by: %{
+             module: __MODULE__,
+             action: query.action,
+             resource: query.resource,
+             message: "Username or password is incorrect"
+           }
+         )}
+
+      query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
+        validate_password(record, query)
+    end)
+  end
+
+  defp filter_for_username_or_email(query, false) do
+    query
+    |> Query.filter(email == ^query.arguments.username_or_email)
+    |> Query.before_action(fn query ->
+      Ash.Query.ensure_selected(query, :hashed_password)
+    end)
+    |> Query.after_action(fn
+      query, [] ->
+        # If record is empty, return an error
+        {:error,
+         AuthenticationFailed.exception(
+           query: query,
+           caused_by: %{
+             module: __MODULE__,
+             action: query.action,
+             resource: query.resource,
+             message: "Username or password is incorrect"
+           }
+         )}
+
+      query, [record] when is_binary(:erlang.map_get(:hashed_password, record)) ->
+        validate_password(record, query)
+    end)
+  end
+
+  defp format_username(username) do
+    if String.at(username, 0) == "@" do
+      String.slice(username, 1, String.length(username))
+    else
+      username
+    end
   end
 end
