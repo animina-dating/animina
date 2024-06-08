@@ -1,5 +1,6 @@
 defmodule Animina.StringHelper do
   alias Animina.Markdown
+
   @moduledoc """
   String helper functions.
   """
@@ -18,7 +19,7 @@ defmodule Animina.StringHelper do
       "This is a long string that ..."
 
   """
-  def slice_at_word_boundary(str, max_length, profile_username ,  add_ellipsis \\ false) do
+  def slice_at_word_boundary(str, max_length, profile_username, add_ellipsis \\ false) do
     if String.length(str) <= max_length do
       str
     else
