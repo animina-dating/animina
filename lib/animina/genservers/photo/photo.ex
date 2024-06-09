@@ -48,6 +48,7 @@ defmodule Animina.GenServers.Photo do
       Photo
       |> Ash.Query.for_read(:read)
       |> Ash.Query.filter(state == ^:pending_review)
+      |> Ash.Query.sort(created_at: :asc)
       |> Accounts.read!(authorize?: false, page: [limit: 6])
 
     queue =
