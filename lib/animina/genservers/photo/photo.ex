@@ -47,6 +47,7 @@ defmodule Animina.GenServers.Photo do
     bulk_result =
       Photo
       |> Ash.Query.for_read(:read)
+      |> Ash.Query.sort(created_at: :asc)
       |> Ash.Query.filter(state == ^:pending_review)
       |> Accounts.read!(authorize?: false, page: [limit: 6])
 
