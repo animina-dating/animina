@@ -6,6 +6,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   import AniminaWeb.Gettext
   alias Animina.Accounts.Points
+  alias Animina.Accounts.User
 
   # -------------------------------------------------------------
   @doc """
@@ -188,21 +189,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def mobile_navigation(assigns) do
     ~H"""
     <div class="flex flex-col p-4 gap-2">
-      <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <div :if={@current_user} class="flex flex-col gap-2">
+        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
 
-      <.user_profile_item
-        current_user={@current_user}
-        active_tab={@active_tab}
-        current_user_credit_points={@current_user_credit_points}
-      />
-
+        <.user_profile_item
+          current_user={@current_user}
+          active_tab={@active_tab}
+          current_user_credit_points={@current_user_credit_points}
+        />
+      </div>
       <div class="flex w-[100%]  flex-col gap-2">
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -212,7 +214,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def desktop_sidebar_navigation(assigns) do
     ~H"""
     <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
-      <div class="flex flex-col p-4 gap-2">
+      <div :if={@current_user} class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -228,7 +230,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -239,7 +241,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%]">
       <%= for interest <- @interests do %>
-        <.random_interest interest={interest} />
+        <.random_interest interest={interest}  />
       <% end %>
     </div>
     """
@@ -248,19 +250,17 @@ defmodule AniminaWeb.TopNavigationCompontents do
   defp random_interest(assigns) do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={false}>
+    <.link navigate={"/#{@interest.username}"} >
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-
-    <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
-    <%= String.slice(@interest, 0, 1) %>
+      <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center uppercase justify-center">
+        <%= String.slice(@interest.name, 0, 1) %>
     </div>
     <p>
-    <%= @interest %>
+        <%= @interest.name %>
     </p>
 
-
-
     </div>
-
+    </.link>
 
 
     </.top_navigation_entry>
@@ -618,5 +618,36 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
     </.top_navigation_entry>
     """
+  end
+
+  defp six_random_public_users(nil) do
+    (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.shuffle()
+  end
+
+  defp six_random_public_users(current_user) do
+    (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.filter(&(&1.id != current_user.id))
+    |> Enum.shuffle()
+  end
+
+  defp three_random_public_female_users do
+    case User.female_public_users_who_created_an_account_in_the_last_60_days() do
+      {:ok, users} ->
+        Enum.take_random(users, 3)
+
+      {:error, _reason} ->
+        []
+    end
+  end
+
+  defp three_random_public_male_users do
+    case User.male_public_users_who_created_an_account_in_the_last_60_days() do
+      {:ok, users} ->
+        Enum.take_random(users, 3)
+
+      {:error, _reason} ->
+        []
+    end
   end
 end

@@ -186,6 +186,20 @@ defmodule Animina.Accounts.User do
 
       filter expr(username == ^arg(:username))
     end
+
+    read :female_public_users_who_created_an_account_in_the_last_60_days do
+      filter expr(
+               is_private == ^false and gender == ^"female" and
+                 created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
+             )
+    end
+
+    read :male_public_users_who_created_an_account_in_the_last_60_days do
+      filter expr(
+               is_private == ^false and gender == ^"male" and
+                 created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
+             )
+    end
   end
 
   code_interface do
@@ -199,6 +213,8 @@ defmodule Animina.Accounts.User do
     define :by_email, get_by: [:email], action: :read
     define :by_username_as_an_actor, args: [:username]
     define :custom_sign_in, get?: true
+    define :female_public_users_who_created_an_account_in_the_last_60_days
+    define :male_public_users_who_created_an_account_in_the_last_60_days
   end
 
   calculations do
