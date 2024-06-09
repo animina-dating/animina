@@ -204,7 +204,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={six_random_public_users()} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -230,7 +230,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={six_random_public_users()} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -241,7 +241,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%]">
       <%= for interest <- @interests do %>
-        <.random_interest interest={interest} />
+        <.random_interest interest={interest}  />
       <% end %>
     </div>
     """
@@ -620,8 +620,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
-  defp six_random_public_users do
+  defp six_random_public_users(nil) do
     (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.shuffle()
+  end
+
+  defp six_random_public_users(current_user) do
+    (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.filter(&(&1.id != current_user.id))
     |> Enum.shuffle()
   end
 
