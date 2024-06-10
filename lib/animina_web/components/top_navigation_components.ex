@@ -241,7 +241,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%]">
       <%= for interest <- @interests do %>
-        <.random_interest interest={interest}  />
+        <.random_interest interest={interest} />
       <% end %>
     </div>
     """
