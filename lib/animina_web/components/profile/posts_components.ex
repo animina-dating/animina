@@ -4,6 +4,7 @@ defmodule AniminaWeb.PostsComponents do
   """
   use Phoenix.Component
   alias Animina.Markdown
+  import AniminaWeb.Gettext
 
   use Timex
 
@@ -16,38 +17,72 @@ defmodule AniminaWeb.PostsComponents do
 
   def post_card(assigns) do
     ~H"""
-    <div class="relative z-20 flex flex-col max-w-[365px] gap-1.5 bg-white p-5 rounded-2xl border border-black">
-      <p class="text-xs">
-        Published <%= Timex.format!(@post.created_at, "{0D}.{0M}.{YYYY} {h24}:{m}") %>
-      </p>
-      <h2 class="text-xl font-bold">
-        <.link navigate={@post.url}>
-          <%= @post.title %>
-        </.link>
-      </h2>
-      <p class="text-sm text-gray-400">
-        <%= (String.slice(@post.content, 0..120) <> " ...") |> Markdown.format() %>
-      </p>
-
-      <div class="flex items-center justify-between">
-        <.link
-          navigate={@post.url}
-          class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          <%= @read_post_title %>
-        </.link>
-
-        <.post_action_icons
-          post={@post}
-          current_user={@current_user}
-          user={@user}
-          dom_id={@dom_id}
-          delete_post_modal_text={@delete_post_modal_text}
-        />
+    <a href="/">
+    <div class="-my-12 divide-y divide-gray-900/10">
+      <div class="py-12">
+        <div class="group relative dark:text-white text-black max-w-xl">
+          <p class="block text-sm leading-6 text-gray-600">
+            <%= Timex.format!(@post.created_at, "{0D}.{0M}.{YYYY}") %>
+          </p>
+          <h2 class="mt-2 text-lg font-semibold text-gray-400 group-hover:text-gray-500">
+            <a href="#">
+              <span class="absolute inset-0"></span>  <%= @post.title %>
+            </a>
+          </h2>
+          <p class="mt-4 text-sm leading-6 ">
+            <%= Markdown.format(
+              @post.content
+              |> Animina.StringHelper.slice_at_word_boundary(
+                150,
+                @post.url,
+                true
+              )
+            ) %>
+          </p>
+          <.link navigate={"/teststst"}>
+           <%= gettext("Continue Reading") %>
+          </.link>
+        </div>
       </div>
     </div>
+    </a>
     """
   end
+
+  # def post_card(assigns) do
+  #   ~H"""
+  #   <div class="relative z-20 flex flex-col max-w-[365px] gap-1.5 bg-white p-5 rounded-2xl border border-black">
+  #     <p class="text-xs">
+  #       Published <%= Timex.format!(@post.created_at, "{0D}.{0M}.{YYYY} {h24}:{m}") %>
+  #     </p>
+  #     <h2 class="text-xl font-bold">
+  #       <.link navigate={@post.url}>
+  #         <%= @post.title %>
+  #       </.link>
+  #     </h2>
+  #     <p class="text-sm text-gray-400">
+  #       <%= (String.slice(@post.content, 0..120) <> " ...") |> Markdown.format() %>
+  #     </p>
+
+  #     <div class="flex items-center justify-between">
+  #       <.link
+  #         navigate={@post.url}
+  #         class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+  #       >
+  #         <%= @read_post_title %>
+  #       </.link>
+
+  #       <.post_action_icons
+  #         post={@post}
+  #         current_user={@current_user}
+  #         user={@user}
+  #         dom_id={@dom_id}
+  #         delete_post_modal_text={@delete_post_modal_text}
+  #       />
+  #     </div>
+  #   </div>
+  #   """
+  # end
 
   attr :post, :any, required: true
   attr :current_user, :any, required: true

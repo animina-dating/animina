@@ -147,7 +147,7 @@ defmodule AniminaWeb.ProfilePostsLive do
         </div>
 
         <div
-          class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
+          class="mx-auto grid  grid-cols-1 gap-x-8 gap-y-12 px-6 sm:gap-y-16 lg:grid-cols-2 lg:px-8"
           id="stream_posts"
           phx-update="stream"
         >
