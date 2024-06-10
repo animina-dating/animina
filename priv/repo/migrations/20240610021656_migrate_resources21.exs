@@ -36,6 +36,7 @@ defmodule Animina.Repo.Migrations.MigrateResources21 do
           ),
           null: false
     end
+
     create index(:potential_partners, [:user_id, :potential_partner_id])
 
     create index(:potential_partners, [:user_id])
@@ -49,6 +50,7 @@ defmodule Animina.Repo.Migrations.MigrateResources21 do
     drop constraint(:potential_partners, "potential_partners_user_id_fkey")
 
     drop constraint(:potential_partners, "potential_partners_potential_partner_id_fkey")
+
     drop_if_exists unique_index(:potential_partners, [:user_id, :potential_partner_id],
                      name: "potential_partners_unique_potential_partner_index"
                    )
