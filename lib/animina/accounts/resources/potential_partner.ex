@@ -1,7 +1,7 @@
 defmodule Animina.Accounts.PotentialPartner do
-  alias Animina.Accounts.User
-  alias Phoenix.PubSub
-
+  @moduledoc """
+  This is the PotentialPartner module which we use to manage potential partners.
+  """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer

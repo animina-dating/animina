@@ -5,12 +5,10 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Accounts.Message
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
-  alias Animima.Accounts.PotentialPartner
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Markdown
   alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
-
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -43,12 +41,10 @@ defmodule AniminaWeb.DashboardLive do
       Accounts.PotentialPartner.potential_partners_for_user!(socket.assigns.current_user.id)
       |> Enum.map(fn x -> x.potential_partner_id end)
 
-    IO.inspect(
-      create_potential_partners_if_none_exist_who_are_active(
-        socket,
-        socket.assigns.current_user,
-        potential_partners_already_in_database
-      )
+    create_potential_partners_if_none_exist_who_are_active(
+      socket,
+      socket.assigns.current_user,
+      potential_partners_already_in_database
     )
 
     likes_received_by_user_in_seven_days =
