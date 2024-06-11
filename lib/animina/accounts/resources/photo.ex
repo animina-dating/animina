@@ -111,6 +111,7 @@ defmodule Animina.Accounts.Photo do
     end
 
     update :process do
+      transaction? false
       manual Animina.Actions.ProcessPhoto
     end
   end
