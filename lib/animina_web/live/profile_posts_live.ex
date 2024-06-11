@@ -103,11 +103,13 @@ defmodule AniminaWeb.ProfilePostsLive do
   defp fetch_posts(user_id, current_user) do
     Narratives.Post
     |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
+    |> Ash.Query.sort(created_at: :desc)
     |> Narratives.read!(actor: current_user)
     |> Enum.map(fn post ->
       Phoenix.PubSub.subscribe(Animina.PubSub, "post:updated:#{post.id}")
       post
     end)
+    |> Enum.take(3)
   end
 
   defp update_post(socket, post) do
@@ -147,7 +149,7 @@ defmodule AniminaWeb.ProfilePostsLive do
         </div>
 
         <div
-          class="grid gap-8 md:grid-cols-2 auto-rows-fr lg:grid-cols-3"
+          class="mx-auto grid  grid-cols-1 gap-x-8 gap-y-12 px-6 sm:gap-y-16 lg:grid-cols-2 lg:px-8"
           id="stream_posts"
           phx-update="stream"
         >
