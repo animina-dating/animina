@@ -9,7 +9,6 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Markdown
   alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
-  alias AniminaWeb.PotentialPartner
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -37,6 +36,16 @@ defmodule AniminaWeb.DashboardLive do
         "reaction:deleted:#{socket.assigns.current_user.id}"
       )
     end
+
+    potential_partners_already_in_database =
+      Accounts.PotentialPartner.potential_partners_for_user!(socket.assigns.current_user.id)
+      |> Enum.map(fn x -> x.potential_partner_id end)
+
+    create_potential_partners_if_none_exist_who_are_active(
+      socket,
+      socket.assigns.current_user,
+      potential_partners_already_in_database
+    )
 
     likes_received_by_user_in_seven_days =
       Reaction.likes_received_by_user_in_seven_days!(socket.assigns.current_user.id)
@@ -82,6 +91,27 @@ defmodule AniminaWeb.DashboardLive do
       )
 
     {:ok, socket}
+  end
+
+  defp create_potential_partners_if_none_exist_who_are_active(
+         socket,
+         current_user,
+         potential_partners_already_in_database
+       ) do
+    if connected?(socket) && active_potential_partners_for_user(current_user.id) == [] do
+      potential_partners_ids =
+        get_potential_partners_ids_from_query(
+          current_user,
+          potential_partners_already_in_database
+        )
+
+      Enum.each(potential_partners_ids, fn potential_partner_id ->
+        Accounts.PotentialPartner.create(%{
+          user_id: current_user.id,
+          potential_partner_id: potential_partner_id
+        })
+      end)
+    end
   end
 
   defp filter_flags(user, color, language) do
@@ -281,15 +311,46 @@ defmodule AniminaWeb.DashboardLive do
     end
   end
 
+  def get_potential_partners_ids_from_query(current_user, potential_partners_already_in_database) do
+    AniminaWeb.PotentialPartner.potential_partners(current_user,
+      limit: 4,
+      remove_bookmarked_potential_users: true
+    )
+    |> Enum.map(fn potential_partner -> potential_partner.id end)
+    |> Enum.filter(fn id ->
+      id not in Enum.map(potential_partners_already_in_database, fn x ->
+        x.potential_partner_id
+      end)
+    end)
+  end
+
+  def active_potential_partners_for_user(user_id) do
+    case Accounts.PotentialPartner.active_potential_partners_for_user(user_id) do
+      {:ok, potential_partners} ->
+        potential_partners
+
+      _ ->
+        []
+    end
+  end
+
+  defp get_four_active_potential_partners_for_user_to_display(user_id) do
+    case Accounts.PotentialPartner.four_active_potential_partners_for_user(user_id) do
+      {:ok, potential_partners} ->
+        potential_partners.results
+
+      _ ->
+        []
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
       <div :if={
-        PotentialPartner.potential_partners(@current_user,
-          limit: 4,
-          remove_bookmarked_potential_users: true
-        ) != []
+        @current_user &&
+          get_four_active_potential_partners_for_user_to_display(@current_user.id) != []
       }>
         <div class="max-w-2xl mx-auto lg:mx-0">
           <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
@@ -301,7 +362,7 @@ defmodule AniminaWeb.DashboardLive do
           role="list"
           class="grid max-w-2xl grid-cols-1 grid-cols-2 mx-auto mt-10 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4"
         >
-          <%= for potential_partner <- PotentialPartner.potential_partners(@current_user, [limit: 4, remove_bookmarked_potential_users: true]) do %>
+          <%= for %{potential_partner: potential_partner} <- get_four_active_potential_partners_for_user_to_display(@current_user.id) do %>
             <li>
               <.link
                 navigate={~p"/#{potential_partner.username}"}
@@ -328,7 +389,8 @@ defmodule AniminaWeb.DashboardLive do
                   />
                   <p
                     :if={
-                      @current_user && potential_partner.profile_photo.state != :approved &&
+                      @current_user && potential_partner.profile_photo &&
+                        potential_partner.profile_photo.state != :approved &&
                         current_user_admin?(@current_user)
                     }
                     class={"p-1 text-[10px] #{get_photo_state_styling(potential_partner.profile_photo.state)} absolute top-2 left-2 rounded-md "}
@@ -343,7 +405,10 @@ defmodule AniminaWeb.DashboardLive do
               </.link>
 
               <div
-                :if={get_about_me_story_by_user(potential_partner.id).content != nil}
+                :if={
+                  get_about_me_story_by_user(potential_partner.id) &&
+                    get_about_me_story_by_user(potential_partner.id).content != nil
+                }
                 class="text-base leading-7 text-gray-600 dark:text-gray-400"
               >
                 <%= Markdown.format(
