@@ -204,7 +204,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={six_random_public_users(@current_user)} />
+          <.random_interests
+            current_user={@current_user}
+            interests={six_random_public_users(@current_user)}
+          />
         </div>
       </div>
     </div>
@@ -230,7 +233,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={six_random_public_users(@current_user)} />
+          <.random_interests
+            interests={six_random_public_users(@current_user)}
+            current_user={@current_user}
+          />
         </div>
       </div>
     </div>
@@ -241,7 +247,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%]">
       <%= for interest <- @interests do %>
-        <.random_interest interest={interest} />
+        <.random_interest interest={interest} current_user={@current_user} />
       <% end %>
     </div>
     """
@@ -252,9 +258,19 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={false}>
     <.link navigate={"/#{@interest.username}"} >
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-      <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center uppercase justify-center">
-        <%= String.slice(@interest.name, 0, 1) %>
+    <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
+    <div class="relative">
+    <.user_avatar_image  current_user={@interest} />
+
+    <p class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
+
+
+
     </div>
+    <%else %>
+
+    <.error_or_nsfw_profile_image />
+    <%end %>
     <p>
         <%= @interest.name %>
     </p>
@@ -264,6 +280,95 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
 
     </.top_navigation_entry>
+    """
+  end
+
+  defp get_photo_state_styling(:error) do
+    "bg-red-500 text-white w-2 h-2 rounded-full"
+  end
+
+  defp get_photo_state_styling(:nsfw) do
+    "bg-red-500 text-white w-2 h-2 rounded-full"
+  end
+
+  defp get_photo_state_styling(:rejected) do
+    "bg-red-500 text-white w-2 h-2 rounded-full"
+  end
+
+  defp get_photo_state_styling(:pending_review) do
+    "bg-yellow-500 text-white w-2 h-2 rounded-full"
+  end
+
+  defp get_photo_state_styling(:in_review) do
+    "bg-blue-500 text-white w-4 h-4 rounded-full"
+  end
+
+  def display_image(:pending_review, _, _) do
+    true
+  end
+
+  def display_image(:approved, _, _) do
+    true
+  end
+
+  def display_image(:in_review, _, _) do
+    true
+  end
+
+  def display_image(:nsfw, current_user, photo) do
+    if current_user && (current_user.id == photo.user_id || admin_user?(current_user)) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(:error, current_user, photo) do
+    if current_user && (current_user.id == photo.user_id || admin_user?(current_user)) do
+      true
+    else
+      false
+    end
+  end
+
+  def display_image(_, _, _) do
+    false
+  end
+
+  def admin_user?(current_user) do
+    if current_user do
+      case current_user.roles do
+        [] ->
+          false
+
+        roles ->
+          roles
+          |> Enum.map(fn x -> x.name end)
+          |> Enum.any?(fn x -> x == :admin end)
+      end
+    else
+      false
+    end
+  end
+
+  defp error_or_nsfw_profile_image(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="w-6 h-6 stroke-current shrink-0"
+      width="25"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+    >
+      <path
+        d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+        stroke="stroke-current"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
     """
   end
 
