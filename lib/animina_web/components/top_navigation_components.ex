@@ -335,19 +335,19 @@ defmodule AniminaWeb.TopNavigationCompontents do
     false
   end
 
-  def admin_user?(current_user) do
-    if current_user do
-      case current_user.roles do
-        [] ->
-          false
+  def admin_user?(nil) do
+    false
+  end
 
-        roles ->
-          roles
-          |> Enum.map(fn x -> x.name end)
-          |> Enum.any?(fn x -> x == :admin end)
-      end
-    else
-      false
+  def admin_user?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
     end
   end
 
