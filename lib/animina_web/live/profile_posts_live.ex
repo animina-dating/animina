@@ -103,11 +103,13 @@ defmodule AniminaWeb.ProfilePostsLive do
   defp fetch_posts(user_id, current_user) do
     Narratives.Post
     |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
+    |> Ash.Query.sort(created_at: :desc)
     |> Narratives.read!(actor: current_user)
     |> Enum.map(fn post ->
       Phoenix.PubSub.subscribe(Animina.PubSub, "post:updated:#{post.id}")
       post
     end)
+    |> Enum.take(3)
   end
 
   defp update_post(socket, post) do
