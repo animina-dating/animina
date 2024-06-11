@@ -262,7 +262,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div class="relative">
     <.user_avatar_image  current_user={@interest} />
 
-    <p class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
+    <p :={if @interest.profile_photo.state != :approved} class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
 
 
 
@@ -301,6 +301,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp get_photo_state_styling(:in_review) do
     "bg-blue-500 text-white w-4 h-4 rounded-full"
+  end
+
+  defp get_photo_state_styling(_) do
+    "bg-green-500 text-white w-4 h-4 rounded-full"
   end
 
   def display_image(:pending_review, _, _) do
