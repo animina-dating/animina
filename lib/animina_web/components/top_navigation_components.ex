@@ -732,9 +732,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp six_random_public_users(current_user) do
-    (three_random_public_male_users() ++ three_random_public_female_users())
-    |> Enum.filter(&(&1.id != current_user.id))
-    |> Enum.shuffle()
+    AniminaWeb.PotentialPartner.potential_partners(current_user, limit: 6)
   end
 
   defp three_random_public_female_users do
