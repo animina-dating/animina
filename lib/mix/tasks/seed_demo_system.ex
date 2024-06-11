@@ -604,7 +604,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
       url =
         "https://images.unsplash.com/#{unsplash_id}"
 
-      %HTTPoison.Response{body: body} = HTTPoison.get!(url)
+      %HTTPoison.Response{body: body} =
+        HTTPoison.get!(url, [], timeout: 100_000, recv_timeout: 150_000)
 
       dest =
         Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
