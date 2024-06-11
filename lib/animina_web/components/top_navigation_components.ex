@@ -6,6 +6,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   import AniminaWeb.Gettext
   alias Animina.Accounts.Points
+  alias Animina.Accounts.User
 
   # -------------------------------------------------------------
   @doc """
@@ -48,7 +49,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           </div>
         </div>
       </div>
-      <div class="flex items-center md:gap-5 gap-3">
+      <div :if={@current_user} class="flex items-center md:gap-5 gap-3">
         <div>
           <.top_notification_bell
             current_user={@current_user}
@@ -72,10 +73,18 @@ defmodule AniminaWeb.TopNavigationCompontents do
             x-show="open"
             x-transition
             x-cloak
-            class=" absolute top-6  right-2 p-4"
+            class=" absolute top-8  right-2 py-3"
           >
-            <.dropdown_items current_user={@current_user} />
+            <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
           </div>
+        </div>
+      </div>
+
+      <div :if={@current_user == nil} class="flex items-center md:gap-5 gap-3">
+        <div>
+          <.link class=" dark:text-white    text-gray-700" navigate="/sign-in">
+            <%= gettext("Login") %>
+          </.link>
         </div>
       </div>
     </div>
@@ -133,29 +142,39 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp dropdown_items(assigns) do
     ~H"""
-    <div class="text-base">
+    <div>
       <%= if @current_user  do %>
-        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
-          <.link navigate="/my/flags/white">
+        <div class="dark:bg-gray-900    text-gray-700 block w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
+          <div class="border-gray-100 border-b-[1px]  py-1">
+            <p class="text-sm px-2 " role="none"><%= gettext("Signed in as") %></p>
+            <p class="truncate text-sm px-2 font-medium dark:text-gray-400 text-gray-900">
+              <%= @current_user.username %>
+            </p>
+          </div>
+          <.link class="px-2" navigate="/my/flags/white">
             <%= gettext("Edit White Flags") %>
           </.link>
-          <.link navigate="/my/flags/green">
-            <%= gettext("Edit Green Flags") %>
+          <.link class="px-2" navigate="/my/flags/green">
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Green Flags") %> <p class="bg-green-500 w-2 h-2 rounded-full" />
+            </div>
           </.link>
-          <.link navigate="/my/flags/red">
-            <%= gettext("Edit Red Flags") %>
+          <.link class="px-2" navigate="/my/flags/red">
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Red Flags") %> <p class="bg-red-500 w-2 h-2 rounded-full" />
+            </div>
           </.link>
-          <.link navigate="/my/potential-partner">
-            <%= gettext("Potential Partner Preference Link") %>
+          <.link class="px-2" navigate="/my/potential-partner">
+            <%= gettext("Edit Potential Partner Preferences") %>
           </.link>
-          <p class="bg-black h-[1px] dark:bg-white my-1 w-[100%]"></p>
-          <.link navigate="/auth/user/sign-out">
+          <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
+          <.link class="px-2" navigate="/auth/user/sign-out">
             <%= gettext("Sign Out") %>
           </.link>
         </div>
       <% else %>
-        <div class="dark:bg-gray-900 bg-white shadow-md flex flex-col rounded-md gap-2 dark:shadow-gray-600 shadow-gray-300 dark:text-white  p-4 w-[100%]">
-          <.link navigate="/">
+        <div class="dark:bg-gray-900 text-gray-700  text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2 dark:text-white  p-4 ">
+          <.link :if={@active_tab != :register} navigate="/">
             <%= gettext("Register") %>
           </.link>
           <.link navigate="/sign-in">
@@ -170,21 +189,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def mobile_navigation(assigns) do
     ~H"""
     <div class="flex flex-col p-4 gap-2">
-      <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
-      <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <div :if={@current_user} class="flex flex-col gap-2">
+        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
 
-      <.user_profile_item
-        current_user={@current_user}
-        active_tab={@active_tab}
-        current_user_credit_points={@current_user_credit_points}
-      />
-
+        <.user_profile_item
+          current_user={@current_user}
+          active_tab={@active_tab}
+          current_user_credit_points={@current_user_credit_points}
+        />
+      </div>
       <div class="flex w-[100%]  flex-col gap-2">
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -194,7 +214,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def desktop_sidebar_navigation(assigns) do
     ~H"""
     <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
-      <div class="flex flex-col p-4 gap-2">
+      <div :if={@current_user} class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -210,7 +230,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests interests={["Stefan", "Michael", "Brian"]} />
+          <.random_interests interests={six_random_public_users(@current_user)} />
         </div>
       </div>
     </div>
@@ -230,19 +250,17 @@ defmodule AniminaWeb.TopNavigationCompontents do
   defp random_interest(assigns) do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={false}>
+    <.link navigate={"/#{@interest.username}"} >
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-
-    <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center justify-center">
-    <%= String.slice(@interest, 0, 1) %>
+      <div class="border-[1px] dark:border-white border-black rounded-md w-8 h-8 flex items-center uppercase justify-center">
+        <%= String.slice(@interest.name, 0, 1) %>
     </div>
     <p>
-    <%= @interest %>
+        <%= @interest.name %>
     </p>
 
-
-
     </div>
-
+    </.link>
 
 
     </.top_navigation_entry>
@@ -600,5 +618,36 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
     </.top_navigation_entry>
     """
+  end
+
+  defp six_random_public_users(nil) do
+    (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.shuffle()
+  end
+
+  defp six_random_public_users(current_user) do
+    (three_random_public_male_users() ++ three_random_public_female_users())
+    |> Enum.filter(&(&1.id != current_user.id))
+    |> Enum.shuffle()
+  end
+
+  defp three_random_public_female_users do
+    case User.female_public_users_who_created_an_account_in_the_last_60_days() do
+      {:ok, users} ->
+        Enum.take_random(users, 3)
+
+      {:error, _reason} ->
+        []
+    end
+  end
+
+  defp three_random_public_male_users do
+    case User.male_public_users_who_created_an_account_in_the_last_60_days() do
+      {:ok, users} ->
+        Enum.take_random(users, 3)
+
+      {:error, _reason} ->
+        []
+    end
   end
 end

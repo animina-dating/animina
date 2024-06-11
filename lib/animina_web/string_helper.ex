@@ -1,4 +1,6 @@
 defmodule Animina.StringHelper do
+  alias Animina.Markdown
+
   @moduledoc """
   String helper functions.
   """
@@ -6,6 +8,7 @@ defmodule Animina.StringHelper do
   @doc """
   Slices the string at the specified length, ensuring it ends at a word boundary.
   Optionally appends "..." if the string was truncated.
+  The Elipses are wrapped in an anchor tag with the link to the user profile.
 
   ## Examples
 
@@ -13,10 +16,10 @@ defmodule Animina.StringHelper do
       "This is a long string that"
 
       iex> Animina.StringHelper.slice_at_word_boundary("This is a long string that should be sliced properly.", 30, true)
-      "This is a long string that ..."
+      "This is a long string that [...]"
 
   """
-  def slice_at_word_boundary(str, max_length, add_ellipsis \\ false) do
+  def slice_at_word_boundary(str, max_length, profile_username, add_ellipsis \\ false) do
     if String.length(str) <= max_length do
       str
     else
@@ -26,7 +29,7 @@ defmodule Animina.StringHelper do
         |> ensure_word_boundary()
 
       if add_ellipsis do
-        sliced_str <> " [...]"
+        sliced_str <> " <a href=#{"/#{profile_username}"}>[...]</a>"
       else
         sliced_str
       end
@@ -39,5 +42,9 @@ defmodule Animina.StringHelper do
     words
     |> Enum.drop(-1)
     |> Enum.join(" ")
+  end
+
+  def add_link_to_hashtags(link) do
+    Markdown.format("<a href=#{link}>#{link}</a>")
   end
 end

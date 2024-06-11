@@ -107,7 +107,7 @@ defmodule AniminaWeb.StoriesComponents do
 
       <div :if={!empty_flags_array?(@flags)} class="bg-green-100 relative rounded-md">
         <.link
-          :if={@current_user.id == @user.id}
+          :if={@current_user && @current_user.id == @user.id}
           class="absolute text-blue-700 top-2 right-4"
           navigate="/my/flags/white"
         >

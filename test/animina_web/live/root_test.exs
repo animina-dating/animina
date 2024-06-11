@@ -112,6 +112,22 @@ defmodule AniminaWeb.RootTest do
       assert html =~ "Criteria for your new partner"
     end
 
+    test "A user can login with their username that has an @ at the start and password", %{
+      conn: conn
+    } do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => "@#{user.username}",
+          "password" => @valid_attrs.password
+        })
+        |> live(~p"/my/potential-partner/")
+
+      assert html =~ "Criteria for your new partner"
+    end
+
     test "Once a user logs in for the first time , if they visit the potential partner page
     , they are given 100 credit points as Registration Bonus and 100 as Daily Bonus",
          %{conn: conn} do
