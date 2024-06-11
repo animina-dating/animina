@@ -21,7 +21,9 @@ defmodule Animina.Notifiers.Photo do
       }) do
     case action_type do
       :create ->
-        Photo.add_photo(photo)
+        if System.get_env("DISABLE_ML_FEATURES") == false do
+          Photo.add_photo(photo)
+        end
 
       _ ->
         :ok

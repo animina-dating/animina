@@ -17,8 +17,6 @@ defmodule Animina.Application do
       # Start the Finch HTTP client for sending emails
       {Finch, name: Animina.Finch},
       {Animina.GenServers.ProfileViewCredits, []},
-      {Animina.GenServers.Photo, 0},
-      {Animina.GenServers.PhotoConsumerSupervisor, []},
 
       # Start a worker by calling: Animina.Worker.start_link(arg)
       # {Animina.Worker, arg},
@@ -36,7 +34,9 @@ defmodule Animina.Application do
             {Nx.Serving,
              name: NsfwDetectionServing,
              serving: Servings.NsfwDetectionServing.serving(),
-             batch_timeout: 100}
+             batch_timeout: 100},
+            {Animina.GenServers.Photo, 0},
+            {Animina.GenServers.PhotoConsumerSupervisor, []}
           ]
 
         # children
