@@ -7,6 +7,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   import AniminaWeb.Gettext
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
+  alias Animina.StringHelper
 
   # -------------------------------------------------------------
   @doc """
@@ -62,7 +63,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
           class="flex cursor-pointer dark:text-white  gap-2 items-center"
         >
           <.user_avatar_image current_user={@current_user} />
-          <p :if={@current_user} class="md:block hidden"><%= @current_user.name %></p>
+          <p :if={@current_user} class="md:block hidden">
+            <%= StringHelper.truncate_name(@current_user.name) %>
+          </p>
 
           <button class="dark:text-white md:block hidden" type="button">
             <.arrow_down />
@@ -148,7 +151,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           <div class="border-gray-100 border-b-[1px]  py-1">
             <p class="text-sm px-2 " role="none"><%= gettext("Signed in as") %></p>
             <p class="truncate text-sm px-2 font-medium dark:text-gray-400 text-gray-900">
-              <%= @current_user.username %>
+              <%= StringHelper.truncate_username(@current_user.username) %>
             </p>
           </div>
           <.link class="px-2" navigate="/my/flags/white">
@@ -269,7 +272,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.error_or_nsfw_profile_image />
     <%end %>
     <p>
-        <%= @interest.name %>
+        <%= StringHelper.truncate_name(@interest.name) %>
     </p>
 
     </div>
