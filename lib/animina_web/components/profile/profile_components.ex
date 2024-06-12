@@ -3,7 +3,6 @@ defmodule AniminaWeb.ProfileComponents do
   Provides Profile UI components.
   """
   use Phoenix.Component
-  import AniminaWeb.Gettext
 
   def profile_details(assigns) do
     ~H"""
@@ -177,7 +176,7 @@ defmodule AniminaWeb.ProfileComponents do
   def receiver_user_image(assigns) do
     ~H"""
     <%= if @user &&  @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
-      <div class="flex flex-col gap-1">
+      <div class="flex relative flex-col gap-1">
         <img
           class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@user.profile_photo.filename}"}
@@ -187,9 +186,9 @@ defmodule AniminaWeb.ProfileComponents do
             @user && @user.profile_photo && @user.profile_photo.state != :approved &&
               (admin_user?(@current_user) || (@current_user && @user.id == @current_user.id))
           }
-          class={"p-1 text-[8px] text-center #{get_photo_state_styling(@user.profile_photo.state)} rounded-md "}
+          class={"absolute top-0 right-0  #{get_photo_state_styling(@user.profile_photo.state)}  "}
         >
-          <%= get_photo_state_name(@user.profile_photo.state) %>
+
         </p>
       </div>
     <% else %>
@@ -264,47 +263,27 @@ defmodule AniminaWeb.ProfileComponents do
   end
 
   defp get_photo_state_styling(:error) do
-    "bg-red-500 text-white"
+    "bg-red-500 text-white w-2 h-2 rounded-full"
   end
 
   defp get_photo_state_styling(:nsfw) do
-    "bg-red-500 text-white"
+    "bg-red-500 text-white w-2 h-2 rounded-full"
   end
 
   defp get_photo_state_styling(:rejected) do
-    "bg-red-500 text-white"
+    "bg-red-500 text-white w-2 h-2 rounded-full"
   end
 
   defp get_photo_state_styling(:pending_review) do
-    "bg-yellow-500 text-white"
+    "bg-yellow-500 text-white w-2 h-2 rounded-full"
   end
 
   defp get_photo_state_styling(:in_review) do
-    "bg-blue-500 text-white"
+    "bg-blue-500 text-white w-4 h-4 rounded-full"
   end
 
-  defp get_photo_state_name(:error) do
-    gettext("Error")
-  end
-
-  defp get_photo_state_name(:nsfw) do
-    gettext("NSFW")
-  end
-
-  defp get_photo_state_name(:rejected) do
-    gettext("Rejected")
-  end
-
-  defp get_photo_state_name(:pending_review) do
-    gettext("Pending review")
-  end
-
-  defp get_photo_state_name(:in_review) do
-    gettext("In review")
-  end
-
-  defp get_photo_state_name(_) do
-    gettext("Error")
+  defp get_photo_state_styling(_) do
+    "bg-green-500 text-white w-4 h-4 rounded-full"
   end
 
   def profile_location_card(assigns) do
