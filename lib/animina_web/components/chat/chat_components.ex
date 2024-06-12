@@ -7,7 +7,6 @@ defmodule AniminaWeb.ChatComponents do
   alias Animina.StringHelper
   alias AniminaWeb.ProfileComponents
 
-
   def send_message_button(assigns) do
     ~H"""
     <div>

@@ -4,7 +4,6 @@ defmodule AniminaWeb.ProfileComponents do
   """
   use Phoenix.Component
 
-
   def profile_details(assigns) do
     ~H"""
     <div :if={@user} class="flex items-center justify-between pb-4">
