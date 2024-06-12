@@ -20,8 +20,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def top_navigation(assigns) do
     ~H"""
     <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
-      <div class="block md:hidden" x-data="{ open: false }" @click="open = !open">
-        <p class="text-black dark:text-white">
+      <div class="md:hidden block" x-data="{ open: false }" @click="open = !open">
+        <p class="dark:text-white text-black">
           <.menu_bar />
         </p>
         <div
@@ -44,12 +44,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
             />
           </div>
 
-          <div class="p-4 text-white" @click="open = false" x-show="open" x-transition x-cloak>
+          <div class="text-white p-4" @click="open = false" x-show="open" x-transition x-cloak>
             <.close_icon />
           </div>
         </div>
       </div>
-      <div :if={@current_user} class="flex items-center gap-3 md:gap-5">
+      <div :if={@current_user} class="flex items-center md:gap-5 gap-3">
         <div>
           <.top_notification_bell
             current_user={@current_user}
@@ -59,12 +59,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <div
           x-data="{ open: false }"
           @click="open = !open"
-          class="flex items-center gap-2 cursor-pointer dark:text-white"
+          class="flex cursor-pointer dark:text-white  gap-2 items-center"
         >
           <.user_avatar_image current_user={@current_user} />
-          <p :if={@current_user} class="hidden md:block"><%= @current_user.name %></p>
+          <p :if={@current_user} class="md:block hidden"><%= @current_user.name %></p>
 
-          <button class="hidden dark:text-white md:block" type="button">
+          <button class="dark:text-white md:block hidden" type="button">
             <.arrow_down />
           </button>
           <div
@@ -73,16 +73,16 @@ defmodule AniminaWeb.TopNavigationCompontents do
             x-show="open"
             x-transition
             x-cloak
-            class="absolute py-3 top-8 right-2"
+            class=" absolute top-8  right-2 py-3"
           >
             <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
           </div>
         </div>
       </div>
 
-      <div :if={@current_user == nil} class="flex items-center gap-3 md:gap-5">
+      <div :if={@current_user == nil} class="flex items-center md:gap-5 gap-3">
         <div>
-          <.link class="text-gray-700 dark:text-white" navigate="/sign-in">
+          <.link class=" dark:text-white    text-gray-700" navigate="/sign-in">
             <%= gettext("Login") %>
           </.link>
         </div>
@@ -146,8 +146,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <%= if @current_user  do %>
         <div class="dark:bg-gray-900    text-gray-700 block w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
           <div class="border-gray-100 border-b-[1px]  py-1">
-            <p class="px-2 text-sm " role="none"><%= gettext("Signed in as") %></p>
-            <p class="px-2 text-sm font-medium text-gray-900 truncate dark:text-gray-400">
+            <p class="text-sm px-2 " role="none"><%= gettext("Signed in as") %></p>
+            <p class="truncate text-sm px-2 font-medium dark:text-gray-400 text-gray-900">
               <%= @current_user.username %>
             </p>
           </div>
@@ -155,13 +155,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
             <%= gettext("Edit White Flags") %>
           </.link>
           <.link class="px-2" navigate="/my/flags/green">
-            <div class="flex items-center gap-2">
-              <%= gettext("Edit Green Flags") %> <p class="w-2 h-2 bg-green-500 rounded-full" />
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Green Flags") %> <p class="bg-green-500 w-2 h-2 rounded-full" />
             </div>
           </.link>
           <.link class="px-2" navigate="/my/flags/red">
-            <div class="flex items-center gap-2">
-              <%= gettext("Edit Red Flags") %> <p class="w-2 h-2 bg-red-500 rounded-full" />
+            <div class="flex gap-2 items-center">
+              <%= gettext("Edit Red Flags") %> <p class="bg-red-500 w-2 h-2 rounded-full" />
             </div>
           </.link>
           <.link class="px-2" navigate="/my/potential-partner">
@@ -173,7 +173,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           </.link>
         </div>
       <% else %>
-        <div class="flex flex-col gap-2 p-4 text-sm text-gray-700 bg-white rounded-md shadow-lg dark:bg-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:text-white ">
+        <div class="dark:bg-gray-900 text-gray-700  text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2 dark:text-white  p-4 ">
           <.link :if={@active_tab != :register} navigate="/">
             <%= gettext("Register") %>
           </.link>
@@ -188,7 +188,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def mobile_navigation(assigns) do
     ~H"""
-    <div class="flex flex-col gap-2 p-4">
+    <div class="flex flex-col p-4 gap-2">
       <div :if={@current_user} class="flex flex-col gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -201,7 +201,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </div>
       <div class="flex w-[100%]  flex-col gap-2">
-        <p class=" dark:text-white"><%= gettext("Other Members") %></p>
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
           <.random_interests
@@ -217,7 +217,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def desktop_sidebar_navigation(assigns) do
     ~H"""
     <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
-      <div :if={@current_user} class="flex flex-col gap-2 p-4">
+      <div :if={@current_user} class="flex flex-col p-4 gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -230,7 +230,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       </div>
 
       <div class="flex w-[100%]  p-4 flex-col gap-2">
-        <p class=" dark:text-white"><%= gettext("Other Members") %></p>
+        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
           <.random_interests
@@ -258,20 +258,20 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={false}>
     <.link navigate={"/#{@interest.username}"} >
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-      <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
-      <div class="relative">
-        <.user_avatar_image current_user={@interest} />
+    <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
+    <div class="relative">
+    <.user_avatar_image  current_user={@interest} />
+    <p :if={@interest.profile_photo.state != :approved} class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
 
-        <p class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
-      </div>
-      <% else %>
-      <.error_or_nsfw_profile_image />
-      <% end %>
-      <p class="text-left">
-        <%= @interest.name %><br />
-        <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md text-black-700"><%= @interest.age %> years</span>
-        <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md text-black-700"><%= @interest.height %> cm</span>
-      </p>
+    </div>
+    <%else %>
+
+    <.error_or_nsfw_profile_image />
+    <%end %>
+    <p>
+        <%= @interest.name %>
+    </p>
+
     </div>
     </.link>
 
@@ -301,7 +301,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp get_photo_state_styling(_) do
-    "text-white w-4 h-4"
+    "bg-green-500 text-white w-4 h-4 rounded-full"
   end
 
   def display_image(:pending_review, _, _) do
@@ -445,7 +445,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div>
       <%= if @current_user && @current_user.profile_photo  do %>
         <img
-          class="object-cover w-12 h-12 rounded-full"
+          class="object-cover w-8 h-8 rounded-full"
           src={"/uploads/#{@current_user.profile_photo.filename}"}
         />
       <% else %>
@@ -472,7 +472,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def top_notification_bell(assigns) do
     ~H"""
-    <div class="flex gap-1 dark:text-white">
+    <div class="flex dark:text-white gap-1">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -512,7 +512,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
     <div :if={@current_user == nil}>
-    <.link navigate={"/sign-in/"} class="flex flex-row items-center gap-2" >
+    <.link navigate={"/sign-in/"} class="flex gap-2 flex-row items-center" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -536,7 +536,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
 
      <div :if={@current_user != nil}>
-     <.link navigate={"/my/dashboard"} class="flex flex-row items-center gap-2" >
+     <.link navigate={"/my/dashboard"} class="flex gap-2 flex-row items-center" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -639,7 +639,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       is_active={if @active_tab == :bookmarks, do: true, else: false}
     >
 
-    <div class="flex flex-row items-center gap-2" :if={@current_user == nil}>
+    <div class="flex gap-2 flex-row items-center" :if={@current_user == nil}>
 
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
@@ -652,7 +652,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/my/bookmarks"} class="flex flex-row items-center gap-2" >
+     <.link navigate={"/my/bookmarks"} class="flex gap-2 flex-row items-center" >
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
     License - https://fontawesome.com/license/free Copyright 2024
@@ -683,7 +683,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
 
 
-    <div class="flex flex-row items-center gap-2" :if={@current_user == nil}>
+    <div class="flex gap-2 flex-row items-center" :if={@current_user == nil}>
 
 
 
@@ -699,12 +699,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
             stroke-linecap="round" stroke-linejoin="round"
           />
         </svg>
-    <span><%= gettext("My Profile") %></span>
+    <span><%= gettext("Profile") %></span>
 
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/#{@current_user.username}"} class="flex flex-row items-center gap-2" >
+     <.link navigate={"/#{@current_user.username}"} class="flex gap-2 flex-row items-center" >
      <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-6 h-6 stroke-current shrink-0"
@@ -717,7 +717,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
             stroke-linecap="round" stroke-linejoin="round"
           />
         </svg>
-       <span><%= gettext("My Profile") %></span>
+       <span><%= gettext("Profile") %></span>
 
     </.link>
     </div>
@@ -732,9 +732,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp six_random_public_users(current_user) do
-    (three_random_public_male_users() ++ three_random_public_female_users())
-    |> Enum.filter(&(&1.id != current_user.id))
-    |> Enum.shuffle()
+    AniminaWeb.PotentialPartner.potential_partners(current_user, limit: 6)
   end
 
   defp three_random_public_female_users do
