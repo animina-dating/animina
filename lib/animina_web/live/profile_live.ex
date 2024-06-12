@@ -57,6 +57,20 @@ defmodule AniminaWeb.ProfileLive do
             filter_flags(user, :white, language)
           )
 
+        intersecting_red_flags =
+          get_intersecting_flags(
+            filter_flags(current_user, :red, language),
+            filter_flags(user, :white, language)
+          )
+          |> Enum.take(3)
+
+        intersecting_green_flags =
+          get_intersecting_flags(
+            filter_flags(current_user, :green, language),
+            filter_flags(user, :white, language)
+          )
+          |> Enum.take(3)
+
         if show_optional_404_page(user, current_user) do
           raise Animina.Fallback
         else
@@ -69,6 +83,8 @@ defmodule AniminaWeb.ProfileLive do
              current_user_credit_points:
                Points.humanized_points(socket.assigns.current_user.credit_points)
            )
+           |> assign(intersecting_green_flags: intersecting_green_flags)
+           |> assign(intersecting_red_flags: intersecting_red_flags)
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
@@ -101,6 +117,8 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(current_user_credit_points: 0)
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
+           |> assign(intersecting_green_flags: [])
+           |> assign(intersecting_red_flags: [])
            |> assign(show_404_page: false)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
            |> assign(
@@ -166,6 +184,8 @@ defmodule AniminaWeb.ProfileLive do
                Points.humanized_points(socket.assigns.current_user.credit_points)
            )
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+           |> assign(intersecting_green_flags: [])
+           |> assign(intersecting_red_flags: [])
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
            |> assign(
@@ -551,8 +571,8 @@ defmodule AniminaWeb.ProfileLive do
         display_profile_image_next_to_name={false}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
         profile_points={@profile_points}
-        intersecting_green_flags={[]}
-        intersecting_red_flags={[]}
+        intersecting_green_flags={@intersecting_green_flags}
+        intersecting_red_flags={@intersecting_red_flags}
         current_user_credit_points={@current_user_credit_points}
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
@@ -602,13 +622,21 @@ defmodule AniminaWeb.ProfileLive do
           %{
             id: trait.flag.id,
             name: get_translation(trait.flag.flag_translations, language),
-            emoji: trait.flag.emoji
+            emoji: trait.flag.emoji,
+            position: trait.position
           }
         end)
+        |> Enum.sort_by(& &1.position)
 
       _ ->
         []
     end
+  end
+
+  def get_intersecting_flags(first_flag_array, second_flag_array) do
+    Enum.filter(first_flag_array, fn x ->
+      x.id in Enum.map(second_flag_array, fn x -> x.id end)
+    end)
   end
 
   defp get_translation(translations, language) do

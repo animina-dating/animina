@@ -83,26 +83,6 @@ defmodule AniminaWeb.ProfileComponents do
             red_flags={@intersecting_red_flags}
             count={@intersecting_red_flags_count}
           />
-
-          <span
-            :if={
-              @current_user != @user && @show_intersecting_flags_count &&
-                @intersecting_green_flags_count != 0
-            }
-            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-          >
-            <%= @intersecting_green_flags_count %>
-            <p class="w-2 ml-1 h-2 bg-green-500 rounded-full" />
-          </span>
-          <span
-            :if={
-              @current_user != @user && @show_intersecting_flags_count &&
-                @intersecting_red_flags_count != 0
-            }
-            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-          >
-            <%= @intersecting_red_flags_count %> <p class="w-2 ml-1 h-2 bg-red-500 rounded-full" />
-          </span>
         </div>
       </div>
 
@@ -188,7 +168,6 @@ defmodule AniminaWeb.ProfileComponents do
           }
           class={"absolute top-0 right-0  #{get_photo_state_styling(@user.profile_photo.state)}  "}
         >
-
         </p>
       </div>
     <% else %>
