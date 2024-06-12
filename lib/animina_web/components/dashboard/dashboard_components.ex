@@ -4,6 +4,7 @@ defmodule AniminaWeb.DashboardComponents do
   """
   use Phoenix.Component
   alias Animina.Markdown
+  alias Animina.StringHelper
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
   import Phoenix.HTML.Form
@@ -146,7 +147,7 @@ defmodule AniminaWeb.DashboardComponents do
         <.sender_user_image user={@sender} current_user={@receiver} />
         <div class="justify-start w-[100%] flex items-start flex-col">
           <p class="text-xs dark:text-white">
-            <%= @sender.name %>
+            <%= StringHelper.truncate_name(@sender.name) %>
           </p>
           <div class=" w-[100%]  text-xs   dark:bg-gray-100 bg-gray-300 text-black   flex flex-col gap-1 justify-between px-1 items-start rounded-md">
             <p class="px-1">

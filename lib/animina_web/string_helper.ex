@@ -36,6 +36,32 @@ defmodule Animina.StringHelper do
     end
   end
 
+  def truncate_username(str) do
+    str = Ash.CiString.value(str)
+
+    if String.length(str) <= 18 do
+      str
+    else
+      sliced_str =
+        str
+        |> String.slice(0, 18)
+
+      sliced_str <> "..."
+    end
+  end
+
+  def truncate_name(str) do
+    if String.length(str) <= 18 do
+      str
+    else
+      sliced_str =
+        str
+        |> String.slice(0, 18)
+
+      sliced_str <> "..."
+    end
+  end
+
   defp ensure_word_boundary(sliced_str) do
     words = String.split(sliced_str, ~r/\s+/)
 

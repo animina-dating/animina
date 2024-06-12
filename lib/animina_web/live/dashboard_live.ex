@@ -8,6 +8,7 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Markdown
   alias Animina.Narratives.Story
+  alias Animina.StringHelper
   alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -400,7 +401,7 @@ defmodule AniminaWeb.DashboardLive do
                 </div>
 
                 <h3 class="mt-6 text-lg font-semibold leading-8 tracking-tight text-gray-900 dark:text-gray-300">
-                  <%= potential_partner.name %>
+                  <%= StringHelper.truncate_name(potential_partner.name) %>
                 </h3>
               </.link>
 

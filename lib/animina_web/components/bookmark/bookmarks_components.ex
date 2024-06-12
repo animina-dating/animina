@@ -2,6 +2,7 @@ defmodule AniminaWeb.BookmarksComponents do
   @moduledoc """
   Provides Bookmark UI components.
   """
+  alias Animina.StringHelper
   use Phoenix.Component
   import AniminaWeb.Gettext
 
@@ -42,7 +43,7 @@ defmodule AniminaWeb.BookmarksComponents do
 
           <div class="space-y-2 w-[100%] flex-1">
             <h1 class=" font-medium dark:text-white">
-              <%= @bookmark.user.name %>
+              <%= StringHelper.truncate_name(@bookmark.user.name) %>
             </h1>
 
             <div
