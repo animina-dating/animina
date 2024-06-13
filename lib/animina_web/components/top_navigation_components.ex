@@ -84,8 +84,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
       </div>
 
       <div :if={@current_user == nil} class="flex items-center md:gap-5 gap-3">
-        <div>
-          <.link class=" dark:text-white    text-gray-700" navigate="/sign-in">
+        <div :if={@active_tab == :sign_in}>
+          <p class="dark:text-gray-500 text-gray-400 cursor-not-allowed">
+            <%= gettext("Login") %>
+          </p>
+        </div>
+
+        <div :if={@active_tab != :sign_in}>
+          <.link class=" dark:text-white cursor-pointer  text-gray-700" navigate="/sign-in">
             <%= gettext("Login") %>
           </.link>
         </div>
