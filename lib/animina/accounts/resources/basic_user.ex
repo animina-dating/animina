@@ -6,7 +6,7 @@ defmodule Animina.Accounts.BasicUser do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    extensions: [AshAuthentication]
+    extensions: [AshAuthentication, AshStateMachine]
 
   alias Animina.Accounts
   alias Animina.Validations
@@ -37,6 +37,21 @@ defmodule Animina.Accounts.BasicUser do
                   min_length: 1,
                   trim?: true,
                   allow_empty?: false
+    end
+
+    attribute :state, :atom do
+      constraints one_of: [
+                    :normal,
+                    :validated,
+                    :under_investigation,
+                    :banned,
+                    :incognito,
+                    :hibernate,
+                    :archived
+                  ]
+
+      default :normal
+      allow_nil? false
     end
 
     attribute :birthday, :date, allow_nil?: false
@@ -81,6 +96,23 @@ defmodule Animina.Accounts.BasicUser do
     end
   end
 
+  state_machine do
+    initial_states([:normal])
+    default_initial_state(:normal)
+
+    transitions do
+      transition(:validate, from: [:normal, :under_investigation], to: :validated)
+      transition(:investigate, from: [:normal, :validated], to: :under_investigation)
+      transition(:ban, from: [:normal, :validated, :under_investigation], to: :banned)
+      transition(:incognito, from: [:normal, :validated, :under_investigation], to: :incognito)
+      transition(:hibernate, from: [:normal, :validated, :under_investigation], to: :hibernate)
+      transition(:archive, from: [:normal, :validated, :under_investigation], to: :archived)
+      transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
+      transition(:unban, from: [:banned], to: :normal)
+      transition(:recover, from: [:archived], to: :normal)
+    end
+  end
+
   validations do
     validate {Validations.Birthday, attribute: :birthday}
     validate {Validations.ZipCode, attribute: :zip_code}
@@ -108,6 +140,42 @@ defmodule Animina.Accounts.BasicUser do
       argument :username_or_email, :string, allow_nil?: false
       argument :password, :string, allow_nil?: false, sensitive?: true
       prepare Animina.MyCustomSignInPreparation
+    end
+
+    update :validate do
+      change transition_state(:validate)
+    end
+
+    update :investigate do
+      change transition_state(:investigate)
+    end
+
+    update :ban do
+      change transition_state(:ban)
+    end
+
+    update :incognito do
+      change transition_state(:incognito)
+    end
+
+    update :hibernate do
+      change transition_state(:hibernate)
+    end
+
+    update :archive do
+      change transition_state(:archive)
+    end
+
+    update :reactivate do
+      change transition_state(:reactivate)
+    end
+
+    update :unban do
+      change transition_state(:unban)
+    end
+
+    update :recover do
+      change transition_state(:recover)
     end
   end
 
