@@ -31,13 +31,37 @@ defmodule Animina.MyCustomSignInPreparation do
     password = query.arguments.password
 
     if Bcrypt.verify_pass(password, Map.get(record, :hashed_password)) do
-      {:ok,
-       [
-         maybe_generate_token(
-           query.context[:token_type] || :user,
-           record
-         )
-       ]}
+      case record.state do
+        :normal ->
+          {:ok,
+           [
+             maybe_generate_token(
+               query.context[:token_type] || :user,
+               record
+             )
+           ]}
+
+        :under_investigation ->
+          {:error,
+           AuthenticationFailed.exception(
+             query: query,
+             caused_by: %{
+               module: __MODULE__,
+               action: query.action,
+               resource: query.resource,
+               message: "Account is under investigation"
+             }
+           )}
+
+        _ ->
+          {:ok,
+           [
+             maybe_generate_token(
+               query.context[:token_type] || :user,
+               record
+             )
+           ]}
+      end
     else
       {:error,
        AuthenticationFailed.exception(
@@ -46,7 +70,7 @@ defmodule Animina.MyCustomSignInPreparation do
            module: __MODULE__,
            action: query.action,
            resource: query.resource,
-           message: "Password is not valid"
+           message: "Username or password is incorrect"
          }
        )}
     end

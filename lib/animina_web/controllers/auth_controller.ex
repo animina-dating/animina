@@ -103,11 +103,13 @@ defmodule AniminaWeb.AuthController do
         |> assign(:current_user, user)
         |> redirect(to: return_to)
 
-      _ ->
+      {:error, body} ->
+        message = (body.errors |> List.first()).caused_by.message
+
         conn
         |> put_flash(
           :error,
-          gettext("Username or password is incorrect")
+          message
         )
         |> redirect(to: "/sign-in")
     end

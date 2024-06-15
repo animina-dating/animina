@@ -8,14 +8,16 @@ defmodule Animina.Checks.ReadProfileCheck do
   alias Animina.Accounts.User
 
   def describe(_opts) do
-    "Ensures An Actor Can Only read the profile of another user if they have a minimum of 20 credit points if it is their first visit and the profile is private and 10 credit points if it is the profile has liked the profile before"
+    "Ensures An Actor Can Only read the profile of another user if they have a minimum of 20 credit points if it is their first visit and the profile is private and 10 credit points if it is the profile has liked the profile before or they are an admin"
   end
 
   def match?(actor, params, _opts) do
-    check_if_user_can_view_profile(actor, params, params.query.arguments)
+    IO.inspect params
+    IO.inspect check_if_user_can_view_profile(actor, params, params.query.arguments) , label: "Mamamia"
   end
 
   defp check_if_user_can_view_profile(_actor, _params, %{}) do
+    IO.inspect("Here s")
     true
   end
 
@@ -23,9 +25,16 @@ defmodule Animina.Checks.ReadProfileCheck do
     case User.by_username(params.query.arguments.username) do
       {:ok, profile} ->
         if actor.username == profile.username || profile.is_private == false do
-          true
-        else
           user_can_view_profile(
+            admin_user?(actor),
+            profile.state
+
+          )
+        else
+          IO.puts("MAmma")
+          user_can_view_profile(
+            admin_user?(actor),
+            profile.state,
             user_has_viewed_the_profile_already(profile.id, actor.id),
             user_has_liked_current_user_profile(profile, actor.id),
             actor.credit_points
@@ -37,19 +46,43 @@ defmodule Animina.Checks.ReadProfileCheck do
     end
   end
 
-  defp user_can_view_profile(true, true, _) do
+
+  defp user_can_view_profile(true, :normal) do
     true
   end
 
-  defp user_can_view_profile(false, true, points) when points >= 10 do
+  defp user_can_view_profile(true, :under_investigation) do
     true
   end
 
-  defp user_can_view_profile(false, false, points) when points >= 20 do
+  defp user_can_view_profile(false, :under_investigation) do
+    false
+  end
+
+  defp user_can_view_profile(_, _) do
+    true
+  end
+  defp user_can_view_profile(true, :normal_, _, _) do
     true
   end
 
-  defp user_can_view_profile(_, _, _) do
+  defp user_can_view_profile(true, :under_investigation_, _, _) do
+    true
+  end
+
+  defp user_can_view_profile(false, :under_investigation, _, _, _) do
+    false
+  end
+
+  defp user_can_view_profile(false, _, false, true, points) when points >= 10 do
+    true
+  end
+
+  defp user_can_view_profile(false, _, false, false, points) when points >= 20 do
+    true
+  end
+
+  defp user_can_view_profile(false, _, _, _, _) do
     false
   end
 
@@ -70,6 +103,22 @@ defmodule Animina.Checks.ReadProfileCheck do
 
       {:error, _} ->
         false
+    end
+  end
+
+  def admin_user?(nil) do
+    false
+  end
+
+  def admin_user?(current_user) do
+    case current_user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
     end
   end
 end

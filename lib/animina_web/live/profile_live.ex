@@ -108,7 +108,7 @@ defmodule AniminaWeb.ProfileLive do
 
     case Accounts.User.by_username(username) do
       {:ok, user} ->
-        if show_optional_404_page(user, nil) do
+        if show_optional_404_page(user, nil) || user.state == :under_investigation do
           raise Animina.Fallback
         else
           {:ok,
