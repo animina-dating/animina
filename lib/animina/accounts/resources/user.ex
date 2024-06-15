@@ -6,7 +6,7 @@ defmodule Animina.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshAuthentication]
+    extensions: [AshAuthentication, AshStateMachine]
 
   alias Animina.Accounts
   alias Animina.Narratives
@@ -43,6 +43,21 @@ defmodule Animina.Accounts.User do
     attribute :zip_code, :string do
       constraints trim?: true,
                   allow_empty?: false
+    end
+
+    attribute :state, :atom do
+      constraints one_of: [
+                    :normal,
+                    :validated,
+                    :under_investigation,
+                    :banned,
+                    :incognito,
+                    :hibernate,
+                    :archived
+                  ]
+
+      default :normal
+      allow_nil? false
     end
 
     attribute :gender, :string, allow_nil?: false
@@ -154,6 +169,23 @@ defmodule Animina.Accounts.User do
     validate {Validations.BadUsername, attribute: :username}
   end
 
+  state_machine do
+    initial_states([:normal])
+    default_initial_state(:normal)
+
+    transitions do
+      transition(:validate, from: [:normal, :under_investigation], to: :validated)
+      transition(:investigate, from: [:normal, :validated], to: :under_investigation)
+      transition(:ban, from: [:normal, :validated, :under_investigation], to: :banned)
+      transition(:incognito, from: [:normal, :validated, :under_investigation], to: :incognito)
+      transition(:hibernate, from: [:normal, :validated, :under_investigation], to: :hibernate)
+      transition(:archive, from: [:normal, :validated, :under_investigation], to: :archived)
+      transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
+      transition(:unban, from: [:banned], to: :normal)
+      transition(:recover, from: [:archived], to: :normal)
+    end
+  end
+
   identities do
     identity :unique_email, [:email], eager_check_with: Accounts
     identity :unique_username, [:username], eager_check_with: Accounts
@@ -199,6 +231,42 @@ defmodule Animina.Accounts.User do
                is_private == ^false and gender == ^"male" and
                  created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
              )
+    end
+
+    update :validate do
+      change transition_state(:validate)
+    end
+
+    update :investigate do
+      change transition_state(:investigate)
+    end
+
+    update :ban do
+      change transition_state(:ban)
+    end
+
+    update :incognito do
+      change transition_state(:incognito)
+    end
+
+    update :hibernate do
+      change transition_state(:hibernate)
+    end
+
+    update :archive do
+      change transition_state(:archive)
+    end
+
+    update :reactivate do
+      change transition_state(:reactivate)
+    end
+
+    update :unban do
+      change transition_state(:unban)
+    end
+
+    update :recover do
+      change transition_state(:recover)
     end
   end
 
