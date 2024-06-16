@@ -61,7 +61,11 @@ defmodule AniminaWeb.PostViewLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply, socket |> assign(:current_user, current_user)}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply, socket |> push_redirect(to: "/auth/user/sign-out")}
+    else
+      {:noreply, socket |> assign(:current_user, current_user)}
+    end
   end
 
   def handle_info({:new_message, message}, socket) do
@@ -71,6 +75,12 @@ defmodule AniminaWeb.PostViewLive do
      socket
      |> assign(unread_messages: unread_messages)
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   @impl true

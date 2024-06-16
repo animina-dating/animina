@@ -1,6 +1,7 @@
 defmodule AniminaWeb.BookmarkTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.Credit
   alias Animina.Accounts.User
 
   describe "Tests the Bookmark Live" do
@@ -8,6 +9,18 @@ defmodule AniminaWeb.BookmarkTest do
       public_user = create_public_user()
 
       private_user = create_private_user()
+
+      Credit.create!(%{
+        user_id: private_user.id,
+        points: 100,
+        subject: "Registration bonus"
+      })
+
+      Credit.create!(%{
+        user_id: public_user.id,
+        points: 100,
+        subject: "Registration bonus"
+      })
 
       [
         public_user: public_user,

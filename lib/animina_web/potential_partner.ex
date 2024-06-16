@@ -44,9 +44,15 @@ defmodule AniminaWeb.PotentialPartner do
     # |> partner_green_flags_query(user)
     # |> partner_red_flags_query(user, strict_red_flags)
     |> partner_not_self_query(user)
+    |> partner_not_under_investigation_query(user)
     |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
+  end
+
+  defp partner_not_under_investigation_query(query, _user) do
+    query
+    |> Ash.Query.filter(state: [not_eq: :under_investigation])
   end
 
   defp partner_not_self_query(query, user) do

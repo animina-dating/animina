@@ -427,12 +427,16 @@ defmodule AniminaWeb.ProfileLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply,
-     socket
-     |> assign(
-       current_user_has_liked_profile?:
-         current_user_has_liked_profile(current_user, socket.assigns.user.id)
-     )}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply, socket |> push_redirect(to: "/auth/user/sign-out")}
+    else
+      {:noreply,
+       socket
+       |> assign(
+         current_user_has_liked_profile?:
+           current_user_has_liked_profile(current_user, socket.assigns.user.id)
+       )}
+    end
   end
 
   def handle_info(
@@ -558,6 +562,12 @@ defmodule AniminaWeb.ProfileLive do
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
 
     reaction
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   @impl true

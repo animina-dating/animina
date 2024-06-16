@@ -2,7 +2,10 @@ defmodule AniminaWeb.ProfileTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Bookmark
+  alias Animina.Accounts.Credit
+  alias Animina.Accounts.Role
   alias Animina.Accounts.User
+  alias Animina.Accounts.UserRole
   alias Animina.Accounts.VisitLogEntry
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
@@ -23,6 +26,18 @@ defmodule AniminaWeb.ProfileTest do
           about_me_headline,
           "This is a private user story"
         )
+
+      Credit.create!(%{
+        user_id: private_user.id,
+        points: 100,
+        subject: "Registration bonus"
+      })
+
+      Credit.create!(%{
+        user_id: public_user.id,
+        points: 100,
+        subject: "Registration bonus"
+      })
 
       [
         public_user: public_user,
@@ -187,6 +202,62 @@ defmodule AniminaWeb.ProfileTest do
         get(conn, "/my/profile") |> response(404)
       end
     end
+
+    test "If an account is under investigation , the profile returns a 404", %{
+      conn: conn,
+      public_user: public_user
+    } do
+      {:ok, user} = User.investigate(public_user)
+
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{user.username}") |> response(404)
+      end
+    end
+
+    test "If an account is under investigation , admins can view that profile", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      {:ok, _user} = User.investigate(public_user)
+
+      admin_role = create_admin_role()
+
+      create_admin_user_role(private_user.id, admin_role.id)
+
+      conn =
+        get(
+          conn
+          |> login_user(%{
+            "username_or_email" => private_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{public_user.username}"
+        )
+    end
+
+    test "Users Under Investigation are automatically logged out", %{
+      conn: conn,
+      private_user: private_user,
+      public_user: public_user
+    } do
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      assert html =~ private_user.name
+
+      {:ok, user} = User.investigate(private_user)
+
+      # now you cannot access the private profile which means you are logged out
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{user.username}") |> response(404)
+      end
+    end
   end
 
   defp create_public_user do
@@ -254,6 +325,25 @@ defmodule AniminaWeb.ProfileTest do
       })
 
     story
+  end
+
+  defp create_admin_role do
+    {:ok, role} =
+      Role.create(%{
+        name: :admin
+      })
+
+    role
+  end
+
+  defp create_admin_user_role(user_id, role_id) do
+    {:ok, user_role} =
+      UserRole.create(%{
+        user_id: user_id,
+        role_id: role_id
+      })
+
+    user_role
   end
 
   defp login_user(conn, attributes) do

@@ -6,7 +6,7 @@ defmodule Animina.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshAuthentication, AshStateMachine]
+    extensions: [AshAuthentication, AshStateMachine, Ash.Notifier.PubSub]
 
   alias Animina.Accounts
   alias Animina.Narratives
@@ -184,6 +184,14 @@ defmodule Animina.Accounts.User do
       transition(:unban, from: [:banned], to: :normal)
       transition(:recover, from: [:archived], to: :normal)
     end
+  end
+
+  pub_sub do
+    module Animina
+    prefix "user"
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
   end
 
   identities do
