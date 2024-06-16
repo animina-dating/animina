@@ -199,22 +199,34 @@ defmodule AniminaWeb.FlagsLive do
   def handle_info({:user, current_user}, socket) do
     flags = filter_flags(current_user, socket.assigns.color)
 
-    {:noreply,
-     socket
-     |> assign(current_user: current_user)
-     |> assign(
-       :opposite_color_flags_selected,
-       filter_flags(current_user, socket.assigns.color)
-       |> Enum.map(fn trait -> trait.flag.id end)
-     )
-     |> assign(
-       :user_flags,
-       flags
-     )
-     |> assign(
-       :selected,
-       Enum.count(flags)
-     )}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=true")
+       |> put_flash(
+         :error,
+         gettext(
+           "Your account is currently under investigation. Please try again to login in 24 hours."
+         )
+       )}
+    else
+      {:noreply,
+       socket
+       |> assign(current_user: current_user)
+       |> assign(
+         :opposite_color_flags_selected,
+         filter_flags(current_user, socket.assigns.color)
+         |> Enum.map(fn trait -> trait.flag.id end)
+       )
+       |> assign(
+         :user_flags,
+         flags
+       )
+       |> assign(
+         :selected,
+         Enum.count(flags)
+       )}
+    end
   end
 
   @impl true
@@ -285,6 +297,12 @@ defmodule AniminaWeb.FlagsLive do
     Traits.Category
     |> Ash.Query.for_read(:read)
     |> Traits.read!()
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   defp filter_flags(current_user, color) do

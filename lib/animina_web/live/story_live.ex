@@ -102,7 +102,19 @@ defmodule AniminaWeb.StoryLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply, socket |> assign(:current_user, current_user)}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=true")
+       |> put_flash(
+         :error,
+         gettext(
+           "Your account is currently under investigation. Please try again to login in 24 hours."
+         )
+       )}
+    else
+      {:noreply, socket |> assign(:current_user, current_user)}
+    end
   end
 
   def handle_info({:new_message, message}, socket) do
@@ -390,6 +402,12 @@ defmodule AniminaWeb.StoryLive do
         disabled: Map.get(user_headlines, headline.id) != nil
       ]
     end)
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   defp get_default_headline(socket) when socket.assigns.live_action == :about_me do

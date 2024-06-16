@@ -54,9 +54,21 @@ defmodule AniminaWeb.ProfilePhotoLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply,
-     socket
-     |> assign(current_user: current_user)}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=true")
+       |> put_flash(
+         :error,
+         gettext(
+           "Your account is currently under investigation. Please try again to login in 24 hours."
+         )
+       )}
+    else
+      {:noreply,
+       socket
+       |> assign(current_user: current_user)}
+    end
   end
 
   @impl true
@@ -135,6 +147,12 @@ defmodule AniminaWeb.ProfilePhotoLive do
        :form,
        Form.for_create(Photo, :create, api: Accounts, as: "photo")
      )}
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   @impl true

@@ -6,7 +6,7 @@ defmodule Animina.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
-    extensions: [AshAuthentication, AshStateMachine]
+    extensions: [AshAuthentication, AshStateMachine, Ash.Notifier.PubSub]
 
   alias Animina.Accounts
   alias Animina.Narratives
@@ -186,6 +186,14 @@ defmodule Animina.Accounts.User do
     end
   end
 
+  pub_sub do
+    module Animina
+    prefix "user"
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
+  end
+
   identities do
     identity :unique_email, [:email], eager_check_with: Accounts
     identity :unique_username, [:username], eager_check_with: Accounts
@@ -234,15 +242,15 @@ defmodule Animina.Accounts.User do
     end
 
     update :validate do
-      change transition_state(:validate)
+      change transition_state(:validated)
     end
 
     update :investigate do
-      change transition_state(:investigate)
+      change transition_state(:under_investigation)
     end
 
     update :ban do
-      change transition_state(:ban)
+      change transition_state(:banned)
     end
 
     update :incognito do
@@ -254,19 +262,19 @@ defmodule Animina.Accounts.User do
     end
 
     update :archive do
-      change transition_state(:archive)
+      change transition_state(:archived)
     end
 
     update :reactivate do
-      change transition_state(:reactivate)
+      change transition_state(:normal)
     end
 
     update :unban do
-      change transition_state(:unban)
+      change transition_state(:normal)
     end
 
     update :recover do
-      change transition_state(:recover)
+      change transition_state(:normal)
     end
   end
 
@@ -283,6 +291,7 @@ defmodule Animina.Accounts.User do
     define :custom_sign_in, get?: true
     define :female_public_users_who_created_an_account_in_the_last_60_days
     define :male_public_users_who_created_an_account_in_the_last_60_days
+    define :investigate
   end
 
   calculations do

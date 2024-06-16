@@ -111,7 +111,19 @@ defmodule AniminaWeb.PotentialPartnerLive do
       |> assign(city_name: City.by_zip_code!(current_user.zip_code))
       |> assign(current_user: current_user)
 
-    {:noreply, socket}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=true")
+       |> put_flash(
+         :error,
+         gettext(
+           "Your account is currently under investigation. Please try again to login in 24 hours."
+         )
+       )}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
@@ -139,6 +151,12 @@ defmodule AniminaWeb.PotentialPartnerLive do
       _ ->
         {:noreply, assign(socket, update_form: form)}
     end
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation
+    ]
   end
 
   @impl true
