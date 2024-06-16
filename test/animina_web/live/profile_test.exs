@@ -234,6 +234,8 @@ defmodule AniminaWeb.ProfileTest do
           }),
           "/#{public_user.username}"
         )
+
+      assert response(conn, 200)
     end
 
     test "Users Under Investigation are automatically logged out", %{

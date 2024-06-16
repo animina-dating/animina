@@ -5,8 +5,12 @@ defmodule Animina.ActionPointsList do
 
   @action_points_list [
     %{
-      points: 100,
-      action: :view_profile
+      points: 10,
+      action: :first_private_profile_view_if_profile_has_liked_current_user
+    },
+    %{
+      points: 20,
+      action: :first_private_profile_view_if_profile_has_not_liked_current_user
     },
     %{
       points: 200,

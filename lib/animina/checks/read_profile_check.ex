@@ -6,6 +6,7 @@ defmodule Animina.Checks.ReadProfileCheck do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
+  alias Animina.ActionPointsList
 
   def describe(_opts) do
     "Ensures An Actor Can Only read the profile of another user if they have a minimum of 20 credit points if it is their first visit and the profile is private and 10 credit points if it is the profile has liked the profile before or they are an admin"
@@ -58,7 +59,7 @@ defmodule Animina.Checks.ReadProfileCheck do
     true
   end
 
-  defp user_can_view_profile(true, :normal_, _, _) do
+  defp user_can_view_profile(true, :normal, _, _) do
     true
   end
 
@@ -70,12 +71,12 @@ defmodule Animina.Checks.ReadProfileCheck do
     false
   end
 
-  defp user_can_view_profile(false, _, false, true, points) when points >= 10 do
-    true
-  end
-
-  defp user_can_view_profile(false, _, false, false, points) when points >= 20 do
-    true
+  defp user_can_view_profile(false, _, false, profile_liked, points) do
+    if profile_liked do
+      points >= get_points_to_view_profile_if_profile_has_liked_current_user()
+    else
+      points >= get_points_to_view_profile_if_profile_has_not_liked_current_user()
+    end
   end
 
   defp user_can_view_profile(false, _, _, _, _) do
@@ -115,6 +116,30 @@ defmodule Animina.Checks.ReadProfileCheck do
         roles
         |> Enum.map(fn x -> x.name end)
         |> Enum.any?(fn x -> x == :admin end)
+    end
+  end
+
+  defp get_points_to_view_profile_if_profile_has_liked_current_user do
+    case ActionPointsList.get_points_for_action(
+           :first_private_profile_view_if_profile_has_liked_current_user
+         ) do
+      {:ok, points} ->
+        points
+
+      {:error, _} ->
+        10
+    end
+  end
+
+  defp get_points_to_view_profile_if_profile_has_not_liked_current_user do
+    case ActionPointsList.get_points_for_action(
+           :first_private_profile_view_if_profile_has_not_liked_current_user
+         ) do
+      {:ok, points} ->
+        points
+
+      {:error, _} ->
+        20
     end
   end
 end

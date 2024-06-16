@@ -115,6 +115,34 @@ defmodule AniminaWeb.AuthController do
     end
   end
 
+  def sign_out(conn, %{"auto_log_out" => _}) do
+    return_to = get_session(conn, :return_to) || ~p"/sign-in"
+
+    token = Plug.Conn.get_session(conn, "user_token")
+
+    if token do
+      Token
+      |> TokenResource.Actions.get_token(%{"token" => token})
+      |> case do
+        {:ok, [token]} ->
+          Token.destroy!(token, authorize?: false)
+
+        _ ->
+          :ok
+      end
+    end
+
+    conn
+    |> clear_session()
+    |> put_flash(
+      :info,
+      gettext(
+        "Your account is currently under investigation. Please try again to login in 24 hours."
+      )
+    )
+    |> redirect(to: return_to)
+  end
+
   def sign_out(conn, _params) do
     return_to = get_session(conn, :return_to) || ~p"/sign-in"
 
@@ -134,6 +162,7 @@ defmodule AniminaWeb.AuthController do
 
     conn
     |> clear_session()
+    |> put_flash(:info, gettext("You have signed out successfully"))
     |> redirect(to: return_to)
   end
 
