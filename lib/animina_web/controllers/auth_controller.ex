@@ -135,7 +135,7 @@ defmodule AniminaWeb.AuthController do
     conn
     |> clear_session()
     |> put_flash(
-      :info,
+      :error,
       get_auto_logout_text(state)
     )
     |> redirect(to: return_to)
