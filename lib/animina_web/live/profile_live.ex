@@ -108,7 +108,7 @@ defmodule AniminaWeb.ProfileLive do
 
     case Accounts.User.by_username(username) do
       {:ok, user} ->
-        if show_optional_404_page(user, nil) || user.state == :under_investigation do
+        if show_optional_404_page(user, nil) || user.state in user_states_to_be_auto_logged_out() do
           raise Animina.Fallback
         else
           {:ok,
@@ -574,7 +574,8 @@ defmodule AniminaWeb.ProfileLive do
 
   defp user_states_to_be_auto_logged_out do
     [
-      :under_investigation
+      :under_investigation,
+      :banned
     ]
   end
 

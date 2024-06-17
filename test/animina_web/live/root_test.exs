@@ -180,7 +180,22 @@ defmodule AniminaWeb.RootTest do
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
 
-      assert error == "Account is under investigation"
+      assert error == "Account is under investigation, kindly try and log in after 24 hours"
+    end
+
+    test "A user cannot login  if an account is banned", %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.ban(user)
+
+      {:error,
+       {:redirect,
+        %{to: "/sign-in?redirect_to=/my/potential-partner/", flash: %{"error" => error}}}} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert error == "Account is banned"
     end
   end
 

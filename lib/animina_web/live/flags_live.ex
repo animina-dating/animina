@@ -301,7 +301,8 @@ defmodule AniminaWeb.FlagsLive do
 
   defp user_states_to_be_auto_logged_out do
     [
-      :under_investigation
+      :under_investigation,
+      :banned
     ]
   end
 
