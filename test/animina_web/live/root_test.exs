@@ -195,7 +195,7 @@ defmodule AniminaWeb.RootTest do
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
 
-      assert error == "Account is banned"
+      assert error == "Account is banned, Kindly Contact Support"
     end
   end
 
