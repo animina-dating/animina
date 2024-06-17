@@ -185,6 +185,8 @@ defmodule Animina.Accounts.BasicUser do
     define :create
     define :by_id, get_by: [:id], action: :read
     define :custom_sign_in, get?: true
+    define :investigate
+    define :ban
   end
 
   aggregates do

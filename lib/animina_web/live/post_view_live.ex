@@ -64,13 +64,7 @@ defmodule AniminaWeb.PostViewLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=true")
-       |> put_flash(
-         :error,
-         gettext(
-           "Your account is currently under investigation. Please try again to login in 24 hours."
-         )
-       )}
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply, socket |> assign(:current_user, current_user)}
     end
@@ -87,8 +81,24 @@ defmodule AniminaWeb.PostViewLive do
 
   defp user_states_to_be_auto_logged_out do
     [
-      :under_investigation
+      :under_investigation,
+      :banned
     ]
+  end
+
+  defp get_auto_logout_text(state) do
+    case state do
+      :under_investigation ->
+        gettext(
+          "Your account is currently under investigation. Please try again to login in 24 hours."
+        )
+
+      :banned ->
+        gettext("Your account has been banned. Please contact support for more information.")
+
+      _ ->
+        gettext("Your account has been banned. Please contact support for more information.")
+    end
   end
 
   @impl true

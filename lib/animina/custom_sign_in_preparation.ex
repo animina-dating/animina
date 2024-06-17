@@ -15,6 +15,7 @@ defmodule Animina.MyCustomSignInPreparation do
   use Ash.Resource.Preparation
   alias Ash.Query
   require Ash.Query
+  import AniminaWeb.Gettext
   alias AshAuthentication.{Errors.AuthenticationFailed, Jwt}
 
   @doc false
@@ -49,7 +50,20 @@ defmodule Animina.MyCustomSignInPreparation do
                module: __MODULE__,
                action: query.action,
                resource: query.resource,
-               message: "Account is under investigation"
+               message:
+                 gettext("Account is under investigation, kindly try and log in after 24 hours")
+             }
+           )}
+
+        :banned ->
+          {:error,
+           AuthenticationFailed.exception(
+             query: query,
+             caused_by: %{
+               module: __MODULE__,
+               action: query.action,
+               resource: query.resource,
+               message: gettext("Account is banned, Kindly Contact Support")
              }
            )}
 

@@ -115,7 +115,7 @@ defmodule AniminaWeb.AuthController do
     end
   end
 
-  def sign_out(conn, %{"auto_log_out" => _}) do
+  def sign_out(conn, %{"auto_log_out" => state}) do
     return_to = get_session(conn, :return_to) || ~p"/sign-in"
 
     token = Plug.Conn.get_session(conn, "user_token")
@@ -135,10 +135,8 @@ defmodule AniminaWeb.AuthController do
     conn
     |> clear_session()
     |> put_flash(
-      :info,
-      gettext(
-        "Your account is currently under investigation. Please try again to login in 24 hours."
-      )
+      :error,
+      get_auto_logout_text(state)
     )
     |> redirect(to: return_to)
   end
@@ -164,6 +162,21 @@ defmodule AniminaWeb.AuthController do
     |> clear_session()
     |> put_flash(:info, gettext("You have signed out successfully"))
     |> redirect(to: return_to)
+  end
+
+  defp get_auto_logout_text(state) do
+    case state do
+      "under_investigation" ->
+        gettext(
+          "Your account is currently under investigation. Please try again to login in 24 hours."
+        )
+
+      "banned" ->
+        gettext("Your account has been banned. Please contact support for more information.")
+
+      _ ->
+        gettext("Your account has been banned. Please contact support for more information.")
+    end
   end
 
   defp redirect_url(user) do
