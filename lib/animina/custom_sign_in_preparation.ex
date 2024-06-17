@@ -63,7 +63,7 @@ defmodule Animina.MyCustomSignInPreparation do
                module: __MODULE__,
                action: query.action,
                resource: query.resource,
-               message: gettext("Account is banned")
+               message: gettext("Account is banned, Kindly Contact Support")
              }
            )}
 
