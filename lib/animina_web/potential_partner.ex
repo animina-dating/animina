@@ -61,6 +61,11 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.Query.filter(state: [not_eq: :banned])
   end
 
+  defp partner_not_archived_query(query, _user) do
+    query
+    |> Ash.Query.filter(state: [not_eq: :archived])
+  end
+
   defp partner_not_self_query(query, user) do
     query
     |> Ash.Query.filter(id: [not_eq: user.id])
