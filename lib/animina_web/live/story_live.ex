@@ -401,7 +401,8 @@ defmodule AniminaWeb.StoryLive do
   defp user_states_to_be_auto_logged_out do
     [
       :under_investigation,
-      :banned
+      :banned,
+      :archived
     ]
   end
 

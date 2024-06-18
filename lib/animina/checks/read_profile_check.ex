@@ -55,6 +55,10 @@ defmodule Animina.Checks.ReadProfileCheck do
     true
   end
 
+  defp user_can_view_profile(true, :archived) do
+    true
+  end
+
   defp user_can_view_profile(false, :under_investigation) do
     false
   end
@@ -63,29 +67,42 @@ defmodule Animina.Checks.ReadProfileCheck do
     false
   end
 
+  defp user_can_view_profile(false, :archived) do
+    false
+  end
+
   defp user_can_view_profile(_, _) do
     true
   end
 
-  defp user_can_view_profile(true, :normal, _, _) do
+
+
+  defp user_can_view_profile(true, :under_investigation, _, _,_) do
     true
   end
 
-  defp user_can_view_profile(true, :under_investigation_, _, _) do
-    true
-  end
-
-  defp user_can_view_profile(false, :under_investigation, _, _, _) do
+  defp user_can_view_profile(false, :under_investigation, _, _,_) do
     false
   end
 
-  defp user_can_view_profile(true, :banned_, _, _) do
+  defp user_can_view_profile(true, :banned, _, _,_) do
     true
   end
 
-  defp user_can_view_profile(false, :banned_, _, _) do
+  defp user_can_view_profile(false, :banned, _, _,_) do
     false
   end
+
+
+  defp user_can_view_profile(true, :archived, _, _,_) do
+    true
+  end
+
+  defp user_can_view_profile(false, :archived, _, _,_) do
+    false
+  end
+
+
 
   defp user_can_view_profile(false, _, false, profile_liked, points) do
     if profile_liked do
@@ -96,6 +113,10 @@ defmodule Animina.Checks.ReadProfileCheck do
   end
 
   defp user_can_view_profile(false, _, _, _, _) do
+    false
+  end
+
+  defp user_can_view_profile(true, _, _, _, _) do
     false
   end
 

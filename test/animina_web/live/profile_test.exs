@@ -225,6 +225,18 @@ defmodule AniminaWeb.ProfileTest do
       end
     end
 
+
+    test "If an account is archived , the profile returns a 404", %{
+      conn: conn,
+      public_user: public_user
+    } do
+      {:ok, user} = User.archive(public_user)
+
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{user.username}") |> response(404)
+      end
+    end
+
     test "If an account is under investigation , admins can view that profile", %{
       conn: conn,
       public_user: public_user,
@@ -255,6 +267,30 @@ defmodule AniminaWeb.ProfileTest do
       private_user: private_user
     } do
       {:ok, _user} = User.ban(public_user)
+
+      admin_role = create_admin_role()
+
+      create_admin_user_role(private_user.id, admin_role.id)
+
+      conn =
+        get(
+          conn
+          |> login_user(%{
+            "username_or_email" => private_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{public_user.username}"
+        )
+
+      assert response(conn, 200)
+    end
+
+    test "If an account is archived , admins can view that profile", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      {:ok, _user} = User.archive(public_user)
 
       admin_role = create_admin_role()
 
@@ -312,6 +348,29 @@ defmodule AniminaWeb.ProfileTest do
       assert html =~ private_user.name
 
       {:ok, user} = User.investigate(private_user)
+
+      # now you cannot access the private profile which means you are logged out
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{user.username}") |> response(404)
+      end
+    end
+
+    test "Users That Are Archived are automatically logged out", %{
+      conn: conn,
+      private_user: private_user,
+      public_user: public_user
+    } do
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      assert html =~ private_user.name
+
+      {:ok, user} = User.archive(private_user)
 
       # now you cannot access the private profile which means you are logged out
       assert_raise Animina.Fallback, fn ->

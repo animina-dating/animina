@@ -293,6 +293,7 @@ defmodule Animina.Accounts.User do
     define :male_public_users_who_created_an_account_in_the_last_60_days
     define :investigate
     define :ban
+    define :archive
   end
 
   calculations do

@@ -187,6 +187,7 @@ defmodule Animina.Accounts.BasicUser do
     define :custom_sign_in, get?: true
     define :investigate
     define :ban
+    define :archive
   end
 
   aggregates do
