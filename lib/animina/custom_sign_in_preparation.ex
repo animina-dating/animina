@@ -67,6 +67,18 @@ defmodule Animina.MyCustomSignInPreparation do
              }
            )}
 
+        :archived ->
+          {:error,
+           AuthenticationFailed.exception(
+             query: query,
+             caused_by: %{
+               module: __MODULE__,
+               action: query.action,
+               resource: query.resource,
+               message: gettext("Account is archived, Kindly Contact Support")
+             }
+           )}
+
         _ ->
           {:ok,
            [

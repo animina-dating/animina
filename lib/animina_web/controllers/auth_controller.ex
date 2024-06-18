@@ -174,6 +174,9 @@ defmodule AniminaWeb.AuthController do
       "banned" ->
         gettext("Your account has been banned. Please contact support for more information.")
 
+      "archived" ->
+        gettext("Your account has been archived")
+
       _ ->
         gettext("Your account has been banned. Please contact support for more information.")
     end

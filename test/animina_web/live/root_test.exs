@@ -197,6 +197,21 @@ defmodule AniminaWeb.RootTest do
 
       assert error == "Account is banned, Kindly Contact Support"
     end
+
+    test "A user cannot login  if an account is archived", %{conn: conn} do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.archive(user)
+
+      {:error,
+       {:redirect,
+        %{to: "/sign-in?redirect_to=/my/potential-partner/", flash: %{"error" => error}}}} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert error == "Account is archived, Kindly Contact Support"
+    end
   end
 
   defp sign_in_user(conn, attributes) do
