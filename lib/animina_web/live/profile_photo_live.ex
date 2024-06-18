@@ -151,8 +151,6 @@ defmodule AniminaWeb.ProfilePhotoLive do
     ]
   end
 
-
-
   @impl true
   def render(assigns) do
     ~H"""

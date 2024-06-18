@@ -225,7 +225,6 @@ defmodule AniminaWeb.ProfileTest do
       end
     end
 
-
     test "If an account is archived , the profile returns a 404", %{
       conn: conn,
       public_user: public_user
