@@ -18,15 +18,35 @@ defmodule AniminaWeb.ProfileLive do
 
   require Ash.Query
 
-  @impl true
-  def mount(%{"username" => username}, %{"language" => language, "user" => _}, socket) do
-    socket =
-      socket
-      |> assign(language: language)
+  defp profile_socket(socket, username, _language, nil) do
+    case Accounts.User.by_username(username) do
+      {:ok, user} ->
+        if show_optional_404_page(user, nil) ||
+             user.state in user_states_not_visible_to_anonymous_users() do
+          raise Animina.Fallback
+        else
+          {:ok,
+           socket
+           |> assign(user: user)
+           |> assign(current_user_credit_points: 0)
+           |> assign(intersecting_green_flags_count: 0)
+           |> assign(intersecting_red_flags_count: 0)
+           |> assign(intersecting_green_flags: [])
+           |> assign(intersecting_red_flags: [])
+           |> assign(show_404_page: false)
+           |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(
+             current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id)
+           )
+           |> redirect_if_username_is_different(username, user)}
+        end
 
-    current_user =
-      socket.assigns.current_user
+      _ ->
+        raise Animina.Fallback
+    end
+  end
 
+  defp profile_socket(socket, username, language, current_user) do
     case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
       {:ok, user} ->
         subscribe(socket, current_user, user)
@@ -98,6 +118,18 @@ defmodule AniminaWeb.ProfileLive do
       _ ->
         raise Animina.Fallback
     end
+  end
+
+  @impl true
+  def mount(%{"username" => username}, %{"language" => language, "user" => _}, socket) do
+    socket =
+      socket
+      |> assign(language: language)
+
+    current_user =
+      socket.assigns.current_user
+
+    profile_socket(socket, username, language, current_user)
   end
 
   def mount(%{"username" => username}, %{"language" => language}, socket) do

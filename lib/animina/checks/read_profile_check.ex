@@ -16,8 +16,8 @@ defmodule Animina.Checks.ReadProfileCheck do
     check_if_user_can_view_profile(actor, params, params.query.arguments)
   end
 
-  defp check_if_user_can_view_profile(nil, params, %{username: _username}) do
-   false
+  defp check_if_user_can_view_profile(nil, _params, %{username: _username}) do
+    false
   end
 
   defp check_if_user_can_view_profile(actor, params, %{username: _username}) do
