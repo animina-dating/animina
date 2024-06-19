@@ -46,6 +46,8 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_not_self_query(user)
     |> partner_not_under_investigation_query(user)
     |> partner_not_banned_query(user)
+    |> partner_not_archived_query(user)
+    |> partner_not_hibernate_query(user)
     |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
     |> Accounts.read!()
@@ -64,6 +66,11 @@ defmodule AniminaWeb.PotentialPartner do
   defp partner_not_archived_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :archived])
+  end
+
+  defp partner_not_hibernate_query(query, _user) do
+    query
+    |> Ash.Query.filter(state: [not_eq: :hibernate])
   end
 
   defp partner_not_self_query(query, user) do

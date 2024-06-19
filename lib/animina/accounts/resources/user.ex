@@ -294,6 +294,7 @@ defmodule Animina.Accounts.User do
     define :investigate
     define :ban
     define :archive
+    define :hibernate
   end
 
   calculations do
