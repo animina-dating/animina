@@ -110,6 +110,7 @@ defmodule Animina.Accounts.BasicUser do
       transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
       transition(:unban, from: [:banned], to: :normal)
       transition(:recover, from: [:archived], to: :normal)
+      transition(:normalize, from: [:banned, :incognito, :hibernate, :archived], to: :normal)
     end
   end
 
@@ -177,6 +178,10 @@ defmodule Animina.Accounts.BasicUser do
     update :recover do
       change transition_state(:normal)
     end
+
+    update :normalize do
+      change transition_state(:normal)
+    end
   end
 
   code_interface do
@@ -189,6 +194,11 @@ defmodule Animina.Accounts.BasicUser do
     define :ban
     define :archive
     define :hibernate
+    define :reactivate
+    define :unban
+    define :recover
+    define :validate
+    define :normalize
   end
 
   aggregates do
