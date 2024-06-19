@@ -6,6 +6,20 @@ defmodule Animina.Accounts.UserTest do
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
 
+  @create_user_params %{
+    email: "bob@example.com",
+    username: "bob",
+    name: "Bob",
+    hashed_password: "zzzzzzzzzzz",
+    birthday: "1950-01-01",
+    height: 180,
+    zip_code: "56068",
+    gender: "male",
+    mobile_phone: "0151-12345678",
+    language: "de",
+    legal_terms_accepted: true
+  }
+
   describe "create BasicUser" do
     test "create a new user" do
       assert {:error, _} = User.by_email("bob@example.com")
@@ -137,6 +151,66 @@ defmodule Animina.Accounts.UserTest do
       {:ok, user} = User.investigate(user)
 
       assert user.state == :under_investigation
+    end
+
+    test "unban/1 returns a user with the state :normal who was :banned" do
+      assert {:ok, user} =
+               BasicUser.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.ban(user)
+
+      assert user.state == :banned
+
+      {:ok, user} = User.unban(user)
+
+      assert user.state == :normal
+    end
+
+    test "recover/1 returns a user with the state :normal from :archived " do
+      assert {:ok, user} =
+               BasicUser.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.archive(user)
+
+      assert user.state == :archived
+
+      {:ok, user} = User.recover(user)
+
+      assert user.state == :normal
+    end
+
+    test "reactivate/1 returns a user with the state :normal from :incognito or :hibernate " do
+      assert {:ok, user} =
+               BasicUser.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.hibernate(user)
+
+      assert user.state == :hibernate
+
+      {:ok, user} = User.reactivate(user)
+
+      assert user.state == :normal
+    end
+
+    test "normalize/1 returns a user with the state :normal from any state" do
+      assert {:ok, user} =
+               BasicUser.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.hibernate(user)
+
+      assert user.state == :hibernate
+
+      {:ok, user} = User.normalize(user)
+
+      assert user.state == :normal
     end
   end
 end
