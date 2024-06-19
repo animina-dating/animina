@@ -188,6 +188,7 @@ defmodule Animina.Accounts.BasicUser do
     define :investigate
     define :ban
     define :archive
+    define :hibernate
   end
 
   aggregates do

@@ -59,6 +59,10 @@ defmodule Animina.Checks.ReadProfileCheck do
     true
   end
 
+  defp user_can_view_profile(true, :hibernate) do
+    true
+  end
+
   defp user_can_view_profile(false, :under_investigation) do
     false
   end
@@ -68,6 +72,10 @@ defmodule Animina.Checks.ReadProfileCheck do
   end
 
   defp user_can_view_profile(false, :archived) do
+    false
+  end
+
+  defp user_can_view_profile(false, :hibernate) do
     false
   end
 
@@ -96,6 +104,14 @@ defmodule Animina.Checks.ReadProfileCheck do
   end
 
   defp user_can_view_profile(false, :archived, _, _, _) do
+    false
+  end
+
+  defp user_can_view_profile(true, :hibernate, _, _, _) do
+    true
+  end
+
+  defp user_can_view_profile(false, :hibernate, _, _, _) do
     false
   end
 

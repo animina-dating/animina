@@ -236,12 +236,47 @@ defmodule AniminaWeb.ProfileTest do
       end
     end
 
+    test "If an account is hibernate , the profile returns a 404", %{
+      conn: conn,
+      public_user: public_user
+    } do
+      {:ok, user} = User.hibernate(public_user)
+
+      assert_raise Animina.Fallback, fn ->
+        get(conn, "/#{user.username}") |> response(404)
+      end
+    end
+
     test "If an account is under investigation , admins can view that profile", %{
       conn: conn,
       public_user: public_user,
       private_user: private_user
     } do
       {:ok, _user} = User.investigate(public_user)
+
+      admin_role = create_admin_role()
+
+      create_admin_user_role(private_user.id, admin_role.id)
+
+      conn =
+        get(
+          conn
+          |> login_user(%{
+            "username_or_email" => private_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{public_user.username}"
+        )
+
+      assert response(conn, 200)
+    end
+
+    test "If an account is hibernate, admins can view that profile", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      {:ok, _user} = User.hibernate(public_user)
 
       admin_role = create_admin_role()
 

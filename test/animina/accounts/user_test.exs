@@ -69,5 +69,74 @@ defmodule Animina.Accounts.UserTest do
 
       assert Enum.any?(user_roles, fn user_role -> user_role.role.name == :user end)
     end
+
+    test "hibernate/1 returns a user with the state :hibernate" do
+      assert {:ok, user} =
+               BasicUser.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true
+               })
+
+      assert user.state == :normal
+
+      {:ok, user} = User.hibernate(user)
+
+      assert user.state == :hibernate
+    end
+
+    test "ban/1 returns a user with the state :banned" do
+      assert {:ok, user} =
+               BasicUser.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true
+               })
+
+      assert user.state == :normal
+
+      {:ok, user} = User.ban(user)
+
+      assert user.state == :banned
+    end
+
+    test "investigate/1 returns a user with the state :under_investigation" do
+      assert {:ok, user} =
+               BasicUser.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true
+               })
+
+      assert user.state == :normal
+
+      {:ok, user} = User.investigate(user)
+
+      assert user.state == :under_investigation
+    end
   end
 end

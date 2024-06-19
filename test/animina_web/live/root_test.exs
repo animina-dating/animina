@@ -212,6 +212,21 @@ defmodule AniminaWeb.RootTest do
 
       assert error == "Account is archived, Kindly Contact Support"
     end
+
+    test "A user can login with their email and password if their account is hibernated", %{
+      conn: conn
+    } do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.hibernate(user)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert html =~ "Criteria for your new partner"
+    end
   end
 
   defp sign_in_user(conn, attributes) do
