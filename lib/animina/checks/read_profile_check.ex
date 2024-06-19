@@ -23,7 +23,7 @@ defmodule Animina.Checks.ReadProfileCheck do
   defp check_if_user_can_view_profile(actor, params, %{username: _username}) do
     case User.by_username(params.query.arguments.username) do
       {:ok, profile} ->
-        if actor.username == profile.username || profile.is_private == false do
+        if actor && (actor.username == profile.username || profile.is_private == false) do
           user_can_view_profile(
             admin_user?(actor),
             profile.state
