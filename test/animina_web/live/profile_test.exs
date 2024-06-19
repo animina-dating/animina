@@ -271,7 +271,6 @@ defmodule AniminaWeb.ProfileTest do
       assert response(conn, 200)
     end
 
-
     test "If an account is hibernate, admins can view that profile", %{
       conn: conn,
       public_user: public_user,
@@ -295,7 +294,6 @@ defmodule AniminaWeb.ProfileTest do
 
       assert response(conn, 200)
     end
-
 
     test "If an account is banned , admins can view that profile", %{
       conn: conn,
