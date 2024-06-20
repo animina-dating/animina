@@ -3,6 +3,7 @@ defmodule AniminaWeb.ProfileComponents do
   Provides Profile UI components.
   """
   use Phoenix.Component
+  import AniminaWeb.Gettext
 
   def profile_details(assigns) do
     ~H"""
@@ -438,6 +439,101 @@ defmodule AniminaWeb.ProfileComponents do
         current_user_height_for_figure={@current_user_height_for_figure}
         profile_user={@user}
       />
+    </div>
+    """
+  end
+
+  def user_state_cards(assigns) do
+    ~H"""
+    <div class="flex flex-col gap-4">
+      <%= for state <- user_states_to_display_to_profile() do %>
+        <.user_state_card
+          state={@current_user.state}
+          name={state["name"]}
+          similar_value={state["similar_value"]}
+          value={state["value"]}
+          description={state["description"]}
+          action={state["action"]}
+        />
+      <% end %>
+    </div>
+    """
+  end
+
+  defp user_state_card(assigns) do
+    ~H"""
+    <div
+      phx-click={
+        if @state != @value || @state != @similar_value do
+          "change_user_state"
+        end
+      }
+      data-confirm={"Are you sure you want to change from #{@value} to #{@state}?"}
+      phx-value-state={@state}
+      phx-value-action={@action}
+      class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
+    >
+      <div class="w-[100%] flex justify-between items-start">
+        <div class="flex  w-[70%] flex-col gap-1">
+          <p class="text-xl group-hover:text-gray-900 transition-all ease-in-out duration-500  text-white">
+            <%= @name %>
+          </p>
+          <p class="text-gray-400">
+            <%= @description %>
+          </p>
+        </div>
+
+        <.active_mark :if={@state == @value || @state == @similar_value} />
+      </div>
+
+      <p class="h-[1px] w-[100%] bg-white" />
+    </div>
+    """
+  end
+
+  defp user_states_to_display_to_profile do
+    [
+      %{
+        "name" => gettext("Normal"),
+        "value" => :normal,
+        "similar_value" => :validated,
+        "action" => "normalize",
+        "description" =>
+          gettext("The user is actively using the account, engaging with posts and other users.")
+      },
+      %{
+        "name" => gettext("Hibernate"),
+        "value" => :hibernate,
+        "similar_value" => :hibernate,
+        "action" => "hibernate",
+        "description" =>
+          gettext(
+            "The user is temporarily inactive but retains their account and data for future use."
+          )
+      },
+      %{
+        "name" => gettext("Archived"),
+        "value" => :archived,
+        "action" => "archive",
+        "similar_value" => :archived,
+        "description" =>
+          gettext("The account is permanently deleted and all data is no longer accessible.")
+      },
+      %{
+        "name" => gettext("Incognito"),
+        "value" => :incognito,
+        "action" => "incognito",
+        "similar_value" => :incognito,
+        "description" =>
+          gettext("The user can browse and read posts anonymously, without being seen by others.")
+      }
+    ]
+  end
+
+  defp active_mark(assigns) do
+    ~H"""
+    <div class="text-green-500  flex items-center gap-1">
+      Active
     </div>
     """
   end
