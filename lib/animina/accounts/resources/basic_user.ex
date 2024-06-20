@@ -199,6 +199,7 @@ defmodule Animina.Accounts.BasicUser do
     define :recover
     define :validate
     define :normalize
+    define :incognito
   end
 
   aggregates do
