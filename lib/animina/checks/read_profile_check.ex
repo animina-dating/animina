@@ -25,6 +25,7 @@ defmodule Animina.Checks.ReadProfileCheck do
       {:ok, profile} ->
         if actor && (actor.username == profile.username || profile.is_private == false) do
           user_can_view_profile(
+            actor_is_profile_owner(actor, profile),
             admin_user?(actor),
             profile.state
           )
@@ -47,43 +48,59 @@ defmodule Animina.Checks.ReadProfileCheck do
     true
   end
 
-  defp user_can_view_profile(true, :normal) do
+  defp user_can_view_profile(_, true, :normal) do
     true
   end
 
-  defp user_can_view_profile(true, :under_investigation) do
+  defp user_can_view_profile(_, true, :under_investigation) do
     true
   end
 
-  defp user_can_view_profile(true, :banned) do
+  defp user_can_view_profile(_, true, :banned) do
     true
   end
 
-  defp user_can_view_profile(true, :archived) do
+  defp user_can_view_profile(_, true, :archived) do
     true
   end
 
-  defp user_can_view_profile(true, :hibernate) do
+  defp user_can_view_profile(true, _, :hibernate) do
     true
   end
 
-  defp user_can_view_profile(false, :under_investigation) do
+  defp user_can_view_profile(true, _, :incognito) do
+    true
+  end
+
+  defp user_can_view_profile(_, true, :incognito) do
+    true
+  end
+
+  defp user_can_view_profile(_, true, :hibernate) do
+    true
+  end
+
+  defp user_can_view_profile(_, false, :under_investigation) do
     false
   end
 
-  defp user_can_view_profile(false, :banned) do
+  defp user_can_view_profile(_, false, :banned) do
     false
   end
 
-  defp user_can_view_profile(false, :archived) do
+  defp user_can_view_profile(_, false, :archived) do
     false
   end
 
-  defp user_can_view_profile(false, :hibernate) do
+  defp user_can_view_profile(_, false, :hibernate) do
     false
   end
 
-  defp user_can_view_profile(_, _) do
+  defp user_can_view_profile(_, false, :incognito) do
+    false
+  end
+
+  defp user_can_view_profile(_, _, _) do
     true
   end
 
@@ -116,6 +133,14 @@ defmodule Animina.Checks.ReadProfileCheck do
   end
 
   defp user_can_view_profile(false, :hibernate, _, _, _) do
+    false
+  end
+
+  defp user_can_view_profile(true, :incognito, _, _, _) do
+    true
+  end
+
+  defp user_can_view_profile(false, :incognito, _, _, _) do
     false
   end
 
@@ -153,6 +178,14 @@ defmodule Animina.Checks.ReadProfileCheck do
       {:error, _} ->
         false
     end
+  end
+
+  defp actor_is_profile_owner(nil, _profile) do
+    false
+  end
+
+  defp actor_is_profile_owner(actor, profile) do
+    actor.id == profile.id
   end
 
   def admin_user?(nil) do

@@ -153,6 +153,17 @@ defmodule Animina.Accounts.UserTest do
       assert user.state == :under_investigation
     end
 
+    test "incognito/1 returns a user with the state :incognito" do
+      assert {:ok, user} =
+               BasicUser.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.incognito(user)
+
+      assert user.state == :incognito
+    end
+
     test "unban/1 returns a user with the state :normal who was :banned" do
       assert {:ok, user} =
                BasicUser.create(@create_user_params)

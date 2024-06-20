@@ -604,7 +604,8 @@ defmodule AniminaWeb.ProfileLive do
       :under_investigation,
       :banned,
       :archived,
-      :hibernate
+      :hibernate,
+      :incognito
     ]
   end
 

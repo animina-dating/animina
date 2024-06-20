@@ -227,6 +227,21 @@ defmodule AniminaWeb.RootTest do
 
       assert html =~ "Criteria for your new partner"
     end
+
+    test "A user can login with their email and password if their account is incognito", %{
+      conn: conn
+    } do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.incognito(user)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/potential-partner/")
+
+      assert html =~ "Criteria for your new partner"
+    end
   end
 
   defp sign_in_user(conn, attributes) do

@@ -305,6 +305,7 @@ defmodule Animina.Accounts.User do
     define :recover
     define :validate
     define :normalize
+    define :incognito
   end
 
   calculations do
