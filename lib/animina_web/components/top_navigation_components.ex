@@ -176,6 +176,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
           <.link class="px-2" navigate="/my/potential-partner">
             <%= gettext("Edit Potential Partner Preferences") %>
           </.link>
+          <.link class="px-2" navigate="/my/profile/visibility">
+            <div class="flex gap-2 items-center">
+              <%= gettext("Change Visibility") %>
+            </div>
+          </.link>
           <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
           <.link class="px-2" navigate="/auth/user/sign-out">
             <%= gettext("Sign Out") %>

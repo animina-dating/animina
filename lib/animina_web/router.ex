@@ -43,6 +43,7 @@ defmodule AniminaWeb.Router do
       live "/my/messages/:profile", ChatLive, :index
       live "/my", DashboardLive, :index
       live "/my/dashboard", DashboardLive, :index
+      live "/my/profile/visibility", ProfileVisibilityLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
     end
 
