@@ -178,8 +178,17 @@ defmodule Animina.Accounts.User do
       transition(:investigate, from: [:normal, :validated], to: :under_investigation)
       transition(:ban, from: [:normal, :validated, :under_investigation], to: :banned)
       transition(:incognito, from: [:normal, :validated, :under_investigation], to: :incognito)
-      transition(:hibernate, from: [:normal, :validated, :under_investigation], to: :hibernate)
-      transition(:archive, from: [:normal, :validated, :under_investigation], to: :archived)
+
+      transition(:hibernate,
+        from: [:normal, :validated, :under_investigation, :archived],
+        to: :hibernate
+      )
+
+      transition(:archive,
+        from: [:normal, :validated, :under_investigation, :hibernate],
+        to: :archived
+      )
+
       transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
       transition(:unban, from: [:banned], to: :normal)
       transition(:recover, from: [:archived], to: :normal)

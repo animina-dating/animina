@@ -471,22 +471,23 @@ defmodule AniminaWeb.ProfileComponents do
       data-confirm={"Are you sure you want to change from #{@value} to #{@state}?"}
       phx-value-state={@state}
       phx-value-action={@action}
+      id={"user-state-#{@value}"}
       class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
     >
       <div class="w-[100%] flex justify-between items-start">
-        <div class="flex  w-[70%] flex-col gap-1">
-          <p class="text-xl group-hover:text-gray-900 transition-all ease-in-out duration-500  text-white">
+        <div class="flex   flex-col gap-1">
+          <p class="text-xl group-hover:text-gray-900 transition-all ease-in-out duration-500 text-black  dark:text-white">
             <%= @name %>
           </p>
-          <p class="text-gray-400">
+          <p class="group-hover:text-blue-600 text-gray-400">
             <%= @description %>
           </p>
         </div>
 
-        <.active_mark :if={@state == @value || @state == @similar_value} />
+        <.active_mark :if={@state == @value || @state == @similar_value} value={@value} />
       </div>
 
-      <p class="h-[1px] w-[100%] bg-white" />
+      <p class="h-[1px] w-[100%] bg-black dark:bg-white" />
     </div>
     """
   end
@@ -532,8 +533,11 @@ defmodule AniminaWeb.ProfileComponents do
 
   defp active_mark(assigns) do
     ~H"""
-    <div class="text-green-500  flex items-center gap-1">
-      Active
+    <div
+      class="text-green-500 group-hover:text-blue-600  flex items-center gap-1"
+      id={"active-mark-#{@value}"}
+    >
+      <%= gettext("Active") %>
     </div>
     """
   end

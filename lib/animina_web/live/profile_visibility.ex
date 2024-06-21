@@ -52,7 +52,13 @@ defmodule AniminaWeb.ProfileVisibilityLive do
   end
 
   def handle_info({:user, current_user}, socket) do
-    {:noreply, socket |> assign(current_user: current_user)}
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+    else
+      {:noreply, socket |> assign(:current_user, current_user)}
+    end
   end
 
   def handle_info({:credit_updated, _updated_credit}, socket) do
@@ -68,6 +74,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  @impl true
   def handle_event("change_user_state", %{"state" => _state, "action" => action}, socket) do
     case change_user_state(action, socket.assigns.current_user) do
       {:ok, user} ->
@@ -101,11 +108,19 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     User.normalize(user)
   end
 
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation,
+      :banned,
+      :archived
+    ]
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
     <div class="px-5 flex flex-col gap-2 pb-8">
-      <p class="text-xl text-white dark:text-white"><%= gettext("Change Profile Visibility") %></p>
+      <p class="text-xl text-black dark:text-white"><%= gettext("Change Profile Visibility") %></p>
       <p class="text-sm text-gray-500">
         <%= gettext("Select And Change the visibility of your profile") %>
       </p>
