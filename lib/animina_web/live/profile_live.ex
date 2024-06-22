@@ -28,6 +28,7 @@ defmodule AniminaWeb.ProfileLive do
           {:ok,
            socket
            |> assign(user: user)
+           |> assign(active_tab: "")
            |> assign(current_user_credit_points: 0)
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
