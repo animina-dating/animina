@@ -57,7 +57,7 @@ demo accounts to play around with. It will print all accounts and tell you the p
 
 ### User States
 
-## Definitions
+#### Definitions
 
 We have the following user states that help a user change their visibility across the system
 
@@ -71,7 +71,7 @@ We have the following user states that help a user change their visibility acros
 
 
 
-## Actions
+#### Actions
 
 To change the state of a user account, we have the following actions:
 
