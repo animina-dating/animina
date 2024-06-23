@@ -53,6 +53,40 @@ Basic seeding is been automatically done by special migrations.
 In the development environment you can use `mix seed_demo_system` to create a couple of 
 demo accounts to play around with. It will print all accounts and tell you the password.
 
+
+
+### User States
+
+#### Definitions
+
+We have the following user states that help a user change their visibility across the system
+
+- `normal` - Standard account.
+- `validated` - This is a validated account, indicating that we are confident it belongs to a real person.
+- `under_investigation` - This account has been flagged by another user, an admin, or an AI for suspicious activity. They cannot log in.
+- `banned` - This account is banned. We retain it to block the associated mobile phone number and email address. They cannot log in.
+- `incognito` The user prefers to browse without being seen.
+- `hibernate`- The user wishes to keep the account but is not currently using it.
+- `archived`- The account has been deleted by the user. They cannot log in.
+
+
+
+#### Actions
+
+To change the state of a user account, we have the following actions:
+
+- `User.validate` - This action is used to validate an account.
+- `User.investigate` - This action is used to flag an account for investigation.
+- `User.ban` - This action is used to ban an account.
+- `User.incognito` - This action is used to set an account to incognito.
+- `User.hibernate` - This action is used to set an account to hibernate.
+- `User.archive` - This action is used to archive an account
+- `User.reactivate` - This action is used to reactivate an account
+- `User.normalize` - This action is used to set an account to normal.
+- `User.unban` - This action is used to unban an account.
+- `User.recover` - This action is used to recover an account from incognito or hibernate.
+
+
 ## Local Phoenix Server
 
 To start your Phoenix server:
