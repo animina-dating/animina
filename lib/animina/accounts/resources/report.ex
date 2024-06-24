@@ -16,14 +16,15 @@ defmodule Animina.Accounts.Report do
 
     attribute :accused_user_state, :atom do
       constraints one_of: [
-        :normal,
-        :validated,
-        :under_investigation,
-        :banned,
-        :incognito,
-        :hibernate,
-        :archived
-      ]
+                    :normal,
+                    :validated,
+                    :under_investigation,
+                    :banned,
+                    :incognito,
+                    :hibernate,
+                    :archived
+                  ]
+
       allow_nil? false
     end
 
@@ -35,7 +36,6 @@ defmodule Animina.Accounts.Report do
     attribute :internal_memo, :string do
       constraints max_length: 1_024
       allow_nil? true
-
     end
 
     create_timestamp :created_at
