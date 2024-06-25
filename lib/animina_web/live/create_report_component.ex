@@ -69,7 +69,7 @@ defmodule AniminaWeb.Live.CreateReportComponent do
 
         <.form
           :let={f}
-          id="add-report-form"
+          id="report-form"
           for={@form}
           phx-target={@myself}
           class="space-y-6 group"

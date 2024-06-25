@@ -665,6 +665,7 @@ defmodule AniminaWeb.ProfileLive do
       <div :if={@current_user} class="w-[100%] py-6 flex justify-end">
         <.link
           navigate={"/#{@user.username}/report"}
+          id={"report-user-#{@user.username}"}
           class="flex justify-center rounded-md bg-indigo-600 px-2 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <%= gettext("Report Account") %>
