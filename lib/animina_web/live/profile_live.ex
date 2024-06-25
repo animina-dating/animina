@@ -661,6 +661,33 @@ defmodule AniminaWeb.ProfileLive do
         },
         id: "profile_posts_live"
       ) %>
+
+      <div :if={@current_user} class="w-[100%] py-6 flex justify-end">
+        <.link
+          navigate={"/#{@user.username}/report"}
+          class="flex justify-center rounded-md bg-indigo-600 px-2 py-1 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          <%= gettext("Report Account") %>
+        </.link>
+      </div>
+
+      <.modal
+        :if={@live_action in [:report]}
+        id="create_report_component"
+        show
+        on_cancel={JS.navigate(~p"/#{@user.username}", replace: true)}
+      >
+        <.live_component
+          module={AniminaWeb.Live.CreateReportComponent}
+          id={:create_report_component}
+          action={@live_action}
+          current_user={@current_user}
+          language={@language}
+          page_title={"Report #{@user.username}"}
+          user={@user}
+          patch={~p"/#{@user.username}"}
+        />
+      </.modal>
     </div>
     """
   end

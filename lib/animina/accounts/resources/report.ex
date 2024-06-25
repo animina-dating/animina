@@ -2,6 +2,8 @@ defmodule Animina.Accounts.Report do
   @moduledoc """
   This is the Report module which we use to manage reports.
   """
+  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer
@@ -71,6 +73,16 @@ defmodule Animina.Accounts.Report do
     define :read
     define :create
     define :update
+  end
+
+  changes do
+    change after_action(fn changeset, record ->
+             user = BasicUser.by_id!(record.accused_id)
+             User.investigate(user)
+
+             {:ok, record}
+           end),
+           on: [:create]
   end
 
   postgres do
