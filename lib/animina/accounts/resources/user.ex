@@ -192,7 +192,11 @@ defmodule Animina.Accounts.User do
       transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
       transition(:unban, from: [:banned], to: :normal)
       transition(:recover, from: [:archived], to: :normal)
-      transition(:normalize, from: [:banned, :incognito, :hibernate, :archived], to: :normal)
+
+      transition(:normalize,
+        from: [:banned, :incognito, :hibernate, :archived, :under_investigation],
+        to: :normal
+      )
     end
   end
 
