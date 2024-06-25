@@ -1,9 +1,8 @@
 defmodule AniminaWeb.ReportTest do
+  alias Animina.Accounts.Credit
+  alias Animina.Accounts.User
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias Animina.Accounts.Credit
-
-  alias Animina.Accounts.User
 
   describe "Tests the Report Profile Feature" do
     setup do
@@ -41,7 +40,6 @@ defmodule AniminaWeb.ReportTest do
           "password" => "MichaelTheEngineer"
         })
         |> live(~p"/#{private_user.username}")
-
 
       private_user = User.by_username!(private_user.username)
 
@@ -81,12 +79,12 @@ defmodule AniminaWeb.ReportTest do
                "To report an account is a serious act. The account will be deactivated right away and will be investigated by our team. Please tell us why you report the account."
     end
 
-
-    test "Once You Fill In the form , the user state changes to :under_investigation , a report record is added and you are redirected to '/dashboard'", %{
-      conn: conn,
-      public_user: public_user,
-      private_user: private_user
-    } do
+    test "Once You Fill In the form , the user state changes to :under_investigation , a report record is added and you are redirected to '/dashboard'",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
       {:ok, index_live, _html} =
         conn
         |> login_user(%{
@@ -95,14 +93,12 @@ defmodule AniminaWeb.ReportTest do
         })
         |> live(~p"/#{private_user.username}")
 
-        assert private_user.state == :normal
+      assert private_user.state == :normal
 
       {_, {:live_redirect, %{kind: :push, to: redirect_url}}} =
         index_live
         |> element("a", "Report Account")
         |> render_click()
-
-
 
       {:ok, index_live, _html} =
         conn
@@ -112,17 +108,14 @@ defmodule AniminaWeb.ReportTest do
         })
         |> live(redirect_url)
 
-       {_, {:live_redirect, %{kind: :push, to: redirect_url}}} =
+      {_, {:live_redirect, %{kind: :push, to: redirect_url}}} =
         index_live
         |> form("#report-form", report: %{"description" => "This is a report against a user"})
         |> render_submit()
 
-        assert redirect_url =~ "/my/dashboard"
-        user= User.by_username!(private_user.username)
-        assert user.state == :under_investigation
-
-
-
+      assert redirect_url =~ "/my/dashboard"
+      user = User.by_username!(private_user.username)
+      assert user.state == :under_investigation
     end
   end
 
