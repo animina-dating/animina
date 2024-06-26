@@ -43,7 +43,6 @@ defmodule AniminaWeb.Live.CreateReportComponent do
   def handle_event("submit", %{"report" => report}, socket) do
     form = Form.validate(socket.assigns.form, report)
 
-
     with [] <- Form.errors(form),
          {:ok, _report} <-
            Report.create(report) do

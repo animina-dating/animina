@@ -1,9 +1,9 @@
 defmodule Animina.Accounts.ReportTest do
   use Animina.DataCase, async: true
   alias Animina.Accounts.Report
+  alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
-  alias Animina.Accounts.Role
 
   describe "Tests for the Report Resource" do
     setup do
