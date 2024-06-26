@@ -7,6 +7,7 @@ defmodule AniminaWeb.Live.CreateReportComponent do
   alias Animina.Accounts.Report
   alias AshPhoenix.Form
 
+  @impl true
   def update(%{current_user: current_user, user: user, language: language} = assigns, socket) do
     form =
       Form.for_create(Report, :create,
@@ -44,7 +45,7 @@ defmodule AniminaWeb.Live.CreateReportComponent do
 
     with [] <- Form.errors(form),
          {:ok, _report} <-
-           Form.submit(form, params: report, api_opts: []) do
+           Report.create(report) do
       {:noreply,
        socket
        |> assign(:errors, [])
@@ -59,6 +60,7 @@ defmodule AniminaWeb.Live.CreateReportComponent do
     end
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-2">

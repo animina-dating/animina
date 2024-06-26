@@ -275,7 +275,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
     <div class="relative">
     <.user_avatar_image  current_user={@interest} />
-    <p :if={@interest.profile_photo.state != :approved} class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
+    <p :if={@interest.profile_photo.state != :approved && @current_user && (@current_user.id == @interest.id || admin_user?(@current_user)) } class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
 
     </div>
     <%else %>

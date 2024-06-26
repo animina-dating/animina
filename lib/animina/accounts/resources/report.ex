@@ -6,7 +6,8 @@ defmodule Animina.Accounts.Report do
   alias Animina.Accounts.User
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: Ash.Policy.Authorizer
 
   attributes do
     uuid_primary_key :id
@@ -73,6 +74,7 @@ defmodule Animina.Accounts.Report do
     define :read
     define :create
     define :update
+    define :by_id, get_by: [:id], action: :read
   end
 
   changes do
@@ -83,6 +85,16 @@ defmodule Animina.Accounts.Report do
              {:ok, record}
            end),
            on: [:create]
+  end
+
+  policies do
+    policy action_type(:read) do
+      authorize_if Animina.Checks.ReadReportCheck
+    end
+
+    policy action_type(:update) do
+      authorize_if Animina.Checks.UpdateReportCheck
+    end
   end
 
   postgres do

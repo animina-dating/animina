@@ -4,8 +4,6 @@ defmodule AniminaWeb.ProfileVisibilityLive do
   """
 
   use AniminaWeb, :live_view
-  alias Animina.Accounts
-  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
