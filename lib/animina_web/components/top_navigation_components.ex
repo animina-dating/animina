@@ -249,7 +249,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <div class="flex w-[100%]  p-4 flex-col gap-2">
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
-        <div class="flex w-[100%] flex-col gap-2">
+        <div class="flex w-[100%] h-[50vh] overflow-y-scroll flex-col gap-2">
           <.random_interests
             interests={six_random_public_users(@current_user)}
             current_user={@current_user}
@@ -283,9 +283,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% else %>
         <.error_or_nsfw_profile_image />
       <% end %>
-      <p class="text-left text-black">
+      <p class="text-left group-hover:text-blue-600 dark:text-white text-black">
         <%= StringHelper.truncate_name(@interest.name) %><br />
-        <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md text-black-700"><%= @interest.age %> years</span>
+        <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md dark:text-black text-black-700"><%= @interest.age %> years</span>
       </p>
     </div>
     </.link>
@@ -405,7 +405,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <button
       type="button"
-      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]   flex flex-row items-center justify-start  rounded-md  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
+      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]   flex flex-row items-center justify-start  rounded-md group  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
     >
       <%= render_slot(@inner_block) %>
     </button>
