@@ -1,14 +1,9 @@
 defmodule AniminaWeb.ChatTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias Animina.Accounts.Bookmark
   alias Animina.Accounts.Credit
-  alias Animina.Accounts.Role
   alias Animina.Accounts.User
-  alias Animina.Accounts.UserRole
-  alias Animina.Accounts.VisitLogEntry
-  alias Animina.Narratives.Headline
-  alias Animina.Narratives.Story
+  alias Animina.Accounts.Message
 
   describe "Tests the Chat Live" do
     setup do
@@ -34,6 +29,61 @@ defmodule AniminaWeb.ChatTest do
       ]
     end
 
+    test "You are redirected to the chat page of a profile by clicking the chat icon on top of a profile",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
+      # we visit the message box for public user and private user
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      assert html =~ private_user.name
+      assert html =~ "#{private_user.height}"
+
+      {:ok, index_live, html} =
+        index_live
+        |> element("#chat_button")
+        |> render_click()
+        |> follow_redirect(
+          conn
+          |> login_user(%{
+            "username_or_email" => public_user.username,
+            "password" => "MichaelTheEngineer"
+          }),
+          "/#{public_user.username}/messages/#{private_user.username}"
+        )
+
+      assert html =~ private_user.name
+      assert has_element?(index_live, "#message_form")
+    end
+
+    test "if you visit /my/messages/profile you will be redirected to /current_user/messages/profile",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
+      # we visit the message box for public user and private user
+
+      {_, {:live_redirect, %{to: url, flash: %{}}}} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/messages/#{private_user.username}")
+
+      assert url =~ "/#{public_user.username}/messages/#{private_user.username}"
+    end
+
     test "You see a user's Mini Profile if you visit their chat live", %{
       conn: conn,
       public_user: public_user,
@@ -51,6 +101,117 @@ defmodule AniminaWeb.ChatTest do
 
       assert html =~ private_user.name
       assert html =~ "#{private_user.height}"
+    end
+
+    test "You can send a message through the message box", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      # we visit the message box for public user and private user
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      refute html =~ "Hello, how are you?"
+
+      html =
+        index_live
+        |> form("#message_form", message: %{"content" => "Hello, how are you?"})
+        |> render_submit()
+
+      assert html =~ "Hello, how are you?"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      assert html =~ "Hello, how are you?"
+
+      assert html =~ private_user.name
+      assert html =~ "#{private_user.height}"
+    end
+
+    test "You can view messages received in the chat box", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      # we visit the message box for public user and private user
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      refute html =~ "This is a message received"
+
+      {:ok, message} =
+        Message.create(%{
+          sender_id: private_user.id,
+          receiver_id: public_user.id,
+          content: "This is a message received"
+        })
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      assert html =~ message.content
+    end
+
+    test "Once You view a chat page , all messages that had previously not been read will be marked as read",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      refute html =~ "This is a message received"
+
+      {:ok, message} =
+        Message.create(%{
+          sender_id: private_user.id,
+          receiver_id: public_user.id,
+          content: "This is a message received"
+        })
+
+      assert message.read_at == nil
+
+      {:ok, _index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      {:ok, [message]} = Message.by_id(message.id)
+
+      refute message.read_at == nil
     end
   end
 

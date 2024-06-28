@@ -668,7 +668,7 @@ defmodule AniminaWeb.ProfileComponents do
     <div>
       <%= if @current_user && @display_chat_icon do %>
         <div :if={@current_user.id != @user.id} class="text-gray-300 cursor-pointer dark:text-white">
-          <.link navigate={"/my/messages/#{@user.username}"}>
+          <.link navigate={"/#{@current_user.username}/messages/#{@user.username}"} id="chat_button">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
