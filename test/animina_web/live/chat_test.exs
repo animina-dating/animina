@@ -2,8 +2,8 @@ defmodule AniminaWeb.ChatTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
-  alias Animina.Accounts.User
   alias Animina.Accounts.Message
+  alias Animina.Accounts.User
 
   describe "Tests the Chat Live" do
     setup do
