@@ -249,7 +249,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <div class="flex w-[100%]  p-4 flex-col gap-2">
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
-        <div class="flex w-[100%] h-[50vh] overflow-y-scroll flex-col gap-2">
+        <div class={"flex w-[100%] #{if @current_user do " h-[50vh] overflow-y-scroll" end } flex-col gap-2"}>
           <.random_interests
             interests={six_random_public_users(@current_user)}
             current_user={@current_user}

@@ -436,6 +436,7 @@ defmodule AniminaWeb.ChatLive do
           for={@form}
           phx-change="validate"
           phx-submit="submit"
+          id="message_form"
           class="w-[100%] flex justify-between items-end"
         >
           <div phx-feedback-for={f[:content].name} class="md:w-[93%] w-[90%]">
