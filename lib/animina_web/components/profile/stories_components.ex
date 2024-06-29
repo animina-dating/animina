@@ -46,101 +46,47 @@ defmodule AniminaWeb.StoriesComponents do
 
   def story_with_flags(assigns) do
     ~H"""
-    <div class="pb-2">
-      <div :if={@story.photo} class="pb-2">
-        <%= if @story.headline.subject == "About me" do %>
-          <div
+    <article>
+      <div
+        :if={@story.photo}
+        class="relative flex flex-col justify-end px-8 pb-8 overflow-hidden bg-gray-900 isolate rounded-2xl pt-80 sm:pt-48 lg:pt-80"
+      >
+        <img
+          :if={
+            (@current_user && @story.user_id == @current_user.id) ||
+              display_image(@story.photo.state, @current_user, @story)
+          }
+          src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+          alt={@story.headline.subject}
+          class="absolute inset-0 object-cover w-full h-full -z-10"
+        />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-gray-900 via-gray-900/40"></div>
+        <div class="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10"></div>
+
+        <h3 class="mt-3 text-lg font-semibold leading-6 text-white">
+          <span class="absolute inset-0"></span> <%= @story.headline.subject %>
+          <p
             :if={
-              (@current_user && @story.user_id == @current_user.id) ||
-                display_image(@story.photo.state, @current_user, @story)
+              @current_user && @story.photo.state != :approved &&
+                (@story.user_id == @current_user.id || admin_user?(@current_user))
             }
-            class="relative"
+            class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
           >
-            <img
-              class="object-cover rounded-lg aspect-square"
-              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
-            />
-
-            <p
-              :if={
-                @current_user && @story.photo.state != :approved &&
-                  (@story.user_id == @current_user.id || admin_user?(@current_user))
-              }
-              class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
-            >
-              <%= get_photo_state_name(@story.photo.state) %>
-            </p>
-          </div>
-        <% else %>
-          <div
-            :if={
-              (@current_user && @story.user_id == @current_user.id) ||
-                display_image(@story.photo.state, @current_user, @story)
-            }
-            class="relative"
-          >
-            <img
-              class="object-cover rounded-lg relative"
-              src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
-            />
-
-            <p
-              :if={
-                @current_user && @story.photo.state != :approved &&
-                  (@story.user_id == @current_user.id || admin_user?(@current_user))
-              }
-              class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
-            >
-              <%= get_photo_state_name(@story.photo.state) %>
-            </p>
-          </div>
-        <% end %>
+            <%= get_photo_state_name(@story.photo.state) %>
+          </p>
+        </h3>
       </div>
-
-      <.story_body
-        story={@story}
-        user={@user}
-        dom_id={@dom_id}
-        current_user={@current_user}
-        delete_story_modal_text={@delete_story_modal_text}
-      />
-
-      <div :if={!empty_flags_array?(@flags)} class="bg-green-100 relative rounded-md">
-        <.link
-          :if={@current_user && @current_user.id == @user.id}
-          class="absolute text-blue-700 top-2 right-4"
-          navigate="/my/flags/white"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="16"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.58 13.42a4 4 0 00-.885 1.343z" />
-          </svg>
-        </.link>
-        <div class="flex flex-wrap justify-center p-2">
-          <%= for flag <- @flags do %>
-            <span
-              :if={flag != %{}}
-              class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
-            >
-              <%= flag.emoji %> <%= flag.name %>
-
-              <.get_styling_for_matching_flags
-                flag={flag}
-                current_user_green_flags={@current_user_green_flags}
-                current_user_red_flags={@current_user_red_flags}
-              />
-            </span>
-          <% end %>
-        </div>
+      <div class="pb-2">
+        <.story_body
+          story={@story}
+          user={@user}
+          dom_id={@dom_id}
+          current_user={@current_user}
+          delete_story_modal_text={@delete_story_modal_text}
+        />
       </div>
-    </div>
-    <div class="pb-4" />
+      <div class="pb-4" />
+    </article>
     """
   end
 
@@ -286,9 +232,9 @@ defmodule AniminaWeb.StoriesComponents do
   def story_body(assigns) do
     ~H"""
     <div :if={@story.headline} class="pb-4">
-      <%= if @story.headline && @story.headline.subject != "About me" do %>
-        <h3 class="text-lg font-semibold dark:text-white"><%= @story.headline.subject %></h3>
-      <% end %>
+      <h3 :if={@story.photo == nil} class="text-lg font-semibold dark:text-white">
+        <%= @story.headline.subject %>
+      </h3>
     </div>
     <.story_content story={@story} />
     <.story_action_icons
