@@ -32,6 +32,7 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(current_user_credit_points: 0)
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
+           |> assign(page_title: "#{user.username} #{gettext("Animina Profile")}")
            |> assign(intersecting_green_flags: [])
            |> assign(intersecting_red_flags: [])
            |> assign(show_404_page: false)
@@ -109,6 +110,7 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(page_title: "#{user.username} #{gettext("Animina Profile")}")
            |> assign(
              current_user_has_liked_profile?:
                current_user_has_liked_profile(socket.assigns.current_user, user.id)
@@ -148,6 +150,7 @@ defmodule AniminaWeb.ProfileLive do
           {:ok,
            socket
            |> assign(user: user)
+           |> assign(page_title: "#{user.username} #{gettext("Animina Profile")}")
            |> assign(current_user_credit_points: 0)
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
@@ -220,6 +223,7 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
            |> assign(intersecting_green_flags: [])
            |> assign(intersecting_red_flags: [])
+           |> assign(page_title: "#{user.username} #{gettext("Animina Profile")}")
            |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
            |> assign(profile_points: Points.humanized_points(user.credit_points))
            |> assign(
