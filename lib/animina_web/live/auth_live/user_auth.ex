@@ -108,6 +108,34 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
+  def on_mount(:live_admin_required, _params, session, socket) do
+    if socket.assigns[:current_user] && user_is_admin(socket.assigns[:current_user]) do
+      current_user = Registration.get_current_user(session)
+
+      add_daily_points_for_user(
+        current_user,
+        100,
+        check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
+      )
+
+      {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
+
+      {:cont,
+       socket
+       |> assign(:current_user, current_user)
+       |> assign(:unread_messages, unread_messages)
+       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
+       |> assign(:current_user_credit_points, current_user.credit_points)}
+    else
+      {:halt, Phoenix.LiveView.redirect(socket, to: "/sign-in")}
+    end
+  end
+
+  defp user_is_admin(user) do
+    user = User.by_id!(user.id)
+    Enum.any?(user.roles, fn role -> role.name == :admin end)
+  end
+
   # in this case the user does not have a daily bonus added for the day , so we add one
   defp add_daily_points_for_user(user, points, nil) do
     Credit.create(%{

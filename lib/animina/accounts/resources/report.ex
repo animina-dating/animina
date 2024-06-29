@@ -67,6 +67,12 @@ defmodule Animina.Accounts.Report do
 
   actions do
     defaults [:create, :read, :update]
+
+    read :all_reports do
+      prepare build(load: [:accuser, :accused, :admin])
+
+      prepare build(sort: [created_at: :desc])
+    end
   end
 
   code_interface do
@@ -75,6 +81,7 @@ defmodule Animina.Accounts.Report do
     define :create
     define :update
     define :by_id, get_by: [:id], action: :read
+    define :all_reports
   end
 
   changes do
