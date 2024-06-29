@@ -62,6 +62,11 @@ defmodule AniminaWeb.Router do
 
     post "/auth/user/sign_in/", AuthController, :sign_in
 
+    ash_authentication_live_session :live_authentication_required,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
+      live "/admin/reports/all", AllReportsLive, :index
+    end
+
     sign_out_route AuthController, "/auth/user/sign-out"
     auth_routes_for Animina.Accounts.User, to: AuthController
     reset_route []
