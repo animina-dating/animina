@@ -4,9 +4,7 @@ defmodule AniminaWeb.ReportComponents do
   """
   use Phoenix.Component
   alias Animina.Markdown
-  alias Animina.StringHelper
   import AniminaWeb.Gettext
-  import AniminaWeb.CoreComponents
   import Phoenix.HTML.Form
 
   def reports_card(assigns) do
@@ -16,7 +14,7 @@ defmodule AniminaWeb.ReportComponents do
         <.report_card report={report} current_user={@current_user} />
       <% end %>
     </div>
-    <div :if={@reports == []} class="w-[100%] my-8 grid md:grid-cols-3 grid-cols-1 gap-8">
+    <div :if={@reports == []} class="w-[100%] my-8 dark:text-white text-black gap-8">
       <%= gettext("No Reports Availabile") %>
     </div>
     """
@@ -71,11 +69,33 @@ defmodule AniminaWeb.ReportComponents do
             <%= gettext("Reviewed By") %> <span><%= @report.admin.name %></span>
           </p>
         <% else %>
-          <button class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2">
+          <.link
+            navigate={"/admin/reports/pending/#{@report.id}/review"}
+            class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
+          >
             <%= gettext("Review Report") %>
-          </button>
+          </.link>
         <% end %>
       </div>
+    </div>
+    """
+  end
+
+  def report_tabs(assigns) do
+    ~H"""
+    <div class="flex gap-4 items-center">
+      <.link
+        navigate="/admin/reports/all"
+        class={" #{if @current_report_tab == "all" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
+      >
+        All Reports
+      </.link>
+      <.link
+        navigate="/admin/reports/pending"
+        class={" #{if @current_report_tab == "pending" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
+      >
+        Pending Reports
+      </.link>
     </div>
     """
   end

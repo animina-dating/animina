@@ -298,7 +298,7 @@ defmodule AniminaWeb.AniminaComponents do
   def footer(assigns) do
     ~H"""
     <h2 id="footer-heading" class="sr-only mt-8">Footer</h2>
-    <div class="px-6 pt-16 pb-8 mx-auto border-t border-gray-900/10 dark:border-gray-200/10 ">
+    <div class="px-6 pt-16 pb-8 mx-auto mt-4 border-t border-gray-900/10 dark:border-gray-200/10 ">
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
         <div class="space-y-8">
           <p class="text-sm leading-6 text-gray-600 dark:text-gray-400">
