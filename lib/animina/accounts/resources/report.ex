@@ -73,6 +73,34 @@ defmodule Animina.Accounts.Report do
 
       prepare build(sort: [created_at: :desc])
     end
+
+    read :pending_reports do
+      prepare build(load: [:accuser, :accused, :admin])
+
+      prepare build(sort: [created_at: :desc])
+
+      filter expr(state == ^:pending)
+    end
+
+    update :review do
+      argument :admin_id, :uuid do
+        allow_nil? false
+      end
+
+      argument :state, :atom do
+        constraints one_of: [:accepted, :denied]
+        allow_nil? false
+      end
+
+      argument :internal_memo, :string do
+        constraints max_length: 1_024
+        allow_nil? true
+      end
+
+      change set_attribute(:admin_id, arg(:admin_id))
+      change set_attribute(:state, arg(:state))
+      change set_attribute(:internal_memo, arg(:internal_memo))
+    end
   end
 
   code_interface do
@@ -82,6 +110,8 @@ defmodule Animina.Accounts.Report do
     define :update
     define :by_id, get_by: [:id], action: :read
     define :all_reports
+    define :pending_reports
+    define :review
   end
 
   changes do
@@ -92,6 +122,39 @@ defmodule Animina.Accounts.Report do
              {:ok, record}
            end),
            on: [:create]
+
+    change after_action(fn changeset, record ->
+             user = BasicUser.by_id!(record.accused_id)
+
+             change_accused_user_state(user, record.accused_user_state, record.state)
+
+             {:ok, record}
+           end),
+           on: [:update]
+  end
+
+  preparations do
+    prepare build(load: [:accuser, :accused, :admin])
+  end
+
+  def change_accused_user_state(user, :normal, :accepted) do
+    User.ban(user)
+  end
+
+  def change_accused_user_state(user, :validated, :accepted) do
+    User.ban(user)
+  end
+
+  def change_accused_user_state(user, :normal, :denied) do
+    User.normalize(user)
+  end
+
+  def change_accused_user_state(user, :validated, :denied) do
+    User.validate(user)
+  end
+
+  def change_accused_user_state(user, _, _) do
+    user
   end
 
   policies do

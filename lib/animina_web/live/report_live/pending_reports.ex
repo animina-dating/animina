@@ -1,4 +1,4 @@
-defmodule AniminaWeb.AllReportsLive do
+defmodule AniminaWeb.PendingReportsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
@@ -25,7 +25,7 @@ defmodule AniminaWeb.AllReportsLive do
     end
 
     reports =
-      case Report.all_reports(actor: socket.assigns.current_user) do
+      case Report.pending_reports(actor: socket.assigns.current_user) do
         {:ok, reports} ->
           reports
 
@@ -37,7 +37,7 @@ defmodule AniminaWeb.AllReportsLive do
       socket
       |> assign(active_tab: :reports)
       |> assign(:language, language)
-      |> assign(:page_title, gettext("All Reports"))
+      |> assign(:page_title, gettext("Pending Reports"))
       |> assign(:reports, reports)
 
     {:ok, socket}
@@ -86,7 +86,7 @@ defmodule AniminaWeb.AllReportsLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.report_tabs current_report_tab="all" />
+      <.report_tabs current_report_tab="pending" />
 
       <.reports_card reports={@reports} current_user={@current_user} />
     </div>
