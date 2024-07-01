@@ -261,7 +261,6 @@ defmodule AniminaWeb.AllReportsTest do
         })
         |> live(~p"/admin/reports/all")
 
-
       {_, {:live_redirect, %{kind: :push, to: url}}} =
         index_live
         |> element("#review-#{report.id}")
@@ -280,7 +279,6 @@ defmodule AniminaWeb.AllReportsTest do
       assert html =~ "Review Report"
       assert html =~ "Description"
       assert html =~ report.description
-
     end
   end
 
