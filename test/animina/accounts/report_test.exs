@@ -114,6 +114,44 @@ defmodule Animina.Accounts.ReportTest do
 
       assert report.admin_id == user_one.id
     end
+
+    test "by_id/1 returns the report of a specific id", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      valid_attrs = %{
+        "state" => :pending,
+        "accused_user_state" => user_two.state,
+        "accused_id" => user_two.id,
+        "accuser_id" => user_one.id,
+        "description" => "This is a test report"
+      }
+
+      assert {:ok, report} = Report.create(valid_attrs)
+
+      assert {:ok, report_in_database} = Report.by_id(report.id, actor: user_one)
+
+      assert report_in_database.id == report.id
+    end
+
+    test "all_reports/1 returns all reports", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      valid_attrs = %{
+        "state" => :pending,
+        "accused_user_state" => user_two.state,
+        "accused_id" => user_two.id,
+        "accuser_id" => user_one.id,
+        "description" => "This is a test report"
+      }
+
+      assert {:ok, _report} = Report.create(valid_attrs)
+
+      assert {:ok, reports_in_database} = Report.all_reports(actor: user_one)
+
+      assert Enum.count(reports_in_database) == 1
+    end
   end
 
   defp create_user_one do

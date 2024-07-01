@@ -1,14 +1,14 @@
 defmodule AniminaWeb.AllReportsLive do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
   alias Animina.Accounts.Points
-  alias Animina.Accounts.Reaction
+
   alias Animina.Accounts.Report
-  alias Animina.Accounts.User
-  alias AshPhoenix.Form
+
   alias Phoenix.PubSub
 
+  alias Animina.GenServers.ProfileViewCredits
+  @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -83,6 +83,7 @@ defmodule AniminaWeb.AllReportsLive do
     ]
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
