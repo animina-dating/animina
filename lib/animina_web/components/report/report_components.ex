@@ -48,7 +48,11 @@ defmodule AniminaWeb.ReportComponents do
 
             <div class="flex flex-col justify-end items-end gap-1">
               <p class="italic"><%= gettext("Accused") %></p>
-              <.link class="text-blue-500 underline" navigate={"/#{@report.accuser.username}"}>
+              <.link
+                class="text-blue-500 underline"
+                id={"accused-#{@report.accused_id}-report-#{@report.id}"}
+                navigate={"/#{@report.accused.username}"}
+              >
                 <%= @report.accused.username %>
               </.link>
             </div>

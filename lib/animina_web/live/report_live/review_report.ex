@@ -4,10 +4,11 @@ defmodule AniminaWeb.ReviewReportLive do
   alias Animina.Accounts
   alias Animina.Accounts.Points
   alias Animina.Accounts.Report
+  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Markdown
   alias AshPhoenix.Form
   alias Phoenix.PubSub
-  alias Animina.GenServers.ProfileViewCredits
+
   @impl true
   def mount(%{"id" => id}, %{"language" => language} = _session, socket) do
     if connected?(socket) do

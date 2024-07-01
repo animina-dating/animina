@@ -1,6 +1,7 @@
 defmodule AniminaWeb.AllReportsTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.Credit
   alias Animina.Accounts.Report
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
@@ -26,6 +27,12 @@ defmodule AniminaWeb.AllReportsTest do
       user_two = create_user_two()
       user_three = create_user_three()
       user_four = create_user_four()
+
+      Credit.create!(%{
+        user_id: user_one.id,
+        points: 100,
+        subject: "Registration bonus"
+      })
 
       # make user one an admin
       UserRole.create(%{
@@ -78,8 +85,7 @@ defmodule AniminaWeb.AllReportsTest do
     test "Only Admins can visit /admin/reports/all",
          %{
            conn: conn,
-           user_one: user_one,
-           user_two: user_two
+           user_one: user_one
          } do
       # User one is an admin hence they can access the reports page
       {:ok, _index_live, html} =
@@ -96,7 +102,6 @@ defmodule AniminaWeb.AllReportsTest do
     test "Normal Users cannot visit /admin/reports/all",
          %{
            conn: conn,
-           user_one: user_one,
            user_two: user_two
          } do
       # User two is a normal user hence they cannot access the reports page
@@ -116,7 +121,6 @@ defmodule AniminaWeb.AllReportsTest do
          %{
            conn: conn,
            user_one: user_one,
-           user_two: user_two,
            report: report,
            reviewed_report: reviewed_report
          } do
@@ -143,8 +147,6 @@ defmodule AniminaWeb.AllReportsTest do
          %{
            conn: conn,
            user_one: user_one,
-           user_two: user_two,
-           report: report,
            reviewed_report: reviewed_report
          } do
       {:ok, index_live, html} =
@@ -167,9 +169,7 @@ defmodule AniminaWeb.AllReportsTest do
          %{
            conn: conn,
            user_one: user_one,
-           user_two: user_two,
-           report: report,
-           reviewed_report: reviewed_report
+           report: report
          } do
       {:ok, index_live, html} =
         conn
@@ -191,11 +191,9 @@ defmodule AniminaWeb.AllReportsTest do
          %{
            conn: conn,
            user_one: user_one,
-           user_two: user_two,
-           report: report,
-           reviewed_report: reviewed_report
+           report: report
          } do
-      {:ok, index_live, html} =
+      {:ok, index_live, _html} =
         conn
         |> login_user(%{
           "username_or_email" => user_one.username,
@@ -203,7 +201,7 @@ defmodule AniminaWeb.AllReportsTest do
         })
         |> live(~p"/admin/reports/all")
 
-      {:ok, index_live, html} =
+      {:ok, _index_live, html} =
         index_live
         |> element("#accuser-#{report.accuser_id}-report-#{report.id}")
         |> render_click()
@@ -211,6 +209,78 @@ defmodule AniminaWeb.AllReportsTest do
 
       assert html =~ report.accuser.name
       assert html =~ "#{report.accuser.height}"
+    end
+
+    test "You can click on the link of the accused to access their profile",
+         %{
+           conn: conn,
+           user_one: user_one,
+           report: report
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user_one.username,
+          "password" => "password"
+        })
+        |> live(~p"/admin/reports/all")
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#accused-#{report.accused_id}-report-#{report.id}")
+        |> render_click()
+
+      assert url =~ "/#{report.accused.username}"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user_one.username,
+          "password" => "password"
+        })
+        |> live(url)
+
+      assert html =~ report.accused.name
+
+      assert html =~ "#{report.accused.height}"
+    end
+
+    test "If a report is yet to be reviewed , you see a link to review it , if you click it you are redirected to the review
+    report page
+    ",
+         %{
+           conn: conn,
+           user_one: user_one,
+           report: report
+         } do
+      {:ok, index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user_one.username,
+          "password" => "password"
+        })
+        |> live(~p"/admin/reports/all")
+
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#review-#{report.id}")
+        |> render_click()
+
+      assert url == "/admin/reports/pending/#{report.id}/review"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user_one.username,
+          "password" => "password"
+        })
+        |> live(url)
+
+      assert html =~ "Review Report"
+      assert html =~ "Description"
+      assert html =~ report.description
+
     end
   end
 

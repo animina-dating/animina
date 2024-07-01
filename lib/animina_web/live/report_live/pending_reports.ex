@@ -3,8 +3,9 @@ defmodule AniminaWeb.PendingReportsLive do
 
   alias Animina.Accounts.Points
   alias Animina.Accounts.Report
-  alias Phoenix.PubSub
   alias Animina.GenServers.ProfileViewCredits
+  alias Phoenix.PubSub
+
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
