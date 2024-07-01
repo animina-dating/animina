@@ -3,12 +3,13 @@ defmodule AniminaWeb.ReviewReportLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Points
-  alias Animina.Accounts.Reaction
   alias Animina.Accounts.Report
-  alias Animina.Accounts.User
+  alias Animina.GenServers.ProfileViewCredits
   alias Animina.Markdown
   alias AshPhoenix.Form
   alias Phoenix.PubSub
+
+  @impl true
   def mount(%{"id" => id}, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -47,6 +48,7 @@ defmodule AniminaWeb.ReviewReportLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("validate", %{"report" => report}, socket) do
     form = Form.validate(socket.assigns.form, report, errors: true)
 
@@ -73,8 +75,8 @@ defmodule AniminaWeb.ReviewReportLive do
          |> put_flash(:info, "Report reviewed successfully.")
          |> push_navigate(to: ~p"/admin/reports/pending")}
 
-      errors ->
-        {:noreply, socket |> assign(:errors, errors)}
+      _ ->
+        {:noreply, socket |> assign(:form, form)}
     end
   end
 
@@ -122,6 +124,7 @@ defmodule AniminaWeb.ReviewReportLive do
     Timex.format!(date, "{WDshort}, {Mshort} {D}, {YYYY}")
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
@@ -167,8 +170,6 @@ defmodule AniminaWeb.ReviewReportLive do
         </div>
       </div>
 
-
-
       <.form
         :let={f}
         id="update-report-form"
@@ -177,9 +178,9 @@ defmodule AniminaWeb.ReviewReportLive do
         phx-change="validate"
         phx-submit="submit"
       >
-      <p class="dark:text-white font-medium text-black">
-       <%= gettext("Your Review :") %>
-      </p>
+        <p class="dark:text-white font-medium text-black">
+          <%= gettext("Your Review :") %>
+        </p>
         <%= hidden_input(f, :admin_id, value: @current_user.id) %>
         <div phx-feedback-for={f[:state].name} class="">
           <label for="report_state" class="block  font-medium leading-6 text-gray-900 dark:text-white">

@@ -5,7 +5,6 @@ defmodule AniminaWeb.ReportComponents do
   use Phoenix.Component
   alias Animina.Markdown
   import AniminaWeb.Gettext
-  import Phoenix.HTML.Form
 
   def reports_card(assigns) do
     ~H"""
@@ -38,14 +37,22 @@ defmodule AniminaWeb.ReportComponents do
           <div class="w-[100%]  flex justify-between items-center">
             <div class="flex flex-col gap-1">
               <p class="italic"><%= gettext("Accuser") %></p>
-              <.link class="text-blue-500 underline" navigate={"/#{@report.accuser.username}"}>
+              <.link
+                class="text-blue-500 underline"
+                id={"accuser-#{@report.accuser_id}-report-#{@report.id}"}
+                navigate={"/#{@report.accuser.username}"}
+              >
                 <%= @report.accuser.username %>
               </.link>
             </div>
 
             <div class="flex flex-col justify-end items-end gap-1">
               <p class="italic"><%= gettext("Accused") %></p>
-              <.link class="text-blue-500 underline" navigate={"/#{@report.accuser.username}"}>
+              <.link
+                class="text-blue-500 underline"
+                id={"accused-#{@report.accused_id}-report-#{@report.id}"}
+                navigate={"/#{@report.accused.username}"}
+              >
                 <%= @report.accused.username %>
               </.link>
             </div>
@@ -65,11 +72,12 @@ defmodule AniminaWeb.ReportComponents do
 
       <div class="flex items-center dark:text-white text-black text-sm gap-4">
         <%= if @report.admin_id do %>
-          <p>
-            <%= gettext("Reviewed By") %> <span><%= @report.admin.name %></span>
+          <p id={"#{@report.id}-reviewed-by-#{@report.admin_id}"}>
+            <%= gettext("Reviewed By") %> <%= @report.admin.name %>
           </p>
         <% else %>
           <.link
+            id={"review-#{@report.id}"}
             navigate={"/admin/reports/pending/#{@report.id}/review"}
             class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
           >
