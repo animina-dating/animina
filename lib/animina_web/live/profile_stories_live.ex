@@ -273,11 +273,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-4 w-[100%]">
-      <div class="columns md:columns-2 lg:columns-3 gap-8">
+      <div class="gap-8 columns md:columns-2 lg:columns-3">
         <div id="stream_stories" phx-update="stream">
           <div
             :for={{dom_id, %{story: story, photo: photo}} <- @streams.stories}
-            class="break-inside-avoid pb-2"
+            class="pb-2 break-inside-avoid"
             id={"#{dom_id}"}
           >
             <.live_component
@@ -330,11 +330,12 @@ defmodule AniminaWeb.ProfileStoriesLive do
           </div>
         </div>
       </div>
-      <div class="flex flex-wrap  text-blue-700 bg-blue-100 w-[100%]  rounded-md justify-center p-2">
+      <div class="flex flex-wrap bg-gray-100 w-[100%] rounded-md justify-center p-2 space-x-2 space-y-2">
+        <span />
         <%= for flag <- @flags do %>
           <span
             :if={flag != %{}}
-            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium "
+            class="inline-flex items-center px-3 py-2 text-base font-medium text-gray-900 bg-white rounded-md ring-1 ring-inset ring-gray-200"
           >
             <%= flag.emoji %> <%= flag.name %>
             <.get_styling_for_matching_flags
