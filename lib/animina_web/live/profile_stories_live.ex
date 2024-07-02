@@ -249,7 +249,6 @@ defmodule AniminaWeb.ProfileStoriesLive do
     end)
   end
 
-
   defp filter_flags(nil, _color, _language) do
     []
   end
