@@ -19,7 +19,7 @@ defmodule AniminaWeb.StoriesComponents do
     <div class="flex flex-col gap-4">
       <div class="gap-8 columns-1 md:columns-2 lg:columns-3">
         <%= for {story, flags} <- @stories_and_flags do %>
-          <.story_with_flags
+          <.story_card
             story={story}
             current_user={@current_user}
             flags={flags}
@@ -44,7 +44,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user_red_flags, :list, required: true
   attr :delete_story_modal_text, :string, required: true
 
-  def story_with_flags(assigns) do
+  def story_card(assigns) do
     ~H"""
     <article>
       <div

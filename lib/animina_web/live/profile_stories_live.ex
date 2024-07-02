@@ -36,23 +36,26 @@ defmodule AniminaWeb.ProfileStoriesLive do
         []
       end
 
+    flags = fetch_flags(user_id, :white) |> filter_flags(:white, language)
+
     socket =
       socket
-      |> assign(stories_and_flags: AsyncResult.loading())
-      |> assign(profile_stories: fetch_stories(user_id))
+      |> assign(stories: AsyncResult.loading())
+      |> assign(profile_stories: fetch_stories(user_id, language))
       |> assign(language: language)
+      |> assign(flags: flags)
       |> assign(current_user: current_user)
       |> assign(user: Accounts.User.by_id!(user_id))
       |> assign(current_user_green_flags: current_user_green_flags)
       |> assign(current_user_red_flags: current_user_red_flags)
-      |> stream(:stories_and_flags, fetch_stories_and_flags(user_id, language))
+      |> stream(:stories, fetch_stories(user_id, language))
 
     {:ok, socket, layout: false}
   end
 
   @impl true
-  def handle_async(:fetch_stories_and_flags, {:ok, data}, socket) do
-    %{stories_and_flags: stories_and_flags, current_user: current_user, language: language} =
+  def handle_async(:fetch_stories, {:ok, data}, socket) do
+    %{stories: stories, current_user: current_user, language: language} =
       socket.assigns
 
     current_user_green_flags =
@@ -72,21 +75,20 @@ defmodule AniminaWeb.ProfileStoriesLive do
     {:noreply,
      socket
      |> assign(
-       :stories_and_flags,
-       AsyncResult.ok(stories_and_flags, data)
+       :stories,
+       AsyncResult.ok(stories, data)
      )
-     |> assign(stories_and_flags_items: data)
+     |> assign(stories_items: data)
      |> assign(current_user_green_flags: current_user_green_flags)
      |> assign(current_user_red_flags: current_user_red_flags)
-     |> stream(:stories_and_flags, data)}
+     |> stream(:stories, data)}
   end
 
   @impl true
-  def handle_async(:fetch_stories_and_flags, {:exit, reason}, socket) do
-    %{stories_and_flags: stories_and_flags} = socket.assigns
+  def handle_async(:fetch_stories, {:exit, reason}, socket) do
+    %{stories: stories} = socket.assigns
 
-    {:noreply,
-     assign(socket, :stories_and_flags, AsyncResult.failed(stories_and_flags, {:exit, reason}))}
+    {:noreply, assign(socket, :stories, AsyncResult.failed(stories, {:exit, reason}))}
   end
 
   @impl true
@@ -141,10 +143,10 @@ defmodule AniminaWeb.ProfileStoriesLive do
       ) do
     {:noreply,
      socket
-     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id))
+     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id, socket.assigns.language))
      |> stream(
-       :stories_and_flags,
-       fetch_stories_and_flags(story.user_id, socket.assigns.language),
+       :stories,
+       fetch_stories(story.user_id, socket.assigns.language),
        reset: true
      )}
   end
@@ -156,8 +158,8 @@ defmodule AniminaWeb.ProfileStoriesLive do
     {:noreply,
      socket
      |> stream(
-       :stories_and_flags,
-       fetch_stories_and_flags(user_flag.user_id, socket.assigns.language),
+       :stories,
+       fetch_stories(user_flag.user_id, socket.assigns.language),
        reset: true
      )}
   end
@@ -185,40 +187,40 @@ defmodule AniminaWeb.ProfileStoriesLive do
       ) do
     {:noreply,
      socket
-     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id))
-     |> delete_story_by_dom_id("stories_and_flags-" <> story.id)}
+     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id, socket.assigns.language))
+     |> delete_story_by_dom_id("stories-" <> story.id)}
   end
 
   defp update_photo(socket, photo) do
     item =
-      Enum.find(socket.assigns.stories_and_flags_items, fn item ->
+      Enum.find(socket.assigns.stories_items, fn item ->
         item.photo != nil && item.photo.id == photo.id
       end)
 
     item = Map.merge(item, %{photo: photo, story: %{item.story | photo: photo}})
 
     socket
-    |> stream_insert(:stories_and_flags, item, at: -1)
+    |> stream_insert(:stories, item, at: -1)
   end
 
   defp update_story(socket, story) do
     item =
-      Enum.find(socket.assigns.stories_and_flags_items, fn item ->
+      Enum.find(socket.assigns.stories_items, fn item ->
         item.story.id == story.id
       end)
 
     item = Map.merge(item, %{story: story})
 
     socket
-    |> stream_insert(:stories_and_flags, item, at: -1)
+    |> stream_insert(:stories, item, at: -1)
   end
 
   defp delete_story_by_dom_id(socket, dom_id) do
     socket
-    |> stream_delete_by_dom_id(:stories_and_flags, dom_id)
+    |> stream_delete_by_dom_id(:stories, dom_id)
     |> stream(
-      :stories_and_flags,
-      fetch_stories_and_flags(socket.assigns.user.id, socket.assigns.language),
+      :stories,
+      fetch_stories(socket.assigns.user.id, socket.assigns.language),
       reset: true
     )
   end
@@ -230,7 +232,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
     |> Traits.read!()
   end
 
-  defp fetch_stories(user_id) do
+  defp fetch_stories(user_id, _) do
     stories =
       Narratives.Story
       |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
@@ -238,70 +240,13 @@ defmodule AniminaWeb.ProfileStoriesLive do
       |> then(& &1.results)
 
     stories
-  end
-
-  defp fetch_stories_and_flags(nil, _language) do
-    []
-  end
-
-  defp fetch_stories_and_flags(user_id, language) do
-    flags = fetch_flags(user_id, :white)
-
-    stories = fetch_stories(user_id)
-
-    flags =
-      filter_flags(flags, :white, language)
-
-    stories_and_flags = group_flags_with_stories(stories, flags)
-
-    Enum.reduce(stories_and_flags, [], fn {story_flags, story}, acc ->
-      acc ++ [%{id: story.id, story: story, photo: story.photo, flags: story_flags}]
+    |> Enum.map(fn story ->
+      %{
+        id: story.id,
+        photo: story.photo,
+        story: story
+      }
     end)
-  end
-
-  def group_flags_with_stories([], []), do: []
-  def group_flags_with_stories([], flags), do: chunk_five_flags_if_stories_are_empty(flags)
-  def group_flags_with_stories(stories, []), do: Enum.map(stories, &{[], &1})
-
-  def group_flags_with_stories(stories, flags) do
-    flags_per_story =
-      if length(flags) > 0 do
-        div(length(flags), length(stories))
-      else
-        0
-      end
-
-    extra_flags = length(flags) - flags_per_story * length(stories)
-
-    chunks = chunk(flags, flags_per_story, extra_flags)
-
-    Enum.zip(
-      chunks ++ Enum.map(1..(length(stories) - length(chunks)), fn _ -> [] end),
-      stories
-    )
-    |> Enum.map(fn {flag_chunk, story} -> {flag_chunk, story} end)
-  end
-
-  defp chunk(flags, _count, 0) when flags == [], do: []
-
-  defp chunk(flags, count, extra) do
-    if extra > 0 do
-      extra = extra - 1
-      [Enum.take(flags, count + 1) | chunk(Enum.drop(flags, count + 1), count, extra)]
-    else
-      [Enum.take(flags, count) | chunk(Enum.drop(flags, count), count, extra)]
-    end
-  end
-
-  defp chunk_five_flags_if_stories_are_empty(flags) do
-    flags = Enum.chunk_every(flags, 5)
-
-    stories =
-      Enum.map(1..(5 * length(flags)), fn _ ->
-        %{id: System.unique_integer(), photo: nil, headline: nil, content: nil}
-      end)
-
-    Enum.zip(flags, stories)
   end
 
   defp filter_flags(nil, _color, _language) do
@@ -327,61 +272,78 @@ defmodule AniminaWeb.ProfileStoriesLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="columns md:columns-2 lg:columns-3 gap-8">
-      <div id="stream_stories" phx-update="stream">
-        <div
-          :for={{dom_id, %{story: story, photo: photo, flags: flags}} <- @streams.stories_and_flags}
-          class="break-inside-avoid pb-2"
-          id={"#{dom_id}"}
-        >
-          <.live_component
-            module={AniminaWeb.StoryComponent}
-            id={"story_#{story.id}"}
-            story={story}
-            photo={photo}
-            flags={flags}
-            user={@user}
-            dom_id={dom_id}
-            current_user={@current_user}
-            current_user_green_flags={@current_user_green_flags}
-            current_user_red_flags={@current_user_red_flags}
-          />
+    <div class="flex flex-col gap-4 w-[100%]">
+      <div class="columns md:columns-2 lg:columns-3 gap-8">
+        <div id="stream_stories" phx-update="stream">
+          <div
+            :for={{dom_id, %{story: story, photo: photo}} <- @streams.stories}
+            class="break-inside-avoid pb-2"
+            id={"#{dom_id}"}
+          >
+            <.live_component
+              module={AniminaWeb.StoryComponent}
+              id={"story_#{story.id}"}
+              story={story}
+              photo={photo}
+              user={@user}
+              dom_id={dom_id}
+              current_user={@current_user}
+              current_user_green_flags={@current_user_green_flags}
+              current_user_red_flags={@current_user_red_flags}
+            />
+          </div>
         </div>
-      </div>
-      <div
-        :if={Enum.count(@profile_stories) == 1 && (@current_user && @current_user.id == @user.id)}
-        class="pb-2"
-      >
-        <div class="p-4 rounded-md bg-blue-50">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg
-                class="w-5 h-5 text-blue-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <div class="ml-3">
-              <h3 class="text-sm font-medium text-blue-800">
-                <%= gettext("Tell us more about yourself!") %>
-              </h3>
-              <div class="mt-2 text-sm text-blue-700">
-                <p>
-                  <%= gettext(
-                    "You can add more stories to your profile. Actually you should to increase the chances for a match. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. Play with it and see for yourself."
-                  ) %>
-                </p>
+
+        <div
+          :if={Enum.count(@profile_stories) == 1 && (@current_user && @current_user.id == @user.id)}
+          class="pb-2"
+        >
+          <div class="p-4 rounded-md bg-blue-50">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg
+                  class="w-5 h-5 text-blue-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">
+                  <%= gettext("Tell us more about yourself!") %>
+                </h3>
+                <div class="mt-2 text-sm text-blue-700">
+                  <p>
+                    <%= gettext(
+                      "You can add more stories to your profile. Actually you should to increase the chances for a match. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. Play with it and see for yourself."
+                    ) %>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="flex flex-wrap  text-blue-700 bg-blue-100 w-[100%]  rounded-md justify-center p-2">
+        <%= for flag <- @flags do %>
+          <span
+            :if={flag != %{}}
+            class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium "
+          >
+            <%= flag.emoji %> <%= flag.name %>
+            <.get_styling_for_matching_flags
+              flag={flag}
+              current_user_green_flags={@current_user_green_flags}
+              current_user_red_flags={@current_user_red_flags}
+            />
+          </span>
+        <% end %>
       </div>
     </div>
     """

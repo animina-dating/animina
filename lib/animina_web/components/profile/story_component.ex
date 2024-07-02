@@ -29,10 +29,9 @@ defmodule AniminaWeb.StoryComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.story_with_flags
+      <.story_card
         story={@story}
         current_user={@current_user}
-        flags={@flags}
         dom_id={@dom_id}
         user={@user}
         current_user_green_flags={@current_user_green_flags}
