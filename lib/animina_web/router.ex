@@ -30,6 +30,7 @@ defmodule AniminaWeb.Router do
       on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
       live "/admin/reports/all", AllReportsLive, :index
       live "/admin/reports/pending", PendingReportsLive, :index
+      live "/admin/reports/:id", ShowReportLive, :index
       live "/admin/reports/pending/:id/review", ReviewReportLive, :index
     end
 

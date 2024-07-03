@@ -63,7 +63,7 @@ defmodule AniminaWeb.ReportComponents do
             @report.description
             |> Animina.StringHelper.slice_at_word_boundary(
               200,
-              "...",
+              "admin/reports/#{@report.id}",
               true
             )
           ) %>
@@ -72,9 +72,18 @@ defmodule AniminaWeb.ReportComponents do
 
       <div class="flex items-center dark:text-white text-black text-sm gap-4">
         <%= if @report.admin_id do %>
-          <p id={"#{@report.id}-reviewed-by-#{@report.admin_id}"}>
-            <%= gettext("Reviewed By") %> <%= @report.admin.name %>
-          </p>
+          <div class="flex w-[100%] flex-col gap-2">
+            <p id={"#{@report.id}-reviewed-by-#{@report.admin_id}"}>
+              <%= gettext("Reviewed By") %> <%= @report.admin.name %>
+            </p>
+            <.link
+              id={"review-#{@report.id}"}
+              navigate={"/admin/reports/#{@report.id}"}
+              class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
+            >
+              <%= gettext("View Report") %>
+            </.link>
+          </div>
         <% else %>
           <.link
             id={"review-#{@report.id}"}
@@ -104,6 +113,84 @@ defmodule AniminaWeb.ReportComponents do
       >
         Pending Reports
       </.link>
+    </div>
+    """
+  end
+
+  def no_report(assigns) do
+    ~H"""
+    <div class="w-[100%] flex flex-col min-h-[30vh] justify-center dark:text-white items-center">
+      <p>
+        <%= gettext("This report does not exist or you do not have permission to view it.") %>
+      </p>
+    </div>
+    """
+  end
+
+  def report_show_card(assigns) do
+    ~H"""
+    <div>
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-col  text-black dark:text-white  border-b-[0.3px] border-black outline-offset-2 dark:border-white gap-1">
+          <div class="w-[100%]  flex justify-between items-center">
+            <p>
+              <%= format_date(@report.created_at) %>
+            </p>
+
+            <p class="capitalize">
+              <%= @report.state %>
+            </p>
+          </div>
+
+          <div class="w-[100%]  flex justify-between items-center">
+            <div class="flex flex-col gap-1">
+              <p class="italic"><%= gettext("Accuser") %></p>
+              <.link class="text-blue-500 underline" navigate={"/#{@report.accuser.username}"}>
+                <%= @report.accuser.username %>
+              </.link>
+            </div>
+
+            <div class="flex flex-col justify-end items-end gap-1">
+              <p class="italic"><%= gettext("Accused") %></p>
+              <.link class="text-blue-500 underline" navigate={"/#{@report.accuser.username}"}>
+                <%= @report.accused.username %>
+              </.link>
+            </div>
+          </div>
+        </div>
+        <div class="dark:text-white flex flex-col gap-1  text-black">
+          <p class="font-medium ">
+            <%= gettext("Description :") %>
+          </p>
+          <p class="text-gray-900 text-sm ">
+            <%= Markdown.format(@report.description) %>
+          </p>
+        </div>
+
+        <div class="dark:text-white flex flex-col gap-1  text-black">
+          <p class="font-medium ">
+            <%= gettext("Review :") %>
+          </p>
+          <p class="text-gray-900 text-sm ">
+            <%= Markdown.format(@report.internal_memo) %>
+          </p>
+        </div>
+
+        <%= if @report.admin_id do %>
+          <div class="flex w-[100%] flex-col gap-2">
+            <p class="italic dark:text-white">
+              <%= gettext("Reviewed By") %> <%= @report.admin.name %>
+            </p>
+          </div>
+        <% else %>
+          <.link
+            navigate={"/admin/reports/pending/#{@report.id}/review"}
+            class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
+          >
+            <%= gettext("Review Report") %>
+          </.link>
+        <% end %>
+      </div>
     </div>
     """
   end
