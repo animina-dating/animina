@@ -29,6 +29,8 @@ defmodule AniminaWeb.ProfileLive do
            socket
            |> assign(user: user)
            |> assign(active_tab: "")
+           |> assign(:initial_active_tab, "")
+           |> render_bookmarks_nudge()
            |> assign(current_user_credit_points: 0)
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
@@ -99,8 +101,10 @@ defmodule AniminaWeb.ProfileLive do
           {:ok,
            socket
            |> assign(user: user)
+           |> assign(:initial_active_tab, active_tab)
            |> assign(active_tab: active_tab)
            |> assign(visit_log_entry: visit_log_entry)
+           |> render_bookmarks_nudge()
            |> assign(
              current_user_credit_points:
                Points.humanized_points(socket.assigns.current_user.credit_points)
@@ -123,6 +127,7 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  # this is the mount for a logged in user visiting another user's profile
   @impl true
   def mount(%{"username" => username}, %{"language" => language, "user" => _}, socket) do
     socket =
@@ -135,12 +140,8 @@ defmodule AniminaWeb.ProfileLive do
     profile_socket(socket, username, language, current_user)
   end
 
+  # this is the mount for an anonymous  visiting a profile
   def mount(%{"username" => username}, %{"language" => language}, socket) do
-    socket =
-      socket
-      |> assign(language: language)
-      |> assign(active_tab: "")
-
     case Accounts.User.by_username(username) do
       {:ok, user} ->
         if show_optional_404_page(user, nil) ||
@@ -152,11 +153,14 @@ defmodule AniminaWeb.ProfileLive do
            |> assign(user: user)
            |> assign(page_title: "#{user.name} - #{gettext("Animina Profile")}")
            |> assign(current_user_credit_points: 0)
+           |> assign(language: language)
+           |> assign(active_tab: "")
            |> assign(intersecting_green_flags_count: 0)
            |> assign(intersecting_red_flags_count: 0)
            |> assign(intersecting_green_flags: [])
            |> assign(intersecting_red_flags: [])
            |> assign(show_404_page: false)
+           |> render_bookmarks_nudge()
            |> assign(profile_points: Points.humanized_points(user.credit_points))
            |> assign(
              current_user_has_liked_profile?: current_user_has_liked_profile(nil, user.id)
@@ -169,11 +173,14 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
+  # this is the mount for 'my/profile'
+
   def mount(_params, %{"language" => language, "user" => _}, socket) do
     socket =
       socket
       |> assign(language: language)
       |> assign(active_tab: :profile)
+      |> assign(:initial_active_tab, :profile)
 
     current_user =
       socket.assigns.current_user
@@ -620,6 +627,29 @@ defmodule AniminaWeb.ProfileLive do
       :banned,
       :archived
     ]
+  end
+
+  defp render_bookmarks_nudge(socket) do
+    Process.send_after(self(), {:change_active_tab_to_bookmarks, []}, 3500)
+    socket
+  end
+
+  def render_active_tab_back_to_initial_state(socket) do
+    Process.send_after(self(), {:change_active_tab_to_initial_state, []}, 3500)
+    socket
+  end
+
+  def handle_info({:change_active_tab_to_bookmarks, _}, socket) do
+    {:noreply,
+     socket
+     |> assign(active_tab: :bookmarks)
+     |> render_active_tab_back_to_initial_state()}
+  end
+
+  def handle_info({:change_active_tab_to_initial_state, _}, socket) do
+    {:noreply,
+     socket
+     |> assign(active_tab: socket.assigns.initial_active_tab)}
   end
 
   @impl true
