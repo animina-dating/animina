@@ -552,6 +552,19 @@ defmodule AniminaWeb.ProfileLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  def handle_info({:change_active_tab_to_bookmarks, _}, socket) do
+    {:noreply,
+     socket
+     |> assign(active_tab: :bookmarks)
+     |> render_active_tab_back_to_initial_state()}
+  end
+
+  def handle_info({:change_active_tab_to_initial_state, _}, socket) do
+    {:noreply,
+     socket
+     |> assign(active_tab: socket.assigns.initial_active_tab)}
+  end
+
   defp add_credit_on_profile_view(points, user, current_user) do
     Credit.create!(%{
       user_id: user.id,
@@ -611,6 +624,16 @@ defmodule AniminaWeb.ProfileLive do
     reaction
   end
 
+  defp render_bookmarks_nudge(socket) do
+    Process.send_after(self(), {:change_active_tab_to_bookmarks, []}, 3500)
+    socket
+  end
+
+  def render_active_tab_back_to_initial_state(socket) do
+    Process.send_after(self(), {:change_active_tab_to_initial_state, []}, 3500)
+    socket
+  end
+
   defp user_states_not_visible_to_anonymous_users do
     [
       :under_investigation,
@@ -627,29 +650,6 @@ defmodule AniminaWeb.ProfileLive do
       :banned,
       :archived
     ]
-  end
-
-  defp render_bookmarks_nudge(socket) do
-    Process.send_after(self(), {:change_active_tab_to_bookmarks, []}, 3500)
-    socket
-  end
-
-  def render_active_tab_back_to_initial_state(socket) do
-    Process.send_after(self(), {:change_active_tab_to_initial_state, []}, 3500)
-    socket
-  end
-
-  def handle_info({:change_active_tab_to_bookmarks, _}, socket) do
-    {:noreply,
-     socket
-     |> assign(active_tab: :bookmarks)
-     |> render_active_tab_back_to_initial_state()}
-  end
-
-  def handle_info({:change_active_tab_to_initial_state, _}, socket) do
-    {:noreply,
-     socket
-     |> assign(active_tab: socket.assigns.initial_active_tab)}
   end
 
   @impl true
