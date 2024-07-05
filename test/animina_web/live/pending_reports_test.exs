@@ -1,4 +1,4 @@
-defmodule AniminaWeb.AllReportsTest do
+defmodule AniminaWeb.PendingReportsTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
@@ -7,7 +7,7 @@ defmodule AniminaWeb.AllReportsTest do
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
 
-  describe "Tests the All Reports Live" do
+  describe "Tests the Pending Reports Live" do
     setup do
       role =
         if Role.by_name!(:user) == nil do
@@ -82,7 +82,7 @@ defmodule AniminaWeb.AllReportsTest do
       ]
     end
 
-    test "Only Admins can visit /admin/reports/all",
+    test "Only Admins can visit /admin/reports/pending",
          %{
            conn: conn,
            user_one: user_one
@@ -94,12 +94,12 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
-      assert html =~ "All Reports"
+      assert html =~ "Pending Reports"
     end
 
-    test "Normal Users cannot visit /admin/reports/all",
+    test "Normal Users cannot visit /admin/reports/pending",
          %{
            conn: conn,
            user_two: user_two
@@ -112,12 +112,12 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_two.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
       assert url =~ "/sign-in"
     end
 
-    test "If you click on the 'All Reports' tab , you are taken to the all reports page",
+    test "If you click on the 'Pending Reports' tab , you are taken to the pending reports page",
          %{
            conn: conn,
            user_one: user_one
@@ -129,16 +129,16 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/pending")
+        |> live(~p"/admin/reports/all")
 
-      assert html =~ "Pending Reports"
+      assert html =~ "All Reports"
 
       {:error, {:live_redirect, %{kind: :push, to: url}}} =
         index_live
-        |> element("#all-reports-tab")
+        |> element("#pending-reports-tab")
         |> render_click()
 
-      assert url == "/admin/reports/all"
+      assert url == "/admin/reports/pending"
 
       {:ok, _index_live, html} =
         conn
@@ -148,10 +148,10 @@ defmodule AniminaWeb.AllReportsTest do
         })
         |> live(url)
 
-      assert html =~ "All Reports"
+      assert html =~ "Pending Reports"
     end
 
-    test "In the all reports page you see all the reports",
+    test "In the all reports page you see only the pending  reports",
          %{
            conn: conn,
            user_one: user_one,
@@ -164,42 +164,14 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
-      assert html =~ "All Reports"
+      assert html =~ "Pending Reports"
       assert html =~ report.description
-      assert html =~ reviewed_report.description
-      assert html =~ Atom.to_string(report.state)
-      assert html =~ Atom.to_string(reviewed_report.state)
-      assert html =~ Ash.CiString.value(report.accused.username)
-      assert html =~ Ash.CiString.value(reviewed_report.accused.username)
-      assert html =~ Ash.CiString.value(report.accuser.username)
-      assert html =~ Ash.CiString.value(reviewed_report.accuser.username)
+      refute html =~ reviewed_report.description
     end
 
-    test "If a report has been reviewed , you see who reviewed it",
-         %{
-           conn: conn,
-           user_one: user_one,
-           reviewed_report: reviewed_report
-         } do
-      {:ok, index_live, html} =
-        conn
-        |> login_user(%{
-          "username_or_email" => user_one.username,
-          "password" => "password"
-        })
-        |> live(~p"/admin/reports/all")
-
-      assert has_element?(
-               index_live,
-               "##{reviewed_report.id}-reviewed-by-#{reviewed_report.admin.id}"
-             )
-
-      assert html =~ "Reviewed By #{reviewed_report.admin.name}"
-    end
-
-    test "If a report is yet to be reviewed , you see a link to review it",
+    test "For each pending report , you see a link to review it",
          %{
            conn: conn,
            user_one: user_one,
@@ -211,7 +183,7 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
       assert has_element?(
                index_live,
@@ -233,7 +205,7 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
       {:ok, _index_live, html} =
         index_live
@@ -257,7 +229,7 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
       {_, {:live_redirect, %{kind: :push, to: url}}} =
         index_live
@@ -293,7 +265,7 @@ defmodule AniminaWeb.AllReportsTest do
           "username_or_email" => user_one.username,
           "password" => "password"
         })
-        |> live(~p"/admin/reports/all")
+        |> live(~p"/admin/reports/pending")
 
       {_, {:live_redirect, %{kind: :push, to: url}}} =
         index_live

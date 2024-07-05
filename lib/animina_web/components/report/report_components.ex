@@ -103,12 +103,14 @@ defmodule AniminaWeb.ReportComponents do
     <div class="flex gap-4 items-center">
       <.link
         navigate="/admin/reports/all"
+        id="all-reports-tab"
         class={" #{if @current_report_tab == "all" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
       >
         All Reports
       </.link>
       <.link
         navigate="/admin/reports/pending"
+        id="pending-reports-tab"
         class={" #{if @current_report_tab == "pending" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
       >
         Pending Reports
