@@ -152,6 +152,25 @@ defmodule Animina.Accounts.ReportTest do
 
       assert Enum.count(reports_in_database) == 1
     end
+
+    test "pending_reports/1 returns pending reports", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      valid_attrs = %{
+        "state" => :pending,
+        "accused_user_state" => user_two.state,
+        "accused_id" => user_two.id,
+        "accuser_id" => user_one.id,
+        "description" => "This is a test report"
+      }
+
+      assert {:ok, _report} = Report.create(valid_attrs)
+
+      assert {:ok, reports_in_database} = Report.pending_reports(actor: user_one)
+
+      assert Enum.count(reports_in_database) == 1
+    end
   end
 
   defp create_user_one do
