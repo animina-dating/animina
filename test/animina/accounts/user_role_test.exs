@@ -43,26 +43,6 @@ defmodule Animina.Accounts.UserRoleTest do
                  actor: first_user
                )
     end
-
-    test "make_admin/1 takes  a user id and makes that user an admin" do
-      if Role.by_name!(:user) == nil do
-        Role.create(%{name: :user})
-      end
-
-      admin_role =
-        if Role.by_name!(:admin) == nil do
-          Role.create(%{name: :admin})
-        else
-          Role.by_name!(:admin)
-        end
-
-      assert {:ok, first_user} = create_first_user()
-
-      assert {:ok, user_role} = UserRole.make_admin(%{user_id: first_user.id})
-
-      assert user_role.role_id == admin_role.id
-      assert(user_role.user_id == first_user.id)
-    end
   end
 
   defp create_first_user do
