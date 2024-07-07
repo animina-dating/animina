@@ -2,7 +2,7 @@ defmodule Animina.Accounts.UserRole do
   @moduledoc """
   This is the User Role module which we use to manage user roles.
   """
-
+  alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Phoenix.PubSub
 
@@ -30,7 +30,7 @@ defmodule Animina.Accounts.UserRole do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create, :read, :update]
 
     read :by_user_id do
       argument :user_id, :uuid do
@@ -40,13 +40,34 @@ defmodule Animina.Accounts.UserRole do
       prepare build(load: [:role])
       filter expr(user_id == ^arg(:user_id))
     end
+
+    create :make_admin do
+      accept [:user_id]
+
+      change fn changeset, _ ->
+        Ash.Changeset.before_action(changeset, fn changeset ->
+          admin_role =
+            case Role.by_name!(:admin) do
+              nil ->
+                Role.create!(%{name: :admin})
+
+              _ ->
+                Role.by_name!(:admin)
+            end
+
+          Ash.Changeset.force_change_attribute(changeset, :role_id, admin_role.id)
+        end)
+      end
+    end
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
+    define :update
     define :by_user_id, args: [:user_id]
+    define :make_admin
   end
 
   changes do

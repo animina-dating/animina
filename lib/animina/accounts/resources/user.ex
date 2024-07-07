@@ -319,6 +319,7 @@ defmodule Animina.Accounts.User do
     define :validate
     define :normalize
     define :incognito
+    define :make_admin, action: :create
   end
 
   calculations do
