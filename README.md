@@ -87,6 +87,12 @@ To change the state of a user account, we have the following actions:
 - `User.recover` - This action is used to recover an account from incognito or hibernate.
 
 
+#### Roles
+
+- We have 2 roles `user` and `admin` .
+- To make a user an admin , run the following in IEX `Animina.Accounts.UserRole.make_admin(%{user_id: your_user.id})`
+
+
 ## Local Phoenix Server
 
 To start your Phoenix server:
