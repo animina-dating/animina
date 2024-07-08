@@ -82,7 +82,7 @@ defmodule Animina.Accounts.UserFlagsTest do
   def opposite_color_flags_selected(user_id, color, flag_id) do
     Traits.UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-    |> Traits.read!()
+    |> Ash.read!()
     |> Enum.map(& &1.flag_id)
     |> Enum.filter(&(&1 != flag_id))
   end

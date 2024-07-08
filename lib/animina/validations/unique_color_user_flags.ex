@@ -29,7 +29,7 @@ defmodule Animina.Validations.UniqueColorUserFlags do
   defp get_selected_opposite_color_flags_for_user(user_id, color, flag_id) do
     Traits.UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: get_opposite_color(color)})
-    |> Traits.read!()
+    |> Ash.read!()
     |> Enum.filter(fn user_flag -> user_flag.flag_id == flag_id end)
   end
 

@@ -195,7 +195,7 @@ defmodule AniminaWeb.PotentialPartner do
   defp get_user_flags(user_id, color) do
     UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-    |> Traits.read!()
+    |> Ash.read!()
   end
 
   defp get_bookmarked_users(user_id) do

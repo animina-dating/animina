@@ -229,7 +229,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
     Traits.UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
     |> Ash.Query.load([:flag])
-    |> Traits.read!()
+    |> Ash.read!()
   end
 
   defp fetch_stories(user_id, _) do

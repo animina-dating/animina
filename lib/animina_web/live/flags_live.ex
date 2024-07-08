@@ -290,7 +290,7 @@ defmodule AniminaWeb.FlagsLive do
   defp fetch_categories do
     Traits.Category
     |> Ash.Query.for_read(:read)
-    |> Traits.read!()
+    |> Ash.read!()
   end
 
   defp user_states_to_be_auto_logged_out do
