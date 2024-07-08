@@ -20,7 +20,7 @@ defmodule Animina.Accounts.UserTest do
     legal_terms_accepted: true
   }
 
-  describe "create BasicUser" do
+  describe "User Resource Tests" do
     test "create a new user" do
       assert {:error, _} = User.by_email("bob@example.com")
 
@@ -222,6 +222,84 @@ defmodule Animina.Accounts.UserTest do
       {:ok, user} = User.normalize(user)
 
       assert user.state == :normal
+    end
+
+    test "make_admin/1 takes  a user id and makes that user an admin" do
+      if Role.by_name!(:user) == nil do
+        Role.create(%{name: :user})
+      end
+
+      admin_role =
+        if Role.by_name!(:admin) == nil do
+          Role.create(%{name: :admin})
+        else
+          Role.by_name!(:admin)
+        end
+
+      assert {:ok, first_user} = create_first_user()
+
+      assert {:ok, user_role} = User.make_admin(%{user_id: first_user.id})
+
+      assert user_role.role_id == admin_role.id
+      assert(user_role.user_id == first_user.id)
+    end
+
+    test "remove_admin/1 takes  a user id and removes all their admin roles" do
+      if Role.by_name!(:user) == nil do
+        Role.create(%{name: :user})
+      end
+
+      admin_role =
+        if Role.by_name!(:admin) == nil do
+          Role.create(%{name: :admin})
+        else
+          Role.by_name!(:admin)
+        end
+
+      assert {:ok, first_user} = create_first_user()
+
+      assert {:ok, user_role} = User.make_admin(%{user_id: first_user.id})
+
+      assert user_role.role_id == admin_role.id
+      assert user_role.user_id == first_user.id
+
+      user = User.by_id!(first_user.id)
+
+      assert user_admin?(user) == true
+
+      assert {:ok, :admin_roles_removed} = User.remove_admin(%{user_id: first_user.id})
+
+      user = User.by_id!(first_user.id)
+
+      assert user_admin?(user) == false
+    end
+  end
+
+  defp create_first_user do
+    User.create(%{
+      email: "bob@example.com",
+      username: "bob",
+      name: "Bob",
+      hashed_password: "zzzzzzzzzzz",
+      birthday: "1950-01-01",
+      height: 180,
+      zip_code: "56068",
+      gender: "male",
+      mobile_phone: "0151-12345678",
+      language: "de",
+      legal_terms_accepted: true
+    })
+  end
+
+  def user_admin?(user) do
+    case user.roles do
+      [] ->
+        false
+
+      roles ->
+        roles
+        |> Enum.map(fn x -> x.name end)
+        |> Enum.any?(fn x -> x == :admin end)
     end
   end
 end

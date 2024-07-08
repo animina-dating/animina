@@ -2,7 +2,6 @@ defmodule Animina.Accounts.UserRole do
   @moduledoc """
   This is the User Role module which we use to manage user roles.
   """
-
   alias Animina.Accounts.User
   alias Phoenix.PubSub
 
@@ -30,7 +29,7 @@ defmodule Animina.Accounts.UserRole do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:create, :read, :update, :destroy]
 
     read :by_user_id do
       argument :user_id, :uuid do
@@ -40,13 +39,25 @@ defmodule Animina.Accounts.UserRole do
       prepare build(load: [:role])
       filter expr(user_id == ^arg(:user_id))
     end
+
+    read :admin_roles_by_user_id do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:role])
+      filter expr(user_id == ^arg(:user_id) and role.name == :admin)
+    end
   end
 
   code_interface do
     define_for Animina.Accounts
     define :read
     define :create
+    define :update
+    define :destroy
     define :by_user_id, args: [:user_id]
+    define :admin_roles_by_user_id
   end
 
   changes do

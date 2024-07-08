@@ -9,6 +9,8 @@ defmodule Animina.Accounts.User do
     extensions: [AshAuthentication, AshStateMachine, Ash.Notifier.PubSub]
 
   alias Animina.Accounts
+  alias Animina.Accounts.Role
+  alias Animina.Accounts.UserRole
   alias Animina.Narratives
   alias Animina.Traits
   alias Animina.Validations
@@ -294,6 +296,48 @@ defmodule Animina.Accounts.User do
     update :normalize do
       change transition_state(:normal)
     end
+
+    action :make_admin, :string do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      run fn input, _ ->
+        admin_role =
+          case Role.by_name!(:admin) do
+            nil ->
+              Role.create!(%{name: :admin})
+
+            _ ->
+              Role.by_name!(:admin)
+          end
+
+        {:ok, user_role} =
+          UserRole.create(%{
+            user_id: input.arguments.user_id,
+            role_id: admin_role.id
+          })
+
+        {:ok, user_role}
+      end
+    end
+
+    action :remove_admin, :string do
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      run fn input, _ ->
+        {:ok, admin_roles_for_user} =
+          UserRole.admin_roles_by_user_id(%{user_id: input.arguments.user_id})
+
+        Enum.each(admin_roles_for_user, fn admin_role ->
+          UserRole.destroy(admin_role)
+        end)
+
+        {:ok, :admin_roles_removed}
+      end
+    end
   end
 
   code_interface do
@@ -319,6 +363,8 @@ defmodule Animina.Accounts.User do
     define :validate
     define :normalize
     define :incognito
+    define :make_admin
+    define :remove_admin
   end
 
   calculations do
