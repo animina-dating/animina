@@ -298,7 +298,7 @@ defmodule AniminaWeb.ProfileLive do
   defp redirect_if_username_is_different(socket, username, user) do
     if username != Ash.CiString.value(user.username) do
       socket
-      |> push_redirect(to: ~p"/#{user.username}")
+      |> push_navigate(to: ~p"/#{user.username}")
     else
       socket
     end
@@ -306,7 +306,7 @@ defmodule AniminaWeb.ProfileLive do
 
   defp redirect_to_username(socket, username) do
     socket
-    |> push_redirect(to: ~p"/#{username}")
+    |> push_navigate(to: ~p"/#{username}")
   end
 
   defp subscribe(socket, current_user, user) do
@@ -429,7 +429,7 @@ defmodule AniminaWeb.ProfileLive do
     {:noreply,
      socket
      |> put_flash(:info, "You have to register or log in before liking a profile.")
-     |> push_redirect(to: ~p"/?action=like&user=#{socket.assigns.user.username}")}
+     |> push_navigate(to: ~p"/?action=like&user=#{socket.assigns.user.username}")}
   end
 
   @impl true
@@ -468,7 +468,7 @@ defmodule AniminaWeb.ProfileLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply,
        socket

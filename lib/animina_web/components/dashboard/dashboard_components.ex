@@ -7,7 +7,9 @@ defmodule AniminaWeb.DashboardComponents do
   alias Animina.StringHelper
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
-  import Phoenix.HTML.Form
+  import Phoenix.HTML
+      import Phoenix.HTML.Form
+      use PhoenixHTMLHelpers
 
   attr :title, :string, required: true
   attr :subtitle, :string, default: nil
@@ -270,7 +272,7 @@ defmodule AniminaWeb.DashboardComponents do
   def send_message_from_dashboard_box(assigns) do
     ~H"""
     <div class=" w-[95%] m-auto ">
-      <%!-- <.form
+      <.form
         :let={f}
         for={@form}
         phx-change="validate"
@@ -312,7 +314,7 @@ defmodule AniminaWeb.DashboardComponents do
             <.send_message_from_dashboard_button />
           <% end %>
         </div>
-      </.form> --%>
+      </.form>
     </div>
     """
   end

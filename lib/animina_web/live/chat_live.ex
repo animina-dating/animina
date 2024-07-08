@@ -89,13 +89,13 @@ defmodule AniminaWeb.ChatLive do
     if receiver == nil or sender == nil do
       {:ok,
        socket
-       |> push_redirect(to: ~p"/")}
+       |> push_navigate(to: ~p"/")}
     else
       if profile != Ash.CiString.value(socket.assigns.receiver.username) or
            params["current_user"] != Ash.CiString.value(socket.assigns.sender.username) do
         {:ok,
          socket
-         |> push_redirect(
+         |> push_navigate(
            to: ~p"/#{socket.assigns.sender.username}/messages/#{socket.assigns.receiver.username}"
          )}
       else
@@ -241,7 +241,7 @@ defmodule AniminaWeb.ChatLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply,
        socket
