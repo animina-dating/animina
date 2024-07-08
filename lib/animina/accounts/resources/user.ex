@@ -223,7 +223,15 @@ defmodule Animina.Accounts.User do
 
   actions do
 
-    defaults [:read, :update, :create]
+    defaults [:read,  :create]
+
+
+    update :update do
+      accept [:is_private]
+
+      primary? true
+      require_atomic? false
+    end
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
@@ -388,7 +396,7 @@ defmodule Animina.Accounts.User do
            end),
            on: [:create]
 
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record , _context->
              PubSub.broadcast(Animina.PubSub, record.id, {:user, record})
 
              {:ok, record}
