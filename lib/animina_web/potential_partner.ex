@@ -189,7 +189,7 @@ defmodule AniminaWeb.PotentialPartner do
         ^search_range
       )
     )
-    |> GeoData.read!()
+    |> Ash.read!()
   end
 
   defp get_user_flags(user_id, color) do
