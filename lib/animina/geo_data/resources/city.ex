@@ -21,7 +21,7 @@ defmodule Animina.GeoData.City do
   end
 
   code_interface do
-    define_for Animina.GeoData
+    domain Animina.GeoData
     define :read
     define :create
     define :update

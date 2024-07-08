@@ -7,6 +7,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
   attributes do
@@ -30,12 +31,12 @@ defmodule Animina.Accounts.VisitLogEntry do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
 
     belongs_to :bookmark, Animina.Accounts.Bookmark do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
   end
@@ -61,7 +62,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update

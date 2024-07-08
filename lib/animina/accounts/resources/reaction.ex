@@ -10,6 +10,7 @@ defmodule Animina.Accounts.Reaction do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
   attributes do
@@ -111,7 +112,7 @@ defmodule Animina.Accounts.Reaction do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :like
     define :unlike

@@ -3,7 +3,7 @@ defmodule Animina.Accounts do
   This is the Accounts module.
   """
 
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Animina.Accounts.BadPassword

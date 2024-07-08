@@ -7,6 +7,7 @@ defmodule Animina.Accounts.UserRole do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
   attributes do
@@ -51,7 +52,7 @@ defmodule Animina.Accounts.UserRole do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update

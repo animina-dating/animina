@@ -7,7 +7,8 @@ defmodule Animina.Traits.UserFlags do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    domain: Animina.Traits
 
   attributes do
     uuid_primary_key :id
@@ -36,7 +37,7 @@ defmodule Animina.Traits.UserFlags do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
       attribute_writable? true
     end
@@ -65,7 +66,7 @@ defmodule Animina.Traits.UserFlags do
   end
 
   code_interface do
-    define_for Animina.Traits
+    domain Animina.Traits
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read

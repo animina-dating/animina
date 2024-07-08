@@ -6,6 +6,7 @@ defmodule Animina.Accounts.BasicUser do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     extensions: [AshAuthentication, AshStateMachine]
 
   alias Animina.Accounts
@@ -13,7 +14,7 @@ defmodule Animina.Accounts.BasicUser do
 
   attributes do
     uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false
+    attribute :email, :ci_string, allow_nil?: false , public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :last_registration_page_visited, :string,
@@ -189,7 +190,7 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   code_interface do
-    define_for Accounts
+    domain Accounts
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
@@ -219,7 +220,7 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   authentication do
-    api Accounts
+    domain Accounts
 
     strategies do
       password :password do

@@ -6,6 +6,7 @@ defmodule Animina.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [AshAuthentication, AshStateMachine, Ash.Notifier.PubSub]
 
   alias Animina.Accounts
@@ -128,7 +129,7 @@ defmodule Animina.Accounts.User do
     end
 
     has_many :stories, Narratives.Story do
-      api Narratives
+      domain  Narratives
     end
 
     has_many :sent_messages, Accounts.Message do
@@ -341,7 +342,7 @@ defmodule Animina.Accounts.User do
   end
 
   code_interface do
-    define_for Accounts
+    domain Accounts
     define :read
     define :create
     define :update
@@ -413,7 +414,7 @@ defmodule Animina.Accounts.User do
   end
 
   authentication do
-    api Accounts
+    domain Accounts
 
     strategies do
       password :password do

@@ -7,7 +7,8 @@ defmodule Animina.Accounts.Credit do
   alias Phoenix.PubSub
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts
 
   attributes do
     uuid_primary_key :id
@@ -47,7 +48,7 @@ defmodule Animina.Accounts.Credit do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read

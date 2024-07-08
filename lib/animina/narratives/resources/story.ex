@@ -7,7 +7,8 @@ defmodule Animina.Narratives.Story do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    domain: Animina.Narratives
 
   attributes do
     uuid_primary_key :id
@@ -37,7 +38,7 @@ defmodule Animina.Narratives.Story do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
     end
 
@@ -46,7 +47,7 @@ defmodule Animina.Narratives.Story do
     end
 
     has_one :photo, Animina.Accounts.Photo do
-      api Animina.Accounts
+      domain Animina.Accounts
     end
   end
 
@@ -98,7 +99,7 @@ defmodule Animina.Narratives.Story do
   end
 
   code_interface do
-    define_for Animina.Narratives
+    domain Animina.Narratives
     define :read
     define :create
     define :update

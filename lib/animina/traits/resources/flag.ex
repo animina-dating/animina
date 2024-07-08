@@ -4,7 +4,8 @@ defmodule Animina.Traits.Flag do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Traits
 
   attributes do
     uuid_primary_key :id
@@ -25,7 +26,7 @@ defmodule Animina.Traits.Flag do
   end
 
   code_interface do
-    define_for Animina.Traits
+    domain Animina.Traits
     define :read
     define :create
     define :update

@@ -7,6 +7,7 @@ defmodule Animina.Accounts.Report do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
   attributes do
@@ -47,19 +48,19 @@ defmodule Animina.Accounts.Report do
 
   relationships do
     belongs_to :accused, Animina.Accounts.User do
-      api Animina.Accounts
+       domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :accuser, Animina.Accounts.User do
-      api Animina.Accounts
+       domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :admin, Animina.Accounts.User do
-      api Animina.Accounts
+       domain Animina.Accounts
       attribute_writable? true
       allow_nil? true
     end
@@ -104,7 +105,7 @@ defmodule Animina.Accounts.Report do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update

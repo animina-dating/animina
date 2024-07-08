@@ -4,7 +4,8 @@ defmodule Animina.Narratives.Headline do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Narratives
 
   attributes do
     uuid_primary_key :id
@@ -29,7 +30,7 @@ defmodule Animina.Narratives.Headline do
   end
 
   code_interface do
-    define_for Animina.Narratives
+    domain Animina.Narratives
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read

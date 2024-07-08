@@ -6,6 +6,7 @@ defmodule Animina.Accounts.Bookmark do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
   attributes do
@@ -32,12 +33,12 @@ defmodule Animina.Accounts.Bookmark do
 
   relationships do
     belongs_to :owner, Animina.Accounts.User do
-      api Animina.Accounts
+       domain Animina.Accounts
       allow_nil? false
     end
 
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+       domain Animina.Accounts
       allow_nil? false
     end
 
@@ -145,7 +146,7 @@ defmodule Animina.Accounts.Bookmark do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :like
     define :visit

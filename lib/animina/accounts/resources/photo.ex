@@ -6,6 +6,7 @@ defmodule Animina.Accounts.Photo do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     notifiers: [Ash.Notifier.PubSub, Animina.Notifiers.Photo],
     extensions: [AshStateMachine, AshOban]
 
@@ -64,7 +65,7 @@ defmodule Animina.Accounts.Photo do
     end
 
     belongs_to :story, Animina.Narratives.Story do
-      api Animina.Narratives
+      domain Animina.Narratives
       attribute_writable? true
     end
   end
@@ -117,7 +118,7 @@ defmodule Animina.Accounts.Photo do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update

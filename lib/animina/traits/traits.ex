@@ -3,7 +3,7 @@ defmodule Animina.Traits do
   This is the Traits module.
   """
 
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Animina.Traits.Category
