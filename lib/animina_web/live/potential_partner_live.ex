@@ -61,7 +61,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
       case Credit
            |> Ash.Query.filter(user_id: user.id)
            |> Ash.Query.filter(subject: "Registration bonus")
-           |> Animina.Accounts.read!() do
+           |> Animina.Ash.read!() do
         [] ->
           Credit.create!(%{
             user_id: user.id,

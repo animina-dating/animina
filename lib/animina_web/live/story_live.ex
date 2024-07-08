@@ -344,7 +344,7 @@ defmodule AniminaWeb.StoryLive do
   defp get_user_default_photo(socket) when socket.assigns.live_action == :about_me do
     Accounts.Photo
     |> Ash.Query.for_read(:user_profile_photo, %{user_id: socket.assigns.current_user.id})
-    |> Accounts.read!()
+    |> Ash.read!()
     |> case do
       [photo | _] -> photo
       _ -> nil

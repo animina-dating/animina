@@ -150,7 +150,7 @@ defmodule AniminaWeb.BookmarksListLive do
   defp fetch_bookmarks(current_user, reason) do
     Accounts.Bookmark
     |> Ash.Query.for_read(:by_reason, %{owner_id: current_user.id, reason: reason})
-    |> Accounts.read!(page: [limit: 50])
+    |> Ash.read!(page: [limit: 50])
     |> then(& &1.results)
   end
 

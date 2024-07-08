@@ -9,7 +9,7 @@ defmodule Animina.GenServers.PhotoConsumer do
     Task.start_link(fn ->
       photo
       |> Ash.Changeset.for_update(:process, %{})
-      |> Accounts.update(authorize?: false)
+      |> Ash.update(authorize?: false)
     end)
   end
 end

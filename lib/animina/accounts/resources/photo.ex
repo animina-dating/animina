@@ -139,7 +139,7 @@ defmodule Animina.Accounts.Photo do
                  error: message,
                  error_state: changeset.data.state
                })
-               |> Accounts.update()
+               |> Ash.update()
            end),
            on: :update
   end

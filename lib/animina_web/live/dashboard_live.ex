@@ -493,7 +493,7 @@ defmodule AniminaWeb.DashboardLive do
         |> Ash.Query.filter(gender == "female")
         |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
         |> Ash.Query.limit(4)
-        |> Accounts.read!()
+        |> Ash.read!()
 
       _ ->
         User
@@ -501,7 +501,7 @@ defmodule AniminaWeb.DashboardLive do
         |> Ash.Query.filter(gender == "male")
         |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
         |> Ash.Query.limit(4)
-        |> Accounts.read!()
+        |> Ash.read!()
     end
   end
 
