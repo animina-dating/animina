@@ -268,49 +268,61 @@ defmodule Animina.Accounts.User do
     end
 
     update :validate do
+      require_atomic? false
       change transition_state(:validated)
     end
 
     update :investigate do
+      require_atomic? false
       change transition_state(:under_investigation)
     end
 
     update :ban do
+      require_atomic? false
       change transition_state(:banned)
     end
 
     update :incognito do
+      require_atomic? false
       change transition_state(:incognito)
     end
 
     update :hibernate do
+      require_atomic? false
       change transition_state(:hibernate)
     end
 
     update :archive do
+      require_atomic? false
       change transition_state(:archived)
     end
 
     update :reactivate do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :unban do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :recover do
+       require_atomic? false
       change transition_state(:normal)
     end
 
     update :normalize do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     action :make_admin, :string do
       argument :user_id, :uuid do
         allow_nil? false
+
       end
+
 
       run fn input, _ ->
         admin_role =
