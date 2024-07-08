@@ -4,7 +4,7 @@ defmodule Animina.Calculations.UserProfilePhoto do
   """
 
   alias Animina.Accounts
-  use Ash.Calculation
+  use Ash.Resource.Calculation
 
   def calculate(records, opts, _) do
     Enum.map(records, fn record -> get_profile_photo(Map.get(record, opts[:field])) end)

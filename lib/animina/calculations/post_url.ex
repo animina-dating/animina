@@ -3,7 +3,7 @@ defmodule Animina.Calculations.PostUrl do
   This is a module for calculating the post url using slug, user and the time the post was created.
   """
 
-  use Ash.Calculation
+  use Ash.Resource.Calculation
 
   def calculate(records, _opts, _) do
     Enum.map(records, fn record -> calculate_post_url(record) end)

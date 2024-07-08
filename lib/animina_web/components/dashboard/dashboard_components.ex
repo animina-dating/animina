@@ -270,7 +270,7 @@ defmodule AniminaWeb.DashboardComponents do
   def send_message_from_dashboard_box(assigns) do
     ~H"""
     <div class=" w-[95%] m-auto ">
-      <.form
+      <%!-- <.form
         :let={f}
         for={@form}
         phx-change="validate"
@@ -312,7 +312,7 @@ defmodule AniminaWeb.DashboardComponents do
             <.send_message_from_dashboard_button />
           <% end %>
         </div>
-      </.form>
+      </.form> --%>
     </div>
     """
   end

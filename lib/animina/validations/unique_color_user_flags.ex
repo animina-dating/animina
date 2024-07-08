@@ -15,7 +15,7 @@ defmodule Animina.Validations.UniqueColorUserFlags do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     user_id = Ash.Changeset.get_attribute(changeset, opts[:user_id])
     color = Ash.Changeset.get_attribute(changeset, opts[:color])
     flag_id = Ash.Changeset.get_attribute(changeset, opts[:flag_id])

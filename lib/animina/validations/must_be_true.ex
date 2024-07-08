@@ -14,7 +14,7 @@ defmodule Animina.Validations.MustBeTrue do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do
       nil -> :ok
       true -> :ok

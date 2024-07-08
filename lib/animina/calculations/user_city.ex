@@ -4,7 +4,7 @@ defmodule Animina.Calculations.UserCity do
   """
 
   alias Animina.GeoData
-  use Ash.Calculation
+  use Ash.Resource.Calculation
 
   def calculate(records, opts, _) do
     Enum.map(records, fn record -> get_city(Map.get(record, opts[:field])) end)
