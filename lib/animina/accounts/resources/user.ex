@@ -222,7 +222,7 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    default_accept :*
+
     defaults [:read, :update, :create]
 
     update :update_last_registration_page_visited do

@@ -140,6 +140,9 @@ defmodule Animina.Accounts.Message do
 
     define :messages_sent_by_user, args: [:sender_id]
   end
+ 
+
+
 
   changes do
     change after_action(fn changeset, record ->

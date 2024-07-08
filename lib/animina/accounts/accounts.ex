@@ -26,4 +26,7 @@ defmodule Animina.Accounts do
     resource Animina.Traits.Category
     resource Animina.Traits.CategoryTranslation
   end
+  authorization do
+    authorize :when_requested
+  end
 end

@@ -10,4 +10,7 @@ defmodule Animina.Narratives do
     resource Animina.Narratives.Story
     resource Animina.Narratives.Post
   end
+  authorization do
+    authorize :when_requested
+  end
 end

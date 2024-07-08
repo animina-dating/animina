@@ -8,4 +8,7 @@ defmodule Animina.GeoData do
   resources do
     resource Animina.GeoData.City
   end
+  authorization do
+    authorize :when_requested
+  end
 end
