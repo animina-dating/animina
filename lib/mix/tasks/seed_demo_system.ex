@@ -625,7 +625,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     defp get_headline_id(subject) do
       Headline
       |> Ash.Query.for_read(:by_subject, %{subject: subject})
-      |> Narratives.read_one()
+      |> Ash.read_one()
       |> case do
         {:ok, headline} -> headline.id
         _ -> nil

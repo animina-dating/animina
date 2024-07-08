@@ -255,7 +255,7 @@ defmodule AniminaWeb.StoryLive do
           story_id: story.id
         }
       )
-      |> Accounts.create()
+      |> Ash.create()
 
       {:noreply,
        socket
@@ -307,7 +307,7 @@ defmodule AniminaWeb.StoryLive do
           :create,
           Map.put(form.params["photo"], "story_id", story.id)
         )
-        |> Accounts.create()
+        |> Ash.create()
 
         {:noreply,
          socket
@@ -360,7 +360,7 @@ defmodule AniminaWeb.StoryLive do
       Story
       |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
       |> Ash.Query.sort(position: :desc)
-      |> Narratives.read!(page: [limit: 1, count: true])
+      |> Ash.read!(page: [limit: 1, count: true])
 
     case Map.get(story_results, :results) do
       [story | _] -> story.position + 1
@@ -372,7 +372,7 @@ defmodule AniminaWeb.StoryLive do
     headline_results =
       Headline
       |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
-      |> Narratives.read!(page: [limit: 1, count: true])
+      |> Ash.read!(page: [limit: 1, count: true])
 
     Map.get(headline_results, :count) + 1
   end
@@ -381,14 +381,14 @@ defmodule AniminaWeb.StoryLive do
     user_headlines =
       Story
       |> Ash.Query.for_read(:user_headlines, %{user_id: socket.assigns.current_user.id})
-      |> Narratives.read!()
+      |> Ash.read!()
       |> Enum.reduce(%{}, fn story, acc ->
         Map.put(acc, story.headline_id, "")
       end)
 
     Headline
     |> Ash.Query.for_read(:read)
-    |> Narratives.read!()
+    |> Ash.read!()
     |> Enum.map(fn headline ->
       [
         key: headline.subject,
@@ -409,7 +409,7 @@ defmodule AniminaWeb.StoryLive do
   defp get_default_headline(socket) when socket.assigns.live_action == :about_me do
     Narratives.Headline
     |> Ash.Query.for_read(:by_subject, %{subject: "About me"})
-    |> Narratives.read_one()
+    |> Ash.read_one()
     |> case do
       {:ok, headline} -> headline.id
       _ -> nil

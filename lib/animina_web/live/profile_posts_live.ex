@@ -33,7 +33,7 @@ defmodule AniminaWeb.ProfilePostsLive do
     stories =
       Narratives.Story
       |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-      |> Narratives.read!(page: [limit: 50])
+      |> Ash.read!(page: [limit: 50])
       |> then(& &1.results)
 
     stories
@@ -104,7 +104,7 @@ defmodule AniminaWeb.ProfilePostsLive do
     Narratives.Post
     |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
     |> Ash.Query.sort(created_at: :desc)
-    |> Narratives.read!(actor: current_user)
+    |> Ash.read!(actor: current_user)
     |> Enum.map(fn post ->
       Phoenix.PubSub.subscribe(Animina.PubSub, "post:updated:#{post.id}")
       post

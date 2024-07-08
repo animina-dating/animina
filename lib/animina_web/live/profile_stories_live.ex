@@ -236,7 +236,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
     stories =
       Narratives.Story
       |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-      |> Narratives.read!(page: [limit: 50])
+      |> Ash.read!(page: [limit: 50])
       |> then(& &1.results)
 
     stories

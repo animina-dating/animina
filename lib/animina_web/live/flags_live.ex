@@ -172,7 +172,7 @@ defmodule AniminaWeb.FlagsLive do
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
     bulk_result =
-      Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
+      Ash.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
 
     successful_socket =
       socket
