@@ -427,11 +427,11 @@ defmodule Animina.Accounts.User do
 
   changes do
     change after_action(fn changeset, record, _ ->
-             add_role(changeset, :user)
+           add_role(changeset, :user)
 
              # First user in dev becomes admin by default.
              if Mix.env() == :dev && Enum.count(Accounts.BasicUser.read!()) == 1 do
-               add_role(changeset, :admin)
+             add_role(changeset, :admin)
              end
 
              {:ok, record}

@@ -225,9 +225,9 @@ defmodule AniminaWeb.ProfileStoriesLive do
     )
   end
 
-  defp fetch_flags(user_id, color) do
+  defp fetch_flags(user_id, _color) do
     Traits.UserFlags
-    |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
+    |> Ash.Query.for_read(:by_user_id, %{id: user_id})
     |> Ash.Query.load([:flag])
     |> Ash.read!()
   end
