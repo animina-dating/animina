@@ -67,7 +67,22 @@ defmodule Animina.Accounts.Report do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :state,
+        :accused_id,
+        :accuser_id,
+        :description,
+        :accused_user_state,
+        :admin_id,
+        :internal_memo
+
+      ]
+      primary? true
+
+    end
 
     read :all_reports do
       prepare build(load: [:accuser, :accused, :admin])
@@ -81,6 +96,23 @@ defmodule Animina.Accounts.Report do
       prepare build(sort: [created_at: :desc])
 
       filter expr(state == ^:pending)
+    end
+
+    update :update do
+      accept [
+        :state,
+        :accused_id,
+        :accuser_id,
+        :description,
+        :accused_user_state,
+        :admin_id,
+        :internal_memo
+
+      ]
+
+      primary? true
+      require_atomic? false
+
     end
 
     update :review do
@@ -97,6 +129,8 @@ defmodule Animina.Accounts.Report do
         constraints max_length: 1_024
         allow_nil? true
       end
+
+      require_atomic? false
 
       change set_attribute(:admin_id, arg(:admin_id))
       change set_attribute(:state, arg(:state))
@@ -116,16 +150,16 @@ defmodule Animina.Accounts.Report do
   end
 
   changes do
-    change after_action(fn changeset, record ->
-             user = BasicUser.by_id!(record.accused_id)
+    change after_action(fn changeset, record, _context ->
+             user = User.by_id!(record.accused_id)
              User.investigate(user)
 
              {:ok, record}
            end),
            on: [:create]
 
-    change after_action(fn changeset, record ->
-             user = BasicUser.by_id!(record.accused_id)
+    change after_action(fn changeset, record, _context ->
+             user = User.by_id!(record.accused_id)
 
              change_accused_user_state(user, record.accused_user_state, record.state)
 
