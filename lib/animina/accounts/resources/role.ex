@@ -21,7 +21,17 @@ defmodule Animina.Accounts.Role do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+    create :create do
+      accept [
+
+        :name
+
+      ]
+      primary? true
+
+    end
   end
 
   code_interface do
