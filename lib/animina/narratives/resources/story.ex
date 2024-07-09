@@ -84,6 +84,7 @@ defmodule Animina.Narratives.Story do
 
     read :read do
       primary? true
+
       pagination offset?: true, keyset?: true, required?: false
 
       prepare build(load: [:headline, :photo])
@@ -100,6 +101,21 @@ defmodule Animina.Narratives.Story do
       prepare build(load: [:headline, :photo, :user])
 
       prepare build(sort: [position: :asc])
+
+      filter expr(user_id == ^arg(:user_id))
+    end
+
+    read :descending_by_user_id do
+      pagination offset?: true, keyset?: true, required?: false
+
+      argument :user_id, :uuid do
+        allow_nil? false
+
+      end
+
+      prepare build(load: [:headline, :photo, :user])
+
+      prepare build(sort: [position: :desc])
 
       filter expr(user_id == ^arg(:user_id))
     end
@@ -129,6 +145,7 @@ defmodule Animina.Narratives.Story do
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_user_id, args: [:user_id]
+    define :descending_by_user_id, args: [:user_id]
     define :about_story_by_user, args: [:user_id], get?: true
   end
 

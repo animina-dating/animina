@@ -666,7 +666,7 @@ defmodule AniminaWeb.ProfileLive do
         id: "profile_posts_live"
       ) %>
 
-      <div :if={@current_user} class="w-[100%] py-6 flex justify-end">
+      <div :if={@current_user && @current_user.id != @user.id} class="w-[100%] py-6 flex justify-end">
         <.link
           navigate={"/#{@user.username}/report"}
           id={"report-user-#{@user.username}"}

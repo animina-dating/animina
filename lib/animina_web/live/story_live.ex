@@ -238,6 +238,7 @@ defmodule AniminaWeb.StoryLive do
   def handle_event("submit", %{"story" => story}, socket)
       when is_nil(socket.assigns.photo) == false do
     form = Form.validate(socket.assigns.form, story)
+    |> IO.inspect
 
     with [] <- Form.errors(form), {:ok, story} <- Form.submit(form, params: story) do
       Ash.Changeset.for_create(
@@ -300,7 +301,7 @@ defmodule AniminaWeb.StoryLive do
           Form.validate(socket.assigns.form, story)
       end
 
-    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form) do
+    with [] <- Form.errors(form), {:ok, story} <- IO.inspect Form.submit(form) do
       if form.params["photo"] do
         Ash.Changeset.for_create(
           Photo,
@@ -358,9 +359,10 @@ defmodule AniminaWeb.StoryLive do
   defp get_user_story_position(socket) do
     story_results =
       Story
-      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
-      |> Ash.Query.sort(position: :desc)
+      |> Ash.Query.for_read(:descending_by_user_id, %{user_id: socket.assigns.current_user.id})
       |> Ash.read!(page: [limit: 1, count: true])
+      |> IO.inspect()
+
 
     case Map.get(story_results, :results) do
       [story | _] -> story.position + 1
@@ -370,8 +372,8 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_user_headline_position(socket) do
     headline_results =
-      Headline
-      |> Ash.Query.for_read(:read, %{user_id: socket.assigns.current_user.id})
+    Story
+    |> Ash.Query.for_read(:by_user_id, %{user_id: socket.assigns.current_user.id})
       |> Ash.read!(page: [limit: 1, count: true])
 
     Map.get(headline_results, :count) + 1

@@ -21,6 +21,7 @@ defmodule Animina.Narratives.Headline do
 
     read :read do
       primary? true
+      
       pagination offset?: true, keyset?: true, required?: false
     end
 
