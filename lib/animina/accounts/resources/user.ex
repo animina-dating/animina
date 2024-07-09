@@ -249,7 +249,17 @@ defmodule Animina.Accounts.User do
         :gender,
         :mobile_phone,
         :legal_terms_accepted,
-        :occupation
+        :occupation,
+       :preapproved_communication_only,
+       :state,
+        :minimum_partner_height,
+        :maximum_partner_height,
+        :minimum_partner_age,
+        :maximum_partner_age,
+        :partner_gender,
+        :search_range,
+        :is_private
+
       ]
       primary? true
     end

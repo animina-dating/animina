@@ -41,7 +41,20 @@ defmodule Animina.Accounts.Message do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+
+    create :create do
+      accept [
+
+        :content,
+        :sender_id,
+        :receiver_id,
+        :read_at
+
+      ]
+      primary? true
+    end
 
     update :has_been_read do
       change set_attribute(:read_at, DateTime.utc_now())
@@ -140,12 +153,12 @@ defmodule Animina.Accounts.Message do
 
     define :messages_sent_by_user, args: [:sender_id]
   end
- 
+
 
 
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(Animina.PubSub, "messages", {:new_message, record})
 
              {:ok, record}

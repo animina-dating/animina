@@ -129,7 +129,7 @@ defmodule Animina.Accounts.Reaction do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                record.sender_id,
@@ -147,7 +147,7 @@ defmodule Animina.Accounts.Reaction do
            on: [:create, :destroy]
 
     change after_transaction(fn
-             _changeset, {:ok, result} ->
+             _changeset, {:ok, result} , _context ->
                if result.name == :like do
                  Bookmark.like(
                    %{
@@ -166,7 +166,7 @@ defmodule Animina.Accounts.Reaction do
            on: :create
 
     change after_transaction(fn
-             _changeset, {:ok, result} ->
+             _changeset, {:ok, result} , _context ->
                if result.name == :like do
                  case Bookmark.by_owner_user_and_reason(
                         result.sender_id,
