@@ -42,7 +42,25 @@ defmodule Animina.Accounts.VisitLogEntry do
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read]
+    create :create do
+      accept [
+        :duration,
+        :bookmark_id,
+        :user_id
+
+      ]
+      primary? true
+    end
+
+    update :update do
+      accept [:duration, :bookmark_id, :user_id]
+
+      primary? true
+      require_atomic? false
+    end
+
+
 
     read :by_bookmark_id do
       argument :bookmark_id, :uuid do
@@ -72,7 +90,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record , _context ->
              PubSub.broadcast(
                Animina.PubSub,
                "visit_log_entry:#{record.user_id}",
