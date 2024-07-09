@@ -18,15 +18,22 @@ defmodule Animina.Traits.Category do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read]
+
+    create :create do
+      accept [
+
+        :name
+
+      ]
+      primary? true
+    end
   end
 
   code_interface do
     domain Animina.Traits
     define :read
     define :create
-    define :update
-    define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_name, get_by: [:name], action: :read
   end

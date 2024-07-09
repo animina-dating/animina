@@ -21,14 +21,23 @@ defmodule Animina.Traits.FlagTranslation do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read,  :destroy]
+
+    create :create do
+      accept [
+        :language,
+        :name,
+        :hashtag,
+        :flag_id
+      ]
+      primary? true
+    end
   end
 
   code_interface do
     domain Animina.Traits
     define :read
     define :create
-    define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
   end
