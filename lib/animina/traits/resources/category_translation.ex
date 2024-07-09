@@ -20,7 +20,7 @@ defmodule Animina.Traits.CategoryTranslation do
   end
 
   actions do
-    defaults [:read,  :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept [
@@ -28,6 +28,7 @@ defmodule Animina.Traits.CategoryTranslation do
         :name,
         :category_id
       ]
+
       primary? true
     end
   end

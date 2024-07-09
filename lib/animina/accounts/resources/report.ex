@@ -48,19 +48,19 @@ defmodule Animina.Accounts.Report do
 
   relationships do
     belongs_to :accused, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :accuser, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :admin, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? true
     end
@@ -78,10 +78,9 @@ defmodule Animina.Accounts.Report do
         :accused_user_state,
         :admin_id,
         :internal_memo
-
       ]
-      primary? true
 
+      primary? true
     end
 
     read :all_reports do
@@ -107,12 +106,10 @@ defmodule Animina.Accounts.Report do
         :accused_user_state,
         :admin_id,
         :internal_memo
-
       ]
 
       primary? true
       require_atomic? false
-
     end
 
     update :review do

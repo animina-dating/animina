@@ -65,7 +65,7 @@ defmodule Animina.Narratives.Story do
         :content,
         :position,
         :user_id,
-        :headline_id,
+        :headline_id
       ]
 
       primary? true
@@ -76,13 +76,11 @@ defmodule Animina.Narratives.Story do
         :content,
         :position,
         :user_id,
-        :headline_id,
-
+        :headline_id
       ]
 
       require_atomic? false
     end
-
 
     read :read do
       primary? true
@@ -96,6 +94,7 @@ defmodule Animina.Narratives.Story do
 
       argument :user_id, :uuid do
         allow_nil? false
+
       end
 
       prepare build(load: [:headline, :photo, :user])

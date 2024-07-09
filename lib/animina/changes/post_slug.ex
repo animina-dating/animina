@@ -18,23 +18,18 @@ defmodule Animina.Changes.PostSlug do
 
   @impl true
   def change(changeset, opts, context) do
-
     case Ash.Changeset.fetch_change(changeset, opts[:attribute]) do
       {:ok, title} ->
-
         title_slug =
           String.replace(title, ~r/(?:'s)?[^\p{L}\-\d_]+|\.+$/u, "-") |> String.downcase()
 
         today = DateTime.utc_now()
-
-
 
         post =
           Post.by_slug_user_and_date!(title_slug, context.actor.id, today,
             not_found_error?: false,
             load: [:user, :url]
           )
-
 
         cond do
           post == nil ->

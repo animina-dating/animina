@@ -7,7 +7,6 @@ defmodule Animina.Accounts.PotentialPartner do
     domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
-
   attributes do
     uuid_primary_key :id
 
@@ -27,13 +26,13 @@ defmodule Animina.Accounts.PotentialPartner do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :potential_partner, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end

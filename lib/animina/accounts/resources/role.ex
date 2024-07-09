@@ -7,7 +7,6 @@ defmodule Animina.Accounts.Role do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-
   attributes do
     uuid_primary_key :id
 
@@ -25,12 +24,10 @@ defmodule Animina.Accounts.Role do
 
     create :create do
       accept [
-
         :name
-
       ]
-      primary? true
 
+      primary? true
     end
   end
 

@@ -22,10 +22,9 @@ defmodule Animina.Traits.Category do
 
     create :create do
       accept [
-
         :name
-
       ]
+
       primary? true
     end
   end

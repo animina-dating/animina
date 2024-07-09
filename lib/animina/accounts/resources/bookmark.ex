@@ -33,12 +33,12 @@ defmodule Animina.Accounts.Bookmark do
 
   relationships do
     belongs_to :owner, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
 
     belongs_to :user, Animina.Accounts.User do
-       domain Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
 

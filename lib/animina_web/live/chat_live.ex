@@ -339,29 +339,24 @@ defmodule AniminaWeb.ChatLive do
   def handle_info({:new_message, message}, socket) do
     {:ok, message} = Message.by_id(message.id)
 
-    messages =
-      (message ++ socket.assigns.messages)
-      |> Enum.uniq()
+    {:ok, messages_between_sender_and_receiver} =
+      Message.messages_for_sender_and_receiver(
+        socket.assigns.sender.id,
+        socket.assigns.receiver.id,
+        actor: socket.assigns.sender
+      )
 
     unread_messages = socket.assigns.unread_messages ++ [message]
 
-    if message_belongs_to_current_user_or_profile(
-         List.first(message),
-         socket.assigns.sender,
-         socket.assigns.receiver
-       ) do
-      page_title =
-        get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
+    page_title =
+      get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
 
-      {:noreply,
-       socket
-       |> assign(page_title: page_title)
-       |> assign(unread_messages: unread_messages)
-       |> assign(number_of_unread_messages: Enum.count(unread_messages))
-       |> assign(messages: messages)}
-    else
-      {:noreply, socket}
-    end
+    {:noreply,
+     socket
+     |> assign(page_title: page_title)
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))
+     |> assign(:messages, messages_between_sender_and_receiver.results)}
   end
 
   @impl true

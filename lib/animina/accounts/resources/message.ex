@@ -43,16 +43,14 @@ defmodule Animina.Accounts.Message do
   actions do
     defaults [:read]
 
-
     create :create do
       accept [
-
         :content,
         :sender_id,
         :receiver_id,
         :read_at
-
       ]
+
       primary? true
     end
 
@@ -153,9 +151,6 @@ defmodule Animina.Accounts.Message do
 
     define :messages_sent_by_user, args: [:sender_id]
   end
-
-
-
 
   changes do
     change after_action(fn changeset, record, _context ->

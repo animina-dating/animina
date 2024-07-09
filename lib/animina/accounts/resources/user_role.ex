@@ -32,12 +32,12 @@ defmodule Animina.Accounts.UserRole do
   actions do
     defaults [:read, :destroy]
 
-
     create :create do
       accept [
         :user_id,
         :role_id
       ]
+
       primary? true
     end
 

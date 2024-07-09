@@ -66,8 +66,6 @@ defmodule AniminaWeb.RootTest do
          %{conn: conn} do
       {:ok, _view, _html} = live(conn, "/")
 
-
-
       {:ok, _index_live, html} =
         conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")
 
@@ -88,9 +86,6 @@ defmodule AniminaWeb.RootTest do
       user = User.by_username!(@valid_attrs.username)
 
       assert {:ok, user_roles} = UserRole.by_user_id(user.id)
-
-
-
 
       assert Enum.any?(user_roles, fn user_role -> user_role.role.name == :user end)
     end

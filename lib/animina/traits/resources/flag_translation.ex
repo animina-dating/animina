@@ -21,7 +21,7 @@ defmodule Animina.Traits.FlagTranslation do
   end
 
   actions do
-    defaults [:read,  :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept [
@@ -30,6 +30,7 @@ defmodule Animina.Traits.FlagTranslation do
         :hashtag,
         :flag_id
       ]
+
       primary? true
     end
   end

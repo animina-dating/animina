@@ -248,11 +248,11 @@ defmodule Animina.Narratives.PostTest do
   end
 
   defp create_three_stories(user_id) do
-     about_me_headline = get_about_me_headline()
-     non_about_me_headline = get_non_about_me_headline()
-     create_about_me_story(user_id, about_me_headline.id)
-     create_non_about_me_story(user_id, non_about_me_headline.id, 2)
-     create_non_about_me_story(user_id, non_about_me_headline.id, 3)
+    about_me_headline = get_about_me_headline()
+    non_about_me_headline = get_non_about_me_headline()
+    create_about_me_story(user_id, about_me_headline.id)
+    create_non_about_me_story(user_id, non_about_me_headline.id, 2)
+    create_non_about_me_story(user_id, non_about_me_headline.id, 3)
   end
 
   defp create_two_stories(user_id) do

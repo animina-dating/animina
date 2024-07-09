@@ -12,6 +12,7 @@ defmodule Animina.Traits do
     resource Animina.Traits.FlagTranslation
     resource Animina.Traits.UserFlags
   end
+
   authorization do
     authorize :when_requested
   end

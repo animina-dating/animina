@@ -26,14 +26,12 @@ defmodule Animina.Traits.Flag do
 
     create :create do
       accept [
-
         :name,
         :emoji,
         :category_id
-
       ]
-      primary? true
 
+      primary? true
     end
   end
 

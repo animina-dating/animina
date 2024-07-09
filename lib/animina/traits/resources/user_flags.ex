@@ -63,11 +63,10 @@ defmodule Animina.Traits.UserFlags do
         :user_id,
         :color,
         :position
-
       ]
+
       primary? true
     end
-
 
     read :by_user_id do
       argument :id, :uuid, allow_nil?: false, public?: true

@@ -8,8 +8,8 @@ defmodule AniminaWeb.DashboardComponents do
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
   import Phoenix.HTML
-      import Phoenix.HTML.Form
-      use PhoenixHTMLHelpers
+  import Phoenix.HTML.Form
+  use PhoenixHTMLHelpers
 
   attr :title, :string, required: true
   attr :subtitle, :string, default: nil

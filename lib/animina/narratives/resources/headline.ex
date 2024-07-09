@@ -15,7 +15,6 @@ defmodule Animina.Narratives.Headline do
   end
 
   actions do
-
     create :create do
       accept [:subject, :position, :is_active]
     end

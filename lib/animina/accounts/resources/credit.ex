@@ -40,10 +40,11 @@ defmodule Animina.Accounts.Credit do
         :user_id,
         :subject,
         :donor_id
-
       ]
+
       primary? true
     end
+
     read :profile_view_credits_by_donor_and_user do
       argument :donor_id, :uuid do
         allow_nil? false

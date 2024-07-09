@@ -14,7 +14,7 @@ defmodule Animina.Accounts.BasicUser do
 
   attributes do
     uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false , public?: true
+    attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :last_registration_page_visited, :string,

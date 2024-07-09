@@ -5,7 +5,7 @@ defmodule Animina.GeoData.City do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    domain:  Animina.GeoData
+    domain: Animina.GeoData
 
   attributes do
     uuid_primary_key :id
