@@ -264,7 +264,7 @@ defmodule Animina.Accounts.User do
       primary? true
     end
 
-
+    
     update :update do
       accept [:is_private, :streak, :last_registration_page_visited]
 

@@ -58,7 +58,32 @@ defmodule Animina.Narratives.Story do
   end
 
   actions do
-    defaults [:create, :update, :destroy]
+    defaults [:destroy]
+
+    create :create do
+      accept [
+        :content,
+        :position,
+        :user_id,
+        :headline_id,
+
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
+        :content,
+        :position,
+        :user_id,
+        :headline_id,
+
+      ]
+
+      require_atomic? false
+    end
+
 
     read :read do
       primary? true

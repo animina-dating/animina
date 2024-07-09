@@ -15,7 +15,10 @@ defmodule Animina.Narratives.Headline do
   end
 
   actions do
-    defaults [:create]
+
+    create :create do
+      accept [:subject, :position, :is_active]
+    end
 
     read :read do
       primary? true

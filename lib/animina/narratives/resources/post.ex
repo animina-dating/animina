@@ -118,6 +118,7 @@ defmodule Animina.Narratives.Post do
 
     update :update do
       primary? true
+      require_atomic? false
       accept [:title, :content]
     end
   end
