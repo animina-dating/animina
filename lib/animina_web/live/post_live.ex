@@ -96,7 +96,7 @@ defmodule AniminaWeb.PostLive do
   defp apply_action(socket, :edit, _params) do
     form =
       Form.for_update(socket.assigns.post, :update,
-        api: Narratives,
+        domain: Narratives,
         as: "post",
         forms: [],
         actor: socket.assigns.current_user
@@ -115,7 +115,7 @@ defmodule AniminaWeb.PostLive do
   defp apply_action(socket, _, _params) do
     form =
       Form.for_create(Post, :create,
-        api: Narratives,
+        domain: Narratives,
         as: "post",
         forms: [],
         actor: socket.assigns.current_user

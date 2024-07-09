@@ -3,7 +3,7 @@ defmodule Animina.Accounts.UserFlagsTest do
   require Ash.Query
   alias Animina.Traits
 
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
 
   alias Animina.Traits.Category
   alias Animina.Traits.Flag
@@ -33,7 +33,7 @@ defmodule Animina.Accounts.UserFlagsTest do
 
   defp create_user do
     {:ok, user} =
-      BasicUser.create(%{
+      User.create(%{
         email: "bob@example.com",
         username: "bob",
         name: "Bob",

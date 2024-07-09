@@ -30,7 +30,7 @@ defmodule AniminaWeb.ReviewReportLive do
     form =
       report
       |> Form.for_update(:update,
-        api: Accounts,
+        domain: Accounts,
         as: "report",
         forms: [],
         actor: socket.assigns.current_user

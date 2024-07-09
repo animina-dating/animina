@@ -66,7 +66,6 @@ defmodule Animina.Narratives.Story do
         :position,
         :user_id,
         :headline_id,
-
       ]
 
       primary? true

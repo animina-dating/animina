@@ -124,7 +124,7 @@ defmodule AniminaWeb.StoryLive do
     form =
       if socket.assigns.story.photo do
         Form.for_update(socket.assigns.story, :update,
-          api: Narratives,
+          domain: Narratives,
           as: "story",
           forms: [
             photo: [
@@ -136,7 +136,7 @@ defmodule AniminaWeb.StoryLive do
         |> to_form()
       else
         Form.for_update(socket.assigns.story, :update,
-          api: Narratives,
+          domain: Narratives,
           as: "story",
           forms: [
             photo: [
@@ -161,7 +161,7 @@ defmodule AniminaWeb.StoryLive do
   defp apply_action(socket, :about_me, _params) do
     form =
       Form.for_create(Story, :create,
-        api: Narratives,
+        domain: Narratives,
         as: "story",
         forms: [
           photo: [
@@ -186,7 +186,7 @@ defmodule AniminaWeb.StoryLive do
   defp apply_action(socket, _, _params) do
     form =
       Form.for_create(Story, :create,
-        api: Narratives,
+        domain: Narratives,
         as: "story",
         forms: [
           photo: [

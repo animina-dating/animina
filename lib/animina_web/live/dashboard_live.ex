@@ -165,7 +165,7 @@ defmodule AniminaWeb.DashboardLive do
 
   defp create_message_form do
     Form.for_create(Message, :create,
-      api: Accounts,
+      domain: Accounts,
       as: "message",
       forms: [auto?: true]
     )

@@ -32,7 +32,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
       |> assign(
         :form,
-        Form.for_create(Photo, :create, api: Accounts, as: "photo")
+        Form.for_create(Photo, :create, domain: Accounts, as: "photo")
       )
 
     {:ok, socket}
@@ -119,7 +119,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
            |> assign(:errors, [])
            |> assign(
              :form,
-             Form.for_create(Photo, :create, api: Accounts, as: "photo")
+             Form.for_create(Photo, :create, domain: Accounts, as: "photo")
            )
            |> push_navigate(to: ~p"/my/flags/white")}
         else
@@ -139,7 +139,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
      |> cancel_upload(:photos, ref)
      |> assign(
        :form,
-       Form.for_create(Photo, :create, api: Accounts, as: "photo")
+       Form.for_create(Photo, :create, domain: Accounts, as: "photo")
      )}
   end
 
