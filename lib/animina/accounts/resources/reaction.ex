@@ -160,7 +160,7 @@ defmodule Animina.Accounts.Reaction do
 
                {:ok, result}
 
-             _changeset, {:error, error} ->
+             _changeset, {:error, error}, _context ->
                {:error, error}
            end),
            on: :create
@@ -184,7 +184,7 @@ defmodule Animina.Accounts.Reaction do
 
                {:ok, result}
 
-             _changeset, {:error, error} ->
+             _changeset, {:error, error}, _context ->
                {:error, error}
            end),
            on: :destroy
