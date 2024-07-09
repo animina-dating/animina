@@ -24,6 +24,7 @@ defmodule Animina.Accounts.User do
 
     attribute :username, :ci_string do
       allow_nil? false
+      public? true
 
       constraints max_length: 15,
                   min_length: 2,
@@ -34,6 +35,7 @@ defmodule Animina.Accounts.User do
 
     attribute :name, :string do
       allow_nil? false
+      public? true
 
       constraints max_length: 50,
                   min_length: 1,
@@ -41,7 +43,7 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :birthday, :date, allow_nil?: false
+    attribute :birthday, :date, allow_nil?: false , public?: true
 
     attribute :zip_code, :string do
       constraints trim?: true,
@@ -63,10 +65,11 @@ defmodule Animina.Accounts.User do
       allow_nil? false
     end
 
-    attribute :gender, :string, allow_nil?: false
+    attribute :gender, :string, allow_nil?: false, public?: true
 
     attribute :height, :integer do
       allow_nil? false
+      public? true
 
       constraints max: 250,
                   min: 40
@@ -82,24 +85,31 @@ defmodule Animina.Accounts.User do
       constraints min: 18
     end
 
-    attribute :maximum_partner_age, :integer, allow_nil?: true
+    attribute :maximum_partner_age, :integer, allow_nil?: true, public?: true
 
-    attribute :partner_gender, :string, allow_nil?: true
+    attribute :partner_gender, :string, allow_nil?: true, public?: true
 
-    attribute :search_range, :integer, allow_nil?: true
-    attribute :language, :string, allow_nil?: true
-    attribute :legal_terms_accepted, :boolean, default: false
-    attribute :preapproved_communication_only, :boolean, default: false
-    attribute :streak, :integer, default: 0
+    attribute :search_range, :integer, allow_nil?: true,public?: true
+    attribute :language, :string, allow_nil?: true, public?: true
+    attribute :legal_terms_accepted, :boolean, default: false , public?: true
+    attribute :preapproved_communication_only, :boolean, default: false , public?: true
+    attribute :streak, :integer, default: 0  , public?: true
 
     attribute :last_registration_page_visited, :string,
       allow_nil?: true,
+       public?: true,
       default: "/my/potential-partner"
 
     attribute :occupation, :string do
+
+
+
       constraints max_length: 40,
                   trim?: true,
                   allow_empty?: false
+
+
+
     end
 
     attribute :is_private, :boolean, default: false , public?: true
@@ -223,11 +233,30 @@ defmodule Animina.Accounts.User do
 
   actions do
 
-    defaults [:read,  :create]
+    defaults [:read]
+
+
+    create :create do
+      accept [
+        :email,
+        :username,
+        :name,
+        :zip_code,
+        :birthday,
+        :height,
+        :hashed_password,
+        :language,
+        :gender,
+        :mobile_phone,
+        :legal_terms_accepted,
+        :occupation
+      ]
+      primary? true
+    end
 
 
     update :update do
-      accept [:is_private]
+      accept [:is_private, :streak, :last_registration_page_visited]
 
       primary? true
       require_atomic? false
@@ -235,6 +264,7 @@ defmodule Animina.Accounts.User do
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
+      require_atomic? false
     end
 
     read :custom_sign_in do
@@ -396,7 +426,7 @@ defmodule Animina.Accounts.User do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
 
              # First user in dev becomes admin by default.

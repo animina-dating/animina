@@ -64,7 +64,9 @@ defmodule AniminaWeb.RootTest do
 
     test "Once we add correct user details , we are redirected to the /my/potential-partner/ page",
          %{conn: conn} do
-      {:ok, _view, _html} = live(conn, "/")
+      {:ok, _view, html} = live(conn, "/")
+
+
 
       {:ok, _index_live, html} =
         conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")

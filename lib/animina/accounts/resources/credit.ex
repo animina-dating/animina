@@ -32,8 +32,18 @@ defmodule Animina.Accounts.Credit do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
 
+    create :create do
+      accept [
+        :points,
+        :user_id,
+        :subject,
+        :donor_id
+
+      ]
+      primary? true
+    end
     read :profile_view_credits_by_donor_and_user do
       argument :donor_id, :uuid do
         allow_nil? false
@@ -56,7 +66,7 @@ defmodule Animina.Accounts.Credit do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                record.user_id,
