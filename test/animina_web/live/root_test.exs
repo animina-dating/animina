@@ -64,7 +64,7 @@ defmodule AniminaWeb.RootTest do
 
     test "Once we add correct user details , we are redirected to the /my/potential-partner/ page",
          %{conn: conn} do
-      {:ok, _view, html} = live(conn, "/")
+      {:ok, _view, _html} = live(conn, "/")
 
 
 
@@ -90,7 +90,7 @@ defmodule AniminaWeb.RootTest do
       assert {:ok, user_roles} = UserRole.by_user_id(user.id)
 
 
-  
+
 
       assert Enum.any?(user_roles, fn user_role -> user_role.role.name == :user end)
     end
