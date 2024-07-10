@@ -14,7 +14,7 @@ defmodule Animina.Repo.Migrations.SeedRoles do
 
   defp seed_roles do
     roles()
-    |> Animina.Accounts.bulk_create(Animina.Accounts.Role, :create,
+    |> Ash.bulk_create(Animina.Accounts.Role, :create,
       return_stream?: false,
       return_records?: false,
       batch_size: 100

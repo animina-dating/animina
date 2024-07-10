@@ -18,7 +18,7 @@ defmodule Animina.Repo.Migrations.SeedCity do
       Map.update(akk, city.zip_code, city, fn _alter -> city end)
     end)
     |> Map.values()
-    |> Animina.GeoData.bulk_create(Animina.GeoData.City, :create,
+    |> Ash.bulk_create(Animina.GeoData.City, :create,
       return_stream?: false,
       return_records?: false,
       batch_size: 100

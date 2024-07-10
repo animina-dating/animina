@@ -14,7 +14,7 @@ defmodule Animina.Repo.Migrations.SeedHeadline do
 
   defp seed_headlines() do
     headlines()
-    |> Animina.Narratives.bulk_create(Animina.Narratives.Headline, :create,
+    |> Ash.bulk_create(Animina.Narratives.Headline, :create,
       return_stream?: false,
       return_records?: false,
       batch_size: 100

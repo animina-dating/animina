@@ -30,7 +30,7 @@ defmodule Animina.Repo.Migrations.SeedBadPassword do
     stream
     |> Enum.map(&String.trim/1)
     |> Enum.map(fn password -> %{value: password} end)
-    |> Animina.Narratives.bulk_create(Animina.Accounts.BadPassword, :create,
+    |> Ash.bulk_create(Animina.Accounts.BadPassword, :create,
       return_stream?: false,
       return_records?: false,
       batch_size: 20000
