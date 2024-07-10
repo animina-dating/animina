@@ -157,7 +157,7 @@ defmodule AniminaWeb.RootLive do
             </div>
           </div>
 
-          <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
+
           <%= text_input(f, :language, type: :hidden, value: @language) %>
 
           <div>
