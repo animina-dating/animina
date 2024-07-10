@@ -7,6 +7,7 @@ defmodule Animina.Accounts.UserRole do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
   attributes do
@@ -29,7 +30,16 @@ defmodule Animina.Accounts.UserRole do
   end
 
   actions do
-    defaults [:create, :read, :update, :destroy]
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :user_id,
+        :role_id
+      ]
+
+      primary? true
+    end
 
     read :by_user_id do
       argument :user_id, :uuid do
@@ -51,17 +61,16 @@ defmodule Animina.Accounts.UserRole do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
-    define :update
     define :destroy
     define :by_user_id, args: [:user_id]
     define :admin_roles_by_user_id
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                record.user_id,

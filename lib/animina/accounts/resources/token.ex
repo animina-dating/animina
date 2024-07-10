@@ -4,6 +4,7 @@ defmodule Animina.Accounts.Token do
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     extensions: [AshAuthentication.TokenResource]
 
   actions do
@@ -11,12 +12,12 @@ defmodule Animina.Accounts.Token do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :destroy
   end
 
   token do
-    api Animina.Accounts
+    domain Animina.Accounts
   end
 
   postgres do

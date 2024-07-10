@@ -6,7 +6,6 @@ defmodule Animina.GenServers.Photo do
   use GenStage
 
   require Ash.Query
-  alias Animina.Accounts
   alias Animina.Accounts.Photo
 
   @doc """
@@ -50,7 +49,7 @@ defmodule Animina.GenServers.Photo do
       |> Ash.Query.sort(created_at: :asc)
       |> Ash.Query.filter(state == ^:pending_review)
       |> Ash.Query.sort(created_at: :asc)
-      |> Accounts.read!(authorize?: false, page: [limit: 6])
+      |> Ash.read!(authorize?: false, page: [limit: 6])
 
     queue =
       Enum.reduce(bulk_result.results, queue, fn photo, acc ->

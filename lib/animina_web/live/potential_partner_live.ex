@@ -61,7 +61,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
       case Credit
            |> Ash.Query.filter(user_id: user.id)
            |> Ash.Query.filter(subject: "Registration bonus")
-           |> Animina.Accounts.read!() do
+           |> Ash.read!() do
         [] ->
           Credit.create!(%{
             user_id: user.id,
@@ -114,7 +114,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply, socket}
     end

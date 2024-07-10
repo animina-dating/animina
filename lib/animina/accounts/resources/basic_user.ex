@@ -6,6 +6,7 @@ defmodule Animina.Accounts.BasicUser do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     extensions: [AshAuthentication, AshStateMachine]
 
   alias Animina.Accounts
@@ -13,15 +14,12 @@ defmodule Animina.Accounts.BasicUser do
 
   attributes do
     uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false
+    attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-
-    attribute :last_registration_page_visited, :string,
-      allow_nil?: true,
-      default: "/my/potential-partner"
 
     attribute :username, :ci_string do
       allow_nil? false
+      public? true
 
       constraints max_length: 15,
                   min_length: 2,
@@ -32,10 +30,18 @@ defmodule Animina.Accounts.BasicUser do
 
     attribute :name, :string do
       allow_nil? false
+      public? true
 
       constraints max_length: 50,
                   min_length: 1,
                   trim?: true,
+                  allow_empty?: false
+    end
+
+    attribute :birthday, :date, allow_nil?: false, public?: true
+
+    attribute :zip_code, :string do
+      constraints trim?: true,
                   allow_empty?: false
     end
 
@@ -54,33 +60,48 @@ defmodule Animina.Accounts.BasicUser do
       allow_nil? false
     end
 
-    attribute :birthday, :date, allow_nil?: false
-
-    attribute :zip_code, :string do
-      constraints trim?: true,
-                  allow_empty?: false
-    end
-
-    attribute :is_private, :boolean, default: false
-
-    attribute :gender, :string, allow_nil?: false
+    attribute :gender, :string, allow_nil?: false, public?: true
 
     attribute :height, :integer do
       allow_nil? false
+      public? true
 
       constraints max: 250,
                   min: 40
     end
 
     attribute :mobile_phone, :ash_phone_number, allow_nil?: false
-    attribute :language, :string, allow_nil?: false
-    attribute :legal_terms_accepted, :boolean, default: false
+
+    attribute :minimum_partner_height, :integer, allow_nil?: true
+    attribute :maximum_partner_height, :integer, allow_nil?: true
+
+    attribute :minimum_partner_age, :integer do
+      allow_nil? true
+      constraints min: 18
+    end
+
+    attribute :maximum_partner_age, :integer, allow_nil?: true, public?: true
+
+    attribute :partner_gender, :string, allow_nil?: true, public?: true
+
+    attribute :search_range, :integer, allow_nil?: true, public?: true
+    attribute :language, :string, allow_nil?: true, public?: true
+    attribute :legal_terms_accepted, :boolean, default: false, public?: true
+    attribute :preapproved_communication_only, :boolean, default: false, public?: true
+    attribute :streak, :integer, default: 0, public?: true
+
+    attribute :last_registration_page_visited, :string,
+      allow_nil?: true,
+      public?: true,
+      default: "/my/potential-partner"
 
     attribute :occupation, :string do
       constraints max_length: 40,
                   trim?: true,
                   allow_empty?: false
     end
+
+    attribute :is_private, :boolean, default: false, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -148,48 +169,58 @@ defmodule Animina.Accounts.BasicUser do
     end
 
     update :validate do
+      require_atomic? false
       change transition_state(:validated)
     end
 
     update :investigate do
+      require_atomic? false
       change transition_state(:under_investigation)
     end
 
     update :ban do
+      require_atomic? false
       change transition_state(:banned)
     end
 
     update :incognito do
+      require_atomic? false
       change transition_state(:incognito)
     end
 
     update :hibernate do
+      require_atomic? false
       change transition_state(:hibernate)
     end
 
     update :archive do
+      require_atomic? false
       change transition_state(:archived)
     end
 
     update :reactivate do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :unban do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :recover do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :normalize do
+      require_atomic? false
       change transition_state(:normal)
     end
   end
 
   code_interface do
-    define_for Accounts
+    domain Accounts
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
@@ -219,7 +250,7 @@ defmodule Animina.Accounts.BasicUser do
   end
 
   authentication do
-    api Accounts
+    domain Accounts
 
     strategies do
       password :password do

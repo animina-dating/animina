@@ -7,18 +7,20 @@ defmodule Animina.Traits.UserFlags do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    domain: Animina.Traits
 
   attributes do
     uuid_primary_key :id
 
-    attribute :flag_id, :uuid, allow_nil?: false
-    attribute :user_id, :uuid, allow_nil?: false
-    attribute :position, :integer, allow_nil?: false
+    attribute :flag_id, :uuid, allow_nil?: false, public?: true
+    attribute :user_id, :uuid, allow_nil?: false, public?: true
+    attribute :position, :integer, allow_nil?: false, public?: true
 
     attribute :color, :atom do
       constraints one_of: [:white, :green, :red]
       allow_nil? false
+      public? true
     end
 
     create_timestamp :created_at
@@ -36,7 +38,7 @@ defmodule Animina.Traits.UserFlags do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
       attribute_writable? true
     end
@@ -53,10 +55,21 @@ defmodule Animina.Traits.UserFlags do
   end
 
   actions do
-    defaults [:create, :read, :destroy]
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :flag_id,
+        :user_id,
+        :color,
+        :position
+      ]
+
+      primary? true
+    end
 
     read :by_user_id do
-      argument :id, :uuid, allow_nil?: false
+      argument :id, :uuid, allow_nil?: false, public?: true
 
       prepare build(sort: [position: :asc])
 
@@ -65,7 +78,7 @@ defmodule Animina.Traits.UserFlags do
   end
 
   code_interface do
-    define_for Animina.Traits
+    domain Animina.Traits
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read

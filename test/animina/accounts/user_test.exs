@@ -1,7 +1,5 @@
 defmodule Animina.Accounts.UserTest do
   use Animina.DataCase, async: true
-
-  alias Animina.Accounts.BasicUser
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
@@ -25,7 +23,7 @@ defmodule Animina.Accounts.UserTest do
       assert {:error, _} = User.by_email("bob@example.com")
 
       assert {:ok, _} =
-               BasicUser.create(%{
+               User.create(%{
                  email: "bob@example.com",
                  username: "bob",
                  name: "Bob",
@@ -44,7 +42,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "does not create a user if they have a bad username" do
       assert {:error, _} =
-               BasicUser.create(%{
+               User.create(%{
                  email: "name@example.com",
                  username: "my",
                  name: "Bobby",
@@ -86,7 +84,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "hibernate/1 returns a user with the state :hibernate" do
       assert {:ok, user} =
-               BasicUser.create(%{
+               User.create(%{
                  email: "bob@example.com",
                  username: "bob",
                  name: "Bob",
@@ -109,7 +107,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "ban/1 returns a user with the state :banned" do
       assert {:ok, user} =
-               BasicUser.create(%{
+               User.create(%{
                  email: "bob@example.com",
                  username: "bob",
                  name: "Bob",
@@ -132,7 +130,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "investigate/1 returns a user with the state :under_investigation" do
       assert {:ok, user} =
-               BasicUser.create(%{
+               User.create(%{
                  email: "bob@example.com",
                  username: "bob",
                  name: "Bob",
@@ -155,7 +153,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "incognito/1 returns a user with the state :incognito" do
       assert {:ok, user} =
-               BasicUser.create(@create_user_params)
+               User.create(@create_user_params)
 
       assert user.state == :normal
 
@@ -166,7 +164,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "unban/1 returns a user with the state :normal who was :banned" do
       assert {:ok, user} =
-               BasicUser.create(@create_user_params)
+               User.create(@create_user_params)
 
       assert user.state == :normal
 
@@ -181,7 +179,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "recover/1 returns a user with the state :normal from :archived " do
       assert {:ok, user} =
-               BasicUser.create(@create_user_params)
+               User.create(@create_user_params)
 
       assert user.state == :normal
 
@@ -196,7 +194,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "reactivate/1 returns a user with the state :normal from :incognito or :hibernate " do
       assert {:ok, user} =
-               BasicUser.create(@create_user_params)
+               User.create(@create_user_params)
 
       assert user.state == :normal
 
@@ -211,7 +209,7 @@ defmodule Animina.Accounts.UserTest do
 
     test "normalize/1 returns a user with the state :normal from any state" do
       assert {:ok, user} =
-               BasicUser.create(@create_user_params)
+               User.create(@create_user_params)
 
       assert user.state == :normal
 

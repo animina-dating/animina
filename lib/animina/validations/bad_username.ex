@@ -15,7 +15,7 @@ defmodule Animina.Validations.BadUsername do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     username =
       Ash.Changeset.get_attribute(changeset, opts[:attribute])
 

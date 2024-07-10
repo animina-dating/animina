@@ -7,7 +7,8 @@ defmodule Animina.Narratives.Story do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    notifiers: [Ash.Notifier.PubSub]
+    notifiers: [Ash.Notifier.PubSub],
+    domain: Animina.Narratives
 
   attributes do
     uuid_primary_key :id
@@ -37,7 +38,7 @@ defmodule Animina.Narratives.Story do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
     end
 
@@ -46,7 +47,7 @@ defmodule Animina.Narratives.Story do
     end
 
     has_one :photo, Animina.Accounts.Photo do
-      api Animina.Accounts
+      domain Animina.Accounts
     end
   end
 
@@ -57,10 +58,33 @@ defmodule Animina.Narratives.Story do
   end
 
   actions do
-    defaults [:create, :update, :destroy]
+    defaults [:destroy]
+
+    create :create do
+      accept [
+        :content,
+        :position,
+        :user_id,
+        :headline_id
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
+        :content,
+        :position,
+        :user_id,
+        :headline_id
+      ]
+
+      require_atomic? false
+    end
 
     read :read do
       primary? true
+
       pagination offset?: true, keyset?: true, required?: false
 
       prepare build(load: [:headline, :photo])
@@ -76,6 +100,20 @@ defmodule Animina.Narratives.Story do
       prepare build(load: [:headline, :photo, :user])
 
       prepare build(sort: [position: :asc])
+
+      filter expr(user_id == ^arg(:user_id))
+    end
+
+    read :descending_by_user_id do
+      pagination offset?: true, keyset?: true, required?: false
+
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:headline, :photo, :user])
+
+      prepare build(sort: [position: :desc])
 
       filter expr(user_id == ^arg(:user_id))
     end
@@ -98,13 +136,14 @@ defmodule Animina.Narratives.Story do
   end
 
   code_interface do
-    define_for Animina.Narratives
+    domain Animina.Narratives
     define :read
     define :create
     define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
     define :by_user_id, args: [:user_id]
+    define :descending_by_user_id, args: [:user_id]
     define :about_story_by_user, args: [:user_id], get?: true
   end
 

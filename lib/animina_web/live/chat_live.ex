@@ -89,13 +89,13 @@ defmodule AniminaWeb.ChatLive do
     if receiver == nil or sender == nil do
       {:ok,
        socket
-       |> push_redirect(to: ~p"/")}
+       |> push_navigate(to: ~p"/")}
     else
       if profile != Ash.CiString.value(socket.assigns.receiver.username) or
            params["current_user"] != Ash.CiString.value(socket.assigns.sender.username) do
         {:ok,
          socket
-         |> push_redirect(
+         |> push_navigate(
            to: ~p"/#{socket.assigns.sender.username}/messages/#{socket.assigns.receiver.username}"
          )}
       else
@@ -200,15 +200,6 @@ defmodule AniminaWeb.ChatLive do
     reaction
   end
 
-  defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
-    if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
-         (message.sender_id == profile.id and message.receiver_id == current_user.id) do
-      true
-    else
-      false
-    end
-  end
-
   defp get_page_title(message, sender, receiver) do
     # if I am the one who has received the new message it should add the chat icon
     if message.receiver_id == sender.id do
@@ -241,7 +232,7 @@ defmodule AniminaWeb.ChatLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply,
        socket
@@ -339,29 +330,24 @@ defmodule AniminaWeb.ChatLive do
   def handle_info({:new_message, message}, socket) do
     {:ok, message} = Message.by_id(message.id)
 
-    messages =
-      (message ++ socket.assigns.messages)
-      |> Enum.uniq()
+    {:ok, messages_between_sender_and_receiver} =
+      Message.messages_for_sender_and_receiver(
+        socket.assigns.sender.id,
+        socket.assigns.receiver.id,
+        actor: socket.assigns.sender
+      )
 
     unread_messages = socket.assigns.unread_messages ++ [message]
 
-    if message_belongs_to_current_user_or_profile(
-         List.first(message),
-         socket.assigns.sender,
-         socket.assigns.receiver
-       ) do
-      page_title =
-        get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
+    page_title =
+      get_page_title(List.first(message), socket.assigns.sender, socket.assigns.receiver)
 
-      {:noreply,
-       socket
-       |> assign(page_title: page_title)
-       |> assign(unread_messages: unread_messages)
-       |> assign(number_of_unread_messages: Enum.count(unread_messages))
-       |> assign(messages: messages)}
-    else
-      {:noreply, socket}
-    end
+    {:noreply,
+     socket
+     |> assign(page_title: page_title)
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))
+     |> assign(:messages, messages_between_sender_and_receiver.results)}
   end
 
   @impl true
@@ -406,7 +392,7 @@ defmodule AniminaWeb.ChatLive do
 
   defp create_message_form do
     Form.for_create(Message, :create,
-      api: Accounts,
+      domain: Accounts,
       as: "message",
       forms: [auto?: true]
     )

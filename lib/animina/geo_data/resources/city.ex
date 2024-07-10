@@ -4,7 +4,8 @@ defmodule Animina.GeoData.City do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.GeoData
 
   attributes do
     uuid_primary_key :id
@@ -17,11 +18,38 @@ defmodule Animina.GeoData.City do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :name,
+        :zip_code,
+        :county,
+        :federal_state,
+        :lat,
+        :lon
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
+        :name,
+        :zip_code,
+        :county,
+        :federal_state,
+        :lat,
+        :lon
+      ]
+
+      primary? true
+      require_atomic? false
+    end
   end
 
   code_interface do
-    define_for Animina.GeoData
+    domain Animina.GeoData
     define :read
     define :create
     define :update

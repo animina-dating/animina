@@ -16,7 +16,7 @@ defmodule Animina.Validations.AboutStory do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     headline_id =
       Ash.Changeset.get_attribute(changeset, opts[:headline])
 

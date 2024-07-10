@@ -2,11 +2,12 @@ defmodule Animina.Accounts.Report do
   @moduledoc """
   This is the Report module which we use to manage reports.
   """
-  alias Animina.Accounts.BasicUser
+
   alias Animina.Accounts.User
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
   attributes do
@@ -47,26 +48,40 @@ defmodule Animina.Accounts.Report do
 
   relationships do
     belongs_to :accused, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :accuser, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :admin, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? true
     end
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :state,
+        :accused_id,
+        :accuser_id,
+        :description,
+        :accused_user_state,
+        :admin_id,
+        :internal_memo
+      ]
+
+      primary? true
+    end
 
     read :all_reports do
       prepare build(load: [:accuser, :accused, :admin])
@@ -80,6 +95,21 @@ defmodule Animina.Accounts.Report do
       prepare build(sort: [created_at: :desc])
 
       filter expr(state == ^:pending)
+    end
+
+    update :update do
+      accept [
+        :state,
+        :accused_id,
+        :accuser_id,
+        :description,
+        :accused_user_state,
+        :admin_id,
+        :internal_memo
+      ]
+
+      primary? true
+      require_atomic? false
     end
 
     update :review do
@@ -97,6 +127,8 @@ defmodule Animina.Accounts.Report do
         allow_nil? true
       end
 
+      require_atomic? false
+
       change set_attribute(:admin_id, arg(:admin_id))
       change set_attribute(:state, arg(:state))
       change set_attribute(:internal_memo, arg(:internal_memo))
@@ -104,7 +136,7 @@ defmodule Animina.Accounts.Report do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update
@@ -115,16 +147,16 @@ defmodule Animina.Accounts.Report do
   end
 
   changes do
-    change after_action(fn changeset, record ->
-             user = BasicUser.by_id!(record.accused_id)
+    change after_action(fn changeset, record, _context ->
+             user = User.by_id!(record.accused_id)
              User.investigate(user)
 
              {:ok, record}
            end),
            on: [:create]
 
-    change after_action(fn changeset, record ->
-             user = BasicUser.by_id!(record.accused_id)
+    change after_action(fn changeset, record, _context ->
+             user = User.by_id!(record.accused_id)
 
              change_accused_user_state(user, record.accused_user_state, record.state)
 

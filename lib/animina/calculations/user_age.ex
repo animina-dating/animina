@@ -3,7 +3,7 @@ defmodule Animina.Calculations.UserAge do
   This is a module for calculating the current age of a user.
   """
 
-  use Ash.Calculation
+  use Ash.Resource.Calculation
 
   def calculate(records, opts, _) do
     Enum.map(records, fn record -> calculate_age(Map.get(record, opts[:field])) end)

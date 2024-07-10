@@ -1,7 +1,7 @@
 defmodule AniminaWeb.RootLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
 
@@ -35,7 +35,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:hidden_points, 100)
     |> assign(
       :form,
-      Form.for_create(BasicUser, :register_with_password, api: Accounts, as: "user")
+      Form.for_create(User, :register_with_password, domain: Accounts, as: "user")
     )
   end
 
@@ -49,7 +49,7 @@ defmodule AniminaWeb.RootLive do
     |> assign(:action, get_link("/auth/user/sign_in/", params))
     |> assign(
       :form,
-      Form.for_action(BasicUser, :custom_sign_in, api: Accounts, as: "user")
+      Form.for_action(User, :custom_sign_in, domain: Accounts, as: "user")
     )
   end
 
@@ -157,7 +157,6 @@ defmodule AniminaWeb.RootLive do
             </div>
           </div>
 
-          <%= text_input(f, :hidden_points, type: :hidden, value: 200) %>
           <%= text_input(f, :language, type: :hidden, value: @language) %>
 
           <div>

@@ -4,7 +4,8 @@ defmodule Animina.Traits.FlagTranslation do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Traits
 
   attributes do
     uuid_primary_key :id
@@ -20,14 +21,24 @@ defmodule Animina.Traits.FlagTranslation do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :language,
+        :name,
+        :hashtag,
+        :flag_id
+      ]
+
+      primary? true
+    end
   end
 
   code_interface do
-    define_for Animina.Traits
+    domain Animina.Traits
     define :read
     define :create
-    define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
   end

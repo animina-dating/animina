@@ -3,7 +3,7 @@ defmodule Animina.Accounts do
   This is the Accounts module.
   """
 
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Animina.Accounts.BadPassword
@@ -25,5 +25,9 @@ defmodule Animina.Accounts do
     resource Animina.Traits.FlagTranslation
     resource Animina.Traits.Category
     resource Animina.Traits.CategoryTranslation
+  end
+
+  authorization do
+    authorize :when_requested
   end
 end

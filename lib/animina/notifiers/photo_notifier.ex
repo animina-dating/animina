@@ -13,7 +13,7 @@ defmodule Animina.Notifiers.Photo do
         data: photo,
         action: %{type: action_type},
         actor: _actor,
-        api: _api,
+        domain: _domain,
         changeset: _changeset,
         for: _for,
         from: _from,

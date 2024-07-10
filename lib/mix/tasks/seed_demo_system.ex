@@ -9,7 +9,6 @@ if Enum.member?([:dev, :test], Mix.env()) do
     alias Animina.Accounts.Role
     alias Animina.Accounts.User
     alias Animina.Accounts.UserRole
-    alias Animina.Narratives
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
     alias Animina.Traits.Flag
@@ -625,7 +624,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     defp get_headline_id(subject) do
       Headline
       |> Ash.Query.for_read(:by_subject, %{subject: subject})
-      |> Narratives.read_one()
+      |> Ash.read_one()
       |> case do
         {:ok, headline} -> headline.id
         _ -> nil

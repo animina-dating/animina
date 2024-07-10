@@ -13,7 +13,8 @@ defmodule Animina.Narratives.Post do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     notifiers: [Ash.Notifier.PubSub],
-    authorizers: Ash.Policy.Authorizer
+    authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Narratives
 
   attributes do
     uuid_primary_key :id
@@ -45,7 +46,7 @@ defmodule Animina.Narratives.Post do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
     end
   end
@@ -117,12 +118,13 @@ defmodule Animina.Narratives.Post do
 
     update :update do
       primary? true
+      require_atomic? false
       accept [:title, :content]
     end
   end
 
   code_interface do
-    define_for Animina.Narratives
+    domain Animina.Narratives
     define :read
     define :create
     define :update

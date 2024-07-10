@@ -78,7 +78,7 @@ defmodule AniminaWeb.PostLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply, socket |> assign(:current_user, current_user)}
     end
@@ -96,7 +96,7 @@ defmodule AniminaWeb.PostLive do
   defp apply_action(socket, :edit, _params) do
     form =
       Form.for_update(socket.assigns.post, :update,
-        api: Narratives,
+        domain: Narratives,
         as: "post",
         forms: [],
         actor: socket.assigns.current_user
@@ -115,7 +115,7 @@ defmodule AniminaWeb.PostLive do
   defp apply_action(socket, _, _params) do
     form =
       Form.for_create(Post, :create,
-        api: Narratives,
+        domain: Narratives,
         as: "post",
         forms: [],
         actor: socket.assigns.current_user

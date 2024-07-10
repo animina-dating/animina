@@ -26,7 +26,7 @@ defmodule Animina.Changes.PostSlug do
         today = DateTime.utc_now()
 
         post =
-          Post.by_slug_user_and_date!(title_slug, context[:actor].id, today,
+          Post.by_slug_user_and_date!(title_slug, context.actor.id, today,
             not_found_error?: false,
             load: [:user, :url]
           )

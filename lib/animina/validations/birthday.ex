@@ -14,7 +14,7 @@ defmodule Animina.Validations.Birthday do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     today = Date.utc_today()
 
     case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do

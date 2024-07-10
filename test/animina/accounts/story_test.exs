@@ -1,7 +1,7 @@
 defmodule Animina.Accounts.StoryTest do
   use Animina.DataCase, async: true
 
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
 
@@ -52,7 +52,7 @@ defmodule Animina.Accounts.StoryTest do
 
   defp create_user do
     {:ok, user} =
-      BasicUser.create(%{
+      User.create(%{
         email: "bob@example.com",
         username: "bob",
         name: "Bob",

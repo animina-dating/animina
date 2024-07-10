@@ -11,7 +11,7 @@ defmodule AniminaWeb.Live.CreateReportComponent do
   def update(%{current_user: current_user, user: user, language: language} = assigns, socket) do
     form =
       Form.for_create(Report, :create,
-        api: Accounts,
+        domain: Accounts,
         as: "report",
         forms: [],
         actor: current_user

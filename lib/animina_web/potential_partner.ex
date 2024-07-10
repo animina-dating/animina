@@ -5,9 +5,7 @@ defmodule AniminaWeb.PotentialPartner do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
-  alias Animina.GeoData
   alias Animina.GeoData.City
-  alias Animina.Traits
   alias Animina.Traits.UserFlags
 
   require Ash.Query
@@ -51,7 +49,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_not_incognito_query(user)
     |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
-    |> Accounts.read!()
+    |> Ash.read!()
   end
 
   defp partner_not_under_investigation_query(query, _user) do
@@ -189,13 +187,13 @@ defmodule AniminaWeb.PotentialPartner do
         ^search_range
       )
     )
-    |> GeoData.read!()
+    |> Ash.read!()
   end
 
   defp get_user_flags(user_id, color) do
     UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-    |> Traits.read!()
+    |> Ash.read!()
   end
 
   defp get_bookmarked_users(user_id) do

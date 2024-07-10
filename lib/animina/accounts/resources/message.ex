@@ -7,7 +7,8 @@ defmodule Animina.Accounts.Message do
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
-    authorizers: Ash.Policy.Authorizer
+    authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts
 
   attributes do
     uuid_primary_key :id
@@ -27,20 +28,31 @@ defmodule Animina.Accounts.Message do
 
   relationships do
     belongs_to :sender, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :receiver, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :content,
+        :sender_id,
+        :receiver_id,
+        :read_at
+      ]
+
+      primary? true
+    end
 
     update :has_been_read do
       change set_attribute(:read_at, DateTime.utc_now())
@@ -124,7 +136,7 @@ defmodule Animina.Accounts.Message do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
 
@@ -141,7 +153,7 @@ defmodule Animina.Accounts.Message do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(Animina.PubSub, "messages", {:new_message, record})
 
              {:ok, record}

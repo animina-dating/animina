@@ -172,7 +172,7 @@ defmodule AniminaWeb.FlagsLive do
     |> Enum.each(fn x -> UserFlags.destroy(x) end)
 
     bulk_result =
-      Traits.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
+      Ash.bulk_create(interests, Traits.UserFlags, :create, stop_on_error?: true)
 
     successful_socket =
       socket
@@ -202,7 +202,7 @@ defmodule AniminaWeb.FlagsLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply,
        socket
@@ -290,7 +290,7 @@ defmodule AniminaWeb.FlagsLive do
   defp fetch_categories do
     Traits.Category
     |> Ash.Query.for_read(:read)
-    |> Traits.read!()
+    |> Ash.read!()
   end
 
   defp user_states_to_be_auto_logged_out do

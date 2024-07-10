@@ -6,6 +6,7 @@ defmodule Animina.Accounts.User do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [AshAuthentication, AshStateMachine, Ash.Notifier.PubSub]
 
   alias Animina.Accounts
@@ -18,11 +19,12 @@ defmodule Animina.Accounts.User do
 
   attributes do
     uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false
+    attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
 
     attribute :username, :ci_string do
       allow_nil? false
+      public? true
 
       constraints max_length: 15,
                   min_length: 2,
@@ -33,6 +35,7 @@ defmodule Animina.Accounts.User do
 
     attribute :name, :string do
       allow_nil? false
+      public? true
 
       constraints max_length: 50,
                   min_length: 1,
@@ -40,7 +43,7 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :birthday, :date, allow_nil?: false
+    attribute :birthday, :date, allow_nil?: false, public?: true
 
     attribute :zip_code, :string do
       constraints trim?: true,
@@ -62,10 +65,11 @@ defmodule Animina.Accounts.User do
       allow_nil? false
     end
 
-    attribute :gender, :string, allow_nil?: false
+    attribute :gender, :string, allow_nil?: false, public?: true
 
     attribute :height, :integer do
       allow_nil? false
+      public? true
 
       constraints max: 250,
                   min: 40
@@ -81,18 +85,19 @@ defmodule Animina.Accounts.User do
       constraints min: 18
     end
 
-    attribute :maximum_partner_age, :integer, allow_nil?: true
+    attribute :maximum_partner_age, :integer, allow_nil?: true, public?: true
 
-    attribute :partner_gender, :string, allow_nil?: true
+    attribute :partner_gender, :string, allow_nil?: true, public?: true
 
-    attribute :search_range, :integer, allow_nil?: true
-    attribute :language, :string, allow_nil?: true
-    attribute :legal_terms_accepted, :boolean, default: false
-    attribute :preapproved_communication_only, :boolean, default: false
-    attribute :streak, :integer, default: 0
+    attribute :search_range, :integer, allow_nil?: true, public?: true
+    attribute :language, :string, allow_nil?: true, public?: true
+    attribute :legal_terms_accepted, :boolean, default: false, public?: true
+    attribute :preapproved_communication_only, :boolean, default: false, public?: true
+    attribute :streak, :integer, default: 0, public?: true
 
     attribute :last_registration_page_visited, :string,
       allow_nil?: true,
+      public?: true,
       default: "/my/potential-partner"
 
     attribute :occupation, :string do
@@ -101,7 +106,7 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :is_private, :boolean, default: false
+    attribute :is_private, :boolean, default: false, public?: true
 
     create_timestamp :created_at
     update_timestamp :updated_at
@@ -128,7 +133,7 @@ defmodule Animina.Accounts.User do
     end
 
     has_many :stories, Narratives.Story do
-      api Narratives
+      domain Narratives
     end
 
     has_many :sent_messages, Accounts.Message do
@@ -221,10 +226,70 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read, :update, :create]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :email,
+        :username,
+        :name,
+        :zip_code,
+        :birthday,
+        :height,
+        :hashed_password,
+        :language,
+        :gender,
+        :mobile_phone,
+        :legal_terms_accepted,
+        :occupation,
+        :preapproved_communication_only,
+        :state,
+        :minimum_partner_height,
+        :maximum_partner_height,
+        :minimum_partner_age,
+        :maximum_partner_age,
+        :partner_gender,
+        :search_range,
+        :is_private
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
+        :email,
+        :username,
+        :name,
+        :zip_code,
+        :birthday,
+        :height,
+        :hashed_password,
+        :language,
+        :gender,
+        :mobile_phone,
+        :legal_terms_accepted,
+        :occupation,
+        :preapproved_communication_only,
+        :state,
+        :minimum_partner_height,
+        :maximum_partner_height,
+        :minimum_partner_age,
+        :maximum_partner_age,
+        :partner_gender,
+        :search_range,
+        :is_private,
+        :last_registration_page_visited,
+        :streak
+      ]
+
+      primary? true
+      require_atomic? false
+    end
 
     update :update_last_registration_page_visited do
       accept [:last_registration_page_visited]
+      require_atomic? false
     end
 
     read :custom_sign_in do
@@ -258,42 +323,52 @@ defmodule Animina.Accounts.User do
     end
 
     update :validate do
+      require_atomic? false
       change transition_state(:validated)
     end
 
     update :investigate do
+      require_atomic? false
       change transition_state(:under_investigation)
     end
 
     update :ban do
+      require_atomic? false
       change transition_state(:banned)
     end
 
     update :incognito do
+      require_atomic? false
       change transition_state(:incognito)
     end
 
     update :hibernate do
+      require_atomic? false
       change transition_state(:hibernate)
     end
 
     update :archive do
+      require_atomic? false
       change transition_state(:archived)
     end
 
     update :reactivate do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :unban do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :recover do
+      require_atomic? false
       change transition_state(:normal)
     end
 
     update :normalize do
+      require_atomic? false
       change transition_state(:normal)
     end
 
@@ -341,7 +416,7 @@ defmodule Animina.Accounts.User do
   end
 
   code_interface do
-    define_for Accounts
+    domain Accounts
     define :read
     define :create
     define :update
@@ -374,7 +449,7 @@ defmodule Animina.Accounts.User do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
 
              # First user in dev becomes admin by default.
@@ -386,7 +461,7 @@ defmodule Animina.Accounts.User do
            end),
            on: [:create]
 
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(Animina.PubSub, record.id, {:user, record})
 
              {:ok, record}
@@ -413,7 +488,7 @@ defmodule Animina.Accounts.User do
   end
 
   authentication do
-    api Accounts
+    domain Accounts
 
     strategies do
       password :password do

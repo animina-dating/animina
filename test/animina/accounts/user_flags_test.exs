@@ -3,7 +3,7 @@ defmodule Animina.Accounts.UserFlagsTest do
   require Ash.Query
   alias Animina.Traits
 
-  alias Animina.Accounts.BasicUser
+  alias Animina.Accounts.User
 
   alias Animina.Traits.Category
   alias Animina.Traits.Flag
@@ -33,7 +33,7 @@ defmodule Animina.Accounts.UserFlagsTest do
 
   defp create_user do
     {:ok, user} =
-      BasicUser.create(%{
+      User.create(%{
         email: "bob@example.com",
         username: "bob",
         name: "Bob",
@@ -82,7 +82,7 @@ defmodule Animina.Accounts.UserFlagsTest do
   def opposite_color_flags_selected(user_id, color, flag_id) do
     Traits.UserFlags
     |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: color})
-    |> Traits.read!()
+    |> Ash.read!()
     |> Enum.map(& &1.flag_id)
     |> Enum.filter(&(&1 != flag_id))
   end

@@ -3,9 +3,13 @@ defmodule Animina.GeoData do
   This is the GeoData module.
   """
 
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Animina.GeoData.City
+  end
+
+  authorization do
+    authorize :when_requested
   end
 end

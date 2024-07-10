@@ -4,7 +4,8 @@ defmodule Animina.Accounts.Role do
   """
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts
 
   attributes do
     uuid_primary_key :id
@@ -19,11 +20,19 @@ defmodule Animina.Accounts.Role do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :name
+      ]
+
+      primary? true
+    end
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :by_name, get_by: [:name], action: :read

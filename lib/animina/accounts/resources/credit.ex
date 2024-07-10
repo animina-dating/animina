@@ -7,7 +7,8 @@ defmodule Animina.Accounts.Credit do
   alias Phoenix.PubSub
 
   use Ash.Resource,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts
 
   attributes do
     uuid_primary_key :id
@@ -31,7 +32,18 @@ defmodule Animina.Accounts.Credit do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :points,
+        :user_id,
+        :subject,
+        :donor_id
+      ]
+
+      primary? true
+    end
 
     read :profile_view_credits_by_donor_and_user do
       argument :donor_id, :uuid do
@@ -47,7 +59,7 @@ defmodule Animina.Accounts.Credit do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :by_id, get_by: [:id], action: :read
@@ -55,7 +67,7 @@ defmodule Animina.Accounts.Credit do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                record.user_id,

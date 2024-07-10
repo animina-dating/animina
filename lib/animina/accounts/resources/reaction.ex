@@ -10,6 +10,7 @@ defmodule Animina.Accounts.Reaction do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
   attributes do
@@ -60,12 +61,15 @@ defmodule Animina.Accounts.Reaction do
     end
 
     destroy :unlike do
+      require_atomic? false
     end
 
     destroy :unblock do
+      require_atomic? false
     end
 
     destroy :unhide do
+      require_atomic? false
     end
 
     create :block do
@@ -111,7 +115,7 @@ defmodule Animina.Accounts.Reaction do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :like
     define :unlike
@@ -128,7 +132,7 @@ defmodule Animina.Accounts.Reaction do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                record.sender_id,
@@ -146,7 +150,7 @@ defmodule Animina.Accounts.Reaction do
            on: [:create, :destroy]
 
     change after_transaction(fn
-             _changeset, {:ok, result} ->
+             _changeset, {:ok, result}, _context ->
                if result.name == :like do
                  Bookmark.like(
                    %{
@@ -159,13 +163,13 @@ defmodule Animina.Accounts.Reaction do
 
                {:ok, result}
 
-             _changeset, {:error, error} ->
+             _changeset, {:error, error}, _context ->
                {:error, error}
            end),
            on: :create
 
     change after_transaction(fn
-             _changeset, {:ok, result} ->
+             _changeset, {:ok, result}, _context ->
                if result.name == :like do
                  case Bookmark.by_owner_user_and_reason(
                         result.sender_id,
@@ -183,7 +187,7 @@ defmodule Animina.Accounts.Reaction do
 
                {:ok, result}
 
-             _changeset, {:error, error} ->
+             _changeset, {:error, error}, _context ->
                {:error, error}
            end),
            on: :destroy

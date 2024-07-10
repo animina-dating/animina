@@ -165,7 +165,7 @@ defmodule AniminaWeb.DashboardLive do
 
   defp create_message_form do
     Form.for_create(Message, :create,
-      api: Accounts,
+      domain: Accounts,
       as: "message",
       forms: [auto?: true]
     )
@@ -176,10 +176,10 @@ defmodule AniminaWeb.DashboardLive do
   def handle_params(_params, url, socket) do
     case URI.parse(url) do
       %URI{path: "/my/"} ->
-        {:noreply, socket |> push_redirect(to: "/my/dashboard")}
+        {:noreply, socket |> push_navigate(to: "/my/dashboard")}
 
       %URI{path: "/my"} ->
-        {:noreply, socket |> push_redirect(to: "/my/dashboard")}
+        {:noreply, socket |> push_navigate(to: "/my/dashboard")}
 
       _ ->
         {:noreply, socket}
@@ -200,7 +200,7 @@ defmodule AniminaWeb.DashboardLive do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,
        socket
-       |> push_redirect(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
     else
       {:noreply,
        socket
@@ -493,7 +493,7 @@ defmodule AniminaWeb.DashboardLive do
         |> Ash.Query.filter(gender == "female")
         |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
         |> Ash.Query.limit(4)
-        |> Accounts.read!()
+        |> Ash.read!()
 
       _ ->
         User
@@ -501,7 +501,7 @@ defmodule AniminaWeb.DashboardLive do
         |> Ash.Query.filter(gender == "male")
         |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
         |> Ash.Query.limit(4)
-        |> Accounts.read!()
+        |> Ash.read!()
     end
   end
 

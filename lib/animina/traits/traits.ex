@@ -3,7 +3,7 @@ defmodule Animina.Traits do
   This is the Traits module.
   """
 
-  use Ash.Api
+  use Ash.Domain
 
   resources do
     resource Animina.Traits.Category
@@ -11,5 +11,9 @@ defmodule Animina.Traits do
     resource Animina.Traits.Flag
     resource Animina.Traits.FlagTranslation
     resource Animina.Traits.UserFlags
+  end
+
+  authorization do
+    authorize :when_requested
   end
 end

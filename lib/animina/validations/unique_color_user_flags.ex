@@ -15,7 +15,7 @@ defmodule Animina.Validations.UniqueColorUserFlags do
   end
 
   @impl true
-  def validate(changeset, opts) do
+  def validate(changeset, opts, _context) do
     user_id = Ash.Changeset.get_attribute(changeset, opts[:user_id])
     color = Ash.Changeset.get_attribute(changeset, opts[:color])
     flag_id = Ash.Changeset.get_attribute(changeset, opts[:flag_id])
@@ -28,9 +28,11 @@ defmodule Animina.Validations.UniqueColorUserFlags do
 
   defp get_selected_opposite_color_flags_for_user(user_id, color, flag_id) do
     Traits.UserFlags
-    |> Ash.Query.for_read(:by_user_id, %{id: user_id, color: get_opposite_color(color)})
-    |> Traits.read!()
-    |> Enum.filter(fn user_flag -> user_flag.flag_id == flag_id end)
+    |> Ash.Query.for_read(:by_user_id, %{id: user_id})
+    |> Ash.read!()
+    |> Enum.filter(fn user_flag ->
+      user_flag.flag_id == flag_id and user_flag.color == get_opposite_color(color)
+    end)
   end
 
   defp get_opposite_color(color) do

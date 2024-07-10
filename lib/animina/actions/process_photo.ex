@@ -4,8 +4,6 @@ defmodule Animina.Actions.ProcessPhoto do
   """
   use Ash.Resource.ManualUpdate
 
-  alias Animina.Accounts
-
   require Logger
 
   @impl true
@@ -53,11 +51,11 @@ defmodule Animina.Actions.ProcessPhoto do
       if normal_label_score > nsfw_label_score do
         photo
         |> Ash.Changeset.for_update(:approve, %{})
-        |> Accounts.update(authorize?: false)
+        |> Ash.update(authorize?: false)
       else
         photo
         |> Ash.Changeset.for_update(:nsfw, %{})
-        |> Accounts.update(authorize?: false)
+        |> Ash.update(authorize?: false)
       end
 
       {:ok, changeset.data}
@@ -77,7 +75,7 @@ defmodule Animina.Actions.ProcessPhoto do
   defp update_photo_to_in_review(photo) do
     photo
     |> Ash.Changeset.for_update(:review, %{})
-    |> Accounts.update(authorize?: false)
+    |> Ash.update(authorize?: false)
   end
 
   defp get_upload_dir(filename) do

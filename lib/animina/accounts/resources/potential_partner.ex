@@ -4,6 +4,7 @@ defmodule Animina.Accounts.PotentialPartner do
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
   attributes do
@@ -25,13 +26,13 @@ defmodule Animina.Accounts.PotentialPartner do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
 
     belongs_to :potential_partner, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       attribute_writable? true
       allow_nil? false
     end
@@ -81,7 +82,7 @@ defmodule Animina.Accounts.PotentialPartner do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :potential_partners_for_user, args: [:user_id]

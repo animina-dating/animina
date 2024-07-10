@@ -2,10 +2,10 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
-  alias Animina.Accounts
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
+    domain: Animina.Accounts,
     notifiers: [Ash.Notifier.PubSub, Animina.Notifiers.Photo],
     extensions: [AshStateMachine, AshOban]
 
@@ -64,13 +64,31 @@ defmodule Animina.Accounts.Photo do
     end
 
     belongs_to :story, Animina.Narratives.Story do
-      api Animina.Narratives
+      domain Animina.Narratives
       attribute_writable? true
     end
   end
 
   actions do
-    defaults [:create, :update, :destroy]
+    defaults [:destroy]
+
+    create :create do
+      accept [
+        :filename,
+        :original_filename,
+        :mime,
+        :size,
+        :ext,
+        :dimensions,
+        :error,
+        :error_state,
+        :state,
+        :user_id,
+        :story_id
+      ]
+
+      primary? true
+    end
 
     read :read do
       primary? true
@@ -86,41 +104,47 @@ defmodule Animina.Accounts.Photo do
     end
 
     update :review do
+      require_atomic? false
       change transition_state(:in_review)
     end
 
     update :approve do
+      require_atomic? false
       change transition_state(:approved)
     end
 
     update :report do
+      require_atomic? false
       change transition_state(:in_review)
     end
 
     update :reject do
+      require_atomic? false
       change transition_state(:rejected)
     end
 
     update :nsfw do
+      require_atomic? false
       change transition_state(:nsfw)
     end
 
     update :error do
+      require_atomic? false
       accept [:error_state, :error]
       change transition_state(:error)
     end
 
     update :process do
       transaction? false
+      require_atomic? false
       manual Animina.Actions.ProcessPhoto
     end
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
-    define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
   end
@@ -138,7 +162,7 @@ defmodule Animina.Accounts.Photo do
                  error: message,
                  error_state: changeset.data.state
                })
-               |> Accounts.update()
+               |> Ash.update()
            end),
            on: :update
   end

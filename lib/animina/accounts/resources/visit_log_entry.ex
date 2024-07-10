@@ -7,6 +7,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     authorizers: Ash.Policy.Authorizer,
+    domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
   attributes do
@@ -30,18 +31,35 @@ defmodule Animina.Accounts.VisitLogEntry do
 
   relationships do
     belongs_to :user, Animina.Accounts.User do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
 
     belongs_to :bookmark, Animina.Accounts.Bookmark do
-      api Animina.Accounts
+      domain Animina.Accounts
       allow_nil? false
     end
   end
 
   actions do
-    defaults [:create, :read, :update]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :duration,
+        :bookmark_id,
+        :user_id
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [:duration, :bookmark_id, :user_id]
+
+      primary? true
+      require_atomic? false
+    end
 
     read :by_bookmark_id do
       argument :bookmark_id, :uuid do
@@ -61,7 +79,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   end
 
   code_interface do
-    define_for Animina.Accounts
+    domain Animina.Accounts
     define :read
     define :create
     define :update
@@ -71,7 +89,7 @@ defmodule Animina.Accounts.VisitLogEntry do
   end
 
   changes do
-    change after_action(fn changeset, record ->
+    change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
                Animina.PubSub,
                "visit_log_entry:#{record.user_id}",
