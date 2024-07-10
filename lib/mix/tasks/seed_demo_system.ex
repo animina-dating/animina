@@ -9,7 +9,6 @@ if Enum.member?([:dev, :test], Mix.env()) do
     alias Animina.Accounts.Role
     alias Animina.Accounts.User
     alias Animina.Accounts.UserRole
-    alias Animina.Narratives
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
     alias Animina.Traits.Flag

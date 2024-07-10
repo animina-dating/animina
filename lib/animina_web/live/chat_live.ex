@@ -200,15 +200,6 @@ defmodule AniminaWeb.ChatLive do
     reaction
   end
 
-  defp message_belongs_to_current_user_or_profile(message, current_user, profile) do
-    if (message.sender_id == current_user.id and message.receiver_id == profile.id) or
-         (message.sender_id == profile.id and message.receiver_id == current_user.id) do
-      true
-    else
-      false
-    end
-  end
-
   defp get_page_title(message, sender, receiver) do
     # if I am the one who has received the new message it should add the chat icon
     if message.receiver_id == sender.id do

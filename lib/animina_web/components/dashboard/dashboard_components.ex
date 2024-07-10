@@ -7,8 +7,6 @@ defmodule AniminaWeb.DashboardComponents do
   alias Animina.StringHelper
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
-  import Phoenix.HTML
-  import Phoenix.HTML.Form
   use PhoenixHTMLHelpers
 
   attr :title, :string, required: true

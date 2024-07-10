@@ -61,12 +61,15 @@ defmodule Animina.Accounts.Reaction do
     end
 
     destroy :unlike do
+      require_atomic? false
     end
 
     destroy :unblock do
+      require_atomic? false
     end
 
     destroy :unhide do
+      require_atomic? false
     end
 
     create :block do

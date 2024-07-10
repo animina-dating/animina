@@ -95,7 +95,6 @@ defmodule Animina.Narratives.Story do
 
       argument :user_id, :uuid do
         allow_nil? false
-
       end
 
       prepare build(load: [:headline, :photo, :user])
@@ -110,7 +109,6 @@ defmodule Animina.Narratives.Story do
 
       argument :user_id, :uuid do
         allow_nil? false
-
       end
 
       prepare build(load: [:headline, :photo, :user])

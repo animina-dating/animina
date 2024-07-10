@@ -2,7 +2,6 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
-  alias Animina.Accounts
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -78,20 +77,18 @@ defmodule Animina.Accounts.Photo do
         :filename,
         :original_filename,
         :mime,
-        :size ,
-        :ext ,
+        :size,
+        :ext,
         :dimensions,
-        :error ,
+        :error,
         :error_state,
         :state,
-        :user_id ,
+        :user_id,
         :story_id
-
       ]
 
       primary? true
     end
-
 
     read :read do
       primary? true

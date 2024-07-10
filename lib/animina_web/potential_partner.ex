@@ -5,9 +5,7 @@ defmodule AniminaWeb.PotentialPartner do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
-  alias Animina.GeoData
   alias Animina.GeoData.City
-  alias Animina.Traits
   alias Animina.Traits.UserFlags
 
   require Ash.Query

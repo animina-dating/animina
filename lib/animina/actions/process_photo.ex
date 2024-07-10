@@ -4,8 +4,6 @@ defmodule Animina.Actions.ProcessPhoto do
   """
   use Ash.Resource.ManualUpdate
 
-  alias Animina.Accounts
-
   require Logger
 
   @impl true

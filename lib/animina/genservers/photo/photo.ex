@@ -6,7 +6,6 @@ defmodule Animina.GenServers.Photo do
   use GenStage
 
   require Ash.Query
-  alias Animina.Accounts
   alias Animina.Accounts.Photo
 
   @doc """

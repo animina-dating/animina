@@ -2,7 +2,7 @@ defmodule Animina.Accounts.Report do
   @moduledoc """
   This is the Report module which we use to manage reports.
   """
-  alias Animina.Accounts.BasicUser
+
   alias Animina.Accounts.User
 
   use Ash.Resource,

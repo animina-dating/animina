@@ -1,7 +1,5 @@
 defmodule AniminaWeb.AuthLive.AuthForm do
   use AniminaWeb, :live_component
-  import Phoenix.HTML
-  import Phoenix.HTML.Form
   use PhoenixHTMLHelpers
 
   alias AshPhoenix.Form

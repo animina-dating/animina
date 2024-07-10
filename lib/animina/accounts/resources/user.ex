@@ -257,30 +257,31 @@ defmodule Animina.Accounts.User do
     end
 
     update :update do
-      accept [ :email,
-      :username,
-      :name,
-      :zip_code,
-      :birthday,
-      :height,
-      :hashed_password,
-      :language,
-      :gender,
-      :mobile_phone,
-      :legal_terms_accepted,
-      :occupation,
-      :preapproved_communication_only,
-      :state,
-      :minimum_partner_height,
-      :maximum_partner_height,
-      :minimum_partner_age,
-      :maximum_partner_age,
-      :partner_gender,
-      :search_range,
-      :is_private,
-      :last_registration_page_visited,
-      :streak
-    ]
+      accept [
+        :email,
+        :username,
+        :name,
+        :zip_code,
+        :birthday,
+        :height,
+        :hashed_password,
+        :language,
+        :gender,
+        :mobile_phone,
+        :legal_terms_accepted,
+        :occupation,
+        :preapproved_communication_only,
+        :state,
+        :minimum_partner_height,
+        :maximum_partner_height,
+        :minimum_partner_age,
+        :maximum_partner_age,
+        :partner_gender,
+        :search_range,
+        :is_private,
+        :last_registration_page_visited,
+        :streak
+      ]
 
       primary? true
       require_atomic? false

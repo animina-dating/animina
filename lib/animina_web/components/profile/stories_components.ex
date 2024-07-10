@@ -37,7 +37,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :story, :any, required: true
   attr :photo, :any, required: false
   attr :dom_id, :any, required: false
-  attr :flags, :list, required: true
+  attr :flags, :list, required: false
   attr :current_user, :any, required: true
   attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
