@@ -18,7 +18,34 @@ defmodule Animina.GeoData.City do
   end
 
   actions do
-    defaults [:read, :create, :update, :destroy]
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :name,
+        :zip_code,
+        :county,
+        :federal_state,
+        :lat,
+        :lon
+      ]
+
+      primary? true
+    end
+
+    update :update do
+      accept [
+        :name,
+        :zip_code,
+        :county,
+        :federal_state,
+        :lat,
+        :lon
+      ]
+
+      primary? true
+      require_atomic? false
+    end
   end
 
   code_interface do
