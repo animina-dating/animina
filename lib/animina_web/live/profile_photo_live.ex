@@ -161,7 +161,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
       />
 
       <h2 class="text-xl dark:text-white font-bold">
-        <%= gettext("Select or use camera to take a photo") %>
+        <%= gettext("Upload an avatar photo for your account") %>
       </h2>
 
       <.form
