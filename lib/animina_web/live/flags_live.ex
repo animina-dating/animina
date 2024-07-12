@@ -4,6 +4,7 @@ defmodule AniminaWeb.FlagsLive do
 
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Narratives.Story
   alias Animina.Traits
   alias Animina.Traits.UserFlags
   alias AniminaWeb.SelectFlagsComponent
@@ -77,7 +78,7 @@ defmodule AniminaWeb.FlagsLive do
     socket
     |> assign(page_title: gettext("Select your red flags"))
     |> assign(color: :red)
-    |> assign(navigate_to: "/my/about-me")
+    |> assign(navigate_to: redirect_url(current_user))
     |> assign(title: gettext("Choose Your Red Flags"))
     |> assign(
       info_text:
@@ -311,6 +312,31 @@ defmodule AniminaWeb.FlagsLive do
 
       _ ->
         []
+    end
+  end
+
+  defp user_has_an_about_me_story?(user) do
+    case get_stories_for_a_user(user) do
+      [] ->
+        false
+
+      stories ->
+        Enum.any?(stories, fn story ->
+          story.headline.subject == "About me"
+        end)
+    end
+  end
+
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+    stories
+  end
+
+  defp redirect_url(user) do
+    if user_has_an_about_me_story?(user) do
+      "/#{user.username}"
+    else
+      "/my/about-me"
     end
   end
 
