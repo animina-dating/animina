@@ -97,6 +97,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
             :selected_flags,
             selected_flags
           )
+          |> assign(:user_flags, user_flags)
           |> assign(:can_select, can_select)
 
         _ ->
@@ -163,6 +164,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
 
             }
           >
+
             <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
             <%= get_translation(flag.flag_translations, @language) %>
 
@@ -170,7 +172,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
               :if={Map.get(@selected_flags, flag.id) != nil}
               class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
             >
-              <%= get_flag_index(@selected_flags, @user_flags, flag.id) %>
+              <%= get_flag_index(@user_flags, flag.id) %>
             </span>
 
             <%= if Enum.member?(@opposite_color_flags_selected, flag.id) do %>
@@ -221,10 +223,10 @@ defmodule AniminaWeb.SelectFlagsComponent do
     "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
   end
 
-  defp get_flag_index(selected_flags, flags, flag_id) do
+  defp get_flag_index(flags, flag_id) do
     case Enum.find_index(flags, fn id -> id == flag_id end) do
-      nil -> 1
-      index -> index + 1
+      nil -> length(flags) + 1
+      index -> index
     end
   end
 
