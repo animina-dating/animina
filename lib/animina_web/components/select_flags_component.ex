@@ -3,25 +3,66 @@ defmodule AniminaWeb.SelectFlagsComponent do
   This component renders flags which a user can click on.
   """
   use AniminaWeb, :live_component
+  alias Animina.Traits.UserFlags
+  @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
 
   @impl true
   def mount(socket) do
-    {:ok, socket |> assign(selected_flags: %{})}
+    {:ok, socket |> assign(max_selected: @max_flags) |> assign(selected_flags: %{})}
   end
 
   @impl true
   def update(assigns, socket) do
+    user_flags =
+      filter_flags(assigns.current_user, assigns.color)
+      |> Enum.map(fn trait -> trait.flag.id end)
+
     selected_flags =
-      Enum.reduce(assigns.user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
+      Enum.reduce(user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
         Map.put_new(acc, flag_id, %{})
       end)
+
+    opposite_color_flags_selected =
+      filter_flags(assigns.current_user, opposite_color(assigns.color))
+      |> Enum.map(fn trait -> trait.flag.id end)
 
     socket =
       socket
       |> assign(assigns)
+      |> assign(opposite_color_flags_selected: opposite_color_flags_selected)
+      |> assign(user_flags: user_flags)
       |> assign(selected_flags: selected_flags)
 
     {:ok, socket}
+  end
+
+  defp opposite_color(:red) do
+    :green
+  end
+
+  defp opposite_color(:green) do
+    :red
+  end
+
+  defp opposite_color(:white) do
+    :white
+  end
+
+  def filter_flags(_) do
+    :white
+  end
+
+  defp filter_flags(current_user, color) do
+    case UserFlags.by_user_id(current_user.id) do
+      {:ok, traits} ->
+        traits
+        |> Enum.filter(fn trait ->
+          trait.color == color
+        end)
+
+      _ ->
+        []
+    end
   end
 
   @impl true
@@ -38,21 +79,40 @@ defmodule AniminaWeb.SelectFlagsComponent do
         nil ->
           send(self(), {:flag_selected, flag_id})
 
-          socket
-          |> assign(
-            :selected_flags,
+          selected_flags =
             Map.merge(socket.assigns.selected_flags, %{
               "#{flag_id}" => %{
                 "id" => flag_id,
                 "name" => flag
               }
             })
+
+          selected = map_size(selected_flags)
+
+          can_select = selected < socket.assigns.max_selected
+          user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
+
+          socket
+          |> assign(
+            :selected_flags,
+            selected_flags
           )
+          |> assign(:can_select, can_select)
 
         _ ->
           send(self(), {:flag_unselected, flag_id})
 
+          user_flags = List.delete(socket.assigns.user_flags, flag_id)
+
+          selected_flags =
+            Map.drop(socket.assigns.selected_flags, [flag_id])
+
+          selected = map_size(selected_flags)
+          can_select = selected < socket.assigns.max_selected
+
           socket
+          |> assign(:user_flags, user_flags)
+          |> assign(:can_select, can_select)
           |> assign(
             :selected_flags,
             Map.drop(socket.assigns.selected_flags, [flag_id])
@@ -110,7 +170,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
               :if={Map.get(@selected_flags, flag.id) != nil}
               class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
             >
-              <%= get_flag_index(@user_flags, flag.id) %>
+              <%= get_flag_index(@selected_flags, @user_flags, flag.id) %>
             </span>
 
             <%= if Enum.member?(@opposite_color_flags_selected, flag.id) do %>
@@ -161,7 +221,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
     "cursor-not-allowed bg-gray-200 dark:bg-gray-100"
   end
 
-  defp get_flag_index(flags, flag_id) do
+  defp get_flag_index(selected_flags, flags, flag_id) do
     case Enum.find_index(flags, fn id -> id == flag_id end) do
       nil -> 1
       index -> index + 1
