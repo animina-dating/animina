@@ -164,7 +164,6 @@ defmodule AniminaWeb.SelectFlagsComponent do
 
             }
           >
-
             <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
             <%= get_translation(flag.flag_translations, @language) %>
 

@@ -230,19 +230,10 @@ defmodule AniminaWeb.FlagsLive do
     can_select = selected < socket.assigns.max_selected
     user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
 
-    # for category_id <- socket.assigns.categories.result do
-    #   send_update(SelectFlagsComponent,
-    #     id: "flags_#{category_id}",
-    #     can_select: can_select,
-    #     user_flags: user_flags,
-    #     current_user: socket.assigns.current_user,
-    #     color: socket.assigns.color
-    #   )
-    # end
-
     {:noreply,
      socket
      |> assign(:user_flags, user_flags)
+     |> assign(:can_select, can_select)
      |> assign(:selected, selected)}
   end
 
@@ -252,19 +243,10 @@ defmodule AniminaWeb.FlagsLive do
     can_select = selected < socket.assigns.max_selected
     user_flags = List.delete(socket.assigns.user_flags, flag_id)
 
-    # for category_id <- socket.assigns.categories.result do
-    #   send_update(SelectFlagsComponent,
-    #     id: "flags_#{category_id}",
-    #     can_select: can_select,
-    #     user_flags: user_flags,
-    #     current_user: socket.assigns.current_user,
-    #     color: socket.assigns.color
-    #   )
-    # end
-
     {:noreply,
      socket
      |> assign(:user_flags, user_flags)
+      |> assign(:can_select, can_select)
      |> assign(:selected, selected)}
   end
 
