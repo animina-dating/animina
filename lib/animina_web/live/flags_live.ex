@@ -246,7 +246,7 @@ defmodule AniminaWeb.FlagsLive do
     {:noreply,
      socket
      |> assign(:user_flags, user_flags)
-      |> assign(:can_select, can_select)
+     |> assign(:can_select, can_select)
      |> assign(:selected, selected)}
   end
 
