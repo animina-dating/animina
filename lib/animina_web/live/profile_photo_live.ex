@@ -5,6 +5,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Animina.Accounts.Photo
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -121,7 +122,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
              :form,
              Form.for_create(Photo, :create, domain: Accounts, as: "photo")
            )
-           |> push_navigate(to: ~p"/my/flags/white")}
+           |> push_navigate(to: redirect_url_if_user_has_flags(socket.assigns.current_user))}
         else
           {:error, form} ->
             {:noreply, socket |> assign(:form, form)}
@@ -143,6 +144,20 @@ defmodule AniminaWeb.ProfilePhotoLive do
      )}
   end
 
+  @impl true
+  def handle_event("delete_photo", _, socket) do
+    photo = socket.assigns.current_user.profile_photo
+
+    Photo.destroy(photo)
+
+    current_user = User.by_id!(socket.assigns.current_user.id)
+
+    {:noreply,
+     socket
+     |> assign(current_user: current_user)
+     |> put_flash(:info, gettext("Profile photo deleted successfully"))}
+  end
+
   defp user_states_to_be_auto_logged_out do
     [
       :under_investigation,
@@ -151,18 +166,49 @@ defmodule AniminaWeb.ProfilePhotoLive do
     ]
   end
 
+  defp redirect_url_if_user_has_flags(current_user) do
+    if get_user_flags(current_user) == [] do
+      "/my/flags/white"
+    else
+      "/#{current_user.username}"
+    end
+  end
+
+  defp get_user_flags(current_user) do
+    case UserFlags.by_user_id(current_user.id) do
+      {:ok, traits} ->
+        traits
+
+      _ ->
+        []
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
     <div class="px-5 space-y-10">
-      <.notification_box
-        title={gettext("Hello %{name}!", name: @current_user.name)}
-        message={gettext("To complete your profile upload a profile photo")}
-      />
+      <%= if @current_user.profile_photo == nil do %>
+        <.notification_box
+          title={gettext("Hello %{name}!", name: @current_user.name)}
+          message={gettext("To complete your profile upload a profile photo")}
+        />
+      <% else %>
+        <.notification_box
+          title={gettext("Hello %{name}!", name: @current_user.name)}
+          message={gettext("Update your profile photo")}
+        />
+      <% end %>
 
-      <h2 class="text-xl dark:text-white font-bold">
-        <%= gettext("Upload an avatar photo for your account") %>
-      </h2>
+      <%= if @current_user.profile_photo == nil do %>
+        <h2 class="text-xl dark:text-white font-bold">
+          <%= gettext("Upload an avatar photo for your account") %>
+        </h2>
+      <% else %>
+        <h2 class="text-xl dark:text-white font-bold">
+          <%= gettext("Update your avatar photo for your account") %>
+        </h2>
+      <% end %>
 
       <.form
         :let={f}
@@ -187,7 +233,12 @@ defmodule AniminaWeb.ProfilePhotoLive do
         >
           <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
-          <p class="text-sm dark:text-white">Upload or drag & drop your photo file JPG, JPEG, PNG</p>
+          <p if={@current_user.profile_photo == nil} class="text-sm dark:text-white">
+            <%= gettext("Upload or drag & drop your photo file JPG, JPEG, PNG") %>
+          </p>
+          <p if={@current_user.profile_photo != nil} class="text-sm dark:text-white">
+            <%= gettext("Update your profile photo & drop your photo file JPG, JPEG, PNG") %>
+          </p>
         </div>
 
         <%= for entry <- @uploads.photos.entries do %>
@@ -234,6 +285,41 @@ defmodule AniminaWeb.ProfilePhotoLive do
             </ul>
           </div>
         <% end %>
+
+        <div
+          :if={@current_user.profile_photo != nil && @uploads.photos.entries == []}
+          class="w-full space-y-2"
+        >
+          <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+            <%= gettext("Current Photo") %>
+          </p>
+          <div class="w-[100%] h-200 relative">
+            <p
+              data-confirm={gettext("Are you sure you want to delete this photo?")}
+              phx-click="delete_photo"
+              class="bg-red-500 cursor-pointer text-white absolute right-4 top-4 z-10 md:w-[50px] md:h-[50px] w-[30px] h-[30px] flex justify-center items-center rounded-md"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                class="p-2"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </p>
+
+            <img
+              class="object-cover h-[100%]  drop-shadow border w-[100%] rounded-lg"
+              src={"/uploads/#{@current_user.profile_photo.filename}"}
+            />
+          </div>
+        </div>
 
         <div>
           <%= submit(gettext("Upload"),

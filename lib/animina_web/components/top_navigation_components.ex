@@ -163,6 +163,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
               <%= StringHelper.truncate_username(@current_user.username) %>
             </p>
           </div>
+          <.link class="px-2" navigate="/my/profile-photo">
+            <%= gettext("Change Profile Photo") %>
+          </.link>
           <.link class="px-2" navigate="/my/flags/white">
             <%= gettext("Edit White Flags") %>
           </.link>
