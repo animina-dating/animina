@@ -163,6 +163,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
               <%= StringHelper.truncate_username(@current_user.username) %>
             </p>
           </div>
+
+          <.link
+            class=" border-b-[0.5px] px-2 pb-2 border-gray-100"
+            navigate={"/#{@current_user.username}"}
+          >
+            <%= gettext("Show Profile") %>
+          </.link>
           <.link class="px-2" navigate="/my/profile-photo">
             <%= gettext("Change Profile Photo") %>
           </.link>
@@ -211,7 +218,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div class="flex flex-col gap-2 p-4">
       <div :if={@current_user} class="flex flex-col gap-2">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
+
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.user_profile_item
@@ -239,7 +246,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
       <div :if={@current_user} class="flex flex-col gap-2 p-4">
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.profile_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.user_profile_item
