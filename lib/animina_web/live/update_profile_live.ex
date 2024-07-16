@@ -1,88 +1,65 @@
-defmodule AniminaWeb.RootLive do
+defmodule AniminaWeb.UpdateProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
+  alias Animina.Accounts.Points
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
+  alias Phoenix.PubSub
 
-  @impl true
-  def mount(_params, %{"language" => language} = _session, socket) do
+  def mount(_params, %{"language" => language}, socket) do
+    subscribe(socket)
+
     socket =
       socket
+      |> assign(active_tab: :home)
+      |> assign(
+        :form,
+        Form.for_update(socket.assigns.current_user, :update, domain: Accounts, as: "user")
+        |> to_form()
+      )
       |> assign(language: language)
-      |> assign(current_user: nil)
-      |> assign(trigger_action: false)
-      |> assign(current_user_credit_points: 0)
-      |> assign(:errors, [])
+      |> assign(
+        page_title: "#{gettext("Update Profile For ")} #{socket.assigns.current_user.name}"
+      )
 
     {:ok, socket}
   end
 
-  @impl true
-  def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-  end
-
-  defp apply_action(socket, :register, params) do
-    socket
-    |> assign(page_title: gettext("Animina dating app"))
-    |> assign(:form_id, "sign-up-form")
-    |> assign(:cta, gettext("Register new account"))
-    |> assign(active_tab: :register)
-    |> assign(page_title: "Animina #{gettext("Register")}")
-    |> assign(:action, get_link("/auth/user/password/register/", params))
-    |> assign(:sign_in_link, get_link("/sign-in/", params))
-    |> assign(:hidden_points, 100)
-    |> assign(
-      :form,
-      Form.for_create(User, :register_with_password, domain: Accounts, as: "user")
-    )
-  end
-
-  defp apply_action(socket, :sign_in, params) do
-    socket
-    |> assign(:form_id, "sign-in-form")
-    |> assign(:cta, gettext("Sign in"))
-    |> assign(active_tab: :sign_in)
-    |> assign(page_title: "Animina #{gettext("Login")}")
-    |> assign(:sign_up_link, get_link("/", params))
-    |> assign(:action, get_link("/auth/user/sign_in/", params))
-    |> assign(
-      :form,
-      Form.for_action(User, :custom_sign_in, domain: Accounts, as: "user")
-    )
-  end
-
-  @impl true
   def handle_event("validate", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user, errors: true)
 
-    {:noreply, socket |> assign(form: form)}
+    {:noreply,
+     socket
+     |> assign(:form, form)}
   end
 
-  @impl true
   def handle_event("submit", %{"user" => user}, socket) do
-    form = Form.validate(socket.assigns.form, user)
+    form =
+      Form.validate(socket.assigns.form, user)
 
-    {:noreply,
-     socket
-     |> assign(:form, form)
-     |> assign(:errors, Form.errors(form))
-     |> assign(:trigger_action, form.valid?)}
+    case Form.submit(form, params: user) do
+      {:ok, user} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, gettext("Profile updated successfully"))
+         |> push_navigate(to: "/#{user.username}")}
+
+      {:error, _} ->
+        {:noreply, socket |> assign(:form, form)}
+    end
   end
 
-  @impl true
-  def handle_info({:display_updated_credits, credits}, socket) do
-    current_user_credit_points =
-      ProfileViewCredits.get_updated_credit_for_current_user(socket.assigns.current_user, credits)
+  defp subscribe(socket) do
+    if connected?(socket) do
+      PubSub.subscribe(Animina.PubSub, "credits")
+      PubSub.subscribe(Animina.PubSub, "messages")
 
-    {:noreply,
-     socket
-     |> assign(current_user_credit_points: current_user_credit_points)}
-  end
-
-  def handle_info({:credit_updated, _updated_credit}, socket) do
-    {:noreply, socket}
+      PubSub.subscribe(
+        Animina.PubSub,
+        "#{socket.assigns.current_user.id}"
+      )
+    end
   end
 
   def handle_info({:new_message, message}, socket) do
@@ -94,33 +71,57 @@ defmodule AniminaWeb.RootLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  def handle_info({:user, current_user}, socket) do
+    if current_user.state in user_states_to_be_auto_logged_out() do
+      {:noreply,
+       socket
+       |> push_navigate(to: "/auth/user/sign-out?auto_log_out=#{current_user.state}")}
+    else
+      {:noreply,
+       socket
+       |> assign(
+         :form,
+         Form.for_update(current_user, :update, domain: Accounts, as: "user")
+         |> to_form()
+       )
+       |> assign(:current_user, current_user)}
+    end
+  end
+
+  def handle_info({:display_updated_credits, credits}, socket) do
+    current_user_credit_points =
+      ProfileViewCredits.get_updated_credit_for_current_user(socket.assigns.current_user, credits)
+      |> Points.humanized_points()
+
+    {:noreply,
+     socket
+     |> assign(current_user_credit_points: current_user_credit_points)}
+  end
+
   @impl true
+  def handle_info({:credit_updated, _updated_credit}, socket) do
+    {:noreply, socket}
+  end
+
+  defp user_states_to_be_auto_logged_out do
+    [
+      :under_investigation,
+      :banned,
+      :archived
+    ]
+  end
+
   def render(assigns) do
     ~H"""
-    <div class="space-y-10 px-5">
-      <%= if @form_id == "sign-up-form" do %>
-        <.notification_box
-          title={gettext("Animina Dating Platform")}
-          message={gettext("Fair, Fast and Free. Join us now!")}
-          avatars_urls={[
-            "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
-            "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
-          ]}
-        />
-      <% end %>
-
-      <%= if @form_id == "sign-in-form" do %>
-        <h1 class="text-4xl dark:text-white font-semibold"><%= gettext("Login") %></h1>
-      <% end %>
+    <div class="flex flex-col gap-3">
+      <h1 class="text-4xl dark:text-white font-semibold">
+        <%= gettext("Update Your Profile") %>
+      </h1>
 
       <.form
         :let={f}
-        :if={@form_id == "sign-up-form"}
-        id="basic_user_form"
         for={@form}
-        action={@action}
-        phx-trigger-action={@trigger_action}
-        method="POST"
+        id="basic_user_update_form"
         class="space-y-6 group "
         phx-change="validate"
         phx-submit="submit"
@@ -186,63 +187,6 @@ defmodule AniminaWeb.RootLive do
               </.error>
             </div>
           </div>
-
-          <div>
-            <label
-              for="user_email"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-            >
-              <%= gettext("E-mail address") %>
-            </label>
-            <div phx-feedback-for={f[:email].name} class="mt-2">
-              <%= text_input(f, :email,
-                class:
-                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700  dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                    unless(get_field_errors(f[:email], :email) == [],
-                      do: "ring-red-600 focus:ring-red-600",
-                      else: "ring-gray-300 focus:ring-indigo-600"
-                    ),
-                placeholder: gettext("alice@example.net"),
-                value: f[:email].value,
-                required: true,
-                autocomplete: :email,
-                "phx-debounce": "200"
-              ) %>
-
-              <.error :for={msg <- get_field_errors(f[:email], :email)}>
-                <%= gettext("E-mail address") <> " " <> msg %>
-              </.error>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex items-center justify-between">
-              <label
-                for="user_password"
-                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-              >
-                <%= gettext("Password") %>
-              </label>
-            </div>
-            <div phx-feedback-for={f[:password].name} class="mt-2">
-              <%= password_input(f, :password,
-                class:
-                  "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                    unless(get_field_errors(f[:password], :password) == [],
-                      do: "ring-red-600 focus:ring-red-600",
-                      else: "ring-gray-300 focus:ring-indigo-600"
-                    ),
-                placeholder: gettext("Password"),
-                value: f[:password].value,
-                autocomplete: gettext("new password"),
-                "phx-debounce": "blur"
-              ) %>
-
-              <.error :for={msg <- get_field_errors(f[:password], :password)}>
-                <%= gettext("Password") <> " " <> msg %>
-              </.error>
-            </div>
-          </div>
         </div>
 
         <div>
@@ -285,52 +229,52 @@ defmodule AniminaWeb.RootLive do
           </div>
           <div class="mt-2" phx-no-format>
 
-            <%
-              item_code = "male"
-              item_title = gettext("Male")
-            %>
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, item_code,
-                id: "gender_" <> item_code,
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
-                checked: true
-              ) %>
-              <%= label(f, :gender, item_title,
-                for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
-              ) %>
-            </div>
-
-            <%
-              item_code = "female"
-              item_title = gettext("Female")
-            %>
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, item_code,
-                id: "gender_" <> item_code,
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              ) %>
-              <%= label(f, :gender, item_title,
-                for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
-              ) %>
-            </div>
-
-            <%
-              item_code = "diverse"
-              item_title = gettext("Diverse")
-            %>
-            <div class="flex items-center mb-4">
-              <%= radio_button(f, :gender, item_code,
-                id: "gender_" <> item_code,
-                class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-              ) %>
-              <%= label(f, :gender, item_title,
-                for: "gender_" <> item_code,
-                class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
-              ) %>
-            </div>
+          <%
+            item_code = "male"
+            item_title = gettext("Male")
+          %>
+          <div class="flex items-center mb-4">
+            <%= radio_button(f, :gender, item_code,
+              id: "gender_" <> item_code,
+              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+              checked: true
+            ) %>
+            <%= label(f, :gender, item_title,
+              for: "gender_" <> item_code,
+              class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
+            ) %>
           </div>
+
+          <%
+            item_code = "female"
+            item_title = gettext("Female")
+          %>
+          <div class="flex items-center mb-4">
+            <%= radio_button(f, :gender, item_code,
+              id: "gender_" <> item_code,
+              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            ) %>
+            <%= label(f, :gender, item_title,
+              for: "gender_" <> item_code,
+              class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
+            ) %>
+          </div>
+
+          <%
+            item_code = "diverse"
+            item_title = gettext("Diverse")
+          %>
+          <div class="flex items-center mb-4">
+            <%= radio_button(f, :gender, item_code,
+              id: "gender_" <> item_code,
+              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            ) %>
+            <%= label(f, :gender, item_title,
+              for: "gender_" <> item_code,
+              class: "ml-3 block text-sm font-medium dark:text-white text-gray-700"
+            ) %>
+          </div>
+        </div>
         </div>
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
           <div>
@@ -431,9 +375,7 @@ defmodule AniminaWeb.RootLive do
                 class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
               >
                 <%= gettext("Mobile phone number") %>
-                <span class="text-gray-400 dark:text-gray-100">
-                  (<%= gettext("to receive a verification code") %>)
-                </span>
+                <span class="text-gray-400 dark:text-gray-100"></span>
               </label>
             </div>
             <div phx-feedback-for={f[:mobile_phone].name} class="mt-2">
@@ -470,121 +412,17 @@ defmodule AniminaWeb.RootLive do
               "phx-debounce": "200"
             ) %>
           </div>
-          <div class="text-sm leading-6">
-            <label for="comments" class="font-medium dark:text-white text-gray-900">
-              <%= gettext("I accept the legal terms of animina.") %>
-            </label>
-            <p class=" dark:text-gray-100 text-gray-500">
-              <%= gettext("Warning: We will sell your data to the devel and Santa Claus.") %>
-            </p>
-            <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
-              <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
-            </.error>
-          </div>
         </div>
 
         <div>
-          <.link navigate={@sign_in_link}>
-            <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
-              <%= gettext("Already have an account? Sign in") %>
-            </p>
-          </.link>
-        </div>
-
-        <div>
-          <%= submit(@cta,
+          <%= submit(gettext("Save Profile Details"),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.valid? == false,
+                unless(@form.errors != [],
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.valid? == false
-          ) %>
-        </div>
-      </.form>
-
-      <.form
-        :let={f}
-        :if={@form_id == "sign-in-form"}
-        id="basic_user_sign_in_form"
-        for={@form}
-        action={@action}
-        phx-trigger-action={@trigger_action}
-        method="POST"
-        class="space-y-6 group"
-        phx-change="validate"
-        phx-submit="submit"
-      >
-        <div>
-          <label
-            for="user_email"
-            class="block text-sm font-medium  leading-6 dark:text-white text-gray-900"
-          >
-            <%= gettext("E-mail address or Username") %>
-          </label>
-          <div phx-feedback-for={f[:username_or_email].name} class="mt-2">
-            <%= text_input(f, :username_or_email,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white  shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:username_or_email], :username_or_email) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("alice@example.net or alice"),
-              value: f[:username_or_email].value,
-              required: true,
-              autocomplete: :username_or_email,
-              "phx-debounce": "200"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:username_or_email], :username_or_email)}>
-              <%= gettext("E-mail address") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <div class="flex items-center justify-between">
-            <label
-              for="user_password"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
-            >
-              <%= gettext("Password") %>
-            </label>
-          </div>
-          <div phx-feedback-for={f[:password].name} class="mt-2">
-            <%= password_input(f, :password,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 dark:bg-gray-700 dark:text-white ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:password], :password) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: gettext("Password"),
-              value: f[:password].value,
-              autocomplete: gettext("new password"),
-              "phx-debounce": "blur"
-            ) %>
-
-            <.error :for={msg <- get_field_errors(f[:password], :password)}>
-              <%= gettext("Password") <> " " <> msg %>
-            </.error>
-          </div>
-        </div>
-
-        <div>
-          <.link navigate={@sign_up_link}>
-            <p class="block text-sm leading-6 transition-all duration-500 ease-in-out text-blue-600  hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-              <%= gettext("Don't have an account? Sign up") %>
-            </p>
-          </.link>
-        </div>
-
-        <div>
-          <%= submit(@cta,
-            class:
-              "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+            disabled: @form.errors != []
           ) %>
         </div>
       </.form>
@@ -594,13 +432,5 @@ defmodule AniminaWeb.RootLive do
 
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
-  end
-
-  defp get_link(route, params) do
-    if params == %{} do
-      route
-    else
-      "#{route}?#{URI.encode_query(params)}"
-    end
   end
 end
