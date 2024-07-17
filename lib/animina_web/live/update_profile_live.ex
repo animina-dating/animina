@@ -7,6 +7,7 @@ defmodule AniminaWeb.UpdateProfileLive do
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
+  @impl true
   def mount(_params, %{"language" => language}, socket) do
     subscribe(socket)
 
@@ -26,6 +27,7 @@ defmodule AniminaWeb.UpdateProfileLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_event("validate", %{"user" => user}, socket) do
     form = Form.validate(socket.assigns.form, user, errors: true)
 
@@ -111,6 +113,7 @@ defmodule AniminaWeb.UpdateProfileLive do
     ]
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-3">

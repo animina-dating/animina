@@ -171,6 +171,67 @@ defmodule Animina.Accounts.ReportTest do
 
       assert Enum.count(reports_in_database) == 1
     end
+
+    test "update/2 updates a report , if the state is accepted , the user acccused is banned", %{
+      user_one: user_one,
+      user_two: user_two
+    } do
+      valid_attrs = %{
+        "state" => :pending,
+        "accused_user_state" => user_two.state,
+        "accused_id" => user_two.id,
+        "accuser_id" => user_one.id,
+        "description" => "This is a test report"
+      }
+
+      assert {:ok, report} = Report.create(valid_attrs)
+
+      accused_user = User.by_id!(user_two.id)
+
+      assert {:ok, report} =
+               Report.update(report, %{
+                 "state" => :accepted,
+                 "admin_id" => user_one.id,
+                 "internal_memo" => "This is a test internal memo"
+               })
+
+      accused_user_after_report_is_accepted = User.by_id!(user_two.id)
+
+      assert accused_user.state == :under_investigation
+      assert accused_user_after_report_is_accepted.state == :banned
+      assert report.state == :accepted
+    end
+
+    test "update/2 updates a report , if the state is accepted , the user acccused is returned to the state they had before",
+         %{
+           user_one: user_one,
+           user_two: user_two
+         } do
+      valid_attrs = %{
+        "state" => :pending,
+        "accused_user_state" => user_two.state,
+        "accused_id" => user_two.id,
+        "accuser_id" => user_one.id,
+        "description" => "This is a test report"
+      }
+
+      assert {:ok, report} = Report.create(valid_attrs)
+
+      accused_user = User.by_id!(user_two.id)
+
+      assert {:ok, report} =
+               Report.update(report, %{
+                 "state" => :denied,
+                 "admin_id" => user_one.id,
+                 "internal_memo" => "This is a test internal memo"
+               })
+
+      accused_user_after_report_is_accepted = User.by_id!(user_two.id)
+
+      assert accused_user.state == :under_investigation
+      assert accused_user_after_report_is_accepted.state == user_two.state
+      assert report.state == :denied
+    end
   end
 
   defp create_user_one do
