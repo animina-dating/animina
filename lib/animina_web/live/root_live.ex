@@ -110,7 +110,7 @@ defmodule AniminaWeb.RootLive do
       <% end %>
 
       <%= if @form_id == "sign-in-form" do %>
-        <h1 class="text-4xl dark:text-white font-semibold">Login</h1>
+        <h1 class="text-4xl dark:text-white font-semibold"><%= gettext("Login") %></h1>
       <% end %>
 
       <.form

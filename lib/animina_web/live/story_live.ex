@@ -3,6 +3,7 @@ defmodule AniminaWeb.StoryLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Photo
+  alias Animina.Accounts.Points
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Narratives
@@ -90,6 +91,7 @@ defmodule AniminaWeb.StoryLive do
   def handle_info({:display_updated_credits, credits}, socket) do
     current_user_credit_points =
       ProfileViewCredits.get_updated_credit_for_current_user(socket.assigns.current_user, credits)
+      |> Points.humanized_points()
 
     {:noreply,
      socket
