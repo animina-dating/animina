@@ -170,6 +170,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
           >
             <%= gettext("Show Profile") %>
           </.link>
+          <.link class="px-2" navigate="/my/profile/edit">
+            <%= gettext("Edit Profile") %>
+          </.link>
           <.link class="px-2" navigate="/my/profile-photo">
             <%= gettext("Change Profile Photo") %>
           </.link>

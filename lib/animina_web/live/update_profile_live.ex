@@ -399,21 +399,6 @@ defmodule AniminaWeb.UpdateProfileLive do
           </div>
         </div>
 
-        <div class="relative flex gap-x-3">
-          <div phx-feedback-for={f[:legal_terms_accepted].name} class="flex h-6 items-center">
-            <%= checkbox(f, :legal_terms_accepted,
-              class:
-                "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              value: f[:legal_terms_accepted].value,
-              "phx-debounce": "200"
-            ) %>
-          </div>
-        </div>
-
         <div>
           <%= submit(gettext("Save Profile Details"),
             class:
