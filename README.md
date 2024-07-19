@@ -112,6 +112,10 @@ By default the server starts with ML features enabled. To disable running ML fea
   * ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
   * For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
 
+## Swoosh Mailbox Server
+
+Use `iex -S mix swoosh.mailbox.server` to start the Swoosh Mailbox Server webpage in development. Go to http://localhost:4000 so see the mailbox.
+
 ## Thoughts about the Frontend
 
 Keep it simple. Let's not use JavaScript everywhere. Better ask sw@wintermeyer-consulting.de first 
