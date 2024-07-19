@@ -82,5 +82,7 @@ config :phoenix_live_view, :debug_heex_annotations, true
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
+config :swoosh, Animina.Mailer, adapter: Swoosh.Adapters.Local
+
 # Debug ash pubsub
 config :ash, :pub_sub, debug?: true
