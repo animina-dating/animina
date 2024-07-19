@@ -40,6 +40,37 @@ defmodule Animina.Accounts.UserTest do
       assert {:ok, _} = User.by_email("bob@example.com")
     end
 
+    test "updated a  user" do
+      assert {:error, _} = User.by_email("bob@example.com")
+
+      assert {:ok, user} =
+               User.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 occupation: "Engineer",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true
+               })
+
+      assert user.occupation =~ "Engineer"
+
+      {:ok, updated_user} =
+        User.update(user, %{
+          occupation: "New Occupation"
+        })
+
+      assert updated_user.occupation =~ "New Occupation"
+
+      assert {:ok, _} = User.by_email("bob@example.com")
+    end
+
     test "does not create a user if they have a bad username" do
       assert {:error, _} =
                User.create(%{
