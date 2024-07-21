@@ -761,8 +761,6 @@ if Enum.member?([:dev, :test], Mix.env()) do
     def create_random_flag(user, color) do
       flag = Flag.read!() |> Enum.take(3) |> Enum.random()
 
-      IO.inspect(flag)
-
       position =
         case UserFlags.read!()
              |> Enum.filter(fn %{user_id: id} -> id == user.id end) do
