@@ -334,9 +334,9 @@ if Enum.member?([:dev, :test], Mix.env()) do
         create_random_flag(user, :white)
       end)
 
-      # create random white flags
+      # create random green flags
       Enum.each(1..Enum.random(5..10), fn _i ->
-        create_random_flag(user, :white)
+        create_random_flag(user, :green)
       end)
 
       # create random red flags
@@ -759,7 +759,9 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     def create_random_flag(user, color) do
-      flag = Flag.read!() |> Enum.take_random(1) |> hd
+      flag = Flag.read!() |> Enum.take(3) |> Enum.random()
+
+      IO.inspect(flag)
 
       position =
         case UserFlags.read!()
