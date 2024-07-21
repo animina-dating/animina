@@ -2,7 +2,6 @@ defmodule AniminaWeb.UpdateProfileLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.Points
-  alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
   alias Phoenix.PubSub
