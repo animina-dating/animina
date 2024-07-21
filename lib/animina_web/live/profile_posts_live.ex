@@ -10,21 +10,21 @@ defmodule AniminaWeb.ProfilePostsLive do
   @impl true
   def mount(
         _params,
-        %{"user_id" => user_id, "current_user" => current_user, "language" => language},
+        %{"user" => user, "current_user" => current_user, "language" => language},
         socket
       ) do
     if connected?(socket) do
-      Phoenix.PubSub.subscribe(Animina.PubSub, "post:created:#{user_id}")
-      Phoenix.PubSub.subscribe(Animina.PubSub, "story:created:#{user_id}")
+      Phoenix.PubSub.subscribe(Animina.PubSub, "post:created:#{user.id}")
+      Phoenix.PubSub.subscribe(Animina.PubSub, "story:created:#{user.id}")
     end
 
     socket =
       socket
       |> assign(language: language)
       |> assign(current_user: current_user)
-      |> assign(user: Accounts.User.by_id!(user_id))
-      |> assign(stories: fetch_stories(user_id))
-      |> stream(:posts, fetch_posts(user_id, current_user))
+      |> assign(user: user)
+      |> assign(stories: fetch_stories(user.id))
+      |> stream(:posts, fetch_posts(user.id, current_user))
 
     {:ok, socket, layout: false}
   end
