@@ -1,4 +1,4 @@
-defmodule AniminaWeb.ReviewReportTest do
+defmodule AniminaWeb.UpdateProfileTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
