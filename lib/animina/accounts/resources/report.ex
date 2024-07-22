@@ -4,6 +4,7 @@ defmodule Animina.Accounts.Report do
   """
 
   alias Animina.Accounts.User
+  alias Animina.UserEmail
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -151,6 +152,8 @@ defmodule Animina.Accounts.Report do
              user = User.by_id!(record.accused_id)
              User.investigate(user)
 
+             send_notification_emaail_to_admin(record.id)
+
              {:ok, record}
            end),
            on: [:create]
@@ -167,6 +170,15 @@ defmodule Animina.Accounts.Report do
 
   preparations do
     prepare build(load: [:accuser, :accused, :admin])
+  end
+
+  defp send_notification_emaail_to_admin(id) do
+    UserEmail.send_email(
+      "Stefan Wintermeyer",
+      "stefan@wintermeyer.de",
+      "New Report on Animina",
+      "Hi Stefan\n\nA new report has been submitted on Animina.\n\n-- \nYou can review the report on https://animina.de/admin/reports/pending/#{id}/review"
+    )
   end
 
   def change_accused_user_state(user, :normal, :accepted) do
