@@ -659,7 +659,7 @@ defmodule AniminaWeb.ProfileLive do
         @socket,
         AniminaWeb.ProfilePostsLive,
         session: %{
-          "user_id" => @user.id,
+          "user" => @user,
           "current_user" => @current_user,
           "language" => @language
         },
