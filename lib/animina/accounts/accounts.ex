@@ -20,6 +20,7 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.VisitLogEntry
     resource Animina.Accounts.Bookmark
     resource Animina.Accounts.UserRole
+    resource Animina.Accounts.OptimizedPhoto
     resource Animina.Traits.UserFlags
     resource Animina.Traits.Flag
     resource Animina.Traits.FlagTranslation
