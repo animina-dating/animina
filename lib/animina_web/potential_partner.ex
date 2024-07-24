@@ -117,7 +117,8 @@ defmodule AniminaWeb.PotentialPartner do
   # defp conditional_partner_age_query(query, minimum_partner_age, nil) do
   #   query
   #   |> Ash.Query.filter(
-  #     fragment("date_part('year', age(current_date, ?))", birthday) >= ^minimum_partner_age
+  # fragment("date_part('year', age(current_date, ?))",
+  # birthday) >= ^minimum_partner_age
   #   )
   # end
 
@@ -176,18 +177,20 @@ defmodule AniminaWeb.PotentialPartner do
   # near the current city in the search range radius
   # defp get_nearby_cities(zip_code, search_range) do
   #   current_city = City.by_zip_code!(zip_code)
-
-  #   City
-  #   |> Ash.Query.filter(
-  #     fragment(
-  #       "acos(sin(radians(?)) * sin(radians(lat)) + cos(radians(?)) * cos(radians(lat)) * cos(radians(?) - radians(lon))) * 6731 <= ?",
-  #       ^current_city.lat,
-  #       ^current_city.lat,
-  #       ^current_city.lon,
-  #       ^search_range
-  #     )
+  #
+  # City
+  # |> Ash.Query.filter(
+  #   fragment(
+  #     "acos(sin(radians(?)) * sin(radians(lat)) +
+  #     cos(radians(?)) * cos(radians(lat)) *
+  #     cos(radians(?) - radians(lon))) * 6731 <= ?",
+  #     ^current_city.lat,
+  #     ^current_city.lat,
+  #     ^current_city.lon,
+  #     ^search_range
   #   )
-  #   |> Ash.read!()
+  # )
+  # |> Ash.read!()
   # end
 
   # defp get_user_flags(user_id, color) do
