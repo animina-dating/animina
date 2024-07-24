@@ -1,0 +1,271 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"gen_random_uuid()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "reason",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "owner_id",
+      "references": {
+        "name": "bookmarks_owner_id_fkey",
+        "table": "users",
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "primary_key?": true,
+        "on_delete": "delete",
+        "destination_attribute": "id",
+        "deferrable": false,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "uuid",
+      "source": "user_id",
+      "references": {
+        "name": "bookmarks_user_id_fkey",
+        "table": "users",
+        "schema": "public",
+        "multitenancy": {
+          "global": null,
+          "attribute": null,
+          "strategy": null
+        },
+        "primary_key?": true,
+        "on_delete": "delete",
+        "destination_attribute": "id",
+        "deferrable": false,
+        "index?": false,
+        "match_type": null,
+        "match_with": null,
+        "on_update": null,
+        "destination_attribute_default": null,
+        "destination_attribute_generated": null
+      },
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "utc_datetime",
+      "source": "last_visit_at",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "created_at",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "fragment(\"(now() AT TIME ZONE 'utc')\")",
+      "size": null,
+      "type": "utc_datetime_usec",
+      "source": "updated_at",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    }
+  ],
+  "table": "bookmarks",
+  "hash": "6729C15FEC14CF42E0B631B9875A5EB0802B1C31558D106F6EC252728C162719",
+  "identities": [
+    {
+      "name": "unique_bookmark",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "user_id"
+        },
+        {
+          "type": "atom",
+          "value": "owner_id"
+        },
+        {
+          "type": "atom",
+          "value": "reason"
+        }
+      ],
+      "where": null,
+      "nils_distinct?": true,
+      "all_tenants?": false,
+      "index_name": "bookmarks_unique_bookmark_index",
+      "base_filter": null
+    }
+  ],
+  "repo": "Elixir.Animina.Repo",
+  "schema": null,
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "custom_indexes": [
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "owner_id"
+        }
+      ],
+      "unique": false,
+      "all_tenants?": false,
+      "concurrently": false,
+      "error_fields": [
+        "owner_id"
+      ],
+      "nulls_distinct": true,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "reason"
+        }
+      ],
+      "unique": false,
+      "all_tenants?": false,
+      "concurrently": false,
+      "error_fields": [
+        "reason"
+      ],
+      "nulls_distinct": true,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "unique": false,
+      "all_tenants?": false,
+      "concurrently": false,
+      "error_fields": [
+        "user_id"
+      ],
+      "nulls_distinct": true,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "owner_id"
+        },
+        {
+          "type": "atom",
+          "value": "user_id"
+        }
+      ],
+      "unique": false,
+      "all_tenants?": false,
+      "concurrently": false,
+      "error_fields": [
+        "owner_id",
+        "user_id"
+      ],
+      "nulls_distinct": true,
+      "using": null
+    },
+    {
+      "message": null,
+      "name": null,
+      "table": null,
+      "include": null,
+      "prefix": null,
+      "where": null,
+      "fields": [
+        {
+          "type": "atom",
+          "value": "owner_id"
+        },
+        {
+          "type": "atom",
+          "value": "reason"
+        }
+      ],
+      "unique": false,
+      "all_tenants?": false,
+      "concurrently": false,
+      "error_fields": [
+        "owner_id",
+        "reason"
+      ],
+      "nulls_distinct": true,
+      "using": null
+    }
+  ],
+  "base_filter": null,
+  "check_constraints": [],
+  "custom_statements": [],
+  "has_create_action": true
+}

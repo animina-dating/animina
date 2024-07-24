@@ -1,0 +1,88 @@
+{
+  "attributes": [
+    {
+      "default": "fragment(\"gen_random_uuid()\")",
+      "size": null,
+      "type": "uuid",
+      "source": "id",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": true
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "text",
+      "source": "subject",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "nil",
+      "size": null,
+      "type": "bigint",
+      "source": "position",
+      "references": null,
+      "allow_nil?": false,
+      "generated?": false,
+      "primary_key?": false
+    },
+    {
+      "default": "true",
+      "size": null,
+      "type": "boolean",
+      "source": "is_active",
+      "references": null,
+      "allow_nil?": true,
+      "generated?": false,
+      "primary_key?": false
+    }
+  ],
+  "table": "headlines",
+  "hash": "CD53DA2555C1529A6A9A9ED3BF7D29077857EC9399DD1751726E6B200D9CDDD7",
+  "identities": [
+    {
+      "name": "unique_position",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "position"
+        }
+      ],
+      "where": null,
+      "nils_distinct?": true,
+      "all_tenants?": false,
+      "index_name": "headlines_unique_position_index",
+      "base_filter": null
+    },
+    {
+      "name": "unique_subject",
+      "keys": [
+        {
+          "type": "atom",
+          "value": "subject"
+        }
+      ],
+      "where": null,
+      "nils_distinct?": true,
+      "all_tenants?": false,
+      "index_name": "headlines_unique_subject_index",
+      "base_filter": null
+    }
+  ],
+  "repo": "Elixir.Animina.Repo",
+  "schema": null,
+  "multitenancy": {
+    "global": null,
+    "attribute": null,
+    "strategy": null
+  },
+  "custom_indexes": [],
+  "base_filter": null,
+  "check_constraints": [],
+  "custom_statements": [],
+  "has_create_action": true
+}
