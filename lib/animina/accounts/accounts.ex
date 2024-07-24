@@ -15,6 +15,7 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.Reaction
     resource Animina.Accounts.Message
     resource Animina.Accounts.Role
+    resource Animina.Accounts.OptimizedPhoto
     resource Animina.Accounts.Report
     resource Animina.Accounts.PotentialPartner
     resource Animina.Accounts.VisitLogEntry
