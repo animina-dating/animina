@@ -217,7 +217,7 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  #TODO: Confirm if the dimensions are  okay for each type
+  # TODO: Confirm if the dimensions are  okay for each type
   defp resize_images_with_imagemagick(record) do
     for type <- [
           %{
@@ -245,7 +245,7 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  #TODO: Confirm if this function is working as expected
+  # TODO: Confirm if this function is working as expected
   defp resize_image(image_path, width, height) do
     image =
       Mogrify.open(image_path)
@@ -256,16 +256,14 @@ defmodule Animina.Accounts.Photo do
   end
 
   def check_if_image_magick_is_installed do
-    try do
-      {output, 0} = System.cmd("convert", ["--version"])
-      {:ok, output}
-    rescue
-      e in ErlangError ->
-        if e.reason == :enoent do
-          {:error, "ImageMagick is not installed or not in the system's PATH"}
-        else
-          {:error, "An unknown error occurred: #{inspect(e)}"}
-        end
-    end
+    {output, 0} = System.cmd("convert", ["--version"])
+    {:ok, output}
+  rescue
+    e in ErlangError ->
+      if e.reason == :enoent do
+        {:error, "ImageMagick is not installed or not in the system's PATH"}
+      else
+        {:error, "An unknown error occurred: #{inspect(e)}"}
+      end
   end
 end
