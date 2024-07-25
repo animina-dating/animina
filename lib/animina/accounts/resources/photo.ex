@@ -2,6 +2,7 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
+  alias Animina.Accounts.OptimizedPhoto
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -66,6 +67,10 @@ defmodule Animina.Accounts.Photo do
     belongs_to :story, Animina.Narratives.Story do
       domain Animina.Narratives
       attribute_writable? true
+    end
+
+    has_many :optimized_photos, Animina.Accounts.OptimizedPhoto do
+      domain Animina.Accounts
     end
   end
 
@@ -165,6 +170,21 @@ defmodule Animina.Accounts.Photo do
                |> Ash.update()
            end),
            on: :update
+
+    change after_action(fn changeset, record, _ ->
+             create_optimized_photos(record)
+
+             {:ok, record}
+           end),
+           on: [:create]
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :optimized_photos
+              ]
+            )
   end
 
   postgres do
@@ -173,6 +193,79 @@ defmodule Animina.Accounts.Photo do
 
     references do
       reference :user, on_delete: :delete
+    end
+  end
+
+  def create_optimized_photos(record) do
+    case check_if_image_magick_is_installed() do
+      {:ok, _} ->
+        resize_images_with_imagemagick(record)
+
+      {:error, _} ->
+        copy_images_directly(record)
+    end
+  end
+
+  defp copy_images_directly(record) do
+    for type <- [:thumbnail, :normal, :big] do
+      OptimizedPhoto.create(%{
+        image_url: record.filename,
+        type: type,
+        user_id: record.user_id,
+        photo_id: record.id
+      })
+    end
+  end
+
+  #TODO: Confirm if the dimensions are  okay for each type
+  defp resize_images_with_imagemagick(record) do
+    for type <- [
+          %{
+            width: 100,
+            height: 100,
+            type: :thumbnail
+          },
+          %{
+            width: 300,
+            height: 300,
+            type: :normal
+          },
+          %{
+            width: 800,
+            height: 800,
+            type: :big
+          }
+        ] do
+      OptimizedPhoto.create(%{
+        image_url: resize_image(record.filename, type.width, type.height),
+        type: type,
+        user_id: record.user_id,
+        photo_id: record.id
+      })
+    end
+  end
+
+  #TODO: Confirm if this function is working as expected
+  defp resize_image(image_path, width, height) do
+    image =
+      Mogrify.open(image_path)
+      |> Mogrify.resize("#{width}x#{height}")
+      |> Mogrify.save(path: "/uploads/optimized/#{image_path}")
+
+    image.path
+  end
+
+  def check_if_image_magick_is_installed do
+    try do
+      {output, 0} = System.cmd("convert", ["--version"])
+      {:ok, output}
+    rescue
+      e in ErlangError ->
+        if e.reason == :enoent do
+          {:error, "ImageMagick is not installed or not in the system's PATH"}
+        else
+          {:error, "An unknown error occurred: #{inspect(e)}"}
+        end
     end
   end
 end
