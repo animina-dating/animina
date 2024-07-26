@@ -114,6 +114,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
         params = Map.merge(params, file)
         form = Form.validate(socket.assigns.form, params, errors: true)
 
+        Photo.destroy(socket.assigns.current_user.profile_photo)
+
         with [] <- Form.errors(form), {:ok, _photo} <- Form.submit(form, params: params) do
           {:noreply,
            socket
