@@ -1,0 +1,28 @@
+# .github/workflows/version-bump.yml
+name: Version Bump
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run version bump script
+      run: |
+        chmod +x bump_version.sh
+        ./bump_version.sh
+
+    - name: Push changes
+      run: |
+        git config --global user.email "github@animina.de"
+        git config --global user.name "GitHub Action"
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
