@@ -1,6 +1,9 @@
 # .github/workflows/version-bump.yml
 name: Version Bump
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
