@@ -9,11 +9,11 @@ if [[ ! -f "$MIX_FILE" ]]; then
 fi
 
 if [[ $(git diff --stat) != '' ]]; then
-  echo "Working directory is dirty. Please commit any pending changes."
-  exit 1
+ echo "Working directory is dirty. Please commit any pending changes."
+ exit 1
 fi
 
-current_version=$(grep -oP "$VERSION_REGEX" "$MIX_FILE" | grep -oP '[0-9]+\.[0-9]+\.[0-9]+')
+current_version=$(awk -F\" '/version: / {print $2}' "$MIX_FILE")
 IFS='.' read -r -a version_parts <<< "$current_version"
 
 major=${version_parts[0]}
