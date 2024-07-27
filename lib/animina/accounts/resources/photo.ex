@@ -197,19 +197,30 @@ defmodule Animina.Accounts.Photo do
   end
 
   def create_optimized_photos(record) do
+    create_optimized_folder_if_not_exists()
+
     case check_if_image_magick_is_installed() do
       {:ok, _} ->
-        resize_images_with_imagemagick(record)
+        resize_image(record)
 
       {:error, _} ->
-        copy_images_directly(record)
+        copy_image_directly(record)
     end
   end
 
-  defp copy_images_directly(record) do
+  defp create_optimized_folder_if_not_exists do
+    for type <- [thumbnail, normal, big] do
+      case File.mkdir_p("priv/static/uploads/optimized/#{type}") do
+        :ok -> :ok
+        _ -> :error
+      end
+    end
+  end
+
+  defp copy_image_directly(record) do
     for type <- [:thumbnail, :normal, :big] do
       OptimizedPhoto.create(%{
-        image_url: record.filename,
+        image_url: copy_image(record.filename, type),
         type: type,
         user_id: record.user_id,
         photo_id: record.id
@@ -217,8 +228,17 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  # TODO: Confirm if the dimensions are  okay for each type
-  defp resize_images_with_imagemagick(record) do
+  defp copy_image(file_name, type) do
+    case File.cp!(
+           "priv/static/uploads/" <> file_name,
+           "priv/static/uploads/optimized/#{type}/#{file_name}"
+         ) do
+      :ok -> "/uploads/optimized/#{type}/#{file_name}"
+      _ -> "/uploads/optimized/#{type}/#{file_name}"
+    end
+  end
+
+  defp resize_image(record) do
     for type <- [
           %{
             width: 100,
@@ -226,18 +246,17 @@ defmodule Animina.Accounts.Photo do
             type: :thumbnail
           },
           %{
-            width: 300,
-            height: 300,
+            width: 600,
+            height: 600,
             type: :normal
           },
           %{
-            width: 800,
-            height: 800,
+            width: 1000,
             type: :big
           }
         ] do
       OptimizedPhoto.create(%{
-        image_url: resize_image(record.filename, type.width, type.height),
+        image_url: resize_image(record.filename, type.width, type.type),
         type: type,
         user_id: record.user_id,
         photo_id: record.id
@@ -246,11 +265,12 @@ defmodule Animina.Accounts.Photo do
   end
 
   # TODO: Confirm if this function is working as expected
-  defp resize_image(image_path, width, height) do
+  defp resize_image(image_path, width, type) do
     image =
       Mogrify.open(image_path)
-      |> Mogrify.resize("#{width}x#{height}")
-      |> Mogrify.save(path: "/uploads/optimized/#{image_path}")
+      |> Mogrify.resize("#{width}")
+      |> Mogrify.format("webp")
+      |> Mogrify.save(path: "/uploads/optimized/#{type}/#{image_path}")
 
     image.path
   end
