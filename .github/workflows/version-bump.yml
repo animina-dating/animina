@@ -1,0 +1,34 @@
+# .github/workflows/version-bump.yml
+name: Version Bump
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get Last Commit Message
+      id: get_commit
+      run: echo "::set-output name=msg::$(git log -1 --pretty=%B)"
+
+    - name: Run version bump script
+      if: github.event.head_commit.message != 'Bump version to*'
+      run: |
+        chmod +x bump_version.sh
+        ./bump_version.sh
+
+    - name: Push changes
+      if: github.event.head_commit.message != 'Bump version to*'
+      run: |
+        git config --global user.email "github@animina.de"
+        git config --global user.name "GitHub Action"
+        git push origin main
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
