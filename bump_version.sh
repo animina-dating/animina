@@ -1,4 +1,3 @@
-# bump_version.sh
 #!/bin/bash
 
 MIX_FILE="mix.exs"
@@ -28,7 +27,9 @@ sed -i -E "s/$VERSION_REGEX/version: \"$new_version\"/" "$MIX_FILE"
 git config user.email "github-actions[bot]@users.noreply.github.com"
 git config user.name "GitHub Action"
 
-git checkout -b version-bump-$new_version
+branch_name="version-bump-$new_version-$(date +%s)"
+git checkout -b "$branch_name"
 git add "$MIX_FILE"
 git commit -m "Bump version to $new_version"
-git push origin version-bump-$new_version
+git push origin "$branch_name"
+echo "::set-output name=branch::$branch_name"
