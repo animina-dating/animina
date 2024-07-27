@@ -3,6 +3,7 @@ name: Version Bump
 
 permissions:
   contents: write
+  pull-requests: write
 
 on:
   push:
@@ -27,9 +28,11 @@ jobs:
         chmod +x bump_version.sh
         ./bump_version.sh
 
-    - name: Push changes
+    - name: Create Pull Request
       if: github.event.head_commit.message != 'Bump version to*'
-      run: |
-        git push origin main
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: version-bump-${{ steps.get_commit.outputs.msg }}
+        title: Bump version to ${{ steps.get_commit.outputs.msg }}
+        body: This PR bumps the version to ${{ steps.get_commit.outputs.msg }}.
