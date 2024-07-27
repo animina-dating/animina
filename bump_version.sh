@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MIX_FILE="mix.exs"
-VERSION_REGEX='version: "([0-9]+)\.([0-9]+)\.([0-9]+)"'
+VERSION_REGEX='version: "[0-9]+\.[0-9]+\.[0-9]+"'
 
 if [[ ! -f "$MIX_FILE" ]]; then
   echo "mix.exs file not found!"
@@ -9,8 +9,8 @@ if [[ ! -f "$MIX_FILE" ]]; then
 fi
 
 if [[ $(git diff --stat) != '' ]]; then
- echo "Working directory is dirty. Please commit any pending changes."
- exit 1
+  echo "Working directory is dirty. Please commit any pending changes."
+  exit 1
 fi
 
 current_version=$(awk -F\" '/version: / {print $2}' "$MIX_FILE")
@@ -23,6 +23,9 @@ new_patch=$((patch + 1))
 new_version="$major.$minor.$new_patch"
 
 sed -i -E "s/$VERSION_REGEX/version: \"$new_version\"/" "$MIX_FILE"
+
+git config user.email "github-actions[bot]@users.noreply.github.com"
+git config user.name "GitHub Action"
 
 git add "$MIX_FILE"
 git commit -m "Bump version to $new_version"
