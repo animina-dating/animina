@@ -35,5 +35,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         branch: ${{ steps.bump_version.outputs.branch }}
+        base: main  # or your default branch
         title: Bump version to ${{ steps.bump_version.outputs.branch }}
         body: This PR bumps the version to ${{ steps.bump_version.outputs.branch }}.
