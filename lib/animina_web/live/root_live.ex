@@ -97,11 +97,11 @@ defmodule AniminaWeb.RootLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="space-y-10 px-5">
+    <div class="px-5 space-y-10">
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
           title={gettext("Animina Dating Platform")}
-          message={gettext("Fair, Fast and Free. Join us now!")}
+          message={gettext("Fair Online Dating for Everyone. Join now!")}
           avatars_urls={[
             "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
             "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
@@ -110,7 +110,7 @@ defmodule AniminaWeb.RootLive do
       <% end %>
 
       <%= if @form_id == "sign-in-form" do %>
-        <h1 class="text-4xl dark:text-white font-semibold"><%= gettext("Login") %></h1>
+        <h1 class="text-4xl font-semibold dark:text-white"><%= gettext("Login") %></h1>
       <% end %>
 
       <.form
@@ -129,7 +129,7 @@ defmodule AniminaWeb.RootLive do
           <div>
             <label
               for="user_username"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Username") %>
             </label>
@@ -162,7 +162,7 @@ defmodule AniminaWeb.RootLive do
           <div>
             <label
               for="user_name"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Name") %>
             </label>
@@ -190,7 +190,7 @@ defmodule AniminaWeb.RootLive do
           <div>
             <label
               for="user_email"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("E-mail address") %>
             </label>
@@ -219,7 +219,7 @@ defmodule AniminaWeb.RootLive do
             <div class="flex items-center justify-between">
               <label
                 for="user_password"
-                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+                class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
                 <%= gettext("Password") %>
               </label>
@@ -249,7 +249,7 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label
               for="user_birthday"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Date of birth") %>
             </label>
@@ -278,7 +278,7 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label
               for="user_gender"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Gender") %>
             </label>
@@ -336,7 +336,7 @@ defmodule AniminaWeb.RootLive do
           <div>
             <label
               for="user_occupation"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Occupation") %>
             </label>
@@ -365,7 +365,7 @@ defmodule AniminaWeb.RootLive do
             <div class="flex items-center justify-between">
               <label
                 for="user_zip_code"
-                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+                class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
                 <%= gettext("Zip code") %>
               </label>
@@ -396,7 +396,7 @@ defmodule AniminaWeb.RootLive do
             <div class="flex items-center justify-between">
               <label
                 for="user_height"
-                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+                class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
                 <%= gettext("Height") %>
                 <span class="text-gray-400 dark:text-gray-100">
@@ -428,7 +428,7 @@ defmodule AniminaWeb.RootLive do
             <div class="flex items-center justify-between">
               <label
                 for="user_mobile_phone"
-                class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+                class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
                 <%= gettext("Mobile phone number") %>
                 <span class="text-gray-400 dark:text-gray-100">
@@ -458,7 +458,7 @@ defmodule AniminaWeb.RootLive do
         </div>
 
         <div class="relative flex gap-x-3">
-          <div phx-feedback-for={f[:legal_terms_accepted].name} class="flex h-6 items-center">
+          <div phx-feedback-for={f[:legal_terms_accepted].name} class="flex items-center h-6">
             <%= checkbox(f, :legal_terms_accepted,
               class:
                 "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
@@ -471,10 +471,10 @@ defmodule AniminaWeb.RootLive do
             ) %>
           </div>
           <div class="text-sm leading-6">
-            <label for="comments" class="font-medium dark:text-white text-gray-900">
+            <label for="comments" class="font-medium text-gray-900 dark:text-white">
               <%= gettext("I accept the legal terms of animina.") %>
             </label>
-            <p class=" dark:text-gray-100 text-gray-500">
+            <p class="text-gray-500  dark:text-gray-100">
               <%= gettext("Warning: We will sell your data to the devel and Santa Claus.") %>
             </p>
             <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
@@ -519,7 +519,7 @@ defmodule AniminaWeb.RootLive do
         <div>
           <label
             for="user_email"
-            class="block text-sm font-medium  leading-6 dark:text-white text-gray-900"
+            class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
             <%= gettext("E-mail address or Username") %>
           </label>
@@ -548,7 +548,7 @@ defmodule AniminaWeb.RootLive do
           <div class="flex items-center justify-between">
             <label
               for="user_password"
-              class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Password") %>
             </label>
@@ -575,7 +575,7 @@ defmodule AniminaWeb.RootLive do
 
         <div>
           <.link navigate={@sign_up_link}>
-            <p class="block text-sm leading-6 transition-all duration-500 ease-in-out text-blue-600  hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
+            <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
               <%= gettext("Don't have an account? Sign up") %>
             </p>
           </.link>
