@@ -24,6 +24,7 @@ jobs:
 
     - name: Run version bump script
       if: github.event.head_commit.message != 'Bump version to*'
+      id: bump_version
       run: |
         chmod +x bump_version.sh
         ./bump_version.sh
@@ -33,6 +34,6 @@ jobs:
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        branch: version-bump-${{ steps.get_commit.outputs.msg }}
-        title: Bump version to ${{ steps.get_commit.outputs.msg }}
-        body: This PR bumps the version to ${{ steps.get_commit.outputs.msg }}.
+        branch: ${{ steps.bump_version.outputs.branch }}
+        title: Bump version to ${{ steps.bump_version.outputs.branch }}
+        body: This PR bumps the version to ${{ steps.bump_version.outputs.branch }}.
