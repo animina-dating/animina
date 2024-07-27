@@ -2,6 +2,7 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
+  alias Animina.Accounts.OptimizedPhoto
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -66,6 +67,10 @@ defmodule Animina.Accounts.Photo do
     belongs_to :story, Animina.Narratives.Story do
       domain Animina.Narratives
       attribute_writable? true
+    end
+
+    has_many :optimized_photos, Animina.Accounts.OptimizedPhoto do
+      domain Animina.Accounts
     end
   end
 
@@ -165,6 +170,21 @@ defmodule Animina.Accounts.Photo do
                |> Ash.update()
            end),
            on: :update
+
+    change after_action(fn changeset, record, _ ->
+             create_optimized_photos(record)
+
+             {:ok, record}
+           end),
+           on: [:create]
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :optimized_photos
+              ]
+            )
   end
 
   postgres do
@@ -174,5 +194,96 @@ defmodule Animina.Accounts.Photo do
     references do
       reference :user, on_delete: :delete
     end
+  end
+
+  def create_optimized_photos(record) do
+    create_optimized_folder_if_not_exists()
+
+    case check_if_image_magick_is_installed() do
+      {:ok, _} ->
+        resize_image(record)
+
+      {:error, _} ->
+        copy_image_directly(record)
+    end
+  end
+
+  defp create_optimized_folder_if_not_exists do
+    for type <- ["thumbnail", "normal", "big"] do
+      case File.mkdir_p("priv/static/uploads/optimized/#{type}") do
+        :ok -> :ok
+        _ -> :error
+      end
+    end
+  end
+
+  defp copy_image_directly(record) do
+    for type <- [:thumbnail, :normal, :big] do
+      OptimizedPhoto.create(%{
+        image_url: copy_image(record.filename, type),
+        type: type,
+        user_id: record.user_id,
+        photo_id: record.id
+      })
+    end
+  end
+
+  defp copy_image(file_name, type) do
+    case File.cp!(
+           "priv/static/uploads/" <> file_name,
+           "priv/static/uploads/optimized/#{type}/#{file_name}"
+         ) do
+      :ok -> "/uploads/optimized/#{type}/#{file_name}"
+      _ -> "/uploads/optimized/#{type}/#{file_name}"
+    end
+  end
+
+  defp resize_image(record) do
+    for type <- [
+          %{
+            width: 100,
+            height: 100,
+            type: :thumbnail
+          },
+          %{
+            width: 600,
+            height: 600,
+            type: :normal
+          },
+          %{
+            width: 1000,
+            type: :big
+          }
+        ] do
+      OptimizedPhoto.create(%{
+        image_url: resize_image(record.filename, type.width, type.type),
+        type: type,
+        user_id: record.user_id,
+        photo_id: record.id
+      })
+    end
+  end
+
+  # TODO: Confirm if this function is working as expected
+  defp resize_image(image_path, width, type) do
+    image =
+      Mogrify.open(image_path)
+      |> Mogrify.resize("#{width}")
+      |> Mogrify.format("webp")
+      |> Mogrify.save(path: "/uploads/optimized/#{type}/#{image_path}")
+
+    image.path
+  end
+
+  def check_if_image_magick_is_installed do
+    {output, 0} = System.cmd("convert", ["--version"])
+    {:ok, output}
+  rescue
+    e in ErlangError ->
+      if e.reason == :enoent do
+        {:error, "ImageMagick is not installed or not in the system's PATH"}
+      else
+        {:error, "An unknown error occurred: #{inspect(e)}"}
+      end
   end
 end
