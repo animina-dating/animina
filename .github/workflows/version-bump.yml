@@ -19,7 +19,10 @@ jobs:
 
     - name: Get Last Commit Message
       id: get_commit
-      run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_ENV
+      run: |
+        last_commit_message=$(git log -1 --pretty=%B)
+        echo "::add-mask::$last_commit_message"
+        echo "msg=$last_commit_message" >> $GITHUB_ENV
 
     - name: Run version bump script
       if: ${{ env.msg != 'Bump version to*' }}
