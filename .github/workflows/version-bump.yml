@@ -21,17 +21,20 @@ jobs:
       id: get_commit
       run: |
         last_commit_message=$(git log -1 --pretty=%B)
-        echo "msg=$(echo "$last_commit_message" | base64)" >> $GITHUB_ENV
+        echo "LAST_COMMIT_MESSAGE=$(echo "$last_commit_message" | base64)" >> $GITHUB_ENV
 
     - name: Run version bump script
-      if: ${{ fromJson('{"msg": "' + env.msg + '" | fromJson(base64decode(env.msg)) }').msg != 'Bump version to*' }}
+      if: ${{ steps.get_commit.outputs.msg != 'Bump version to*' }}
       id: bump_version
       run: |
-        chmod +x bump_version.sh
-        ./bump_version.sh
+        last_commit_message=$(echo "${{ env.LAST_COMMIT_MESSAGE }}" | base64 --decode)
+        if [[ "$last_commit_message" != Bump\ version\ to* ]]; then
+          chmod +x bump_version.sh
+          ./bump_version.sh
+        fi
 
     - name: Create Pull Request
-      if: ${{ fromJson('{"msg": "' + env.msg + '" | fromJson(base64decode(env.msg)) }').msg != 'Bump version to*' }}
+      if: ${{ steps.get_commit.outputs.msg != 'Bump version to*' }}
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
