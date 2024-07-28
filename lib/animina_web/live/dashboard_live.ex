@@ -3,6 +3,7 @@ defmodule AniminaWeb.DashboardLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Message
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
@@ -394,7 +395,7 @@ defmodule AniminaWeb.DashboardLive do
                         )
                     }
                     class="aspect-[1/1] w-full rounded-2xl object-cover"
-                    src={"/uploads/#{potential_partner.profile_photo.filename}"}
+                    src={Photo.get_optimized_photo_to_use(potential_partner.profile_photo, :normal)}
                     alt={
                       gettext("Image of %{name}.",
                         name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()

@@ -5,6 +5,7 @@ defmodule AniminaWeb.BookmarksComponents do
   alias Animina.StringHelper
   use Phoenix.Component
   import AniminaWeb.Gettext
+  alias Animina.Accounts.Photo
 
   attr :bookmark, :any, required: true
   attr :dom_id, :any, required: false
@@ -27,7 +28,7 @@ defmodule AniminaWeb.BookmarksComponents do
             >
               <img
                 class="object-cover rounded-lg aspect-square h-24 w-24"
-                src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @bookmark.user.profile_photo.filename}
+                src={Photo.get_optimized_photo_to_use(@bookmark.user.profile_photo, :normal)}
               />
               <p
                 :if={

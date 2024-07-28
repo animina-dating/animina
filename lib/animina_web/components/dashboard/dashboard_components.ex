@@ -8,6 +8,7 @@ defmodule AniminaWeb.DashboardComponents do
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
   use PhoenixHTMLHelpers
+  alias Animina.Accounts.Photo
 
   attr :title, :string, required: true
   attr :subtitle, :string, default: nil
@@ -170,7 +171,7 @@ defmodule AniminaWeb.DashboardComponents do
       <div class="relative">
         <img
           class="object-cover w-6 h-6 rounded-full"
-          src={"/uploads/#{@user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
         />
 
         <p

@@ -318,7 +318,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
 
             <img
               class="object-cover h-[100%]  drop-shadow border w-[100%] rounded-lg"
-              src={"/uploads/#{@current_user.profile_photo.filename}"}
+              src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)}
             />
           </div>
         </div>
