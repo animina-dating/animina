@@ -12,6 +12,7 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
+  alias Animina.Accounts.Photo
 
   require Ash.Query
   require Ash.Sort
@@ -394,7 +395,7 @@ defmodule AniminaWeb.DashboardLive do
                         )
                     }
                     class="aspect-[1/1] w-full rounded-2xl object-cover"
-                    src={"/uploads/#{potential_partner.profile_photo.filename}"}
+                    src={Photo.get_optimized_photo_to_use(potential_partner.profile_photo, :normal)}
                     alt={
                       gettext("Image of %{name}.",
                         name: potential_partner.name |> Phoenix.HTML.Safe.to_iodata() |> to_string()

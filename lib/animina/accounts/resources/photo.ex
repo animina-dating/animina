@@ -179,20 +179,22 @@ defmodule Animina.Accounts.Photo do
            on: [:create]
   end
 
-  preparations do
-    prepare build(
-              load: [
-                :optimized_photos
-              ]
-            )
-  end
-
   postgres do
     table "photos"
     repo Animina.Repo
 
     references do
       reference :user, on_delete: :delete
+    end
+  end
+
+  def get_optimized_photo_to_use(photo, type) do
+    case OptimizedPhoto.by_type_and_photo_id(%{type: type, photo_id: photo.id}) do
+      {:ok, optimized_photo} ->
+        optimized_photo.image_url
+
+      _ ->
+        "/uploads/#{photo.filename}"
     end
   end
 

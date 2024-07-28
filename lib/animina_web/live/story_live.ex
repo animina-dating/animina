@@ -550,7 +550,7 @@ defmodule AniminaWeb.StoryLive do
 
           <img
             class="object-cover h-200 drop-shadow border w-[100%] rounded-lg"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @photo.filename}
+            src={Photo.get_optimized_photo_to_use(@photo, :normal)}
           />
         </div>
 

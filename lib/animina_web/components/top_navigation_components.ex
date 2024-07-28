@@ -7,6 +7,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   import AniminaWeb.Gettext
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
+  alias Animina.Accounts.Photo
   alias Animina.StringHelper
 
   # -------------------------------------------------------------
@@ -443,7 +444,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <.top_navigation_entry phx-no-format is_active={@active_tab == :profile_points}>
       <%= if @current_user && @current_user.profile_photo  do %>
-        <img class="object-cover w-6 h-6 rounded-full"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
+        <img class="object-cover w-6 h-6 rounded-full"  src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)} />
       <% else %>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -492,7 +493,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <%= if @current_user && @current_user.profile_photo  do %>
         <img
           class="object-cover w-8 h-8 rounded-full"
-          src={"/uploads/#{@current_user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)}
         />
       <% else %>
         <svg
@@ -522,7 +523,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <%= if @current_user && @current_user.profile_photo  do %>
         <img
           class="object-cover w-12 h-12 rounded-full"
-          src={"/uploads/#{@current_user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)}
         />
       <% else %>
         <svg
@@ -672,7 +673,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           aria-hidden="true"
         >
         <%= if @current_user && @current_user.profile_photo  do %>
-        <img class="object-cover w-full h-full rounded-full"  src={"/uploads/#{@current_user.profile_photo.filename}"} />
+        <img class="object-cover w-full h-full rounded-full"  src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)} />
       <% else %>
         <svg
           xmlns="http://www.w3.org/2000/svg"

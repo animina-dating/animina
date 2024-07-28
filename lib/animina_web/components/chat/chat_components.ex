@@ -5,6 +5,7 @@ defmodule AniminaWeb.ChatComponents do
   use Phoenix.Component
   alias Animina.Markdown
   alias Animina.StringHelper
+  alias Animina.Accounts.Photo
   alias AniminaWeb.ProfileComponents
 
   def send_message_button(assigns) do
@@ -149,7 +150,7 @@ defmodule AniminaWeb.ChatComponents do
       <div class="flex flex-col relative justify-center items-center gap-1">
         <img
           class="object-cover w-8 h-8 rounded-full"
-          src={"/uploads/#{@user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
         />
 
         <p
@@ -183,7 +184,7 @@ defmodule AniminaWeb.ChatComponents do
       <div class="flex flex-col relative gap-1  items-center">
         <img
           class="object-cover w-8 h-8 rounded-full"
-          src={"/uploads/#{@user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
         />
 
         <p

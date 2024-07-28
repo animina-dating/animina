@@ -5,6 +5,7 @@ defmodule AniminaWeb.StoriesComponents do
   use Phoenix.Component
   alias Animina.Markdown
   import AniminaWeb.Gettext
+  alias Animina.Accounts.Photo
 
   attr :stories_and_flags, :list, required: true
   attr :current_user, :any, required: true
@@ -56,7 +57,7 @@ defmodule AniminaWeb.StoriesComponents do
             (@current_user && @story.user_id == @current_user.id) ||
               display_image(@story.photo.state, @current_user, @story)
           }
-          src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+          src={Photo.get_optimized_photo_to_use(@story.photo, :normal)}
           alt={@story.headline.subject}
           class="absolute inset-0 object-cover w-full h-full -z-10"
         />
@@ -200,12 +201,12 @@ defmodule AniminaWeb.StoriesComponents do
         <%= if @story.headline.subject == "About me" do %>
           <img
             class="object-cover rounded-lg aspect-square"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+            src={Photo.get_optimized_photo_to_use(@story.photo, :normal)}
           />
         <% else %>
           <img
             class="object-cover rounded-lg"
-            src={AniminaWeb.Endpoint.url() <> "/uploads/" <> @story.photo.filename}
+            src={Photo.get_optimized_photo_to_use(@story.photo, :normal)}
           />
         <% end %>
       </div>

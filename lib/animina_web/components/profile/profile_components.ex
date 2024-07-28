@@ -4,6 +4,7 @@ defmodule AniminaWeb.ProfileComponents do
   """
   use Phoenix.Component
   import AniminaWeb.Gettext
+  alias Animina.Accounts.Photo
 
   def profile_details(assigns) do
     ~H"""
@@ -160,7 +161,7 @@ defmodule AniminaWeb.ProfileComponents do
       <div class="flex relative flex-col gap-1">
         <img
           class="object-cover w-8 h-8 rounded-full"
-          src={"/uploads/#{@user.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
         />
         <p
           :if={
@@ -403,7 +404,10 @@ defmodule AniminaWeb.ProfileComponents do
   def square_user_profile_photo(assigns) do
     ~H"""
     <div class="md:w-[400px] md:h-[400px] w-[100%] h-[300px] flex-grow border-[4px] rounded-md border-[#1672DF]">
-      <img src={"/uploads/#{@user.profile_photo.filename}"} class="object-cover h-[100%] w-[100%] " />
+      <img
+        src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
+        class="object-cover h-[100%] w-[100%] "
+      />
     </div>
     """
   end
@@ -596,7 +600,7 @@ defmodule AniminaWeb.ProfileComponents do
     <div class="border-[1px] rounded-full bg-white h-[24px] w-[24px] border-[#1672DF]">
       <%= if @avatar.profile_photo do %>
         <img
-          src={"/uploads/#{@avatar.profile_photo.filename}"}
+          src={Photo.get_optimized_photo_to_use(@avatar.profile_photo, :normal)}
           class="object-cover h-[100%] rounded-full  w-[100%] "
         />
       <% else %>
