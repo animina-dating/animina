@@ -1,0 +1,40 @@
+# .github/workflows/version-bump.yml
+name: Version Bump
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Get Last Commit Message
+      id: get_commit
+      run: echo "::set-output name=msg::$(git log -1 --pretty=%B)"
+
+    - name: Run version bump script
+      if: github.event.head_commit.message != 'Bump version to*'
+      id: bump_version
+      run: |
+        chmod +x bump_version.sh
+        ./bump_version.sh
+
+    - name: Create Pull Request
+      if: github.event.head_commit.message != 'Bump version to*'
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ steps.bump_version.outputs.branch }}
+        base: main  # or your default branch
+        title: Bump version to ${{ steps.bump_version.outputs.branch }}
+        body: This PR bumps the version to ${{ steps.bump_version.outputs.branch }}.
