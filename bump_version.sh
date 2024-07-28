@@ -23,15 +23,3 @@ new_patch=$((patch + 1))
 new_version="$major.$minor.$new_patch"
 
 sed -i -E "s/$VERSION_REGEX/version: \"$new_version\"/" "$MIX_FILE"
-
-git config user.email "github-actions[bot]@users.noreply.github.com"
-git config user.name "GitHub Action"
-
-branch_name="version-bump-$new_version-$(date +%s)"
-git checkout -b "$branch_name"
-git add "$MIX_FILE"
-git commit -m "Bump version to $new_version"
-git push origin "$branch_name"
-
-# Set the branch name for GitHub Actions output
-echo "branch=$branch_name" >> $GITHUB_ENV
