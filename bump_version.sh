@@ -32,4 +32,6 @@ git checkout -b "$branch_name"
 git add "$MIX_FILE"
 git commit -m "Bump version to $new_version"
 git push origin "$branch_name"
-echo "::set-output name=branch::$branch_name"
+
+# Set the branch name for GitHub Actions output
+echo "branch=$branch_name" >> $GITHUB_ENV
