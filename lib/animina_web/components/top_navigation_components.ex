@@ -5,9 +5,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
   use Phoenix.Component
 
   import AniminaWeb.Gettext
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
-  alias Animina.Accounts.Photo
   alias Animina.StringHelper
 
   # -------------------------------------------------------------

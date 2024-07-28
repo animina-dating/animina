@@ -3,9 +3,9 @@ defmodule AniminaWeb.ChatComponents do
   Provides Chat UI components.
   """
   use Phoenix.Component
+  alias Animina.Accounts.Photo
   alias Animina.Markdown
   alias Animina.StringHelper
-  alias Animina.Accounts.Photo
   alias AniminaWeb.ProfileComponents
 
   def send_message_button(assigns) do

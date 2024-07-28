@@ -3,6 +3,7 @@ defmodule AniminaWeb.DashboardLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Message
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
@@ -12,7 +13,6 @@ defmodule AniminaWeb.DashboardLive do
   alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
-  alias Animina.Accounts.Photo
 
   require Ash.Query
   require Ash.Sort
