@@ -1,7 +1,9 @@
 # ANIMINA Dating Platform
 
-ANIMINA is a web based dating platform. Initially for Germany but ... who knows! 😉 In case you have a question do not hesitate to contact
-Stefan Wintermeyer <sw@wintermeyer-consulting.de>
+ANIMINA is a web based dating platform. In case you have a question do not 
+hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
+
+![Screenshot of a demo ANIMINA profile](https://github.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.webp?raw=true)
 
 > [!WARNING]
 > The current version a beta version. We appreciate all bug reports!
@@ -10,10 +12,8 @@ Please do submit bug reports or feature requests with an [issue](https://github.
 
 > [!TIP]
 > Project founder Stefan Wintermeyer will give a talk about ANIMINA and other 
-> dating platforms at [FrOSCon](https://froscon.org). First slot on August the 18th 2024. 
-> See you there!
-
-![Screenshot of a demo ANIMINA profile](https://github.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.webp?raw=true)
+> dating platforms at [FrOSCon](https://froscon.org). First slot (10 a.m.) on 
+> August the 18th 2024. See you there!
 
 ## ANIMINA Installation Guide
 
