@@ -3,11 +3,15 @@
 ANIMINA is a web based dating platform. Initially for Germany but ... who knows! 😉 In case you have a question do not hesitate to contact
 Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
-> [!WARNING]  
+> [!WARNING]
 > The current version a beta version. We appreciate all bug reports!
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
+> [!INFO]
+> Project founder Stefan Wintermeyer will give a talk about ANIMINA and other 
+> dating platforms at [FrOSCon](https://froscon.org). First slot on August the 18th 2024. 
+> See you there!
 
 ## ANIMINA Installation Guide
 
@@ -17,7 +21,8 @@ What we assume:
 - Installed [PostgreSQL](https://www.postgresql.org) database.
 - Basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org). Have a look at https://elixir-phoenix-ash.com if you are new to it.
 
-**IMPORTANT:** If you wish to disable ML features (e.g., because of slow hardware), add `DISABLE_ML_FEATURES=true` before `mix` and `iex` commands.
+> [!IMPORTANT]
+> If you wish to disable ML features (e.g., because of slow hardware), add `DISABLE_ML_FEATURES=true` before `mix` and `iex` commands.
 
 ### Install Dependencies
 
