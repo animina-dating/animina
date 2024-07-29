@@ -266,13 +266,12 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  # TODO: Confirm if this function is working as expected
   defp resize_image(image_path, width, type) do
     image =
-      Mogrify.open(image_path)
+      Mogrify.open("priv/static/uploads/" <> image_path)
       |> Mogrify.resize("#{width}")
       |> Mogrify.format("webp")
-      |> Mogrify.save(path: "/uploads/optimized/#{type}/#{image_path}")
+      |> Mogrify.save(path: "priv/static/uploads/optimized/#{type}/#{image_path}")
 
     image.path
   end
