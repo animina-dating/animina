@@ -8,7 +8,7 @@ Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
-> [!INFO]
+> [!TIP]
 > Project founder Stefan Wintermeyer will give a talk about ANIMINA and other 
 > dating platforms at [FrOSCon](https://froscon.org). First slot on August the 18th 2024. 
 > See you there!
