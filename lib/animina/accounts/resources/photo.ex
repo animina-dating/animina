@@ -156,7 +156,7 @@ defmodule Animina.Accounts.Photo do
 
   changes do
     change after_transaction(fn
-             changeset, {:ok, result} ->
+             changeset, {:ok, result} , _context ->
                {:ok, result}
 
              changeset, {:error, error} ->
