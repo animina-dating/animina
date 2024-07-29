@@ -13,6 +13,8 @@ Please do submit bug reports or feature requests with an [issue](https://github.
 > dating platforms at [FrOSCon](https://froscon.org). First slot on August the 18th 2024. 
 > See you there!
 
+![Screenshot of a demo ANIMINA profile](https://raw.githubusercontent.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.jpg)
+
 ## ANIMINA Installation Guide
 
 What we assume:
