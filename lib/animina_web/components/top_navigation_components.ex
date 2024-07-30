@@ -232,14 +232,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </div>
       <div :if={six_random_public_users(@current_user) != []} class="flex w-[100%]  flex-col gap-2">
-        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
-
-        <div class="flex w-[100%] flex-col gap-2">
-          <.random_interests
-            current_user={@current_user}
-            interests={six_random_public_users(@current_user)}
-          />
-        </div>
+        <p class="dark:text-white"><%= gettext("Animina BETA") %></p>
       </div>
     </div>
     """
