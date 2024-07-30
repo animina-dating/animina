@@ -1,38 +1,73 @@
 # ANIMINA Dating Platform
 
-ANIMINA is a web based dating platform. Initially for Germany but ... who knows! 😉 In case you have a question do not hesitate to contact
-Stefan Wintermeyer <sw@wintermeyer-consulting.de>
+ANIMINA is a web based dating platform. In case you have a question do not 
+hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
-> [!WARNING]  
+![Screenshot of a demo ANIMINA profile](https://github.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.webp?raw=true)
+
+> [!WARNING]
 > The current version a beta version. We appreciate all bug reports!
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
-## Setup a dev system
+> [!TIP]
+> Project founder Stefan Wintermeyer will give a talk about ANIMINA and other 
+> dating platforms at [FrOSCon](https://froscon.org). First slot (10 a.m.) on 
+> August the 18th 2024. See you there!
+
+## ANIMINA Installation Guide
 
 What we assume:
 
-- You have access too a locally hosted [PostgreSQL](https://www.postgresql.org) database.
-- You have basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org).
-- You probably use macOS or Linux.
+- macOS or Linux as an OS
+- Installed [PostgreSQL](https://www.postgresql.org) database.
+- Basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org). Have a look at https://elixir-phoenix-ash.com if you are new to it.
 
-> [!NOTE]
-> Have a look at https://elixir-phoenix-ash.com if you are new to Elixir, Phoenix or Ash.
+> [!IMPORTANT]
+> If you wish to disable ML features (e.g., because of slow hardware), add `DISABLE_ML_FEATURES=true` before `mix` and `iex` commands.
 
-Here we go:
+### Install Dependencies
 
-- Install [asdf](https://asdf-vm.com)
+We use [asdf](https://asdf-vm.com) to handle the Elixir and Erlang version. You don't have to use it but in our opinion it is the best solution.
+
+- Install asdf ([Get started guide](https://asdf-vm.com/guide/getting-started.html))
+  - `asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git`
+  - `asdf plugin add erlang https://github.com/asdf-vm/asdf-erlang.git`
+  - `asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git`
+
+### Clone the Project
+
 - Git clone the project with `git clone git@github.com:animina-dating/animina.git`
 - `cd animina` into the local project clone
+
+### Set Up the Environment
+
 - `asdf install` installs the needed Elixir and Erlang versions
-- `mix deps.get` or `DISABLE_ML_FEATURES=true mix deps.get` if you wish to not install the ML dependencies
+
+### Install Dependencies
+
+- `mix deps.get`
 - `cd assets && npm install` to install [Alpine.js](https://alpinejs.dev)
+- `cd ..`
+
+### Database Setup
+
 - `mix ash_postgres.create` to create the database
 - `mix ash_postgres.migrate` to run migrations
-- `mix seed_demo_system` creates dummy accounts and lists them.
-- `iex -S mix phx.server` or `DISABLE_ML_FEATURES=true iex -S mix phx.server` if you wish to start the server without ML features
 
-Open http://localhost:4000 in your browser
+### Seed the Database
+
+This step is optional, but very useful for development and demo systems.
+
+- `mix seed_demo_system` creates dummy accounts and lists them.
+
+### Start the Server
+
+- `iex -S mix phx.server`
+
+### GO!
+
+Open http://localhost:4000 in your browser. You can create a new profile and visit the demo accounts. And you can log into the demo accounts. The default password of the demo accounts is printed at the end of the list of demo accounts after running `mix seed_demo_system`.
 
 ## User
 
