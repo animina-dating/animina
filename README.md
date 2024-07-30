@@ -65,6 +65,14 @@ To change the state of a user account use the following actions:
 - `User.unban` - This action is used to unban an account.
 - `User.recover` - This action is used to recover an account from incognito or hibernate.
 
+
+If you want to for example hibernate a user with the username 'wintermeyer' you can run the following in IEX 
+
+`{:ok, user} = Animina.Accounts.User.get_by_username("wintermeyer") `
+`Animina.Accounts.User.hibernate(%{user_id: user.id})`
+
+
+
 ### User Roles
 
 - We have 2 roles `user` and `admin` .
