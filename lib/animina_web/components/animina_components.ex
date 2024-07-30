@@ -302,9 +302,15 @@ defmodule AniminaWeb.AniminaComponents do
       <div class="xl:grid xl:grid-cols-3 xl:gap-8">
         <div class="space-y-8">
           <p class="text-sm leading-6 text-gray-600 dark:text-gray-400">
-            <span class="text-sm font-semibold leading-6 text-gray-900 dark:text-white">Animina</span>
+            <span class="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+              Animina
+              <span>
+                v<%= Application.spec(:animina, :vsn) %>
+              </span>
+            </span>
             <br />Fair and common sense online-dating.
           </p>
+
           <p class="text-sm leading-6 text-gray-600 dark:text-gray-400">
             Founded by <a href="https://www.wintermeyer.de">Stefan Wintermeyer</a>.
           </p>
