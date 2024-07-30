@@ -101,7 +101,11 @@ defmodule AniminaWeb.RootLive do
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
           title={gettext("Animina Dating Platform")}
-          message={gettext("Fair Online Dating for Everyone. Join now!")}
+          message={
+            gettext(
+              "Other dating platforms prolong your search to charge you more. We don’t have a monthly fee—just a one-time €10 fee after you find a partner. No credit card needed for registration—we trust you. But for all beta testers, it’s free anyway. Join now and find your match!"
+            )
+          }
           avatars_urls={[
             "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
             "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
@@ -474,8 +478,10 @@ defmodule AniminaWeb.RootLive do
             <label for="comments" class="font-medium text-gray-900 dark:text-white">
               <%= gettext("I accept the legal terms of animina.") %>
             </label>
-            <p class="text-gray-500  dark:text-gray-100">
-              <%= gettext("Warning: We will sell your data to the devel and Santa Claus.") %>
+            <p class="text-gray-500 dark:text-gray-100">
+              <%= gettext(
+                "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
+              ) %>
             </p>
             <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
               <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
