@@ -1,7 +1,6 @@
 defmodule AniminaWeb.StoryLive do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
@@ -172,17 +171,29 @@ defmodule AniminaWeb.StoryLive do
           ]
         ]
       )
+      |> AshPhoenix.Form.add_form([:photo], validate?: false)
       |> to_form()
 
     update_last_registration_page_visited(socket.assigns.current_user, "/my/about-me")
 
-    socket
-    |> assign(page_title: gettext("Create your first story"))
-    |> assign(form_id: "create-story-form")
-    |> assign(title: gettext("Create your first story"))
-    |> assign(:cta, gettext("Create about me story"))
-    |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
-    |> assign(form: form)
+    if user_has_an_about_me_story?(socket.assigns.current_user) do
+      about_me_story =
+        get_stories_for_a_user(socket.assigns.current_user)
+        |> Enum.find(fn story ->
+          story.headline.subject == "About me"
+        end)
+
+      socket
+      |> push_navigate(to: "/my/stories/#{about_me_story.id}/edit")
+    else
+      socket
+      |> assign(page_title: gettext("Create your first story"))
+      |> assign(form_id: "create-story-form")
+      |> assign(title: gettext("Create your first story"))
+      |> assign(:cta, gettext("Create about me story"))
+      |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
+      |> assign(form: form)
+    end
   end
 
   defp apply_action(socket, _, _params) do
@@ -344,14 +355,21 @@ defmodule AniminaWeb.StoryLive do
       User.update_last_registration_page_visited(user, %{last_registration_page_visited: page})
   end
 
-  defp get_user_default_photo(socket) when socket.assigns.live_action == :about_me do
-    Accounts.Photo
-    |> Ash.Query.for_read(:user_profile_photo, %{user_id: socket.assigns.current_user.id})
-    |> Ash.read!()
-    |> case do
-      [photo | _] -> photo
-      _ -> nil
+  defp user_has_an_about_me_story?(user) do
+    case get_stories_for_a_user(user) do
+      [] ->
+        false
+
+      stories ->
+        Enum.any?(stories, fn story ->
+          story.headline.subject == "About me"
+        end)
     end
+  end
+
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+    stories
   end
 
   defp get_user_default_photo(_socket) do
