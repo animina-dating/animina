@@ -21,83 +21,88 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def top_navigation(assigns) do
     ~H"""
-    <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex md:justify-end justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
-      <div class="block md:hidden" x-data="{ open: false }" @click="open = !open">
-        <p class="text-black dark:text-white">
-          <.menu_bar />
-        </p>
-        <div
-          x-show="open"
-          class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-black/60 left-0 "
-        >
+    <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex  justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
+      <p class="text-base font-bold text-gray-700 cursor-pointer dark:text-white">
+        ANIMINA Beta
+      </p>
+      <div class="flex gap-5 items-center">
+        <div class="block md:hidden" x-data="{ open: false }" @click="open = !open">
+          <p class="text-black dark:text-white">
+            <.menu_bar />
+          </p>
           <div
-            @click.outside="open = false"
-            @keydown.escape.window="open = false"
             x-show="open"
-            x-transition
-            x-cloak
-            class="w-[75%]  h-[100%] dark:bg-gray-900 bg-white "
+            class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-black/60 left-0 "
           >
-            <.mobile_navigation
-              active_tab={@active_tab}
+            <div
+              @click.outside="open = false"
+              @keydown.escape.window="open = false"
+              x-show="open"
+              x-transition
+              x-cloak
+              class="w-[75%]  h-[100%] dark:bg-gray-900 bg-white "
+            >
+              <.mobile_navigation
+                active_tab={@active_tab}
+                current_user={@current_user}
+                current_user_credit_points={@current_user_credit_points}
+                number_of_unread_messages={@number_of_unread_messages}
+              />
+            </div>
+
+            <div class="p-4 text-white" @click="open = false" x-show="open" x-transition x-cloak>
+              <.close_icon />
+            </div>
+          </div>
+        </div>
+        <div :if={@current_user} class="flex items-center gap-3 md:gap-5">
+          <div>
+            <.top_notification_bell
               current_user={@current_user}
-              current_user_credit_points={@current_user_credit_points}
               number_of_unread_messages={@number_of_unread_messages}
             />
           </div>
-
-          <div class="p-4 text-white" @click="open = false" x-show="open" x-transition x-cloak>
-            <.close_icon />
-          </div>
-        </div>
-      </div>
-      <div :if={@current_user} class="flex items-center gap-3 md:gap-5">
-        <div>
-          <.top_notification_bell
-            current_user={@current_user}
-            number_of_unread_messages={@number_of_unread_messages}
-          />
-        </div>
-        <div
-          x-data="{ open: false }"
-          @click="open = !open"
-          class="flex items-center gap-2 cursor-pointer dark:text-white"
-        >
-          <.user_avatar_image current_user={@current_user} />
-          <p :if={@current_user} class="hidden md:block">
-            <%= StringHelper.truncate_name(@current_user.name) %>
-          </p>
-
-          <button class="hidden dark:text-white md:block" type="button">
-            <.arrow_down />
-          </button>
           <div
-            @click.outside="open = false"
-            @keydown.escape.window="open = false"
-            x-show="open"
-            x-transition
-            x-cloak
-            class="absolute py-3 top-8 right-2"
+            x-data="{ open: false }"
+            @click="open = !open"
+            class="flex items-center gap-2 cursor-pointer dark:text-white"
           >
-            <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
+            <.user_avatar_image current_user={@current_user} />
+            <p :if={@current_user} class="hidden md:block">
+              <%= StringHelper.truncate_name(@current_user.name) %>
+            </p>
+
+            <button class="hidden dark:text-white md:block" type="button">
+              <.arrow_down />
+            </button>
+            <div
+              @click.outside="open = false"
+              @keydown.escape.window="open = false"
+              x-show="open"
+              x-transition
+              x-cloak
+              class="absolute py-3 top-8 right-2"
+            >
+              <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div :if={@current_user == nil} class="flex items-center gap-3 md:gap-5">
-        <div :if={@active_tab == :sign_in}>
-          <p class="text-base font-bold text-gray-400 cursor-not-allowed dark:text-gray-500">
-            <%= gettext("Login") %>
-          </p>
-        </div>
+        <div :if={@current_user == nil} class="flex items-center gap-3 md:gap-5">
+          <div :if={@active_tab == :sign_in}>
+            <p class="text-base font-bold text-gray-400 cursor-not-allowed dark:text-gray-500">
+              <%= gettext("Login") %>
+            </p>
+          </div>
 
-        <div :if={@active_tab != :sign_in}>
-          <.link
-            class="text-base font-bold text-gray-700 cursor-pointer dark:text-white"
-            navigate="/sign-in"
-          >
-            <%= gettext("Login") %>
-          </.link>
+          <div :if={@active_tab != :sign_in}>
+            <.link
+              class="text-base font-bold text-gray-700 cursor-pointer dark:text-white"
+              navigate="/sign-in"
+            >
+              <%= gettext("Login") %>
+            </.link>
+          </div>
         </div>
       </div>
     </div>
