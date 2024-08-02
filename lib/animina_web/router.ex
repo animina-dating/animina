@@ -71,6 +71,7 @@ defmodule AniminaWeb.Router do
 
     post "/auth/user/sign_in/", AuthController, :sign_in
 
+
     sign_out_route AuthController, "/auth/user/sign-out"
     auth_routes_for Animina.Accounts.User, to: AuthController
     reset_route []

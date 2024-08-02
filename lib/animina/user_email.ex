@@ -7,11 +7,27 @@ defmodule Animina.UserEmail do
   alias Animina.Mailer
   use AshAuthentication.Sender
 
+  def send(user, confirm, _opts) do
+    "http://localhost:4000/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"
+    |> IO.inspect()
 
-  # def send(user, confirm, _opts) do
-  #   IO.inspect user
-  #   IO.inspect confirm
-  # end
+    # new()
+    # |> to(to_string(user.email))
+    # |> from({"MyApp Admin", "support@myapp.inc"})
+    # |> subject("Confirm your email address")
+    # |> html_body("""
+    #   <p>
+    #     Hi!<br />
+
+    #     Someone has tried to register a new account at <a href="https://myapp.inc">MyApp</a>.
+    #     If it was you, then please click the link below to confirm your identity.  If you did not initiate this request then please ignore this email.
+    #   </p>
+    #   <p>
+    #     <a href="https://myapp.inc/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}">Click here to confirm your account</a>
+    #   </p>
+    # """)
+    # |> Mailer.deliver()
+  end
 
   def test do
     send_email(

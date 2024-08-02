@@ -64,6 +64,21 @@ defmodule AniminaWeb.AuthController do
 
   def failure(
         conn,
+        {:confirm_new_user, :confirm},
+        reason
+      ) do
+    IO.inspect(reason)
+
+    conn
+    |> put_flash(
+      :error,
+      gettext("Invalid Email Confirmation Link")
+    )
+    |> redirect(to: "/")
+  end
+
+  def failure(
+        conn,
         {:password, :register},
         reason
       ) do

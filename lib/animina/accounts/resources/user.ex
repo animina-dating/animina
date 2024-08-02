@@ -518,9 +518,6 @@ defmodule Animina.Accounts.User do
     add_ons do
       confirmation :confirm_new_user do
         monitor_fields [:email]
-        confirm_on_create? true
-        confirm_on_update?  false
-        confirm_action_name :confirm_new_user
         sender Animina.UserEmail
       end
     end
