@@ -94,6 +94,7 @@ defmodule Animina.Accounts.User do
     attribute :legal_terms_accepted, :boolean, default: false, public?: true
     attribute :preapproved_communication_only, :boolean, default: false, public?: true
     attribute :streak, :integer, default: 0, public?: true
+    attribute :confirmed_at, :utc_datetime_usec, allow_nil?: true
 
     attribute :last_registration_page_visited, :string,
       allow_nil?: true,
@@ -250,7 +251,8 @@ defmodule Animina.Accounts.User do
         :maximum_partner_age,
         :partner_gender,
         :search_range,
-        :is_private
+        :is_private,
+        :confirmed_at
       ]
 
       primary? true
@@ -280,7 +282,8 @@ defmodule Animina.Accounts.User do
         :search_range,
         :is_private,
         :last_registration_page_visited,
-        :streak
+        :streak,
+        :confirmed_at
       ]
 
       primary? true
@@ -509,6 +512,16 @@ defmodule Animina.Accounts.User do
           :legal_terms_accepted,
           :occupation
         ])
+      end
+    end
+
+    add_ons do
+      confirmation :confirm_new_user do
+        monitor_fields [:email]
+        confirm_on_create? true
+        confirm_on_update?  false
+        confirm_action_name :confirm_new_user
+        sender Animina.UserEmail
       end
     end
 

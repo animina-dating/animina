@@ -5,6 +5,13 @@ defmodule Animina.UserEmail do
 
   import Swoosh.Email
   alias Animina.Mailer
+  use AshAuthentication.Sender
+
+
+  # def send(user, confirm, _opts) do
+  #   IO.inspect user
+  #   IO.inspect confirm
+  # end
 
   def test do
     send_email(
