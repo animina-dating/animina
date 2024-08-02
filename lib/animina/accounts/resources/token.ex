@@ -1,6 +1,6 @@
 defmodule Animina.Accounts.Token do
   @moduledoc """
-  This is the Toke module.
+  This is the Token module.
   """
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,

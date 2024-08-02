@@ -26,6 +26,11 @@ defmodule AniminaWeb.Router do
       live "/sign-in", RootLive, :sign_in
     end
 
+    ash_authentication_live_session :authentication_required_for_email_validation,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_validation} do
+      live "/email-validation", EmailValidationLive, :index
+    end
+
     ash_authentication_live_session :live_authentication_required,
       on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
       live "/admin/reports/all", AllReportsLive, :index
@@ -70,7 +75,6 @@ defmodule AniminaWeb.Router do
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in
-
 
     sign_out_route AuthController, "/auth/user/sign-out"
     auth_routes_for Animina.Accounts.User, to: AuthController
