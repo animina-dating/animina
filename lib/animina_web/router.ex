@@ -28,7 +28,7 @@ defmodule AniminaWeb.Router do
 
     ash_authentication_live_session :authentication_required_for_email_validation,
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_validation} do
-      live "/email-validation", EmailValidationLive, :index
+      live "/my/email-validation", EmailValidationLive, :index
     end
 
     ash_authentication_live_session :live_authentication_required,

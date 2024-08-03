@@ -197,7 +197,7 @@ defmodule AniminaWeb.AuthController do
 
   defp redirect_url(user) do
     if user.confirmed_at == nil do
-      "/email-validation"
+      "/my/email-validation"
     else
       if user_has_an_about_me_story?(user) do
         "/my/dashboard"

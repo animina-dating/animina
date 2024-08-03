@@ -63,26 +63,26 @@ defmodule AniminaWeb.RootTest do
       assert html =~ "Password length must be greater than or equal to 8"
     end
 
-    test "Once we add correct user details , we are redirected to /email-validation where we see information about how to confirm our accounts.",
+    test "Once we add correct user details , we are redirected to /my/email-validation where we see information about how to confirm our accounts.",
          %{conn: conn} do
       {:ok, _view, _html} = live(conn, "/")
 
       {:ok, _index_live, html} =
         conn
         |> sign_in_user(@valid_attrs)
-        |> live(~p"/email-validation")
+        |> live(~p"/my/email-validation")
 
       assert html =~ "We just send you an email to #{@valid_attrs.email} with a confirmation link"
     end
 
-    test "Once we add correct user details , we are redirected to /email-validation then to  /my/potential-partner/ page after confirmation",
+    test "Once we add correct user details , we are redirected to /my/email-validation then to  /my/potential-partner/ page after confirmation",
          %{conn: conn} do
       {:ok, _view, _html} = live(conn, "/")
 
       {:ok, _index_live, _html} =
         conn
         |> sign_in_user(@valid_attrs)
-        |> live(~p"/email-validation")
+        |> live(~p"/my/email-validation")
 
       confirm_user(@valid_attrs)
 
@@ -108,7 +108,7 @@ defmodule AniminaWeb.RootTest do
       {:ok, _index_live, _html} =
         conn
         |> sign_in_user(@valid_attrs)
-        |> live(~p"/email-validation")
+        |> live(~p"/my/email-validation")
 
       confirm_user(@valid_attrs)
 
