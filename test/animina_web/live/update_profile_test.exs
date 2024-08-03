@@ -88,7 +88,8 @@ defmodule AniminaWeb.UpdateProfileTest do
         occupation: "Engineer",
         mobile_phone: "0151-12345678",
         language: "de",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now()
       })
 
     user

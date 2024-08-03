@@ -58,7 +58,7 @@ defmodule AniminaWeb.LiveUserAuth do
           end
       end
 
-    if socket.assigns[:current_user] do
+    if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at do
       current_user =
         Registration.get_current_user(session)
 
@@ -77,7 +77,13 @@ defmodule AniminaWeb.LiveUserAuth do
        |> assign(:number_of_unread_messages, Enum.count(unread_messages))
        |> assign(:current_user_credit_points, current_user.credit_points)}
     else
-      {:halt, Phoenix.LiveView.redirect(socket, to: "/#{path}")}
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/#{path}")
+       |> Phoenix.LiveView.put_flash(
+         :error,
+         "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
+       )}
     end
   end
 
@@ -96,7 +102,7 @@ defmodule AniminaWeb.LiveUserAuth do
   end
 
   def on_mount(:live_user_home_optional, _params, _session, socket) do
-    if socket.assigns[:current_user] do
+    if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at do
       {:halt, Phoenix.LiveView.redirect(socket, to: "/my/dashboard")}
     else
       {:cont,
@@ -127,7 +133,30 @@ defmodule AniminaWeb.LiveUserAuth do
        |> assign(:number_of_unread_messages, Enum.count(unread_messages))
        |> assign(:current_user_credit_points, current_user.credit_points)}
     else
-      {:halt, Phoenix.LiveView.redirect(socket, to: "/sign-in")}
+      {:halt,
+       socket
+       |> Phoenix.LiveView.put_flash(
+         :error,
+         "You need to be authenticated as an admin and confirmed to access this page . If you are already signed up , check your email for the confirmation link"
+       )
+       |> Phoenix.LiveView.redirect(to: "/sign-in")}
+    end
+  end
+
+  def on_mount(:live_user_required_for_validation, _params, session, socket) do
+    if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at == nil do
+      current_user = Registration.get_current_user(session)
+
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
+       |> assign(:current_user, current_user)}
+    else
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/sign-in")}
     end
   end
 

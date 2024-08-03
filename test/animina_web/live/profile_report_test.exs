@@ -132,7 +132,8 @@ defmodule AniminaWeb.ReportTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "en",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now()
       })
 
     user
@@ -152,7 +153,8 @@ defmodule AniminaWeb.ReportTest do
         mobile_phone: "0151-22345678",
         language: "en",
         is_private: true,
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now()
       })
 
     user

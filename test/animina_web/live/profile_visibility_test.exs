@@ -155,7 +155,8 @@ defmodule AniminaWeb.ProfileVisibilityTest do
         })
         |> live(~p"/my/profile/visibility")
 
-      assert error == "Account is archived, Kindly Contact Support"
+      assert error ==
+               "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
     end
 
     test "If a user is incognito , they can go back to the normal state by clicking the Normal Div",
@@ -252,7 +253,8 @@ defmodule AniminaWeb.ProfileVisibilityTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "en",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now()
       })
 
     user

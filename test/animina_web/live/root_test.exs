@@ -32,7 +32,8 @@ defmodule AniminaWeb.RootTest do
     mobile_phone: "0151-12345678",
     occupation: "Software Engineer",
     language: "en",
-    legal_terms_accepted: true
+    legal_terms_accepted: true,
+    confirmed_at: DateTime.utc_now()
   }
 
   describe "Tests the Registration flow" do
@@ -62,12 +63,36 @@ defmodule AniminaWeb.RootTest do
       assert html =~ "Password length must be greater than or equal to 8"
     end
 
-    test "Once we add correct user details , we are redirected to the /my/potential-partner/ page",
+    test "Once we add correct user details , we are redirected to /my/email-validation where we see information about how to confirm our accounts.",
          %{conn: conn} do
       {:ok, _view, _html} = live(conn, "/")
 
       {:ok, _index_live, html} =
-        conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")
+        conn
+        |> sign_in_user(@valid_attrs)
+        |> live(~p"/my/email-validation")
+
+      assert html =~ "We just send you an email to #{@valid_attrs.email} with a confirmation link"
+    end
+
+    test "Once we add correct user details , we are redirected to /my/email-validation then to  /my/potential-partner/ page after confirmation",
+         %{conn: conn} do
+      {:ok, _view, _html} = live(conn, "/")
+
+      {:ok, _index_live, _html} =
+        conn
+        |> sign_in_user(@valid_attrs)
+        |> live(~p"/my/email-validation")
+
+      confirm_user(@valid_attrs)
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(~p"/my/potential-partner/")
 
       assert html =~ "Criteria for your new partner"
     end
@@ -81,7 +106,19 @@ defmodule AniminaWeb.RootTest do
       {:ok, _view, _html} = live(conn, "/")
 
       {:ok, _index_live, _html} =
-        conn |> sign_in_user(@valid_attrs) |> live(~p"/my/potential-partner/")
+        conn
+        |> sign_in_user(@valid_attrs)
+        |> live(~p"/my/email-validation")
+
+      confirm_user(@valid_attrs)
+
+      {:ok, _index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(~p"/my/potential-partner/")
 
       user = User.by_username!(@valid_attrs.username)
 
@@ -180,7 +217,8 @@ defmodule AniminaWeb.RootTest do
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
 
-      assert error == "Account is under investigation, kindly try and log in after 24 hours"
+      assert error ==
+               "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
     end
 
     test "A user cannot login  if an account is banned", %{conn: conn} do
@@ -195,7 +233,8 @@ defmodule AniminaWeb.RootTest do
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
 
-      assert error == "Account is banned, Kindly Contact Support"
+      assert error ==
+               "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
     end
 
     test "A user cannot login  if an account is archived", %{conn: conn} do
@@ -210,7 +249,8 @@ defmodule AniminaWeb.RootTest do
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
         |> live(~p"/my/potential-partner/")
 
-      assert error == "Account is archived, Kindly Contact Support"
+      assert error ==
+               "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
     end
 
     test "A user can login with their email and password if their account is hibernated", %{
@@ -260,5 +300,11 @@ defmodule AniminaWeb.RootTest do
       form(lv, "#basic_user_sign_in_form", user: attributes)
 
     submit_form(form, conn)
+  end
+
+  defp confirm_user(attributes) do
+    user = User.by_username!(attributes.username)
+
+    User.update(user, %{confirmed_at: DateTime.utc_now()})
   end
 end

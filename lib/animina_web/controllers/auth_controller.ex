@@ -64,6 +64,19 @@ defmodule AniminaWeb.AuthController do
 
   def failure(
         conn,
+        {:confirm_new_user, :confirm},
+        _reason
+      ) do
+    conn
+    |> put_flash(
+      :error,
+      gettext("Invalid Email Confirmation Link")
+    )
+    |> redirect(to: "/")
+  end
+
+  def failure(
+        conn,
         {:password, :register},
         reason
       ) do
@@ -183,10 +196,14 @@ defmodule AniminaWeb.AuthController do
   end
 
   defp redirect_url(user) do
-    if user_has_an_about_me_story?(user) do
-      "/my/dashboard"
+    if user.confirmed_at == nil do
+      "/my/email-validation"
     else
-      get_last_registration_page_visited(user.last_registration_page_visited)
+      if user_has_an_about_me_story?(user) do
+        "/my/dashboard"
+      else
+        get_last_registration_page_visited(user.last_registration_page_visited)
+      end
     end
   end
 

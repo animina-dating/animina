@@ -26,6 +26,11 @@ defmodule AniminaWeb.Router do
       live "/sign-in", RootLive, :sign_in
     end
 
+    ash_authentication_live_session :authentication_required_for_email_validation,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_validation} do
+      live "/my/email-validation", EmailValidationLive, :index
+    end
+
     ash_authentication_live_session :live_authentication_required,
       on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
       live "/admin/reports/all", AllReportsLive, :index

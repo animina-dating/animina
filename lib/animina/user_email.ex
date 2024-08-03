@@ -5,6 +5,19 @@ defmodule Animina.UserEmail do
 
   import Swoosh.Email
   alias Animina.Mailer
+  use AshAuthentication.Sender
+
+  def send(user, confirm, _opts) do
+    send_email(
+      user.name,
+      Ash.CiString.value(user.email),
+      "Confirm your email address",
+      "Hi!
+         Someone has tried to register a new account at \nAnimina\nhttps://animina.de.
+         If it was you, then please click the link below to confirm your identity.  If you did not initiate this request then please ignore this email.
+         \nClick here to confirm your account \n#{"https://animina.de/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
+    )
+  end
 
   def test do
     send_email(
