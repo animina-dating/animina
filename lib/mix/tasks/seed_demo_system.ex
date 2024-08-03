@@ -293,7 +293,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
           minimum_partner_age: minimum_partner_age(age),
           maximum_partner_age: age + 10,
           partner_gender: opposite_gender(seed_data.gender),
-          search_range: hd(Enum.take_random([5, 10, 20, 50], 1))
+          search_range: hd(Enum.take_random([5, 10, 20, 50], 1)),
+          confirmed_at: DateTime.utc_now()
         })
 
       user_role = Role.by_name!(:user)
