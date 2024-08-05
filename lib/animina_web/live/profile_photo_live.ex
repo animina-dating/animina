@@ -191,23 +191,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
     ~H"""
     <div class="px-5 space-y-10">
       <%= if @current_user.profile_photo == nil do %>
-        <.notification_box
-          title={gettext("Hello %{name}!", name: @current_user.name)}
-          message={gettext("To complete your profile upload a profile photo")}
-        />
-      <% else %>
-        <.notification_box
-          title={gettext("Hello %{name}!", name: @current_user.name)}
-          message={gettext("Update your profile photo")}
-        />
-      <% end %>
-
-      <%= if @current_user.profile_photo == nil do %>
-        <h2 class="text-xl dark:text-white font-bold">
+        <h2 class="text-xl font-bold dark:text-white">
           <%= gettext("Upload an avatar photo for your account") %>
         </h2>
       <% else %>
-        <h2 class="text-xl dark:text-white font-bold">
+        <h2 class="text-xl font-bold dark:text-white">
           <%= gettext("Update your avatar photo for your account") %>
         </h2>
       <% end %>
@@ -253,9 +241,9 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <div class="flex space-x-8">
             <.live_img_preview class="inline-block object-cover w-32 h-32 rounded-md" entry={entry} />
 
-            <div class="flex flex-col dark:text-white justify-center flex-1">
+            <div class="flex flex-col justify-center flex-1 dark:text-white">
               <p><%= entry.client_name %></p>
-              <p class="text-sm dark:text-gray-100 text-gray-600">
+              <p class="text-sm text-gray-600 dark:text-gray-100">
                 <%= Size.humanize!(entry.client_size, output: :string) %>
               </p>
 
