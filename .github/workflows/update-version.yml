@@ -38,7 +38,6 @@ jobs:
         else
           echo "Changes detected"
           echo "no_changes=false" >> $GITHUB_ENV
-        fi
 
     - name: Debug check changes
       run: |
@@ -66,4 +65,11 @@ jobs:
         # Commit and push the changes
         git add mix.exs
         git commit -m "Bump patch version to $new_version"
-        git push origin main
+
+    - name: Push changes
+      if: env.no_changes == 'false'
+      env:
+        GH_TOKEN: ${{ secrets.VERSION_NUMBER_BUMP_GH_TOKEN }}
+      run: |
+        git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
+
