@@ -2,8 +2,8 @@ name: Update Patch Version
 
 on:
   schedule:
-    - cron: '0 12 * * *'  # Dies bedeutet, dass das Skript jeden Tag um 12:00 Uhr mittags UTC ausgeführt wird
-  workflow_dispatch:  # Optional, ermöglicht das manuelle Auslösen des Workflows
+    - cron: '0 12 * * *'  # This means the script will run every day at 12:00 PM UTC
+  workflow_dispatch:  # Optional, allows manual triggering of the workflow
 
 jobs:
   update-patch-version:
@@ -12,12 +12,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Set up Elixir
-      uses: actions/setup-elixir@v1
-      with:
-        elixir-version: '1.16.3'
-        otp-version: '26.2.5'
 
     - name: Check for changes
       id: changes
@@ -28,17 +22,17 @@ jobs:
     - name: Update patch version
       if: steps.changes.outcome != 'success'
       run: |
-        # Extrahiere die aktuelle Version
+        # Extract the current version
         current_version=$(grep 'version:' mix.exs | sed -E "s/.*version: \"([0-9]+\.[0-9]+\.[0-9]+)\".*/\1/")
         IFS='.' read -ra ADDR <<< "$current_version"
         patch=${ADDR[2]}
         new_patch=$((patch + 1))
         new_version="${ADDR[0]}.${ADDR[1]}.$new_patch"
 
-        # Aktualisiere die mix.exs Datei
+        # Update the mix.exs file
         sed -i "s/$current_version/$new_version/" mix.exs
 
-        # Commit und Push der Änderungen
+        # Commit and push the changes
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git add mix.exs
