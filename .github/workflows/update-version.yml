@@ -19,18 +19,28 @@ jobs:
         git fetch origin
         git diff --exit-code origin/main || echo "Changes detected"
 
+    - name: Debug check changes
+      run: |
+        git diff origin/main
+        git status
+
     - name: Update patch version
       if: steps.changes.outcome != 'success'
       run: |
         # Extract the current version
         current_version=$(grep 'version:' mix.exs | sed -E "s/.*version: \"([0-9]+\.[0-9]+\.[0-9]+)\".*/\1/")
+        echo "Current version: $current_version"
         IFS='.' read -ra ADDR <<< "$current_version"
         patch=${ADDR[2]}
         new_patch=$((patch + 1))
         new_version="${ADDR[0]}.${ADDR[1]}.$new_patch"
+        echo "New version: $new_version"
 
         # Update the mix.exs file
         sed -i "s/$current_version/$new_version/" mix.exs
+
+        # Verify the update
+        grep 'version:' mix.exs
 
         # Commit and push the changes
         git config --global user.name 'github-actions'
