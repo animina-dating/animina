@@ -62,7 +62,7 @@ jobs:
         # Verify the update
         grep 'version:' mix.exs
 
-        # Commit and push the changes
+        # Commit the changes
         git add mix.exs
         git commit -m "Bump patch version to $new_version"
 
@@ -72,4 +72,3 @@ jobs:
         GH_TOKEN: ${{ secrets.VERSION_NUMBER_BUMP_GH_TOKEN }}
       run: |
         git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git HEAD:main
-
