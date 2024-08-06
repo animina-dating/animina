@@ -12,23 +12,38 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Fetch all history for all branches and tags
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
 
     - name: Check for changes since last run
       id: changes
       run: |
-        # Fetch all branches and tags
+        # Fetch all branches and tags to ensure we have a complete history
         git fetch --all
-        # Get the commit hash from 24 hours ago
-        since_commit=$(git rev-list -n 1 --before="24 hours ago" main)
+        # Get the latest commit hash from 24 hours ago
+        since_commit=$(git rev-list -n 1 --before="24 hours ago" origin/main)
         echo "Commit from 24 hours ago: $since_commit"
         # Check if there are changes since then
-        if git diff --quiet $since_commit..HEAD; then
+        if [ -z "$since_commit" ]; then
+          echo "No commit found from 24 hours ago. Assuming changes."
+          echo "no_changes=false" >> $GITHUB_ENV
+        elif git diff --quiet $since_commit..HEAD; then
           echo "No changes since last run"
           echo "no_changes=true" >> $GITHUB_ENV
         else
           echo "Changes detected"
           echo "no_changes=false" >> $GITHUB_ENV
         fi
+
+    - name: Debug check changes
+      run: |
+        git log --since="24 hours ago"
+        git status
 
     - name: Update patch version
       if: env.no_changes == 'false'
@@ -49,8 +64,6 @@ jobs:
         grep 'version:' mix.exs
 
         # Commit and push the changes
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
         git add mix.exs
         git commit -m "Bump patch version to $new_version"
         git push origin main
