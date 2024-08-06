@@ -13,19 +13,25 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Check for changes
+    - name: Check for changes since last run
       id: changes
       run: |
-        git fetch origin
-        git diff --exit-code origin/main || echo "Changes detected"
-
-    - name: Debug check changes
-      run: |
-        git diff origin/main
-        git status
+        # Fetch all branches and tags
+        git fetch --all
+        # Get the commit hash from 24 hours ago
+        since_commit=$(git rev-list -n 1 --before="24 hours ago" main)
+        echo "Commit from 24 hours ago: $since_commit"
+        # Check if there are changes since then
+        if git diff --quiet $since_commit..HEAD; then
+          echo "No changes since last run"
+          echo "no_changes=true" >> $GITHUB_ENV
+        else
+          echo "Changes detected"
+          echo "no_changes=false" >> $GITHUB_ENV
+        fi
 
     - name: Update patch version
-      if: steps.changes.outcome != 'success'
+      if: env.no_changes == 'false'
       run: |
         # Extract the current version
         current_version=$(grep 'version:' mix.exs | sed -E "s/.*version: \"([0-9]+\.[0-9]+\.[0-9]+)\".*/\1/")
