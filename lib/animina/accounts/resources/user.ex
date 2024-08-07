@@ -519,6 +519,7 @@ defmodule Animina.Accounts.User do
       confirmation :confirm_new_user do
         monitor_fields [:email]
         sender Animina.UserEmail
+        token_lifetime {365, :days}
       end
     end
 
