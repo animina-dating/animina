@@ -20,8 +20,24 @@ defmodule Animina.UserEmail do
       Ash.CiString.value(user.email),
       subject,
       text_body <>
-        "\n#{"https://animina.de/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
+        "\n<a href='#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}' target='_blank'>#{gettext("Confirm your email address")}</a>"
     )
+  end
+
+  defp get_link(:prod) do
+    "https://animina.de"
+  end
+
+  defp get_link(:dev) do
+    "http://localhost:4000"
+  end
+
+  defp get_link(:test) do
+    "http://localhost:4000"
+  end
+
+  defp get_link(_) do
+    "http://localhost:4000"
   end
 
   def test do
@@ -29,7 +45,7 @@ defmodule Animina.UserEmail do
       "Stefan Wintermeyer",
       "stefan@wintermeyer.de",
       "This is a test",
-      "Hi,\n\njust a test.\n\n-- \nAnimina System\nhttps://animina.de"
+      "Hi,\n\njust a test.\n\n-- \nAnimina System\nhttps://animina.de "
     )
   end
 

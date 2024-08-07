@@ -1,6 +1,6 @@
 # ANIMINA Dating Platform
 
-ANIMINA is a web based dating platform. In case you have a question do not 
+ANIMINA is a web based dating platform. In case you have a question do not
 hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 ![Screenshot of a demo ANIMINA profile](https://github.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.webp?raw=true)
@@ -11,8 +11,8 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
 > [!TIP]
-> Project founder Stefan Wintermeyer will give a talk about ANIMINA and other 
-> dating platforms at [FrOSCon](https://froscon.org). First slot (10 a.m.) on 
+> Project founder Stefan Wintermeyer will give a talk about ANIMINA and other
+> dating platforms at [FrOSCon](https://froscon.org). First slot (10 a.m.) on
 > August the 18th 2024. See you there!
 
 ## ANIMINA Installation Guide
@@ -100,13 +100,10 @@ To change the state of a user account use the following actions:
 - `User.unban` - This action is used to unban an account.
 - `User.recover` - This action is used to recover an account from incognito or hibernate.
 
-
-If you want to for example hibernate a user with the username 'wintermeyer' you can run the following in IEX 
+If you want to for example hibernate a user with the username 'wintermeyer' you can run the following in IEX
 
 `{:ok, user} = Animina.Accounts.User.get_by_username("wintermeyer") `
 `Animina.Accounts.User.hibernate(%{user_id: user.id})`
-
-
 
 ### User Roles
 
@@ -117,20 +114,22 @@ If you want to for example hibernate a user with the username 'wintermeyer' you 
 ## Enable Machine Learning features and servings
 
 By default the server starts with ML features enabled. To disable running ML features:
-  * set `DISABLE_ML_FEATURES` environment variable to true
-  * ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
-  * For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
+
+- set `DISABLE_ML_FEATURES` environment variable to true
+- ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
+- For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
 
 ## Swoosh Mailbox Server
 
-Use `iex -S mix swoosh.mailbox.server` to start the Swoosh Mailbox Server webpage in development. Go to http://localhost:4000 so see the mailbox.
+To access all the emails sent to the mailbox server, go to `localhost:4000/dev/mailbox` in your browser once the server is running.
+Once you register a new account, you can see the email sent to the mailbox server for account verification.
 
 ## Thoughts about the Frontend
 
-Keep it simple. Let's not use JavaScript everywhere. Better ask sw@wintermeyer-consulting.de first 
+Keep it simple. Let's not use JavaScript everywhere. Better ask sw@wintermeyer-consulting.de first
 before diving into a JavaScript driven feature. Use Phoenix tools when possible.
 
-We are doing a mobile first approach and use [Tailwind CSS](https://tailwindui.com). Please don't 
+We are doing a mobile first approach and use [Tailwind CSS](https://tailwindui.com). Please don't
 forget a dark mode version when implimenting a new feature.
 
 ## Submiting Code

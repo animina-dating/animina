@@ -12,6 +12,10 @@ if System.get_env("DISABLE_ML_FEATURES") == true do
   config :nx, default_backend: EXLA.Backend
 end
 
+# Configures the environment
+
+config :animina, env: Mix.env()
+
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
