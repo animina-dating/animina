@@ -11,7 +11,6 @@ defmodule Animina.Accounts.Token do
     defaults [:read, :destroy]
   end
 
-
   code_interface do
     domain Animina.Accounts
     define :destroy
