@@ -3,7 +3,8 @@
 
 set -euo pipefail
 
-LOCKFILE=$(mktemp /tmp/animina-deploy.lock.XXXXXX)
+# Define a unique lock file name using the script's name to avoid conflicts
+LOCKFILE="/tmp/animina-deploy.lock"
 
 # Clean up the lock file on exit
 cleanup() {
@@ -12,9 +13,15 @@ cleanup() {
 trap cleanup EXIT
 
 # Check if the script is already running
-if [ -e "${LOCKFILE}" ] && kill -0 "$(cat "${LOCKFILE}")"; then
-    echo "ANIMINA deployment script is already running."
-    exit 1
+if [ -e "${LOCKFILE}" ]; then
+    LOCK_PID=$(cat "${LOCKFILE}")
+    if [ -n "${LOCK_PID}" ] && kill -0 "${LOCK_PID}" 2>/dev/null; then
+        echo "ANIMINA deployment script is already running."
+        exit 1
+    else
+        echo "Removing stale lock file."
+        rm -f "${LOCKFILE}"
+    fi
 fi
 
 # Store the current process ID in the lock file
