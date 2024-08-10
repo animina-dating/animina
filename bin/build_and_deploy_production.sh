@@ -33,7 +33,7 @@ SRC_DIR="$HOME/GitHub/animina/"
 DEST_DIR="$HOME/bin/animina/"
 
 # Ensure required commands are available
-required_commands=("git" "rsync" "sed" "grep" "date" "asdf" "npm" "mix")
+required_commands=("git" "rsync" "sed" "grep" "date" "npm" "mix")
 for cmd in "${required_commands[@]}"; do
     if ! command -v "$cmd" &> /dev/null; then
         echo "Error: Required command '$cmd' is not installed."
@@ -104,6 +104,7 @@ if [ "$current_version" != "$new_version" ]; then
 
     # Stop the old version and start the new one
     sudo /bin/systemctl restart animina
+    logger -t ANIMINA "Deployed new version ${new_version}"
 else
     echo "No new version available."
 fi
