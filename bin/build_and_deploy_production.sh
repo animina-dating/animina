@@ -32,15 +32,6 @@ chmod 600 "${LOCKFILE}"
 SRC_DIR="$HOME/GitHub/animina/"
 DEST_DIR="$HOME/bin/animina/"
 
-# Ensure required commands are available
-required_commands=("git" "rsync" "sed" "grep" "date" "npm" "mix")
-for cmd in "${required_commands[@]}"; do
-    if ! command -v "$cmd" &> /dev/null; then
-        echo "Error: Required command '$cmd' is not installed."
-        exit 1
-    fi
-done
-
 # Create version number
 cd "$SRC_DIR"
 timestamp=$(git log -1 --format="%at")
