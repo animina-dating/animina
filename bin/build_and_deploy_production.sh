@@ -89,18 +89,9 @@ if [ "$current_version" != "$new_version" ]; then
     cd .. 
     MIX_ENV=prod mix assets.deploy
 
-    echo "+++++++++++++++++++++++++++++++++++++++"
-    echo "Debug: MIX_ENV=prod mix phx.gen.release"
-    echo "+++++++++++++++++++++++++++++++++++++++"
     MIX_ENV=prod mix phx.gen.release
-    echo "+++++++++++++++++++++++++++++++++++++++"
-    echo "Debug: MIX_ENV=prod mix release"
-    echo "+++++++++++++++++++++++++++++++++++++++"
     MIX_ENV=prod mix release
-    echo "+++++++++++++++++++++++++++++++++++++++"
-    echo "Debug: Animina.Release.migrate"
-    echo "+++++++++++++++++++++++++++++++++++++++"
-    _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
+    . ~/bashrc && _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
 
     # Stop the old version and start the new one
     sudo /bin/systemctl restart animina
