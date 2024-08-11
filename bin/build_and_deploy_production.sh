@@ -91,7 +91,7 @@ if [ "$current_version" != "$new_version" ]; then
 
     MIX_ENV=prod mix phx.gen.release
     MIX_ENV=prod mix release
-    . ~/bashrc && _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
+    . ~/.bashrc && _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
 
     # Stop the old version and start the new one
     sudo /bin/systemctl restart animina
