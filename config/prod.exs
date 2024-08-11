@@ -14,7 +14,12 @@ config :animina, AniminaWeb.Endpoint,
 config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Animina.Finch
 
 # Disable Swoosh Local Memory Storage
-config :swoosh, local: false
+config :swoosh,
+  local: false,
+  adapter: Swoosh.Adapters.SMTP,
+  relay: "localhost",
+  port: 25,
+  domain: "animina.de"
 
 # Do not print debug messages in production
 config :logger, level: :info
