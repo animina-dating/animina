@@ -202,7 +202,10 @@ defmodule AniminaWeb.AuthController do
       if user_has_an_about_me_story?(user) do
         "/my/dashboard"
       else
-        get_last_registration_page_visited(user.last_registration_page_visited)
+        get_last_registration_page_visited(
+          user.last_registration_page_visited,
+          user.is_in_waitlist
+        )
       end
     end
   end
@@ -219,11 +222,19 @@ defmodule AniminaWeb.AuthController do
     end
   end
 
-  defp get_last_registration_page_visited(nil) do
+  defp get_last_registration_page_visited(nil, true) do
+    "/my/too-successful"
+  end
+
+  defp get_last_registration_page_visited(nil, false) do
     "/my/potential-partner"
   end
 
-  defp get_last_registration_page_visited(last_registration_page_visited) do
+  defp get_last_registration_page_visited(_last_registration_page_visited, true) do
+    "/my/too-successful"
+  end
+
+  defp get_last_registration_page_visited(last_registration_page_visited, false) do
     last_registration_page_visited
   end
 

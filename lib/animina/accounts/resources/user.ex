@@ -14,6 +14,7 @@ defmodule Animina.Accounts.User do
   alias Animina.Accounts.UserRole
   alias Animina.Narratives
   alias Animina.Traits
+  alias Animina.UserEmail
   alias Animina.Validations
   alias Phoenix.PubSub
 
@@ -21,6 +22,7 @@ defmodule Animina.Accounts.User do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false, public?: true
     attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :is_in_waitlist, :boolean, default: false, public?: true
 
     attribute :username, :ci_string do
       allow_nil? false
@@ -283,7 +285,8 @@ defmodule Animina.Accounts.User do
         :is_private,
         :last_registration_page_visited,
         :streak,
-        :confirmed_at
+        :confirmed_at,
+        :is_in_waitlist
       ]
 
       primary? true
@@ -323,6 +326,10 @@ defmodule Animina.Accounts.User do
                is_private == ^false and gender == ^"male" and
                  created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
              )
+    end
+
+    read :users_registered_within_the_hour do
+      filter expr(created_at >= ^DateTime.add(DateTime.utc_now(), -1, :hour))
     end
 
     update :validate do
@@ -426,6 +433,7 @@ defmodule Animina.Accounts.User do
     define :update_last_registration_page_visited, action: :update
     define :by_username, get_by: [:username], action: :read
     define :by_id, get_by: [:id], action: :read
+    define :users_registered_within_the_hour
     define :by_email, get_by: [:email], action: :read
     define :by_username_as_an_actor, args: [:username]
     define :custom_sign_in, get?: true
@@ -454,6 +462,7 @@ defmodule Animina.Accounts.User do
   changes do
     change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
+             insert_user_into_waitlist_if_needed(record)
 
              # First user in dev becomes admin by default.
              if Mix.env() == :dev && Enum.count(Accounts.BasicUser.read!()) == 1 do
@@ -546,5 +555,24 @@ defmodule Animina.Accounts.User do
       user_id: changeset.attributes.id,
       role_id: role.id
     })
+  end
+
+  defp insert_user_into_waitlist_if_needed(record) do
+    users_registered_in_the_hour =
+      Enum.count(Animina.Accounts.User.users_registered_within_the_hour!())
+
+    if users_registered_in_the_hour > 200 do
+      {:ok, user} = Accounts.User.update(record, %{is_in_waitlist: true})
+      send_notification_email_to_admin(user)
+    end
+  end
+
+  defp send_notification_email_to_admin(user) do
+    UserEmail.send_email(
+      "Stefan Wintermeyer",
+      "stefan@wintermeyer.de",
+      "New User in Waitlist",
+      "Hi Stefan\n\nA new user has been added to the waitlist #{user.name}.  \nYou can review the report on https://animina.de/admin/waitlist"
+    )
   end
 end

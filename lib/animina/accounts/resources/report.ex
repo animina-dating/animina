@@ -152,7 +152,7 @@ defmodule Animina.Accounts.Report do
              user = User.by_id!(record.accused_id)
              User.investigate(user)
 
-             send_notification_emaail_to_admin(record.id, record.description)
+             send_notification_email_to_admin(record.id, record.description)
 
              {:ok, record}
            end),
@@ -172,7 +172,7 @@ defmodule Animina.Accounts.Report do
     prepare build(load: [:accuser, :accused, :admin])
   end
 
-  defp send_notification_emaail_to_admin(id, description) do
+  defp send_notification_email_to_admin(id, description) do
     UserEmail.send_email(
       "Stefan Wintermeyer",
       "stefan@wintermeyer.de",
