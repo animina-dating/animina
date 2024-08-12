@@ -70,12 +70,22 @@ defmodule AniminaWeb.LiveUserAuth do
 
       {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
 
-      {:cont,
-       socket
-       |> assign(:current_user, current_user)
-       |> assign(:unread_messages, unread_messages)
-       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
-       |> assign(:current_user_credit_points, current_user.credit_points)}
+      if socket.assigns[:current_user].is_in_waitlist do
+        {:halt,
+         socket
+         |> Phoenix.LiveView.redirect(to: "/my/too-successful")
+         |> Phoenix.LiveView.put_flash(
+           :info,
+           "Welcome back"
+         )}
+      else
+        {:cont,
+         socket
+         |> assign(:current_user, current_user)
+         |> assign(:unread_messages, unread_messages)
+         |> assign(:number_of_unread_messages, Enum.count(unread_messages))
+         |> assign(:current_user_credit_points, current_user.credit_points)}
+      end
     else
       {:halt,
        socket
@@ -103,7 +113,11 @@ defmodule AniminaWeb.LiveUserAuth do
 
   def on_mount(:live_user_home_optional, _params, _session, socket) do
     if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at do
-      {:halt, Phoenix.LiveView.redirect(socket, to: "/my/dashboard")}
+      if socket.assigns[:current_user].is_in_waitlist do
+        {:halt, Phoenix.LiveView.redirect(socket, to: "/my/too-successful")}
+      else
+        {:halt, Phoenix.LiveView.redirect(socket, to: "/my/dashboard")}
+      end
     else
       {:cont,
        socket
@@ -145,6 +159,24 @@ defmodule AniminaWeb.LiveUserAuth do
 
   def on_mount(:live_user_required_for_validation, _params, session, socket) do
     if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at == nil do
+      current_user = Registration.get_current_user(session)
+
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
+       |> assign(:current_user, current_user)}
+    else
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/sign-in")}
+    end
+  end
+
+  def on_mount(:live_user_required_for_too_successful, _params, session, socket) do
+    if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at != nil &&
+         socket.assigns[:current_user].is_in_waitlist do
       current_user = Registration.get_current_user(session)
 
       {:cont,

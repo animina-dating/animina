@@ -282,6 +282,41 @@ defmodule AniminaWeb.RootTest do
 
       assert html =~ "Criteria for your new partner"
     end
+
+    test "A user is taken to to the too successful page if they are in the waitlist", %{
+      conn: conn
+    } do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.update(user, %{is_in_waitlist: true})
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/too-successful")
+
+      assert html =~
+               "Hi #{user.name}"
+
+      assert html =~
+               "we currently have too many new registrations to handle"
+    end
+
+    test "A user in the waitlist cannot access other pages", %{
+      conn: conn
+    } do
+      {:ok, user} = User.create(@valid_create_user_attrs)
+
+      {:ok, user} = User.update(user, %{is_in_waitlist: true})
+
+      {:error, {:redirect, %{to: url, flash: _flash}}} =
+        conn
+        |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
+        |> live(~p"/my/dashboard")
+
+      assert url ==
+               "/my/too-successful"
+    end
   end
 
   defp sign_in_user(conn, attributes) do
