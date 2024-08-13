@@ -76,6 +76,7 @@ current_version=$(extract_version "$MIX_FILE")
 if [ "$current_version" != "$new_version" ]; then
     echo "Old version: ${current_version}"
     echo "New version: ${new_version}"
+    logger -t ANIMINA "Starting deployment of ANIMINA version ${new_version}"
     touch ~/deployment_is_happening
 
     # Update the version number in the mix.exs file
@@ -97,7 +98,9 @@ if [ "$current_version" != "$new_version" ]; then
     rm -f "/var/www/animina.de"
     ln -sf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static" "/var/www/animina.de"
     mkdir -p /home/animina/uploads
-    rm -f "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
+    
+    # uploads is a shared directory between the old and new version
+    rm -rf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
 
     # Stop the old version and start the new one
@@ -105,7 +108,7 @@ if [ "$current_version" != "$new_version" ]; then
 
     rm ~/deployment_is_happening
 
-    logger -t ANIMINA "Deployed new version ${new_version}"
+    logger -t ANIMINA "ANIMINA version ${new_version} successfully deployed"
 else
     echo "No new version available."
 fi
