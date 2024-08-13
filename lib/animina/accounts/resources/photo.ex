@@ -262,7 +262,7 @@ defmodule Animina.Accounts.Photo do
         ] do
       OptimizedPhoto.create(%{
         image_url: resize_image(record.filename, type.width, type.type),
-        type: type,
+        type: type.type,
         user_id: record.user_id,
         photo_id: record.id
       })
