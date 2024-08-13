@@ -9,17 +9,17 @@ defmodule Animina.UserEmail do
   use AshAuthentication.Sender
 
   def send(user, confirm, _opts) do
-    subject = gettext("Confirm your email address")
+    subject = gettext("👫❤️ Confirm your email address")
 
     text_body = ~S"""
-    Hi!
-    Someone has tried to register a new account at the dating platform ANIMINA
-    https://animina.de.
+    Hi #{user.name}!
 
-    If it was you, then please click the link below to confirm your identity.
-    If you did not initiate this request, then please ignore this email.
+    A new ANIMINA (https://animina.de) account has been created with your
+    email address.
 
-    Click here to confirm your account.
+    Please confirm your email address by clicking the link below or do
+    nothing in case you didn't create this account.
+
     """
 
     send_email(
