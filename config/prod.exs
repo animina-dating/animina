@@ -11,6 +11,7 @@ config :animina, AniminaWeb.Endpoint,
   server: true
 
 config :swoosh,
+  api_client: false,
   adapter: Swoosh.Adapters.SMTP,
   relay: "localhost",
   port: 25,
