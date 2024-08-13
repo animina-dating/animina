@@ -38,6 +38,7 @@ defmodule AniminaWeb.Router do
 
     ash_authentication_live_session :live_authentication_required,
       on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
+      live "/admin/waitlist", WaitlistLive, :index
       live "/admin/reports/all", AllReportsLive, :index
       live "/admin/reports/pending", PendingReportsLive, :index
       live "/admin/reports/:id", ShowReportLive, :index

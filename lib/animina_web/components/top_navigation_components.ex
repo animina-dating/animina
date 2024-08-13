@@ -230,6 +230,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.waitlist_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.user_profile_item
           current_user={@current_user}
           active_tab={@active_tab}
@@ -257,6 +258,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.waitlist_nav_item current_user={@current_user} active_tab={@active_tab} />
         <.user_profile_item
           current_user={@current_user}
           active_tab={@active_tab}
@@ -485,6 +487,26 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </svg>
 
       <span><%= gettext("Reports") %></span>
+      </.link>
+
+      </.top_navigation_entry>
+    <% end %>
+    """
+  end
+
+  def waitlist_nav_item(assigns) do
+    ~H"""
+    <%= if @current_user && admin_user?(@current_user)  do %>
+      <.top_navigation_entry phx-no-format is_active={@active_tab == :waitlist}>
+    <.link navigate={"/admin/waitlist"} class="flex flex-row items-center gap-2" >
+
+
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+    </svg>
+
+
+      <span><%= gettext("Waitlist") %></span>
       </.link>
 
       </.top_navigation_entry>

@@ -298,6 +298,11 @@ defmodule Animina.Accounts.User do
       require_atomic? false
     end
 
+    update :give_user_in_waitlist_access do
+      change set_attribute(:is_in_waitlist, false)
+      require_atomic? false
+    end
+
     read :custom_sign_in do
       argument :username_or_email, :string, allow_nil?: false
       argument :password, :string, allow_nil?: false, sensitive?: true
@@ -330,6 +335,10 @@ defmodule Animina.Accounts.User do
 
     read :users_registered_within_the_hour do
       filter expr(created_at >= ^DateTime.add(DateTime.utc_now(), -1, :hour))
+    end
+
+    read :users_in_waitlist do
+      filter expr(is_in_waitlist == ^true)
     end
 
     update :validate do
@@ -439,7 +448,9 @@ defmodule Animina.Accounts.User do
     define :custom_sign_in, get?: true
     define :female_public_users_who_created_an_account_in_the_last_60_days
     define :male_public_users_who_created_an_account_in_the_last_60_days
+    define :users_in_waitlist
     define :investigate
+    define :give_user_in_waitlist_access
     define :ban
     define :archive
     define :hibernate
@@ -465,7 +476,7 @@ defmodule Animina.Accounts.User do
              insert_user_into_waitlist_if_needed(record)
 
              # First user in dev becomes admin by default.
-             if Mix.env() == :dev && Enum.count(Accounts.BasicUser.read!()) == 1 do
+             if Mix.env() == :dev && Enum.count(Accounts.User.read!()) == 1 do
                add_role(changeset, :admin)
              end
 
@@ -475,6 +486,11 @@ defmodule Animina.Accounts.User do
 
     change after_action(fn changeset, record, _context ->
              PubSub.broadcast(Animina.PubSub, record.id, {:user, record})
+
+             send_notification_to_user_if_they_are_removed_from_waitlist(
+               changeset.action.name,
+               record
+             )
 
              {:ok, record}
            end),
@@ -574,5 +590,21 @@ defmodule Animina.Accounts.User do
       "New User in Waitlist",
       "Hi Stefan\n\nA new user has been added to the waitlist #{user.name}.  \nYou can review the report on https://animina.de/admin/waitlist"
     )
+  end
+
+  defp send_notification_to_user_if_they_are_removed_from_waitlist(
+         :give_user_in_waitlist_access,
+         user
+       ) do
+    UserEmail.send_email(
+      user.name,
+      Ash.CiString.value(user.email),
+      "You are now out of the waitlist for Animina!",
+      "Hi there\n\nYou are now out of the waitlist. You can now access the platform at https://animina.de"
+    )
+  end
+
+  defp send_notification_to_user_if_they_are_removed_from_waitlist(_, _) do
+    :ok
   end
 end
