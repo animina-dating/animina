@@ -97,6 +97,7 @@ if [ "$current_version" != "$new_version" ]; then
     rm -f "/var/www/animina.de"
     ln -sf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static" "/var/www/animina.de"
     mkdir -p /home/animina/uploads
+    rm -f "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
 
     # Stop the old version and start the new one
