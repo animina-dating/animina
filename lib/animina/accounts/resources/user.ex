@@ -229,7 +229,7 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read]
+    defaults [:read , :destroy]
 
     create :create do
       accept [
@@ -438,6 +438,7 @@ defmodule Animina.Accounts.User do
     domain Accounts
     define :read
     define :create
+    define :destroy
     define :update
     define :update_last_registration_page_visited, action: :update
     define :by_username, get_by: [:username], action: :read
@@ -561,6 +562,8 @@ defmodule Animina.Accounts.User do
 
   postgres do
     table "users"
+
+
     repo Animina.Repo
   end
 

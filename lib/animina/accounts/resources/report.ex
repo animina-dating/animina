@@ -214,5 +214,11 @@ defmodule Animina.Accounts.Report do
   postgres do
     table "reports"
     repo Animina.Repo
+
+    references do
+      reference :accused, on_delete: :delete
+      reference :accuser, on_delete: :delete
+      reference :admin, on_delete: :delete
+    end
   end
 end
