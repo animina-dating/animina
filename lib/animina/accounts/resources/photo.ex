@@ -217,7 +217,7 @@ defmodule Animina.Accounts.Photo do
           :ok
 
         {:error, reason} ->
-          Logger.error("Failed to create directory #{path}: #{reason}")
+          Logger.error("Failed to create directory '/uploads/optimized/#{type}' : #{reason}")
       end
     end
   end
