@@ -33,11 +33,13 @@ defmodule AniminaWeb.WaitlistLive do
     {:ok, socket}
   end
 
+  @impl true
   def handle_params(_, _, socket) do
     users_in_waitlist = User.users_in_waitlist!()
     {:noreply, socket |> assign(users_in_waitlist: users_in_waitlist)}
   end
 
+  @impl true
   def handle_event("give_user_in_waitlist_access", %{"id" => id}, socket) do
     user = User.by_id!(id)
 

@@ -154,5 +154,9 @@ defmodule Animina.Narratives.Story do
   postgres do
     table "stories"
     repo Animina.Repo
+
+    references do
+      reference :user, on_delete: :delete
+    end
   end
 end
