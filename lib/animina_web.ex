@@ -97,6 +97,7 @@ defmodule AniminaWeb do
       import AniminaWeb.Gettext
       import AniminaWeb.PostsComponents
       import AniminaWeb.ReportComponents
+      import AniminaWeb.WaitlistComponents
 
       # https://elixirforum.com/t/form-for-not-working-in-phoenix-1-7/52013
 

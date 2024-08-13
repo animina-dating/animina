@@ -21,9 +21,10 @@ defmodule AniminaWeb.TooSuccessFulLive do
           ) %>
           <span>
             <a href="mailto:stefan@wintermeyer.de" class="text-blue-500 underline">
-              stefan@wintermeyer.de 
+              stefan@wintermeyer.de
             </a>
-          </span> <%= gettext("The buck stops in my inbox.") %>
+          </span>
+          <%= gettext("The buck stops in my inbox.") %>
         </p>
       </div>
     </div>

@@ -298,6 +298,11 @@ defmodule Animina.Accounts.User do
       require_atomic? false
     end
 
+    update :give_user_in_waitlist_access do
+      change set_attribute(:is_in_waitlist, false)
+      require_atomic? false
+    end
+
     read :custom_sign_in do
       argument :username_or_email, :string, allow_nil?: false
       argument :password, :string, allow_nil?: false, sensitive?: true
@@ -330,6 +335,10 @@ defmodule Animina.Accounts.User do
 
     read :users_registered_within_the_hour do
       filter expr(created_at >= ^DateTime.add(DateTime.utc_now(), -1, :hour))
+    end
+
+    read :users_in_waitlist do
+      filter expr(is_in_waitlist == ^true)
     end
 
     update :validate do
@@ -439,7 +448,9 @@ defmodule Animina.Accounts.User do
     define :custom_sign_in, get?: true
     define :female_public_users_who_created_an_account_in_the_last_60_days
     define :male_public_users_who_created_an_account_in_the_last_60_days
+    define :users_in_waitlist
     define :investigate
+    define :give_user_in_waitlist_access
     define :ban
     define :archive
     define :hibernate
