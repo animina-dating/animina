@@ -89,7 +89,7 @@ defmodule AniminaWeb.DashboardLive do
       |> assign(profiles_liked_by_user: profiles_liked_by_user)
       |> assign(total_likes_received_by_user: total_likes_received_by_user)
       |> assign(
-        page_title: "#{gettext("Animina dashboard for")} #{socket.assigns.current_user.name}"
+        page_title: "#{gettext("👫❤️ ANIMINA dashboard - ")} #{socket.assigns.current_user.name}"
       )
 
     {:ok, socket}
