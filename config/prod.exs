@@ -16,8 +16,7 @@ config :animina, Animina.Mailer,
   port: 25,
   retries: 3,
   domain: "animina.de",
-  ssl: false,
-  tls: false
+  ssl: false
 
 config :swoosh,
   api_client: false,
