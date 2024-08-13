@@ -4,7 +4,6 @@ defmodule AniminaWeb.WaitlistComponents do
   """
   use Phoenix.Component
   import AniminaWeb.Gettext
-  import AniminaWeb.CoreComponents
   use PhoenixHTMLHelpers
 
   def waitlist_users_table(assigns) do
