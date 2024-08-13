@@ -229,7 +229,7 @@ defmodule Animina.Accounts.User do
   end
 
   actions do
-    defaults [:read , :destroy]
+    defaults [:read, :destroy]
 
     create :create do
       accept [
@@ -562,7 +562,6 @@ defmodule Animina.Accounts.User do
 
   postgres do
     table "users"
-
 
     repo Animina.Repo
   end

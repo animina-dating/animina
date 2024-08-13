@@ -169,7 +169,6 @@ defmodule Animina.Narratives.Post do
       index [:user_id]
     end
 
-
     references do
       reference :user, on_delete: :delete
     end

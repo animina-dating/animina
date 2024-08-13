@@ -92,11 +92,10 @@ defmodule Animina.Accounts.UserTest do
 
       assert user.occupation =~ "Engineer"
 
-     User.destroy(user)
+      User.destroy(user)
 
       assert {:error, _} = User.by_email("bob@example.com")
     end
-
 
     test "does not create a user if they have a bad username" do
       assert {:error, _} =
