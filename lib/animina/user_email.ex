@@ -10,17 +10,24 @@ defmodule Animina.UserEmail do
 
   def send(user, confirm, _opts) do
     subject = gettext("Confirm your email address")
-    text_body = gettext("Hi!
-         Someone has tried to register a new account at \nAnimina\nhttps://animina.de.
-         If it was you, then please click the link below to confirm your identity.  If you did not initiate this request then please ignore this email.
-         \nClick here to confirm your account ")
+
+    text_body = ~S"""
+    Hi!
+    Someone has tried to register a new account at the dating platform ANIMINA
+    https://animina.de.
+
+    If it was you, then please click the link below to confirm your identity.
+    If you did not initiate this request, then please ignore this email.
+
+    Click here to confirm your account.
+    """
 
     send_email(
       user.name,
       Ash.CiString.value(user.email),
       subject,
       text_body <>
-        "\n<a href='#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}' target='_blank'>#{gettext("Confirm your email address")}</a>"
+        "\n<a href='#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}'>#{gettext("Confirm your email address")}</a>"
     )
   end
 
@@ -28,25 +35,8 @@ defmodule Animina.UserEmail do
     "https://animina.de"
   end
 
-  defp get_link(:dev) do
-    "http://localhost:4000"
-  end
-
-  defp get_link(:test) do
-    "http://localhost:4000"
-  end
-
   defp get_link(_) do
     "http://localhost:4000"
-  end
-
-  def test do
-    send_email(
-      "Stefan Wintermeyer",
-      "stefan@wintermeyer.de",
-      "This is a test",
-      "Hi,\n\njust a test.\n\n-- \nAnimina System\nhttps://animina.de "
-    )
   end
 
   def send_email(
