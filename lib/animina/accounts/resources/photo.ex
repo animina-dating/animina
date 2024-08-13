@@ -213,8 +213,11 @@ defmodule Animina.Accounts.Photo do
   defp create_optimized_folder_if_not_exists do
     for type <- ["thumbnail", "normal", "big"] do
       case File.mkdir_p("priv/static/uploads/optimized/#{type}") do
-        :ok -> :ok
-        _ -> :error
+        :ok ->
+          :ok
+
+        {:error, reason} ->
+          Logger.error("Failed to create directory #{path}: #{reason}")
       end
     end
   end
