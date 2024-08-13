@@ -23,9 +23,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex  justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
       <p class="text-base font-bold text-gray-700 cursor-pointer dark:text-white">
-        ANIMINA Beta
+        👫❤️ ANIMINA Beta
       </p>
-      <div class="flex gap-5 items-center">
+      <div class="flex items-center gap-5">
         <div class="block md:hidden" x-data="{ open: false }" @click="open = !open">
           <p class="text-black dark:text-white">
             <.menu_bar />
@@ -306,7 +306,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% else %>
         <.error_or_nsfw_profile_image />
       <% end %>
-      <p class="text-left group-hover:text-blue-600 dark:text-white text-black">
+      <p class="text-left text-black group-hover:text-blue-600 dark:text-white">
         <%= StringHelper.truncate_name(@interest.name) %><br />
         <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md dark:text-black text-black-700"><%= @interest.age %> years</span>
       </p>
