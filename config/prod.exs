@@ -10,6 +10,8 @@ config :animina, AniminaWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: System.get_env("PORT") || 4005],
   server: true
 
+config :animina, Animina.Mailer, adapter: Swoosh.Adapters.SMTP
+
 config :swoosh,
   api_client: false,
   adapter: Swoosh.Adapters.SMTP,
