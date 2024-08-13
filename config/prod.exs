@@ -10,7 +10,12 @@ config :animina, AniminaWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: System.get_env("PORT") || 4005],
   server: true
 
-config :animina, Animina.Mailer, adapter: Swoosh.Adapters.SMTP
+config :animina, Animina.Mailer,
+  adapter: Swoosh.Adapters.SMTP,
+  relay: "localhost",
+  port: 25,
+  retries: 3,
+  domain: "animina.de"
 
 config :swoosh,
   api_client: false,
