@@ -94,9 +94,10 @@ if [ "$current_version" != "$new_version" ]; then
     MIX_ENV=prod mix release
     . ~/.bashrc && _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
 
-    mkdir -p /home/animina/uploads
+    rm -f "/var/www/animina.de"
     ln -sf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static" "/var/www/animina.de"
-    ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads" 
+    mkdir -p /home/animina/uploads
+    ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/"
 
     # Stop the old version and start the new one
     sudo /bin/systemctl restart animina
