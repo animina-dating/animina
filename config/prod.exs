@@ -14,8 +14,11 @@ config :animina, Animina.Mailer,
   adapter: Swoosh.Adapters.SMTP,
   relay: "localhost",
   port: 25,
-  retries: 3,
-  domain: "animina.de"
+  domain: "animina.de",
+  ssl: false,
+  tls: :never,
+  auth: :never,
+  retries: 2
 
 config :swoosh,
   api_client: false,
