@@ -12,13 +12,13 @@ defmodule Animina.UserEmail do
     subject = gettext("👫❤️ Confirm your email address")
 
     text_body = ~S"""
-    Hi #{user.name}!
+    Hi #{user.username}!
 
-    A new ANIMINA (https://animina.de) account has been created with your
+    A new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Please confirm your email address by clicking the link below or do
-    nothing in case you didn't create this account.
+    Please confirm the account by clicking the link below or do nothing
+    in case you didn't create the account.
 
     """
 
