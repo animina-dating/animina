@@ -10,12 +10,7 @@ config :animina, AniminaWeb.Endpoint,
   http: [ip: {0, 0, 0, 0}, port: System.get_env("PORT") || 4005],
   server: true
 
-# Configures Swoosh API Client
-config :swoosh, api_client: Swoosh.ApiClient.Finch, finch_name: Animina.Finch
-
-# Disable Swoosh Local Memory Storage
 config :swoosh,
-  local: false,
   adapter: Swoosh.Adapters.SMTP,
   relay: "localhost",
   port: 25,
