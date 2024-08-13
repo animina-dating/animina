@@ -107,6 +107,7 @@ If you want to for example hibernate a user with the username 'wintermeyer' you 
 
 
 - To remove a user from a waitlist we use `User.give_user_in_waitlist_access` .
+After removing a user from the waitlist, the user will get an email notification that they can now access the platform.
 An example of how to give a user in the waitlist access via CLI is 
 `{:ok, user} = Animina.Accounts.User.get_by_username("wintermeyer") `
 `Animina.Accounts.User.give_user_in_waitlist_access(user)`
