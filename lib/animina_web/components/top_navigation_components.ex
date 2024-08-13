@@ -23,7 +23,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%] dark:bg-gray-900 text-base bg-white border-[1px] dark:border-gray-800 border-gray-200  flex  justify-between items-center py-2 px-4 gap-5  z-50  fixed top-0">
       <p class="text-base font-bold text-gray-700 cursor-pointer dark:text-white">
-        👫❤️ ANIMINA Beta
+        <a href="/">👫❤️ ANIMINA Beta</a>
       </p>
       <div class="flex items-center gap-5">
         <div class="block md:hidden" x-data="{ open: false }" @click="open = !open">
