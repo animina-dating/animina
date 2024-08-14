@@ -110,7 +110,8 @@ if [ "$current_version" != "$new_version" ]; then
     
     # uploads is a shared directory between the old and new version
     logger -t animina "Deployment ${new_version}: Linking ~/uploads"
-    rmdir --ignore-fail-on-non-empty "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
+    rm -f "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads/.gitkeep"
+    rmdir "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
 
     # Stop the old version and start the new one
