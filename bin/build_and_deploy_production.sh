@@ -100,7 +100,7 @@ if [ "$current_version" != "$new_version" ]; then
     mkdir -p /home/animina/uploads
     
     # uploads is a shared directory between the old and new version
-    rmdir -f "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
+    rmdir --ignore-fail-on-non-empty "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
 
     # Stop the old version and start the new one
