@@ -193,10 +193,17 @@ defmodule Animina.Accounts.Photo do
   def get_optimized_photo_to_use(photo, type) do
     case OptimizedPhoto.by_type_and_photo_id(%{type: type, photo_id: photo.id}) do
       {:ok, optimized_photo} ->
-        optimized_photo.image_url
+        extract_uploads_path(optimized_photo.image_url)
 
       _ ->
         "/uploads/#{photo.filename}"
+    end
+  end
+
+  def extract_uploads_path(path) do
+    case Regex.run(~r/\/uploads.*/, path) do
+      [matched_path] -> matched_path
+      _ -> nil
     end
   end
 
