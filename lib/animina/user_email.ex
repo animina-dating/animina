@@ -22,39 +22,43 @@ defmodule Animina.UserEmail do
       Ash.CiString.value(user.email),
       subject,
       body
-
     )
   end
 
   defp construct_salutation(user) do
-    "Hi #{user.name}!"
+    "Hi #{user.name}!\n"
   end
 
   defp construct_email_body do
     ~S"""
 
-    A new ANIMINA https://animina.de account has been created with this
+    Your new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Please confirm the account by clicking the link below or do nothing
-    in case you didn't create the account.
+    Please confirm the email address by clicking the monstrosity of a link
+    below or do nothing in case you didn't create the account.
 
     """
   end
 
   defp construct_link(confirm) do
-    "\n#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
-    <>
-    ~S"""
+    "\n#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}" <>
+      ~S"""
 
 
-    """
+      """
   end
 
   defp construct_signature do
     ~S"""
     Best regards,
-    ANIMINA Team
+      ANIMINA Team
+
+    --
+    This email was sent by the ANIMINA system. Please do not reply to it.
+    I am just dumb software and can't read your emails. Do contact my
+    human boss Stefan Wintermeyer <stefan@wintermeyer.de> in case you
+    have any questions or concerns.
     """
   end
 
