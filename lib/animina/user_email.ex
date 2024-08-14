@@ -11,8 +11,27 @@ defmodule Animina.UserEmail do
   def send(user, confirm, _opts) do
     subject = gettext("👫❤️ Confirm your email address")
 
-    text_body = ~S"""
-    Hi #{user.username}!
+    body =
+      construct_salutation(user) <>
+        construct_email_body() <>
+        construct_link(confirm) <>
+        construct_signature()
+
+    send_email(
+      user.name,
+      Ash.CiString.value(user.email),
+      subject,
+      body
+
+    )
+  end
+
+  defp construct_salutation(user) do
+    "Hi #{user.name}!"
+  end
+
+  defp construct_email_body do
+    ~S"""
 
     A new ANIMINA https://animina.de account has been created with this
     email address.
@@ -21,14 +40,22 @@ defmodule Animina.UserEmail do
     in case you didn't create the account.
 
     """
+  end
 
-    send_email(
-      user.name,
-      Ash.CiString.value(user.email),
-      subject,
-      text_body <>
-        "\n<a href='#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}'>#{gettext("Confirm your email address")}</a>"
-    )
+  defp construct_link(confirm) do
+    "\n#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
+    <>
+    ~S"""
+
+
+    """
+  end
+
+  defp construct_signature do
+    ~S"""
+    Best regards,
+    ANIMINA Team
+    """
   end
 
   defp get_link(:prod) do
