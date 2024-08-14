@@ -4,6 +4,8 @@ defmodule Animina.Accounts.Photo do
   """
   alias Animina.Accounts.OptimizedPhoto
 
+  require Logger
+
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts,
