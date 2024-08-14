@@ -240,8 +240,13 @@ defmodule Animina.Accounts.Photo do
            "priv/static/uploads/" <> file_name,
            "priv/static/uploads/optimized/#{type}/#{file_name}"
          ) do
-      :ok -> "/uploads/optimized/#{type}/#{file_name}"
-      _ -> "/uploads/optimized/#{type}/#{file_name}"
+      :ok ->
+        "/uploads/optimized/#{type}/#{file_name}"
+
+      {:error, reason} ->
+        Logger.error("Failed to copy '/uploads/optimized/#{type}/#{file_name}' : #{reason}")
+
+        "/uploads/optimized/#{type}/#{file_name}"
     end
   end
 

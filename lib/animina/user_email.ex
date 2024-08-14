@@ -22,7 +22,6 @@ defmodule Animina.UserEmail do
       Ash.CiString.value(user.email),
       subject,
       body
-
     )
   end
 
@@ -43,12 +42,11 @@ defmodule Animina.UserEmail do
   end
 
   defp construct_link(confirm) do
-    "\n#{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
-    <>
-    ~S"""
+    "\n #{" #{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}" <>
+      ~S"""
 
 
-    """
+      """
   end
 
   defp construct_signature do
