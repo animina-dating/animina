@@ -30,7 +30,7 @@ defmodule Animina.UserEmail do
     "Hi #{user.name}!"
   end
 
-  defp construct_email_body() do
+  defp construct_email_body do
     ~S"""
 
     A new ANIMINA https://animina.de account has been created with this
