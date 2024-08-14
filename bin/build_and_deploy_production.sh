@@ -76,39 +76,50 @@ current_version=$(extract_version "$MIX_FILE")
 if [ "$current_version" != "$new_version" ]; then
     echo "Old version: ${current_version}"
     echo "New version: ${new_version}"
-    logger -t ANIMINA "Starting deployment of ANIMINA version ${new_version}"
+    logger -t animina "Deployment ${new_version}: Starting deployment"
     touch ~/deployment_is_happening
 
     # Update the version number in the mix.exs file
     sed -i "s/^\(\s*version:\s*\"\)[^\"]*\(.*\)$/\1${new_version}\2/" "$MIX_FILE"
 
     # Source asdf and perform build operations
+    logger -t animina "Deployment ${new_version}: asdf install"
     . "$HOME/.asdf/asdf.sh"
     asdf install 
+    logger -t animina "Deployment ${new_version}: mix deps.get --only prod"
     mix deps.get --only prod 
+    logger -t animina "Deployment ${new_version}: MIX_ENV=prod mix compile"
     MIX_ENV=prod mix compile
+    logger -t animina "Deployment ${new_version}: cd assets && npm install"
     cd assets && npm install
     cd .. 
+    logger -t animina "Deployment ${new_version}: MIX_ENV=prod mix assets.deploy"
     MIX_ENV=prod mix assets.deploy
 
+    logger -t animina "Deployment ${new_version}: MIX_ENV=prod mix phx.gen.release"
     MIX_ENV=prod mix phx.gen.release
+    logger -t animina "Deployment ${new_version}: MIX_ENV=prod mix release"
     MIX_ENV=prod mix release
+    logger -t animina "Deployment ${new_version}: Animina.Release.migrate"
     . ~/.bashrc && _build/prod/rel/animina/bin/animina eval "Animina.Release.migrate"
 
+    logger -t animina "Deployment ${new_version}: Linking /var/www/animina.de"
     rm -f "/var/www/animina.de"
     ln -sf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static" "/var/www/animina.de"
     mkdir -p /home/animina/uploads
     
     # uploads is a shared directory between the old and new version
+    logger -t animina "Deployment ${new_version}: Linking ~/uploads"
     rmdir --ignore-fail-on-non-empty "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
 
     # Stop the old version and start the new one
+    logger -t animina "Deployment ${new_version}: systemctl restart animina"
     sudo /bin/systemctl restart animina
 
     rm ~/deployment_is_happening
 
-    logger -t ANIMINA "ANIMINA version ${new_version} successfully deployed"
+    logger -t animina "Deployment ${new_version}: successully deployed"
 else
     echo "No new version available."
 fi
