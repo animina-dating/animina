@@ -9,7 +9,7 @@ defmodule Animina.UserEmail do
   use AshAuthentication.Sender
 
   def send(user, confirm, _opts) do
-    subject = gettext("👫❤️ Confirm your email address")
+    subject = gettext("👫❤️ Confirm the email address for your new ANIMINA account")
 
     body =
       construct_salutation(user) <>
@@ -48,7 +48,7 @@ defmodule Animina.UserEmail do
   defp construct_signature do
     ~S"""
 
-    
+
     Best regards,
       ANIMINA Team
 
