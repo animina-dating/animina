@@ -108,11 +108,17 @@ if [ "$current_version" != "$new_version" ]; then
     ln -sf "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static" "/var/www/animina.de"
     mkdir -p /home/animina/uploads
     
-    # uploads is a shared directory between the old and new version
+    # link ~/uploads as a shared directory
     logger -t animina "Deployment ${new_version}: Linking ~/uploads"
     rm -f "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads/.gitkeep"
     rmdir "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
     ln -sf "/home/animina/uploads" "${DEST_DIR}_build/prod/rel/animina/lib/animina-${new_version}/priv/static/uploads"
+
+    if [ ! -L ~/bin/animina/priv/static/uploads ]; then
+      rm ~/bin/animina/priv/static/uploads/.gitkeep
+      rmdir ~/bin/animina/priv/static/uploads
+      ln -s /home/animina/uploads ~/bin/animina/priv/static/uploads
+    fi
 
     # Stop the old version and start the new one
     logger -t animina "Deployment ${new_version}: systemctl restart animina"
