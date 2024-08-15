@@ -1,7 +1,10 @@
 defmodule Animina.ChatCompletion do
+  @moduledoc """
+  This module is responsible for generating a chat message for a dating app.
+  """
   alias Animina.Accounts.User
-  alias Animina.Traits.UserFlags
   alias Animina.Narratives.Story
+  alias Animina.Traits.UserFlags
 
   def prompt(
         user,
@@ -11,7 +14,7 @@ defmodule Animina.ChatCompletion do
         user_stories,
         potential_partner_stories
       ) do
-   "I want to send a first chat message on a dating app to a potential partner. My name is #{user.name}, and I am a #{user.gender}. The potential partner’s name is #{potential_partner.name}, and they are #{potential_partner.gender}.
+    "I want to send a first chat message on a dating app to a potential partner. My name is #{user.name}, and I am a #{user.gender}. The potential partner’s name is #{potential_partner.name}, and they are #{potential_partner.gender}.
 
 Here’s some more context:
 
@@ -24,8 +27,8 @@ ensure the message is respectful and engaging and that is is just one , not many
   end
 
   def test do
-    user = User.read! |> Enum.random()
-    potential_partner = User.read! |> Enum.random()
+    user = User.read!() |> Enum.random()
+    potential_partner = User.read!() |> Enum.random()
 
     request_message(user, potential_partner)
   end
@@ -58,13 +61,13 @@ ensure the message is respectful and engaging and that is is just one , not many
   defp get_white_flags(user) do
     UserFlags.by_user_id!(user.id)
     |> Enum.filter(fn trait -> trait.color == :white end)
-    |> Enum.map(fn trait -> Ash.CiString.value(trait.flag.name) end)
-    |> Enum.join(", ")
+    |> Enum.map_join(", ", fn trait -> Ash.CiString.value(trait.flag.name) end)
   end
 
   defp get_stories(user) do
     Story.by_user_id_with_headline!(user.id)
-    |> Enum.map(fn story -> "Headline: #{story.headline.subject} and Story: #{story.content}" end)
-    |> Enum.join(",")
+    |> Enum.map_join(", ", fn story ->
+      "Headline: #{story.headline.subject} and Story: #{story.content}"
+    end)
   end
 end

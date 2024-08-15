@@ -6,9 +6,9 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
   alias Animina.Accounts.User
+  alias Animina.ChatCompletion
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits.UserFlags
-  alias Animina.ChatCompletion
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -407,11 +407,7 @@ defmodule AniminaWeb.ChatLive do
   end
 
   defp messages_sent_to_a_user_by_sender(sender_id, messages) do
-    messages
-    |> Enum.filter(fn message ->
-      message.sender_id == sender_id
-    end)
-    |> Enum.count()
+    Enum.count(messages, fn message -> message.sender_id == sender_id end)
   end
 
   def handle_event("generate_message_with_ai", _params, socket) do
@@ -453,7 +449,7 @@ defmodule AniminaWeb.ChatLive do
               phx-disable-with="Generating..."
               class="flex p-2 justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
             >
-              Help me with this message
+              <%= gettext("Help me with this message") %>
             </p>
           </div>
         <% end %>
