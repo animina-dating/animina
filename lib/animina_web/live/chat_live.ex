@@ -2,6 +2,7 @@ defmodule AniminaWeb.ChatLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Credit
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
@@ -72,7 +73,7 @@ defmodule AniminaWeb.ChatLive do
       socket
       |> assign(active_tab: :chat)
       |> assign(sender: sender)
-      |> assign(:message_value, "")
+      |> assign(:suggested_messages, [])
       |> assign(:messages, messages_between_sender_and_receiver.results)
       |> assign(receiver: receiver)
       |> assign(:language, language)
@@ -153,8 +154,7 @@ defmodule AniminaWeb.ChatLive do
 
     {:noreply,
      socket
-     |> assign(form: form)
-     |> assign(message_value: params["content"])}
+     |> assign(form: form)}
   end
 
   def handle_event("submit", %{"message" => params}, socket) do
@@ -170,11 +170,35 @@ defmodule AniminaWeb.ChatLive do
         {:noreply,
          socket
          |> assign(messages: messages_between_sender_and_receiver.results)
-         |> assign(message_value: "")
+         |> assign(suggested_messages: [])
          |> assign(form: create_message_form())}
 
       {:error, _} ->
         {:noreply, assign(socket, form: socket.assigns.form)}
+    end
+  end
+
+  def handle_event("generate_message_with_ai", _params, socket) do
+    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+      {:ok, message} ->
+        suggested_messages = ChatCompletion.parse_message(message["response"])
+
+        if suggested_messages != [] do
+          deduct_points(socket.assigns.sender, -20)
+
+          {:noreply,
+           socket
+           |> assign(suggested_messages: suggested_messages)}
+        else
+          {:noreply,
+           socket
+           |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
+        end
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
     end
   end
 
@@ -410,18 +434,12 @@ defmodule AniminaWeb.ChatLive do
     Enum.count(messages, fn message -> message.sender_id == sender_id end)
   end
 
-  def handle_event("generate_message_with_ai", _params, socket) do
-    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-      {:ok, message} ->
-        {:noreply,
-         socket
-         |> assign(message_value: message["response"])}
-
-      {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Could not generate message with AI"))}
-    end
+  defp deduct_points(user, points) do
+    Credit.create!(%{
+      user_id: user.id,
+      points: points,
+      subject: "Chat Help Completion"
+    })
   end
 
   @impl true
@@ -442,17 +460,6 @@ defmodule AniminaWeb.ChatLive do
         centimeters_text={gettext("cm")}
       />
       <div class="w-[100%]  absolute bottom-0">
-        <%= if  messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 do %>
-          <div class="w-[100%] flex justify-start mb-4 items-center">
-            <p
-              phx-click="generate_message_with_ai"
-              phx-disable-with="Generating..."
-              class="flex p-2 justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-            >
-              <%= gettext("Need help with the first message?") %>
-            </p>
-          </div>
-        <% end %>
         <.form
           :let={f}
           for={@form}
@@ -472,7 +479,7 @@ defmodule AniminaWeb.ChatLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("Your message here..."),
-              value: @message_value,
+              value: f[:content].value,
               type: :text,
               required: true,
               autocomplete: :content,
@@ -497,6 +504,33 @@ defmodule AniminaWeb.ChatLive do
             <% end %>
           </div>
         </.form>
+
+        <%= if  messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] do %>
+          <div class="w-[100%]  flex justify-start my-3 items-center">
+            <p
+              phx-click="generate_message_with_ai"
+              phx-disable-with="Generating..."
+              class="flex p-2 justify-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-500 items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+            >
+              <%= gettext("Need help with the first message?") %>
+            </p>
+          </div>
+        <% end %>
+
+        <div
+          :if={@suggested_messages != []}
+          class="mt-2 flex flex-col gap-1 dark:text-white text-black"
+        >
+          <p class="font-bold ">
+            Suggested messages:
+          </p>
+
+          <ul class="flex flex-col gap-1">
+            <%= for message <- @suggested_messages do %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
       </div>
     </div>
     """
