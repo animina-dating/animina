@@ -522,7 +522,7 @@ defmodule AniminaWeb.ChatLive do
           class="mt-2 flex flex-col gap-1 dark:text-white text-black"
         >
           <p class="font-bold ">
-            Suggested messages:
+            <%= gettext("Suggested messages:") %>
           </p>
 
           <ul class="flex flex-col gap-1">
