@@ -171,7 +171,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
               :if={Map.get(@selected_flags, flag.id) != nil}
               class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
             >
-              <%= get_flag_index(@user_flags, flag.id) %>
+              <%= get_flag_index(@user_flags, flag.id) + 1 %>
             </span>
 
             <%= if Enum.member?(@opposite_color_flags_selected, flag.id) do %>
