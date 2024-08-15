@@ -2,6 +2,7 @@ defmodule AniminaWeb.ChatLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Credit
   alias Animina.Accounts.Message
   alias Animina.Accounts.Points
   alias Animina.Accounts.Reaction
@@ -175,6 +176,22 @@ defmodule AniminaWeb.ChatLive do
 
       {:error, _} ->
         {:noreply, assign(socket, form: socket.assigns.form)}
+    end
+  end
+
+  def handle_event("generate_message_with_ai", _params, socket) do
+    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+      {:ok, message} ->
+        deduct_points(socket.assigns.sender, -20)
+
+        {:noreply,
+         socket
+         |> assign(message_value: message.response)}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Could not generate message with AI"))}
     end
   end
 
@@ -410,18 +427,14 @@ defmodule AniminaWeb.ChatLive do
     Enum.count(messages, fn message -> message.sender_id == sender_id end)
   end
 
-  def handle_event("generate_message_with_ai", _params, socket) do
-    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-      {:ok, message} ->
-        {:noreply,
-         socket
-         |> assign(message_value: message.response)}
 
-      {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Could not generate message with AI"))}
-    end
+
+  defp deduct_points(user, points) do
+    Credit.create!(%{
+      user_id: user.id,
+      points: points,
+      subject: "Chat Help Completion"
+    })
   end
 
   @impl true
