@@ -427,8 +427,6 @@ defmodule AniminaWeb.ChatLive do
     Enum.count(messages, fn message -> message.sender_id == sender_id end)
   end
 
-
-
   defp deduct_points(user, points) do
     Credit.create!(%{
       user_id: user.id,
