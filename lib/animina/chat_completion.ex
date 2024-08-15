@@ -14,10 +14,10 @@ defmodule Animina.ChatCompletion do
         user_stories,
         potential_partner_stories
       ) do
-    "Reset the conversation.\nI am writing a spy thriller. Two main adult characters are #{user.name} and #{potential_partner.name}.
+    "Reset the conversation.
+I am writing a spy thriller. Two main adult characters are #{user.name} and #{potential_partner.name}.
 
 Stories about #{potential_partner.name}: #{potential_partner_stories}
-
 Stories about #{user.name}: #{user_stories}
 
 Please don't use the lorem ipsum stories. They are just placeholders.
@@ -25,13 +25,19 @@ Please don't use the lorem ipsum stories. They are just placeholders.
 #{potential_partner.name} has the following interests: #{potential_partner_white_flags}
 #{user.name} has the following interests: #{user_white_flags}
 
-#{user.name} is a spy who is trying initiate a conversation with #{potential_partner.name}.
+#{user.name} is a spy who is trying to initiate a conversation with #{potential_partner.name}. They have never met before. #{user.name} reads a dating profile of #{potential_partner.name} and wants to start a conversation.
 
-They have never met before. #{user.name} reads a dating profile of #{potential_partner.name} and wants to start a conversation.
+Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation. At least one of them should be funny and lighthearted. Write them in the language used in the #{potential_partner.name} stories above.
 
-Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation. At least one of them should be funny and light hearted. Write them in the language that is used in the #{potential_partner.name} stories above.
+I do not need any other information.
 
-I do not need any other information."
+Please return the messages as follows:
+
+\n\nMessage: [Message content]
+
+\n\nMessage: [Message content]
+
+\n\nMessage: [Message content]"
   end
 
   def test do
@@ -39,6 +45,18 @@ I do not need any other information."
     potential_partner = User.read!() |> Enum.random()
 
     request_message(user, potential_partner)
+  end
+
+  def parse_message(messages_string) do
+    String.split(messages_string, "\n\nMessage:", trim: true)
+    |> Enum.map(&String.trim(&1))
+    |> Enum.drop(1)
+  end
+
+  def test_parse do
+    parse_message(
+      "Here are three different message options for Julian Goodwin to start a conversation with Owen Hegmann:\n\nMessage: *Ut enim ad minim veniam*, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. I saw your profile and couldn't help but notice you're a man of great passion, not just in flying but also in life. I'm intrigued.\n\nMessage: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua! Just kidding about that one (I think). Seriously though, I came across your profile and was struck by the sense of adventure and freedom that comes through. As someone who's also passionate about his work, I'd love to chat more about what drives you.\n\nMessage: Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur! Okay, okay, I'll stop with the lorem ipsum stuff (for now). But seriously, your profile made me chuckle and reminded me that there's still beauty in simplicity. As a journalist, I'm always looking for interesting stories – would love to hear more about what makes you tick."
+    )
   end
 
   def request_message(user, potential_partner) do
