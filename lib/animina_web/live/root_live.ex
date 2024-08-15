@@ -100,10 +100,9 @@ defmodule AniminaWeb.RootLive do
     <div class="px-5 space-y-10">
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
-          title={gettext("Animina Dating Platform")}
           message={
             gettext(
-              "Other dating platforms prolong your search to charge you more. We don’t have a monthly fee—just a one-time €10 fee after you find a partner. No credit card needed for registration—we trust you. But for all beta testers, it’s free anyway. Join now and find your match!"
+              "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
             )
           }
           avatars_urls={[
