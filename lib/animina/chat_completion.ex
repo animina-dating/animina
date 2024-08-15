@@ -14,16 +14,20 @@ defmodule Animina.ChatCompletion do
         user_stories,
         potential_partner_stories
       ) do
-    "I want to send a first chat message on a dating app to a potential partner. My name is #{user.name}, and I am a #{user.gender}. The potential partner’s name is #{potential_partner.name}, and they are #{potential_partner.gender}.
+    "Reset the conversation.\nI am writing a spy thriller. Two main adult characters are #{user.name} and #{potential_partner.name}.
 
-Here’s some more context:
+Stories about #{potential_partner.name}: #{potential_partner_stories}
 
-The potential partner's profile mentions the following stories: #{potential_partner_stories}.
-My profile lists these stories: #{user_stories}.
-The potential partner has the following interests: #{potential_partner_white_flags}.
-Here is a list of my interests: #{user_white_flags}.
-Can you create a positive and possibly funny first chat message using this information?,
-ensure the message is respectful and engaging and that is is just one , not many options."
+Stories about #{user.name}: #{user_stories}
+
+Please don't use the lorem ipsum stories. They are just placeholders.
+
+#{potential_partner.name} has the following interests: #{potential_partner_white_flags}
+#{user.name} has the following interests: #{user_white_flags}
+
+#{user.name} is a spy who is trying initiate a conversation with #{potential_partner.name}.
+
+They have never met before. #{user.name} seeds a dating profile of #{potential_partner.name} and wants to start a conversation. Please just return the message in the lanuage which is used in #{potential_partner.name} stories. I do not need any other information."
   end
 
   def test do
@@ -66,8 +70,8 @@ ensure the message is respectful and engaging and that is is just one , not many
 
   defp get_stories(user) do
     Story.by_user_id_with_headline!(user.id)
-    |> Enum.map_join(", ", fn story ->
-      "Headline: #{story.headline.subject} and Story: #{story.content}"
+    |> Enum.map_join("\n\n", fn story ->
+      "#{story.headline.subject}\n#{story.content}"
     end)
   end
 end

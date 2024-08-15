@@ -415,7 +415,7 @@ defmodule AniminaWeb.ChatLive do
       {:ok, message} ->
         {:noreply,
          socket
-         |> assign(message_value: message.response)}
+         |> assign(message_value: message["response"])}
 
       {:error, _} ->
         {:noreply,
@@ -449,7 +449,7 @@ defmodule AniminaWeb.ChatLive do
               phx-disable-with="Generating..."
               class="flex p-2 justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
             >
-              <%= gettext("Help me with this message") %>
+              <%= gettext("Need help with the first message?") %>
             </p>
           </div>
         <% end %>
