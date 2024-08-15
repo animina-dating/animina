@@ -8,6 +8,7 @@ defmodule AniminaWeb.ChatLive do
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits.UserFlags
+  alias Animina.ChatCompletion
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -71,6 +72,7 @@ defmodule AniminaWeb.ChatLive do
       socket
       |> assign(active_tab: :chat)
       |> assign(sender: sender)
+      |> assign(:message_value, "")
       |> assign(:messages, messages_between_sender_and_receiver.results)
       |> assign(receiver: receiver)
       |> assign(:language, language)
@@ -149,7 +151,10 @@ defmodule AniminaWeb.ChatLive do
   def handle_event("validate", %{"message" => params}, socket) do
     form = AshPhoenix.Form.validate(socket.assigns.form, params)
 
-    {:noreply, assign(socket, form: form)}
+    {:noreply,
+     socket
+     |> assign(form: form)
+     |> assign(message_value: params["content"])}
   end
 
   def handle_event("submit", %{"message" => params}, socket) do
@@ -165,6 +170,7 @@ defmodule AniminaWeb.ChatLive do
         {:noreply,
          socket
          |> assign(messages: messages_between_sender_and_receiver.results)
+         |> assign(message_value: "")
          |> assign(form: create_message_form())}
 
       {:error, _} ->
@@ -400,6 +406,28 @@ defmodule AniminaWeb.ChatLive do
     |> to_form()
   end
 
+  defp messages_sent_to_a_user_by_sender(sender_id, messages) do
+    messages
+    |> Enum.filter(fn message ->
+      message.sender_id == sender_id
+    end)
+    |> Enum.count()
+  end
+
+  def handle_event("generate_message_with_ai", _params, socket) do
+    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+      {:ok, message} ->
+        {:noreply,
+         socket
+         |> assign(message_value: message.response)}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Could not generate message with AI"))}
+    end
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -418,6 +446,17 @@ defmodule AniminaWeb.ChatLive do
         centimeters_text={gettext("cm")}
       />
       <div class="w-[100%]  absolute bottom-0">
+        <%= if  messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 do %>
+          <div class="w-[100%] flex justify-start mb-4 items-center">
+            <p
+              phx-click="generate_message_with_ai"
+              phx-disable-with="Generating..."
+              class="flex p-2 justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+            >
+              Help me with this message
+            </p>
+          </div>
+        <% end %>
         <.form
           :let={f}
           for={@form}
@@ -437,7 +476,7 @@ defmodule AniminaWeb.ChatLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder: gettext("Your message here..."),
-              value: f[:content].value,
+              value: @message_value,
               type: :text,
               required: true,
               autocomplete: :content,
