@@ -74,7 +74,8 @@ defmodule Animina.MixProject do
       {:ash_oban, "~> 0.2.2"},
       {:mogrify, "~> 0.9.3"},
       {:briefly, "~> 0.5.0"},
-      {:gen_stage, "~> 1.2.1"}
+      {:gen_stage, "~> 1.2.1"},
+      {:ollama, "0.7.1"}
     ]
 
     if System.get_env("DISABLE_ML_FEATURES") do
