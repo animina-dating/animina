@@ -183,33 +183,27 @@ defmodule AniminaWeb.ChatLive do
   end
 
   def handle_event("generate_message_with_ai", _params, socket) do
-    # case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-    #   {:ok, message} ->
-    #     suggested_messages = ChatCompletion.parse_message(message["response"])
+    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+      {:ok, message} ->
+        suggested_messages = ChatCompletion.parse_message(message["response"])
 
-    #     if suggested_messages != [] do
-    #       deduct_points(socket.assigns.sender, -20)
+        if suggested_messages != [] do
+          deduct_points(socket.assigns.sender, -20)
 
-    #       {:noreply,
-    #        socket
-    #        |> assign(suggested_messages: suggested_messages)}
-    #     else
-    #       {:noreply,
-    #        socket
-    #        |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
-    #     end
+          {:noreply,
+           socket
+           |> assign(suggested_messages: suggested_messages)}
+        else
+          {:noreply,
+           socket
+           |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
+        end
 
-    #   {:error, _} ->
-    #     {:noreply,
-    #      socket
-    #      |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
-    # end
-
-    suggested_messages = ChatCompletion.test_parse()
-
-    {:noreply,
-     socket
-     |> assign(suggested_messages: suggested_messages)}
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
+    end
   end
 
   def handle_event("use_ai_message", %{"content" => content}, socket) do
