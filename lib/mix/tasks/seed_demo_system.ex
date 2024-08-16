@@ -297,12 +297,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
           confirmed_at: DateTime.utc_now()
         })
 
-      user_role = Role.by_name!(:user)
 
-      UserRole.create(%{
-        user_id: user.id,
-        role_id: user_role.id
-      })
 
       # create profile photo
       photo = download_photo(seed_data.unsplash_photo_id, "#{Faker.UUID.v4()}.png")
@@ -760,7 +755,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     def create_random_flag(user, color) do
-      flag = Flag.read!() |> Enum.take(3) |> Enum.random()
+
+      flag = Flag.read!() |> Enum.random()
 
       position =
         case UserFlags.read!()
