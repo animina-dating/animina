@@ -445,7 +445,7 @@ defmodule AniminaWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
+    <div class={" #{if @suggested_messages != [] do "h-[140vh] md:h-[85vh]" else  "md:h-[90vh] h-[85vh]" end} relative  w-[100%] flex gap-4 flex-col justify-betwen"}>
       <.chat_messages_component
         sender={@sender}
         receiver={@receiver}

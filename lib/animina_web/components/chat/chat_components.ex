@@ -36,7 +36,7 @@ defmodule AniminaWeb.ChatComponents do
     ~H"""
     <div class="h-[80vh]  w-[100%] ">
       <div class="w-[100%] h-[100%] flex flex-col justify-between">
-        <div class=" w-[100%] z-50">
+        <div class=" w-[100%] ">
           <.link navigate={"/#{@receiver.username}"}>
             <ProfileComponents.profile_details
               user={@receiver}
@@ -55,7 +55,7 @@ defmodule AniminaWeb.ChatComponents do
             />
           </.link>
         </div>
-        <div class="h-[85%] z-0  w-[100%]">
+        <div class="h-[85%]   w-[100%]">
           <.messages_box messages={@messages} sender={@sender} receiver={@receiver} />
         </div>
       </div>
