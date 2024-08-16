@@ -261,6 +261,18 @@ if Enum.member?([:dev, :test], Mix.env()) do
         }
       ]
 
+      raw_seed_data = [
+        %{
+          unsplash_photo_id: "photo-1531123897727-8f129e1688ce",
+          gender: "female",
+          about_me:
+            "I'm a passionate traveler and foodie. I love exploring new cultures and trying out exotic cuisines. When I'm not traveling, you can find me reading a good book or practicing yoga. My ultimate goal is to visit every continent and learn at least one dish from each country I visit. I believe that travel broadens the mind and enriches the soul, and I enjoy sharing my experiences with others through my travel blog.",
+          favorite_travel_story:
+            "One of my most unforgettable travel experiences was exploring the bustling markets of Marrakech. The vibrant colors, the fragrant spices, and the lively atmosphere were enchanting. I spent hours wandering through the narrow alleys, trying different street foods, and bargaining with local vendors. The highlight of the trip was a hot air balloon ride over the desert at sunrise, witnessing the golden dunes and the serene landscape from above. It was a magical experience that I'll cherish forever.",
+          occupation: nil
+        }
+      ]
+
       Enum.each(raw_seed_data, fn seed_data ->
         create_demo_user(seed_data)
       end)
@@ -297,38 +309,41 @@ if Enum.member?([:dev, :test], Mix.env()) do
           confirmed_at: DateTime.utc_now()
         })
 
+      user_role = Role.by_name!(:user)
 
+      UserRole.create(%{
+        user_id: user.id,
+        role_id: user_role.id
+      })
 
       # create profile photo
-      photo = download_photo(seed_data.unsplash_photo_id, "#{Faker.UUID.v4()}.png")
-      Photo.create!(Map.merge(photo, %{user_id: user.id}))
+      # photo = download_photo(seed_data.unsplash_photo_id, "#{Faker.UUID.v4()}.png")
+      # Photo.create!(Map.merge(photo, %{user_id: user.id}))
 
       # create about me story
-      story =
-        Story.create!(%{
-          headline_id: get_headline_id("About me"),
-          user_id: user.id,
-          content: seed_data.about_me,
-          position: 1
-        })
+      # story =
+      #   Story.create!(%{
+      #     headline_id: get_headline_id("About me"),
+      #     user_id: user.id,
+      #     content: seed_data.about_me,
+      #     position: 1
+      #   })
 
       # create about me story photo
-      Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
+      # Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
 
-      _story2 =
-        Story.create!(%{
-          headline_id: get_headline_id("The adventure that left me speechless"),
-          user_id: user.id,
-          content: seed_data.favorite_travel_story,
-          position: 2
-        })
-
-      create_random_stories(user, Enum.random(0..6), 3)
-
+      #   Story.create!(%{
+      #     headline_id: get_headline_id("The adventure that left me speechless"),
+      #     user_id: user.id,
+      #     content: seed_data.favorite_travel_story,
+      #     position: 2
+      #   })
+      # create_random_stories(user, Enum.random(0..6), 3)
       # create random white flags
-      Enum.each(1..Enum.random(5..20), fn _i ->
-        create_random_flag(user, :white)
-      end)
+      _story2 =
+        Enum.each(1..Enum.random(5..20), fn _i ->
+          create_random_flag(user, :white)
+        end)
 
       # create random green flags
       Enum.each(1..Enum.random(5..10), fn _i ->
@@ -755,8 +770,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     def create_random_flag(user, color) do
-
-      flag = Flag.read!() |> Enum.random()
+      flag = Flag.read!() |> Enum.take(3) |> Enum.random()
 
       position =
         case UserFlags.read!()

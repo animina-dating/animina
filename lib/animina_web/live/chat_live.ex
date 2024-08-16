@@ -205,11 +205,11 @@ defmodule AniminaWeb.ChatLive do
     #      |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
     # end
 
-
     suggested_messages = ChatCompletion.test_parse()
+
     {:noreply,
-          socket
-          |> assign(suggested_messages: suggested_messages)}
+     socket
+     |> assign(suggested_messages: suggested_messages)}
   end
 
   def handle_event("use_ai_message", %{"content" => content}, socket) do
@@ -556,12 +556,10 @@ defmodule AniminaWeb.ChatLive do
           <ul class="flex flex-col gap-1 list-disc">
             <%= for message <- @suggested_messages do %>
               <li class="md:ml-6 ml-2 flex items-start justify-between  gap-1 ">
-              <span class="md:w-[85%] w-[70%]">
-                <%= message %>
+                <span class="md:w-[85%] w-[70%]">
+                  <%= message %>
                 </span>
                 <span class="md:w-[12%] w-[25%] flex justify-end items-end">
-
-
                   <button
                     phx-value-content={message}
                     phx-click="use_ai_message"
@@ -569,7 +567,6 @@ defmodule AniminaWeb.ChatLive do
                   >
                     <%= gettext("Use this ") %>
                   </button>
-
                 </span>
               </li>
             <% end %>
