@@ -111,7 +111,10 @@ defmodule AniminaWeb.ProfileComponents do
           :if={flag != %{}}
           class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
         >
-          <%= flag.emoji %> <%= flag.name %>
+          <%= flag.emoji %>
+          <span class="md:hidden block">
+            <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
+          </span> <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-red-500 rounded-full" />
@@ -137,7 +140,10 @@ defmodule AniminaWeb.ProfileComponents do
           :if={flag != %{}}
           class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
         >
-          <%= flag.emoji %> <%= flag.name %>
+          <%= flag.emoji %>
+          <span class="md:hidden block">
+            <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
+          </span> <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />
