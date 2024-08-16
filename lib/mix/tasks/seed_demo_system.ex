@@ -261,18 +261,6 @@ if Enum.member?([:dev, :test], Mix.env()) do
         }
       ]
 
-      raw_seed_data = [
-        %{
-          unsplash_photo_id: "photo-1531123897727-8f129e1688ce",
-          gender: "female",
-          about_me:
-            "I'm a passionate traveler and foodie. I love exploring new cultures and trying out exotic cuisines. When I'm not traveling, you can find me reading a good book or practicing yoga. My ultimate goal is to visit every continent and learn at least one dish from each country I visit. I believe that travel broadens the mind and enriches the soul, and I enjoy sharing my experiences with others through my travel blog.",
-          favorite_travel_story:
-            "One of my most unforgettable travel experiences was exploring the bustling markets of Marrakech. The vibrant colors, the fragrant spices, and the lively atmosphere were enchanting. I spent hours wandering through the narrow alleys, trying different street foods, and bargaining with local vendors. The highlight of the trip was a hot air balloon ride over the desert at sunrise, witnessing the golden dunes and the serene landscape from above. It was a magical experience that I'll cherish forever.",
-          occupation: nil
-        }
-      ]
-
       Enum.each(raw_seed_data, fn seed_data ->
         create_demo_user(seed_data)
       end)
