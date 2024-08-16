@@ -70,7 +70,7 @@ defmodule AniminaWeb.CoreComponents do
               phx-window-keydown={JS.exec("data-cancel", to: "##{@id}")}
               phx-key="escape"
               phx-click-away={JS.exec("data-cancel", to: "##{@id}")}
-              class="relative hidden transition dark:dark:bg-gray-900 bg-white shadow-lg shadow-zinc-700/10 ring-zinc-700/10 rounded-2xl p-14 ring-1"
+              class="relative hidden transition bg-white shadow-lg dark:dark:bg-gray-900 shadow-zinc-700/10 ring-zinc-700/10 rounded-2xl p-14 ring-1"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -79,7 +79,7 @@ defmodule AniminaWeb.CoreComponents do
                   class="flex-none p-3 -m-3 opacity-20 hover:opacity-40"
                   aria-label={gettext("close")}
                 >
-                  <.icon name="hero-x-mark-solid" class="w-5 dark:text-white  h-5" />
+                  <.icon name="hero-x-mark-solid" class="w-5 h-5 dark:text-white" />
                 </button>
               </div>
               <div id={"#{@id}-content"}>
@@ -151,31 +151,29 @@ defmodule AniminaWeb.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={gettext("Erfolg!")} flash={@flash} />
-      <.flash kind={:error} title={gettext("Fehler!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
       <.flash
         id="client-error"
         kind={:error}
-        title={gettext("Keine Verbindung zum Server!")}
+        title={gettext("Lost connection to server!")}
         phx-disconnected={show(".phx-client-error #client-error")}
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= gettext(
-          "Bitte warten Sie einen Moment. Dies kann ein Server-Software-Update oder eine instabile Internetverbindung sein."
-        ) %>
+        <%= gettext("We are deploying an update. Doesn't take long.") %>
         <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title={gettext("Es gibt ein Server-Problem!")}
+        title={gettext("Server problem!")}
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= gettext("Bitte warten Sie einen Moment.") %>
+        <%= gettext("Please wait a second. We are working on it.") %>
         <.icon name="hero-arrow-path" class="w-3 h-3 ml-1 animate-spin" />
       </.flash>
     </div>
