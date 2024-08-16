@@ -27,7 +27,7 @@ Please don't use the lorem ipsum stories. They are just placeholders.
 
 #{user.name} is a spy who is trying to initiate a conversation with #{potential_partner.name}. They have never met before. #{user.name} reads a dating profile of #{potential_partner.name} and wants to start a conversation.
 
-Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation. At least one of them should be funny and lighthearted. Write them in the language used in the #{potential_partner.name} stories above.
+Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation. Use a similar writing style as #{user.name} uses in his/her own stories. At least one of them should be funny and lighthearted. Write them in the language used in the #{potential_partner.name} stories above.
 
 I do not need any other information.
 

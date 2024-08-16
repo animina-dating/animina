@@ -511,29 +511,35 @@ defmodule AniminaWeb.ChatLive do
           </div>
         </.form>
 
-        <%= if  messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] do %>
+        <%= if messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] do %>
           <div class="w-[100%]  flex justify-start my-3 items-center">
             <p
               phx-click="generate_message_with_ai"
-              phx-disable-with="Generating..."
+              phx-disable-with="Generating potential first messages. Please wait (up to 30 seconds) ..."
               class="flex p-2 justify-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-500 items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
             >
-              <%= gettext("Need help with the first message?") %>
+              <%= gettext("Need help with your first message?") %>
             </p>
           </div>
         <% end %>
 
         <div
           :if={@suggested_messages != []}
-          class="mt-2 flex flex-col gap-1 dark:text-white text-black"
+          class="flex flex-col gap-1 mt-2 text-black dark:text-white"
         >
           <p class="font-bold ">
-            <%= gettext("Suggested messages:") %>
+            <%= gettext(
+              "Remember, the more personal the message, the better the response. Pick one message and customize it."
+            ) %>
           </p>
 
-          <ul class="flex flex-col text-sm gap-1">
+
+         
+
+          <ul class="flex flex-col gap-1 list-disc">
+
             <%= for message <- @suggested_messages do %>
-              <li><%= message %></li>
+              <li class="ml-6"><%= message %></li>
             <% end %>
           </ul>
         </div>
