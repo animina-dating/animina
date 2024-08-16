@@ -179,27 +179,33 @@ defmodule AniminaWeb.ChatLive do
   end
 
   def handle_event("generate_message_with_ai", _params, socket) do
-    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-      {:ok, message} ->
-        suggested_messages = ChatCompletion.parse_message(message["response"])
+    # case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+    #   {:ok, message} ->
+    #     suggested_messages = ChatCompletion.parse_message(message["response"])
 
-        if suggested_messages != [] do
-          deduct_points(socket.assigns.sender, -20)
+    #     if suggested_messages != [] do
+    #       deduct_points(socket.assigns.sender, -20)
 
-          {:noreply,
-           socket
-           |> assign(suggested_messages: suggested_messages)}
-        else
-          {:noreply,
-           socket
-           |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
-        end
+    #       {:noreply,
+    #        socket
+    #        |> assign(suggested_messages: suggested_messages)}
+    #     else
+    #       {:noreply,
+    #        socket
+    #        |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
+    #     end
 
-      {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
-    end
+    #   {:error, _} ->
+    #     {:noreply,
+    #      socket
+    #      |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
+    # end
+
+    suggested_messages = ChatCompletion.test_parse()
+
+    {:noreply,
+     socket
+     |> assign(suggested_messages: suggested_messages)}
   end
 
   defp filter_flags(user, color, language) do
@@ -445,7 +451,7 @@ defmodule AniminaWeb.ChatLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="md:h-[90vh] h-[85vh] relative  w-[100%] flex gap-4 flex-col justify-betwen">
+    <div class={" #{if @suggested_messages != [] do "md:h-[130vh] h-[90vh]" else  "md:h-[90vh] h-[85vh]" end} relative  w-[100%] flex gap-4 flex-col justify-betwen"}>
       <.chat_messages_component
         sender={@sender}
         receiver={@receiver}
@@ -525,7 +531,7 @@ defmodule AniminaWeb.ChatLive do
             <%= gettext("Suggested messages:") %>
           </p>
 
-          <ul class="flex flex-col gap-1">
+          <ul class="flex flex-col text-sm gap-1">
             <%= for message <- @suggested_messages do %>
               <li><%= message %></li>
             <% end %>
