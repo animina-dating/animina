@@ -148,7 +148,6 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       assert redirect_url == "/my/profile/delete_account"
     end
 
-   
     test "If a user is incognito , they can go back to the normal state by clicking the Normal Div",
          %{
            conn: conn,
