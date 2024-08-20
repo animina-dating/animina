@@ -115,7 +115,9 @@ defmodule AniminaWeb.ProfileComponents do
           <span class="md:hidden block">
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
           </span>
-          <span class="md:block hidden"><%= flag.name %></span>
+
+           <span class="md:block hidden"><%= flag.name %></span>
+
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-red-500 rounded-full" />
@@ -145,7 +147,9 @@ defmodule AniminaWeb.ProfileComponents do
           <span class="md:hidden block">
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
           </span>
-          <span class="md:block hidden"><%= flag.name %></span>
+
+           <span class="md:block hidden"><%= flag.name %></span>
+
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />

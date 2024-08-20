@@ -295,8 +295,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp random_interest(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={false}>
-    <.link navigate={"/#{@interest.username}"} >
+    <.top_navigation_entry phx-no-format is_active={false} link={"/#{@interest.username}"}>
+
     <div class="flex gap-2 w-[100%] flex-row items-center" >
       <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
       <div class="relative">
@@ -311,7 +311,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <span class="inline-flex items-center px-2 py-1 text-xs font-light bg-gray-100 rounded-md dark:text-black text-black-700"><%= @interest.age %> years</span>
       </p>
     </div>
-    </.link>
+
 
     </.top_navigation_entry>
     """
@@ -421,17 +421,27 @@ defmodule AniminaWeb.TopNavigationCompontents do
       </.top_navigation_entry>
   """
   attr :is_active, :boolean, default: false, doc: "active state of the item"
+  attr :link, :any, doc: "link to navigate to"
   attr :current_user, :any, default: nil, doc: "current user"
   slot :inner_block
 
   def top_navigation_entry(assigns) do
     ~H"""
-    <button
-      type="button"
-      class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]   flex flex-row items-center justify-start  rounded-md group  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
-    >
-      <%= render_slot(@inner_block) %>
-    </button>
+    <%= if @link == nil do %>
+      <button
+        type="button"
+        class={"relative  #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%]   flex flex-row items-center justify-start  rounded-md group  gap-1.5 py-3 px-3   shadow-none drop-shadow-none"}
+      >
+        <%= render_slot(@inner_block) %>
+      </button>
+    <% else %>
+      <.link
+        navigate={@link}
+        class={"relative #{if @is_active do "bg-blue-100 text-blue-600" else "text-gray-400" end} text-base hover:bg-blue-100 hover:text-blue-600 transition-all ease-in-out duration-500 w-[100%] flex flex-row items-center justify-start rounded-md group gap-1.5 py-3 px-3 shadow-none drop-shadow-none"}
+      >
+        <%= render_slot(@inner_block) %>
+      </.link>
+    <% end %>
     """
   end
 
@@ -449,7 +459,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def user_profile_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={@active_tab == :profile_points}>
+    <.top_navigation_entry phx-no-format is_active={@active_tab == :profile_points} link={nil}>
       <%= if @current_user && @current_user.profile_photo  do %>
         <img class="object-cover w-6 h-6 rounded-full"  src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)} />
       <% else %>
@@ -480,14 +490,18 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def reports_nav_item(assigns) do
     ~H"""
     <%= if @current_user && admin_user?(@current_user)  do %>
-      <.top_navigation_entry phx-no-format is_active={@active_tab == :reports}>
-    <.link navigate={"/admin/reports/all"} class="flex flex-row items-center gap-2" >
+      <.top_navigation_entry
+        phx-no-format
+        is_active={@active_tab == :reports}
+        link="/admin/reports/all"
+      >
+    <div class="flex flex-row items-center gap-2" >
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
     </svg>
 
       <span><%= gettext("Reports") %></span>
-      </.link>
+      </div>
 
       </.top_navigation_entry>
     <% end %>
@@ -497,8 +511,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def waitlist_nav_item(assigns) do
     ~H"""
     <%= if @current_user && admin_user?(@current_user)  do %>
-      <.top_navigation_entry phx-no-format is_active={@active_tab == :waitlist}>
-    <.link navigate={"/admin/waitlist"} class="flex flex-row items-center gap-2" >
+      <.top_navigation_entry phx-no-format is_active={@active_tab == :waitlist} link="/admin/waitlist">
+    <div class="flex flex-row items-center gap-2" >
 
 
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -507,7 +521,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
 
       <span><%= gettext("Waitlist") %></span>
-      </.link>
+      </div>
 
       </.top_navigation_entry>
     <% end %>
@@ -614,9 +628,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def home_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={@active_tab == :home}>
+    <.top_navigation_entry
+      phx-no-format
+      is_active={@active_tab == :home}
+      link={if @current_user != nil, do: "/my/dashboard", else: nil}
+    >
     <div :if={@current_user == nil}>
-    <.link navigate={"/sign-in/"} class="flex flex-row items-center gap-2" >
+    <div class="flex flex-row items-center gap-2" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -635,12 +653,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </svg>
       <span><%= gettext("Home") %></span>
-      </.link>
+      </div>
       </div>
 
 
      <div :if={@current_user != nil}>
-     <.link navigate={"/my/dashboard"} class="flex flex-row items-center gap-2" >
+     <div class="flex flex-row items-center gap-2" >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 fill-current shrink-0"
@@ -659,7 +677,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         />
       </svg>
       <span><%= gettext("Home") %></span>
-      </.link>
+      </div>
       </div>
 
     </.top_navigation_entry>
@@ -680,7 +698,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def chat_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={@active_tab == :chat}>
+    <.top_navigation_entry phx-no-format is_active={@active_tab == :chat} link={nil}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         class="w-6 h-6 stroke-current shrink-0"
@@ -741,6 +759,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry
       phx-no-format
       is_active={if @active_tab == :bookmarks, do: true, else: false}
+      link={if @current_user, do: "/my/bookmarks", else: nil}
     >
 
     <div class="flex flex-row items-center gap-2" :if={@current_user == nil}>
@@ -756,7 +775,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/my/bookmarks"} class="flex flex-row items-center gap-2" >
+     <div class="flex flex-row items-center gap-2" >
     <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 384 512" style="fill: currentColor;">
     <!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com
     License - https://fontawesome.com/license/free Copyright 2024
@@ -765,7 +784,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </svg>
        <span><%= gettext("Bookmarks") %></span>
 
-    </.link>
+    </div>
     </div>
 
     </.top_navigation_entry>
@@ -784,7 +803,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def profile_nav_item(assigns) do
     ~H"""
-    <.top_navigation_entry phx-no-format is_active={if @active_tab == :profile, do: true, else: false}>
+    <.top_navigation_entry
+      phx-no-format
+      is_active={if @active_tab == :profile, do: true, else: false}
+      link={if @current_user != nil, do: "/#{@current_user.username}", else: nil}
+    >
 
 
     <div class="flex flex-row items-center gap-2" :if={@current_user == nil}>
@@ -808,7 +831,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </div>
 
     <div :if={@current_user != nil}>
-     <.link navigate={"/#{@current_user.username}"} class="flex flex-row items-center gap-2" >
+     <div class="flex flex-row items-center gap-2" >
      <svg
           xmlns="http://www.w3.org/2000/svg"
           class="w-6 h-6 stroke-current shrink-0"
@@ -823,7 +846,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
         </svg>
        <span><%= gettext("Profile") %></span>
 
-    </.link>
+    </div>
     </div>
 
     </.top_navigation_entry>
