@@ -80,7 +80,7 @@ Please return the messages as follows:
 
     {:ok, task} =
       Ollama.completion(client,
-        model: "llama3.1",
+        model: "llama3.1:8b",
         prompt: prompt,
         stream: self()
       )
