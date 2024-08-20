@@ -460,6 +460,7 @@ defmodule AniminaWeb.ChatLive do
 
   @impl true
   def handle_info(_, socket) do
+    deduct_points(socket.assigns.sender, 20)
     {:noreply, socket |> assign(:generating_message, false)}
   end
 
