@@ -27,10 +27,9 @@ defmodule AniminaWeb.ProfileVisibilityTest do
 
       assert html =~ "Change Profile Visibility"
 
-      # we check to ensure we can see the 4 states a user can change to
+      # we check to ensure we can see the 3 states a user can change to
       assert html =~ "Normal"
       assert html =~ "Hibernate"
-      assert html =~ "Archived"
       assert html =~ "Incognito"
     end
 
@@ -149,39 +148,7 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       assert redirect_url == "/my/profile/delete_account"
     end
 
-    test "You can click on the Archive to change the profile visibility to archived, you will be auto logged out",
-         %{
-           conn: conn,
-           user: user
-         } do
-      {:ok, index_live, html} =
-        conn
-        |> login_user(%{
-          "username_or_email" => user.username,
-          "password" => "MichaelTheEngineer"
-        })
-        |> live(~p"/my/profile/visibility")
-
-      assert html =~ "Change Profile Visibility"
-
-      index_live
-      |> element("#user-state-archived")
-      |> render_click()
-
-      user = User.by_id!(user.id)
-
-      {:error, {:redirect, %{to: _, flash: %{"error" => error}}}} =
-        conn
-        |> login_user(%{
-          "username_or_email" => user.username,
-          "password" => "MichaelTheEngineer"
-        })
-        |> live(~p"/my/profile/visibility")
-
-      assert error ==
-               "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
-    end
-
+   
     test "If a user is incognito , they can go back to the normal state by clicking the Normal Div",
          %{
            conn: conn,

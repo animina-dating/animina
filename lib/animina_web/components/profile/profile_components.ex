@@ -115,7 +115,6 @@ defmodule AniminaWeb.ProfileComponents do
           <span class="md:hidden block">
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
           </span>
-
           <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
@@ -550,14 +549,6 @@ defmodule AniminaWeb.ProfileComponents do
           gettext(
             "The user is temporarily inactive but retains their account and data for future use."
           )
-      },
-      %{
-        "name" => gettext("Archived"),
-        "value" => :archived,
-        "action" => "archive",
-        "similar_value" => :archived,
-        "description" =>
-          gettext("The account is permanently deleted and all data is no longer accessible.")
       },
       %{
         "name" => gettext("Incognito"),
