@@ -125,6 +125,29 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       refute user.state == :normal
     end
 
+    test "You can click on the Delete Account div to go to the page to delete an account",
+         %{
+           conn: conn,
+           user: user
+         } do
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/profile/visibility")
+
+      assert html =~ "Change Profile Visibility"
+
+      {_, {:live_redirect, %{kind: :push, to: redirect_url}}} =
+        index_live
+        |> element("#redirect_to_delete_account_page")
+        |> render_click()
+
+      assert redirect_url == "/my/profile/delete_account"
+    end
+
     test "If a user is incognito , they can go back to the normal state by clicking the Normal Div",
          %{
            conn: conn,

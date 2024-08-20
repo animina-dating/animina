@@ -249,6 +249,16 @@ defmodule Animina.Accounts.UserTest do
       assert user.state == :normal
     end
 
+    test "destroy/1  deletes a user from the database" do
+      assert {:ok, user} =
+               User.create(@create_user_params)
+
+      assert user.state == :normal
+      User.destroy(user)
+
+      assert {:error, _} = User.by_id(user.id)
+    end
+
     test "reactivate/1 returns a user with the state :normal from :incognito or :hibernate " do
       assert {:ok, user} =
                User.create(@create_user_params)
