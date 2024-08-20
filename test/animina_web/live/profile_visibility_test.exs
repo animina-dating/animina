@@ -126,7 +126,7 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       refute user.state == :normal
     end
 
-    test "You can click on the Delete Account div to delete the account",
+    test "You can click on the Delete Account div to go to the page to delete an account",
          %{
            conn: conn,
            user: user
@@ -141,12 +141,12 @@ defmodule AniminaWeb.ProfileVisibilityTest do
 
       assert html =~ "Change Profile Visibility"
 
-      index_live
-      |> element("#delete_account")
-      |> render_click()
+      {_, {:live_redirect, %{kind: :push, to: redirect_url}}} =
+        index_live
+        |> element("#redirect_to_delete_account_page")
+        |> render_click()
 
-      # we check to ensure the user is deleted
-      assert {:error, _} = User.by_id(user.id)
+      assert redirect_url == "/my/profile/delete_account"
     end
 
     test "You can click on the Archive to change the profile visibility to archived, you will be auto logged out",

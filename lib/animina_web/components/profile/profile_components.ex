@@ -116,8 +116,7 @@ defmodule AniminaWeb.ProfileComponents do
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
           </span>
 
-           <span class="md:block hidden"><%= flag.name %></span>
-
+          <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-red-500 rounded-full" />
@@ -148,8 +147,7 @@ defmodule AniminaWeb.ProfileComponents do
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
           </span>
 
-           <span class="md:block hidden"><%= flag.name %></span>
-
+          <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />
@@ -481,9 +479,8 @@ defmodule AniminaWeb.ProfileComponents do
   defp delete_account_card(assigns) do
     ~H"""
     <div
-      phx-click="delete_account"
-      id="delete_account"
-      data-confirm={@confirm_text}
+      phx-click="redirect_to_delete_account_page"
+      id="redirect_to_delete_account_page"
       class="flex hover:bg-red-100 group cursor-pointer hover:text-red-500 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
     >
       <div class="w-[100%] flex justify-between items-start">
