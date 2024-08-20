@@ -86,6 +86,7 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:intersecting_red_flags, intersecting_red_flags)
       |> assign(:number_of_unread_messages, 0)
       |> assign(:message_value, "")
+      |> assign(:generating_message, false)
       |> assign(form: create_message_form())
       |> assign(
         current_user_has_liked_profile?: current_user_has_liked_profile(sender.id, receiver.id)
@@ -183,27 +184,74 @@ defmodule AniminaWeb.ChatLive do
   end
 
   def handle_event("generate_message_with_ai", _params, socket) do
-    case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-      {:ok, message} ->
-        suggested_messages = ChatCompletion.parse_message(message["response"])
+    send(self(), {:generate_messages, []})
 
-        if suggested_messages != [] do
-          deduct_points(socket.assigns.sender, -20)
+    {:noreply,
+     socket
+     |> assign(:show_use_ai_button, false)
+     |> assign(:generating_message, true)}
+  end
 
-          {:noreply,
-           socket
-           |> assign(suggested_messages: suggested_messages)}
-        else
-          {:noreply,
-           socket
-           |> put_flash(:error, gettext("Could not generate message with AI , Kindly Try Again"))}
-        end
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          IO.inspect(chunk)
+          generated_message = socket.assigns.generated_message <> chunk
 
-      {:error, _} ->
-        {:noreply,
-         socket
-         |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))}
-    end
+          socket
+          |> assign(:generated_message, generated_message)
+          |> assign(:suggested_messages, ChatCompletion.parse_message(generated_message))
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => true, "response" => response}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          generated_message = socket.assigns.generated_message <> response
+
+          socket
+          |> assign(:generated_message, generated_message)
+          |> assign(:current_request, nil)
+          |> assign(:show_use_ai_button, true)
+          |> assign(:generated_message, false)
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:generate_messages, _}, socket) do
+    socket =
+      case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+        {:ok, task} ->
+          socket
+          |> assign(:current_request, task)
+          |> assign(:generated_message, "")
+          |> assign(:show_use_ai_button, true)
+
+        {:error, _} ->
+          socket
+          |> put_flash(:error, "Could not generate message with AI, Kindly Try Again")
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("use_ai_message", %{"content" => content}, socket) do
@@ -532,7 +580,11 @@ defmodule AniminaWeb.ChatLive do
               phx-disable-with="Generating potential first messages. Please wait (up to 30 seconds) ..."
               class="flex p-2 justify-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-500 items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
             >
-              <%= gettext("Need help with your first message?") %>
+              <%= if @generating_message do %>
+                <%= gettext("Generating your message. This may take up to 30 seconds...") %>
+              <% else %>
+                <%= gettext("Need help with your first message?") %>
+              <% end %>
             </p>
           </div>
         <% end %>
