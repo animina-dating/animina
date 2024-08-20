@@ -460,7 +460,7 @@ defmodule AniminaWeb.ChatLive do
 
   @impl true
   def handle_info(_, socket) do
-    {:noreply, socket}
+    {:noreply, socket |> assign(:generating_message, false)}
   end
 
   defp get_field_errors(field, _name) do
@@ -599,19 +599,31 @@ defmodule AniminaWeb.ChatLive do
           </p>
 
           <ul class="flex flex-col gap-1 list-disc">
-            <%= for message <- @suggested_messages do %>
+            <%= for {message, index} <- Enum.with_index(@suggested_messages) do %>
               <li class="md:ml-6 ml-2 flex items-start justify-between  gap-1 ">
                 <span class="md:w-[85%] w-[70%]">
                   <%= message %>
                 </span>
                 <span class="md:w-[12%] w-[25%] flex justify-end items-end">
-                  <button
-                    phx-value-content={message}
-                    phx-click="use_ai_message"
-                    class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                  >
-                    <%= gettext("Use this ") %>
-                  </button>
+                  <%= if length(@suggested_messages) == 3  && index + 2 == 4 do %>
+                    <button
+                      :if={@show_use_ai_button && @generating_message == false}
+                      phx-value-content={message}
+                      phx-click="use_ai_message"
+                      class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                    >
+                      <%= gettext("Use this ") %>
+                    </button>
+                  <% else %>
+                    <button
+                      :if={@show_use_ai_button && index + 2 <= length(@suggested_messages)}
+                      phx-value-content={message}
+                      phx-click="use_ai_message"
+                      class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                    >
+                      <%= gettext("Use this ") %>
+                    </button>
+                  <% end %>
                 </span>
               </li>
             <% end %>
