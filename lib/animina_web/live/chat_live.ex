@@ -136,6 +136,22 @@ defmodule AniminaWeb.ChatLive do
      )}
   end
 
+  def handle_event("use_ai_message", %{"content" => content}, socket) do
+    params = %{
+      "receiver_id" => socket.assigns.receiver.id,
+      "sender_id" => socket.assigns.sender.id,
+      "content" => content
+    }
+
+    form = AshPhoenix.Form.validate(socket.assigns.form, params)
+
+    {:noreply,
+     socket
+     |> assign(:form, form)
+     |> assign(:show_use_ai_button, false)
+     |> assign(:message_value, content)}
+  end
+
   @impl true
   def handle_event("remove_like", _params, socket) do
     reaction =
@@ -190,84 +206,6 @@ defmodule AniminaWeb.ChatLive do
      socket
      |> assign(:show_use_ai_button, false)
      |> assign(:generating_message, true)}
-  end
-
-  @impl true
-  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
-    socket =
-      case socket.assigns.current_request do
-        %{pid: ^request_pid} ->
-          IO.inspect(chunk)
-          generated_message = socket.assigns.generated_message <> chunk
-
-          socket
-          |> assign(:generated_message, generated_message)
-          |> assign(:suggested_messages, ChatCompletion.parse_message(generated_message))
-
-        _ ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({request_pid, {:data, %{"done" => true, "response" => response}}}, socket) do
-    socket =
-      case socket.assigns.current_request do
-        %{pid: ^request_pid} ->
-          generated_message = socket.assigns.generated_message <> response
-
-          socket
-          |> assign(:generated_message, generated_message)
-          |> assign(:current_request, nil)
-          |> assign(:show_use_ai_button, true)
-          |> assign(:generated_message, false)
-
-        _ ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({:generate_messages, _}, socket) do
-    socket =
-      case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
-        {:ok, task} ->
-          socket
-          |> assign(:current_request, task)
-          |> assign(:generated_message, "")
-          |> assign(:show_use_ai_button, true)
-
-        {:error, _} ->
-          socket
-          |> put_flash(:error, "Could not generate message with AI, Kindly Try Again")
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info(_, socket) do
-    {:noreply, socket}
-  end
-
-  def handle_event("use_ai_message", %{"content" => content}, socket) do
-    params = %{
-      "receiver_id" => socket.assigns.receiver.id,
-      "sender_id" => socket.assigns.sender.id,
-      "content" => content
-    }
-
-    form = AshPhoenix.Form.validate(socket.assigns.form, params)
-
-    {:noreply,
-     socket
-     |> assign(:form, form)
-     |> assign(:show_use_ai_button, false)
-     |> assign(:message_value, content)}
   end
 
   defp filter_flags(user, color, language) do
@@ -461,6 +399,67 @@ defmodule AniminaWeb.ChatLive do
 
   @impl true
   def handle_info({:credit_updated, _updated_credit}, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          generated_message = socket.assigns.generated_message <> chunk
+
+          socket
+          |> assign(:generated_message, generated_message)
+          |> assign(:suggested_messages, ChatCompletion.parse_message(generated_message))
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => true, "response" => response}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          generated_message = socket.assigns.generated_message <> response
+
+          socket
+          |> assign(:generated_message, generated_message)
+          |> assign(:current_request, nil)
+          |> assign(:show_use_ai_button, true)
+          |> assign(:generated_message, false)
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:generate_messages, _}, socket) do
+    socket =
+      case ChatCompletion.request_message(socket.assigns.sender, socket.assigns.receiver) do
+        {:ok, task} ->
+          socket
+          |> assign(:current_request, task)
+          |> assign(:generated_message, "")
+          |> assign(:show_use_ai_button, true)
+
+        {:error, _} ->
+          socket
+          |> put_flash(:error, "Could not generate message with AI, Kindly Try Again")
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(_, socket) do
     {:noreply, socket}
   end
 
