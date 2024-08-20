@@ -78,10 +78,14 @@ Please return the messages as follows:
 
     client = Ollama.init()
 
-    Ollama.completion(client,
-      model: "llama3.1:8b",
-      prompt: prompt
-    )
+    {:ok, task} =
+      Ollama.completion(client,
+        model: "llama3.1:8b",
+        prompt: prompt,
+        stream: self()
+      )
+
+    {:ok, task}
   end
 
   defp get_white_flags(user) do
