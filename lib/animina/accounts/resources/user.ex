@@ -322,6 +322,7 @@ defmodule Animina.Accounts.User do
     read :female_public_users_who_created_an_account_in_the_last_60_days do
       filter expr(
                is_private == ^false and gender == ^"female" and
+                 (state == ^:normal or state == ^:validated) and
                  created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
              )
     end
@@ -329,6 +330,7 @@ defmodule Animina.Accounts.User do
     read :male_public_users_who_created_an_account_in_the_last_60_days do
       filter expr(
                is_private == ^false and gender == ^"male" and
+                 (state == ^:normal or state == ^:validated) and
                  created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
              )
     end
