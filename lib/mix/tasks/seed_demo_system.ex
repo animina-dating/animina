@@ -305,33 +305,34 @@ if Enum.member?([:dev, :test], Mix.env()) do
       })
 
       # create profile photo
-      # photo = download_photo(seed_data.unsplash_photo_id, "#{Faker.UUID.v4()}.png")
-      # Photo.create!(Map.merge(photo, %{user_id: user.id}))
+      photo = download_photo(seed_data.unsplash_photo_id, "#{Faker.UUID.v4()}.png")
+      Photo.create!(Map.merge(photo, %{user_id: user.id}))
 
       # create about me story
-      # story =
-      #   Story.create!(%{
-      #     headline_id: get_headline_id("About me"),
-      #     user_id: user.id,
-      #     content: seed_data.about_me,
-      #     position: 1
-      #   })
+      story =
+        Story.create!(%{
+          headline_id: get_headline_id("About me"),
+          user_id: user.id,
+          content: seed_data.about_me,
+          position: 1
+        })
 
       # create about me story photo
-      # Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
+      Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
 
-      #   Story.create!(%{
-      #     headline_id: get_headline_id("The adventure that left me speechless"),
-      #     user_id: user.id,
-      #     content: seed_data.favorite_travel_story,
-      #     position: 2
-      #   })
-      # create_random_stories(user, Enum.random(0..6), 3)
+      Story.create!(%{
+        headline_id: get_headline_id("The adventure that left me speechless"),
+        user_id: user.id,
+        content: seed_data.favorite_travel_story,
+        position: 2
+      })
+
+      create_random_stories(user, Enum.random(0..6), 3)
       # create random white flags
-      _story2 =
-        Enum.each(1..Enum.random(5..20), fn _i ->
-          create_random_flag(user, :white)
-        end)
+
+      Enum.each(1..Enum.random(5..20), fn _i ->
+        create_random_flag(user, :white)
+      end)
 
       # create random green flags
       Enum.each(1..Enum.random(5..10), fn _i ->
@@ -758,7 +759,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
     end
 
     def create_random_flag(user, color) do
-      flag = Flag.read!() |> Enum.take(3) |> Enum.random()
+      flag = Flag.read!() |> Enum.random()
 
       position =
         case UserFlags.read!()
