@@ -126,6 +126,29 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       refute user.state == :normal
     end
 
+    test "You can click on the Delete Account div to delete the account",
+         %{
+           conn: conn,
+           user: user
+         } do
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/profile/visibility")
+
+      assert html =~ "Change Profile Visibility"
+
+      index_live
+      |> element("#delete_account")
+      |> render_click()
+
+      # we check to ensure the user is deleted
+      assert {:error, _} = User.by_id(user.id)
+    end
+
     test "You can click on the Archive to change the profile visibility to archived, you will be auto logged out",
          %{
            conn: conn,

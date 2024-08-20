@@ -86,6 +86,13 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     end
   end
 
+  @impl true
+  def handle_event("delete_account", _params, socket) do
+    User.destroy(socket.assigns.current_user)
+
+    {:noreply, socket |> push_navigate(to: "/auth/user/sign-out")}
+  end
+
   def change_user_state("normalize", user) do
     User.normalize(user)
   end

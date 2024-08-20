@@ -92,6 +92,7 @@ defmodule Animina.Accounts.Credit do
 
     references do
       reference :user, on_delete: :delete
+      reference :donor, on_delete: :delete
     end
   end
 

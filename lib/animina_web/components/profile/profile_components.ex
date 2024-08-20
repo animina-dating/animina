@@ -114,7 +114,8 @@ defmodule AniminaWeb.ProfileComponents do
           <%= flag.emoji %>
           <span class="md:hidden block">
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
-          </span> <span class="md:block hidden"><%= flag.name %></span>
+          </span>
+          <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-red-500 rounded-full" />
@@ -143,7 +144,8 @@ defmodule AniminaWeb.ProfileComponents do
           <%= flag.emoji %>
           <span class="md:hidden block">
             <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
-          </span> <span class="md:block hidden"><%= flag.name %></span>
+          </span>
+          <span class="md:block hidden"><%= flag.name %></span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />
@@ -466,6 +468,32 @@ defmodule AniminaWeb.ProfileComponents do
           action={state["action"]}
         />
       <% end %>
+
+      <.delete_account_card confirm_text={gettext("Are you sure you want to delete your account?")} />
+    </div>
+    """
+  end
+
+  defp delete_account_card(assigns) do
+    ~H"""
+    <div
+      phx-click="delete_account"
+      id="delete_account"
+      data-confirm={@confirm_text}
+      class="flex hover:bg-red-100 group cursor-pointer hover:text-red-500 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
+    >
+      <div class="w-[100%] flex justify-between items-start">
+        <div class="flex   flex-col gap-1">
+          <p class="text-xl group-hover:text-red-500 text-red-500 transition-all ease-in-out duration-500 text-black  ">
+            <%= gettext("Delete Account") %>
+          </p>
+          <p class="group-hover:text-red-600 text-red-500">
+            <%= gettext("Permanently delete your account and all data , this action is irreversible.") %>
+          </p>
+        </div>
+      </div>
+
+      <p class="h-[1px] w-[100%] bg-red-500" />
     </div>
     """
   end
