@@ -13,6 +13,7 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.User
   alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
   alias Phoenix.PubSub
 
@@ -22,7 +23,7 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username(username) do
       {:ok, user} ->
         if show_optional_404_page(user, nil) ||
-             user.state in user_states_not_visible_to_anonymous_users() do
+             user.state in user_states_not_visible_to_anonymous_users() || number_of_stories_by_a_user(user.id) == 0 do
           raise Animina.Fallback
         else
           {:ok,
@@ -93,7 +94,17 @@ defmodule AniminaWeb.ProfileLive do
           )
           |> Enum.take(3)
 
-        if show_optional_404_page(user, current_user) do
+
+
+          # we set it to be 1 by default so that we can display the profile to the user if the user is the same as the current user
+          number_of_stories_by_a_user =
+          if current_user.id != user.id do
+            number_of_stories_by_a_user(user.id)
+          else
+            1
+          end
+
+        if show_optional_404_page(user, current_user) || number_of_stories_by_a_user == 0 do
           raise Animina.Fallback
         else
           {:ok,
@@ -144,7 +155,7 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username(username) do
       {:ok, user} ->
         if show_optional_404_page(user, nil) ||
-             user.state in user_states_not_visible_to_anonymous_users() do
+             user.state in user_states_not_visible_to_anonymous_users() || number_of_stories_by_a_user(user.id) == 0 do
           raise Animina.Fallback
         else
           {:ok,
@@ -209,7 +220,7 @@ defmodule AniminaWeb.ProfileLive do
             filter_flags(user, :white, language)
           )
 
-        if show_optional_404_page(user, current_user) do
+        if show_optional_404_page(user, current_user)   do
           raise Animina.Fallback
         else
           {:ok,
@@ -602,6 +613,18 @@ defmodule AniminaWeb.ProfileLive do
       Reaction.by_sender_and_receiver_id(user_id, current_user_id)
 
     reaction
+  end
+
+
+  defp number_of_stories_by_a_user(user_id) do
+   case Story.by_user_id(user_id) do
+     {:ok, stories} ->
+       Enum.count(stories)
+
+     _ ->
+       0
+   end
+
   end
 
   defp user_states_not_visible_to_anonymous_users do

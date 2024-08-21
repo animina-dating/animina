@@ -160,6 +160,7 @@ defmodule Animina.Narratives.Story do
     define :about_story_by_user, args: [:user_id], get?: true
   end
 
+
   identities do
     identity :unique_position, [:position, :user_id]
   end

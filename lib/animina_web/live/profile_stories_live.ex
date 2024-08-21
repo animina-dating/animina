@@ -273,7 +273,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-4 w-[100%]">
-      <div class="gap-8 columns md:columns-2 lg:columns-3">
+      <div class={"gap-8 columns  #{if Enum.count(@profile_stories) > 0 do "md:columns-2 lg:columns-3 " else "columns-1" end } "}>
         <div id="stream_stories" phx-update="stream">
           <div
             :for={{dom_id, %{story: story, photo: photo}} <- @streams.stories}
@@ -295,7 +295,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
         </div>
 
         <div
-          :if={Enum.count(@profile_stories) == 1 && (@current_user && @current_user.id == @user.id)}
+          :if={Enum.count(@profile_stories) <= 1 && (@current_user && @current_user.id == @user.id)}
           class="pb-2"
         >
           <div class="p-4 rounded-md bg-blue-50">
