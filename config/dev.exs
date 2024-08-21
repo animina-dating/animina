@@ -66,7 +66,6 @@ config :animina, AniminaWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :animina, dev_routes: true
 
-
 # Configures the llama version
 config :animina, :llama_version, "llama3.1:8b"
 

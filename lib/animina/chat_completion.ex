@@ -101,7 +101,6 @@ Please return the messages as follows:
     end)
   end
 
-
   defp llama_version do
     Application.get_env(:animina, :llama_version)
   end
