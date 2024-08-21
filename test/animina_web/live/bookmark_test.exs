@@ -3,6 +3,8 @@ defmodule AniminaWeb.BookmarkTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
 
   describe "Tests the Bookmark Live" do
     setup do
@@ -333,6 +335,8 @@ defmodule AniminaWeb.BookmarkTest do
         confirmed_at: DateTime.utc_now()
       })
 
+    create_about_me_story(user.id, get_about_me_headline().id)
+
     user
   end
 
@@ -354,7 +358,34 @@ defmodule AniminaWeb.BookmarkTest do
         confirmed_at: DateTime.utc_now()
       })
 
+    create_about_me_story(user.id, get_about_me_headline().id)
+
     user
+  end
+
+  defp create_about_me_story(user_id, headline_id) do
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: 1
+    })
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
   end
 
   defp login_user(conn, attributes) do
