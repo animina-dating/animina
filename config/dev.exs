@@ -66,6 +66,9 @@ config :animina, AniminaWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :animina, dev_routes: true
 
+# Configures the llama version
+config :animina, :llm_version, "llama3.1:8b"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 
