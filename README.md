@@ -131,10 +131,11 @@ By default the server starts with ML features enabled. To disable running ML fea
 - ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
 - For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
 
-## LLama Version
+## LLama Version We Use For AI Features
 
-- Our project uses the LLaMA model version `llama3.1:8b` in development and `llama3.1:70b` in production for AI functionalities.
-- To update the LLaMA model version for your use in development, update the corresponding version in the `config/dev.exs` .
+- To update the LLaMA model version for development, adjust the config/dev.exs file. Use `llama3.1:8b` for development and `llama3.1:70b` for production.
+
+- For additional support, visit [Ollama](https://ollama.com). Ollama provides comprehensive tools and documentation for deploying and managing LLaMA models, helping streamline the integration of AI functionalities into your projects
 
 ## Swoosh Mailbox Server
 
