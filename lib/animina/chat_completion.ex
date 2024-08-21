@@ -80,7 +80,7 @@ Please return the messages as follows:
 
     {:ok, task} =
       Ollama.completion(client,
-        model: "llama3.1:8b",
+        model: llama_version(),
         prompt: prompt,
         stream: self()
       )
@@ -99,5 +99,10 @@ Please return the messages as follows:
     |> Enum.map_join("\n\n", fn story ->
       "#{story.headline.subject}\n#{story.content}"
     end)
+  end
+
+
+  defp llama_version do
+    Application.get_env(:animina, :llama_version)
   end
 end
