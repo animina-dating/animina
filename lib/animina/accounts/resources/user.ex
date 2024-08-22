@@ -94,6 +94,7 @@ defmodule Animina.Accounts.User do
     attribute :search_range, :integer, allow_nil?: true, public?: true
     attribute :language, :string, allow_nil?: true, public?: true
     attribute :legal_terms_accepted, :boolean, default: false, public?: true
+    attribute :registration_completed_at, :utc_datetime_usec, allow_nil?: true, public?: true
     attribute :preapproved_communication_only, :boolean, default: false, public?: true
     attribute :streak, :integer, default: 0, public?: true
     attribute :confirmed_at, :utc_datetime_usec, allow_nil?: true, public?: true
@@ -254,7 +255,8 @@ defmodule Animina.Accounts.User do
         :partner_gender,
         :search_range,
         :is_private,
-        :confirmed_at
+        :confirmed_at,
+        :registration_completed_at
       ]
 
       primary? true
@@ -286,7 +288,8 @@ defmodule Animina.Accounts.User do
         :last_registration_page_visited,
         :streak,
         :confirmed_at,
-        :is_in_waitlist
+        :is_in_waitlist,
+        :registration_completed_at
       ]
 
       primary? true

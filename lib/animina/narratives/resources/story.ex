@@ -1,5 +1,8 @@
 defmodule Animina.Narratives.Story do
+  alias Animina.Accounts
   alias Animina.Validations
+
+  @number_of_stories_required_for_complete_registration 1
 
   @moduledoc """
   This is the story resource.
@@ -164,12 +167,37 @@ defmodule Animina.Narratives.Story do
     identity :unique_position, [:position, :user_id]
   end
 
+  changes do
+    change after_action(fn changeset, record, _ ->
+             update_user_registration_completed_at(record.user_id)
+             {:ok, record}
+           end),
+           on: [:create, :destroy]
+  end
+
   postgres do
     table "stories"
     repo Animina.Repo
 
     references do
       reference :user, on_delete: :delete
+    end
+  end
+
+  defp update_user_registration_completed_at(user_id) do
+    user = Accounts.User.by_id!(user_id)
+
+    case by_user_id(user_id) do
+      {:ok, stories} ->
+        if Enum.count(stories) >= @number_of_stories_required_for_complete_registration &&
+             user.registration_completed_at == nil do
+          Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
+        else
+          Accounts.User.update(user, %{registration_completed_at: nil})
+        end
+
+      _ ->
+        :ok
     end
   end
 end
