@@ -30,5 +30,8 @@ config :swoosh,
 # Do not print debug messages in production
 config :logger, level: :info
 
+# Configures the llama version
+config :animina, :llm_version, "llama3.1:70b"
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
