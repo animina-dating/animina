@@ -178,6 +178,8 @@ defmodule Animina.Accounts.User do
               attribute: :password}
 
     validate {Validations.BadUsername, attribute: :username}
+
+    validate {Validations.RegistrationCompletedAt, attribute: :registration_completed_at}
   end
 
   state_machine do

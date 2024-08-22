@@ -2,8 +2,6 @@ defmodule Animina.Narratives.Story do
   alias Animina.Accounts
   alias Animina.Validations
 
-  @number_of_stories_required_for_complete_registration 1
-
   @moduledoc """
   This is the story resource.
   """
@@ -189,11 +187,10 @@ defmodule Animina.Narratives.Story do
 
     case by_user_id(user_id) do
       {:ok, stories} ->
-        if Enum.count(stories) >= @number_of_stories_required_for_complete_registration &&
+        if Enum.count(stories) >=
+             Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
              user.registration_completed_at == nil do
           Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
-        else
-          Accounts.User.update(user, %{registration_completed_at: nil})
         end
 
       _ ->

@@ -12,10 +12,6 @@ defmodule Animina.Repo.Migrations.MigrateResources5 do
       add :registration_completed_at, :utc_datetime_usec
     end
 
-    execute """
-    UPDATE users
-    SET registration_completed_at = date_trunc('day', now()) + interval '9 hours';
-    """
   end
 
   def down do
