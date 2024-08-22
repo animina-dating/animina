@@ -321,7 +321,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
                 <div class="mt-2 text-sm text-blue-700">
                   <p>
                     <%= gettext(
-                      "You can add more stories to your profile. Actually you should to increase the chances for a match. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. Play with it and see for yourself."
+                      "To activate your profile you have to have at least one story. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
                     ) %>
                   </p>
                 </div>
