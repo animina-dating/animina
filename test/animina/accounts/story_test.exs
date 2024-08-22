@@ -29,6 +29,17 @@ defmodule Animina.Accounts.StoryTest do
       assert {:ok, _} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
     end
 
+    test "After creating a story , the users registration_completed_at should be set",
+         %{
+           user: user,
+           get_about_me_headline: get_about_me_headline
+         } do
+      assert user.registration_completed_at == nil
+      assert {:ok, _about_me_story} = create_about_me_story(user.id, get_about_me_headline.id)
+      user = User.by_id!(user.id)
+      assert user.registration_completed_at != nil
+    end
+
     test "You cannot delete a story with the 'About me' headline if it is the last one remaining ",
          %{
            user: user,
