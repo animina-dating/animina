@@ -43,7 +43,10 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:default_headline, nil)
       |> assign(:show_buttons, true)
       |> assign(:generating_story, false)
-      |> assign(:message_when_generating_story, gettext("Generating story..."))
+      |> assign(
+        :message_when_generating_story,
+        gettext("Feeding our internal AI with this text. Please wait a second ")
+      )
       |> assign(:words, String.length(story.content))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
 
@@ -84,7 +87,10 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:current_request, nil)
       |> assign(:generating_story, false)
       |> assign(:show_buttons, true)
-      |> assign(:message_when_generating_story, gettext("Generating story..."))
+      |> assign(
+        :message_when_generating_story,
+        gettext("Feeding our internal AI with this text. Please wait a second ")
+      )
       |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
@@ -322,6 +328,7 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp process_story(socket, prompt, :new) do
+    Process.send_after(self(), {:render_generating_story, 1}, 1000)
     headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
 
     socket =
@@ -350,6 +357,8 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp process_story(socket, prompt, :edit) do
+    Process.send_after(self(), {:render_generating_story, 1}, 1000)
+
     socket =
       case ChatCompletion.request_stories(
              socket.assigns.story.headline.subject,
@@ -438,6 +447,35 @@ defmodule AniminaWeb.StoryLive do
       end
 
     {:noreply, socket}
+  end
+
+  def handle_info({:render_generating_story, count}, socket) do
+    if socket.assigns.generating_story do
+      new_message =
+        case count do
+          1 -> "."
+          2 -> "."
+          3 -> "."
+          _ -> "."
+        end
+
+      message_when_generating_story = socket.assigns.message_when_generating_story <> new_message
+
+      Process.send_after(self(), {:render_generating_story, rem(count + 1, 4)}, 1000)
+
+      if count == 1 do
+        {:noreply,
+         assign(
+           socket,
+           :message_when_generating_story,
+           gettext("Feeding our internal AI with this text. Please wait a second ")
+         )}
+      else
+        {:noreply, assign(socket, :message_when_generating_story, message_when_generating_story)}
+      end
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
