@@ -10,12 +10,13 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
-> [!TIP]
-> Project founder Stefan Wintermeyer will give a talk about ANIMINA and other
-> dating platforms at [FrOSCon](https://froscon.org). First slot (10 a.m.) on
-> August the 18th 2024. See you there!
+> [!NOTE]
+> Project founder Stefan Wintermeyer gave a (German) talk about the first 
+> ANIMINA Beta at [FrOSCon](https://froscon.org). 
+> - [video recording](https://media.ccc.de/v/froscon2024-3060-parship_tinder_animina_und_co)
+> - [slides](https://speakerdeck.com/wintermeyer/disassembling-online-dating-froscon-2024)
 
-## ANIMINA Installation Guide
+## ANIMINA Installation Guide for Developers
 
 What we assume:
 
@@ -131,11 +132,10 @@ By default the server starts with ML features enabled. To disable running ML fea
 - ML dependecies are installed by default. If you wish to not install them run `DISABLE_ML_FEATURES=true mix deps.get`
 - For example to start the phoenix server in dev mode without ML features run `DISABLE_ML_FEATURES=true iex -S mix phx.server`
 
-## LLama Version We Use For AI Features
+## LLM We Use for the AI Features
 
-- To update the LLaMA model version for development, adjust the config/dev.exs file. Use `llama3.1:8b` for development and `llama3.1:70b` for production.
-
-- For additional support, visit [Ollama](https://ollama.com). Ollama provides comprehensive tools and documentation for deploying and managing LLaMA models, helping streamline the integration of AI functionalities into your projects
+For development and on our production servers we use [Ollama](https://ollama.com). 
+So should you on your development system. For development we use the [Llama3.1 (8B)](https://ollama.com/library/llama3.1:8b) LLM. Install Ollama and than run `ollama run llama3.1:8b` to download the needed files for the LLM. You can configure the used LLM in `config/dev.exs` (search for `:llm_version`).
 
 ## Swoosh Mailbox Server
 
