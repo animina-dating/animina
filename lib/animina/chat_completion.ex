@@ -50,9 +50,8 @@ Please return the messages as follows:
 
     Please make sure to keep the original meaning and style of the story. Do not change the headline. Use the same language as the story provided.
 
-    You should only re
+    You should only return the content of the story. Do not include the headline or any other information.
 
-    Content:
     """
   end
 
@@ -109,10 +108,14 @@ Please return the messages as follows:
 
     client = Ollama.init()
 
-    Ollama.completion(client,
-      model: Application.get_env(:animina, :llm_version),
-      prompt: prompt
-    )
+    {:ok, task} =
+      Ollama.completion(client,
+        model: Application.get_env(:animina, :llm_version),
+        prompt: prompt,
+        stream: self()
+      )
+
+    {:ok, task}
   end
 
   defp get_white_flags(user) do
