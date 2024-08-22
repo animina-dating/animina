@@ -760,7 +760,7 @@ defmodule AniminaWeb.StoryLive do
             </.error>
           </div>
 
-          <%= if @words > 20 do %>
+          <%= if @words > 50 do %>
             <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
               <p
                 phx-click="correct_errors"
