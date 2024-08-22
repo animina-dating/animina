@@ -594,15 +594,13 @@ defmodule AniminaWeb.ChatLive do
           class="flex flex-col gap-1 mt-2 text-black dark:text-white"
         >
           <p class="font-bold ">
-            <%= gettext(
-              "Remember, the more personal the message, the better the response. Pick one message and customize it."
-            ) %>
+            <%= gettext("Here are some ideas. Copy one and customize it (e.g. add a greeting).") %>
           </p>
 
-          <ul class="list-disc pl-5">
+          <ul class="pl-5 list-disc">
             <%= for {message, index} <- Enum.with_index(@suggested_messages) do %>
-              <li class="md:ml-6 ml-2 mt-2 list-item">
-                <div class="flex items-start justify-between  gap-1 ">
+              <li class="mt-2 ml-2 md:ml-6 list-item">
+                <div class="flex items-start justify-between gap-1 ">
                   <span class="md:w-[85%] w-[70%]">
                     <%= message %>
                   </span>
