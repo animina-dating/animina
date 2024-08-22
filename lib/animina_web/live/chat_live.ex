@@ -452,7 +452,7 @@ defmodule AniminaWeb.ChatLive do
 
         {:error, _} ->
           socket
-          |> put_flash(:error, "Could not generate message with AI, Kindly Try Again")
+          |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))
       end
 
     {:noreply, socket}
