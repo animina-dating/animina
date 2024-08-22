@@ -6,7 +6,7 @@ defmodule Animina.ChatCompletion do
   alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
 
-  def prompt(
+  def chat_prompt(
         user,
         potential_partner,
         user_white_flags,
@@ -40,6 +40,22 @@ Please return the messages as follows:
 \n\nMessage: [Message content]"
   end
 
+  def stories_prompt(headline, content, reason) do
+    """
+    Please improve the following story content based on the given reason.
+    Headline: #{headline}
+    Content: #{content}
+
+    Reason: #{reason}
+
+    Please make sure to keep the original meaning and style of the story. Do not change the headline. Use the same language as the story provided.
+
+    You should only re
+
+    Content:
+    """
+  end
+
   def test do
     user = User.read!() |> Enum.random()
     potential_partner = User.read!() |> Enum.random()
@@ -67,7 +83,7 @@ Please return the messages as follows:
     potential_partner_stories = get_stories(potential_partner)
 
     prompt =
-      prompt(
+      chat_prompt(
         user,
         potential_partner,
         user_white_flags,
@@ -86,6 +102,17 @@ Please return the messages as follows:
       )
 
     {:ok, task}
+  end
+
+  def request_stories(headline, content, reason) do
+    prompt = stories_prompt(headline, content, reason) |> IO.inspect()
+
+    client = Ollama.init()
+
+    Ollama.completion(client,
+      model: Application.get_env(:animina, :llm_version),
+      prompt: prompt
+    )
   end
 
   defp get_white_flags(user) do

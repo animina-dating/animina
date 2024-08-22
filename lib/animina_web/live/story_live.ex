@@ -1,4 +1,5 @@
 defmodule AniminaWeb.StoryLive do
+  alias Animina.ChatCompletion
   use AniminaWeb, :live_view
 
   alias Animina.Accounts.Photo
@@ -38,7 +39,9 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:either_content_or_photo_added, either_content_or_photo_added(story.content, []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, nil)
+      |> assign(:words, String.length(story.content))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
+      |> IO.inspect(label: "socket")
 
     {:ok, socket}
   end
@@ -73,6 +76,7 @@ defmodule AniminaWeb.StoryLive do
       )
       |> assign(:errors, [])
       |> assign(:content, "")
+      |> assign(:words, 0)
       |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
@@ -232,6 +236,7 @@ defmodule AniminaWeb.StoryLive do
 
   @impl true
   def handle_event("validate", %{"story" => story}, socket) do
+    IO.inspect(story, label: "story")
     form = Form.validate(socket.assigns.form, story, errors: true)
 
     content =
@@ -244,6 +249,7 @@ defmodule AniminaWeb.StoryLive do
        :either_content_or_photo_added,
        either_content_or_photo_added(content, socket.assigns.uploads.photos.entries)
      )
+     |> assign(:words, String.length(content))
      |> assign(:content, content)}
   end
 
@@ -281,6 +287,67 @@ defmodule AniminaWeb.StoryLive do
 
       errors ->
         {:noreply, socket |> assign(:errors, errors)}
+    end
+  end
+
+  def handle_event("correct_errors", _params, socket) do
+    process_story(
+      socket,
+      "Correct any spelling, grammar, case, and punctuation errors in the story."
+    )
+  end
+
+  def handle_event("improve_funny", _params, socket) do
+    process_story(socket, "Improve the story to be funnier.")
+  end
+
+  def handle_event("improve_exciting", _params, socket) do
+    process_story(socket, "Improve the story to be more exciting.")
+  end
+
+  def handle_event("lengthen_story", _params, socket) do
+    process_story(socket, "Lengthen the story.")
+  end
+
+  def handle_event("shorten_story", _params, socket) do
+    process_story(socket, "Shorten the story.")
+  end
+
+  defp process_story(socket, prompt) do
+    IO.inspect(socket.assigns.form.params, label: "params")
+
+    headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
+    IO.inspect(headline, label: "headline")
+
+    case ChatCompletion.request_stories(
+           headline.subject,
+           socket.assigns.form.params["content"],
+           prompt
+         )
+         |> IO.inspect() do
+      {:ok, %{"response" => response}} ->
+        IO.inspect(trim_before_colon(response), label: "response")
+
+        updated_params =
+          Map.update!(socket.assigns.form.params, "content", fn _content ->
+            trim_before_colon(response)
+          end)
+
+        IO.inspect(updated_params, label: "updated_params")
+
+        {:noreply, socket |> assign(:form, Form.validate(socket.assigns.form, updated_params))}
+
+      {:error, _} ->
+        {:noreply, socket}
+    end
+
+    {:noreply, socket}
+  end
+
+  def trim_before_colon(string) do
+    case String.split(string, ":", parts: 2) do
+      [_before_colon, after_colon] -> String.trim(after_colon)
+      _ -> string
     end
   end
 
@@ -527,12 +594,19 @@ defmodule AniminaWeb.StoryLive do
         </div>
 
         <div>
-          <label
-            for="story_content"
-            class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
-          >
-            <%= gettext("Content") %>
-          </label>
+          <div class="flex justify-between">
+            <label
+              for="story_content"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+            >
+              <%= gettext("Content") %>
+            </label>
+
+            <p class="text-sm text-gray-500 dark:text-white">
+              <%= gettext("Characters: ") %>
+              <span class="font-semibold"><%= @words %></span>
+            </p>
+          </div>
 
           <div phx-feedback-for={f[:content].name} class="mt-2">
             <%= textarea(
@@ -559,6 +633,41 @@ defmodule AniminaWeb.StoryLive do
               <%= gettext("Content") <> " " <> msg %>
             </.error>
           </div>
+
+          <%= if @words > 20 do %>
+            <div class="mt-4 space-y-2">
+              <p
+                phx-click="correct_errors"
+                class="flex text-sm justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Correct Errors") %>
+              </p>
+              <p
+                phx-click="improve_funny"
+                class="flex text-sm justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Make Funnier") %>
+              </p>
+              <p
+                phx-click="improve_exciting"
+                class="flex text-sm justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Make More Exciting") %>
+              </p>
+              <p
+                phx-click="lengthen_story"
+                class="flex text-sm justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Lengthen Story") %>
+              </p>
+              <p
+                phx-click="shorten_story"
+                class="flex text-sm justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Shorten Story") %>
+              </p>
+            </div>
+          <% end %>
         </div>
 
         <div :if={@photo != nil} class="w-full space-y-2">
