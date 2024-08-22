@@ -17,7 +17,11 @@ defmodule Animina.Validations.RegistrationCompletedAt do
   @impl true
   def validate(changeset, opts, _context) do
     registration_completed_at =
-      Ash.Changeset.get_attribute(changeset, opts[:attribute])
+      if Map.has_key?(changeset.attributes, :registration_completed_at) do
+        changeset.attributes.registration_completed_at
+      else
+        nil
+      end
 
     validate_registration_completed_at(registration_completed_at)
   end
