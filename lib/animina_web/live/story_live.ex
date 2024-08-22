@@ -46,7 +46,6 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:message_when_generating_story, gettext("Generating story..."))
       |> assign(:words, String.length(story.content))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
-      |> IO.inspect(label: "socket")
 
     {:ok, socket}
   end
@@ -245,7 +244,6 @@ defmodule AniminaWeb.StoryLive do
 
   @impl true
   def handle_event("validate", %{"story" => story}, socket) do
-    IO.inspect(story, label: "story")
     form = Form.validate(socket.assigns.form, story, errors: true)
 
     content =
@@ -331,8 +329,7 @@ defmodule AniminaWeb.StoryLive do
              headline.subject,
              socket.assigns.form.params["content"],
              prompt
-           )
-           |> IO.inspect() do
+           ) do
         {:ok, task} ->
           updated_params =
             Map.update!(socket.assigns.form.params, "content", fn _content ->
@@ -358,11 +355,8 @@ defmodule AniminaWeb.StoryLive do
              socket.assigns.story.headline.subject,
              socket.assigns.story.content,
              prompt
-           )
-           |> IO.inspect() do
+           ) do
         {:ok, task} ->
-          IO.inspect(task, label: "task")
-
           new_story =
             if socket.assigns.story.photo == nil do
               %{
