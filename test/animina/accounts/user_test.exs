@@ -289,19 +289,18 @@ defmodule Animina.Accounts.UserTest do
       assert user.state == :normal
     end
 
-
     test "you cannot update the registration_completed_at field to a time  more than 1  minute in the past or the future" do
       assert {:ok, user} =
                User.create(@create_user_params)
 
-     two_minutes_ago = DateTime.add(DateTime.utc_now(), -2, :minute)
+      two_minutes_ago = DateTime.add(DateTime.utc_now(), -2, :minute)
       two_minutes_later = DateTime.add(DateTime.utc_now(), 2, :minute)
 
-      assert {:error, _} = User.update(user , %{registration_completed_at: two_minutes_ago })
-      assert {:error, _} = User.update(user , %{registration_completed_at: two_minutes_later })
+      assert {:error, _} = User.update(user, %{registration_completed_at: two_minutes_ago})
+      assert {:error, _} = User.update(user, %{registration_completed_at: two_minutes_later})
 
-      assert {:ok, _} = User.update(user , %{registration_completed_at: DateTime.utc_now() })
-     end
+      assert {:ok, _} = User.update(user, %{registration_completed_at: DateTime.utc_now()})
+    end
 
     test "make_admin/1 takes  a user id and makes that user an admin" do
       if Role.by_name!(:user) == nil do
