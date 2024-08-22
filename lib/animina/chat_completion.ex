@@ -33,6 +33,8 @@ I do not need any other information.
 
 Please return the messages as follows:
 
+Do not use square brackets [] around the messages.
+
 \n\nMessage: [Message content]
 
 \n\nMessage: [Message content]
