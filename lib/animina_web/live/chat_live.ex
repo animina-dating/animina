@@ -573,7 +573,7 @@ defmodule AniminaWeb.ChatLive do
           </div>
         </.form>
 
-        <%= if messages_sent_to_a_user_by_sender(@sender.id , @messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] && @show_use_ai_button do %>
+        <%= if Enum.count(@messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] && @show_use_ai_button do %>
           <div class="w-[100%]  flex justify-start my-3 items-center">
             <p
               phx-click="generate_message_with_ai"
