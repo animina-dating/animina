@@ -573,7 +573,9 @@ defmodule AniminaWeb.ChatLive do
           </div>
         </.form>
 
-        <%= if Enum.count(@messages) == 0 && @current_user_credit_points > 20 && @suggested_messages == [] && @show_use_ai_button do %>
+        <%= if Enum.count(@messages) == 0 && @current_user_credit_points >
+        Application.get_env(:animina, :minimum_points_required_for_ai_help_in_chat)
+         && @suggested_messages == [] && @show_use_ai_button do %>
           <div class="w-[100%]  flex justify-start my-3 items-center">
             <p
               phx-click="generate_message_with_ai"
