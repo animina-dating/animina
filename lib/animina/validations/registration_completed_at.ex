@@ -15,7 +15,7 @@ defmodule Animina.Validations.RegistrationCompletedAt do
   end
 
   @impl true
-  def validate(changeset, opts, _context) do
+  def validate(changeset, _opts, _context) do
     registration_completed_at =
       if Map.has_key?(changeset.attributes, :registration_completed_at) do
         changeset.attributes.registration_completed_at
