@@ -452,7 +452,7 @@ defmodule AniminaWeb.ChatLive do
 
         {:error, _} ->
           socket
-          |> put_flash(:error, "Could not generate message with AI, Kindly Try Again")
+          |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))
       end
 
     {:noreply, socket}
@@ -594,38 +594,38 @@ defmodule AniminaWeb.ChatLive do
           class="flex flex-col gap-1 mt-2 text-black dark:text-white"
         >
           <p class="font-bold ">
-            <%= gettext(
-              "Remember, the more personal the message, the better the response. Pick one message and customize it."
-            ) %>
+            <%= gettext("Here are some ideas. Copy one and customize it (e.g. add a greeting).") %>
           </p>
 
-          <ul class="flex flex-col gap-1 list-disc">
+          <ul class="pl-5 list-disc">
             <%= for {message, index} <- Enum.with_index(@suggested_messages) do %>
-              <li class="md:ml-6 ml-2 flex items-start justify-between  gap-1 ">
-                <span class="md:w-[85%] w-[70%]">
-                  <%= message %>
-                </span>
-                <span class="md:w-[12%] w-[25%] flex justify-end items-end">
-                  <%= if length(@suggested_messages) == 3  && index + 2 == 4 do %>
-                    <button
-                      :if={@show_use_ai_button && @generating_message == false}
-                      phx-value-content={message}
-                      phx-click="use_ai_message"
-                      class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                    >
-                      <%= gettext("Use this ") %>
-                    </button>
-                  <% else %>
-                    <button
-                      :if={@show_use_ai_button && index + 2 <= length(@suggested_messages)}
-                      phx-value-content={message}
-                      phx-click="use_ai_message"
-                      class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                    >
-                      <%= gettext("Use this ") %>
-                    </button>
-                  <% end %>
-                </span>
+              <li class="mt-2 ml-2 md:ml-6 list-item">
+                <div class="flex items-start justify-between gap-1 ">
+                  <span class="md:w-[85%] w-[70%]">
+                    <%= message %>
+                  </span>
+                  <span class="md:w-[12%] w-[25%] flex justify-end items-end">
+                    <%= if length(@suggested_messages) == 3  && index + 2 == 4 do %>
+                      <button
+                        :if={@show_use_ai_button && @generating_message == false}
+                        phx-value-content={message}
+                        phx-click="use_ai_message"
+                        class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                      >
+                        <%= gettext("Copy ") %>
+                      </button>
+                    <% else %>
+                      <button
+                        :if={@show_use_ai_button && index + 2 <= length(@suggested_messages)}
+                        phx-value-content={message}
+                        phx-click="use_ai_message"
+                        class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                      >
+                        <%= gettext("Copy") %>
+                      </button>
+                    <% end %>
+                  </span>
+                </div>
               </li>
             <% end %>
           </ul>

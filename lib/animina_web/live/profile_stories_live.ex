@@ -273,7 +273,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-4 w-[100%]">
-      <div class="gap-8 columns md:columns-2 lg:columns-3">
+      <div class={"gap-8 columns  #{if Enum.count(@profile_stories) > 0 do "md:columns-2 lg:columns-3 " else "columns-1" end } "}>
         <div id="stream_stories" phx-update="stream">
           <div
             :for={{dom_id, %{story: story, photo: photo}} <- @streams.stories}
@@ -295,7 +295,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
         </div>
 
         <div
-          :if={Enum.count(@profile_stories) == 1 && (@current_user && @current_user.id == @user.id)}
+          :if={Enum.count(@profile_stories) <= 1 && (@current_user && @current_user.id == @user.id)}
           class="pb-2"
         >
           <div class="p-4 rounded-md bg-blue-50">
@@ -321,7 +321,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
                 <div class="mt-2 text-sm text-blue-700">
                   <p>
                     <%= gettext(
-                      "You can add more stories to your profile. Actually you should to increase the chances for a match. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. Play with it and see for yourself."
+                      "To activate your profile you have to have at least one story. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
                     ) %>
                   </p>
                 </div>

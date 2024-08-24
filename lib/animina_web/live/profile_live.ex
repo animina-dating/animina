@@ -22,7 +22,8 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username(username) do
       {:ok, user} ->
         if show_optional_404_page(user, nil) ||
-             user.state in user_states_not_visible_to_anonymous_users() do
+             user.state in user_states_not_visible_to_anonymous_users() ||
+             user.registration_completed_at == nil do
           raise Animina.Fallback
         else
           {:ok,
@@ -93,7 +94,17 @@ defmodule AniminaWeb.ProfileLive do
           )
           |> Enum.take(3)
 
-        if show_optional_404_page(user, current_user) do
+        # we set it to be the current time and date by default so that we can display the profile to the user if
+        # the user is the same as the current user
+
+        user_registration_completed_at =
+          if current_user.id == user.id do
+            DateTime.utc_now()
+          else
+            user.registration_completed_at
+          end
+
+        if show_optional_404_page(user, current_user) || user_registration_completed_at == nil do
           raise Animina.Fallback
         else
           {:ok,
@@ -144,7 +155,8 @@ defmodule AniminaWeb.ProfileLive do
     case Accounts.User.by_username(username) do
       {:ok, user} ->
         if show_optional_404_page(user, nil) ||
-             user.state in user_states_not_visible_to_anonymous_users() do
+             user.state in user_states_not_visible_to_anonymous_users() ||
+             user.registration_completed_at == nil do
           raise Animina.Fallback
         else
           {:ok,

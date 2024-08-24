@@ -6,6 +6,8 @@ defmodule AniminaWeb.AllReportsTest do
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
 
   describe "Tests the All Reports Live" do
     setup do
@@ -332,6 +334,8 @@ defmodule AniminaWeb.AllReportsTest do
         legal_terms_accepted: true
       })
 
+    create_about_me_story(user.id, get_about_me_headline().id)
+
     user
   end
 
@@ -350,6 +354,8 @@ defmodule AniminaWeb.AllReportsTest do
         language: "de",
         legal_terms_accepted: true
       })
+
+    create_about_me_story(user.id, get_about_me_headline().id)
 
     user
   end
@@ -370,6 +376,8 @@ defmodule AniminaWeb.AllReportsTest do
         legal_terms_accepted: true
       })
 
+    create_about_me_story(user.id, get_about_me_headline().id)
+
     user
   end
 
@@ -388,6 +396,8 @@ defmodule AniminaWeb.AllReportsTest do
         language: "en",
         legal_terms_accepted: true
       })
+
+    create_about_me_story(user.id, get_about_me_headline().id)
 
     user
   end
@@ -427,5 +437,30 @@ defmodule AniminaWeb.AllReportsTest do
       form(lv, "#basic_user_sign_in_form", user: attributes)
 
     submit_form(form, conn)
+  end
+
+  defp create_about_me_story(user_id, headline_id) do
+    Story.create(%{
+      user_id: user_id,
+      headline_id: headline_id,
+      content: "This is a story about me",
+      position: 1
+    })
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
   end
 end

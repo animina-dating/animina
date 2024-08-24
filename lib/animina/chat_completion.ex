@@ -20,18 +20,18 @@ I am writing a spy thriller. Two main adult characters are #{user.name} and #{po
 Stories about #{potential_partner.name}: #{potential_partner_stories}
 Stories about #{user.name}: #{user_stories}
 
-Please don't use the lorem ipsum stories. They are just placeholders.
-
 #{potential_partner.name} has the following interests: #{potential_partner_white_flags}
 #{user.name} has the following interests: #{user_white_flags}
 
 #{user.name} is a spy who is trying to initiate a conversation with #{potential_partner.name}. They have never met before. #{user.name} reads a dating profile of #{potential_partner.name} and wants to start a conversation.
 
-Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation. Use a similar writing style as #{user.name} uses in his/her own stories. At least one of them should be funny and lighthearted. Write them in the language used in the #{potential_partner.name} stories above.
+Please write three different messages that #{user.name} could send to #{potential_partner.name} to start a conversation in a chatroom. One message should be open and flirty, the second one lighthearted and funny and the last one the same way the stories are writen. Use a similar writing style as #{user.name} uses in his or her own stories. Add markdown and emojis when it makes sense. Write them in the language used in the #{potential_partner.name} stories above.
 
 I do not need any other information.
 
 Please return the messages as follows:
+
+Do not use square brackets [] or \" around the messages.
 
 \n\nMessage: [Message content]
 
