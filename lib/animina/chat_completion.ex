@@ -40,19 +40,57 @@ Do not use square brackets [] or \" around the messages.
 \n\nMessage: [Message content]"
   end
 
-  def stories_prompt(headline, content, reason) do
+  def stories_prompt(headline, content, reason, previous) do
+    writing_style = """
+    Steps:
+    1. Generate a short assessment of the #{previous} stories on all the key writing style elements defined below. Be definitive:
+    • Diction (word choice): Vocabulary, Formality, Connotation
+    • Syntax (sentence structure): Length, Variety, Complexity
+    • Tone: Attitude, Mood, Voice
+    • Figurative Language: Metaphors and Similes, Symbolism, Irony
+    • Structure: Organization, Transitions, Pacing
+    • Rhetorical Devices: Repetition, Alliteration, Rhetorical Questions
+    • Authorial Intent and Purpose: Persuasion, Information, Entertainment
     """
-    Please improve the following story content based on the given reason.
+
+    vocab_list = """
+    Steps:
+    1. Based on the #{previous} stories, generate a comprehensive overview of the writer's vocabulary and style elements.
+    2. Build a vocabulary list of the most common superlatives, adjectives, adverbs, vocal fry (in a writing sense), emphasis words, transitional phrases, rhetorical devices, idioms and colloquialisms, etc. Make a massive list.
+    """
+
+    prompt = """
+    You are a highly skilled language model trained to rewrite and improve user-generated stories by closely following the provided writing style and vocabulary list. Your task is to help users create engaging and personalized stories that they can share with potential partners.
+
+    Below is the user's selected headline and their original story content, followed by the reason they would like the content to be improved.
+
     Headline: #{headline}
     Content: #{content}
 
-    Reason: #{reason}
+    Reason for Improvement: #{reason}
 
-    Please make sure to keep the original meaning and style of the story. Do not change the headline. Use the same language as the story provided.
+    Instructions:
 
-    You should only return the content of the story. Do not include the headline or any other information.
+    1. Maintain Style: The revised story must follow the provided writing style and vocabulary list. This includes tone, style, sentence structure, and word choice.
+    2. Preserve Meaning: Keep the original meaning, intent, and key details of the user's story intact. Do not introduce new ideas or remove essential information.
+    3. Reason-Specific Adjustments: Apply changes based on the provided reason for improvement. For example:
+       - Correct Errors: Identify and fix any grammatical, spelling, or punctuation mistakes.
+       - Make Funnier: Add humor while keeping it appropriate and aligned with the original style.
+       - Make More Exciting: Increase the story's engagement level by enhancing descriptions, adding suspense, or amplifying emotions.
+       - Lengthen Story: Expand the content with relevant details, anecdotes, or dialogue without deviating from the core message.
+       - Shorten Story: Condense the content by removing unnecessary details or redundancies while preserving the essence of the story.
+    4. Consistency: Ensure that the final output reads smoothly, with coherent transitions and consistent pacing throughout.
 
+    Your response should reflect the improvements made based on the reason provided by the user and return the updated story. If you are not able to improve the story, please return the original story as it is.
+
+    Use the same language as the story provided.
+
+    Should have a minimum of 50 characters, and a maximum 0f 1024 characters
+
+    You should only return the content of the story.
     """
+
+    prompt
   end
 
   def test do
@@ -103,8 +141,8 @@ Do not use square brackets [] or \" around the messages.
     {:ok, task}
   end
 
-  def request_stories(headline, content, reason) do
-    prompt = stories_prompt(headline, content, reason)
+  def request_stories(headline, content, reason, previous) do
+    prompt = stories_prompt(headline, content, reason, previous)
 
     client = Ollama.init()
 

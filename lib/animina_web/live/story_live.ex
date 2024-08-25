@@ -331,11 +331,18 @@ defmodule AniminaWeb.StoryLive do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
     headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
 
+    previous_stories =
+      get_stories_for_a_user(socket.assigns.current_user)
+      |> Enum.map_join("\n\n", fn story ->
+        "#{story.headline.subject}\n#{story.content}"
+      end)
+
     socket =
       case ChatCompletion.request_stories(
              headline.subject,
              socket.assigns.form.params["content"],
-             prompt
+             prompt,
+             previous_stories
            ) do
         {:ok, task} ->
           updated_params =
@@ -359,11 +366,18 @@ defmodule AniminaWeb.StoryLive do
   defp process_story(socket, prompt, :edit) do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
 
+    previous_stories =
+      get_stories_for_a_user(socket.assigns.current_user)
+      |> Enum.map_join("\n\n", fn story ->
+        "#{story.headline.subject}\n#{story.content}"
+      end)
+
     socket =
       case ChatCompletion.request_stories(
              socket.assigns.story.headline.subject,
              socket.assigns.story.content,
-             prompt
+             prompt,
+             previous_stories
            ) do
         {:ok, task} ->
           new_story =
@@ -570,6 +584,7 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_stories_for_a_user(user) do
     {:ok, stories} = Story.by_user_id(user.id)
+
     stories
   end
 
