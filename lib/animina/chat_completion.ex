@@ -104,7 +104,7 @@ Do not use square brackets [] or \" around the messages.
   end
 
   def request_stories(headline, content, reason) do
-    prompt = stories_prompt(headline, content, reason) |> IO.inspect()
+    prompt = stories_prompt(headline, content, reason)
 
     client = Ollama.init()
 

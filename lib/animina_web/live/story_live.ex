@@ -358,8 +358,6 @@ defmodule AniminaWeb.StoryLive do
 
   defp process_story(socket, prompt, :edit) do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
-    IO.inspect(socket)
-    IO.inspect(socket.assigns.story)
 
     socket =
       case ChatCompletion.request_stories(
