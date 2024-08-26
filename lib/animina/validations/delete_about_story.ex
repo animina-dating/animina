@@ -23,13 +23,10 @@ defmodule Animina.Validations.DeleteAboutStory do
 
     user_id = Ash.Changeset.get_attribute(changeset, opts[:user])
 
-  
     case Headline.by_id(headline_id) do
       {:ok, headline} ->
-        if  headline.subject == "About me" do
-          {:error,
-           field: opts[:attribute],
-           message: "You cannot delete the 'About me' story."}
+        if headline.subject == "About me" do
+          {:error, field: opts[:attribute], message: "You cannot delete the 'About me' story."}
         else
           :ok
         end
