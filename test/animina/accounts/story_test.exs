@@ -40,7 +40,7 @@ defmodule Animina.Accounts.StoryTest do
       assert user.registration_completed_at != nil
     end
 
-    test "You cannot delete a story with the 'About me' headline if it is the last one remaining ",
+    test "You cannot delete a story with the 'About me' headline ",
          %{
            user: user,
            get_about_me_headline: get_about_me_headline,
@@ -53,11 +53,15 @@ defmodule Animina.Accounts.StoryTest do
       assert {:error, _} = Story.destroy(about_me_story)
 
       # insert another story
-      create_non_about_me_story(user.id, get_non_about_me_headline.id)
+      {:ok , non_about_me_story} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
 
       # now when there is another story with a different headline, you should
-      # be able to delete the story with the 'About me' headline
-      assert :ok = Story.destroy(about_me_story)
+      # still not be able to delete the 'About me' story
+      assert {:error, _} = Story.destroy(about_me_story)
+
+      # now you should be able to delete the non about me story
+
+      assert :ok = Story.destroy(non_about_me_story)
     end
   end
 

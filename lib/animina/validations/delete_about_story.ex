@@ -4,7 +4,8 @@ defmodule Animina.Validations.DeleteAboutStory do
   alias Animina.Narratives.Story
 
   @moduledoc """
-  This is a module for validating the first story is 'About me'
+  This is a module for ensuring the 'About me' story is not
+  deleted at all
   """
 
   @impl true
@@ -22,14 +23,13 @@ defmodule Animina.Validations.DeleteAboutStory do
 
     user_id = Ash.Changeset.get_attribute(changeset, opts[:user])
 
-    stories = get_stories_for_user(user_id)
-
+  
     case Headline.by_id(headline_id) do
       {:ok, headline} ->
-        if length(stories) == 1 && headline.subject == "About me" do
+        if  headline.subject == "About me" do
           {:error,
            field: opts[:attribute],
-           message: "You cannot delete the 'About me' story if it is the last one remaining"}
+           message: "You cannot delete the 'About me' story."}
         else
           :ok
         end
