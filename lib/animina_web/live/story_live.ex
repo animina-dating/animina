@@ -1,4 +1,5 @@
 defmodule AniminaWeb.StoryLive do
+  alias Animina.ChatCompletion
   use AniminaWeb, :live_view
 
   alias Animina.Accounts.Photo
@@ -33,11 +34,20 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:photo, story.photo)
       |> assign(:story_position, nil)
       |> assign(:headline_position, nil)
+      |> assign(:current_request, nil)
       |> assign(:errors, [])
+      |> assign(:current_request, nil)
       |> assign(:content, story.content)
       |> assign(:either_content_or_photo_added, either_content_or_photo_added(story.content, []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, nil)
+      |> assign(:show_buttons, true)
+      |> assign(:generating_story, false)
+      |> assign(
+        :message_when_generating_story,
+        gettext("Feeding our internal AI with this text. Please wait a second ")
+      )
+      |> assign(:words, String.length(story.content))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
 
     {:ok, socket}
@@ -73,6 +83,14 @@ defmodule AniminaWeb.StoryLive do
       )
       |> assign(:errors, [])
       |> assign(:content, "")
+      |> assign(:words, 0)
+      |> assign(:current_request, nil)
+      |> assign(:generating_story, false)
+      |> assign(:show_buttons, true)
+      |> assign(
+        :message_when_generating_story,
+        gettext("Feeding our internal AI with this text. Please wait a second ")
+      )
       |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
@@ -244,6 +262,7 @@ defmodule AniminaWeb.StoryLive do
        :either_content_or_photo_added,
        either_content_or_photo_added(content, socket.assigns.uploads.photos.entries)
      )
+     |> assign(:words, String.length(content))
      |> assign(:content, content)}
   end
 
@@ -282,6 +301,202 @@ defmodule AniminaWeb.StoryLive do
       errors ->
         {:noreply, socket |> assign(:errors, errors)}
     end
+  end
+
+  def handle_event("correct_errors", _params, socket) do
+    process_story(
+      socket,
+      "Correct any spelling, grammar, case, and punctuation errors in the story.",
+      socket.assigns.live_action
+    )
+  end
+
+  def handle_event("improve_funny", _params, socket) do
+    process_story(socket, "Improve the story to be funnier.", socket.assigns.live_action)
+  end
+
+  def handle_event("improve_exciting", _params, socket) do
+    process_story(socket, "Improve the story to be more exciting.", socket.assigns.live_action)
+  end
+
+  def handle_event("lengthen_story", _params, socket) do
+    process_story(socket, "Lengthen the story.", socket.assigns.live_action)
+  end
+
+  def handle_event("shorten_story", _params, socket) do
+    process_story(socket, "Shorten the story.", socket.assigns.live_action)
+  end
+
+  defp process_story(socket, prompt, :new) do
+    Process.send_after(self(), {:render_generating_story, 1}, 1000)
+    headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
+
+    previous_stories =
+      get_stories_for_a_user(socket.assigns.current_user)
+      |> Enum.map_join("\n\n", fn story ->
+        "#{story.headline.subject}\n#{story.content}"
+      end)
+
+    socket =
+      case ChatCompletion.request_stories(
+             headline.subject,
+             socket.assigns.form.params["content"],
+             prompt,
+             previous_stories
+           ) do
+        {:ok, task} ->
+          updated_params =
+            Map.update!(socket.assigns.form.params, "content", fn _content ->
+              ""
+            end)
+
+          socket
+          |> assign(:current_request, task)
+          |> assign(:form, Form.validate(socket.assigns.form, updated_params))
+          |> assign(:generating_story, true)
+          |> assign(:show_buttons, false)
+
+        {:error, _} ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  defp process_story(socket, prompt, :edit) do
+    Process.send_after(self(), {:render_generating_story, 1}, 1000)
+
+    previous_stories =
+      get_stories_for_a_user(socket.assigns.current_user)
+      |> Enum.map_join("\n\n", fn story ->
+        "#{story.headline.subject}\n#{story.content}"
+      end)
+
+    socket =
+      case ChatCompletion.request_stories(
+             socket.assigns.story.headline.subject,
+             socket.assigns.story.content,
+             prompt,
+             previous_stories
+           ) do
+        {:ok, task} ->
+          new_story =
+            if socket.assigns.story.photo == nil do
+              %{
+                "photo" => %{
+                  "_form_type" => "create",
+                  "_ignored" => "true",
+                  "_persistent_id" => "0",
+                  "user_id" => socket.assigns.story.user_id
+                },
+                "headline_id" => socket.assigns.story.headline_id,
+                "content" => "",
+                "position" => socket.assigns.story.position,
+                "user_id" => socket.assigns.story.user_id,
+                "headline" => socket.assigns.story.headline,
+                "id" => socket.assigns.story.id
+              }
+            else
+              %{
+                "headline_id" => socket.assigns.story.headline_id,
+                "content" => "",
+                "position" => socket.assigns.story.position,
+                "user_id" => socket.assigns.story.user_id,
+                "headline" => socket.assigns.story.headline,
+                "id" => socket.assigns.story.id
+              }
+            end
+
+          form =
+            Form.validate(
+              socket.assigns.form,
+              new_story,
+              errors: true
+            )
+
+          socket
+          |> assign(:current_request, task)
+          |> assign(:form, form)
+          |> assign(:generating_story, true)
+          |> assign(:show_buttons, false)
+
+        {:error, _} ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
+    updated_params =
+      Map.update!(socket.assigns.form.params, "content", fn content ->
+        content <> chunk
+      end)
+
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          socket
+          |> assign(:generating_story, false)
+          |> assign(:form, Form.validate(socket.assigns.form, updated_params))
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => true, "response" => response}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          socket
+          |> assign(:current_request, nil)
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:render_generating_story, count}, socket) do
+    if socket.assigns.generating_story do
+      new_message =
+        case count do
+          1 -> "."
+          2 -> "."
+          3 -> "."
+          _ -> "."
+        end
+
+      message_when_generating_story = socket.assigns.message_when_generating_story <> new_message
+
+      Process.send_after(self(), {:render_generating_story, rem(count + 1, 4)}, 1000)
+
+      if count == 1 do
+        {:noreply,
+         assign(
+           socket,
+           :message_when_generating_story,
+           gettext("Feeding our internal AI with this text. Please wait a second ")
+         )}
+      else
+        {:noreply, assign(socket, :message_when_generating_story, message_when_generating_story)}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_buttons, true)}
   end
 
   @impl true
@@ -369,6 +584,7 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_stories_for_a_user(user) do
     {:ok, stories} = Story.by_user_id(user.id)
+
     stories
   end
 
@@ -527,14 +743,20 @@ defmodule AniminaWeb.StoryLive do
         </div>
 
         <div>
-          <label
-            for="story_content"
-            class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
-          >
-            <%= gettext("Content") %>
-          </label>
+          <div class="flex justify-between">
+            <label
+              for="story_content"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+            >
+              <%= gettext("Content") %>
+            </label>
 
-          <div phx-feedback-for={f[:content].name} class="mt-2">
+            <p class="text-sm text-gray-500 dark:text-white">
+              <%= gettext("Characters: ") %>
+              <span class="font-semibold"><%= @words %></span>
+            </p>
+          </div>
+          <div :if={@generating_story == false} phx-feedback-for={f[:content].name} class="mt-2">
             <%= textarea(
               f,
               :content,
@@ -559,6 +781,66 @@ defmodule AniminaWeb.StoryLive do
               <%= gettext("Content") <> " " <> msg %>
             </.error>
           </div>
+          <div :if={@generating_story == true} phx-feedback-for={f[:content].name} class="mt-2">
+            <%= textarea(
+              f,
+              :content,
+              class:
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                  unless(get_field_errors(f[:content], :content) == [],
+                    do: "ring-red-600 focus:ring-red-600",
+                    else: "ring-gray-300 focus:ring-indigo-600"
+                  ),
+              placeholder:
+                gettext(
+                  "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
+                ),
+              value: @message_when_generating_story,
+              rows: 4,
+              type: :text,
+              "phx-debounce": "200",
+              maxlength: "1024"
+            ) %>
+
+            <.error :for={msg <- get_field_errors(f[:content], :content)}>
+              <%= gettext("Content") <> " " <> msg %>
+            </.error>
+          </div>
+
+          <%= if @words > 50 do %>
+            <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
+              <p
+                phx-click="correct_errors"
+                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Correct Errors") %>
+              </p>
+              <p
+                phx-click="improve_funny"
+                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Make Funnier") %>
+              </p>
+              <p
+                phx-click="improve_exciting"
+                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Make More Exciting") %>
+              </p>
+              <p
+                phx-click="lengthen_story"
+                class="flex text-sm  md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Lengthen Story") %>
+              </p>
+              <p
+                phx-click="shorten_story"
+                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <%= gettext("Shorten Story") %>
+              </p>
+            </div>
+          <% end %>
         </div>
 
         <div :if={@photo != nil} class="w-full space-y-2">
