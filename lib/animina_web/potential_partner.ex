@@ -47,7 +47,6 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_not_archived_query(user)
     |> partner_not_hibernate_query(user)
     |> partner_not_incognito_query(user)
-    |> partner_bookmarked_query(user, remove_bookmarked)
     |> Ash.Query.limit(limit)
     |> Ash.read!()
   end
