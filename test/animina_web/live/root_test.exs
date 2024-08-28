@@ -4,6 +4,8 @@ defmodule AniminaWeb.RootTest do
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
 
   @valid_attrs %{
     email: "michael@example.com",
@@ -190,6 +192,12 @@ defmodule AniminaWeb.RootTest do
          %{conn: conn} do
       {:ok, user} = User.create(@valid_create_user_attrs)
 
+      create_user_about_me_story(
+        user,
+        get_about_me_headline(),
+        "I am a software engineer"
+      )
+
       current_points = User.by_username!(user.username).credit_points
 
       {:ok, index_live, _html} =
@@ -290,6 +298,12 @@ defmodule AniminaWeb.RootTest do
 
       {:ok, user} = User.update(user, %{is_in_waitlist: true})
 
+      create_user_about_me_story(
+        user,
+        get_about_me_headline(),
+        "I am a software engineer"
+      )
+
       {:ok, _index_live, html} =
         conn
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
@@ -335,6 +349,34 @@ defmodule AniminaWeb.RootTest do
       form(lv, "#basic_user_sign_in_form", user: attributes)
 
     submit_form(form, conn)
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
+  end
+
+  defp create_user_about_me_story(user, headline, story_content) do
+    {:ok, story} =
+      Story.create(%{
+        user_id: user.id,
+        headline_id: headline.id,
+        content: story_content,
+        position: 1
+      })
+
+    story
   end
 
   defp confirm_user(attributes) do

@@ -99,24 +99,6 @@ defmodule AniminaWeb.LiveUserAuth do
   end
 
   def on_mount(:live_user_required_with_about_me_story, _params, session, socket) do
-    path =
-      case Map.get(socket.private.connect_info, :request_path, nil) do
-        nil ->
-          "sign-in"
-
-        path ->
-          case Map.get(socket.private.connect_info, :query_string, nil) do
-            nil ->
-              "sign-in?redirect_to=" <> path
-
-            "" ->
-              "sign-in?redirect_to=" <> path
-
-            query_string ->
-              "sign-in?redirect_to=" <> path <> "?" <> query_string
-          end
-      end
-
     if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at &&
          user_has_an_about_me_story?(socket.assigns[:current_user]) do
       current_user =
@@ -132,13 +114,7 @@ defmodule AniminaWeb.LiveUserAuth do
 
       user_in_waitlist_socket(current_user, socket, unread_messages, current_user)
     else
-      {:halt,
-       socket
-       |> Phoenix.LiveView.redirect(to: "/my/about-me")
-       |> Phoenix.LiveView.put_flash(
-         :error,
-         "You need to have an About me story to access this page"
-       )}
+      user_in_waitlist_socket(socket, socket.assigns[:current_user])
     end
   end
 
@@ -158,6 +134,26 @@ defmodule AniminaWeb.LiveUserAuth do
        |> assign(:unread_messages, unread_messages)
        |> assign(:number_of_unread_messages, Enum.count(unread_messages))
        |> assign(:current_user_credit_points, current_user.credit_points)}
+    end
+  end
+
+  defp user_in_waitlist_socket(socket, user) do
+    if user.is_in_waitlist do
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/my/too-successful")
+       |> Phoenix.LiveView.put_flash(
+         :info,
+         "Welcome back"
+       )}
+    else
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/my/about-me")
+       |> Phoenix.LiveView.put_flash(
+         :error,
+         "You need to have an About me story to access this page"
+       )}
     end
   end
 
