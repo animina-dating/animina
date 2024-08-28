@@ -6,6 +6,7 @@ defmodule AniminaWeb.LiveUserAuth do
   alias Animina.Accounts.Credit
   alias Animina.Accounts.Message
   alias Animina.Accounts.User
+  alias Animina.Narratives.Story
   alias AniminaWeb.Registration
   import Phoenix.Component
 
@@ -93,6 +94,65 @@ defmodule AniminaWeb.LiveUserAuth do
        |> Phoenix.LiveView.put_flash(
          :error,
          "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
+       )}
+    end
+  end
+
+  def on_mount(:live_user_required_with_about_me_story, _params, session, socket) do
+    if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at &&
+         user_has_an_about_me_story?(socket.assigns[:current_user]) do
+      current_user =
+        Registration.get_current_user(session)
+
+      add_daily_points_for_user(
+        current_user,
+        100,
+        check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
+      )
+
+      {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
+
+      user_in_waitlist_socket(current_user, socket, unread_messages, current_user)
+    else
+      user_in_waitlist_socket(socket, socket.assigns[:current_user])
+    end
+  end
+
+  defp user_in_waitlist_socket(user, socket, unread_messages, current_user) do
+    if user.is_in_waitlist do
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/my/too-successful")
+       |> Phoenix.LiveView.put_flash(
+         :info,
+         "Welcome back"
+       )}
+    else
+      {:cont,
+       socket
+       |> assign(:current_user, current_user)
+       |> assign(:unread_messages, unread_messages)
+       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
+       |> assign(:current_user_credit_points, current_user.credit_points)}
+    end
+  end
+
+  defp user_in_waitlist_socket(socket, user) do
+    if user.is_in_waitlist do
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/my/too-successful")
+       |> Phoenix.LiveView.put_flash(
+         :info,
+         "Welcome back"
+       )}
+    else
+      {:halt,
+       socket
+       |> Phoenix.LiveView.redirect(to: "/my/about-me")
+       |> Phoenix.LiveView.put_flash(
+         :error,
+         "You need to have an About me story to access this page"
        )}
     end
   end
@@ -190,6 +250,24 @@ defmodule AniminaWeb.LiveUserAuth do
        socket
        |> Phoenix.LiveView.redirect(to: "/sign-in")}
     end
+  end
+
+  defp user_has_an_about_me_story?(user) do
+    case get_stories_for_a_user(user) do
+      [] ->
+        false
+
+      stories ->
+        Enum.any?(stories, fn story ->
+          story.headline.subject == "About me"
+        end)
+    end
+  end
+
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+
+    stories
   end
 
   defp user_is_admin(user) do

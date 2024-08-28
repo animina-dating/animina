@@ -21,8 +21,6 @@ defmodule Animina.Validations.DeleteAboutStory do
     headline_id =
       Ash.Changeset.get_attribute(changeset, opts[:headline])
 
-    user_id = Ash.Changeset.get_attribute(changeset, opts[:user])
-
     case Headline.by_id(headline_id) do
       {:ok, headline} ->
         if headline.subject == "About me" do

@@ -3,6 +3,8 @@ defmodule AniminaWeb.UpdateProfileTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
   alias Animina.Accounts.User
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
 
   describe "Tests the Update Profile Live" do
     setup do
@@ -92,7 +94,37 @@ defmodule AniminaWeb.UpdateProfileTest do
         confirmed_at: DateTime.utc_now()
       })
 
+    create_user_about_me_story(user, get_about_me_headline(), "This is my story")
+
     user
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
+  end
+
+  defp create_user_about_me_story(user, headline, story_content) do
+    {:ok, story} =
+      Story.create(%{
+        user_id: user.id,
+        headline_id: headline.id,
+        content: story_content,
+        position: 1
+      })
+
+    story
   end
 
   defp login_user(conn, attributes) do
