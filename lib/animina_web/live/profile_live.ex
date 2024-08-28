@@ -13,10 +13,97 @@ defmodule AniminaWeb.ProfileLive do
   alias Animina.Accounts.User
   alias Animina.Accounts.VisitLogEntry
   alias Animina.GenServers.ProfileViewCredits
+  alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
   alias Phoenix.PubSub
 
   require Ash.Query
+
+  defp profile_socket(socket, username, language, current_user, :same_profile) do
+    case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+      {:ok, user} ->
+        subscribe(socket, current_user, user)
+        active_tab = if current_user.id == user.id, do: :profile, else: ""
+
+        if connected?(socket) do
+          create_or_update_visited_bookmark(current_user, user)
+
+          deduct_points_for_first_profile_view(current_user, user)
+        end
+
+        add_points_for_viewing_to_profile(current_user.id, user.id, socket)
+
+        visit_log_entry =
+          create_visit_log_entry_for_bookmark_and_user(current_user, user, socket)
+
+        update_visit_log_entry_for_bookmark_and_user(current_user, user)
+
+        intersecting_green_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :green, language),
+            filter_flags(user, :white, language)
+          )
+
+        intersecting_red_flags_count =
+          get_intersecting_flags_count(
+            filter_flags(current_user, :red, language),
+            filter_flags(user, :white, language)
+          )
+
+        intersecting_red_flags =
+          get_intersecting_flags(
+            filter_flags(current_user, :red, language),
+            filter_flags(user, :white, language)
+          )
+          |> Enum.take(3)
+
+        intersecting_green_flags =
+          get_intersecting_flags(
+            filter_flags(current_user, :green, language),
+            filter_flags(user, :white, language)
+          )
+          |> Enum.take(3)
+
+        # we set it to be the current time and date by default so that we can display the profile to the user if
+        # the user is the same as the current user
+
+        user_registration_completed_at =
+          if current_user.id == user.id do
+            DateTime.utc_now()
+          else
+            user.registration_completed_at
+          end
+
+        if show_optional_404_page(user, current_user) || user_registration_completed_at == nil do
+          raise Animina.Fallback
+        else
+          {:ok,
+           socket
+           |> assign(user: user)
+           |> assign(active_tab: active_tab)
+           |> assign(visit_log_entry: visit_log_entry)
+           |> assign(
+             current_user_credit_points:
+               Points.humanized_points(socket.assigns.current_user.credit_points)
+           )
+           |> assign(intersecting_green_flags: intersecting_green_flags)
+           |> assign(intersecting_red_flags: intersecting_red_flags)
+           |> assign(intersecting_green_flags_count: intersecting_green_flags_count)
+           |> assign(intersecting_red_flags_count: intersecting_red_flags_count)
+           |> assign(profile_points: Points.humanized_points(user.credit_points))
+           |> assign(page_title: "#{user.name} - #{gettext("Animina Profile")}")
+           |> assign(
+             current_user_has_liked_profile?:
+               current_user_has_liked_profile(socket.assigns.current_user, user.id)
+           )
+           |> redirect_if_username_is_different(username, user)
+           |> redirect_if_user_has_no_about_me_story(user)}
+        end
+
+      _ ->
+        raise Animina.Fallback
+    end
+  end
 
   defp profile_socket(socket, username, _language, nil) do
     case Accounts.User.by_username(username) do
@@ -143,7 +230,11 @@ defmodule AniminaWeb.ProfileLive do
     current_user =
       socket.assigns.current_user
 
-    profile_socket(socket, username, language, current_user)
+    if current_user && Ash.CiString.value(current_user.username) == username do
+      profile_socket(socket, username, language, current_user, :same_profile)
+    else
+      profile_socket(socket, username, language, current_user)
+    end
   end
 
   def mount(%{"username" => username}, %{"language" => language}, socket) do
@@ -313,6 +404,15 @@ defmodule AniminaWeb.ProfileLive do
       |> push_navigate(to: ~p"/#{user.username}")
     else
       socket
+    end
+  end
+
+  defp redirect_if_user_has_no_about_me_story(socket, user) do
+    if user_has_an_about_me_story?(user) do
+      socket
+    else
+      socket
+      |> push_navigate(to: ~p"/my/about-me")
     end
   end
 
@@ -576,6 +676,24 @@ defmodule AniminaWeb.ProfileLive do
     {:ok, user} = BasicUser.by_id(user_id)
 
     user.credit_points
+  end
+
+  defp user_has_an_about_me_story?(user) do
+    case get_stories_for_a_user(user) do
+      [] ->
+        false
+
+      stories ->
+        Enum.any?(stories, fn story ->
+          story.headline.subject == "About me"
+        end)
+    end
+  end
+
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+
+    stories
   end
 
   defp get_intersecting_flags_count(first_flag_array, second_flag_array) do

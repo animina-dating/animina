@@ -50,14 +50,18 @@ defmodule AniminaWeb.Router do
       live "/my/potential-partner", PotentialPartnerLive, :index
       live "/my/profile-photo", ProfilePhotoLive, :index
       live "/my/profile/edit", UpdateProfileLive, :index
-      live "/my/stories/new", StoryLive, :new
-      live "/my/stories/:id/edit", StoryLive, :edit
-      live "/my/posts/new", PostLive, :new
-      live "/my/posts/:id/edit", PostLive, :edit
       live "/my/flags/white", FlagsLive, :white
       live "/my/flags/green", FlagsLive, :green
       live "/my/flags/red", FlagsLive, :red
       live "/my/about-me", StoryLive, :about_me
+    end
+
+    ash_authentication_live_session :authentication_required_and_about_me_story,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_with_about_me_story} do
+      live "/my/stories/new", StoryLive, :new
+      live "/my/stories/:id/edit", StoryLive, :edit
+      live "/my/posts/new", PostLive, :new
+      live "/my/posts/:id/edit", PostLive, :edit
       live "/my/bookmarks", BookmarksLive, :bookmarks
       live "/my/bookmarks/:filter_type", BookmarksLive, :bookmarks
       live "/my/messages/:profile", ChatLive, :index
