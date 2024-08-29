@@ -8,7 +8,7 @@ defmodule AniminaWeb.AuthController do
   alias Animina.Narratives.Story
   alias AshAuthentication.TokenResource
 
-  def success(conn, _activity, user, _token) do
+  def success(conn, activity, user, _token) do
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
@@ -20,11 +20,36 @@ defmodule AniminaWeb.AuthController do
 
     get_actions_to_perform(conn.query_params, user)
 
-    conn
-    |> delete_session(:return_to)
-    |> store_in_session(user)
-    |> assign(:current_user, user)
-    |> redirect(to: return_to)
+    conn =
+      conn
+      |> delete_session(:return_to)
+      |> store_in_session(user)
+      |> assign(:current_user, user)
+
+    case activity do
+      {:password, :reset} ->
+        conn
+        |> put_flash(
+          :success,
+          gettext("Password reset successful")
+        )
+        |> redirect(to: return_to)
+
+      {:password, :reset_request} ->
+        conn
+        |> put_flash(
+          :success,
+          gettext("Password reset email has been sent to your email address")
+        )
+        |> redirect(to: return_to)
+
+      _ ->
+        conn
+        |> redirect(to: return_to)
+    end
+  end
+
+  defp get_actions_to_perform(_, nil) do
   end
 
   defp get_actions_to_perform(%{"action" => action, "user" => username}, actor) do
@@ -71,6 +96,19 @@ defmodule AniminaWeb.AuthController do
     |> put_flash(
       :error,
       gettext("Invalid Email Confirmation Link")
+    )
+    |> redirect(to: "/")
+  end
+
+  def failure(
+        conn,
+        {:password, :reset_request},
+        _reason
+      ) do
+    conn
+    |> put_flash(
+      :error,
+      gettext("Something went wrong. Try again.")
     )
     |> redirect(to: "/")
   end
@@ -177,6 +215,24 @@ defmodule AniminaWeb.AuthController do
     |> redirect(to: return_to)
   end
 
+  def reset_request(conn, _params) do
+    conn
+    |> put_flash(
+      :success,
+      gettext("Password reset email has been sent to your email address")
+    )
+    |> redirect(to: "/")
+  end
+
+  def reset(conn, _params, _options) do
+    conn
+    |> put_flash(
+      :success,
+      gettext("Password reset successful")
+    )
+    |> redirect(to: "/")
+  end
+
   defp get_auto_logout_text(state) do
     case state do
       "under_investigation" ->
@@ -193,6 +249,10 @@ defmodule AniminaWeb.AuthController do
       _ ->
         gettext("Your account has been banned. Please contact support for more information.")
     end
+  end
+
+  defp redirect_url(nil) do
+    "/"
   end
 
   defp redirect_url(user) do

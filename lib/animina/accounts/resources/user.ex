@@ -314,6 +314,14 @@ defmodule Animina.Accounts.User do
       prepare Animina.MyCustomSignInPreparation
     end
 
+    read :request_password_reset_with_password do
+      argument :email, Ash.Type.CiString do
+        allow_nil? false
+      end
+
+      prepare AshAuthentication.Strategy.Password.RequestPasswordResetPreparation
+    end
+
     read :by_username_as_an_actor do
       argument :username, :ci_string do
         allow_nil? false
@@ -454,6 +462,7 @@ defmodule Animina.Accounts.User do
     define :by_email, get_by: [:email], action: :read
     define :by_username_as_an_actor, args: [:username]
     define :custom_sign_in, get?: true
+    define :request_password_reset_with_password
     define :female_public_users_who_created_an_account_in_the_last_60_days
     define :male_public_users_who_created_an_account_in_the_last_60_days
     define :users_in_waitlist
@@ -545,6 +554,10 @@ defmodule Animina.Accounts.User do
           :legal_terms_accepted,
           :occupation
         ])
+
+        resettable do
+          sender Animina.SendPasswordResetEmail
+        end
       end
     end
 

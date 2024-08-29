@@ -15,9 +15,13 @@ defmodule Animina.Validations.MobilePhoneNumber do
 
   @impl true
   def validate(changeset, opts, _context) do
-    Ash.Changeset.get_attribute(changeset, opts[:attribute])
-    |> extract_ex_phone_number()
-    |> validate_mobile_phone_number(opts)
+    if changeset.action.name == :password_reset_with_password do
+      :ok
+    else
+      Ash.Changeset.get_attribute(changeset, opts[:attribute])
+      |> extract_ex_phone_number()
+      |> validate_mobile_phone_number(opts)
+    end
   end
 
   defp extract_ex_phone_number(raw_attribute) do
