@@ -48,6 +48,9 @@ jobs:
       - name: Compile the project with warnings as errors in source files
         run: mix compile --warnings-as-errors lib/**/*.ex
 
+      - name: Check formatting
+        run: mix format --check-formatted
+
       - name: Restore database from cache
         id: restore-db
         uses: actions/cache@v3
