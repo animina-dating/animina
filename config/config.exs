@@ -19,7 +19,6 @@ config :animina, env: Mix.env()
 # Configures the number of stories required for complete registration
 config :animina, :number_of_stories_required_for_complete_registration, 1
 
-
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
