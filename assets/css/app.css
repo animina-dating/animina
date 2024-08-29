@@ -40,8 +40,6 @@ input:not([placeholder])[type="tel"],
 input:not([placeholder])[type="time"],
 input:not([placeholder])[type="url"],
 input:not([placeholder])[type="week"] {
-  border: 5px dashed #f30 !important;
-  outline: 5px dashed #f96 !important;
 }
 
 input:disabled,
@@ -71,6 +69,7 @@ input[type="time"],
 input[type="url"],
 input[type="week"] {
   @apply shadow-inner;
+  border: gray 1px solid !important;
 }
 
 input[type="checkbox"],
@@ -83,6 +82,16 @@ input[type="submit"] input[type="reset"],
 button,
 select {
   @apply drop-shadow-lg;
+}
+
+#user-password-password-reset-with-password_password {
+  border: 1px solid gray !important;
+  border-radius: 10px !important;
+}
+
+img[src*="https://ash-hq.org/images/ash-framework-dark.png"]
+{
+  display: none !important;
 }
 
 /*
