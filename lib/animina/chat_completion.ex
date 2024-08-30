@@ -41,7 +41,7 @@ Do not use square brackets [] or \" around the messages.
   end
 
   def stories_prompt(headline, content, reason, previous) do
-    writing_style = """
+    _writing_style = """
     Steps:
     1. Generate a short assessment of the #{previous} stories on all the key writing style elements defined below. Be definitive:
     • Diction (word choice): Vocabulary, Formality, Connotation
@@ -53,7 +53,7 @@ Do not use square brackets [] or \" around the messages.
     • Authorial Intent and Purpose: Persuasion, Information, Entertainment
     """
 
-    vocab_list = """
+    _vocab_list = """
     Steps:
     1. Based on the #{previous} stories, generate a comprehensive overview of the writer's vocabulary and style elements.
     2. Build a vocabulary list of the most common superlatives, adjectives, adverbs, vocal fry (in a writing sense), emphasis words, transitional phrases, rhetorical devices, idioms and colloquialisms, etc. Make a massive list.
