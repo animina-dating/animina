@@ -498,10 +498,6 @@ defmodule AniminaWeb.ChatLive do
     |> to_form()
   end
 
-  defp messages_sent_to_a_user_by_sender(sender_id, messages) do
-    Enum.count(messages, fn message -> message.sender_id == sender_id end)
-  end
-
   defp deduct_points(user, points) do
     Credit.create!(%{
       user_id: user.id,
@@ -573,8 +569,8 @@ defmodule AniminaWeb.ChatLive do
           </div>
         </.form>
 
-        <%= if Enum.count(@messages) == 0 && @current_user_credit_points >
-        Application.get_env(:animina, :minimum_points_required_for_ai_help_in_chat)
+        <%= if Enum.count(@messages) == 0 && @current_user_credit_points >=
+        Application.get_env(:animina, :ai_message_help_price)
          && @suggested_messages == [] && @show_use_ai_button do %>
           <div class="w-[100%]  flex justify-start my-3 items-center">
             <p
