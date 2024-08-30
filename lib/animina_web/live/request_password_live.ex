@@ -2,7 +2,6 @@ defmodule AniminaWeb.RequestPasswordLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts
   alias Animina.Accounts.User
-  alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
 
   @impl true
@@ -28,7 +27,7 @@ defmodule AniminaWeb.RequestPasswordLive do
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
+  def handle_params(_params, _url, socket) do
     {:noreply, socket}
   end
 

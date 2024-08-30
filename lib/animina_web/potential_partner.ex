@@ -30,7 +30,7 @@ defmodule AniminaWeb.PotentialPartner do
   def potential_partners(user, options \\ []) do
     limit = Keyword.get(options, :limit, 10)
     # strict_red_flags = Keyword.get(options, :strict_red_flags, false)
-    remove_bookmarked = Keyword.get(options, :remove_bookmarked_potential_users, true)
+    # remove_bookmarked = Keyword.get(options, :remove_bookmarked_potential_users, true)
 
     User
     |> Ash.Query.for_read(:read)
@@ -51,41 +51,41 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.read!()
   end
 
-  defp partner_not_under_investigation_query(query, _user) do
+  def partner_not_under_investigation_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :under_investigation])
   end
 
-  defp partner_not_banned_query(query, _user) do
+  def partner_not_banned_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :banned])
   end
 
-  defp partner_not_archived_query(query, _user) do
+  def partner_not_archived_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :archived])
   end
 
-  defp partner_not_hibernate_query(query, _user) do
+  def partner_not_hibernate_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :hibernate])
   end
 
-  defp partner_not_incognito_query(query, _user) do
+  def partner_not_incognito_query(query, _user) do
     query
     |> Ash.Query.filter(state: [not_eq: :incognito])
   end
 
-  defp partner_not_self_query(query, user) do
+  def partner_not_self_query(query, user) do
     query
     |> Ash.Query.filter(id: [not_eq: user.id])
   end
 
-  defp partner_bookmarked_query(query, _user, false) do
+  def partner_bookmarked_query(query, _user, false) do
     query
   end
 
-  defp partner_bookmarked_query(query, user, true) do
+  def partner_bookmarked_query(query, user, true) do
     bookmarked_users =
       get_bookmarked_users(user.id)
 
