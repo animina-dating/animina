@@ -8,8 +8,8 @@ jobs:
     name: OTP ${{ matrix.otp }} / Elixir ${{ matrix.elixir }}
     strategy:
       matrix:
-        otp: ['26.2.5']
-        elixir: ['1.16.3']
+        otp: ["26.2.5"]
+        elixir: ["1.16.3"]
 
     services:
       db:
@@ -44,7 +44,12 @@ jobs:
           mix local.hex --force
           mix local.rebar --force
           mix deps.get
-          mix compile
+
+      - name: Compile the project with warnings as errors in source files
+        run: mix compile --warnings-as-errors lib/**/*.ex
+
+      - name: Check formatting
+        run: mix format --check-formatted
 
       - name: Restore database from cache
         id: restore-db
@@ -92,8 +97,8 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: animina_test
-          CI: true  # Set a CI environment variable
-          DISABLE_ML_FEATURES: true  # Disable ML features
+          CI: true # Set a CI environment variable
+          DISABLE_ML_FEATURES: true # Disable ML features
         run: mix test
 
       - name: Run Credo

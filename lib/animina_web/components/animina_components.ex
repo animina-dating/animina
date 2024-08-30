@@ -305,7 +305,11 @@ defmodule AniminaWeb.AniminaComponents do
             <span class="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
               Animina
               <span>
-                v<%= Application.spec(:animina, :vsn) %>
+                Release <%= to_string(Application.spec(:animina, :vsn))
+                |> String.split(".")
+                |> (fn [date, time, _] ->
+                      "#{String.slice(date, 0, 4)}.#{String.slice(date, 4, 2)}.#{String.slice(date, 6, 2)} #{String.slice(time, 0, 2)}:#{String.slice(time, 2, 2)}"
+                    end).() %>
               </span>
             </span>
             <br />Fair and common sense online-dating.

@@ -110,6 +110,16 @@ defmodule Animina.Accounts.Photo do
       filter expr(is_nil(story_id) == ^true and user_id == ^arg(:user_id))
     end
 
+    read :by_user_id do
+      pagination offset?: true, keyset?: true, required?: false
+
+      argument :user_id, :uuid do
+        allow_nil? false
+      end
+
+      filter expr(user_id == ^arg(:user_id))
+    end
+
     update :review do
       require_atomic? false
       change transition_state(:in_review)
@@ -154,6 +164,7 @@ defmodule Animina.Accounts.Photo do
     define :create
     define :by_id, get_by: [:id], action: :read
     define :destroy
+    define :by_user_id, args: [:user_id]
   end
 
   changes do

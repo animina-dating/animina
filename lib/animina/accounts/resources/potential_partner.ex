@@ -43,7 +43,16 @@ defmodule Animina.Accounts.PotentialPartner do
   end
 
   actions do
-    defaults [:create, :read]
+    defaults [:read]
+
+    create :create do
+      accept [
+        :user_id,
+        :potential_partner_id
+      ]
+
+      primary? true
+    end
 
     read :potential_partners_for_user do
       argument :user_id, :uuid do

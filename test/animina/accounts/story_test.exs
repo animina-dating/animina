@@ -53,7 +53,7 @@ defmodule Animina.Accounts.StoryTest do
       assert {:error, _} = Story.destroy(about_me_story)
 
       # insert another story
-      {:ok , non_about_me_story} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
+      {:ok, non_about_me_story} = create_non_about_me_story(user.id, get_non_about_me_headline.id)
 
       # now when there is another story with a different headline, you should
       # still not be able to delete the 'About me' story

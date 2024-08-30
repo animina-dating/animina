@@ -139,6 +139,78 @@ defmodule AniminaWeb.StoryLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
+    updated_params =
+      Map.update!(socket.assigns.form.params, "content", fn content ->
+        content <> chunk
+      end)
+
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          socket
+          |> assign(:generating_story, false)
+          |> assign(:form, Form.validate(socket.assigns.form, updated_params))
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({request_pid, {:data, %{"done" => true, "response" => _response}}}, socket) do
+    socket =
+      case socket.assigns.current_request do
+        %{pid: ^request_pid} ->
+          socket
+          |> assign(:current_request, nil)
+
+        _ ->
+          socket
+      end
+
+    {:noreply, socket}
+  end
+
+  def handle_info({:render_generating_story, count}, socket) do
+    if socket.assigns.generating_story do
+      new_message =
+        case count do
+          1 -> "."
+          2 -> "."
+          3 -> "."
+          _ -> "."
+        end
+
+      message_when_generating_story = socket.assigns.message_when_generating_story <> new_message
+
+      Process.send_after(self(), {:render_generating_story, rem(count + 1, 4)}, 1000)
+
+      if count == 1 do
+        {:noreply,
+         assign(
+           socket,
+           :message_when_generating_story,
+           gettext("Feeding our internal AI with this text. Please wait a second ")
+         )}
+      else
+        {:noreply, assign(socket, :message_when_generating_story, message_when_generating_story)}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(_, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_buttons, true)}
+  end
+
   defp apply_action(socket, :edit, _params) do
     form =
       if socket.assigns.story.photo do
@@ -303,6 +375,72 @@ defmodule AniminaWeb.StoryLive do
     end
   end
 
+  @impl true
+  def handle_event("submit", %{"story" => story}, socket) do
+    form =
+      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
+        filename = entry.uuid <> "." <> ext(entry)
+
+        dest =
+          Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+
+        File.cp!(path, dest)
+
+        {:ok,
+         %{
+           "filename" => filename,
+           "original_filename" => entry.client_name,
+           "ext" => ext(entry),
+           "mime" => entry.client_type,
+           "size" => entry.client_size
+         }}
+      end)
+      |> case do
+        [] ->
+          Form.remove_form(socket.assigns.form, [:photo])
+
+        [%{} = file] ->
+          photo = Map.get(story, "photo") |> Map.merge(file)
+          story = Map.merge(story, %{"photo" => photo})
+          Form.validate(socket.assigns.form, story)
+      end
+
+    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form) do
+      if form.params["photo"] do
+        Ash.Changeset.for_create(
+          Photo,
+          :create,
+          Map.put(form.params["photo"], "story_id", story.id)
+        )
+        |> Ash.create()
+
+        {:noreply,
+         socket
+         |> assign(:errors, [])
+         |> assign(
+           :form,
+           nil
+         )
+         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
+      else
+        {:noreply,
+         socket
+         |> assign(:errors, [])
+         |> assign(
+           :form,
+           nil
+         )
+         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
+      end
+    else
+      {:error, form} ->
+        {:noreply, socket |> assign(:form, form)}
+
+      errors ->
+        {:noreply, socket |> assign(:errors, errors)}
+    end
+  end
+
   def handle_event("correct_errors", _params, socket) do
     process_story(
       socket,
@@ -425,144 +563,6 @@ defmodule AniminaWeb.StoryLive do
       end
 
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({request_pid, {:data, %{"done" => false, "response" => chunk}}}, socket) do
-    updated_params =
-      Map.update!(socket.assigns.form.params, "content", fn content ->
-        content <> chunk
-      end)
-
-    socket =
-      case socket.assigns.current_request do
-        %{pid: ^request_pid} ->
-          socket
-          |> assign(:generating_story, false)
-          |> assign(:form, Form.validate(socket.assigns.form, updated_params))
-
-        _ ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_info({request_pid, {:data, %{"done" => true, "response" => response}}}, socket) do
-    socket =
-      case socket.assigns.current_request do
-        %{pid: ^request_pid} ->
-          socket
-          |> assign(:current_request, nil)
-
-        _ ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  def handle_info({:render_generating_story, count}, socket) do
-    if socket.assigns.generating_story do
-      new_message =
-        case count do
-          1 -> "."
-          2 -> "."
-          3 -> "."
-          _ -> "."
-        end
-
-      message_when_generating_story = socket.assigns.message_when_generating_story <> new_message
-
-      Process.send_after(self(), {:render_generating_story, rem(count + 1, 4)}, 1000)
-
-      if count == 1 do
-        {:noreply,
-         assign(
-           socket,
-           :message_when_generating_story,
-           gettext("Feeding our internal AI with this text. Please wait a second ")
-         )}
-      else
-        {:noreply, assign(socket, :message_when_generating_story, message_when_generating_story)}
-      end
-    else
-      {:noreply, socket}
-    end
-  end
-
-  @impl true
-  def handle_info(_, socket) do
-    {:noreply,
-     socket
-     |> assign(:show_buttons, true)}
-  end
-
-  @impl true
-  def handle_event("submit", %{"story" => story}, socket) do
-    form =
-      consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
-        filename = entry.uuid <> "." <> ext(entry)
-
-        dest =
-          Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
-
-        File.cp!(path, dest)
-
-        {:ok,
-         %{
-           "filename" => filename,
-           "original_filename" => entry.client_name,
-           "ext" => ext(entry),
-           "mime" => entry.client_type,
-           "size" => entry.client_size
-         }}
-      end)
-      |> case do
-        [] ->
-          Form.remove_form(socket.assigns.form, [:photo])
-
-        [%{} = file] ->
-          photo = Map.get(story, "photo") |> Map.merge(file)
-          story = Map.merge(story, %{"photo" => photo})
-          Form.validate(socket.assigns.form, story)
-      end
-
-    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form) do
-      if form.params["photo"] do
-        Ash.Changeset.for_create(
-          Photo,
-          :create,
-          Map.put(form.params["photo"], "story_id", story.id)
-        )
-        |> Ash.create()
-
-        {:noreply,
-         socket
-         |> assign(:errors, [])
-         |> assign(
-           :form,
-           nil
-         )
-         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
-      else
-        {:noreply,
-         socket
-         |> assign(:errors, [])
-         |> assign(
-           :form,
-           nil
-         )
-         |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
-      end
-    else
-      {:error, form} ->
-        {:noreply, socket |> assign(:form, form)}
-
-      errors ->
-        {:noreply, socket |> assign(:errors, errors)}
-    end
   end
 
   defp update_last_registration_page_visited(user, page) do

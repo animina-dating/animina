@@ -578,10 +578,15 @@ defmodule AniminaWeb.RootLive do
           </div>
         </div>
 
-        <div>
+        <div class="w-[100%] flex justify-between items-center">
           <.link navigate={@sign_up_link}>
             <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
               <%= gettext("Don't have an account? Sign up") %>
+            </p>
+          </.link>
+          <.link navigate="/reset-password">
+            <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
+              <%= gettext("Forgot Your Password?") %>
             </p>
           </.link>
         </div>

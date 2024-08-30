@@ -1,7 +1,6 @@
 defmodule Animina.Validations.DeleteAboutStory do
   use Ash.Resource.Validation
   alias Animina.Narratives.Headline
-  alias Animina.Narratives.Story
 
   @moduledoc """
   This is a module for ensuring the 'About me' story is not
@@ -21,15 +20,10 @@ defmodule Animina.Validations.DeleteAboutStory do
     headline_id =
       Ash.Changeset.get_attribute(changeset, opts[:headline])
 
-    user_id = Ash.Changeset.get_attribute(changeset, opts[:user])
-
-  
     case Headline.by_id(headline_id) do
       {:ok, headline} ->
-        if  headline.subject == "About me" do
-          {:error,
-           field: opts[:attribute],
-           message: "You cannot delete the 'About me' story."}
+        if headline.subject == "About me" do
+          {:error, field: opts[:attribute], message: "You cannot delete the 'About me' story."}
         else
           :ok
         end
@@ -37,10 +31,5 @@ defmodule Animina.Validations.DeleteAboutStory do
       _ ->
         :ok
     end
-  end
-
-  defp get_stories_for_user(user_id) do
-    Story.read!()
-    |> Enum.filter(fn story -> story.user_id == user_id end)
   end
 end
