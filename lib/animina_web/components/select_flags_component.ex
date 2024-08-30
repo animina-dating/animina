@@ -131,6 +131,8 @@ defmodule AniminaWeb.SelectFlagsComponent do
         <%= get_translation(@category.category_translations, @language) %>
       </h3>
 
+    
+
       <ol class="flex flex-wrap gap-2 w-full">
         <li :for={flag <- @category.flags}>
           <div
