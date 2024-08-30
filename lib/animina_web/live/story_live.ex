@@ -151,6 +151,7 @@ defmodule AniminaWeb.StoryLive do
         %{pid: ^request_pid} ->
           socket
           |> assign(:generating_story, false)
+          |> assign(:words, String.length(updated_params["content"]))
           |> assign(:form, Form.validate(socket.assigns.form, updated_params))
 
         _ ->
@@ -753,7 +754,7 @@ defmodule AniminaWeb.StoryLive do
 
             <p class="text-sm text-gray-500 dark:text-white">
               <%= gettext("Characters: ") %>
-              <span class="font-semibold"><%= @words %></span>
+              <span class="font-semibold"><%= @words %> / 1024</span>
             </p>
           </div>
           <div :if={@generating_story == false} phx-feedback-for={f[:content].name} class="mt-2">
@@ -764,7 +765,10 @@ defmodule AniminaWeb.StoryLive do
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
+                    else:
+                      "ring-gray-300 focus:ring-indigo-600 #{if @words == 1024 do
+                        "ring-red-600 focus:ring-red-600"
+                      end}"
                   ),
               placeholder:
                 gettext(
@@ -774,6 +778,7 @@ defmodule AniminaWeb.StoryLive do
               rows: 4,
               type: :text,
               "phx-debounce": "200",
+              readonly: make_readonly(@words),
               maxlength: "1024"
             ) %>
 
@@ -787,7 +792,7 @@ defmodule AniminaWeb.StoryLive do
               :content,
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:content], :content) == [],
+                  unless(get_field_errors(f[:content], :content) == [] || @words == 1024,
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
@@ -798,6 +803,7 @@ defmodule AniminaWeb.StoryLive do
               value: @message_when_generating_story,
               rows: 4,
               type: :text,
+              readonly: true,
               "phx-debounce": "200",
               maxlength: "1024"
             ) %>
@@ -960,5 +966,13 @@ defmodule AniminaWeb.StoryLive do
   defp ext(entry) do
     [ext | _] = MIME.extensions(entry.client_type)
     ext
+  end
+
+  def make_readonly(words) do
+    if words > 1024 do
+      true
+    else
+      false
+    end
   end
 end
