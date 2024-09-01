@@ -31,14 +31,20 @@ defmodule AniminaWeb.FlagsLive do
       |> assign(selected: 0)
       |> assign(active_tab: :home)
       |> assign(selected_flags: %{})
+      |> assign(
+        flags_for_user_with_current_color:
+          filter_flags_and_return_map(socket.assigns.current_user, socket.assigns.live_action)
+      )
       |> assign(can_select: true)
-      |> assign(array: 0)
-      |> assign(user_flags: [])
       |> assign(language: language)
-      |> assign(color: :white)
-      |> assign(categories: AsyncResult.loading())
-      |> assign(:categories, fetch_categories())
-
+      |> assign(categories: fetch_categories())
+      |> assign(
+        :opposite_color_flags_selected_already,
+        get_opposite_color_flags_selected_already(
+          socket.assigns.current_user,
+          socket.assigns.live_action
+        )
+      )
 
     {:ok, socket}
   end
@@ -53,15 +59,14 @@ defmodule AniminaWeb.FlagsLive do
 
     current_user = socket.assigns.current_user
 
-    user_flags =
-    filter_flags(current_user, :white)
-    |> Enum.map(fn trait -> trait.flag.id end)
-
-
     selected_flags =
-    Enum.reduce(user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
-      Map.put_new(acc, flag_id, %{})
-    end)
+      Enum.reduce(
+        socket.assigns.flags_for_user_with_current_color,
+        socket.assigns.selected_flags,
+        fn flag_id, acc ->
+          Map.put_new(acc, flag_id, %{})
+        end
+      )
 
     socket
     |> assign(page_title: gettext("Select your own flags"))
@@ -75,15 +80,7 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(
-      :opposite_color_flags_selected,
-      []
-    )
     |> assign(selected_flags: selected_flags)
-    |> assign(
-      :user_flags,
-      user_flags
-    )
   end
 
   defp apply_action(socket, :red, _params) do
@@ -91,13 +88,14 @@ defmodule AniminaWeb.FlagsLive do
 
     current_user = socket.assigns.current_user
 
-    user_flags =
-    filter_flags(current_user, :red)
-    |> Enum.map(fn trait -> trait.flag.id end)
     selected_flags =
-    Enum.reduce(user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
-      Map.put_new(acc, flag_id, %{})
-    end)
+      Enum.reduce(
+        socket.assigns.flags_for_user_with_current_color,
+        socket.assigns.selected_flags,
+        fn flag_id, acc ->
+          Map.put_new(acc, flag_id, %{})
+        end
+      )
 
     socket
     |> assign(page_title: gettext("Select your red flags"))
@@ -111,31 +109,21 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(
-      :opposite_color_flags_selected,
-      filter_flags(socket.assigns.current_user, :green)
-      |> Enum.map(fn trait -> trait.flag.id end)
-    )
     |> assign(selected_flags: selected_flags)
-    |> assign(
-      :user_flags,
-      user_flags
-    )
   end
 
   defp apply_action(socket, :green, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/green")
     current_user = socket.assigns.current_user
 
-    user_flags =
-    filter_flags(current_user, :green)
-    |> Enum.map(fn trait -> trait.flag.id end)
     selected_flags =
-    Enum.reduce(user_flags, socket.assigns.selected_flags, fn flag_id, acc ->
-      Map.put_new(acc, flag_id, %{})
-    end)
-
-
+      Enum.reduce(
+        socket.assigns.flags_for_user_with_current_color,
+        socket.assigns.selected_flags,
+        fn flag_id, acc ->
+          Map.put_new(acc, flag_id, %{})
+        end
+      )
 
     socket
     |> assign(page_title: gettext("Select your green flags"))
@@ -149,17 +137,7 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(
-      :opposite_color_flags_selected,
-      filter_flags(socket.assigns.current_user, :red)
-      |> Enum.map(fn trait -> trait.flag.id end)
-    )
     |> assign(selected_flags: selected_flags)
-    |> assign(
-      :user_flags,
-      user_flags
-    )
-
   end
 
   defp update_last_registration_page_visited(user, page) do
@@ -168,40 +146,11 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   @impl true
-  def handle_async(:filter_flags, {:ok, flags}, socket) do
-    flags = Enum.map(flags, fn trait -> trait.flag.id end)
-
-    {:noreply, socket |> assign(user_flags: flags) |> assign(selected: Enum.count(flags))}
-  end
-
-  @impl true
-  def handle_async(:filter_flags, {:exit, _reason}, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_async(:fetch_categories, {:ok, fetched_categories}, socket) do
-    %{categories: categories} = socket.assigns
-
-    {:noreply,
-     socket
-     |> assign(
-       :categories,
-       AsyncResult.ok(categories, Enum.map(fetched_categories, fn category -> category.id end))
-     )
-     |> stream(:categories, fetched_categories)}
-  end
-
-  @impl true
-  def handle_async(:fetch_categories, {:exit, reason}, socket) do
-    %{categories: categories} = socket.assigns
-    {:noreply, assign(socket, :categories, AsyncResult.failed(categories, {:exit, reason}))}
-  end
-
-  @impl true
   def handle_event("add_flags", _params, socket) do
     interests =
-      Enum.with_index(socket.assigns.user_flags, fn element, index -> {index, element} end)
+      Enum.with_index(socket.assigns.flags_for_user_with_current_color, fn element, index ->
+        {index, element}
+      end)
       |> Enum.map(fn {index, flag_id} ->
         %{
           flag_id: flag_id,
@@ -220,7 +169,7 @@ defmodule AniminaWeb.FlagsLive do
 
     successful_socket =
       socket
-      |> assign(:user_flags, [])
+      |> assign(:flags_for_user_with_current_color, [])
       |> assign(:selected, 0)
       |> push_navigate(to: socket.assigns.navigate_to)
 
@@ -257,7 +206,7 @@ defmodule AniminaWeb.FlagsLive do
          |> Enum.map(fn trait -> trait.flag.id end)
        )
        |> assign(
-         :user_flags,
+         :color_flags_for_user,
          flags
        )
        |> assign(
@@ -265,32 +214,6 @@ defmodule AniminaWeb.FlagsLive do
          Enum.count(flags)
        )}
     end
-  end
-
-  @impl true
-  def handle_info({:flag_selected, flag_id}, socket) do
-    selected = socket.assigns.selected + 1
-    can_select = selected < socket.assigns.max_selected
-    user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
-
-    {:noreply,
-     socket
-     |> assign(:user_flags, user_flags)
-     |> assign(:can_select, can_select)
-     |> assign(:selected, selected)}
-  end
-
-  @impl true
-  def handle_info({:flag_unselected, flag_id}, socket) do
-    selected = max(socket.assigns.selected - 1, 0)
-    can_select = selected < socket.assigns.max_selected
-    user_flags = List.delete(socket.assigns.user_flags, flag_id)
-
-    {:noreply,
-     socket
-     |> assign(:user_flags, user_flags)
-     |> assign(:can_select, can_select)
-     |> assign(:selected, selected)}
   end
 
   @impl true
@@ -344,6 +267,23 @@ defmodule AniminaWeb.FlagsLive do
     end
   end
 
+  defp filter_flags_and_return_map(current_user, color) do
+    filter_flags(current_user, color)
+    |> Enum.map(fn trait -> trait.flag.id end)
+  end
+
+  defp get_opposite_color_flags_selected_already(current_user, :green) do
+    filter_flags_and_return_map(current_user, :red)
+  end
+
+  defp get_opposite_color_flags_selected_already(current_user, :red) do
+    filter_flags_and_return_map(current_user, :green)
+  end
+
+  defp get_opposite_color_flags_selected_already(current_user, _) do
+    []
+  end
+
   defp user_has_an_about_me_story?(user) do
     case get_stories_for_a_user(user) do
       [] ->
@@ -368,8 +308,6 @@ defmodule AniminaWeb.FlagsLive do
       "/my/about-me"
     end
   end
-
-
 
   @impl true
   def render(assigns) do
@@ -399,98 +337,81 @@ defmodule AniminaWeb.FlagsLive do
 
       <p class="dark:text-white"><%= @info_text %></p>
 
+      <div :for={category <- @categories}>
+        <div class="py-4 space-y-2">
+          <h3 class="font-semibold text-gray-800 dark:text-white truncate">
+            <%= get_translation(category.category_translations, @language) %>
+          </h3>
 
-
-
-
-
-
-
-
-
-
-
-          <div :for={category <- @categories}>
-          <div class="py-4 space-y-2">
-      <h3 class="font-semibold text-gray-800 dark:text-white truncate">
-        <%= get_translation(category.category_translations, @language) %>
-      </h3>
-
-
-
-      <ol class="flex flex-wrap gap-2 w-full">
-        <li :for={flag <- category.flags}>
-          <div
-            phx-value-flag={flag.name}
-            phx-value-flagid={flag.id}
-            aria-label="button"
-            phx-click={
-              if(
-                get_flag_styling(
-                  (@selected < @max_selected),
-                  @selected_flags,
-                  flag.id,
-                  @opposite_color_flags_selected,
-                  flag,
-                  @color
-                ) != "cursor-not-allowed bg-gray-200 dark:bg-gray-100",
-                do: "select_flag",
-                else: nil
-              )
-            }
-            class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_flag_styling(
+          <ol class="flex flex-wrap gap-2 w-full">
+            <li :for={flag <- category.flags}>
+              <div
+                phx-value-flag={flag.name}
+                phx-value-flagid={flag.id}
+                aria-label="button"
+                phx-click={
+                  if(
+                    get_flag_styling(
+                      @selected < @max_selected,
+                      @flags_for_user_with_current_color,
+                      flag.id,
+                      @opposite_color_flags_selected_already,
+                      flag,
+                      @color
+                    ) != "cursor-not-allowed bg-gray-200 dark:bg-gray-100",
+                    do: "select_flag",
+                    else: nil
+                  )
+                }
+                class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_flag_styling(
               @selected < @max_selected,
-              @selected_flags,
+              @flags_for_user_with_current_color,
               flag.id,
-              @opposite_color_flags_selected,
+              @opposite_color_flags_selected_already,
               flag,
               @color
 
             )} "
 
             }
-          >
-            <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
-            <%= get_translation(flag.flag_translations, @language) %>
+              >
+                <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
+                <%= get_translation(flag.flag_translations, @language) %>
 
-            <span
-              :if={Map.get(@selected_flags, flag.id) != nil}
-              class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
-            >
-              <%= get_flag_index(@selected_flags, flag.id) + 1 %>
-            </span>
+                <span
+                  :if={Enum.member?(@flags_for_user_with_current_color, flag.id)}
+                  class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
+                >
+                  <%= get_flag_index(@flags_for_user_with_current_color, flag.id) + 1 %>
+                </span>
 
-            <%= if Enum.member?(@opposite_color_flags_selected, flag.id) do %>
-              <p class={get_dot_for_selected_opposite_selected_flag(@color)} />
-            <% end %>
-          </div>
-        </li>
-      </ol>
-    </div>
-          </div>
+                <%= if Enum.member?(@opposite_color_flags_selected_already, flag.id) do %>
+                  <p class={get_dot_for_selected_opposite_selected_flag(@color)} />
+                <% end %>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
 
-
-        <button
-          phx-click="add_flags"
-          class={
+      <button
+        phx-click="add_flags"
+        class={
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@selected == 0,
                   do: " ",
                   else: "opacity-40  hover:bg-blue-500 active:bg-blue-500"
                 )}
-        >
-          <%= if @selected == 0 do %>
-            <%= gettext("Proceed without selecting a flag") %>
-          <% else %>
-            <%= gettext("Save flags") %>
-          <% end %>
-        </button>
-
+      >
+        <%= if @selected == 0 do %>
+          <%= gettext("Proceed without selecting a flag") %>
+        <% else %>
+          <%= gettext("Save flags") %>
+        <% end %>
+      </button>
     </div>
     """
-
   end
-
 
   @impl true
   def handle_event(
@@ -502,63 +423,46 @@ defmodule AniminaWeb.FlagsLive do
         socket
       ) do
     socket =
-      case Map.get(socket.assigns.selected_flags, flag_id) do
-        nil ->
-
-
+      case Enum.member?(socket.assigns.flags_for_user_with_current_color, flag_id) do
+        false ->
           selected_flags =
             Map.merge(socket.assigns.selected_flags, %{
-              "#{flag_id}" => %{
-
-              }
+              "#{flag_id}" => %{}
             })
 
+          flags_for_user_with_current_color =
+            List.insert_at(socket.assigns.flags_for_user_with_current_color, -1, flag_id)
 
-
-
-
-          selected = map_size(selected_flags)
-
-          can_select = selected < socket.assigns.max_selected
-          user_flags = List.insert_at(socket.assigns.user_flags, -1, flag_id)
-          IO.inspect(user_flags)
-
-
+          selected = Enum.count(flags_for_user_with_current_color)
 
           socket
           |> assign(
             :selected_flags,
             selected_flags
           )
-          |> assign(:user_flags, user_flags)
-          |> assign(:can_select, can_select)
+          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
+          |> assign(:selected, selected)
 
-        _ ->
-
-
-          user_flags = List.delete(socket.assigns.user_flags, flag_id)
+        true ->
+          flags_for_user_with_current_color =
+            List.delete(socket.assigns.flags_for_user_with_current_color, flag_id)
 
           selected_flags =
             Map.drop(socket.assigns.selected_flags, [flag_id])
 
-          selected = map_size(selected_flags)
-          can_select = selected < socket.assigns.max_selected
-
-
-          IO.inspect(user_flags)
+          selected = Enum.count(flags_for_user_with_current_color)
 
           socket
-          |> assign(:user_flags, user_flags)
-          |> assign(:can_select, can_select)
+          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
           |> assign(
             :selected_flags,
             Map.drop(socket.assigns.selected_flags, [flag_id])
           )
+          |> assign(:selected, selected)
       end
 
     {:noreply, socket}
   end
-
 
   defp get_translation(translations, language) when translations != [] do
     language = String.split(language, "-") |> Enum.at(0)
@@ -575,23 +479,23 @@ defmodule AniminaWeb.FlagsLive do
 
   defp get_flag_styling(
          can_select,
-         selected_flags,
+         color_flags_for_user,
          flag_id,
          opposite_color_flags_selected,
          flag,
          color
        ) do
     if (can_select && !Enum.member?(opposite_color_flags_selected, flag_id)) ||
-         (can_select == false && Map.get(selected_flags, flag_id) != nil &&
+         (can_select == false && Enum.member?(color_flags_for_user, flag.id) &&
             !Enum.member?(opposite_color_flags_selected, flag_id)) do
-      "cursor-pointer #{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none")}"
+      "cursor-pointer #{if Enum.member?(color_flags_for_user, flag.id), do: "#{get_active_button_colors(color)} text-white shadow-sm", else: "#{get_inactive_button_colors(color)} shadow-none"}"
     else
-      get_styling_if_flag_is_white(color, selected_flags, flag)
+      get_styling_if_flag_is_white(color, color_flags_for_user, flag)
     end
   end
 
-  defp get_styling_if_flag_is_white(:white, selected_flags, flag) do
-    "#{if(Map.get(selected_flags, flag.id) != nil, do: "#{get_active_button_colors(:white)} text-white shadow-sm", else: "#{get_inactive_button_colors(:white)} shadow-none")}"
+  defp get_styling_if_flag_is_white(:white, color_flags_for_user, flag) do
+    "#{if Enum.member?(color_flags_for_user, flag.id), do: "#{get_active_button_colors(:white)} text-white shadow-sm", else: "#{get_inactive_button_colors(:white)} shadow-none"}"
   end
 
   defp get_styling_if_flag_is_white(_color, _selected_flags, _flag) do
@@ -599,9 +503,6 @@ defmodule AniminaWeb.FlagsLive do
   end
 
   defp get_flag_index(flags, flag_id) do
-    flags = Map.keys(flags)
-
-
     case Enum.find_index(flags, fn id -> id == flag_id end) do
       nil -> length(flags) + 1
       index -> index
