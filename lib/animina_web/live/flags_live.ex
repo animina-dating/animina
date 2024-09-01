@@ -7,8 +7,6 @@ defmodule AniminaWeb.FlagsLive do
   alias Animina.Narratives.Story
   alias Animina.Traits
   alias Animina.Traits.UserFlags
-  alias AniminaWeb.SelectFlagsComponent
-  alias Phoenix.LiveView.AsyncResult
   alias Phoenix.PubSub
 
   @max_flags Application.compile_env(:animina, AniminaWeb.FlagsLive)[:max_selected]
@@ -57,17 +55,6 @@ defmodule AniminaWeb.FlagsLive do
   defp apply_action(socket, :white, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/white")
 
-    current_user = socket.assigns.current_user
-
-    selected_flags =
-      Enum.reduce(
-        socket.assigns.flags_for_user_with_current_color,
-        socket.assigns.selected_flags,
-        fn flag_id, acc ->
-          Map.put_new(acc, flag_id, %{})
-        end
-      )
-
     socket
     |> assign(page_title: gettext("Select your own flags"))
     |> assign(color: :white)
@@ -80,22 +67,12 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(selected_flags: selected_flags)
   end
 
   defp apply_action(socket, :red, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/red")
 
     current_user = socket.assigns.current_user
-
-    selected_flags =
-      Enum.reduce(
-        socket.assigns.flags_for_user_with_current_color,
-        socket.assigns.selected_flags,
-        fn flag_id, acc ->
-          Map.put_new(acc, flag_id, %{})
-        end
-      )
 
     socket
     |> assign(page_title: gettext("Select your red flags"))
@@ -109,21 +86,10 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(selected_flags: selected_flags)
   end
 
   defp apply_action(socket, :green, _params) do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/green")
-    current_user = socket.assigns.current_user
-
-    selected_flags =
-      Enum.reduce(
-        socket.assigns.flags_for_user_with_current_color,
-        socket.assigns.selected_flags,
-        fn flag_id, acc ->
-          Map.put_new(acc, flag_id, %{})
-        end
-      )
 
     socket
     |> assign(page_title: gettext("Select your green flags"))
@@ -137,7 +103,6 @@ defmodule AniminaWeb.FlagsLive do
           number_of_flags: @max_flags
         )
     )
-    |> assign(selected_flags: selected_flags)
   end
 
   defp update_last_registration_page_visited(user, page) do
@@ -186,6 +151,41 @@ defmodule AniminaWeb.FlagsLive do
             {:noreply, successful_socket}
         end
     end
+  end
+
+  @impl true
+  def handle_event(
+        "select_flag",
+        %{
+          "flag" => _flag,
+          "flagid" => flag_id
+        },
+        socket
+      ) do
+    socket =
+      case Enum.member?(socket.assigns.flags_for_user_with_current_color, flag_id) do
+        false ->
+          flags_for_user_with_current_color =
+            List.insert_at(socket.assigns.flags_for_user_with_current_color, -1, flag_id)
+
+          selected = Enum.count(flags_for_user_with_current_color)
+
+          socket
+          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
+          |> assign(:selected, selected)
+
+        true ->
+          flags_for_user_with_current_color =
+            List.delete(socket.assigns.flags_for_user_with_current_color, flag_id)
+
+          selected = Enum.count(flags_for_user_with_current_color)
+
+          socket
+          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
+          |> assign(:selected, selected)
+      end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -280,7 +280,7 @@ defmodule AniminaWeb.FlagsLive do
     filter_flags_and_return_map(current_user, :green)
   end
 
-  defp get_opposite_color_flags_selected_already(current_user, _) do
+  defp get_opposite_color_flags_selected_already(_current_user, _) do
     []
   end
 
@@ -413,57 +413,6 @@ defmodule AniminaWeb.FlagsLive do
     """
   end
 
-  @impl true
-  def handle_event(
-        "select_flag",
-        %{
-          "flag" => flag,
-          "flagid" => flag_id
-        },
-        socket
-      ) do
-    socket =
-      case Enum.member?(socket.assigns.flags_for_user_with_current_color, flag_id) do
-        false ->
-          selected_flags =
-            Map.merge(socket.assigns.selected_flags, %{
-              "#{flag_id}" => %{}
-            })
-
-          flags_for_user_with_current_color =
-            List.insert_at(socket.assigns.flags_for_user_with_current_color, -1, flag_id)
-
-          selected = Enum.count(flags_for_user_with_current_color)
-
-          socket
-          |> assign(
-            :selected_flags,
-            selected_flags
-          )
-          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
-          |> assign(:selected, selected)
-
-        true ->
-          flags_for_user_with_current_color =
-            List.delete(socket.assigns.flags_for_user_with_current_color, flag_id)
-
-          selected_flags =
-            Map.drop(socket.assigns.selected_flags, [flag_id])
-
-          selected = Enum.count(flags_for_user_with_current_color)
-
-          socket
-          |> assign(:flags_for_user_with_current_color, flags_for_user_with_current_color)
-          |> assign(
-            :selected_flags,
-            Map.drop(socket.assigns.selected_flags, [flag_id])
-          )
-          |> assign(:selected, selected)
-      end
-
-    {:noreply, socket}
-  end
-
   defp get_translation(translations, language) when translations != [] do
     language = String.split(language, "-") |> Enum.at(0)
 
@@ -544,18 +493,6 @@ defmodule AniminaWeb.FlagsLive do
       color == :red -> "text-rose-600 bg-rose-200"
       true -> "text-indigo-600 bg-indigo-200"
     end
-  end
-
-  defp opposite_color(:red) do
-    :green
-  end
-
-  defp opposite_color(:green) do
-    :red
-  end
-
-  defp opposite_color(:white) do
-    :white
   end
 
   def filter_flags(_) do
