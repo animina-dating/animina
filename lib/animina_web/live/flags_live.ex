@@ -344,7 +344,10 @@ defmodule AniminaWeb.FlagsLive do
           </h3>
 
           <ol class="flex flex-wrap gap-2 w-full">
-            <li :for={flag <- category.flags}>
+            <li
+              :for={flag <- category.flags}
+              :if={Enum.member?(@opposite_color_flags_selected_already, flag.id) == false}
+            >
               <div
                 phx-value-flag={flag.name}
                 phx-value-flagid={flag.id}
@@ -384,10 +387,6 @@ defmodule AniminaWeb.FlagsLive do
                 >
                   <%= get_flag_index(@flags_for_user_with_current_color, flag.id) + 1 %>
                 </span>
-
-                <%= if Enum.member?(@opposite_color_flags_selected_already, flag.id) do %>
-                  <p class={get_dot_for_selected_opposite_selected_flag(@color)} />
-                <% end %>
               </div>
             </li>
           </ol>
@@ -463,14 +462,6 @@ defmodule AniminaWeb.FlagsLive do
       color == :green -> "hover:bg-green-500  bg-green-600 focus-visible:outline-green-600"
       color == :red -> "hover:bg-rose-500  bg-rose-600 focus-visible:outline-rose-600"
       true -> "hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600"
-    end
-  end
-
-  defp get_dot_for_selected_opposite_selected_flag(color) do
-    cond do
-      color == :green -> "w-3 h-3 bg-red-500 rounded-full"
-      color == :red -> "w-3 h-3 bg-green-500 rounded-full"
-      true -> ""
     end
   end
 
