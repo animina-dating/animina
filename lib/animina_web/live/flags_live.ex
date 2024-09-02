@@ -344,7 +344,10 @@ defmodule AniminaWeb.FlagsLive do
           </h3>
 
           <ol class="flex flex-wrap gap-2 w-full">
-            <li :for={flag <- category.flags} :if={Enum.member?(@opposite_color_flags_selected_already, flag.id) == false} >
+            <li
+              :for={flag <- category.flags}
+              :if={Enum.member?(@opposite_color_flags_selected_already, flag.id) == false}
+            >
               <div
                 phx-value-flag={flag.name}
                 phx-value-flagid={flag.id}
