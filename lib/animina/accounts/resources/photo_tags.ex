@@ -1,4 +1,4 @@
-defmodule Animina.Accounts.PhotoTags do
+defmodule Animina.Accounts.PhotoFlagTags do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
@@ -30,6 +30,11 @@ defmodule Animina.Accounts.PhotoTags do
       domain Animina.Accounts
       attribute_writable? true
     end
+
+    belongs_to :flag, Animina.Traits.Flag do
+      domain Animina.Traits
+      attribute_writable? true
+    end
   end
 
   actions do
@@ -39,6 +44,7 @@ defmodule Animina.Accounts.PhotoTags do
       accept [
         :user_id,
         :photo_id,
+        :flag_id,
         :description
       ]
 
@@ -71,11 +77,13 @@ defmodule Animina.Accounts.PhotoTags do
   end
 
   postgres do
-    table "photo_tags"
+    table "photo_flag_tags"
     repo Animina.Repo
 
     references do
       reference :user, on_delete: :delete
+      reference :photo, on_delete: :delete
+      reference :flag, on_delete: :delete
     end
   end
 end

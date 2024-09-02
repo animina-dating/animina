@@ -26,7 +26,7 @@ defmodule Animina.Accounts do
     resource Animina.Traits.FlagTranslation
     resource Animina.Traits.Category
     resource Animina.Traits.CategoryTranslation
-    resource Animina.Accounts.PhotoTags
+    resource Animina.Accounts.PhotoFlagTags
   end
 
   authorization do
