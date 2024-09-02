@@ -283,11 +283,11 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
             <%= gettext("Current Photo") %>
           </p>
-          <div class="w-[100%] h-200 relative">
+          <div class="md:w-[300px] w-[100%] relative">
             <p
               data-confirm={gettext("Are you sure you want to delete this photo?")}
               phx-click="delete_photo"
-              class="bg-red-500 cursor-pointer text-white absolute right-4 top-4 z-10 md:w-[50px] md:h-[50px] w-[30px] h-[30px] flex justify-center items-center rounded-md"
+              class="bg-red-500 cursor-pointer text-white absolute right-4 top-4 z-10 md:w-[30px] md:h-[30px] w-[30px] h-[30px] flex justify-center items-center rounded-md"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -305,7 +305,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
             </p>
 
             <img
-              class="object-cover h-[100%]  drop-shadow border w-[100%] rounded-lg"
+              class="object-cover md:h-200  drop-shadow border md:w-[300px] w-[100%] rounded-lg"
               src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)}
             />
           </div>
