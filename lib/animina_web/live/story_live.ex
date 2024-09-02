@@ -504,7 +504,7 @@ defmodule AniminaWeb.StoryLive do
       case ChatCompletion.request_stories(
              socket.assigns.story.headline.subject,
              socket.assigns.story.content,
-             reasons,
+             List.to_string(reasons),
              previous_stories
            ) do
         {:ok, task} ->
