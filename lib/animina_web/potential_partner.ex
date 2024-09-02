@@ -42,6 +42,7 @@ defmodule AniminaWeb.PotentialPartner do
     # |> partner_green_flags_query(user)
     # |> partner_red_flags_query(user, strict_red_flags)
     |> partner_not_self_query(user)
+    |> partner_completed_registration_query(user)
     |> partner_not_under_investigation_query(user)
     |> partner_not_banned_query(user)
     |> partner_not_archived_query(user)
@@ -49,6 +50,11 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_not_incognito_query(user)
     |> Ash.Query.limit(limit)
     |> Ash.read!()
+  end
+
+  defp partner_completed_registration_query(query, _user) do
+    query
+    |> Ash.Query.filter(not is_nil(registration_completed_at))
   end
 
   def partner_not_under_investigation_query(query, _user) do
