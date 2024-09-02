@@ -456,7 +456,6 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp process_story(socket, reasons, :new) do
-    IO.inspect(reasons)
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
     headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
 
@@ -472,8 +471,7 @@ defmodule AniminaWeb.StoryLive do
              socket.assigns.form.params["content"],
              List.to_string(reasons),
              previous_stories
-           )
-           |> IO.inspect(label: "gfhjkl") do
+           ) do
         {:ok, task} ->
           updated_params =
             Map.update!(socket.assigns.form.params, "content", fn _content ->
@@ -823,7 +821,7 @@ defmodule AniminaWeb.StoryLive do
             </.error>
           </div>
 
-          <%= if @words > 1 do %>
+          <%= if @words > 50 do %>
             <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
               <legend class="sr-only">Optimize a Story</legend>
               <div>
