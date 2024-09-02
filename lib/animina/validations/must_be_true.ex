@@ -15,10 +15,14 @@ defmodule Animina.Validations.MustBeTrue do
 
   @impl true
   def validate(changeset, opts, _context) do
-    case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do
-      nil -> :ok
-      true -> :ok
-      _ -> {:error, field: opts[:attribute], message: "must be true"}
+    if changeset.action.name == :password_reset_with_password do
+      :ok
+    else
+      case Ash.Changeset.get_attribute(changeset, opts[:attribute]) do
+        nil -> :ok
+        true -> :ok
+        _ -> {:error, field: opts[:attribute], message: "must be true"}
+      end
     end
   end
 end

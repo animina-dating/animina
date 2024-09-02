@@ -1,7 +1,6 @@
 defmodule Animina.Validations.DeleteAboutStory do
   use Ash.Resource.Validation
   alias Animina.Narratives.Headline
-  alias Animina.Narratives.Story
 
   @moduledoc """
   This is a module for ensuring the 'About me' story is not
@@ -32,10 +31,5 @@ defmodule Animina.Validations.DeleteAboutStory do
       _ ->
         :ok
     end
-  end
-
-  defp get_stories_for_user(user_id) do
-    Story.read!()
-    |> Enum.filter(fn story -> story.user_id == user_id end)
   end
 end

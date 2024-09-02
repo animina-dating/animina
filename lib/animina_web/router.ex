@@ -24,6 +24,7 @@ defmodule AniminaWeb.Router do
     ash_authentication_live_session :authentication_optional,
       on_mount: {AniminaWeb.LiveUserAuth, :live_no_user} do
       live "/sign-in", RootLive, :sign_in
+      live "/reset-password", RequestPasswordLive, :index
     end
 
     ash_authentication_live_session :authentication_required_for_email_validation,
@@ -86,9 +87,11 @@ defmodule AniminaWeb.Router do
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in
+    post "/auth/user/request_password", AuthController, :request_password
 
     sign_out_route AuthController, "/auth/user/sign-out"
     auth_routes_for Animina.Accounts.User, to: AuthController
+
     reset_route []
   end
 

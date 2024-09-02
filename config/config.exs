@@ -19,6 +19,9 @@ config :animina, env: Mix.env()
 # Configures the number of stories required for complete registration
 config :animina, :number_of_stories_required_for_complete_registration, 1
 
+# Configures the minimum number of points required to view the 'AI Help' Chat Message in the chat
+config :animina, :ai_message_help_price, 20
+
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
