@@ -65,6 +65,10 @@ defmodule AniminaWeb.StoryLive do
       )
     end
 
+    reasons = [
+      gettext("Fix spelling and grammar errors.")
+    ]
+
     socket =
       socket
       |> assign(language: language)
@@ -77,6 +81,7 @@ defmodule AniminaWeb.StoryLive do
         :story_position,
         get_user_story_position(socket)
       )
+      |> assign(:reasons, reasons)
       |> assign(
         :headline_position,
         get_user_headline_position(socket)
@@ -442,31 +447,16 @@ defmodule AniminaWeb.StoryLive do
     end
   end
 
-  def handle_event("correct_errors", _params, socket) do
+  def handle_event("generate_story", _params, socket) do
     process_story(
       socket,
-      "Correct any spelling, grammar, case, and punctuation errors in the story.",
+      socket.assigns.reasons,
       socket.assigns.live_action
     )
   end
 
-  def handle_event("improve_funny", _params, socket) do
-    process_story(socket, "Improve the story to be funnier.", socket.assigns.live_action)
-  end
-
-  def handle_event("improve_exciting", _params, socket) do
-    process_story(socket, "Improve the story to be more exciting.", socket.assigns.live_action)
-  end
-
-  def handle_event("lengthen_story", _params, socket) do
-    process_story(socket, "Lengthen the story.", socket.assigns.live_action)
-  end
-
-  def handle_event("shorten_story", _params, socket) do
-    process_story(socket, "Shorten the story.", socket.assigns.live_action)
-  end
-
-  defp process_story(socket, prompt, :new) do
+  defp process_story(socket, reasons, :new) do
+    IO.inspect(reasons)
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
     headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
 
@@ -480,9 +470,10 @@ defmodule AniminaWeb.StoryLive do
       case ChatCompletion.request_stories(
              headline.subject,
              socket.assigns.form.params["content"],
-             prompt,
+             List.to_string(reasons),
              previous_stories
-           ) do
+           )
+           |> IO.inspect(label: "gfhjkl") do
         {:ok, task} ->
           updated_params =
             Map.update!(socket.assigns.form.params, "content", fn _content ->
@@ -502,7 +493,7 @@ defmodule AniminaWeb.StoryLive do
     {:noreply, socket}
   end
 
-  defp process_story(socket, prompt, :edit) do
+  defp process_story(socket, reasons, :edit) do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
 
     previous_stories =
@@ -515,7 +506,7 @@ defmodule AniminaWeb.StoryLive do
       case ChatCompletion.request_stories(
              socket.assigns.story.headline.subject,
              socket.assigns.story.content,
-             prompt,
+             reasons,
              previous_stories
            ) do
         {:ok, task} ->
@@ -603,6 +594,25 @@ defmodule AniminaWeb.StoryLive do
       [story | _] -> story.position + 1
       _ -> Map.get(story_results, :count) + 1
     end
+  end
+
+  def handle_event("toggle_reason", %{"_target" => [reason]}, socket) do
+    reasons = socket.assigns.reasons
+
+    new_reasons =
+      if Enum.member?(reasons, reason) do
+        Enum.reject(reasons, fn r -> r == reason end)
+      else
+        updated_reasons = [reason | reasons]
+
+        case reason do
+          "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
+          "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
+          _ -> updated_reasons
+        end
+      end
+
+    {:noreply, assign(socket, :reasons, new_reasons)}
   end
 
   defp get_user_headline_position(socket) do
@@ -813,39 +823,118 @@ defmodule AniminaWeb.StoryLive do
             </.error>
           </div>
 
-          <%= if @words > 50 do %>
+          <%= if @words > 1 do %>
             <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
-              <p
-                phx-click="correct_errors"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Correct Errors") %>
-              </p>
-              <p
-                phx-click="improve_funny"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Make Funnier") %>
-              </p>
-              <p
-                phx-click="improve_exciting"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Make More Exciting") %>
-              </p>
-              <p
-                phx-click="lengthen_story"
-                class="flex text-sm  md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Lengthen Story") %>
-              </p>
-              <p
-                phx-click="shorten_story"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Shorten Story") %>
-              </p>
+              <legend class="sr-only">Optimize a Story</legend>
+              <div>
+                <div class="space-y-5 grid grid-cols-1 md:grid-cols-5 items-center">
+                  <div class="relative flex items-start">
+                    <div class="flex h-6 items-center">
+                      <input
+                        id="comments"
+                        aria-describedby="comments-description"
+                        name="Fix spelling and grammar errors."
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Fix spelling and grammar errors."
+                        checked={Enum.member?(@reasons, gettext("Fix spelling and grammar errors."))}
+                        phx-change="toggle_reason"
+                      />
+                    </div>
+                    <div class="ml-3 text-sm leading-6">
+                      <label for="comments" class="font-medium dark:text-[#fff] text-gray-900">
+                        <%= gettext("Fix spelling and grammar errors.") %>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="relative flex items-start">
+                    <div class="flex h-6 items-center">
+                      <input
+                        id="funnier"
+                        aria-describedby="funnier-description"
+                        name="Make Funnier"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Make Funnier"
+                        checked={Enum.member?(@reasons, gettext("Make Funnier"))}
+                        phx-change="toggle_reason"
+                      />
+                    </div>
+                    <div class="ml-3 text-sm leading-6">
+                      <label for="funnier" class="font-medium dark:text-[#fff] text-gray-900">
+                        <%= gettext("Make Funnier") %>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="relative flex items-start">
+                    <div class="flex h-6 items-center">
+                      <input
+                        id="exciting"
+                        aria-describedby="exciting-description"
+                        name="More Exciting"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="More Exciting"
+                        checked={Enum.member?(@reasons, gettext("More Exciting"))}
+                        phx-change="toggle_reason"
+                      />
+                    </div>
+                    <div class="ml-3 text-sm leading-6">
+                      <label for="exciting" class="font-medium dark:text-[#fff] text-gray-900">
+                        <%= gettext("More Exciting") %>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="relative flex items-start">
+                    <div class="flex h-6 items-center">
+                      <input
+                        id="lengthen"
+                        aria-describedby="lengthen-description"
+                        name="Lengthen Story"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Lengthen Story"
+                        checked={Enum.member?(@reasons, gettext("Lengthen Story"))}
+                        phx-change="toggle_reason"
+                      />
+                    </div>
+                    <div class="ml-3 text-sm leading-6">
+                      <label for="lengthen" class="font-medium dark:text-[#fff] text-gray-900">
+                        <%= gettext("Lengthen Story") %>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="relative flex items-start">
+                    <div class="flex h-6 items-center">
+                      <input
+                        id="shorten"
+                        aria-describedby="shorten-description"
+                        name="Shorten Story"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Shorten Story"
+                        checked={Enum.member?(@reasons, gettext("Shorten Story"))}
+                        phx-change="toggle_reason"
+                      />
+                    </div>
+                    <div class="ml-3 text-sm leading-6">
+                      <label for="shorten" class="font-medium dark:text-[#fff] text-gray-900">
+                        <%= gettext("Shorten Story") %>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <button
+              :if={length(@reasons) > 0}
+              type="button"
+              phx-click="generate_story"
+              class="flex mt-5 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <%= gettext("Generate story") %>
+            </button>
           <% end %>
         </div>
 
