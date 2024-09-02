@@ -26,6 +26,10 @@ defmodule AniminaWeb.StoryLive do
 
     story = Story.by_id!(story_id)
 
+    reasons = [
+      gettext("Fix spelling and grammar errors.")
+    ]
+
     socket =
       socket
       |> assign(language: language)
@@ -36,6 +40,7 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:headline_position, nil)
       |> assign(:current_request, nil)
       |> assign(:errors, [])
+      |> assign(:reasons, reasons)
       |> assign(:current_request, nil)
       |> assign(:content, story.content)
       |> assign(:either_content_or_photo_added, either_content_or_photo_added(story.content, []))
