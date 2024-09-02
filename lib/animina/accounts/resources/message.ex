@@ -133,6 +133,18 @@ defmodule Animina.Accounts.Message do
 
       filter expr(receiver_id == ^arg(:receiver_id) and is_nil(read_at))
     end
+
+    read :unique_conversations do
+      argument :sender_id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:sender, :receiver])
+
+      prepare build(sort: [created_at: :desc])
+
+      filter expr(sender_id == ^arg(:sender_id) or receiver_id == ^arg(:sender_id))
+    end
   end
 
   code_interface do
@@ -150,6 +162,7 @@ defmodule Animina.Accounts.Message do
     define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
 
     define :messages_sent_by_user, args: [:sender_id]
+    define :unique_conversations, args: [:sender_id]
   end
 
   changes do
