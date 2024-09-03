@@ -295,7 +295,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
         </div>
 
         <div
-          :if={Enum.count(@profile_stories) <= 1 && (@current_user && @current_user.id == @user.id)}
+          :if={@current_user.registration_completed_at == nil && (@current_user && @current_user.id == @user.id)}
           class="pb-2"
         >
           <div class="p-4 rounded-md bg-blue-50">
@@ -321,7 +321,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
                 <div class="mt-2 text-sm text-blue-700">
                   <p>
                     <%= gettext(
-                      "To activate your profile you have to have at least one story. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
+                      "To activate your profile you have to have at least an about me story and a profile picture uploaded. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
                     ) %>
                   </p>
                 </div>

@@ -2,8 +2,8 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
-  alias Animina.Accounts.OptimizedPhoto
   alias Animina.Accounts
+  alias Animina.Accounts.OptimizedPhoto
   alias Animina.Narratives
 
   require Logger
