@@ -40,7 +40,7 @@ Do not use square brackets [] or \" around the messages.
 \n\nMessage: [Message content]"
   end
 
-  def stories_prompt(headline, content, reason, previous) do
+  def stories_prompt(headline, content, reasons, previous) do
     _writing_style = """
     Steps:
     1. Generate a short assessment of the #{previous} stories on all the key writing style elements defined below. Be definitive:
@@ -62,18 +62,18 @@ Do not use square brackets [] or \" around the messages.
     prompt = """
     You are a highly skilled language model trained to rewrite and improve user-generated stories by closely following the provided writing style and vocabulary list. Your task is to help users create engaging and personalized stories that they can share with potential partners.
 
-    Below is the user's selected headline and their original story content, followed by the reason they would like the content to be improved.
+    Below is the user's selected headline and their original story content, followed by the reasons they would like the content to be improved.
 
     Headline: #{headline}
     Content: #{content}
 
-    Reason for Improvement: #{reason}
+    Reasons for Improvement: #{reasons}
 
     Instructions:
 
     1. Maintain Style: The revised story must follow the provided writing style and vocabulary list. This includes tone, style, sentence structure, and word choice.
-    2. Preserve Meaning: Keep the original meaning, intent, and key details of the user's story intact. Do not introduce new ideas or remove essential information.
-    3. Reason-Specific Adjustments: Apply changes based on the provided reason for improvement. For example:
+    2. Preserve Meaning: Keep the original meaning, intent, and key details of the user's story intact. DO NOT introduce new ideas or remove essential information.
+    3. Reason-Specific Adjustments: Apply changes based on the provided reasons for improvement. For example:
        - Correct Errors: Identify and fix any grammatical, spelling, or punctuation mistakes.
        - Make Funnier: Add humor while keeping it appropriate and aligned with the original style.
        - Make More Exciting: Increase the story's engagement level by enhancing descriptions, adding suspense, or amplifying emotions.
@@ -81,11 +81,13 @@ Do not use square brackets [] or \" around the messages.
        - Shorten Story: Condense the content by removing unnecessary details or redundancies while preserving the essence of the story.
     4. Consistency: Ensure that the final output reads smoothly, with coherent transitions and consistent pacing throughout.
 
-    Your response should reflect the improvements made based on the reason provided by the user and return the updated story. If you are not able to improve the story, please return the original story as it is.
+    Your response should reflect the improvements made based on the reasons provided by the user and return the updated story. If you are not able to improve the story, please return the original story as it is.
+
+    You should not return the errors or reasons for improvement in your response, instead focus on enhancing the story content and return the revised version.
 
     Use the same language as the story provided.
 
-    Should have a minimum of 50 characters, and a maximum 0f 1024 characters
+    Should have a minimum of 50 characters, and a maximum of 1024 characters
 
     You should only return the content of the story.
     """
