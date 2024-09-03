@@ -331,6 +331,25 @@ defmodule AniminaWeb.StoryLive do
      )}
   end
 
+  def handle_event("toggle_reason", %{"_target" => [reason]}, socket) do
+    reasons = socket.assigns.reasons
+
+    new_reasons =
+      if Enum.member?(reasons, reason) do
+        Enum.reject(reasons, fn r -> r == reason end)
+      else
+        updated_reasons = [reason | reasons]
+
+        case reason do
+          "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
+          "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
+          _ -> updated_reasons
+        end
+      end
+
+    {:noreply, assign(socket, :reasons, new_reasons)}
+  end
+
   @impl true
   def handle_event("validate", %{"story" => story}, socket) do
     form = Form.validate(socket.assigns.form, story, errors: true)
@@ -597,25 +616,6 @@ defmodule AniminaWeb.StoryLive do
       [story | _] -> story.position + 1
       _ -> Map.get(story_results, :count) + 1
     end
-  end
-
-  def handle_event("toggle_reason", %{"_target" => [reason]}, socket) do
-    reasons = socket.assigns.reasons
-
-    new_reasons =
-      if Enum.member?(reasons, reason) do
-        Enum.reject(reasons, fn r -> r == reason end)
-      else
-        updated_reasons = [reason | reasons]
-
-        case reason do
-          "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
-          "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
-          _ -> updated_reasons
-        end
-      end
-
-    {:noreply, assign(socket, :reasons, new_reasons)}
   end
 
   defp get_user_headline_position(socket) do
