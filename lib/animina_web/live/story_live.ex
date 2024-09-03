@@ -334,17 +334,13 @@ defmodule AniminaWeb.StoryLive do
   def handle_event("toggle_reason", %{"_target" => [reason]}, socket) do
     reasons = socket.assigns.reasons
 
+    new_reasons = update_reasons(reasons, reason)
+
     new_reasons =
       if Enum.member?(reasons, reason) do
-        Enum.reject(reasons, fn r -> r == reason end)
+        new_reasons
       else
-        updated_reasons = [reason | reasons]
-
-        case reason do
-          "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
-          "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
-          _ -> updated_reasons
-        end
+        reject_conflicting_reasons(new_reasons, reason)
       end
 
     {:noreply, assign(socket, :reasons, new_reasons)}
@@ -477,6 +473,22 @@ defmodule AniminaWeb.StoryLive do
       socket.assigns.reasons,
       socket.assigns.live_action
     )
+  end
+
+  defp update_reasons(reasons, reason) do
+    if Enum.member?(reasons, reason) do
+      Enum.reject(reasons, fn r -> r == reason end)
+    else
+      [reason | reasons]
+    end
+  end
+
+  defp reject_conflicting_reasons(updated_reasons, reason) do
+    case reason do
+      "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
+      "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
+      _ -> updated_reasons
+    end
   end
 
   defp process_story(socket, reasons, :new) do
@@ -931,7 +943,7 @@ defmodule AniminaWeb.StoryLive do
             </div>
 
             <button
-              :if={length(@reasons) > 0}
+              :if={length(@reasons) > 0 && @show_buttons == true}
               type="button"
               phx-click="generate_story"
               class="flex mt-5 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
