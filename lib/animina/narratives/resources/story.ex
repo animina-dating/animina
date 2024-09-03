@@ -189,7 +189,7 @@ defmodule Animina.Narratives.Story do
       {:ok, stories} ->
         if Enum.count(stories) >=
              Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
-             user.registration_completed_at == nil do
+             user.registration_completed_at == nil and user.profile_photo != nil do
           Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
         end
 

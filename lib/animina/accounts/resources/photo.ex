@@ -3,6 +3,8 @@ defmodule Animina.Accounts.Photo do
   This is the Photo module which we use to manage user photos.
   """
   alias Animina.Accounts.OptimizedPhoto
+  alias Animina.Accounts
+  alias Animina.Narratives
 
   require Logger
 
@@ -190,6 +192,12 @@ defmodule Animina.Accounts.Photo do
              {:ok, record}
            end),
            on: [:create]
+
+    change after_action(fn changeset, record, _ ->
+             update_user_registration_completed_at(record.user_id)
+             {:ok, record}
+           end),
+           on: [:create, :destroy]
   end
 
   postgres do
@@ -208,6 +216,26 @@ defmodule Animina.Accounts.Photo do
 
       _ ->
         "/uploads/#{photo.filename}"
+    end
+  end
+
+  defp update_user_registration_completed_at(user_id) do
+    user =
+      Accounts.User.by_id!(user_id)
+     
+
+    case Narratives.Story.by_user_id(user_id) do
+      {:ok, stories} ->
+        if Enum.count(stories) >=
+             Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
+             user.registration_completed_at == nil and user.profile_photo != nil do
+          User.update(user, %{registration_completed_at: DateTime.utc_now()})
+        else
+          User.update(user, %{registration_completed_at: nil})
+        end
+
+      _ ->
+        :ok
     end
   end
 
