@@ -174,7 +174,7 @@ defmodule Animina.Accounts.Photo do
              changeset, {:ok, result}, _context ->
                {:ok, result}
 
-             changeset, {:error, error} ->
+             changeset, {:error, error}, _context ->
                message = Exception.message(error)
 
                changeset.data
@@ -222,16 +222,13 @@ defmodule Animina.Accounts.Photo do
   defp update_user_registration_completed_at(user_id) do
     user =
       Accounts.User.by_id!(user_id)
-     
 
     case Narratives.Story.by_user_id(user_id) do
       {:ok, stories} ->
         if Enum.count(stories) >=
              Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
              user.registration_completed_at == nil and user.profile_photo != nil do
-          User.update(user, %{registration_completed_at: DateTime.utc_now()})
-        else
-          User.update(user, %{registration_completed_at: nil})
+          Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
         end
 
       _ ->
