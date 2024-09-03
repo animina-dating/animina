@@ -295,7 +295,10 @@ defmodule AniminaWeb.ProfileStoriesLive do
         </div>
 
         <div
-          :if={@current_user.registration_completed_at == nil && (@current_user && @current_user.id == @user.id)}
+          :if={
+            @current_user.registration_completed_at == nil &&
+              (@current_user && @current_user.id == @user.id)
+          }
           class="pb-2"
         >
           <div class="p-4 rounded-md bg-blue-50">
