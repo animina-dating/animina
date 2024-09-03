@@ -2,6 +2,7 @@ defmodule AniminaWeb.AllReportsTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Report
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
@@ -335,6 +336,7 @@ defmodule AniminaWeb.AllReportsTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -356,6 +358,7 @@ defmodule AniminaWeb.AllReportsTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -377,6 +380,7 @@ defmodule AniminaWeb.AllReportsTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -398,6 +402,7 @@ defmodule AniminaWeb.AllReportsTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -462,5 +467,20 @@ defmodule AniminaWeb.AllReportsTest do
 
         headline
     end
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 end

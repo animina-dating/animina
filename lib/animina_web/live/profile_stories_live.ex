@@ -296,8 +296,8 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
         <div
           :if={
-            @current_user.registration_completed_at == nil &&
-              (@current_user && @current_user.id == @user.id)
+            @current_user && @current_user.id == @user.id &&
+              @current_user.registration_completed_at == nil
           }
           class="pb-2"
         >

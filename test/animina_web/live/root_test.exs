@@ -1,6 +1,7 @@
 defmodule AniminaWeb.RootTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
@@ -198,6 +199,8 @@ defmodule AniminaWeb.RootTest do
         "I am a software engineer"
       )
 
+      create_profile_picture(user.id)
+
       current_points = User.by_username!(user.username).credit_points
 
       {:ok, index_live, _html} =
@@ -304,6 +307,8 @@ defmodule AniminaWeb.RootTest do
         "I am a software engineer"
       )
 
+      create_profile_picture(user.id)
+
       {:ok, _index_live, html} =
         conn
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
@@ -377,6 +382,21 @@ defmodule AniminaWeb.RootTest do
       })
 
     story
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 
   defp confirm_user(attributes) do

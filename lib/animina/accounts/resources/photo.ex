@@ -279,17 +279,21 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp copy_image(file_name, type) do
-    case File.cp!(
-           "priv/static/uploads/" <> file_name,
-           "priv/static/uploads/optimized/#{type}/#{file_name}"
-         ) do
-      :ok ->
-        "/uploads/optimized/#{type}/#{file_name}"
+    if File.exists?("priv/static/uploads/" <> file_name) do
+      case File.cp!(
+             "priv/static/uploads/" <> file_name,
+             "priv/static/uploads/optimized/#{type}/#{file_name}"
+           ) do
+        :ok ->
+          "/uploads/optimized/#{type}/#{file_name}"
 
-      {:error, reason} ->
-        Logger.error("Failed to copy '/uploads/optimized/#{type}/#{file_name}' : #{reason}")
+        {:error, reason} ->
+          Logger.error("Failed to copy '/uploads/optimized/#{type}/#{file_name}' : #{reason}")
 
-        "/uploads/optimized/#{type}/#{file_name}"
+          "/uploads/optimized/#{type}/#{file_name}"
+      end
+    else
+      file_name
     end
   end
 
