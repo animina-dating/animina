@@ -2,6 +2,7 @@ defmodule AniminaWeb.UpdateProfileTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
@@ -95,7 +96,7 @@ defmodule AniminaWeb.UpdateProfileTest do
       })
 
     create_user_about_me_story(user, get_about_me_headline(), "This is my story")
-
+    create_profile_picture(user.id)
     user
   end
 
@@ -125,6 +126,21 @@ defmodule AniminaWeb.UpdateProfileTest do
       })
 
     story
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 
   defp login_user(conn, attributes) do

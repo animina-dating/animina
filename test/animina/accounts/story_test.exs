@@ -1,6 +1,7 @@
 defmodule Animina.Accounts.StoryTest do
   use Animina.DataCase, async: true
 
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
@@ -34,8 +35,11 @@ defmodule Animina.Accounts.StoryTest do
            user: user,
            get_about_me_headline: get_about_me_headline
          } do
+      {:ok, _} = create_profile_picture(user.id)
+
       assert user.registration_completed_at == nil
       assert {:ok, _about_me_story} = create_about_me_story(user.id, get_about_me_headline.id)
+
       user = User.by_id!(user.id)
       assert user.registration_completed_at != nil
     end
@@ -135,6 +139,21 @@ defmodule Animina.Accounts.StoryTest do
       headline_id: headline_id,
       content: "This is a story about me",
       position: 2
+    })
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
     })
   end
 end

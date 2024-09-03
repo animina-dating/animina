@@ -75,6 +75,7 @@ defmodule Animina.MixProject do
       {:mogrify, "~> 0.9.3"},
       {:briefly, "~> 0.5.0"},
       {:gen_stage, "~> 1.2.1"},
+      {:temp, "~> 0.4"},
       {:ollama, "0.7.1"}
     ]
 

@@ -2,7 +2,9 @@ defmodule Animina.Accounts.Photo do
   @moduledoc """
   This is the Photo module which we use to manage user photos.
   """
+  alias Animina.Accounts
   alias Animina.Accounts.OptimizedPhoto
+  alias Animina.Narratives
 
   require Logger
 
@@ -172,7 +174,7 @@ defmodule Animina.Accounts.Photo do
              changeset, {:ok, result}, _context ->
                {:ok, result}
 
-             changeset, {:error, error} ->
+             changeset, {:error, error}, _context ->
                message = Exception.message(error)
 
                changeset.data
@@ -190,6 +192,12 @@ defmodule Animina.Accounts.Photo do
              {:ok, record}
            end),
            on: [:create]
+
+    change after_action(fn changeset, record, _ ->
+             update_user_registration_completed_at(record.user_id)
+             {:ok, record}
+           end),
+           on: [:create, :destroy]
   end
 
   postgres do
@@ -208,6 +216,23 @@ defmodule Animina.Accounts.Photo do
 
       _ ->
         "/uploads/#{photo.filename}"
+    end
+  end
+
+  defp update_user_registration_completed_at(user_id) do
+    user =
+      Accounts.User.by_id!(user_id)
+
+    case Narratives.Story.by_user_id(user_id) do
+      {:ok, stories} ->
+        if Enum.count(stories) >=
+             Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
+             user.registration_completed_at == nil and user.profile_photo != nil do
+          Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
+        end
+
+      _ ->
+        :ok
     end
   end
 
@@ -254,17 +279,21 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp copy_image(file_name, type) do
-    case File.cp!(
-           "priv/static/uploads/" <> file_name,
-           "priv/static/uploads/optimized/#{type}/#{file_name}"
-         ) do
-      :ok ->
-        "/uploads/optimized/#{type}/#{file_name}"
+    if File.exists?("priv/static/uploads/" <> file_name) do
+      case File.cp!(
+             "priv/static/uploads/" <> file_name,
+             "priv/static/uploads/optimized/#{type}/#{file_name}"
+           ) do
+        :ok ->
+          "/uploads/optimized/#{type}/#{file_name}"
 
-      {:error, reason} ->
-        Logger.error("Failed to copy '/uploads/optimized/#{type}/#{file_name}' : #{reason}")
+        {:error, reason} ->
+          Logger.error("Failed to copy '/uploads/optimized/#{type}/#{file_name}' : #{reason}")
 
-        "/uploads/optimized/#{type}/#{file_name}"
+          "/uploads/optimized/#{type}/#{file_name}"
+      end
+    else
+      file_name
     end
   end
 
@@ -285,12 +314,21 @@ defmodule Animina.Accounts.Photo do
             type: :big
           }
         ] do
-      OptimizedPhoto.create(%{
-        image_url: resize_image(record.filename, type.width, type.type),
-        type: type.type,
-        user_id: record.user_id,
-        photo_id: record.id
-      })
+      if File.exists?("priv/static/uploads/" <> record.filename) do
+        OptimizedPhoto.create(%{
+          image_url: resize_image(record.filename, type.width, type.type),
+          type: type.type,
+          user_id: record.user_id,
+          photo_id: record.id
+        })
+      else
+        OptimizedPhoto.create(%{
+          image_url: record.filename,
+          type: type.type,
+          user_id: record.user_id,
+          photo_id: record.id
+        })
+      end
     end
   end
 

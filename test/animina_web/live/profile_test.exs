@@ -3,6 +3,7 @@ defmodule AniminaWeb.ProfileTest do
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Bookmark
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
@@ -26,6 +27,9 @@ defmodule AniminaWeb.ProfileTest do
           about_me_headline,
           "This is a private user story"
         )
+
+      create_profile_picture(public_user.id)
+      create_profile_picture(private_user.id)
 
       Credit.create!(%{
         user_id: private_user.id,
@@ -551,6 +555,21 @@ defmodule AniminaWeb.ProfileTest do
       })
 
     story
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 
   defp create_admin_role do
