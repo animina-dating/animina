@@ -85,9 +85,12 @@ Do not use square brackets [] or \" around the messages.
 
     You should not return the errors or reasons for improvement in your response, instead focus on enhancing the story content and return the revised version.
 
+
     Use the same language as the story provided.
 
     Should have a minimum of 50 characters, and a maximum of 1024 characters
+
+    You should not include the headline in the response.
 
     You should only return the content of the story.
     """
