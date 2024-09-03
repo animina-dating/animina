@@ -843,8 +843,8 @@ defmodule AniminaWeb.StoryLive do
               <legend class="sr-only">Optimize a Story</legend>
               <div>
                 <div class="space-y-5 grid grid-cols-1 md:grid-cols-5 items-center">
-                  <div class="relative flex items-start">
-                    <div class="flex h-6 items-center">
+                  <div class="flex items-center space-x-4 flex-nowrap">
+                    <div class="flex items-center">
                       <input
                         id="comments"
                         aria-describedby="comments-description"
@@ -855,15 +855,14 @@ defmodule AniminaWeb.StoryLive do
                         checked={Enum.member?(@reasons, gettext("Fix spelling and grammar errors."))}
                         phx-change="toggle_reason"
                       />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label for="comments" class="font-medium dark:text-[#fff] text-gray-900">
+                      <label
+                        for="comments"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
                         <%= gettext("Fix spelling and grammar errors.") %>
                       </label>
                     </div>
-                  </div>
-                  <div class="relative flex items-start">
-                    <div class="flex h-6 items-center">
+                    <div class="flex items-center">
                       <input
                         id="funnier"
                         aria-describedby="funnier-description"
@@ -874,15 +873,14 @@ defmodule AniminaWeb.StoryLive do
                         checked={Enum.member?(@reasons, gettext("Make Funnier"))}
                         phx-change="toggle_reason"
                       />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label for="funnier" class="font-medium dark:text-[#fff] text-gray-900">
+                      <label
+                        for="funnier"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
                         <%= gettext("Make Funnier") %>
                       </label>
                     </div>
-                  </div>
-                  <div class="relative flex items-start">
-                    <div class="flex h-6 items-center">
+                    <div class="flex items-center">
                       <input
                         id="exciting"
                         aria-describedby="exciting-description"
@@ -893,15 +891,14 @@ defmodule AniminaWeb.StoryLive do
                         checked={Enum.member?(@reasons, gettext("More Exciting"))}
                         phx-change="toggle_reason"
                       />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label for="exciting" class="font-medium dark:text-[#fff] text-gray-900">
+                      <label
+                        for="exciting"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
                         <%= gettext("More Exciting") %>
                       </label>
                     </div>
-                  </div>
-                  <div class="relative flex items-start">
-                    <div class="flex h-6 items-center">
+                    <div class="flex items-center">
                       <input
                         id="lengthen"
                         aria-describedby="lengthen-description"
@@ -912,15 +909,14 @@ defmodule AniminaWeb.StoryLive do
                         checked={Enum.member?(@reasons, gettext("Lengthen Story"))}
                         phx-change="toggle_reason"
                       />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label for="lengthen" class="font-medium dark:text-[#fff] text-gray-900">
+                      <label
+                        for="lengthen"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
                         <%= gettext("Lengthen Story") %>
                       </label>
                     </div>
-                  </div>
-                  <div class="relative flex items-start">
-                    <div class="flex h-6 items-center">
+                    <div class="flex items-center">
                       <input
                         id="shorten"
                         aria-describedby="shorten-description"
@@ -931,9 +927,10 @@ defmodule AniminaWeb.StoryLive do
                         checked={Enum.member?(@reasons, gettext("Shorten Story"))}
                         phx-change="toggle_reason"
                       />
-                    </div>
-                    <div class="ml-3 text-sm leading-6">
-                      <label for="shorten" class="font-medium dark:text-[#fff] text-gray-900">
+                      <label
+                        for="shorten"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
                         <%= gettext("Shorten Story") %>
                       </label>
                     </div>
