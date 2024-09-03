@@ -26,6 +26,10 @@ defmodule AniminaWeb.StoryLive do
 
     story = Story.by_id!(story_id)
 
+    reasons = [
+      gettext("Fix spelling and grammar errors.")
+    ]
+
     socket =
       socket
       |> assign(language: language)
@@ -36,6 +40,7 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:headline_position, nil)
       |> assign(:current_request, nil)
       |> assign(:errors, [])
+      |> assign(:reasons, reasons)
       |> assign(:current_request, nil)
       |> assign(:content, story.content)
       |> assign(:either_content_or_photo_added, either_content_or_photo_added(story.content, []))
@@ -65,6 +70,10 @@ defmodule AniminaWeb.StoryLive do
       )
     end
 
+    reasons = [
+      gettext("Fix spelling and grammar errors.")
+    ]
+
     socket =
       socket
       |> assign(language: language)
@@ -77,6 +86,7 @@ defmodule AniminaWeb.StoryLive do
         :story_position,
         get_user_story_position(socket)
       )
+      |> assign(:reasons, reasons)
       |> assign(
         :headline_position,
         get_user_headline_position(socket)
@@ -321,6 +331,21 @@ defmodule AniminaWeb.StoryLive do
      )}
   end
 
+  def handle_event("toggle_reason", %{"_target" => [reason]}, socket) do
+    reasons = socket.assigns.reasons
+
+    new_reasons = update_reasons(reasons, reason)
+
+    new_reasons =
+      if Enum.member?(reasons, reason) do
+        new_reasons
+      else
+        reject_conflicting_reasons(new_reasons, reason)
+      end
+
+    {:noreply, assign(socket, :reasons, new_reasons)}
+  end
+
   @impl true
   def handle_event("validate", %{"story" => story}, socket) do
     form = Form.validate(socket.assigns.form, story, errors: true)
@@ -442,31 +467,31 @@ defmodule AniminaWeb.StoryLive do
     end
   end
 
-  def handle_event("correct_errors", _params, socket) do
+  def handle_event("generate_story", _params, socket) do
     process_story(
       socket,
-      "Correct any spelling, grammar, case, and punctuation errors in the story.",
+      socket.assigns.reasons,
       socket.assigns.live_action
     )
   end
 
-  def handle_event("improve_funny", _params, socket) do
-    process_story(socket, "Improve the story to be funnier.", socket.assigns.live_action)
+  defp update_reasons(reasons, reason) do
+    if Enum.member?(reasons, reason) do
+      Enum.reject(reasons, fn r -> r == reason end)
+    else
+      [reason | reasons]
+    end
   end
 
-  def handle_event("improve_exciting", _params, socket) do
-    process_story(socket, "Improve the story to be more exciting.", socket.assigns.live_action)
+  defp reject_conflicting_reasons(updated_reasons, reason) do
+    case reason do
+      "Shorten Story" -> Enum.reject(updated_reasons, fn r -> r == "Lengthen Story" end)
+      "Lengthen Story" -> Enum.reject(updated_reasons, fn r -> r == "Shorten Story" end)
+      _ -> updated_reasons
+    end
   end
 
-  def handle_event("lengthen_story", _params, socket) do
-    process_story(socket, "Lengthen the story.", socket.assigns.live_action)
-  end
-
-  def handle_event("shorten_story", _params, socket) do
-    process_story(socket, "Shorten the story.", socket.assigns.live_action)
-  end
-
-  defp process_story(socket, prompt, :new) do
+  defp process_story(socket, reasons, :new) do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
     headline = Headline.by_id!(socket.assigns.form.params["headline_id"])
 
@@ -480,7 +505,7 @@ defmodule AniminaWeb.StoryLive do
       case ChatCompletion.request_stories(
              headline.subject,
              socket.assigns.form.params["content"],
-             prompt,
+             List.to_string(reasons),
              previous_stories
            ) do
         {:ok, task} ->
@@ -502,7 +527,7 @@ defmodule AniminaWeb.StoryLive do
     {:noreply, socket}
   end
 
-  defp process_story(socket, prompt, :edit) do
+  defp process_story(socket, reasons, :edit) do
     Process.send_after(self(), {:render_generating_story, 1}, 1000)
 
     previous_stories =
@@ -515,7 +540,7 @@ defmodule AniminaWeb.StoryLive do
       case ChatCompletion.request_stories(
              socket.assigns.story.headline.subject,
              socket.assigns.story.content,
-             prompt,
+             List.to_string(reasons),
              previous_stories
            ) do
         {:ok, task} ->
@@ -815,37 +840,113 @@ defmodule AniminaWeb.StoryLive do
 
           <%= if @words > 50 do %>
             <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
-              <p
-                phx-click="correct_errors"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Correct Errors") %>
-              </p>
-              <p
-                phx-click="improve_funny"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Make Funnier") %>
-              </p>
-              <p
-                phx-click="improve_exciting"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Make More Exciting") %>
-              </p>
-              <p
-                phx-click="lengthen_story"
-                class="flex text-sm  md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Lengthen Story") %>
-              </p>
-              <p
-                phx-click="shorten_story"
-                class="flex text-sm md:w-[20%] justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                <%= gettext("Shorten Story") %>
-              </p>
+              <legend class="sr-only">Optimize a Story</legend>
+              <div>
+                <div class="space-y-5 grid grid-cols-1 md:grid-cols-5 items-center">
+                  <div class="flex items-center space-x-4 flex-nowrap">
+                    <div class="flex items-center">
+                      <input
+                        id="comments"
+                        aria-describedby="comments-description"
+                        name="Fix spelling and grammar errors."
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Fix spelling and grammar errors."
+                        checked={Enum.member?(@reasons, gettext("Fix spelling and grammar errors."))}
+                        phx-change="toggle_reason"
+                      />
+                      <label
+                        for="comments"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
+                        <%= gettext("Fix spelling and grammar errors.") %>
+                      </label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        id="funnier"
+                        aria-describedby="funnier-description"
+                        name="Make Funnier"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Make Funnier"
+                        checked={Enum.member?(@reasons, gettext("Make Funnier"))}
+                        phx-change="toggle_reason"
+                      />
+                      <label
+                        for="funnier"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
+                        <%= gettext("Make Funnier") %>
+                      </label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        id="exciting"
+                        aria-describedby="exciting-description"
+                        name="More Exciting"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="More Exciting"
+                        checked={Enum.member?(@reasons, gettext("More Exciting"))}
+                        phx-change="toggle_reason"
+                      />
+                      <label
+                        for="exciting"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
+                        <%= gettext("More Exciting") %>
+                      </label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        id="lengthen"
+                        aria-describedby="lengthen-description"
+                        name="Lengthen Story"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Lengthen Story"
+                        checked={Enum.member?(@reasons, gettext("Lengthen Story"))}
+                        phx-change="toggle_reason"
+                      />
+                      <label
+                        for="lengthen"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
+                        <%= gettext("Lengthen Story") %>
+                      </label>
+                    </div>
+                    <div class="flex items-center">
+                      <input
+                        id="shorten"
+                        aria-describedby="shorten-description"
+                        name="Shorten Story"
+                        type="checkbox"
+                        class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        value="Shorten Story"
+                        checked={Enum.member?(@reasons, gettext("Shorten Story"))}
+                        phx-change="toggle_reason"
+                      />
+                      <label
+                        for="shorten"
+                        class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
+                      >
+                        <%= gettext("Shorten Story") %>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            <button
+              :if={length(@reasons) > 0 && @show_buttons == true}
+              type="button"
+              phx-click="generate_story"
+              class="flex mt-5 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <%= gettext("Generate story") %>
+            </button>
           <% end %>
         </div>
 
