@@ -314,7 +314,7 @@ defmodule Animina.Accounts.Photo do
             type: :big
           }
         ] do
-      if File.exists?("priv/static/uploads/" <> record.file_name) do
+      if File.exists?("priv/static/uploads/" <> record.filename) do
         OptimizedPhoto.create(%{
           image_url: resize_image(record.filename, type.width, type.type),
           type: type.type,
@@ -323,7 +323,7 @@ defmodule Animina.Accounts.Photo do
         })
       else
         OptimizedPhoto.create(%{
-          image_url: record.file_name,
+          image_url: record.filename,
           type: type.type,
           user_id: record.user_id,
           photo_id: record.id
