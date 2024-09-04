@@ -10,34 +10,31 @@ defmodule Animina.Accounts.Message do
     authorizers: Ash.Policy.Authorizer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "messages"
+    repo Animina.Repo
 
-    attribute :content, :string do
-      constraints max_length: 1_024
-      allow_nil? false
+    references do
+      reference :sender, on_delete: :delete
+      reference :receiver, on_delete: :delete
     end
-
-    attribute :read_at, :utc_datetime_usec do
-      allow_nil? true
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :sender, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-      allow_nil? false
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
 
-    belongs_to :receiver, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-      allow_nil? false
-    end
+    define :by_id, args: [:id]
+    define :has_been_read
+    define :unread_messages_for_user, args: [:user_id]
+
+    define :last_unread_message_by_receiver, args: [:receiver_id], get?: true
+
+    define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
+    define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
+
+    define :messages_sent_by_user, args: [:sender_id]
   end
 
   actions do
@@ -135,32 +132,6 @@ defmodule Animina.Accounts.Message do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-
-    define :by_id, args: [:id]
-    define :has_been_read
-    define :unread_messages_for_user, args: [:user_id]
-
-    define :last_unread_message_by_receiver, args: [:receiver_id], get?: true
-
-    define :messages_for_sender_and_receiver, args: [:sender_id, :receiver_id]
-    define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
-
-    define :messages_sent_by_user, args: [:sender_id]
-  end
-
-  changes do
-    change after_action(fn changeset, record, _context ->
-             PubSub.broadcast(Animina.PubSub, "messages", {:new_message, record})
-
-             {:ok, record}
-           end),
-           on: [:create]
-  end
-
   policies do
     policy action_type(:create) do
       authorize_if Animina.Checks.CreateMessageCheck
@@ -175,13 +146,42 @@ defmodule Animina.Accounts.Message do
     end
   end
 
-  postgres do
-    table "messages"
-    repo Animina.Repo
+  changes do
+    change after_action(fn changeset, record, _context ->
+             PubSub.broadcast(Animina.PubSub, "messages", {:new_message, record})
 
-    references do
-      reference :sender, on_delete: :delete
-      reference :receiver, on_delete: :delete
+             {:ok, record}
+           end),
+           on: [:create]
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :content, :string do
+      constraints max_length: 1_024
+      allow_nil? false
+    end
+
+    attribute :read_at, :utc_datetime_usec do
+      allow_nil? true
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :sender, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+      allow_nil? false
+    end
+
+    belongs_to :receiver, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+      allow_nil? false
     end
   end
 end

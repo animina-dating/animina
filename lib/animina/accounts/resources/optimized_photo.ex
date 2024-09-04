@@ -7,30 +7,22 @@ defmodule Animina.Accounts.OptimizedPhoto do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
-    attribute :image_url, :string, allow_nil?: false
+  postgres do
+    table "optimized_photos"
+    repo Animina.Repo
 
-    attribute :type, :atom do
-      constraints one_of: [:thumbnail, :normal, :big]
-
-      allow_nil? false
+    references do
+      reference :user, on_delete: :delete
+      reference :photo, on_delete: :delete
     end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :photo, Animina.Accounts.Photo do
-      domain Animina.Accounts
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :destroy
+    define :by_type_and_photo_id, get?: true
   end
 
   actions do
@@ -67,21 +59,29 @@ defmodule Animina.Accounts.OptimizedPhoto do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :destroy
-    define :by_type_and_photo_id, get?: true
+  attributes do
+    uuid_primary_key :id
+    attribute :image_url, :string, allow_nil?: false
+
+    attribute :type, :atom do
+      constraints one_of: [:thumbnail, :normal, :big]
+
+      allow_nil? false
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
-  postgres do
-    table "optimized_photos"
-    repo Animina.Repo
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
 
-    references do
-      reference :user, on_delete: :delete
-      reference :photo, on_delete: :delete
+    belongs_to :photo, Animina.Accounts.Photo do
+      domain Animina.Accounts
+      attribute_writable? true
     end
   end
 end

@@ -7,11 +7,17 @@ defmodule Animina.Narratives.Headline do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Narratives
 
-  attributes do
-    uuid_primary_key :id
-    attribute :subject, :string, allow_nil?: false
-    attribute :position, :integer, allow_nil?: false
-    attribute :is_active, :boolean, default: true
+  postgres do
+    table "headlines"
+    repo Animina.Repo
+  end
+
+  code_interface do
+    domain Animina.Narratives
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+    define :by_subject, get_by: [:subject], action: :read
   end
 
   actions do
@@ -32,21 +38,15 @@ defmodule Animina.Narratives.Headline do
     end
   end
 
-  code_interface do
-    domain Animina.Narratives
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
-    define :by_subject, get_by: [:subject], action: :read
+  attributes do
+    uuid_primary_key :id
+    attribute :subject, :string, allow_nil?: false
+    attribute :position, :integer, allow_nil?: false
+    attribute :is_active, :boolean, default: true
   end
 
   identities do
     identity :unique_subject, [:subject]
     identity :unique_position, [:position]
-  end
-
-  postgres do
-    table "headlines"
-    repo Animina.Repo
   end
 end

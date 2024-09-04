@@ -11,51 +11,26 @@ defmodule Animina.Narratives.Story do
     notifiers: [Ash.Notifier.PubSub],
     domain: Animina.Narratives
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "stories"
+    repo Animina.Repo
 
-    attribute :content, :string do
-      constraints max_length: 1_024
-    end
-
-    attribute :position, :integer, allow_nil?: false
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  pub_sub do
-    module Animina
-    prefix "story"
-
-    broadcast_type :phoenix_broadcast
-
-    publish :create, ["created", [:user_id, nil]]
-    publish :update, ["updated", :id]
-    publish :destroy, ["deleted", [:id]]
-
-    publish_all :destroy, ["deleted", [:user_id, :id]]
-  end
-
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-    end
-
-    belongs_to :headline, Animina.Narratives.Headline do
-      attribute_writable? true
-    end
-
-    has_one :photo, Animina.Accounts.Photo do
-      domain Animina.Accounts
+    references do
+      reference :user, on_delete: :delete
     end
   end
 
-  validations do
-    validate {Validations.AboutStory, headline: :headline_id, user: :user_id}
-    validate {Validations.DeleteAboutStory, headline: :headline_id, user: :user_id}, on: :destroy
-    validate present(:headline_id)
+  code_interface do
+    domain Animina.Narratives
+    define :read
+    define :create
+    define :update
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
+    define :by_user_id_with_headline, args: [:user_id]
+    define :by_user_id, args: [:user_id]
+    define :descending_by_user_id, args: [:user_id]
+    define :about_story_by_user, args: [:user_id], get?: true
   end
 
   actions do
@@ -148,21 +123,17 @@ defmodule Animina.Narratives.Story do
     end
   end
 
-  code_interface do
-    domain Animina.Narratives
-    define :read
-    define :create
-    define :update
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
-    define :by_user_id_with_headline, args: [:user_id]
-    define :by_user_id, args: [:user_id]
-    define :descending_by_user_id, args: [:user_id]
-    define :about_story_by_user, args: [:user_id], get?: true
-  end
+  pub_sub do
+    module Animina
+    prefix "story"
 
-  identities do
-    identity :unique_position, [:position, :user_id]
+    broadcast_type :phoenix_broadcast
+
+    publish :create, ["created", [:user_id, nil]]
+    publish :update, ["updated", :id]
+    publish :destroy, ["deleted", [:id]]
+
+    publish_all :destroy, ["deleted", [:user_id, :id]]
   end
 
   changes do
@@ -173,13 +144,42 @@ defmodule Animina.Narratives.Story do
            on: [:create, :destroy]
   end
 
-  postgres do
-    table "stories"
-    repo Animina.Repo
+  validations do
+    validate {Validations.AboutStory, headline: :headline_id, user: :user_id}
+    validate {Validations.DeleteAboutStory, headline: :headline_id, user: :user_id}, on: :destroy
+    validate present(:headline_id)
+  end
 
-    references do
-      reference :user, on_delete: :delete
+  attributes do
+    uuid_primary_key :id
+
+    attribute :content, :string do
+      constraints max_length: 1_024
     end
+
+    attribute :position, :integer, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+    end
+
+    belongs_to :headline, Animina.Narratives.Headline do
+      attribute_writable? true
+    end
+
+    has_one :photo, Animina.Accounts.Photo do
+      domain Animina.Accounts
+    end
+  end
+
+  identities do
+    identity :unique_position, [:position, :user_id]
   end
 
   defp update_user_registration_completed_at(user_id) do

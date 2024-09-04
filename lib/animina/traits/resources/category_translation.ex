@@ -7,16 +7,17 @@ defmodule Animina.Traits.CategoryTranslation do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Traits
 
-  attributes do
-    uuid_primary_key :id
-    attribute :language, :string, allow_nil?: false
-    attribute :name, :ci_string, allow_nil?: false
+  postgres do
+    table "traits_category_translations"
+    repo Animina.Repo
   end
 
-  relationships do
-    belongs_to :category, Animina.Traits.Category do
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Traits
+    define :read
+    define :create
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
   end
 
   actions do
@@ -33,17 +34,16 @@ defmodule Animina.Traits.CategoryTranslation do
     end
   end
 
-  code_interface do
-    domain Animina.Traits
-    define :read
-    define :create
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
+  attributes do
+    uuid_primary_key :id
+    attribute :language, :string, allow_nil?: false
+    attribute :name, :ci_string, allow_nil?: false
   end
 
-  postgres do
-    table "traits_category_translations"
-    repo Animina.Repo
+  relationships do
+    belongs_to :category, Animina.Traits.Category do
+      attribute_writable? true
+    end
   end
 
   # defp validate_language_code_length(changes) do
