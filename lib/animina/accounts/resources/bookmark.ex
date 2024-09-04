@@ -9,57 +9,37 @@ defmodule Animina.Accounts.Bookmark do
     domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "bookmarks"
+    repo Animina.Repo
 
-    attribute :reason, :atom do
-      constraints one_of: [:liked, :visited]
-      allow_nil? false
+    references do
+      reference :owner, on_delete: :delete
+      reference :user, on_delete: :delete
     end
 
-    attribute :owner_id, :uuid do
-      allow_nil? false
+    custom_indexes do
+      index [:owner_id]
+      index [:reason]
+      index [:user_id]
+      index [:owner_id, :user_id]
+      index [:owner_id, :reason]
     end
-
-    attribute :user_id, :uuid do
-      allow_nil? false
-    end
-
-    attribute :last_visit_at, :utc_datetime
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :owner, Animina.Accounts.User do
-      domain Animina.Accounts
-      allow_nil? false
-    end
-
-    belongs_to :user, Animina.Accounts.User do
-      domain Animina.Accounts
-      allow_nil? false
-    end
-
-    has_many :visit_log_entries, Animina.Accounts.VisitLogEntry
-  end
-
-  pub_sub do
-    module Animina
-    prefix "bookmark"
-
-    broadcast_type :phoenix_broadcast
-
-    publish :create, ["created", [:owner_id, nil]]
-    publish :update, ["updated", :id]
-    publish :destroy, ["deleted", [:id]]
-
-    publish_all :destroy, ["deleted", [:owner_id, :id]]
-  end
-
-  identities do
-    identity :unique_bookmark, [:user_id, :owner_id, :reason]
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :like
+    define :visit
+    define :unlike
+    define :update_last_visit
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
+    define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
+    define :by_owner, args: [:owner_id]
+    define :most_often_visited_by_user, args: [:owner_id]
+    define :longest_overall_duration_visited_by_user, args: [:owner_id]
   end
 
   actions do
@@ -145,30 +125,6 @@ defmodule Animina.Accounts.Bookmark do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :like
-    define :visit
-    define :unlike
-    define :update_last_visit
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
-    define :by_owner_user_and_reason, get_by: [:owner_id, :user_id, :reason], action: :read
-    define :by_owner, args: [:owner_id]
-    define :most_often_visited_by_user, args: [:owner_id]
-    define :longest_overall_duration_visited_by_user, args: [:owner_id]
-  end
-
-  aggregates do
-    sum :visit_log_entries_total_duration, :visit_log_entries, :duration
-    count :visit_log_entries_count, :visit_log_entries
-  end
-
-  preparations do
-    prepare build(load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user])
-  end
-
   policies do
     policy action_type(:create) do
       authorize_if actor_present()
@@ -183,21 +139,65 @@ defmodule Animina.Accounts.Bookmark do
     end
   end
 
-  postgres do
-    table "bookmarks"
-    repo Animina.Repo
+  pub_sub do
+    module Animina
+    prefix "bookmark"
 
-    references do
-      reference :owner, on_delete: :delete
-      reference :user, on_delete: :delete
+    broadcast_type :phoenix_broadcast
+
+    publish :create, ["created", [:owner_id, nil]]
+    publish :update, ["updated", :id]
+    publish :destroy, ["deleted", [:id]]
+
+    publish_all :destroy, ["deleted", [:owner_id, :id]]
+  end
+
+  preparations do
+    prepare build(load: [:visit_log_entries_total_duration, :visit_log_entries_count, :user])
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :reason, :atom do
+      constraints one_of: [:liked, :visited]
+      allow_nil? false
     end
 
-    custom_indexes do
-      index [:owner_id]
-      index [:reason]
-      index [:user_id]
-      index [:owner_id, :user_id]
-      index [:owner_id, :reason]
+    attribute :owner_id, :uuid do
+      allow_nil? false
     end
+
+    attribute :user_id, :uuid do
+      allow_nil? false
+    end
+
+    attribute :last_visit_at, :utc_datetime
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :owner, Animina.Accounts.User do
+      domain Animina.Accounts
+      allow_nil? false
+    end
+
+    belongs_to :user, Animina.Accounts.User do
+      domain Animina.Accounts
+      allow_nil? false
+    end
+
+    has_many :visit_log_entries, Animina.Accounts.VisitLogEntry
+  end
+
+  aggregates do
+    sum :visit_log_entries_total_duration, :visit_log_entries, :duration
+    count :visit_log_entries_count, :visit_log_entries
+  end
+
+  identities do
+    identity :unique_bookmark, [:user_id, :owner_id, :reason]
   end
 end

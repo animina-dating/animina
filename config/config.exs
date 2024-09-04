@@ -86,23 +86,29 @@ config :animina, AniminaWeb.Gettext, default_locale: "en", locales: ~w(en de)
 
 config :animina, AniminaWeb.FlagsLive, max_selected: 20
 
-config :spark, :formatter,
-  remove_parens?: true,
-  "Ash.Resource": [
-    type: Ash.Resource,
-    section_order: [
-      :attributes,
-      :relationships,
-      :validations,
-      :identities,
-      :aggregates,
-      :calculations,
-      :preparations,
-      :policies,
-      :authentication,
-      :token,
-      :postgres
-    ]
+config :spark,
+  formatter: [
+    remove_parens?: true,
+    "Ash.Resource": [
+      section_order: [
+        :postgres,
+        :resource,
+        :code_interface,
+        :actions,
+        :policies,
+        :pub_sub,
+        :preparations,
+        :changes,
+        :validations,
+        :multitenancy,
+        :attributes,
+        :relationships,
+        :calculations,
+        :aggregates,
+        :identities
+      ]
+    ],
+    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
 
 # Import environment specific config. This must remain at the bottom

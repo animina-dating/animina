@@ -12,6 +12,162 @@ defmodule Animina.Accounts.BasicUser do
   alias Animina.Accounts
   alias Animina.Validations
 
+  postgres do
+    table "users"
+    repo Animina.Repo
+  end
+
+  authentication do
+    domain Accounts
+
+    strategies do
+      password :password do
+        identity_field :email
+        sign_in_tokens_enabled? true
+        confirmation_required?(false)
+
+        register_action_accept([
+          :email,
+          :username,
+          :name,
+          :zip_code,
+          :birthday,
+          :height,
+          :gender,
+          :mobile_phone,
+          :language,
+          :legal_terms_accepted,
+          :occupation
+        ])
+      end
+    end
+
+    tokens do
+      enabled? true
+      token_resource Accounts.Token
+
+      signing_secret Accounts.Secrets
+    end
+  end
+
+  state_machine do
+    initial_states([:normal])
+    default_initial_state(:normal)
+
+    transitions do
+      transition(:validate, from: [:normal, :under_investigation], to: :validated)
+      transition(:investigate, from: [:normal, :validated], to: :under_investigation)
+      transition(:ban, from: [:normal, :validated, :under_investigation], to: :banned)
+      transition(:incognito, from: [:normal, :validated, :under_investigation], to: :incognito)
+      transition(:hibernate, from: [:normal, :validated, :under_investigation], to: :hibernate)
+      transition(:archive, from: [:normal, :validated, :under_investigation], to: :archived)
+      transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
+      transition(:unban, from: [:banned], to: :normal)
+      transition(:recover, from: [:archived], to: :normal)
+
+      transition(:normalize,
+        from: [:banned, :incognito, :hibernate, :archived, :under_investigation],
+        to: :normal
+      )
+    end
+  end
+
+  code_interface do
+    domain Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+    define :custom_sign_in, get?: true
+    define :investigate
+    define :ban
+    define :archive
+    define :hibernate
+    define :reactivate
+    define :unban
+    define :recover
+    define :validate
+    define :normalize
+    define :incognito
+  end
+
+  actions do
+    defaults [:create, :read]
+
+    read :custom_sign_in do
+      argument :username_or_email, :string, allow_nil?: false
+      argument :password, :string, allow_nil?: false, sensitive?: true
+      prepare Animina.MyCustomSignInPreparation
+    end
+
+    update :validate do
+      require_atomic? false
+      change transition_state(:validated)
+    end
+
+    update :investigate do
+      require_atomic? false
+      change transition_state(:under_investigation)
+    end
+
+    update :ban do
+      require_atomic? false
+      change transition_state(:banned)
+    end
+
+    update :incognito do
+      require_atomic? false
+      change transition_state(:incognito)
+    end
+
+    update :hibernate do
+      require_atomic? false
+      change transition_state(:hibernate)
+    end
+
+    update :archive do
+      require_atomic? false
+      change transition_state(:archived)
+    end
+
+    update :reactivate do
+      require_atomic? false
+      change transition_state(:normal)
+    end
+
+    update :unban do
+      require_atomic? false
+      change transition_state(:normal)
+    end
+
+    update :recover do
+      require_atomic? false
+      change transition_state(:normal)
+    end
+
+    update :normalize do
+      require_atomic? false
+      change transition_state(:normal)
+    end
+  end
+
+  preparations do
+    prepare build(load: [:age, :credit_points])
+  end
+
+  validations do
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.ZipCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
+    validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
+    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
+
+    validate {Validations.BadPassword,
+              where: [action_is([:register_with_password, :change_password])],
+              attribute: :password}
+
+    validate {Validations.BadUsername, attribute: :username}
+  end
+
   attributes do
     uuid_primary_key :id
     attribute :email, :ci_string, allow_nil?: false, public?: true
@@ -117,173 +273,17 @@ defmodule Animina.Accounts.BasicUser do
     end
   end
 
-  state_machine do
-    initial_states([:normal])
-    default_initial_state(:normal)
-
-    transitions do
-      transition(:validate, from: [:normal, :under_investigation], to: :validated)
-      transition(:investigate, from: [:normal, :validated], to: :under_investigation)
-      transition(:ban, from: [:normal, :validated, :under_investigation], to: :banned)
-      transition(:incognito, from: [:normal, :validated, :under_investigation], to: :incognito)
-      transition(:hibernate, from: [:normal, :validated, :under_investigation], to: :hibernate)
-      transition(:archive, from: [:normal, :validated, :under_investigation], to: :archived)
-      transition(:reactivate, from: [:incognito, :hibernate], to: :normal)
-      transition(:unban, from: [:banned], to: :normal)
-      transition(:recover, from: [:archived], to: :normal)
-
-      transition(:normalize,
-        from: [:banned, :incognito, :hibernate, :archived, :under_investigation],
-        to: :normal
-      )
-    end
-  end
-
-  validations do
-    validate {Validations.Birthday, attribute: :birthday}
-    validate {Validations.ZipCode, attribute: :zip_code}
-    validate {Validations.Gender, attribute: :gender}
-    validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
-    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
-
-    validate {Validations.BadPassword,
-              where: [action_is([:register_with_password, :change_password])],
-              attribute: :password}
-
-    validate {Validations.BadUsername, attribute: :username}
-  end
-
-  identities do
-    identity :unique_email, [:email], eager_check_with: Accounts
-    identity :unique_username, [:username], eager_check_with: Accounts
-    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
-  end
-
-  actions do
-    defaults [:create, :read]
-
-    read :custom_sign_in do
-      argument :username_or_email, :string, allow_nil?: false
-      argument :password, :string, allow_nil?: false, sensitive?: true
-      prepare Animina.MyCustomSignInPreparation
-    end
-
-    update :validate do
-      require_atomic? false
-      change transition_state(:validated)
-    end
-
-    update :investigate do
-      require_atomic? false
-      change transition_state(:under_investigation)
-    end
-
-    update :ban do
-      require_atomic? false
-      change transition_state(:banned)
-    end
-
-    update :incognito do
-      require_atomic? false
-      change transition_state(:incognito)
-    end
-
-    update :hibernate do
-      require_atomic? false
-      change transition_state(:hibernate)
-    end
-
-    update :archive do
-      require_atomic? false
-      change transition_state(:archived)
-    end
-
-    update :reactivate do
-      require_atomic? false
-      change transition_state(:normal)
-    end
-
-    update :unban do
-      require_atomic? false
-      change transition_state(:normal)
-    end
-
-    update :recover do
-      require_atomic? false
-      change transition_state(:normal)
-    end
-
-    update :normalize do
-      require_atomic? false
-      change transition_state(:normal)
-    end
-  end
-
-  code_interface do
-    domain Accounts
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
-    define :custom_sign_in, get?: true
-    define :investigate
-    define :ban
-    define :archive
-    define :hibernate
-    define :reactivate
-    define :unban
-    define :recover
-    define :validate
-    define :normalize
-    define :incognito
+  calculations do
+    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
   end
 
   aggregates do
     sum :credit_points, :credits, :points
   end
 
-  calculations do
-    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
-  end
-
-  preparations do
-    prepare build(load: [:age, :credit_points])
-  end
-
-  authentication do
-    domain Accounts
-
-    strategies do
-      password :password do
-        identity_field :email
-        sign_in_tokens_enabled? true
-        confirmation_required?(false)
-
-        register_action_accept([
-          :email,
-          :username,
-          :name,
-          :zip_code,
-          :birthday,
-          :height,
-          :gender,
-          :mobile_phone,
-          :language,
-          :legal_terms_accepted,
-          :occupation
-        ])
-      end
-    end
-
-    tokens do
-      enabled? true
-      token_resource Accounts.Token
-
-      signing_secret Accounts.Secrets
-    end
-  end
-
-  postgres do
-    table "users"
-    repo Animina.Repo
+  identities do
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 end

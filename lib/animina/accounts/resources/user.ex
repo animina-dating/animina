@@ -18,168 +18,58 @@ defmodule Animina.Accounts.User do
   alias Animina.Validations
   alias Phoenix.PubSub
 
-  attributes do
-    uuid_primary_key :id
-    attribute :email, :ci_string, allow_nil?: false, public?: true
-    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
-    attribute :is_in_waitlist, :boolean, default: false, public?: true
+  postgres do
+    table "users"
 
-    attribute :username, :ci_string do
-      allow_nil? false
-      public? true
-
-      constraints max_length: 15,
-                  min_length: 2,
-                  match: ~r/^[A-Za-z0-9._-]*$/,
-                  trim?: true,
-                  allow_empty?: false
-    end
-
-    attribute :name, :string do
-      allow_nil? false
-      public? true
-
-      constraints max_length: 50,
-                  min_length: 1,
-                  trim?: true,
-                  allow_empty?: false
-    end
-
-    attribute :birthday, :date, allow_nil?: false, public?: true
-
-    attribute :zip_code, :string do
-      constraints trim?: true,
-                  allow_empty?: false
-    end
-
-    attribute :state, :atom do
-      constraints one_of: [
-                    :normal,
-                    :validated,
-                    :under_investigation,
-                    :banned,
-                    :incognito,
-                    :hibernate,
-                    :archived
-                  ]
-
-      default :normal
-      allow_nil? false
-    end
-
-    attribute :gender, :string, allow_nil?: false, public?: true
-
-    attribute :height, :integer do
-      allow_nil? false
-      public? true
-
-      constraints max: 250,
-                  min: 40
-    end
-
-    attribute :mobile_phone, :ash_phone_number, allow_nil?: false
-
-    attribute :minimum_partner_height, :integer, allow_nil?: true
-    attribute :maximum_partner_height, :integer, allow_nil?: true
-
-    attribute :minimum_partner_age, :integer do
-      allow_nil? true
-      constraints min: 18
-    end
-
-    attribute :maximum_partner_age, :integer, allow_nil?: true, public?: true
-
-    attribute :partner_gender, :string, allow_nil?: true, public?: true
-
-    attribute :search_range, :integer, allow_nil?: true, public?: true
-    attribute :language, :string, allow_nil?: true, public?: true
-    attribute :legal_terms_accepted, :boolean, default: false, public?: true
-    attribute :registration_completed_at, :utc_datetime_usec, allow_nil?: true, public?: true
-    attribute :preapproved_communication_only, :boolean, default: false, public?: true
-    attribute :streak, :integer, default: 0, public?: true
-    attribute :confirmed_at, :utc_datetime_usec, allow_nil?: true, public?: true
-
-    attribute :last_registration_page_visited, :string,
-      allow_nil?: true,
-      public?: true,
-      default: "/my/potential-partner"
-
-    attribute :occupation, :string do
-      constraints max_length: 40,
-                  trim?: true,
-                  allow_empty?: false
-    end
-
-    attribute :is_private, :boolean, default: false, public?: true
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
+    repo Animina.Repo
   end
 
-  relationships do
-    has_many :credits, Accounts.Credit
-    has_many :photos, Accounts.Photo
+  authentication do
+    domain Accounts
 
-    many_to_many :roles, Accounts.Role do
-      through Accounts.UserRole
-      source_attribute_on_join_resource :user_id
-      destination_attribute_on_join_resource :role_id
+    strategies do
+      password :password do
+        identity_field :email
+        sign_in_tokens_enabled? true
+        confirmation_required?(false)
+
+        register_action_accept([
+          :email,
+          :username,
+          :name,
+          :zip_code,
+          :birthday,
+          :height,
+          :gender,
+          :mobile_phone,
+          :language,
+          :legal_terms_accepted,
+          :occupation
+        ])
+
+        resettable do
+          sender Animina.SendPasswordResetEmail
+        end
+      end
     end
 
-    many_to_many :flags, Traits.Flag do
-      through Traits.UserFlags
-      source_attribute_on_join_resource :user_id
-      destination_attribute_on_join_resource :flag_id
+    add_ons do
+      confirmation :confirm_new_user do
+        monitor_fields [:email]
+        confirm_on_create? true
+        confirm_on_update? false
+        sender Animina.UserEmail
+        token_lifetime {365, :days}
+      end
     end
 
-    has_many :traits, Traits.UserFlags do
-      destination_attribute :user_id
+    tokens do
+      enabled? true
+      token_resource Accounts.Token
+      store_all_tokens? true
+
+      signing_secret Accounts.Secrets
     end
-
-    has_many :stories, Narratives.Story do
-      domain Narratives
-    end
-
-    has_many :sent_messages, Accounts.Message do
-      destination_attribute :sender_id
-    end
-
-    has_many :received_messages, Accounts.Message do
-      destination_attribute :receiver_id
-    end
-
-    has_many :received_reactions, Animina.Accounts.Reaction do
-      destination_attribute :receiver_id
-    end
-
-    has_many :send_reactions, Animina.Accounts.Reaction do
-      destination_attribute :sender_id
-    end
-
-    has_many :bookmarks, Accounts.Bookmark do
-      destination_attribute :owner_id
-    end
-
-    has_many :visit_log_entries, Accounts.VisitLogEntry do
-      destination_attribute :user_id
-    end
-  end
-
-  validations do
-    validate {Validations.Birthday, attribute: :birthday}
-    validate {Validations.ZipCode, attribute: :zip_code}
-    validate {Validations.Gender, attribute: :gender}
-    validate {Validations.Gender, attribute: :partner_gender}
-    validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
-    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
-
-    validate {Validations.BadPassword,
-              where: [action_is([:register_with_password, :change_password])],
-              attribute: :password}
-
-    validate {Validations.BadUsername, attribute: :username}
-
-    validate {Validations.RegistrationCompletedAt, attribute: :registration_completed_at}
   end
 
   state_machine do
@@ -213,22 +103,36 @@ defmodule Animina.Accounts.User do
     end
   end
 
-  pub_sub do
-    module Animina
-    prefix "user"
-    broadcast_type :phoenix_broadcast
-
-    publish :update, ["updated", :id]
-  end
-
-  identities do
-    identity :unique_email, [:email], eager_check_with: Accounts
-    identity :unique_username, [:username], eager_check_with: Accounts
-    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
-  end
-
-  aggregates do
-    sum :credit_points, :credits, :points, default: 0
+  code_interface do
+    domain Accounts
+    define :read
+    define :create
+    define :destroy
+    define :update
+    define :update_last_registration_page_visited, action: :update
+    define :by_username, get_by: [:username], action: :read
+    define :by_id, get_by: [:id], action: :read
+    define :users_registered_within_the_hour
+    define :by_email, get_by: [:email], action: :read
+    define :by_username_as_an_actor, args: [:username]
+    define :custom_sign_in, get?: true
+    define :request_password_reset_with_password
+    define :female_public_users_who_created_an_account_in_the_last_60_days
+    define :male_public_users_who_created_an_account_in_the_last_60_days
+    define :users_in_waitlist
+    define :investigate
+    define :give_user_in_waitlist_access
+    define :ban
+    define :archive
+    define :hibernate
+    define :reactivate
+    define :unban
+    define :recover
+    define :validate
+    define :normalize
+    define :incognito
+    define :make_admin
+    define :remove_admin
   end
 
   actions do
@@ -451,42 +355,30 @@ defmodule Animina.Accounts.User do
     end
   end
 
-  code_interface do
-    domain Accounts
-    define :read
-    define :create
-    define :destroy
-    define :update
-    define :update_last_registration_page_visited, action: :update
-    define :by_username, get_by: [:username], action: :read
-    define :by_id, get_by: [:id], action: :read
-    define :users_registered_within_the_hour
-    define :by_email, get_by: [:email], action: :read
-    define :by_username_as_an_actor, args: [:username]
-    define :custom_sign_in, get?: true
-    define :request_password_reset_with_password
-    define :female_public_users_who_created_an_account_in_the_last_60_days
-    define :male_public_users_who_created_an_account_in_the_last_60_days
-    define :users_in_waitlist
-    define :investigate
-    define :give_user_in_waitlist_access
-    define :ban
-    define :archive
-    define :hibernate
-    define :reactivate
-    define :unban
-    define :recover
-    define :validate
-    define :normalize
-    define :incognito
-    define :make_admin
-    define :remove_admin
+  policies do
+    policy action_type(:read) do
+      authorize_if Animina.Checks.ReadProfileCheck
+    end
   end
 
-  calculations do
-    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
-    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
-    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
+  pub_sub do
+    module Animina
+    prefix "user"
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
+  end
+
+  preparations do
+    prepare build(
+              load: [
+                :age,
+                :credit_points,
+                :profile_photo,
+                :city,
+                :roles
+              ]
+            )
   end
 
   changes do
@@ -516,76 +408,184 @@ defmodule Animina.Accounts.User do
            on: [:update]
   end
 
-  preparations do
-    prepare build(
-              load: [
-                :age,
-                :credit_points,
-                :profile_photo,
-                :city,
-                :roles
-              ]
-            )
+  validations do
+    validate {Validations.Birthday, attribute: :birthday}
+    validate {Validations.ZipCode, attribute: :zip_code}
+    validate {Validations.Gender, attribute: :gender}
+    validate {Validations.Gender, attribute: :partner_gender}
+    validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
+    validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
+
+    validate {Validations.BadPassword,
+              where: [action_is([:register_with_password, :change_password])],
+              attribute: :password}
+
+    validate {Validations.BadUsername, attribute: :username}
+
+    validate {Validations.RegistrationCompletedAt, attribute: :registration_completed_at}
   end
 
-  policies do
-    policy action_type(:read) do
-      authorize_if Animina.Checks.ReadProfileCheck
+  attributes do
+    uuid_primary_key :id
+    attribute :email, :ci_string, allow_nil?: false, public?: true
+    attribute :hashed_password, :string, allow_nil?: false, sensitive?: true
+    attribute :is_in_waitlist, :boolean, default: false, public?: true
+
+    attribute :username, :ci_string do
+      allow_nil? false
+      public? true
+
+      constraints max_length: 15,
+                  min_length: 2,
+                  match: ~r/^[A-Za-z0-9._-]*$/,
+                  trim?: true,
+                  allow_empty?: false
+    end
+
+    attribute :name, :string do
+      allow_nil? false
+      public? true
+
+      constraints max_length: 50,
+                  min_length: 1,
+                  trim?: true,
+                  allow_empty?: false
+    end
+
+    attribute :birthday, :date, allow_nil?: false, public?: true
+
+    attribute :zip_code, :string do
+      constraints trim?: true,
+                  allow_empty?: false
+    end
+
+    attribute :state, :atom do
+      constraints one_of: [
+                    :normal,
+                    :validated,
+                    :under_investigation,
+                    :banned,
+                    :incognito,
+                    :hibernate,
+                    :archived
+                  ]
+
+      default :normal
+      allow_nil? false
+    end
+
+    attribute :gender, :string, allow_nil?: false, public?: true
+
+    attribute :height, :integer do
+      allow_nil? false
+      public? true
+
+      constraints max: 250,
+                  min: 40
+    end
+
+    attribute :mobile_phone, :ash_phone_number, allow_nil?: false
+
+    attribute :minimum_partner_height, :integer, allow_nil?: true
+    attribute :maximum_partner_height, :integer, allow_nil?: true
+
+    attribute :minimum_partner_age, :integer do
+      allow_nil? true
+      constraints min: 18
+    end
+
+    attribute :maximum_partner_age, :integer, allow_nil?: true, public?: true
+
+    attribute :partner_gender, :string, allow_nil?: true, public?: true
+
+    attribute :search_range, :integer, allow_nil?: true, public?: true
+    attribute :language, :string, allow_nil?: true, public?: true
+    attribute :legal_terms_accepted, :boolean, default: false, public?: true
+    attribute :registration_completed_at, :utc_datetime_usec, allow_nil?: true, public?: true
+    attribute :preapproved_communication_only, :boolean, default: false, public?: true
+    attribute :streak, :integer, default: 0, public?: true
+    attribute :confirmed_at, :utc_datetime_usec, allow_nil?: true, public?: true
+
+    attribute :last_registration_page_visited, :string,
+      allow_nil?: true,
+      public?: true,
+      default: "/my/potential-partner"
+
+    attribute :occupation, :string do
+      constraints max_length: 40,
+                  trim?: true,
+                  allow_empty?: false
+    end
+
+    attribute :is_private, :boolean, default: false, public?: true
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    has_many :credits, Accounts.Credit
+    has_many :photos, Accounts.Photo
+
+    many_to_many :roles, Accounts.Role do
+      through Accounts.UserRole
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :role_id
+    end
+
+    many_to_many :flags, Traits.Flag do
+      through Traits.UserFlags
+      source_attribute_on_join_resource :user_id
+      destination_attribute_on_join_resource :flag_id
+    end
+
+    has_many :traits, Traits.UserFlags do
+      destination_attribute :user_id
+    end
+
+    has_many :stories, Narratives.Story do
+      domain Narratives
+    end
+
+    has_many :sent_messages, Accounts.Message do
+      destination_attribute :sender_id
+    end
+
+    has_many :received_messages, Accounts.Message do
+      destination_attribute :receiver_id
+    end
+
+    has_many :received_reactions, Animina.Accounts.Reaction do
+      destination_attribute :receiver_id
+    end
+
+    has_many :send_reactions, Animina.Accounts.Reaction do
+      destination_attribute :sender_id
+    end
+
+    has_many :bookmarks, Accounts.Bookmark do
+      destination_attribute :owner_id
+    end
+
+    has_many :visit_log_entries, Accounts.VisitLogEntry do
+      destination_attribute :user_id
     end
   end
 
-  authentication do
-    domain Accounts
-
-    strategies do
-      password :password do
-        identity_field :email
-        sign_in_tokens_enabled? true
-        confirmation_required?(false)
-
-        register_action_accept([
-          :email,
-          :username,
-          :name,
-          :zip_code,
-          :birthday,
-          :height,
-          :gender,
-          :mobile_phone,
-          :language,
-          :legal_terms_accepted,
-          :occupation
-        ])
-
-        resettable do
-          sender Animina.SendPasswordResetEmail
-        end
-      end
-    end
-
-    add_ons do
-      confirmation :confirm_new_user do
-        monitor_fields [:email]
-        confirm_on_create? true
-        confirm_on_update? false
-        sender Animina.UserEmail
-        token_lifetime {365, :days}
-      end
-    end
-
-    tokens do
-      enabled? true
-      token_resource Accounts.Token
-      store_all_tokens? true
-
-      signing_secret Accounts.Secrets
-    end
+  calculations do
+    calculate :age, :integer, {Animina.Calculations.UserAge, field: :birthday}
+    calculate :profile_photo, :map, {Animina.Calculations.UserProfilePhoto, field: :id}
+    calculate :city, :map, {Animina.Calculations.UserCity, field: :zip_code}
   end
 
-  postgres do
-    table "users"
+  aggregates do
+    sum :credit_points, :credits, :points, default: 0
+  end
 
-    repo Animina.Repo
+  identities do
+    identity :unique_email, [:email], eager_check_with: Accounts
+    identity :unique_username, [:username], eager_check_with: Accounts
+    identity :unique_mobile_phone, [:mobile_phone], eager_check_with: Accounts
   end
 
   defp add_role(changeset, name) do

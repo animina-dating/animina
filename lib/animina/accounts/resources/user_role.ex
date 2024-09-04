@@ -10,23 +10,23 @@ defmodule Animina.Accounts.UserRole do
     domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "user_roles"
+    repo Animina.Repo
 
-    create_timestamp :created_at
-    update_timestamp :updated_at
+    references do
+      reference :user, on_delete: :delete
+      reference :role, on_delete: :delete
+    end
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :role, Animina.Accounts.Role do
-      allow_nil? false
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :destroy
+    define :by_user_id, args: [:user_id]
+    define :admin_roles_by_user_id
   end
 
   actions do
@@ -60,13 +60,18 @@ defmodule Animina.Accounts.UserRole do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :destroy
-    define :by_user_id, args: [:user_id]
-    define :admin_roles_by_user_id
+  policies do
+    policy action(:create) do
+      authorize_if Animina.Checks.CreateUserRoleCheck
+    end
+
+    policy action(:read) do
+      authorize_if Animina.Checks.ReadUserRoleCheck
+    end
+  end
+
+  preparations do
+    prepare build(load: [:role])
   end
 
   changes do
@@ -82,27 +87,22 @@ defmodule Animina.Accounts.UserRole do
            on: [:create]
   end
 
-  preparations do
-    prepare build(load: [:role])
+  attributes do
+    uuid_primary_key :id
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
-  policies do
-    policy action(:create) do
-      authorize_if Animina.Checks.CreateUserRoleCheck
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
     end
 
-    policy action(:read) do
-      authorize_if Animina.Checks.ReadUserRoleCheck
-    end
-  end
-
-  postgres do
-    table "user_roles"
-    repo Animina.Repo
-
-    references do
-      reference :user, on_delete: :delete
-      reference :role, on_delete: :delete
+    belongs_to :role, Animina.Accounts.Role do
+      allow_nil? false
+      attribute_writable? true
     end
   end
 end
