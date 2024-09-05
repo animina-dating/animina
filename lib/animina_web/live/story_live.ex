@@ -253,6 +253,7 @@ defmodule AniminaWeb.StoryLive do
     |> assign(page_title: gettext("Edit your story"))
     |> assign(form_id: "edit-story-form")
     |> assign(title: gettext("Edit your story"))
+    |> assign(:image_required, false)
     |> assign(
       :either_content_or_photo_added,
       either_content_or_photo_added(socket.assigns.story.content, [], "")
@@ -1063,6 +1064,7 @@ defmodule AniminaWeb.StoryLive do
 
         <div>
           <%= submit(@cta,
+            phx_disable_with: gettext("Saving..."),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 if(@form.source.source.valid? == false || @either_content_or_photo_added == false,
