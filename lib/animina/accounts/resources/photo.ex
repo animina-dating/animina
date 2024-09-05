@@ -3,6 +3,8 @@ defmodule Animina.Accounts.Photo do
   This is the Photo module which we use to manage user photos.
   """
   alias Animina.Accounts.OptimizedPhoto
+  alias Animina.ImageTagging
+  alias Animina.Traits.Flag
 
   require Logger
 
@@ -20,6 +22,10 @@ defmodule Animina.Accounts.Photo do
     attribute :size, :integer, allow_nil?: false
     attribute :ext, :string, allow_nil?: false
     attribute :dimensions, :map
+
+    attribute :description, :string do
+      constraints max_length: 1_024
+    end
 
     attribute :error, :string
     attribute :error_state, :string
@@ -91,7 +97,8 @@ defmodule Animina.Accounts.Photo do
         :error_state,
         :state,
         :user_id,
-        :story_id
+        :story_id,
+        :description
       ]
 
       primary? true
@@ -186,6 +193,7 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              create_optimized_photos(record)
+             create_photo_flags(record)
 
              {:ok, record}
            end),
@@ -228,6 +236,39 @@ defmodule Animina.Accounts.Photo do
       {:error, _} ->
         copy_image_directly(record)
     end
+  end
+
+  def create_photo_flags(record) do
+    IO.inspect(record, label: "Recorddd")
+
+    {flags, description} =
+      ImageTagging.tag_image_using_llava("uploads/#{record.filename}")
+
+    IO.inspect(flags, label: "Flags")
+    IO.inspect(description, label: "Description")
+
+    Ash.Changeset.with_transaction(fn ->
+      record
+      |> Ash.Changeset.for_update(:description, description)
+      |> Ash.update()
+
+      Enum.each(flags, fn flag ->
+        Flag.by_name(flag)
+        |> IO.inspect(label: "Flag")
+        |> case do
+          {:ok, flag} ->
+            PhotoFlag.create(%{
+              user_id: record.user_id,
+              photo_id: record.id,
+              flag_id: flag.id
+            })
+
+          {:error, _} ->
+            nil
+        end
+      end)
+    end)
+    |> IO.inspect(label: "Changeset")
   end
 
   defp create_optimized_folder_if_not_exists do

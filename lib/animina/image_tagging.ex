@@ -1,18 +1,30 @@
 defmodule Animina.ImageTagging do
   alias Animina.Traits.Flag
 
-  def tag_image_using_llava(image, system_flags) do
-    prompt = """
-    Tag the image with the following labels:
-    Image: #{image}
-    Flags: #{system_flags}
+  def tag_image_using_llava(image) do
+    IO.inspect(image, label: "Image")
 
-    Make sure you tag it with only one or two flags and make sure the flags are relevant to the image.
+    system_flags =
+      Flag.read!()
+      |> Enum.map(fn flag -> Ash.CiString.value(flag.name) end)
+
+    string_flags = Enum.join(system_flags, ", ")
+
+    IO.inspect(string_flags, label: "String Flags")
+
+    prompt = """
+    Tag this image #{image} with the following system flags #{string_flags}. The image may closely relate to one or two of the system flags.
+
+    Tag the image with the relevant flags.
+
+    if the image is not relevant to any of the flags, please do not tag it with any flags.
+
 
     ONLY RETURN THE RELEVANT FLAGS TO THE IMAGE. DO NOT RETURN FLAGS THAT ARE NOT RELEVANT TO THE IMAGE.
 
     You should return the flags as an array of the flag names and a description of the image.
 
+    The response should be in the following format:
     Flags: [Flag1, Flag2]
     Description: Description of the image
     """
@@ -26,23 +38,15 @@ defmodule Animina.ImageTagging do
       )
 
     {flag, description} = parse_response(response["response"])
-    IO.inspect(flag)
-    IO.inspect(description)
+
+    {flag, description}
   end
 
   def test() do
     # priv/static/images/hike.jpg
     image = "images/hike.jpg"
 
-    system_flags =
-      Flag.read!()
-      |> Enum.map(fn flag -> Ash.CiString.value(flag.name) end)
-
-    string_flags = Enum.join(system_flags, ", ")
-
-    IO.inspect(string_flags)
-
-    tag_image_using_llava(image, string_flags)
+    tag_image_using_llava(image)
   end
 
   defp parse_response(response) do
