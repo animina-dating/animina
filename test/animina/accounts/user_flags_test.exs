@@ -44,6 +44,7 @@ defmodule Animina.Accounts.UserFlagsTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 

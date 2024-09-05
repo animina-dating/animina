@@ -44,7 +44,8 @@ defmodule Animina.Accounts.User do
           :mobile_phone,
           :language,
           :legal_terms_accepted,
-          :occupation
+          :occupation,
+          :country
         ])
 
         resettable do
@@ -162,7 +163,8 @@ defmodule Animina.Accounts.User do
         :search_range,
         :is_private,
         :confirmed_at,
-        :registration_completed_at
+        :registration_completed_at,
+        :country
       ]
 
       primary? true
@@ -195,7 +197,8 @@ defmodule Animina.Accounts.User do
         :streak,
         :confirmed_at,
         :is_in_waitlist,
-        :registration_completed_at
+        :registration_completed_at,
+        :country
       ]
 
       primary? true
@@ -422,6 +425,8 @@ defmodule Animina.Accounts.User do
 
     validate {Validations.BadUsername, attribute: :username}
 
+    validate {Validations.Country, attribute: :country}
+
     validate {Validations.RegistrationCompletedAt, attribute: :registration_completed_at}
   end
 
@@ -459,19 +464,9 @@ defmodule Animina.Accounts.User do
                   allow_empty?: false
     end
 
-    attribute :state, :atom do
-      constraints one_of: [
-                    :normal,
-                    :validated,
-                    :under_investigation,
-                    :banned,
-                    :incognito,
-                    :hibernate,
-                    :archived
-                  ]
-
-      default :normal
+    attribute :country, :string do
       allow_nil? false
+      public? true
     end
 
     attribute :gender, :string, allow_nil?: false, public?: true

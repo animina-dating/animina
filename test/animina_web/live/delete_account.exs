@@ -43,6 +43,7 @@ defmodule AniminaWeb.DeleteAccountTest do
         height: 180,
         zip_code: "56068",
         gender: "male",
+        country: "Germany",
         mobile_phone: "0151-12345678",
         language: "en",
         legal_terms_accepted: true,

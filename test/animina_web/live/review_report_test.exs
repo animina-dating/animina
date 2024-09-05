@@ -247,6 +247,7 @@ defmodule AniminaWeb.ReviewReportTest do
       User.create(%{
         email: "bob@example.com",
         username: "bob",
+        country: "Germany",
         name: "Bob",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1950-01-01",
@@ -269,6 +270,7 @@ defmodule AniminaWeb.ReviewReportTest do
         email: "mike@example.com",
         username: "mike",
         name: "Mike",
+        country: "Germany",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1950-01-01",
         height: 180,
@@ -291,6 +293,7 @@ defmodule AniminaWeb.ReviewReportTest do
         email: "stefan@example.com",
         username: "stefan",
         name: "stefan",
+        country: "Germany",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1951-01-01",
         height: 180,

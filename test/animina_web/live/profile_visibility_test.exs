@@ -242,6 +242,7 @@ defmodule AniminaWeb.ProfileVisibilityTest do
         birthday: "1950-01-01",
         height: 180,
         zip_code: "56068",
+        country: "Germany",
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "en",

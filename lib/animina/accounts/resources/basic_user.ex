@@ -160,6 +160,7 @@ defmodule Animina.Accounts.BasicUser do
     validate {Validations.Gender, attribute: :gender}
     validate {Validations.MobilePhoneNumber, attribute: :mobile_phone}
     validate {Validations.MustBeTrue, attribute: :legal_terms_accepted}
+    validate {Validations.Country, attribute: :country}
 
     validate {Validations.BadPassword,
               where: [action_is([:register_with_password, :change_password])],
@@ -214,6 +215,11 @@ defmodule Animina.Accounts.BasicUser do
 
       default :normal
       allow_nil? false
+    end
+
+    attribute :country, :string do
+      allow_nil? false
+      public? true
     end
 
     attribute :gender, :string, allow_nil?: false, public?: true
