@@ -43,7 +43,6 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:reasons, reasons)
       |> assign(:current_request, nil)
       |> assign(:content, story.content)
-      |> assign(:either_content_or_photo_added, either_content_or_photo_added(story.content, []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, nil)
       |> assign(:show_buttons, true)
@@ -101,7 +100,6 @@ defmodule AniminaWeb.StoryLive do
         :message_when_generating_story,
         gettext("Feeding our internal AI with this text. Please wait a second ")
       )
-      |> assign(:either_content_or_photo_added, either_content_or_photo_added("", []))
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
@@ -255,6 +253,11 @@ defmodule AniminaWeb.StoryLive do
     |> assign(page_title: gettext("Edit your story"))
     |> assign(form_id: "edit-story-form")
     |> assign(title: gettext("Edit your story"))
+    |> assign(:image_required, false)
+    |> assign(
+      :either_content_or_photo_added,
+      either_content_or_photo_added(socket.assigns.story.content, [], "")
+    )
     |> assign(:cta, gettext("Save story"))
     |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
     |> assign(form: form)
@@ -292,6 +295,8 @@ defmodule AniminaWeb.StoryLive do
       |> assign(form_id: "create-story-form")
       |> assign(title: gettext("Create your first story"))
       |> assign(:cta, gettext("Create about me story"))
+      |> assign(:either_content_or_photo_added, either_content_or_photo_added("", [], :about_me))
+      |> assign(:image_required, true)
       |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
       |> assign(form: form)
     end
@@ -314,8 +319,10 @@ defmodule AniminaWeb.StoryLive do
 
     socket
     |> assign(page_title: gettext("Create a story"))
+    |> assign(image_required: false)
     |> assign(form_id: "create-story-form")
     |> assign(title: gettext("Create your own story"))
+    |> assign(:either_content_or_photo_added, either_content_or_photo_added("", [], ""))
     |> assign(:cta, gettext("Create new story"))
     |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
     |> assign(form: form)
@@ -327,7 +334,7 @@ defmodule AniminaWeb.StoryLive do
      |> cancel_upload(:photos, ref)
      |> assign(
        :either_content_or_photo_added,
-       either_content_or_photo_added(socket.assigns.content, [])
+       either_content_or_photo_added(socket.assigns.content, [], "")
      )}
   end
 
@@ -358,7 +365,11 @@ defmodule AniminaWeb.StoryLive do
      |> assign(:form, form)
      |> assign(
        :either_content_or_photo_added,
-       either_content_or_photo_added(content, socket.assigns.uploads.photos.entries)
+       either_content_or_photo_added(
+         content,
+         socket.assigns.uploads.photos.entries,
+         socket.assigns.live_action
+       )
      )
      |> assign(:words, String.length(content))
      |> assign(:content, content)}
@@ -682,11 +693,19 @@ defmodule AniminaWeb.StoryLive do
     nil
   end
 
-  defp either_content_or_photo_added(content, uploads) do
-    if content == "" && uploads == [] do
-      false
-    else
+  defp either_content_or_photo_added(content, uploads, :about_me) do
+    if content != "" && uploads != [] do
       true
+    else
+      false
+    end
+  end
+
+  defp either_content_or_photo_added(content, uploads, _) do
+    if content != "" || uploads != [] do
+      true
+    else
+      false
     end
   end
 
@@ -963,10 +982,16 @@ defmodule AniminaWeb.StoryLive do
 
         <.inputs_for :let={photo_form} :if={@photo == nil} field={@form[:photo]}>
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-            <%= gettext("Photo") %>
+            <%= gettext("Photo") %> <span :if={@image_required} class="text-red-600">* required</span>
           </p>
 
-          <.live_file_input type="file" accept="image/*" upload={@uploads.photos} class="hidden" />
+          <.live_file_input
+            type="file"
+            accept="image/*"
+            upload={@uploads.photos}
+            class="hidden"
+            required={@image_required}
+          />
 
           <%= text_input(photo_form, :user_id, type: :hidden, value: @current_user.id) %>
 
@@ -1039,13 +1064,19 @@ defmodule AniminaWeb.StoryLive do
 
         <div>
           <%= submit(@cta,
+            phx_disable_with: gettext("Saving..."),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.source.valid? == false || @either_content_or_photo_added == false,
-                  do: "",
-                  else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+                if(@form.source.source.valid? == false || @either_content_or_photo_added == false,
+                  do: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500",
+                  else: ""
                 ),
-            disabled: @form.source.source.valid? == false || @either_content_or_photo_added == false
+            disabled:
+              if @form.source.source.valid? == false || @either_content_or_photo_added == false do
+                true
+              else
+                false
+              end
           ) %>
         </div>
       </.form>
