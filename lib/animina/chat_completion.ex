@@ -33,6 +33,8 @@ Please return the messages as follows:
 
 Do not use square brackets [] or \" around the messages.
 
+Make sure to always return three messages.
+
 \n\nMessage: [Message content]
 
 \n\nMessage: [Message content]
