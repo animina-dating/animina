@@ -7,13 +7,9 @@ defmodule Animina.Accounts.BadPassword do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
-    attribute :value, :ci_string, allow_nil?: false
-  end
-
-  actions do
-    defaults [:create, :read]
+  postgres do
+    table "bad_passwords"
+    repo Animina.Repo
   end
 
   code_interface do
@@ -24,12 +20,16 @@ defmodule Animina.Accounts.BadPassword do
     define :by_value, get_by: [:value], action: :read
   end
 
-  identities do
-    identity :value, [:value]
+  actions do
+    defaults [:create, :read]
   end
 
-  postgres do
-    table "bad_passwords"
-    repo Animina.Repo
+  attributes do
+    uuid_primary_key :id
+    attribute :value, :ci_string, allow_nil?: false
+  end
+
+  identities do
+    identity :value, [:value]
   end
 end

@@ -10,25 +10,22 @@ defmodule Animina.Accounts.Credit do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "credits"
+    repo Animina.Repo
 
-    attribute :points, :integer, allow_nil?: false
-    attribute :subject, :string, allow_nil?: false
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
+    references do
+      reference :user, on_delete: :delete
+      reference :donor, on_delete: :delete
+    end
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :donor, Animina.Accounts.User do
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+    define :profile_view_credits_by_donor_and_user, args: [:donor_id, :user_id]
   end
 
   actions do
@@ -58,14 +55,6 @@ defmodule Animina.Accounts.Credit do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
-    define :profile_view_credits_by_donor_and_user, args: [:donor_id, :user_id]
-  end
-
   changes do
     change after_action(fn changeset, record, _context ->
              PubSub.broadcast(
@@ -86,13 +75,24 @@ defmodule Animina.Accounts.Credit do
            on: [:create]
   end
 
-  postgres do
-    table "credits"
-    repo Animina.Repo
+  attributes do
+    uuid_primary_key :id
 
-    references do
-      reference :user, on_delete: :delete
-      reference :donor, on_delete: :delete
+    attribute :points, :integer, allow_nil?: false
+    attribute :subject, :string, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
+
+    belongs_to :donor, Animina.Accounts.User do
+      attribute_writable? true
     end
   end
 

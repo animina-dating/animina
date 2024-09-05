@@ -10,35 +10,28 @@ defmodule Animina.Accounts.VisitLogEntry do
     domain: Animina.Accounts,
     extensions: [Ash.Notifier.PubSub]
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "visit_log_entries"
+    repo Animina.Repo
 
-    attribute :duration, :integer do
-      allow_nil? false
+    references do
+      reference :bookmark, on_delete: :delete
+      reference :user, on_delete: :delete
     end
 
-    attribute :bookmark_id, :uuid do
-      allow_nil? false
+    custom_indexes do
+      index [:user_id, :bookmark_id]
     end
-
-    attribute :user_id, :uuid do
-      allow_nil? false
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      domain Animina.Accounts
-      allow_nil? false
-    end
-
-    belongs_to :bookmark, Animina.Accounts.Bookmark do
-      domain Animina.Accounts
-      allow_nil? false
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :update
+    define :by_id, get_by: [:id], action: :read
+    define :by_bookmark_id, args: [:bookmark_id]
+    define :by_user_id, args: [:user_id]
   end
 
   actions do
@@ -78,14 +71,14 @@ defmodule Animina.Accounts.VisitLogEntry do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :by_bookmark_id, args: [:bookmark_id]
-    define :by_user_id, args: [:user_id]
+  policies do
+    policy action_type(:create) do
+      authorize_if Animina.Checks.CreateVisitLogEntryCheck
+    end
+
+    policy action_type(:update) do
+      authorize_if Animina.Checks.UpdateVisitLogEntryCheck
+    end
   end
 
   changes do
@@ -101,27 +94,34 @@ defmodule Animina.Accounts.VisitLogEntry do
            on: [:create, :update]
   end
 
-  policies do
-    policy action_type(:create) do
-      authorize_if Animina.Checks.CreateVisitLogEntryCheck
+  attributes do
+    uuid_primary_key :id
+
+    attribute :duration, :integer do
+      allow_nil? false
     end
 
-    policy action_type(:update) do
-      authorize_if Animina.Checks.UpdateVisitLogEntryCheck
+    attribute :bookmark_id, :uuid do
+      allow_nil? false
     end
+
+    attribute :user_id, :uuid do
+      allow_nil? false
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
-  postgres do
-    table "visit_log_entries"
-    repo Animina.Repo
-
-    references do
-      reference :bookmark, on_delete: :delete
-      reference :user, on_delete: :delete
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      domain Animina.Accounts
+      allow_nil? false
     end
 
-    custom_indexes do
-      index [:user_id, :bookmark_id]
+    belongs_to :bookmark, Animina.Accounts.Bookmark do
+      domain Animina.Accounts
+      allow_nil? false
     end
   end
 end

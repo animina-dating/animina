@@ -7,8 +7,13 @@ defmodule Animina.Accounts.Token do
     domain: Animina.Accounts,
     extensions: [AshAuthentication.TokenResource]
 
-  actions do
-    defaults [:read, :destroy]
+  postgres do
+    table "tokens"
+    repo Animina.Repo
+  end
+
+  token do
+    domain Animina.Accounts
   end
 
   code_interface do
@@ -16,12 +21,7 @@ defmodule Animina.Accounts.Token do
     define :destroy
   end
 
-  token do
-    domain Animina.Accounts
-  end
-
-  postgres do
-    table "tokens"
-    repo Animina.Repo
+  actions do
+    defaults [:read, :destroy]
   end
 end

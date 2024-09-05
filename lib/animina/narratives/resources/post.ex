@@ -16,44 +16,29 @@ defmodule Animina.Narratives.Post do
     authorizers: Ash.Policy.Authorizer,
     domain: Animina.Narratives
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "posts"
+    repo Animina.Repo
 
-    attribute :content, :string do
-      constraints max_length: 8192
-      allow_nil? false
+    custom_indexes do
+      index [:user_id]
     end
 
-    attribute :slug, :string, allow_nil?: false
-    attribute :title, :string, allow_nil?: false
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  pub_sub do
-    module Animina
-    prefix "post"
-
-    broadcast_type :phoenix_broadcast
-
-    publish :create, ["created", [:user_id, nil]]
-    publish :update, ["updated", :id]
-    publish :destroy, ["deleted", [:id]]
-
-    publish_all :destroy, ["deleted", [:user_id, :id]]
-  end
-
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
+    references do
+      reference :user, on_delete: :delete
     end
   end
 
-  validations do
-    validate present(:content)
-    validate present(:title)
+  code_interface do
+    domain Animina.Narratives
+    define :read
+    define :create
+    define :update
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
+    define :by_slug, get_by: [:slug], action: :read
+    define :by_user_id, args: [:user_id]
+    define :by_slug_user_and_date, args: [:slug, :user_id, :date], action: :by_slug_user_and_date
   end
 
   actions do
@@ -123,26 +108,6 @@ defmodule Animina.Narratives.Post do
     end
   end
 
-  code_interface do
-    domain Animina.Narratives
-    define :read
-    define :create
-    define :update
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
-    define :by_slug, get_by: [:slug], action: :read
-    define :by_user_id, args: [:user_id]
-    define :by_slug_user_and_date, args: [:slug, :user_id, :date], action: :by_slug_user_and_date
-  end
-
-  changes do
-    change {Changes.PostSlug, attribute: :title}, on: [:create, :update]
-  end
-
-  calculations do
-    calculate :url, :string, {Calculations.PostUrl, field: :slug}
-  end
-
   policies do
     policy action_type(:read) do
       authorize_if always()
@@ -161,16 +126,51 @@ defmodule Animina.Narratives.Post do
     end
   end
 
-  postgres do
-    table "posts"
-    repo Animina.Repo
+  pub_sub do
+    module Animina
+    prefix "post"
 
-    custom_indexes do
-      index [:user_id]
+    broadcast_type :phoenix_broadcast
+
+    publish :create, ["created", [:user_id, nil]]
+    publish :update, ["updated", :id]
+    publish :destroy, ["deleted", [:id]]
+
+    publish_all :destroy, ["deleted", [:user_id, :id]]
+  end
+
+  changes do
+    change {Changes.PostSlug, attribute: :title}, on: [:create, :update]
+  end
+
+  validations do
+    validate present(:content)
+    validate present(:title)
+  end
+
+  attributes do
+    uuid_primary_key :id
+
+    attribute :content, :string do
+      constraints max_length: 8192
+      allow_nil? false
     end
 
-    references do
-      reference :user, on_delete: :delete
+    attribute :slug, :string, allow_nil?: false
+    attribute :title, :string, allow_nil?: false
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
     end
+  end
+
+  calculations do
+    calculate :url, :string, {Calculations.PostUrl, field: :slug}
   end
 end

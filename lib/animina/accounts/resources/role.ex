@@ -7,16 +7,17 @@ defmodule Animina.Accounts.Role do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "roles"
+    repo Animina.Repo
+  end
 
-    attribute :name, :atom do
-      constraints one_of: [:user, :admin]
-      allow_nil? false
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :by_name, get_by: [:name], action: :read
+    define :by_id, get_by: [:id], action: :read
   end
 
   actions do
@@ -31,16 +32,15 @@ defmodule Animina.Accounts.Role do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :by_name, get_by: [:name], action: :read
-    define :by_id, get_by: [:id], action: :read
-  end
+  attributes do
+    uuid_primary_key :id
 
-  postgres do
-    table "roles"
-    repo Animina.Repo
+    attribute :name, :atom do
+      constraints one_of: [:user, :admin]
+      allow_nil? false
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 end

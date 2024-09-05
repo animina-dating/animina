@@ -7,17 +7,17 @@ defmodule Animina.Traits.FlagTranslation do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Traits
 
-  attributes do
-    uuid_primary_key :id
-    attribute :language, :string, allow_nil?: false
-    attribute :name, :ci_string, allow_nil?: false
-    attribute :hashtag, :ci_string, allow_nil?: false
+  postgres do
+    table "traits_flag_translations"
+    repo Animina.Repo
   end
 
-  relationships do
-    belongs_to :flag, Animina.Traits.Flag do
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Traits
+    define :read
+    define :create
+    define :destroy
+    define :by_id, get_by: [:id], action: :read
   end
 
   actions do
@@ -35,22 +35,22 @@ defmodule Animina.Traits.FlagTranslation do
     end
   end
 
-  code_interface do
-    domain Animina.Traits
-    define :read
-    define :create
-    define :destroy
-    define :by_id, get_by: [:id], action: :read
+  attributes do
+    uuid_primary_key :id
+    attribute :language, :string, allow_nil?: false
+    attribute :name, :ci_string, allow_nil?: false
+    attribute :hashtag, :ci_string, allow_nil?: false
+  end
+
+  relationships do
+    belongs_to :flag, Animina.Traits.Flag do
+      attribute_writable? true
+    end
   end
 
   identities do
     identity :unique_name, [:name, :language, :flag_id]
     identity :hashtag, [:hashtag, :language]
-  end
-
-  postgres do
-    table "traits_flag_translations"
-    repo Animina.Repo
   end
 
   # defp validate_language_code_length(changes) do

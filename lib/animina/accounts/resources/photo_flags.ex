@@ -9,32 +9,24 @@ defmodule Animina.Accounts.PhotoFlags do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Accounts
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "photo_flags"
+    repo Animina.Repo
 
-    attribute :description, :string do
-      constraints max_length: 1_024
+    references do
+      reference :user, on_delete: :delete
+      reference :photo, on_delete: :delete
+      reference :flag, on_delete: :delete
     end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :photo, Animina.Accounts.Photo do
-      domain Animina.Accounts
-      attribute_writable? true
-    end
-
-    belongs_to :flag, Animina.Traits.Flag do
-      domain Animina.Traits
-      attribute_writable? true
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :by_id, get_by: [:id], action: :read
+    define :destroy
+    define :by_user_id, args: [:user_id]
   end
 
   actions do
@@ -67,23 +59,31 @@ defmodule Animina.Accounts.PhotoFlags do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :by_id, get_by: [:id], action: :read
-    define :destroy
-    define :by_user_id, args: [:user_id]
+  attributes do
+    uuid_primary_key :id
+
+    attribute :description, :string do
+      constraints max_length: 1_024
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
-  postgres do
-    table "photo_flags"
-    repo Animina.Repo
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
 
-    references do
-      reference :user, on_delete: :delete
-      reference :photo, on_delete: :delete
-      reference :flag, on_delete: :delete
+    belongs_to :photo, Animina.Accounts.Photo do
+      domain Animina.Accounts
+      attribute_writable? true
+    end
+
+    belongs_to :flag, Animina.Traits.Flag do
+      domain Animina.Traits
+      attribute_writable? true
     end
   end
 end
