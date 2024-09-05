@@ -135,6 +135,7 @@ defmodule AniminaWeb.ReportTest do
         zip_code: "56068",
         gender: "male",
         mobile_phone: "0151-12345678",
+        country: "Germany",
         language: "en",
         legal_terms_accepted: true,
         confirmed_at: DateTime.utc_now()
@@ -157,6 +158,7 @@ defmodule AniminaWeb.ReportTest do
         height: 180,
         zip_code: "56068",
         gender: "male",
+        country: "Germany",
         mobile_phone: "0151-22345678",
         language: "en",
         is_private: true,

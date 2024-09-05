@@ -147,7 +147,8 @@ defmodule Animina.Accounts.ReactionTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        country: "Germany"
       })
 
     user
@@ -163,6 +164,7 @@ defmodule Animina.Accounts.ReactionTest do
         birthday: "1950-01-01",
         height: 180,
         zip_code: "56068",
+        country: "Germany",
         gender: "male",
         mobile_phone: "0151-12341678",
         language: "de",

@@ -323,6 +323,7 @@ defmodule AniminaWeb.BookmarkTest do
     {:ok, user} =
       User.create(%{
         email: "adam@example.com",
+        country: "Germany",
         username: "adam",
         name: "Adam Newuser",
         hashed_password: Bcrypt.hash_pwd_salt("MichaelTheEngineer"),
@@ -347,6 +348,7 @@ defmodule AniminaWeb.BookmarkTest do
       User.create(%{
         email: "private@example.com",
         username: "private",
+        country: "Germany",
         name: "Private",
         hashed_password: Bcrypt.hash_pwd_salt("MichaelTheEngineer"),
         birthday: "1950-01-01",

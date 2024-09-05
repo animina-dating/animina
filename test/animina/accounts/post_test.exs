@@ -122,6 +122,7 @@ defmodule Animina.Narratives.PostTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 
@@ -140,6 +141,7 @@ defmodule Animina.Narratives.PostTest do
         zip_code: "56068",
         gender: "male",
         mobile_phone: "0151-12341678",
+        country: "Germany",
         language: "de",
         legal_terms_accepted: true
       })

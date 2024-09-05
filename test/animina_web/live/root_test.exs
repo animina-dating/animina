@@ -20,7 +20,8 @@ defmodule AniminaWeb.RootTest do
     mobile_phone: "0151-12345678",
     occupation: "Software Engineer",
     language: "en",
-    legal_terms_accepted: true
+    legal_terms_accepted: true,
+    country: "Germany"
   }
 
   @valid_create_user_attrs %{
@@ -36,7 +37,8 @@ defmodule AniminaWeb.RootTest do
     occupation: "Software Engineer",
     language: "en",
     legal_terms_accepted: true,
-    confirmed_at: DateTime.utc_now()
+    confirmed_at: DateTime.utc_now(),
+    country: "Germany"
   }
 
   describe "Tests the Registration flow" do

@@ -332,6 +332,7 @@ defmodule AniminaWeb.AllReportsTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 
@@ -354,6 +355,7 @@ defmodule AniminaWeb.AllReportsTest do
         gender: "male",
         mobile_phone: "0151-12341678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 
@@ -373,6 +375,7 @@ defmodule AniminaWeb.AllReportsTest do
         birthday: "1951-01-01",
         height: 180,
         zip_code: "56068",
+        country: "Germany",
         gender: "male",
         mobile_phone: "0151-12311678",
         language: "en",
@@ -395,6 +398,7 @@ defmodule AniminaWeb.AllReportsTest do
         birthday: "1951-01-01",
         height: 180,
         zip_code: "56068",
+        country: "Germany",
         gender: "male",
         mobile_phone: "0151-12321678",
         language: "en",

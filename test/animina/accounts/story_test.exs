@@ -78,6 +78,7 @@ defmodule Animina.Accounts.StoryTest do
         hashed_password: "zzzzzzzzzzz",
         birthday: "1950-01-01",
         height: 180,
+        country: "Germany",
         zip_code: "56068",
         gender: "male",
         mobile_phone: "0151-12345678",
