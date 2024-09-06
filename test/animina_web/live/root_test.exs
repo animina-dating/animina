@@ -80,6 +80,47 @@ defmodule AniminaWeb.RootTest do
       assert html =~ "We just send you an email to #{@valid_attrs.email} with a confirmation link"
     end
 
+    test "When more users than the one required per hour sign up , they are added to the waitlist",
+         %{conn: conn} do
+      #  we first create 5 users , this is the maximum number of users that can sign up in an hour
+      # for test env ,
+      # for production and development it is 200
+      create_five_users()
+
+      {:ok, _index_live, _html} =
+        conn
+        |> sign_in_user(@valid_attrs)
+        |> live(~p"/my/email-validation")
+
+      confirm_user(@valid_attrs)
+
+      # we check that we are redirected back to the too-successful page
+
+      {:error, {:redirect, %{to: url, flash: _}}} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(~p"/my/dashboard")
+
+      assert url == "/my/too-successful"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(url)
+
+      assert html =~
+               "Hi #{@valid_attrs.name} we currently have too many new registrations to handle. That is a good problem for us to have but for you it means that you just landed on a waiting list. We&#39;ll send you an email once our systems are ready. In case this is a spike we are talking minutes or hours."
+
+      user = User.by_username!("MichaelMunavu")
+      assert user.is_in_waitlist == true
+    end
+
     test "Once we add correct user details , we are redirected to /my/email-validation then to  /my/potential-partner/ page after confirmation",
          %{conn: conn} do
       {:ok, _view, _html} = live(conn, "/")
@@ -405,5 +446,58 @@ defmodule AniminaWeb.RootTest do
     user = User.by_username!(attributes.username)
 
     User.update(user, %{confirmed_at: DateTime.utc_now()})
+  end
+
+  defp create_five_users do
+    for user <- user_details() do
+      user =
+        user
+        |> Map.put(:hashed_password, Bcrypt.hash_pwd_salt("MichaelTheEngineer"))
+        |> Map.put(:birthday, "1950-01-01")
+        |> Map.put(:height, 180)
+        |> Map.put(:zip_code, "56068")
+        |> Map.put(:occupation, "Software Engineer")
+        |> Map.put(:language, "en")
+        |> Map.put(:legal_terms_accepted, true)
+        |> Map.put(:country, "Germany")
+        |> Map.put(:gender, "male")
+
+      User.create(user)
+    end
+  end
+
+  defp user_details do
+    [
+      %{
+        email: "test@example.com",
+        username: "Maya",
+        name: "Maya",
+        mobile_phone: "0151-12445678"
+      },
+      %{
+        email: "jones@example.com",
+        username: "Jones",
+        name: "Jones",
+        mobile_phone: "0151-12345671"
+      },
+      %{
+        email: "kim@example.com",
+        username: "Kim",
+        name: "Kim",
+        mobile_phone: "0151-12345672"
+      },
+      %{
+        email: "jama@example.com",
+        username: "Jama",
+        name: "Jama",
+        mobile_phone: "0151-12345673"
+      },
+      %{
+        email: "stefan@example.com",
+        username: "Stefan",
+        name: "Stefan",
+        mobile_phone: "0151-12345674"
+      }
+    ]
   end
 end

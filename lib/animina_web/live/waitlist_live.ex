@@ -73,6 +73,11 @@ defmodule AniminaWeb.WaitlistLive do
      |> assign(number_of_unread_messages: Enum.count(unread_messages))}
   end
 
+  @impl true
+  def handle_info({:email, _}, socket) do
+    {:noreply, socket}
+  end
+
   def handle_info({:user, current_user}, socket) do
     if current_user.state in user_states_to_be_auto_logged_out() do
       {:noreply,

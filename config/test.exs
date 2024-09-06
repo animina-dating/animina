@@ -29,6 +29,10 @@ config :swoosh, :api_client, false
 # Print only warnings and errors during test
 config :logger, level: :warning
 
+# configures the maximum number of users allowed to the system within the hour before joining the waiting list
+
+config :animina, :max_users_per_hour, 5
+
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
