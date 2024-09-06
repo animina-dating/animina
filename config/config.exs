@@ -16,6 +16,10 @@ end
 
 config :animina, env: Mix.env()
 
+# configures the maximum number of users allowed to the system within the hour before joining the waiting list
+
+config :animina, :max_users_per_hour, 100
+
 # Configures the number of stories required for complete registration
 config :animina, :number_of_stories_required_for_complete_registration, 1
 

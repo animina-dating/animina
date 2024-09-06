@@ -9,6 +9,8 @@ defmodule AniminaWeb.AuthController do
   alias AshAuthentication.TokenResource
 
   def success(conn, activity, user, _token) do
+    user = User.by_id!(user.id)
+
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
         nil ->
@@ -256,13 +258,15 @@ defmodule AniminaWeb.AuthController do
   end
 
   defp redirect_url(user) do
-    if user.confirmed_at == nil do
+    if user.confirmed_at == nil && user.is_in_waitlist == false do
       "/my/email-validation"
     else
-      if user_has_an_about_me_story?(user) do
+      if user_has_an_about_me_story?(user) && user.is_in_waitlist == false &&
+           user.confirmed_at != nil do
         "/my/dashboard"
       else
         get_last_registration_page_visited(
+          user.confirmed_at,
           user.last_registration_page_visited,
           user.is_in_waitlist
         )
@@ -282,19 +286,19 @@ defmodule AniminaWeb.AuthController do
     end
   end
 
-  defp get_last_registration_page_visited(nil, true) do
+  defp get_last_registration_page_visited(_, _, true) do
     "/my/too-successful"
   end
 
-  defp get_last_registration_page_visited(nil, false) do
-    "/my/potential-partner"
+  defp get_last_registration_page_visited(nil, _, _) do
+    "/my/email-validation"
   end
 
-  defp get_last_registration_page_visited(_last_registration_page_visited, true) do
+  defp get_last_registration_page_visited(_, _last_registration_page_visited, true) do
     "/my/too-successful"
   end
 
-  defp get_last_registration_page_visited(last_registration_page_visited, false) do
+  defp get_last_registration_page_visited(_, last_registration_page_visited, false) do
     last_registration_page_visited
   end
 

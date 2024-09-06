@@ -596,7 +596,7 @@ defmodule Animina.Accounts.User do
     users_registered_in_the_hour =
       Enum.count(Animina.Accounts.User.users_registered_within_the_hour!())
 
-    if users_registered_in_the_hour > 200 do
+    if users_registered_in_the_hour > Application.get_env(:animina, :max_users_per_hour) do
       {:ok, user} = Accounts.User.update(record, %{is_in_waitlist: true})
       send_notification_email_to_admin(user)
     end

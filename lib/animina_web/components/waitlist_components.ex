@@ -34,6 +34,7 @@ defmodule AniminaWeb.WaitlistComponents do
                 <td class="px-4 py-3">
                   <button
                     phx-value-id={user.id}
+                    id={"user-in-waitlist-#{user.id}"}
                     phx-click="give_user_in_waitlist_access"
                     data-confirm="Are You Sure?"
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
