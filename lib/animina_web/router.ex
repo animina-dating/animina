@@ -55,6 +55,8 @@ defmodule AniminaWeb.Router do
       live "/my/flags/green", FlagsLive, :green
       live "/my/flags/red", FlagsLive, :red
       live "/my/about-me", StoryLive, :about_me
+      live "/my/profile/visibility", ProfileVisibilityLive, :index
+      live "/my/profile/delete_account", DeleteAccountLive, :index
     end
 
     ash_authentication_live_session :authentication_required_and_about_me_story,
@@ -68,8 +70,6 @@ defmodule AniminaWeb.Router do
       live "/my/messages/:profile", ChatLive, :index
       live "/my", DashboardLive, :index
       live "/my/dashboard", DashboardLive, :index
-      live "/my/profile/visibility", ProfileVisibilityLive, :index
-      live "/my/profile/delete_account", DeleteAccountLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
       live "/:username/report", ProfileLive, :report
     end
