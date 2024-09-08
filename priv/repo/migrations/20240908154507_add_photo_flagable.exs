@@ -8,8 +8,10 @@ defmodule Animina.Repo.Migrations.AddPhotoFlagable do
   use Ecto.Migration
 
   def up do
-    alter table(:traits_flags) do
-      add :photo_flagable, :boolean, default: false
+    unless column_exists?(:traits_flags, :photo_flagable) do
+      alter table(:traits_flags) do
+        add :photo_flagable, :boolean, default: false
+      end
     end
 
     execute """
@@ -24,8 +26,23 @@ WHERE traits_flags.category_id = traits_categories.id;
   end
 
   def down do
-    alter table(:traits_flags) do
-      remove :photo_flagable
+    if column_exists?(:traits_flags, :photo_flagable) do
+      alter table(:traits_flags) do
+        remove :photo_flagable
+      end
+    end
+  end
+
+  defp column_exists?(table, column) do
+    query = """
+    SELECT COUNT(*)
+    FROM information_schema.columns
+    WHERE table_name = '#{table}'
+    AND column_name = '#{column}';
+    """
+    case Ecto.Adapters.SQL.query(Animina.Repo, query, []) do
+      {:ok, %{rows: [[1]]}} -> true
+      _ -> false
     end
   end
 end

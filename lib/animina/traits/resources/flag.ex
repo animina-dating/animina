@@ -28,7 +28,8 @@ defmodule Animina.Traits.Flag do
       accept [
         :name,
         :emoji,
-        :category_id
+        :category_id,
+        :photo_flagable
       ]
 
       primary? true
