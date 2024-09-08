@@ -1,31 +1,39 @@
 defmodule Animina.Repo.Migrations.SeedFlag do
-  @moduledoc """
-  Seed flags.
-  """
-
   use Ecto.Migration
 
   def up do
+    # First, add the new column if it doesn't exist
+    unless column_exists?(:traits_flags, :photo_flagable) do
+      alter table(:traits_flags) do
+        add :photo_flagable, :boolean, default: false
+      end
+    end
+
+    # Flush changes to ensure the column exists before inserting data
+    flush()
+
+    # Now proceed with seeding the data
     flags()
     |> Enum.map(&{&1.category_id, &1.category_name, &1.items})
     |> Enum.map(fn val ->
       case val do
         {name, %{de: name_de, en: name_en}, items} ->
-          category = Animina.Traits.Category.create!(%{name: name})
+          {:ok, category} = repo().insert(%Animina.Traits.Category{
+            name: name,
+            id: Ecto.UUID.generate()
+          })
 
-          _de =
-            Animina.Traits.CategoryTranslation.create!(%{
-              category_id: category.id,
-              name: name_de,
-              language: "de"
-            })
+          repo().insert(%Animina.Traits.CategoryTranslation{
+            category_id: category.id,
+            name: name_de,
+            language: "de"
+          })
 
-          _en =
-            Animina.Traits.CategoryTranslation.create!(%{
-              category_id: category.id,
-              name: name_en,
-              language: "en"
-            })
+          repo().insert(%Animina.Traits.CategoryTranslation{
+            category_id: category.id,
+            name: name_en,
+            language: "en"
+          })
 
           Enum.map(items, fn item ->
             case item do
@@ -34,28 +42,27 @@ defmodule Animina.Repo.Migrations.SeedFlag do
                 hashtags: %{de: hashtags_de, en: hashtags_en},
                 emoji: emoji
               } ->
-                flag =
-                  Animina.Traits.Flag.create!(%{
-                    category_id: category.id,
-                    name: name_en,
-                    emoji: emoji
-                  })
+                {:ok, flag} = repo().insert(%Animina.Traits.Flag{
+                  category_id: category.id,
+                  name: name_en,
+                  emoji: emoji,
+                  photo_flagable: false,
+                  id: Ecto.UUID.generate()
+                })
 
-                _de =
-                  Animina.Traits.FlagTranslation.create!(%{
-                    flag_id: flag.id,
-                    name: name_de,
-                    language: "de",
-                    hashtag: hashtags_de
-                  })
+                repo().insert(%Animina.Traits.FlagTranslation{
+                  flag_id: flag.id,
+                  name: name_de,
+                  language: "de",
+                  hashtag: hashtags_de
+                })
 
-                _en =
-                  Animina.Traits.FlagTranslation.create!(%{
-                    flag_id: flag.id,
-                    name: name_en,
-                    language: "en",
-                    hashtag: hashtags_en
-                  })
+                repo().insert(%Animina.Traits.FlagTranslation{
+                  flag_id: flag.id,
+                  name: name_en,
+                  language: "en",
+                  hashtag: hashtags_en
+                })
             end
           end)
 
@@ -66,6 +73,24 @@ defmodule Animina.Repo.Migrations.SeedFlag do
   end
 
   def down do
+    if column_exists?(:traits_flags, :photo_flagable) do
+      alter table(:traits_flags) do
+        remove :photo_flagable
+      end
+    end
+  end
+
+  defp column_exists?(table, column) do
+    query = """
+    SELECT COUNT(*)
+    FROM information_schema.columns
+    WHERE table_name = '#{table}'
+    AND column_name = '#{column}';
+    """
+    case Ecto.Adapters.SQL.query(Animina.Repo, query, []) do
+      {:ok, %{rows: [[1]]}} -> true
+      _ -> false
+    end
   end
 
   defp flags do
@@ -782,122 +807,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
             name: %{de: "Alternative", en: "Alternative"},
             hashtags: %{de: "#Alternative", en: "#Alternative"},
             emoji: "🚀"
-          }
-        ]
-      },
-      %{
-        category_id: "movies",
-        category_name: %{de: "Filme", en: "Movies"},
-        items: [
-          %{
-            name: %{de: "Komödie", en: "Comedy"},
-            hashtags: %{de: "#KomödieFilme", en: "#ComedyMovies"},
-            emoji: "😄"
-          },
-          %{
-            name: %{de: "Drama", en: "Drama"},
-            hashtags: %{de: "#DramaFilme", en: "#DramaMovies"},
-            emoji: "🎭"
-          },
-          %{
-            name: %{de: "Thriller", en: "Thriller"},
-            hashtags: %{de: "#ThrillerFilme", en: "#ThrillerMovies"},
-            emoji: "🔪"
-          },
-          %{
-            name: %{de: "Action", en: "Action"},
-            hashtags: %{de: "#ActionFilme", en: "#ActionMovies"},
-            emoji: "💥"
-          },
-          %{
-            name: %{de: "Science-Fiction", en: "Science Fiction"},
-            hashtags: %{de: "#ScienceFictionFilme", en: "#ScienceFictionMovies"},
-            emoji: "👽"
-          },
-          %{
-            name: %{de: "Horror", en: "Horror"},
-            hashtags: %{de: "#HorrorFilme", en: "#HorrorMovies"},
-            emoji: "😱"
-          },
-          %{
-            name: %{de: "Romantik", en: "Romance"},
-            hashtags: %{de: "#RomantikFilme", en: "#RomanceMovies"},
-            emoji: "💘"
-          },
-          %{
-            name: %{de: "Fantasy", en: "Fantasy"},
-            hashtags: %{de: "#FantasyFilme", en: "#FantasyMovies"},
-            emoji: "🧝"
-          },
-          %{
-            name: %{de: "Krimi", en: "Crime"},
-            hashtags: %{de: "#KrimiFilme", en: "#CrimeMovies"},
-            emoji: "🕵️"
-          },
-          %{
-            name: %{de: "Dokumentarfilme", en: "Documentaries"},
-            hashtags: %{de: "#Dokumentarfilme", en: "#DocumentariesMovies"},
-            emoji: "🎥"
-          },
-          %{
-            name: %{de: "Historienfilme", en: "Historical Movies"},
-            hashtags: %{de: "#Historienfilme", en: "#HistoricalMoviesMovies"},
-            emoji: "🏰"
-          },
-          %{
-            name: %{de: "Animationsfilme", en: "Animated Movies"},
-            hashtags: %{de: "#Animationsfilme", en: "#AnimatedMoviesMovies"},
-            emoji: "🐭"
-          },
-          %{
-            name: %{de: "Abenteuer", en: "Adventure"},
-            hashtags: %{de: "#AbenteuerFilme", en: "#AdventureMovies"},
-            emoji: "🗺️"
-          },
-          %{
-            name: %{de: "Kinder- und Familien", en: "Children and Family"},
-            hashtags: %{de: "#KinderUndFamilien", en: "#ChildrenAndFamily"},
-            emoji: "👨‍👩‍👧‍👦"
-          },
-          %{
-            name: %{de: "Mystery", en: "Mystery"},
-            hashtags: %{de: "#MysteryFilme", en: "#MysteryMovies"},
-            emoji: "🔍"
-          },
-          %{
-            name: %{de: "Romcom", en: "Romantic Comedy"},
-            hashtags: %{de: "#RomcomFilme", en: "#RomanticComedyMovies"},
-            emoji: "😂💕"
-          },
-          %{
-            name: %{de: "Superhelden", en: "Superheroes"},
-            hashtags: %{de: "#SuperheldenFilme", en: "#SuperheroesMovies"},
-            emoji: "🦸"
-          },
-          %{
-            name: %{de: "Gameshows", en: "Game Shows"},
-            hashtags: %{de: "#GameshowsFilme", en: "#GameShowsMovies"},
-            emoji: "🎲"
-          },
-          %{
-            name: %{de: "Reality TV", en: "Reality TV"},
-            hashtags: %{de: "#RealityTVFilme", en: "#RealityTVMovies"},
-            emoji: "📺"
-          },
-          %{
-            name: %{de: "Kochsendungen", en: "Cooking Shows"},
-            hashtags: %{de: "#KochsendungenFilme", en: "#CookingShowsMovies"},
-            emoji: "👩‍🍳"
-          },
-          %{
-            name: %{de: "Tatort", en: "Crime Scene"},
-            hashtags: %{de: "#TatortFilme", en: "#CrimeSceneMovies"},
-            emoji: "🔎"
-          },
-          %{
-            name: %{de: "Erotik", en: "Erotica"},
-            hashtags: %{de: "#ErotikFilme", en: "#EroticaMovies"},
-            emoji: "💋"
           }
         ]
       },

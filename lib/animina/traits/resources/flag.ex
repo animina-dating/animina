@@ -28,7 +28,8 @@ defmodule Animina.Traits.Flag do
       accept [
         :name,
         :emoji,
-        :category_id
+        :category_id,
+        :photo_flagable
       ]
 
       primary? true
@@ -43,6 +44,7 @@ defmodule Animina.Traits.Flag do
     uuid_primary_key :id
     attribute :name, :ci_string, allow_nil?: false
     attribute :emoji, :string, allow_nil?: true
+    attribute :photo_flagable, :boolean, default: false
   end
 
   relationships do
