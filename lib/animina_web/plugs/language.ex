@@ -6,26 +6,30 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
   extracts the *Accept-Language* header and injects it into the user's session
   """
 
-  def init(options), do: options
+  def init(_opts), do: nil
 
-  def call(conn, _options) do
-    conn
-    |> extract_accept_language()
-    |> case do
-      [language | _] ->
-        case parse_language(language) |> supported_locale?() do
-          true -> Gettext.put_locale(AniminaWeb.Gettext, parse_language(language))
-          _ -> Gettext.put_locale(AniminaWeb.Gettext, "en")
-        end
+  def call(conn, _opts) do
+    accepted_languages = extract_accept_language(conn)
+    known_locales = Gettext.known_locales(AniminaWeb.Gettext)
 
-        conn |> put_session("language", language)
+    accepted_languages =
+      known_locales --
+        (known_locales -- accepted_languages)
 
-      [] ->
-        Gettext.put_locale(AniminaWeb.Gettext, "en")
-        conn |> put_session("language", "en")
+    case accepted_languages do
+      [locale | _] ->
+        Gettext.put_locale(AniminaWeb.Gettext, locale)
+
+        conn
+        |> put_session(:language, locale)
+
+      _ ->
+        conn
     end
   end
 
+  # Copied from
+  # https://raw.githubusercontent.com/smeevil/set_locale/fd35624e25d79d61e70742e42ade955e5ff857b8/lib/headers.ex
   def extract_accept_language(conn) do
     case Plug.Conn.get_req_header(conn, "accept-language") do
       [value | _] ->
@@ -39,19 +43,6 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
 
       _ ->
         []
-    end
-  end
-
-  defp supported_locales,
-    do: Gettext.known_locales(AniminaWeb.Gettext) ++ ["de"]
-
-  defp supported_locale?(locale), do: Enum.member?(supported_locales(), locale)
-
-  defp parse_language(language) do
-    case language do
-      "de-" <> _rest -> "de"
-      "en-" <> _rest -> "en"
-      _ -> language
     end
   end
 
@@ -69,8 +60,13 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
 
   defp ensure_language_fallbacks(tags) do
     Enum.flat_map(tags, fn tag ->
-      [language | _] = String.split(tag, "-")
-      if Enum.member?(tags, language), do: [tag], else: [tag, language]
+      case String.split(tag, "-") do
+        [language, _country_variant] ->
+          if Enum.member?(tags, language), do: [tag], else: [tag, language]
+
+        [_language] ->
+          [tag]
+      end
     end)
   end
 end

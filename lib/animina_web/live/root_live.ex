@@ -4,9 +4,12 @@ defmodule AniminaWeb.RootLive do
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias AshPhoenix.Form
+  
 
   @impl true
   def mount(_params, %{"language" => language} = _session, socket) do
+
+
     socket =
       socket
       |> assign(language: language)
@@ -115,6 +118,12 @@ defmodule AniminaWeb.RootLive do
       <%= if @form_id == "sign-in-form" do %>
         <h1 class="text-4xl font-semibold dark:text-white"><%= gettext("Login") %></h1>
       <% end %>
+
+
+
+    <%= with_locale(@language, fn -> %>
+    <h2>   <%= gettext("Username") %></h2>
+    <% end) %>
 
       <.form
         :let={f}

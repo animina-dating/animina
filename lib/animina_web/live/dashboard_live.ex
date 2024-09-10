@@ -364,6 +364,11 @@ defmodule AniminaWeb.DashboardLive do
   def render(assigns) do
     ~H"""
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
+
+    <%= with_locale(@language, fn -> %>
+      <%= gettext("E-mail address") %>
+    <% end) %>
+
       <div :if={
         @current_user &&
           get_four_active_potential_partners_for_user_to_display(@current_user.id) != []
