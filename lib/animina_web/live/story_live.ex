@@ -754,7 +754,12 @@ defmodule AniminaWeb.StoryLive do
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
+                  ) <>
+                  if @generating_story do
+                    " cursor-not-allowed disabled:pointer-events-none disabled:opacity-50"
+                  else
+                    ""
+                  end,
               prompt: gettext("Select a headline"),
               value: f[:headline_id].value,
               "phx-debounce": "200"
@@ -775,7 +780,12 @@ defmodule AniminaWeb.StoryLive do
                   unless(get_field_errors(f[:headline_id], :headline_id) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
+                  ) <>
+                  if @generating_story do
+                    "cursor-not-allowed disabled:pointer-events-none disabled:opacity-50"
+                  else
+                    ""
+                  end,
               prompt: gettext("Select a headline"),
               value: @default_headline,
               "phx-debounce": "200"
@@ -1072,7 +1082,8 @@ defmodule AniminaWeb.StoryLive do
                   else: ""
                 ),
             disabled:
-              if @form.source.source.valid? == false || @either_content_or_photo_added == false do
+              if @form.source.source.valid? == false || @either_content_or_photo_added == false ||
+                   @generating_story == true do
                 true
               else
                 false
