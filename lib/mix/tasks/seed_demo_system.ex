@@ -381,6 +381,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
           name: full_name,
           zip_code: random_zip_code(),
           language: "DE-de",
+          country: "Germany",
           legal_terms_accepted: true,
           gender: seed_data.gender,
           height: height,
