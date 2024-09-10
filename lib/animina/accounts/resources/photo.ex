@@ -5,6 +5,7 @@ defmodule Animina.Accounts.Photo do
   alias Animina.Accounts.OptimizedPhoto
   alias Animina.ImageTagging
   alias Animina.Traits.Flag
+  alias Animina.Accounts.PhotoFlags
 
   require Logger
 
@@ -104,6 +105,25 @@ defmodule Animina.Accounts.Photo do
       primary? true
     end
 
+    update :update do
+      accept [
+        :filename,
+        :original_filename,
+        :mime,
+        :size,
+        :ext,
+        :dimensions,
+        :error,
+        :error_state,
+        :state,
+        :user_id,
+        :story_id,
+        :description
+      ]
+
+      require_atomic? false
+    end
+
     read :read do
       primary? true
       pagination offset?: true, keyset?: true, required?: false
@@ -169,6 +189,7 @@ defmodule Animina.Accounts.Photo do
     domain Animina.Accounts
     define :read
     define :create
+    define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_user_id, args: [:user_id]
@@ -193,7 +214,8 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              create_optimized_photos(record)
-             create_photo_flags(record)
+             #  create_photo_flags(record)
+             spawn(fn -> create_photo_flags(record) end)
 
              {:ok, record}
            end),
@@ -244,31 +266,32 @@ defmodule Animina.Accounts.Photo do
     {flags, description} =
       ImageTagging.tag_image_using_llava("uploads/#{record.filename}")
 
-    IO.inspect(flags, label: "Flags")
-    IO.inspect(description, label: "Description")
+    case update(record, %{description: description}) do
+      {:ok, record} ->
+        create_photo_flags(record, flags)
 
-    Ash.Changeset.with_transaction(fn ->
-      record
-      |> Ash.Changeset.for_update(:description, description)
-      |> Ash.update()
+      {:error, _} ->
+        :ok
+    end
+  end
 
-      Enum.each(flags, fn flag ->
-        Flag.by_name(flag)
-        |> IO.inspect(label: "Flag")
-        |> case do
-          {:ok, flag} ->
-            PhotoFlag.create(%{
-              user_id: record.user_id,
-              photo_id: record.id,
-              flag_id: flag.id
-            })
+  defp create_photo_flags(record, flags) do
+    Enum.each(flags, fn flag ->
+      Flag.by_name(flag)
+      |> case do
+        {:ok, flag} ->
+          IO.inspect(flag, label: "Flag")
 
-          {:error, _} ->
-            nil
-        end
-      end)
+          PhotoFlags.create(%{
+            user_id: record.user_id,
+            photo_id: record.id,
+            flag_id: flag.id
+          })
+
+        {:error, _} ->
+          nil
+      end
     end)
-    |> IO.inspect(label: "Changeset")
   end
 
   defp create_optimized_folder_if_not_exists do
