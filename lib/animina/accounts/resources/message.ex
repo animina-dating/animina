@@ -145,6 +145,15 @@ defmodule Animina.Accounts.Message do
 
       filter expr(sender_id == ^arg(:sender_id) or receiver_id == ^arg(:sender_id))
     end
+
+    def get_distinct_messages(sender_id) do
+      query =
+        __MODULE__
+        |> Ash.Query.for_read(:messages_sent_by_user, %{sender_id: sender_id})
+        |> Ash.Query.distinct([:receiver_id, :sender_id])
+
+      Ash.read!(query)
+    end
   end
 
   code_interface do
