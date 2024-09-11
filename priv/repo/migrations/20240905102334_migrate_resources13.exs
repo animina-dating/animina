@@ -1,4 +1,4 @@
-defmodule Animina.Repo.Migrations.MigrateResources11 do
+defmodule Animina.Repo.Migrations.MigrateResources13 do
   @moduledoc """
   Updates resources based on their most recent snapshots.
 

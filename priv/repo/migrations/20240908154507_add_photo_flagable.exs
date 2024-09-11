@@ -16,12 +16,12 @@ defmodule Animina.Repo.Migrations.AddPhotoFlagable do
 
     execute """
     UPDATE traits_flags
-SET photo_flagable = CASE
+    SET photo_flagable = CASE
     WHEN traits_categories.name IN ('animals', 'sports', 'travels', 'favorite_destinations', 'at_home', 'creativity') THEN true
     ELSE false
-END
-FROM traits_categories
-WHERE traits_flags.category_id = traits_categories.id;
+    END
+    FROM traits_categories
+    WHERE traits_flags.category_id = traits_categories.id;
     """
   end
 
