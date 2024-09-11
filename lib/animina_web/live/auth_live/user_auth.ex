@@ -12,12 +12,7 @@ defmodule AniminaWeb.LiveUserAuth do
 
   use AniminaWeb, :verified_routes
 
-
-
-
-
   def on_mount(:live_user_optional, _params, session, socket) do
-
     if socket.assigns[:current_user] do
       current_user = Registration.get_current_user(session)
 
@@ -137,8 +132,7 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
-  def on_mount(:live_user_home_optional, _params, session, socket) do
-    
+  def on_mount(:live_user_home_optional, _params, _session, socket) do
     if socket.assigns[:current_user] && socket.assigns[:current_user].confirmed_at do
       if socket.assigns[:current_user].is_in_waitlist do
         {:halt, Phoenix.LiveView.redirect(socket, to: "/my/too-successful")}

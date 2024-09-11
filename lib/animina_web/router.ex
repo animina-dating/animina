@@ -18,7 +18,7 @@ defmodule AniminaWeb.Router do
     plug :load_from_bearer
   end
 
-  scope "/", AniminaWeb  do
+  scope "/", AniminaWeb do
     pipe_through :browser
 
     ash_authentication_live_session :authentication_optional,

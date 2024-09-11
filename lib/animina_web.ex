@@ -54,11 +54,7 @@ defmodule AniminaWeb do
       use Phoenix.LiveView,
         layout: {AniminaWeb.Layouts, :app}
 
-
-  import Gettext, only: [with_locale: 2]
-
-
-
+      import Gettext, only: [with_locale: 2]
 
       unquote(html_helpers())
     end
@@ -104,7 +100,6 @@ defmodule AniminaWeb do
       import AniminaWeb.PostsComponents
       import AniminaWeb.ReportComponents
       import AniminaWeb.WaitlistComponents
-
 
       # https://elixirforum.com/t/form-for-not-working-in-phoenix-1-7/52013
 

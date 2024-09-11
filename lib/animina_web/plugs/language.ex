@@ -14,7 +14,7 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
 
     accepted_languages =
       known_locales --
-        (known_locales -- accepted_languages)
+        known_locales -- accepted_languages
 
     case accepted_languages do
       [locale | _] ->
