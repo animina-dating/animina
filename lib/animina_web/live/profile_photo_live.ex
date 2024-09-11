@@ -10,7 +10,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, %{"language" => language}= _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")

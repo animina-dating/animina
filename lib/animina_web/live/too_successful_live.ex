@@ -2,7 +2,7 @@ defmodule AniminaWeb.TooSuccessFulLive do
   use AniminaWeb, :live_view
 
   @impl true
-  def mount(_, %{"language" => language}= _session, socket) do
+  def mount(_, %{"language" => language} = _session, socket) do
     socket =
       socket
       |> assign(active_tab: :home)

@@ -10,7 +10,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, %{"language" => language}= _session, socket) do
+  def mount(_params, %{"language" => language} = _session, socket) do
     add_registration_bonus(socket, socket.assigns.current_user)
 
     if connected?(socket) do
