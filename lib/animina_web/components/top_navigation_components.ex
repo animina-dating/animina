@@ -162,7 +162,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div>
       <%= if @current_user  do %>
-        <div class="dark:bg-gray-900    text-gray-700 block w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
+        <div class="dark:bg-gray-900 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
           <div class="border-gray-100 border-b-[1px]  py-1">
             <p class="px-2 text-sm " role="none"><%= gettext("Signed in as") %></p>
             <p class="px-2 text-sm font-medium text-gray-900 truncate dark:text-gray-400">
@@ -863,9 +863,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_female_users do
-    case User.female_public_users_who_created_an_account_in_the_last_60_days() do
-      {:ok, users} ->
-        Enum.take_random(users, 3)
+    case User.female_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+      {:ok, offset} ->
+        offset.results
 
       {:error, _reason} ->
         []
@@ -873,9 +873,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_male_users do
-    case User.male_public_users_who_created_an_account_in_the_last_60_days() do
-      {:ok, users} ->
-        Enum.take_random(users, 3)
+    case User.male_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+      {:ok, offset} ->
+        offset.results
 
       {:error, _reason} ->
         []
