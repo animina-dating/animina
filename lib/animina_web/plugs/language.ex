@@ -1,76 +1,52 @@
 defmodule AniminaWeb.Plugs.AcceptLanguage do
-  import Plug.Conn
+  alias Plug.Conn
+
+  @behaviour Plug
 
   @moduledoc """
   This is a module that creates a plug to intercept the request headers,
   extracts the *Accept-Language* header and injects it into the user's session
   """
 
-  def init(options), do: options
+  @locales Gettext.known_locales(AniminaWeb.Gettext)
+  @cookie "Animinalanguage"
 
-  def call(conn, _options) do
+  defguard known_locale?(locale) when locale in @locales
+
+  @impl Plug
+  def init(_opts), do: nil
+
+  @impl Plug
+  def call(conn, _opts) do
+    locale = fetch_locale(conn)
+
     conn
-    |> extract_accept_language()
-    |> case do
-      [language | _] ->
-        case parse_language(language) |> supported_locale?() do
-          true -> Gettext.put_locale(AniminaWeb.Gettext, parse_language(language))
-          _ -> Gettext.put_locale(AniminaWeb.Gettext, "en")
-        end
+    |> Conn.assign(:language, locale)
+    |> Conn.put_session(:language, locale)
+  end
 
-        conn |> put_session("language", language)
+  defp fetch_locale(conn) do
+    case locale_from_params(conn) || locale_from_cookies(conn) do
+      nil ->
+        # NOTE: This will fallback to the default locale set in `config.exs`
+        Gettext.get_locale()
 
-      [] ->
-        Gettext.put_locale(AniminaWeb.Gettext, "en")
-        conn |> put_session("language", "en")
+      locale ->
+        locale
     end
   end
 
-  def extract_accept_language(conn) do
-    case Plug.Conn.get_req_header(conn, "accept-language") do
-      [value | _] ->
-        value
-        |> String.split(",")
-        |> Enum.map(&parse_language_option/1)
-        |> Enum.sort(&(&1.quality > &2.quality))
-        |> Enum.map(& &1.tag)
-        |> Enum.reject(&is_nil/1)
-        |> ensure_language_fallbacks()
-
-      _ ->
-        []
-    end
+  defp locale_from_params(%Conn{params: %{"locale" => locale}})
+       when known_locale?(locale) do
+    locale
   end
 
-  defp supported_locales,
-    do: Gettext.known_locales(AniminaWeb.Gettext) ++ ["de"]
+  defp locale_from_params(_conn), do: nil
 
-  defp supported_locale?(locale), do: Enum.member?(supported_locales(), locale)
-
-  defp parse_language(language) do
-    case language do
-      "de-" <> _rest -> "de"
-      "en-" <> _rest -> "en"
-      _ -> language
-    end
+  defp locale_from_cookies(%Conn{cookies: %{@cookie => locale}})
+       when known_locale?(locale) do
+    locale
   end
 
-  defp parse_language_option(string) do
-    captures = Regex.named_captures(~r/^\s?(?<tag>[\w\-]+)(?:;q=(?<quality>[\d\.]+))?$/i, string)
-
-    quality =
-      case Float.parse(captures["quality"] || "1.0") do
-        {val, _} -> val
-        _ -> 1.0
-      end
-
-    %{tag: captures["tag"], quality: quality}
-  end
-
-  defp ensure_language_fallbacks(tags) do
-    Enum.flat_map(tags, fn tag ->
-      [language | _] = String.split(tag, "-")
-      if Enum.member?(tags, language), do: [tag], else: [tag, language]
-    end)
-  end
+  defp locale_from_cookies(_conn), do: nil
 end

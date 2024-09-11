@@ -25,11 +25,15 @@ defmodule AniminaWeb.RootLive do
 
   defp apply_action(socket, :register, params) do
     socket
-    |> assign(page_title: gettext("Animina dating app"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Animina dating app") end)
+    )
     |> assign(:form_id, "sign-up-form")
-    |> assign(:cta, gettext("Register new account"))
+    |> assign(
+      :cta,
+      with_locale(socket.assigns.language, fn -> gettext("Register new account") end)
+    )
     |> assign(active_tab: :register)
-    |> assign(page_title: "Animina #{gettext("Register")}")
     |> assign(:action, get_link("/auth/user/password/register/", params))
     |> assign(:sign_in_link, get_link("/sign-in/", params))
     |> assign(:hidden_points, 100)
@@ -42,9 +46,12 @@ defmodule AniminaWeb.RootLive do
   defp apply_action(socket, :sign_in, params) do
     socket
     |> assign(:form_id, "sign-in-form")
-    |> assign(:cta, gettext("Sign in"))
+    |> assign(:cta, with_locale(socket.assigns.language, fn -> gettext("Sign in") end))
     |> assign(active_tab: :sign_in)
-    |> assign(page_title: "Animina #{gettext("Login")}")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Animina Login") end)
+    )
     |> assign(:sign_up_link, get_link("/", params))
     |> assign(:action, get_link("/auth/user/sign_in/", params))
     |> assign(
@@ -101,9 +108,11 @@ defmodule AniminaWeb.RootLive do
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
           message={
-            gettext(
-              "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
-            )
+            with_locale(@language, fn ->
+              gettext(
+                "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
+              )
+            end)
           }
           avatars_urls={[
             "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
@@ -113,7 +122,11 @@ defmodule AniminaWeb.RootLive do
       <% end %>
 
       <%= if @form_id == "sign-in-form" do %>
-        <h1 class="text-4xl font-semibold dark:text-white"><%= gettext("Login") %></h1>
+        <h1 class="text-4xl font-semibold dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Login") %>
+          <% end) %>
+        </h1>
       <% end %>
 
       <.form
@@ -134,7 +147,9 @@ defmodule AniminaWeb.RootLive do
               for="user_username"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Username") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Username") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:username].name} class="mt-2">
               <%= text_input(
@@ -146,16 +161,17 @@ defmodule AniminaWeb.RootLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Pusteblume1977"),
+                placeholder: with_locale(@language, fn -> gettext("Pusteblume1977") end),
                 value: f[:username].value,
                 type: :text,
                 required: true,
                 autocomplete: :username,
                 "phx-debounce": "200"
               ) %>
-
               <.error :for={msg <- get_field_errors(f[:username], :username)}>
-                <%= gettext("Username") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Username") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -167,7 +183,9 @@ defmodule AniminaWeb.RootLive do
               for="user_name"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Name") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Name") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:name].name} class="mt-2">
               <%= text_input(f, :name,
@@ -177,15 +195,16 @@ defmodule AniminaWeb.RootLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Alice"),
+                placeholder: with_locale(@language, fn -> gettext("Alice") end),
                 value: f[:name].value,
                 type: :text,
                 required: true,
                 autocomplete: "given-name"
               ) %>
-
               <.error :for={msg <- get_field_errors(f[:name], :name)}>
-                <%= gettext("Name") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Name") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -195,7 +214,9 @@ defmodule AniminaWeb.RootLive do
               for="user_email"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("E-mail address") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("E-mail address") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:email].name} class="mt-2">
               <%= text_input(f, :email,
@@ -205,15 +226,16 @@ defmodule AniminaWeb.RootLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("alice@example.net"),
+                placeholder: with_locale(@language, fn -> gettext("alice@example.net") end),
                 value: f[:email].value,
                 required: true,
                 autocomplete: :email,
                 "phx-debounce": "200"
               ) %>
-
               <.error :for={msg <- get_field_errors(f[:email], :email)}>
-                <%= gettext("E-mail address") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("E-mail address") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -224,7 +246,9 @@ defmodule AniminaWeb.RootLive do
                 for="user_password"
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
-                <%= gettext("Password") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Password") %>
+                <% end) %>
               </label>
             </div>
             <div phx-feedback-for={f[:password].name} class="mt-2">
@@ -235,14 +259,16 @@ defmodule AniminaWeb.RootLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Password"),
+                placeholder: with_locale(@language, fn -> gettext("Password") end),
                 value: f[:password].value,
-                autocomplete: gettext("new password"),
+                autocomplete: with_locale(@language, fn -> gettext("new password") end),
                 "phx-debounce": "blur"
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:password], :password)}>
-                <%= gettext("Password") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Password") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -254,7 +280,9 @@ defmodule AniminaWeb.RootLive do
               for="user_birthday"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Date of birth") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Date of birth") %>
+              <% end) %>
             </label>
 
             <div phx-feedback-for={f[:birthday].name} class="mt-2">
@@ -272,7 +300,9 @@ defmodule AniminaWeb.RootLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
-                <%= gettext("Date of birth") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Date of birth") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -281,14 +311,16 @@ defmodule AniminaWeb.RootLive do
               for="user_country"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Country") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Country") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:country].name} class="mt-2">
               <%= select(
                 f,
                 :country,
                 ["Germany"],
-                prompt: gettext("Select your country"),
+                prompt: with_locale(@language, fn -> gettext("Select your country") end),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                     unless(get_field_errors(f[:country], :country) == [],
@@ -299,7 +331,9 @@ defmodule AniminaWeb.RootLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:country], :country)}>
-                <%= gettext("Country") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Country") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -311,14 +345,16 @@ defmodule AniminaWeb.RootLive do
               for="user_gender"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Gender") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Gender") %>
+              <% end) %>
             </label>
           </div>
           <div class="mt-2" phx-no-format>
 
             <%
               item_code = "male"
-              item_title = gettext("Male")
+              item_title =  with_locale(@language, fn -> gettext("Male") end)
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
@@ -334,7 +370,7 @@ defmodule AniminaWeb.RootLive do
 
             <%
               item_code = "female"
-              item_title = gettext("Female")
+              item_title =  with_locale(@language, fn -> gettext("Female") end)
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
@@ -349,7 +385,7 @@ defmodule AniminaWeb.RootLive do
 
             <%
               item_code = "diverse"
-              item_title = gettext("Diverse")
+              item_title = with_locale(@language, fn -> gettext("Diverse") end)
             %>
             <div class="flex items-center mb-4">
               <%= radio_button(f, :gender, item_code,
@@ -369,7 +405,9 @@ defmodule AniminaWeb.RootLive do
               for="user_occupation"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Occupation") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Occupation") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:occupation].name} class="mt-2">
               <%= text_input(f, :occupation,
@@ -379,15 +417,16 @@ defmodule AniminaWeb.RootLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Dating Coach"),
+                placeholder: with_locale(@language, fn -> gettext("Dating Coach") end),
                 value: f[:occupation].value,
                 type: :text,
                 required: false,
                 autocomplete: "organization-title"
               ) %>
-
               <.error :for={msg <- get_field_errors(f[:occupation], :name)}>
-                <%= gettext("Occupation") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Occupation") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -398,7 +437,9 @@ defmodule AniminaWeb.RootLive do
                 for="user_zip_code"
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
-                <%= gettext("Zip code") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Zip code") %>
+                <% end) %>
               </label>
             </div>
             <div phx-feedback-for={f[:zip_code].name} class="mt-2">
@@ -418,7 +459,9 @@ defmodule AniminaWeb.RootLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
-                <%= gettext("Zip code") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Zip code") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -429,7 +472,9 @@ defmodule AniminaWeb.RootLive do
                 for="user_height"
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
-                <%= gettext("Height") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Height") %>
+                <% end) %>
                 <span class="text-gray-400 dark:text-gray-100">
                   (<%= gettext("in cm") %>)
                 </span>
@@ -450,7 +495,9 @@ defmodule AniminaWeb.RootLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:height], :height)}>
-                <%= gettext("Height") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Height") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -461,9 +508,13 @@ defmodule AniminaWeb.RootLive do
                 for="user_mobile_phone"
                 class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
               >
-                <%= gettext("Mobile phone number") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Mobile phone number") %>
+                <% end) %>
                 <span class="text-gray-400 dark:text-gray-100">
-                  (<%= gettext("to receive a verification code") %>)
+                  <%= with_locale(@language, fn -> %>
+                    (<%= gettext("to receive a verification code") %>)
+                  <% end) %>
                 </span>
               </label>
             </div>
@@ -482,7 +533,9 @@ defmodule AniminaWeb.RootLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
-                <%= gettext("Mobile phone number") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Mobile phone number") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -503,15 +556,21 @@ defmodule AniminaWeb.RootLive do
           </div>
           <div class="text-sm leading-6">
             <label for="comments" class="font-medium text-gray-900 dark:text-white">
-              <%= gettext("I accept the legal terms of animina.") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("I accept the legal terms of animina.") %>
+              <% end) %>
             </label>
             <p class="text-gray-500 dark:text-gray-100">
-              <%= gettext(
-                "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
-              ) %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext(
+                  "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
+                ) %>
+              <% end) %>
             </p>
             <.error :for={msg <- get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted)}>
-              <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -519,7 +578,9 @@ defmodule AniminaWeb.RootLive do
         <div>
           <.link navigate={@sign_in_link}>
             <p class="block text-sm leading-6 text-gray-700 dark:text-white hover:text-gray-900 dark:hover:text-gray-100 hover:cursor-pointer hover:underline">
-              <%= gettext("Already have an account? Sign in") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Already have an account? Sign in") %>
+              <% end) %>
             </p>
           </.link>
         </div>
@@ -554,7 +615,9 @@ defmodule AniminaWeb.RootLive do
             for="user_email"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("E-mail address or Username") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("E-mail address or Username") %>
+            <% end) %>
           </label>
           <div phx-feedback-for={f[:username_or_email].name} class="mt-2">
             <%= text_input(f, :username_or_email,
@@ -564,15 +627,16 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("alice@example.net or alice"),
+              placeholder: with_locale(@language, fn -> gettext("alice@example.net or alice") end),
               value: f[:username_or_email].value,
               required: true,
               autocomplete: :username_or_email,
               "phx-debounce": "200"
             ) %>
-
             <.error :for={msg <- get_field_errors(f[:username_or_email], :username_or_email)}>
-              <%= gettext("E-mail address") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("E-mail address") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -583,7 +647,9 @@ defmodule AniminaWeb.RootLive do
               for="user_password"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Password") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Password") %>
+              <% end) %>
             </label>
           </div>
           <div phx-feedback-for={f[:password].name} class="mt-2">
@@ -594,14 +660,15 @@ defmodule AniminaWeb.RootLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("Password"),
+              placeholder: with_locale(@language, fn -> gettext("Password") end),
               value: f[:password].value,
               autocomplete: gettext("new password"),
               "phx-debounce": "blur"
             ) %>
-
             <.error :for={msg <- get_field_errors(f[:password], :password)}>
-              <%= gettext("Password") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Password") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -609,12 +676,16 @@ defmodule AniminaWeb.RootLive do
         <div class="w-[100%] flex justify-between items-center">
           <.link navigate={@sign_up_link}>
             <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-              <%= gettext("Don't have an account? Sign up") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Don't have an account? Sign up") %>
+              <% end) %>
             </p>
           </.link>
           <.link navigate="/reset-password">
             <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-              <%= gettext("Forgot Your Password?") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Forgot Your Password?") %>
+              <% end) %>
             </p>
           </.link>
         </div>
