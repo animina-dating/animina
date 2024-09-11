@@ -30,6 +30,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           <p class="text-black dark:text-white">
             <.menu_bar />
           </p>
+
           <div
             x-show="open"
             class=" absolute top-0 w-[100vw] h-[100vh] flex gap-4 items-start border-none  bg-black/60 left-0 "
@@ -45,6 +46,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
               <.mobile_navigation
                 active_tab={@active_tab}
                 current_user={@current_user}
+                language={@language}
                 current_user_credit_points={@current_user_credit_points}
                 number_of_unread_messages={@number_of_unread_messages}
               />
@@ -83,14 +85,20 @@ defmodule AniminaWeb.TopNavigationCompontents do
               x-cloak
               class="absolute py-3 top-8 right-2"
             >
-              <.dropdown_items current_user={@current_user} active_tab={@active_tab} />
+              <.dropdown_items
+                language={@language}
+                current_user={@current_user}
+                active_tab={@active_tab}
+              />
             </div>
           </div>
         </div>
-
+        <div class="md:block hidden">
+          <.flag_language_switcher :if={@current_user == nil} base_url="/" language={@language} />
+        </div>
         <div :if={@current_user == nil} class="flex items-center gap-3 md:gap-5">
           <div :if={@active_tab == :sign_in}>
-            <p class="text-base font-bold text-gray-400 cursor-not-allowed dark:text-gray-500">
+            <p class="text-base font-bold text-gray-400 md:block hidden  cursor-not-allowed dark:text-gray-500">
               <%= gettext("Login") %>
             </p>
           </div>
@@ -105,6 +113,26 @@ defmodule AniminaWeb.TopNavigationCompontents do
           </div>
         </div>
       </div>
+    </div>
+    """
+  end
+
+  defp flag_language_switcher(assigns) do
+    ~H"""
+    <div class="flex gap-4 items-center items-center">
+      <a
+        href={"#{@base_url}?locale=en"}
+        class={"text-base font-bold text-gray-700 #{if @language== "en" do "border-[2px] border-blue-500 rounded-full" else "" end} cursor-pointer dark:text-white"}
+      >
+        <img src="/images/usa_flag.png" alt="de" class="w-[25px] h-[25px] rounded-full" />
+      </a>
+
+      <a
+        href={"#{@base_url}?locale=de"}
+        class={"text-base font-bold text-gray-700 #{if @language== "de" do "border-[2px] border-blue-500 rounded-full" else "" end} cursor-pointer dark:text-white"}
+      >
+        <img src="/images/german_flag.png" alt="de" class="w-[25px] h-[25px] rounded-full" />
+      </a>
     </div>
     """
   end
@@ -204,6 +232,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
             </div>
           </.link>
           <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
+          <div class="px-2">
+            <.flag_language_switcher base_url="/my/dashboard/" language={@language} />
+          </div>
+          <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
           <.link class="px-2" navigate="/auth/user/sign-out">
             <%= gettext("Sign Out") %>
           </.link>
@@ -226,6 +258,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="flex flex-col gap-2 p-4">
       <div :if={@current_user} class="flex flex-col gap-2">
+
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
 
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -236,8 +269,15 @@ defmodule AniminaWeb.TopNavigationCompontents do
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
+
+
+        <div class="py-3 px-3 ">
+          <.flag_language_switcher  base_url="/my/dashboard/" language={@language} />
+        </div>
       </div>
       <div :if={six_random_public_users(@current_user) != []} class="flex w-[100%]  flex-col gap-2">
+
+
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
@@ -245,6 +285,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
             current_user={@current_user}
             interests={six_random_public_users(@current_user)}
           />
+        </div>
+
+
+        <div class="py-3 px-3">
+          <.flag_language_switcher base_url="/" language={@language} />
         </div>
       </div>
     </div>

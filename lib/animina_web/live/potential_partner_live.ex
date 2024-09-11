@@ -10,7 +10,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language}= _session, socket) do
     add_registration_bonus(socket, socket.assigns.current_user)
 
     if connected?(socket) do
@@ -50,6 +50,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
       |> assign(city_name: City.by_zip_code!(user.zip_code))
       |> assign(current_user: user)
       |> assign(active_tab: :home)
+      |> assign(language: language)
       |> assign(page_title: gettext("Preferences for your future partner"))
 
     {:ok, socket}

@@ -10,7 +10,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Phoenix.PubSub
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(_params, %{"language" => language}= _session, socket) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
       PubSub.subscribe(Animina.PubSub, "messages")
@@ -27,6 +27,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
       socket
       |> assign(active_tab: :home)
       |> assign(attachment: nil)
+      |> assign(language: language)
       |> assign(uploading: false)
       |> assign(preview_url: nil)
       |> assign(page_title: gettext("Upload a profile photo"))
