@@ -107,8 +107,13 @@ defmodule AniminaWeb.RootLive do
     <div class="px-5 space-y-10">
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
-          message=
-            {with_locale(@language, fn -> gettext("Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉") end)}
+          message={
+            with_locale(@language, fn ->
+              gettext(
+                "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
+              )
+            end)
+          }
           avatars_urls={[
             "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
             "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
@@ -306,9 +311,9 @@ defmodule AniminaWeb.RootLive do
               for="user_country"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Country") %>
-            <% end) %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Country") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:country].name} class="mt-2">
               <%= select(
@@ -551,8 +556,8 @@ defmodule AniminaWeb.RootLive do
           </div>
           <div class="text-sm leading-6">
             <label for="comments" class="font-medium text-gray-900 dark:text-white">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("I accept the legal terms of animina.") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("I accept the legal terms of animina.") %>
               <% end) %>
             </label>
             <p class="text-gray-500 dark:text-gray-100">

@@ -62,11 +62,15 @@ defmodule AniminaWeb.Plugs.AcceptLanguage do
     Enum.flat_map(tags, fn tag ->
       case String.split(tag, "-") do
         [language, _country_variant] ->
-          if Enum.member?(tags, language), do: [tag], else: [tag, language]
+          check_if_language_is_in_tags(tags, language, tag)
 
         [_language] ->
           [tag]
       end
     end)
+  end
+
+  defp check_if_language_is_in_tags(tags, language, tag) do
+    if Enum.member?(tags, language), do: [tag], else: [tag, language]
   end
 end
