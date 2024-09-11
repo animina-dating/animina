@@ -1,4 +1,7 @@
 defmodule Animina.ImageTagging do
+  @moduledoc """
+  This module is responsible for tagging images using the Llava model.
+  """
   alias Animina.Traits.Flag
 
   def tag_image_using_llava(image) do
