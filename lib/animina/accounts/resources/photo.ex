@@ -15,42 +15,13 @@ defmodule Animina.Accounts.Photo do
     notifiers: [Ash.Notifier.PubSub, Animina.Notifiers.Photo],
     extensions: [AshStateMachine, AshOban]
 
-  attributes do
-    uuid_primary_key :id
-    attribute :filename, :string, allow_nil?: false
-    attribute :original_filename, :string, allow_nil?: false
-    attribute :mime, :string, allow_nil?: false
-    attribute :size, :integer, allow_nil?: false
-    attribute :ext, :string, allow_nil?: false
-    attribute :dimensions, :map
+  postgres do
+    table "photos"
+    repo Animina.Repo
 
-    attribute :description, :string do
-      constraints max_length: 1_024
+    references do
+      reference :user, on_delete: :delete
     end
-
-    attribute :error, :string
-    attribute :error_state, :string
-
-    attribute :state, :atom do
-      constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
-
-      default :pending_review
-      allow_nil? false
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
-  end
-
-  pub_sub do
-    module Animina
-    prefix "photo"
-
-    broadcast_type :phoenix_broadcast
-
-    publish :update, ["updated", :id]
-    publish :reject, ["updated", :id]
-    publish :approve, ["updated", :id]
   end
 
   state_machine do
@@ -67,20 +38,14 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  relationships do
-    belongs_to :user, Animina.Accounts.User do
-      allow_nil? false
-      attribute_writable? true
-    end
-
-    belongs_to :story, Animina.Narratives.Story do
-      domain Animina.Narratives
-      attribute_writable? true
-    end
-
-    has_many :optimized_photos, Animina.Accounts.OptimizedPhoto do
-      domain Animina.Accounts
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :update
+    define :by_id, get_by: [:id], action: :read
+    define :destroy
+    define :by_user_id, args: [:user_id]
   end
 
   actions do
@@ -185,14 +150,15 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :destroy
-    define :by_user_id, args: [:user_id]
+  pub_sub do
+    module Animina
+    prefix "photo"
+
+    broadcast_type :phoenix_broadcast
+
+    publish :update, ["updated", :id]
+    publish :reject, ["updated", :id]
+    publish :approve, ["updated", :id]
   end
 
   changes do
@@ -214,20 +180,54 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              create_optimized_photos(record)
-             #  create_photo_flags(record)
-             spawn(fn -> create_photo_flags(record) end)
+             create_photo_flags(record)
+             #  spawn(fn -> create_photo_flags(record) end)
 
              {:ok, record}
            end),
            on: [:create]
   end
 
-  postgres do
-    table "photos"
-    repo Animina.Repo
+  attributes do
+    uuid_primary_key :id
+    attribute :filename, :string, allow_nil?: false
+    attribute :original_filename, :string, allow_nil?: false
+    attribute :mime, :string, allow_nil?: false
+    attribute :size, :integer, allow_nil?: false
+    attribute :ext, :string, allow_nil?: false
+    attribute :dimensions, :map
 
-    references do
-      reference :user, on_delete: :delete
+    attribute :description, :string do
+      constraints max_length: 1_024
+    end
+
+    attribute :error, :string
+    attribute :error_state, :string
+
+    attribute :state, :atom do
+      constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
+
+      default :pending_review
+      allow_nil? false
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
+  end
+
+  relationships do
+    belongs_to :user, Animina.Accounts.User do
+      allow_nil? false
+      attribute_writable? true
+    end
+
+    belongs_to :story, Animina.Narratives.Story do
+      domain Animina.Narratives
+      attribute_writable? true
+    end
+
+    has_many :optimized_photos, Animina.Accounts.OptimizedPhoto do
+      domain Animina.Accounts
     end
   end
 
@@ -261,10 +261,8 @@ defmodule Animina.Accounts.Photo do
   end
 
   def create_photo_flags(record) do
-    IO.inspect(record, label: "Recorddd")
-
     {flags, description} =
-      ImageTagging.tag_image_using_llava("uploads/#{record.filename}")
+      ImageTagging.tag_image_using_llava("#{record.filename}")
 
     case update(record, %{description: description}) do
       {:ok, record} ->
@@ -280,8 +278,6 @@ defmodule Animina.Accounts.Photo do
       Flag.by_name(flag)
       |> case do
         {:ok, flag} ->
-          IO.inspect(flag, label: "Flag")
-
           PhotoFlags.create(%{
             user_id: record.user_id,
             photo_id: record.id,
@@ -292,6 +288,8 @@ defmodule Animina.Accounts.Photo do
           nil
       end
     end)
+
+    {:ok, record}
   end
 
   defp create_optimized_folder_if_not_exists do

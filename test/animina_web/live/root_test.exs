@@ -1,6 +1,7 @@
 defmodule AniminaWeb.RootTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
@@ -19,7 +20,8 @@ defmodule AniminaWeb.RootTest do
     mobile_phone: "0151-12345678",
     occupation: "Software Engineer",
     language: "en",
-    legal_terms_accepted: true
+    legal_terms_accepted: true,
+    country: "Germany"
   }
 
   @valid_create_user_attrs %{
@@ -35,7 +37,8 @@ defmodule AniminaWeb.RootTest do
     occupation: "Software Engineer",
     language: "en",
     legal_terms_accepted: true,
-    confirmed_at: DateTime.utc_now()
+    confirmed_at: DateTime.utc_now(),
+    country: "Germany"
   }
 
   describe "Tests the Registration flow" do
@@ -75,6 +78,47 @@ defmodule AniminaWeb.RootTest do
         |> live(~p"/my/email-validation")
 
       assert html =~ "We just send you an email to #{@valid_attrs.email} with a confirmation link"
+    end
+
+    test "When more users than the one required per hour sign up , they are added to the waitlist",
+         %{conn: conn} do
+      #  we first create 5 users , this is the maximum number of users that can sign up in an hour
+      # for test env ,
+      # for production and development it is 200
+      create_five_users()
+
+      {:ok, _index_live, _html} =
+        conn
+        |> sign_in_user(@valid_attrs)
+        |> live(~p"/my/email-validation")
+
+      confirm_user(@valid_attrs)
+
+      # we check that we are redirected back to the too-successful page
+
+      {:error, {:redirect, %{to: url, flash: _}}} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(~p"/my/dashboard")
+
+      assert url == "/my/too-successful"
+
+      {:ok, _index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => @valid_attrs.username,
+          "password" => @valid_attrs.password
+        })
+        |> live(url)
+
+      assert html =~
+               "Hi #{@valid_attrs.name} we currently have too many new registrations to handle. That is a good problem for us to have but for you it means that you just landed on a waiting list. We&#39;ll send you an email once our systems are ready. In case this is a spike we are talking minutes or hours."
+
+      user = User.by_username!("MichaelMunavu")
+      assert user.is_in_waitlist == true
     end
 
     test "Once we add correct user details , we are redirected to /my/email-validation then to  /my/potential-partner/ page after confirmation",
@@ -198,6 +242,8 @@ defmodule AniminaWeb.RootTest do
         "I am a software engineer"
       )
 
+      create_profile_picture(user.id)
+
       current_points = User.by_username!(user.username).credit_points
 
       {:ok, index_live, _html} =
@@ -304,6 +350,8 @@ defmodule AniminaWeb.RootTest do
         "I am a software engineer"
       )
 
+      create_profile_picture(user.id)
+
       {:ok, _index_live, html} =
         conn
         |> login_user(%{"username_or_email" => user.email, "password" => @valid_attrs.password})
@@ -379,9 +427,77 @@ defmodule AniminaWeb.RootTest do
     story
   end
 
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
+  end
+
   defp confirm_user(attributes) do
     user = User.by_username!(attributes.username)
 
     User.update(user, %{confirmed_at: DateTime.utc_now()})
+  end
+
+  defp create_five_users do
+    for user <- user_details() do
+      user =
+        user
+        |> Map.put(:hashed_password, Bcrypt.hash_pwd_salt("MichaelTheEngineer"))
+        |> Map.put(:birthday, "1950-01-01")
+        |> Map.put(:height, 180)
+        |> Map.put(:zip_code, "56068")
+        |> Map.put(:occupation, "Software Engineer")
+        |> Map.put(:language, "en")
+        |> Map.put(:legal_terms_accepted, true)
+        |> Map.put(:country, "Germany")
+        |> Map.put(:gender, "male")
+
+      User.create(user)
+    end
+  end
+
+  defp user_details do
+    [
+      %{
+        email: "test@example.com",
+        username: "Maya",
+        name: "Maya",
+        mobile_phone: "0151-12445678"
+      },
+      %{
+        email: "jones@example.com",
+        username: "Jones",
+        name: "Jones",
+        mobile_phone: "0151-12345671"
+      },
+      %{
+        email: "kim@example.com",
+        username: "Kim",
+        name: "Kim",
+        mobile_phone: "0151-12345672"
+      },
+      %{
+        email: "jama@example.com",
+        username: "Jama",
+        name: "Jama",
+        mobile_phone: "0151-12345673"
+      },
+      %{
+        email: "stefan@example.com",
+        username: "Stefan",
+        name: "Stefan",
+        mobile_phone: "0151-12345674"
+      }
+    ]
   end
 end

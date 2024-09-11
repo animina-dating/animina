@@ -7,32 +7,9 @@ defmodule Animina.Traits.Flag do
     data_layer: AshPostgres.DataLayer,
     domain: Animina.Traits
 
-  attributes do
-    uuid_primary_key :id
-    attribute :name, :ci_string, allow_nil?: false
-    attribute :emoji, :string, allow_nil?: true
-  end
-
-  relationships do
-    has_many :flag_translations, Animina.Traits.FlagTranslation
-
-    belongs_to :category, Animina.Traits.Category do
-      attribute_writable? true
-    end
-  end
-
-  actions do
-    defaults [:read, :destroy]
-
-    create :create do
-      accept [
-        :name,
-        :emoji,
-        :category_id
-      ]
-
-      primary? true
-    end
+  postgres do
+    table "traits_flags"
+    repo Animina.Repo
   end
 
   code_interface do
@@ -44,16 +21,41 @@ defmodule Animina.Traits.Flag do
     define :by_name, get_by: [:name], action: :read
   end
 
-  identities do
-    identity :unique_name, [:name, :category_id]
+  actions do
+    defaults [:read, :destroy]
+
+    create :create do
+      accept [
+        :name,
+        :emoji,
+        :category_id,
+        :photo_flagable
+      ]
+
+      primary? true
+    end
   end
 
   preparations do
     prepare build(load: [:flag_translations])
   end
 
-  postgres do
-    table "traits_flags"
-    repo Animina.Repo
+  attributes do
+    uuid_primary_key :id
+    attribute :name, :ci_string, allow_nil?: false
+    attribute :emoji, :string, allow_nil?: true
+    attribute :photo_flagable, :boolean, default: false
+  end
+
+  relationships do
+    has_many :flag_translations, Animina.Traits.FlagTranslation
+
+    belongs_to :category, Animina.Traits.Category do
+      attribute_writable? true
+    end
+  end
+
+  identities do
+    identity :unique_name, [:name, :category_id]
   end
 end

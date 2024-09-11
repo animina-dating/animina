@@ -16,6 +16,10 @@ end
 
 config :animina, env: Mix.env()
 
+# configures the maximum number of users allowed to the system within the hour before joining the waiting list
+
+config :animina, :max_users_per_hour, 100
+
 # Configures the number of stories required for complete registration
 config :animina, :number_of_stories_required_for_complete_registration, 1
 
@@ -86,23 +90,29 @@ config :animina, AniminaWeb.Gettext, default_locale: "en", locales: ~w(en de)
 
 config :animina, AniminaWeb.FlagsLive, max_selected: 20
 
-config :spark, :formatter,
-  remove_parens?: true,
-  "Ash.Resource": [
-    type: Ash.Resource,
-    section_order: [
-      :attributes,
-      :relationships,
-      :validations,
-      :identities,
-      :aggregates,
-      :calculations,
-      :preparations,
-      :policies,
-      :authentication,
-      :token,
-      :postgres
-    ]
+config :spark,
+  formatter: [
+    remove_parens?: true,
+    "Ash.Resource": [
+      section_order: [
+        :postgres,
+        :resource,
+        :code_interface,
+        :actions,
+        :policies,
+        :pub_sub,
+        :preparations,
+        :changes,
+        :validations,
+        :multitenancy,
+        :attributes,
+        :relationships,
+        :calculations,
+        :aggregates,
+        :identities
+      ]
+    ],
+    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
   ]
 
 # Import environment specific config. This must remain at the bottom

@@ -248,32 +248,60 @@ defmodule AniminaWeb.RootLive do
           </div>
         </div>
 
-        <div>
-          <div class="flex items-center justify-between">
+        <div class="w-[100%] md:grid grid-cols-2 gap-8">
+          <div>
             <label
               for="user_birthday"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
               <%= gettext("Date of birth") %>
             </label>
-          </div>
-          <div phx-feedback-for={f[:birthday].name} class="mt-2">
-            <%= date_input(f, :birthday,
-              class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                  unless(get_field_errors(f[:birthday], :birthday) == [],
-                    do: "ring-red-600 focus:ring-red-600",
-                    else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              placeholder: "",
-              value: f[:birthday].value,
-              autocomplete: gettext("bday"),
-              "phx-debounce": "blur"
-            ) %>
 
-            <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
-              <%= gettext("Date of birth") <> " " <> msg %>
-            </.error>
+            <div phx-feedback-for={f[:birthday].name} class="mt-2">
+              <%= date_input(f, :birthday,
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:birthday], :birthday) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                placeholder: "",
+                value: f[:birthday].value,
+                autocomplete: gettext("bday"),
+                "phx-debounce": "blur"
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
+                <%= gettext("Date of birth") <> " " <> msg %>
+              </.error>
+            </div>
+          </div>
+          <div>
+            <label
+              for="user_country"
+              class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+            >
+              <%= gettext("Country") %>
+            </label>
+            <div phx-feedback-for={f[:country].name} class="mt-2">
+              <%= select(
+                f,
+                :country,
+                ["Germany"],
+                prompt: gettext("Select your country"),
+                class:
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(get_field_errors(f[:country], :country) == [],
+                      do: "ring-red-600 focus:ring-red-600",
+                      else: "ring-gray-300 focus:ring-indigo-600"
+                    ),
+                autofocus: true
+              ) %>
+
+              <.error :for={msg <- get_field_errors(f[:country], :country)}>
+                <%= gettext("Country") <> " " <> msg %>
+              </.error>
+            </div>
           </div>
         </div>
 

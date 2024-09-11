@@ -2,6 +2,7 @@ defmodule AniminaWeb.ReviewReportTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Report
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
@@ -246,6 +247,7 @@ defmodule AniminaWeb.ReviewReportTest do
       User.create(%{
         email: "bob@example.com",
         username: "bob",
+        country: "Germany",
         name: "Bob",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1950-01-01",
@@ -258,7 +260,7 @@ defmodule AniminaWeb.ReviewReportTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
-
+    create_profile_picture(user.id)
     user
   end
 
@@ -268,6 +270,7 @@ defmodule AniminaWeb.ReviewReportTest do
         email: "mike@example.com",
         username: "mike",
         name: "Mike",
+        country: "Germany",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1950-01-01",
         height: 180,
@@ -279,6 +282,7 @@ defmodule AniminaWeb.ReviewReportTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -289,6 +293,7 @@ defmodule AniminaWeb.ReviewReportTest do
         email: "stefan@example.com",
         username: "stefan",
         name: "stefan",
+        country: "Germany",
         hashed_password: Bcrypt.hash_pwd_salt("password"),
         birthday: "1951-01-01",
         height: 180,
@@ -300,6 +305,7 @@ defmodule AniminaWeb.ReviewReportTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -349,5 +355,20 @@ defmodule AniminaWeb.ReviewReportTest do
       form(lv, "#basic_user_sign_in_form", user: attributes)
 
     submit_form(form, conn)
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 end

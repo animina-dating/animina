@@ -11,60 +11,26 @@ defmodule Animina.Accounts.Report do
     domain: Animina.Accounts,
     authorizers: Ash.Policy.Authorizer
 
-  attributes do
-    uuid_primary_key :id
+  postgres do
+    table "reports"
+    repo Animina.Repo
 
-    attribute :state, :atom do
-      constraints one_of: [:pending, :under_review, :accepted, :denied]
-      allow_nil? false
+    references do
+      reference :accused, on_delete: :delete
+      reference :accuser, on_delete: :delete
+      reference :admin, on_delete: :delete
     end
-
-    attribute :accused_user_state, :atom do
-      constraints one_of: [
-                    :normal,
-                    :validated,
-                    :under_investigation,
-                    :banned,
-                    :incognito,
-                    :hibernate,
-                    :archived
-                  ]
-
-      allow_nil? false
-    end
-
-    attribute :description, :string do
-      constraints max_length: 1_024
-      allow_nil? false
-    end
-
-    attribute :internal_memo, :string do
-      constraints max_length: 1_024
-      allow_nil? true
-    end
-
-    create_timestamp :created_at
-    update_timestamp :updated_at
   end
 
-  relationships do
-    belongs_to :accused, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-      allow_nil? false
-    end
-
-    belongs_to :accuser, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-      allow_nil? false
-    end
-
-    belongs_to :admin, Animina.Accounts.User do
-      domain Animina.Accounts
-      attribute_writable? true
-      allow_nil? true
-    end
+  code_interface do
+    domain Animina.Accounts
+    define :read
+    define :create
+    define :update
+    define :by_id, get_by: [:id], action: :read
+    define :all_reports
+    define :pending_reports
+    define :review
   end
 
   actions do
@@ -136,15 +102,18 @@ defmodule Animina.Accounts.Report do
     end
   end
 
-  code_interface do
-    domain Animina.Accounts
-    define :read
-    define :create
-    define :update
-    define :by_id, get_by: [:id], action: :read
-    define :all_reports
-    define :pending_reports
-    define :review
+  policies do
+    policy action_type(:read) do
+      authorize_if Animina.Checks.ReadReportCheck
+    end
+
+    policy action_type(:update) do
+      authorize_if Animina.Checks.UpdateReportCheck
+    end
+  end
+
+  preparations do
+    prepare build(load: [:accuser, :accused, :admin])
   end
 
   changes do
@@ -166,10 +135,6 @@ defmodule Animina.Accounts.Report do
              {:ok, record}
            end),
            on: [:update]
-  end
-
-  preparations do
-    prepare build(load: [:accuser, :accused, :admin])
   end
 
   defp send_notification_email_to_admin(id, description) do
@@ -201,24 +166,59 @@ defmodule Animina.Accounts.Report do
     user
   end
 
-  policies do
-    policy action_type(:read) do
-      authorize_if Animina.Checks.ReadReportCheck
+  attributes do
+    uuid_primary_key :id
+
+    attribute :state, :atom do
+      constraints one_of: [:pending, :under_review, :accepted, :denied]
+      allow_nil? false
     end
 
-    policy action_type(:update) do
-      authorize_if Animina.Checks.UpdateReportCheck
+    attribute :accused_user_state, :atom do
+      constraints one_of: [
+                    :normal,
+                    :validated,
+                    :under_investigation,
+                    :banned,
+                    :incognito,
+                    :hibernate,
+                    :archived
+                  ]
+
+      allow_nil? false
     end
+
+    attribute :description, :string do
+      constraints max_length: 1_024
+      allow_nil? false
+    end
+
+    attribute :internal_memo, :string do
+      constraints max_length: 1_024
+      allow_nil? true
+    end
+
+    create_timestamp :created_at
+    update_timestamp :updated_at
   end
 
-  postgres do
-    table "reports"
-    repo Animina.Repo
+  relationships do
+    belongs_to :accused, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+      allow_nil? false
+    end
 
-    references do
-      reference :accused, on_delete: :delete
-      reference :accuser, on_delete: :delete
-      reference :admin, on_delete: :delete
+    belongs_to :accuser, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+      allow_nil? false
+    end
+
+    belongs_to :admin, Animina.Accounts.User do
+      domain Animina.Accounts
+      attribute_writable? true
+      allow_nil? true
     end
   end
 end

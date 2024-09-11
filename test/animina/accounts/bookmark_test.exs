@@ -138,7 +138,8 @@ defmodule Animina.Accounts.BookmarkTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        country: "Germany"
       })
 
     user
@@ -157,7 +158,8 @@ defmodule Animina.Accounts.BookmarkTest do
         gender: "male",
         mobile_phone: "0151-12341678",
         language: "de",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        country: "Germany"
       })
 
     user
@@ -176,7 +178,8 @@ defmodule Animina.Accounts.BookmarkTest do
         gender: "male",
         mobile_phone: "0151-12342678",
         language: "de",
-        legal_terms_accepted: true
+        legal_terms_accepted: true,
+        country: "Germany"
       })
 
     user

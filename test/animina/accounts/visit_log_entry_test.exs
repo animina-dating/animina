@@ -50,6 +50,7 @@ defmodule Animina.Accounts.VisitLogEntryTest do
         gender: "male",
         mobile_phone: "0151-12345678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 
@@ -69,6 +70,7 @@ defmodule Animina.Accounts.VisitLogEntryTest do
         gender: "male",
         mobile_phone: "0151-12341678",
         language: "de",
+        country: "Germany",
         legal_terms_accepted: true
       })
 

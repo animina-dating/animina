@@ -144,7 +144,8 @@ defmodule Animina.Accounts.MessageTest do
         mobile_phone: "0151-12345678",
         language: "de",
         legal_terms_accepted: true,
-        preapproved_communication_only: true
+        preapproved_communication_only: true,
+        country: "Germany"
       })
 
     user
@@ -164,7 +165,8 @@ defmodule Animina.Accounts.MessageTest do
         mobile_phone: "0151-12341678",
         language: "de",
         legal_terms_accepted: true,
-        preapproved_communication_only: false
+        preapproved_communication_only: false,
+        country: "Germany"
       })
 
     user
@@ -184,7 +186,8 @@ defmodule Animina.Accounts.MessageTest do
         mobile_phone: "0151-22345678",
         language: "de",
         legal_terms_accepted: true,
-        preapproved_communication_only: false
+        preapproved_communication_only: false,
+        country: "Germany"
       })
 
     user
@@ -204,7 +207,8 @@ defmodule Animina.Accounts.MessageTest do
         mobile_phone: "0151-21345678",
         language: "de",
         legal_terms_accepted: true,
-        preapproved_communication_only: false
+        preapproved_communication_only: false,
+        country: "Germany"
       })
 
     user
@@ -224,7 +228,8 @@ defmodule Animina.Accounts.MessageTest do
         mobile_phone: "0151-21445678",
         language: "de",
         legal_terms_accepted: true,
-        preapproved_communication_only: false
+        preapproved_communication_only: false,
+        country: "Germany"
       })
 
     user

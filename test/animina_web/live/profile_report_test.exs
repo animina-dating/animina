@@ -1,5 +1,6 @@
 defmodule AniminaWeb.ReportTest do
   alias Animina.Accounts.Credit
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.User
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
@@ -134,12 +135,14 @@ defmodule AniminaWeb.ReportTest do
         zip_code: "56068",
         gender: "male",
         mobile_phone: "0151-12345678",
+        country: "Germany",
         language: "en",
         legal_terms_accepted: true,
         confirmed_at: DateTime.utc_now()
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
 
     user
   end
@@ -155,6 +158,7 @@ defmodule AniminaWeb.ReportTest do
         height: 180,
         zip_code: "56068",
         gender: "male",
+        country: "Germany",
         mobile_phone: "0151-22345678",
         language: "en",
         is_private: true,
@@ -163,6 +167,7 @@ defmodule AniminaWeb.ReportTest do
       })
 
     create_about_me_story(user.id, get_about_me_headline().id)
+    create_profile_picture(user.id)
     user
   end
 
@@ -189,6 +194,21 @@ defmodule AniminaWeb.ReportTest do
 
         headline
     end
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 
   defp login_user(conn, attributes) do

@@ -15,7 +15,8 @@ defmodule Animina.Accounts.UserTest do
     gender: "male",
     mobile_phone: "0151-12345678",
     language: "de",
-    legal_terms_accepted: true
+    legal_terms_accepted: true,
+    country: "Germany"
   }
 
   describe "User Resource Tests" do
@@ -31,6 +32,7 @@ defmodule Animina.Accounts.UserTest do
                  birthday: "1950-01-01",
                  height: 180,
                  zip_code: "56068",
+                 country: "Germany",
                  gender: "male",
                  mobile_phone: "0151-12345678",
                  language: "de",
@@ -38,6 +40,44 @@ defmodule Animina.Accounts.UserTest do
                })
 
       assert {:ok, _} = User.by_email("bob@example.com")
+    end
+
+    test "You cannot create a user with a country that is not in the list of allowed countries" do
+      assert {:error, _} = User.by_email("bob@example.com")
+
+      assert {:ok, _} =
+               User.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true,
+                 country: "Germany"
+               })
+
+      assert {:ok, _} = User.by_email("bob@example.com")
+
+      assert {:error, _} =
+               User.create(%{
+                 email: "bob@example.com",
+                 username: "bob",
+                 name: "Bob",
+                 hashed_password: "zzzzzzzzzzz",
+                 birthday: "1950-01-01",
+                 height: 180,
+                 zip_code: "56068",
+                 gender: "male",
+                 mobile_phone: "0151-12345678",
+                 language: "de",
+                 legal_terms_accepted: true,
+                 country: "My Fake Country"
+               })
     end
 
     test "updated a  user" do
@@ -56,6 +96,7 @@ defmodule Animina.Accounts.UserTest do
                  gender: "male",
                  mobile_phone: "0151-12345678",
                  language: "de",
+                 country: "Germany",
                  legal_terms_accepted: true
                })
 
@@ -85,6 +126,7 @@ defmodule Animina.Accounts.UserTest do
                  zip_code: "56068",
                  occupation: "Engineer",
                  gender: "male",
+                 country: "Germany",
                  mobile_phone: "0151-12345678",
                  language: "de",
                  legal_terms_accepted: true
@@ -108,6 +150,7 @@ defmodule Animina.Accounts.UserTest do
                  height: 180,
                  zip_code: "56068",
                  gender: "male",
+                 country: "Germany",
                  mobile_phone: "0151-12315678",
                  language: "de",
                  legal_terms_accepted: true
@@ -126,6 +169,7 @@ defmodule Animina.Accounts.UserTest do
                  name: "Bob",
                  hashed_password: "zzzzzzzzzzz",
                  birthday: "1950-01-01",
+                 country: "Germany",
                  height: 180,
                  zip_code: "56068",
                  gender: "male",
@@ -149,6 +193,7 @@ defmodule Animina.Accounts.UserTest do
                  birthday: "1950-01-01",
                  height: 180,
                  zip_code: "56068",
+                 country: "Germany",
                  gender: "male",
                  mobile_phone: "0151-12345678",
                  language: "de",
@@ -167,6 +212,7 @@ defmodule Animina.Accounts.UserTest do
                User.create(%{
                  email: "bob@example.com",
                  username: "bob",
+                 country: "Germany",
                  name: "Bob",
                  hashed_password: "zzzzzzzzzzz",
                  birthday: "1950-01-01",
@@ -195,6 +241,7 @@ defmodule Animina.Accounts.UserTest do
                  birthday: "1950-01-01",
                  height: 180,
                  zip_code: "56068",
+                 country: "Germany",
                  gender: "male",
                  mobile_phone: "0151-12345678",
                  language: "de",
@@ -365,7 +412,8 @@ defmodule Animina.Accounts.UserTest do
       gender: "male",
       mobile_phone: "0151-12345678",
       language: "de",
-      legal_terms_accepted: true
+      legal_terms_accepted: true,
+      country: "Germany"
     })
   end
 

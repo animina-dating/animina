@@ -242,7 +242,7 @@ defmodule AniminaWeb.ChatLive do
     if message.receiver_id == sender.id do
       "Chat: 💬 #{sender.username} <-> #{receiver.username}"
     else
-      "Chat#{sender.username} <-> #{receiver.username}"
+      "Chat: #{sender.username} <-> #{receiver.username}"
     end
   end
 
