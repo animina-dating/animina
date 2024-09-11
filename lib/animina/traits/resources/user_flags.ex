@@ -69,7 +69,7 @@ defmodule Animina.Traits.UserFlags do
   end
 
   preparations do
-    prepare build(load: [:flag, :user_id])
+    prepare build(load: [:flag])
   end
 
   validations do

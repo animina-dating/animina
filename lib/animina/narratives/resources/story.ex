@@ -73,7 +73,7 @@ defmodule Animina.Narratives.Story do
         allow_nil? false
       end
 
-      prepare build(load: [:headline, :photo, :user])
+      prepare build(load: [:headline, :photo])
 
       prepare build(sort: [position: :asc])
 
@@ -99,7 +99,7 @@ defmodule Animina.Narratives.Story do
         allow_nil? false
       end
 
-      prepare build(load: [:headline, :photo, :user])
+      prepare build(load: [:headline, :photo])
 
       prepare build(sort: [position: :desc])
 
@@ -109,7 +109,7 @@ defmodule Animina.Narratives.Story do
     read :user_headlines do
       argument :user_id, :uuid, allow_nil?: false
 
-      prepare build(load: [:headline, :photo, :user])
+      prepare build(load: [:headline, :photo])
 
       filter expr(is_nil(headline_id) == ^false and user_id == ^arg(:user_id))
     end
