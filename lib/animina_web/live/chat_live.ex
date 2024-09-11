@@ -80,6 +80,10 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:unread_messages, [])
       |> assign(profile_points: Points.humanized_points(receiver.credit_points))
       |> assign(:show_use_ai_button, true)
+      |> assign(
+        :message_when_generating,
+        gettext("Feeding our internal AI with this text. Please wait a second")
+      )
       |> assign(:intersecting_green_flags_count, intersecting_green_flags_count)
       |> assign(:intersecting_red_flags_count, intersecting_red_flags_count)
       |> assign(:intersecting_green_flags, intersecting_green_flags)
@@ -200,6 +204,7 @@ defmodule AniminaWeb.ChatLive do
   end
 
   def handle_event("generate_message_with_ai", _params, socket) do
+    Process.send_after(self(), {:render_generating_message, 1}, 1000)
     send(self(), {:generate_messages, []})
 
     {:noreply,
@@ -278,6 +283,35 @@ defmodule AniminaWeb.ChatLive do
          current_user_has_liked_profile?:
            current_user_has_liked_profile(current_user.id, socket.assigns.receiver.id)
        )}
+    end
+  end
+
+  def handle_info({:render_generating_message, count}, socket) do
+    if socket.assigns.generating_message do
+      new_message =
+        case count do
+          1 -> "."
+          2 -> "."
+          3 -> "."
+          _ -> "."
+        end
+
+      message_when_generating_story = socket.assigns.message_when_generating <> new_message
+
+      Process.send_after(self(), {:render_generating_message, rem(count + 1, 4)}, 1000)
+
+      if count == 1 do
+        {:noreply,
+         assign(
+           socket,
+           :message_when_generating,
+           gettext("Feeding our internal AI with this text. Please wait a second ")
+         )}
+      else
+        {:noreply, assign(socket, :message_when_generating, message_when_generating_story)}
+      end
+    else
+      {:noreply, socket}
     end
   end
 
@@ -558,11 +592,11 @@ defmodule AniminaWeb.ChatLive do
             <%= submit(
             class:
               "flex w-full justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.valid? == false,
+                unless(@form.source.valid? == false || @generating_message == false,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.source.valid? == false
+            disabled: @form.source.valid? == false || @generating_message == true
           ) do %>
               <.send_message_button />
             <% end %>
@@ -576,10 +610,18 @@ defmodule AniminaWeb.ChatLive do
             <p
               phx-click="generate_message_with_ai"
               phx-disable-with="Generating potential first messages. Please wait (up to 30 seconds) ..."
-              class="flex p-2 justify-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-500 items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+              class={
+                  "flex p-2 justify-center cursor-pointer hover:scale-105 transition-all ease-in-out duration-500 items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+                  if @generating_message do
+                  " cursor-not-allowed opacity-50"
+                  else
+                  ""
+                  end
+                  }
+              disabled={if @generating_message, do: true, else: false}
             >
               <%= if @generating_message do %>
-                <%= gettext("Generating your message. This may take up to 30 seconds...") %>
+                <%= @message_when_generating %>
               <% else %>
                 <%= gettext("Need help with your first message?") %>
               <% end %>
