@@ -25,11 +25,15 @@ defmodule AniminaWeb.RootLive do
 
   defp apply_action(socket, :register, params) do
     socket
-    |> assign(page_title: gettext("Animina dating app"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Animina dating app") end)
+    )
     |> assign(:form_id, "sign-up-form")
-    |> assign(:cta, gettext("Register new account"))
+    |> assign(
+      :cta,
+      with_locale(socket.assigns.language, fn -> gettext("Register new account") end)
+    )
     |> assign(active_tab: :register)
-    |> assign(page_title: "Animina #{gettext("Register")}")
     |> assign(:action, get_link("/auth/user/password/register/", params))
     |> assign(:sign_in_link, get_link("/sign-in/", params))
     |> assign(:hidden_points, 100)
@@ -42,9 +46,12 @@ defmodule AniminaWeb.RootLive do
   defp apply_action(socket, :sign_in, params) do
     socket
     |> assign(:form_id, "sign-in-form")
-    |> assign(:cta, gettext("Sign in"))
+    |> assign(:cta, with_locale(socket.assigns.language, fn -> gettext("Sign in") end))
     |> assign(active_tab: :sign_in)
-    |> assign(page_title: "Animina #{gettext("Login")}")
+    |> assign(
+      :page_title,
+      with_locale(socket.assigns.language, fn -> gettext("Animina Login") end)
+    )
     |> assign(:sign_up_link, get_link("/", params))
     |> assign(:action, get_link("/auth/user/sign_in/", params))
     |> assign(
@@ -100,11 +107,8 @@ defmodule AniminaWeb.RootLive do
     <div class="px-5 space-y-10">
       <%= if @form_id == "sign-up-form" do %>
         <.notification_box
-          message={
-            gettext(
-              "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
-            )
-          }
+          message=
+            {with_locale(@language, fn -> gettext("Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉") end)}
           avatars_urls={[
             "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
             "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
@@ -113,10 +117,12 @@ defmodule AniminaWeb.RootLive do
       <% end %>
 
       <%= if @form_id == "sign-in-form" do %>
-        <h1 class="text-4xl font-semibold dark:text-white"><%= gettext("Login") %></h1>
+        <h1 class="text-4xl font-semibold dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Login") %>
+          <% end) %>
+        </h1>
       <% end %>
-
-
 
       <.form
         :let={f}
@@ -300,7 +306,9 @@ defmodule AniminaWeb.RootLive do
               for="user_country"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
+            <%= with_locale(@language, fn -> %>
               <%= gettext("Country") %>
+            <% end) %>
             </label>
             <div phx-feedback-for={f[:country].name} class="mt-2">
               <%= select(
@@ -543,7 +551,9 @@ defmodule AniminaWeb.RootLive do
           </div>
           <div class="text-sm leading-6">
             <label for="comments" class="font-medium text-gray-900 dark:text-white">
+            <%= with_locale(@language, fn -> %>
               <%= gettext("I accept the legal terms of animina.") %>
+              <% end) %>
             </label>
             <p class="text-gray-500 dark:text-gray-100">
               <%= with_locale(@language, fn -> %>

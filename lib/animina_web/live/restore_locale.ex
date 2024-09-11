@@ -1,9 +1,8 @@
 defmodule AniminaWeb.RestoreLocale do
   def on_mount(:default, %{"language" => language}, _session, socket) do
-
     IO.inspect("I Mounted")
-    IO.inspect language
-    IO.inspect Gettext.put_locale(Animina.Gettext, "de")
+    IO.inspect(language)
+    IO.inspect(Gettext.put_locale(Animina.Gettext, "de"))
     {:cont, socket}
   end
 
