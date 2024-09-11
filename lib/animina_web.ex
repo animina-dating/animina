@@ -54,6 +54,8 @@ defmodule AniminaWeb do
       use Phoenix.LiveView,
         layout: {AniminaWeb.Layouts, :app}
 
+      import Gettext, only: [with_locale: 2]
+
       unquote(html_helpers())
     end
   end

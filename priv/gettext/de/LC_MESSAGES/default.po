@@ -324,6 +324,19 @@ msgstr "Geburtsdatum"
 msgid "Dating Coach"
 msgstr "Dating-Coach"
 
+
+#: lib/animina_web/live/root_live.ex:310
+#:, elixir-autogen, elixir-format
+msgid "Country"
+msgstr "Land"
+
+#: lib/animina_web/live/root_live.ex:318
+#:, elixir-autogen, elixir-format
+msgid "Select your country"
+msgstr "Wählen Sie Ihr Land aus"
+
+
+
 #: lib/animina_web/components/profile/profile_components.ex:488
 #: lib/animina_web/live/delete_account_live.ex:135
 #, elixir-autogen, elixir-format
@@ -925,6 +938,12 @@ msgstr "Abmelden"
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Anmelden"
+
+
+#: lib/animina_web/live/root_live.ex:34
+#, elixir-autogen, elixir-format
+msgid "Register new account"
+msgstr "Neues Konto registrieren"
 
 #: lib/animina_web/components/top_navigation_components.ex:167
 #, elixir-autogen, elixir-format

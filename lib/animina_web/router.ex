@@ -10,7 +10,7 @@ defmodule AniminaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :load_from_session
-    plug AniminaWeb.Plugs.AcceptLanguage
+    plug AniminaWeb.Plugs.Locale
   end
 
   pipeline :api do
