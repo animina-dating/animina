@@ -250,7 +250,7 @@ defmodule Animina.Accounts.Photo do
 
   def create_photo_flags(record) do
     {flags, description} =
-      if File.exists?("priv/static/uploads/" <> record.file_name) do
+      if File.exists?("priv/static/uploads/" <> record.filename) do
         ImageTagging.tag_image_using_llava("#{record.filename}")
       end
 
