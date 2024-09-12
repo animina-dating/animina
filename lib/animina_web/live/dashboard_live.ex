@@ -370,7 +370,9 @@ defmodule AniminaWeb.DashboardLive do
       }>
         <div class="max-w-2xl mx-auto lg:mx-0">
           <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-300 sm:text-4xl">
-            <%= gettext("Potential Matches") |> raw() %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Potential Matches") %>
+            <% end) %>
           </h2>
         </div>
 
@@ -438,10 +440,16 @@ defmodule AniminaWeb.DashboardLive do
               </div>
               <div class="pt-2">
                 <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-                  <%= potential_partner.age %> <%= gettext("years") |> raw() %>
+                  <%= potential_partner.age %>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("years") %>
+                  <% end) %>
                 </span>
                 <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
-                  <%= potential_partner.height %> <%= gettext("cm") |> raw() %>
+                  <%= potential_partner.height %>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("cm") %>
+                  <% end) %>
                 </span>
                 <span class="inline-flex items-center px-2 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md">
                   📍 <%= potential_partner.city.name %>
@@ -460,14 +468,23 @@ defmodule AniminaWeb.DashboardLive do
 
       <div class="grid grid-cols-1 gap-6 mt-10 md:grid-cols-2">
         <.dashboard_card_like_component
-          title={gettext("Likes")}
+          title={
+            with_locale(@language, fn ->
+              gettext("Likes")
+            end)
+          }
           likes_received_by_user_in_seven_days={@likes_received_by_user_in_seven_days}
           profiles_liked_by_user={@profiles_liked_by_user}
+          language={@language}
           total_likes_received_by_user={@total_likes_received_by_user}
         />
 
         <.dashboard_card_messages_component
-          title={gettext("Unread Chats")}
+          title={
+            with_locale(@language, fn ->
+              gettext("Unread Chats")
+            end)
+          }
           unread_messages={@unread_messages}
           language={@language}
           current_user={@current_user}
@@ -475,7 +492,11 @@ defmodule AniminaWeb.DashboardLive do
         />
 
         <.dashboard_card_chat_component
-          title={gettext("Latest Chat")}
+          title={
+            with_locale(@language, fn ->
+              gettext("Latest Chat")
+            end)
+          }
           last_unread_message={@last_unread_message}
           language={@language}
           current_user={@current_user}

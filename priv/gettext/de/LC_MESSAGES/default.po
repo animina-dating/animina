@@ -746,10 +746,23 @@ msgstr "Keine Berichte verfügbar"
 msgid "No bookmarks found"
 msgstr "Keine Lesezeichen gefunden"
 
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:289
+#, elixir-autogen, elixir-format
+msgid "No Unread Messages"
+msgstr "Keine ungelesenen Nachrichten"
+
 #: lib/animina_web/components/profile/profile_components.ex:536
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
+
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:53
+#, elixir-autogen, elixir-format
+msgid "Period Of Time"
+msgstr "Zeitraum"
+
 
 #: lib/animina_web/live/root_live.ex:344
 #: lib/animina_web/live/root_live.ex:362
