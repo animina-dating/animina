@@ -11,8 +11,9 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
 > [!NOTE]
-> Project founder Stefan Wintermeyer gave a (German) talk about the first 
-> ANIMINA Beta at [FrOSCon](https://froscon.org). 
+> Project founder Stefan Wintermeyer gave a (German) talk about the first
+> ANIMINA Beta at [FrOSCon](https://froscon.org).
+>
 > - [video recording](https://media.ccc.de/v/froscon2024-3060-parship_tinder_animina_und_co)
 > - [slides](https://speakerdeck.com/wintermeyer/disassembling-online-dating-froscon-2024)
 
@@ -124,6 +125,18 @@ If you want to for example hibernate a user with the username 'wintermeyer' you 
 - To make a user an admin , run the following in IEX `Animina.Accounts.User.make_admin(%{user_id: your_user.id})`
 - To remove admin roles from a user , run the following in IEX `Animina.Accounts.User.remove_admin(%{user_id: your_user.id})`
 
+## Admin
+
+- There are admin tasks we can do , for example adding points to a user.
+
+### Admin Actions
+
+- Adding 100 Points To A User
+
+`{:ok, user} = Animina.Accounts.User.get_by_username("wintermeyer") `
+`user.credit_points`
+`Animina.Accounts.Credit.create(%{user_id: user.id, points: 100, subject: "Bonus Points"})`
+
 ## Enable Machine Learning features and servings
 
 By default the server starts with ML features enabled. To disable running ML features:
@@ -134,7 +147,7 @@ By default the server starts with ML features enabled. To disable running ML fea
 
 ## LLM We Use for the AI Features
 
-For development and on our production servers we use [Ollama](https://ollama.com). 
+For development and on our production servers we use [Ollama](https://ollama.com).
 So should you on your development system. For development we use the [Llama3.1 (8B)](https://ollama.com/library/llama3.1:8b) LLM. Install Ollama and than run `ollama run llama3.1:8b` to download the needed files for the LLM. You can configure the used LLM in `config/dev.exs` (search for `:llm_version`).
 
 ## Swoosh Mailbox Server
