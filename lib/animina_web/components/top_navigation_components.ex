@@ -258,7 +258,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="flex flex-col gap-2 p-4">
       <div :if={@current_user} class="flex flex-col gap-2">
-
         <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
 
         <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
@@ -270,14 +269,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
           current_user_credit_points={@current_user_credit_points}
         />
 
-
         <div class="py-3 px-3 ">
-          <.flag_language_switcher  base_url="/my/dashboard/" language={@language} />
+          <.flag_language_switcher base_url="/my/dashboard/" language={@language} />
         </div>
       </div>
       <div :if={six_random_public_users(@current_user) != []} class="flex w-[100%]  flex-col gap-2">
-
-
         <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
 
         <div class="flex w-[100%] flex-col gap-2">
@@ -286,7 +282,6 @@ defmodule AniminaWeb.TopNavigationCompontents do
             interests={six_random_public_users(@current_user)}
           />
         </div>
-
 
         <div class="py-3 px-3">
           <.flag_language_switcher base_url="/" language={@language} />
