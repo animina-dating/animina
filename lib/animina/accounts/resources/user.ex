@@ -18,6 +18,9 @@ defmodule Animina.Accounts.User do
   alias Animina.Validations
   alias Phoenix.PubSub
 
+  require Ash.Query
+  require Ash.Sort
+
   postgres do
     table "users"
 
@@ -240,21 +243,37 @@ defmodule Animina.Accounts.User do
     end
 
     read :female_public_users_who_created_an_account_in_the_last_60_days do
-      filter expr(
-               is_private == ^false and gender == ^"female" and
-                 (state == ^:normal or state == ^:validated) and
-                 not is_nil(registration_completed_at) and
-                 created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
-             )
+      prepare fn query, _context ->
+        date = DateTime.add(DateTime.utc_now(), -60, :day)
+
+        Ash.Query.filter(
+          query,
+          is_private == ^false and gender == ^"female" and
+            (state == ^:normal or state == ^:validated) and
+            not is_nil(registration_completed_at) and
+            created_at >= ^date
+        )
+        |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+      end
+
+      pagination offset?: true, keyset?: true, required?: false
     end
 
     read :male_public_users_who_created_an_account_in_the_last_60_days do
-      filter expr(
-               is_private == ^false and gender == ^"male" and
-                 (state == ^:normal or state == ^:validated) and
-                 not is_nil(registration_completed_at) and
-                 created_at >= ^DateTime.add(DateTime.utc_now(), -60, :day)
-             )
+      prepare fn query, _context ->
+        date = DateTime.add(DateTime.utc_now(), -60, :day)
+
+        Ash.Query.filter(
+          query,
+          is_private == ^false and gender == ^"male" and
+            (state == ^:normal or state == ^:validated) and
+            not is_nil(registration_completed_at) and
+            created_at >= ^date
+        )
+        |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+      end
+
+      pagination offset?: true, keyset?: true, required?: false
     end
 
     read :users_registered_within_the_hour do
