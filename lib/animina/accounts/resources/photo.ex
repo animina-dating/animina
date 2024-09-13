@@ -4,9 +4,10 @@ defmodule Animina.Accounts.Photo do
   """
   alias Animina.Accounts
   alias Animina.Accounts.OptimizedPhoto
-  alias Animina.Narratives
-  alias Animina.ImageTagging
   alias Animina.Accounts.PhotoFlags
+  alias Animina.ImageTagging
+  alias Animina.Narratives
+
   alias Animina.Traits.Flag
 
   require Logger
