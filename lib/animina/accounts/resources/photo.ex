@@ -4,7 +4,11 @@ defmodule Animina.Accounts.Photo do
   """
   alias Animina.Accounts
   alias Animina.Accounts.OptimizedPhoto
+  alias Animina.Accounts.PhotoFlags
+  alias Animina.ImageTagging
   alias Animina.Narratives
+
+  alias Animina.Traits.Flag
 
   require Logger
 
@@ -41,6 +45,7 @@ defmodule Animina.Accounts.Photo do
     domain Animina.Accounts
     define :read
     define :create
+    define :update
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_user_id, args: [:user_id]
@@ -65,6 +70,25 @@ defmodule Animina.Accounts.Photo do
       ]
 
       primary? true
+    end
+
+    update :update do
+      accept [
+        :filename,
+        :original_filename,
+        :mime,
+        :size,
+        :ext,
+        :dimensions,
+        :error,
+        :error_state,
+        :state,
+        :user_id,
+        :story_id,
+        :description
+      ]
+
+      require_atomic? false
     end
 
     read :read do
@@ -158,6 +182,8 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              create_optimized_photos(record)
+             create_photo_flags(record)
+             #  spawn(fn -> create_photo_flags(record) end)
 
              {:ok, record}
            end),
@@ -178,6 +204,10 @@ defmodule Animina.Accounts.Photo do
     attribute :size, :integer, allow_nil?: false
     attribute :ext, :string, allow_nil?: false
     attribute :dimensions, :map
+
+    attribute :description, :string do
+      constraints max_length: 1_024
+    end
 
     attribute :error, :string
     attribute :error_state, :string
@@ -217,6 +247,39 @@ defmodule Animina.Accounts.Photo do
       _ ->
         "/uploads/#{photo.filename}"
     end
+  end
+
+  def create_photo_flags(record) do
+    if File.exists?("priv/static/uploads/" <> record.filename) do
+      {flags, description} = ImageTagging.tag_image_using_llava("#{record.filename}")
+
+      case update(record, %{description: description}) do
+        {:ok, record} ->
+          create_photo_flags(record, flags)
+
+        {:error, _} ->
+          :ok
+      end
+    end
+  end
+
+  defp create_photo_flags(record, flags) do
+    Enum.each(flags, fn flag ->
+      Flag.by_name(flag)
+      |> case do
+        {:ok, flag} ->
+          PhotoFlags.create(%{
+            user_id: record.user_id,
+            photo_id: record.id,
+            flag_id: flag.id
+          })
+
+        {:error, _} ->
+          nil
+      end
+    end)
+
+    {:ok, record}
   end
 
   defp update_user_registration_completed_at(user_id) do
