@@ -1,7 +1,6 @@
-defmodule AniminaWeb.LanguageSwitchLive do
+defmodule AniminaWeb.LanguageSwitchTest do
   use AniminaWeb.ConnCase
   import Phoenix.LiveViewTest
-  alias Animina.Accounts.User
 
   describe "Tests to ensure you can switch languages on the languages page" do
     test "A user can visit the language switcher page", %{conn: conn} do
@@ -32,9 +31,9 @@ defmodule AniminaWeb.LanguageSwitchLive do
       |> element("#switch-language-de")
       |> render_click()
 
-      {:ok, index_live, html} =
+      {:ok, _index_live, html} =
         conn
-        |> live(~p"/language-switch")
+        |> live(~p"/language-switch?locale=de")
 
       refute html =~ "Please select your preferred language"
       assert html =~ "Bitte wählen Sie Ihre bevorzugte Sprache"

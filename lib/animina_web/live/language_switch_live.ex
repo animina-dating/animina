@@ -1,4 +1,4 @@
-defmodule AniminaWeb.LanguageSwitchLive.Index do
+defmodule AniminaWeb.LanguageSwitchLive do
   use AniminaWeb, :live_view
 
   @impl true

@@ -40,6 +40,35 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
+
+  def on_mount(:live_user_not_required, _params, session, socket) do
+    if socket.assigns[:current_user] do
+      current_user = Registration.get_current_user(session)
+
+      add_daily_points_for_user(
+        current_user,
+        100,
+        check_if_user_has_daily_bonus_added_for_the_day(current_user.id)
+      )
+
+      {:ok, unread_messages} = Message.unread_messages_for_user(current_user.id)
+
+      {:cont,
+       socket
+       |> assign(:current_user, current_user)
+       |> assign(:unread_messages, unread_messages)
+       |> assign(:number_of_unread_messages, Enum.count(unread_messages))
+       |> assign(:current_user_credit_points, current_user.credit_points)}
+    else
+      {:cont,
+       socket
+       |> assign(:current_user_credit_points, 0)
+       |> assign(:unread_messages, [])
+       |> assign(:number_of_unread_messages, 0)
+       |> assign(:current_user, nil)}
+    end
+  end
+
   def on_mount(:live_user_required, _params, session, socket) do
     path =
       case Map.get(socket.private.connect_info, :request_path, nil) do
