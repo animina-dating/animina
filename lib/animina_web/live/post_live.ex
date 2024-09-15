@@ -150,7 +150,7 @@ defmodule AniminaWeb.PostLive do
 
     with [] <- Form.errors(form),
          {:ok, _post} <-
-           Form.submit(form, params: post, api_opts: []) do
+           Form.submit(form, params: post, action_opts: []) do
       {:noreply,
        socket
        |> assign(:errors, [])

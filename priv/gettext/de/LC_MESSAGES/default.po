@@ -16,6 +16,13 @@ msgstr ""
 msgid "10 seconds"
 msgstr "10 Sekunden"
 
+
+msgid "Language switched successfully"
+msgstr "Sprache erfolgreich umgeschaltet"
+
+msgid "Please select your preferred language"
+msgstr "Bitte wählen Sie Ihre bevorzugte Sprache"
+
 #: lib/animina_web/live/dashboard_live.ex:92
 #, elixir-autogen, elixir-format
 msgid "ANIMINA dashboard - "

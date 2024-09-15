@@ -2,10 +2,11 @@ defmodule AniminaWeb.EmailValidationLive do
   use AniminaWeb, :live_view
 
   @impl true
-  def mount(_, _session, socket) do
+  def mount(_, %{"language" => language} = _session, socket) do
     socket =
       socket
       |> assign(active_tab: :home)
+      |> assign(language: language)
 
     {:ok, socket}
   end
