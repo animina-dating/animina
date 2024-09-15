@@ -40,7 +40,6 @@ defmodule AniminaWeb.LiveUserAuth do
     end
   end
 
-
   def on_mount(:live_user_not_required, _params, session, socket) do
     if socket.assigns[:current_user] do
       current_user = Registration.get_current_user(session)
