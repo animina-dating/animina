@@ -120,19 +120,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
   defp flag_language_switcher(assigns) do
     ~H"""
     <div class="flex gap-4 items-center items-center">
-      <a
-        href={"#{@base_url}?locale=en"}
-        class={"text-base font-bold text-gray-700 #{if @language== "en" do "border-[2px] border-blue-500 rounded-full" else "" end} cursor-pointer dark:text-white"}
-      >
-        <img src="/images/usa_flag.png" alt="de" class="w-[25px] h-[25px] rounded-full" />
-      </a>
-
-      <a
-        href={"#{@base_url}?locale=de"}
-        class={"text-base font-bold text-gray-700 #{if @language== "de" do "border-[2px] border-blue-500 rounded-full" else "" end} cursor-pointer dark:text-white"}
-      >
-        <img src="/images/german_flag.png" alt="de" class="w-[25px] h-[25px] rounded-full" />
-      </a>
+      <.link navigate="/language-switch">
+        <%= if @language == "en" do %>
+          🇺🇸
+        <% else %>
+          🇩🇪
+        <% end %>
+      </.link>
     </div>
     """
   end
