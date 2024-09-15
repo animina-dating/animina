@@ -21,6 +21,16 @@ defmodule AniminaWeb.Router do
   scope "/", AniminaWeb do
     pipe_through :browser
 
+    ash_authentication_live_session :user_optional,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
+      live "/", RootLive, :register
+    end
+
+    ash_authentication_live_session :user_not_required,
+      on_mount: {AniminaWeb.LiveUserAuth, :live_user_not_required} do
+      live "/language-switch", LanguageSwitchLive, :index
+    end
+
     ash_authentication_live_session :authentication_optional,
       on_mount: {AniminaWeb.LiveUserAuth, :live_no_user} do
       live "/sign-in", RootLive, :sign_in
@@ -72,11 +82,6 @@ defmodule AniminaWeb.Router do
       live "/my/dashboard", DashboardLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
       live "/:username/report", ProfileLive, :report
-    end
-
-    ash_authentication_live_session :user_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
-      live "/", RootLive, :register
     end
 
     ash_authentication_live_session :user_optional_home,
