@@ -320,14 +320,13 @@ defmodule AniminaWeb.RootLive do
                 f,
                 :country,
                 ["Germany"],
-                prompt: with_locale(@language, fn -> gettext("Select your country") end),
                 class:
-                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-                    unless(get_field_errors(f[:country], :country) == [],
-                      do: "ring-red-600 focus:ring-red-600",
-                      else: "ring-gray-300 focus:ring-indigo-600"
-                    ),
-                autofocus: true
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-2 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                    unless(
+                      get_field_errors(f[:country], :country) == [],
+                      do: "ring-red-600 ring-2 py-2 focus:ring-red-600",
+                      else: "ring-gray-300 ring-3 py-2 focus:ring-indigo-600"
+                    )
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:country], :country)}>

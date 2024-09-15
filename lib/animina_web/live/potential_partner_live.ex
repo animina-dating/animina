@@ -269,7 +269,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
               <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
                 prompt: gettext("doesn't matter"),
                 class:
-                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+                  "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-2 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(
                       get_field_errors(f[:maximum_partner_height], :maximum_partner_height) == [],
                       do: "ring-red-600 focus:ring-red-600",
