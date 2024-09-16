@@ -312,11 +312,6 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  defp redirect_to_username(socket, username) do
-    socket
-    |> push_navigate(to: ~p"/#{username}")
-  end
-
   defp subscribe(socket, current_user, user) do
     if connected?(socket) do
       PubSub.subscribe(Animina.PubSub, "credits")
