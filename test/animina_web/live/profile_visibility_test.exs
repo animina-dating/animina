@@ -30,10 +30,9 @@ defmodule AniminaWeb.ProfileVisibilityTest do
 
       assert html =~ "Change Profile Visibility"
 
-      # we check to ensure we can see the 3 states a user can change to
+      # we check to ensure we can see the 2 states a user can change to
       assert html =~ "Normal"
       assert html =~ "Hibernate"
-      assert html =~ "Incognito"
     end
 
     test "The state of the current user will have a corresponding active text next to it",
@@ -54,42 +53,6 @@ defmodule AniminaWeb.ProfileVisibilityTest do
       assert user.state == :normal
 
       assert has_element?(index_live, "#active-mark-#{user.state}")
-    end
-
-    test "You can click on the Incognito div to change the profile visibility to incognito",
-         %{
-           conn: conn,
-           user: user
-         } do
-      {:ok, index_live, html} =
-        conn
-        |> login_user(%{
-          "username_or_email" => user.username,
-          "password" => "MichaelTheEngineer"
-        })
-        |> live(~p"/my/profile/visibility")
-
-      assert html =~ "Change Profile Visibility"
-
-      index_live
-      |> element("#user-state-incognito")
-      |> render_click()
-
-      user = User.by_id!(user.id)
-
-      {:ok, index_live, _html} =
-        conn
-        |> login_user(%{
-          "username_or_email" => user.username,
-          "password" => "MichaelTheEngineer"
-        })
-        |> live(~p"/my/profile/visibility")
-
-      assert has_element?(index_live, "#active-mark-incognito")
-      refute has_element?(index_live, "#active-mark-normal")
-
-      assert user.state == :incognito
-      refute user.state == :normal
     end
 
     test "You can click on the Hibernate div to change the profile visibility to hibernate",
@@ -185,7 +148,6 @@ defmodule AniminaWeb.ProfileVisibilityTest do
         |> live(~p"/my/profile/visibility")
 
       assert has_element?(index_live, "#active-mark-normal")
-      refute has_element?(index_live, "#active-mark-incognito")
 
       assert user.state == :normal
       refute user.state == :incognito

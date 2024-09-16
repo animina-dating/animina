@@ -549,14 +549,6 @@ defmodule AniminaWeb.ProfileComponents do
           gettext(
             "The user is temporarily inactive but retains their account and data for future use."
           )
-      },
-      %{
-        "name" => gettext("Incognito"),
-        "value" => :incognito,
-        "action" => "incognito",
-        "similar_value" => :incognito,
-        "description" =>
-          gettext("The user can browse and read posts anonymously, without being seen by others.")
       }
     ]
   end

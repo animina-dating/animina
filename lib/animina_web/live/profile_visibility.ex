@@ -103,10 +103,6 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     User.hibernate(user)
   end
 
-  def change_user_state("incognito", user) do
-    User.incognito(user)
-  end
-
   def change_user_state(_, user) do
     User.normalize(user)
   end
