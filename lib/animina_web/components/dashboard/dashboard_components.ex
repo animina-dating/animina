@@ -7,6 +7,7 @@ defmodule AniminaWeb.DashboardComponents do
   alias Animina.StringHelper
   import AniminaWeb.Gettext
   import AniminaWeb.CoreComponents
+  import Gettext, only: [with_locale: 2]
   use PhoenixHTMLHelpers
   alias Animina.Accounts.Photo
 
@@ -41,29 +42,63 @@ defmodule AniminaWeb.DashboardComponents do
             <table class="min-w-full text-left bg-white table-auto ">
               <thead>
                 <tr class="text-white dark:bg-gray-700 bg-gray-800">
-                  <th class="px-4 py-3"><%= gettext("Type") %></th>
-                  <th class="px-4 py-3"><%= gettext("Period of Time") %></th>
-                  <th class="px-4 py-3"><%= gettext("Count") %></th>
+                  <th class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Type") %>
+                    <% end) %>
+                  </th>
+                  <th class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Period Of Time") %>
+                    <% end) %>
+                  </th>
+                  <th class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Count") %>
+                    <% end) %>
+                  </th>
                 </tr>
               </thead>
               <tbody class="text-gray-700 dark:bg-gray-300">
                 <tr>
-                  <td class="px-4 py-3"><%= gettext("Received") %></td>
-                  <td class="px-4 py-3"><%= gettext("Last 7 days") %></td>
+                  <td class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Received") %>
+                    <% end) %>
+                  </td>
+                  <td class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Last 7 days") %>
+                    <% end) %>
+                  </td>
                   <td class="px-4 py-3"><%= @likes_received_by_user_in_seven_days %></td>
                 </tr>
                 <tr class="dark:bg-gray-200 bg-gray-100">
-                  <td class="px-4 py-3"><%= gettext("Received") %></td>
-                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Received") %>
+                    <% end) %>
+                  </td>
+                  <td class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Forever") %>
+                    <% end) %>
+                  </td>
                   <td class="px-4 py-3"><%= @total_likes_received_by_user %></td>
                 </tr>
                 <tr>
                   <td class="px-4 py-3">
                     <.link navigate="/my/bookmarks/liked" class="text-blue-500">
-                      <%= gettext("Given") %>
+                      <%= with_locale(@language, fn -> %>
+                        <%= gettext("Given") %>
+                      <% end) %>
                     </.link>
                   </td>
-                  <td class="px-4 py-3"><%= gettext("Forever") %></td>
+                  <td class="px-4 py-3">
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Forever") %>
+                    <% end) %>
+                  </td>
                   <td class="px-4 py-3">
                     <.link navigate="/my/bookmarks/liked" class="text-blue-500">
                       <%= @profiles_liked_by_user %>
@@ -103,7 +138,7 @@ defmodule AniminaWeb.DashboardComponents do
           </div>
         <% else %>
           <div class="h-[200px]">
-            <.no_unread_messages_component />
+            <.no_unread_messages_component language={@language} />
           </div>
         <% end %>
       </div>
@@ -133,7 +168,7 @@ defmodule AniminaWeb.DashboardComponents do
           </div>
         <% else %>
           <div class="h-[200px]">
-            <.no_unread_messages_component />
+            <.no_unread_messages_component language={@language} />
           </div>
         <% end %>
       </div>
@@ -258,7 +293,9 @@ defmodule AniminaWeb.DashboardComponents do
         />
       </svg>
       <p>
-        No Unread Messages
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("No Unread Messages") %>
+        <% end) %>
       </p>
     </div>
     """
@@ -288,7 +325,10 @@ defmodule AniminaWeb.DashboardComponents do
                   do: "ring-red-600 focus:ring-red-600",
                   else: "ring-gray-300 focus:ring-indigo-600"
                 ),
-            placeholder: gettext("Your message here..."),
+            placeholder:
+              with_locale(@language, fn ->
+                gettext("Your Message here ...")
+              end),
             value: f[:content].value,
             type: :text,
             required: true,
