@@ -10,9 +10,6 @@ defmodule Animina.Repo.Migrations.MigrateResources14 do
     execute "UPDATE users SET state = 'hibernate' WHERE state = 'incognito';"
   end
 
-  def down do
-    # Revert the changes, setting 'hibernate' back to 'incognito'
-    execute "UPDATE users SET state = 'incognito' WHERE state = 'hibernate';"
-  end
+
 
 end
