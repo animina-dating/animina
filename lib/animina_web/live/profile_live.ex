@@ -250,7 +250,7 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  def mount(_params, %{"language" => _language}, _socket) do
+  def mount(_params, _session, _socket) do
     raise Animina.Fallback
   end
 
