@@ -72,7 +72,12 @@ defmodule AniminaWeb.BookmarksListLive do
       {:error, _changeset} ->
         {:noreply,
          socket
-         |> put_flash(:error, gettext("An error occurred while deleting the bookmark"))}
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             gettext("An error occurred while deleting the bookmark")
+           end)
+         )}
     end
   end
 
@@ -160,17 +165,25 @@ defmodule AniminaWeb.BookmarksListLive do
     <div>
       <div class="pb-2 px-4">
         <h3 :if={@reason == :visited} class="text-lg font-medium dark:text-white">
-          <%= gettext("Visited Profiles") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Visited Profiles") %>
+          <% end) %>
         </h3>
         <h3 :if={@reason == :liked} class="text-lg font-medium dark:text-white">
-          <%= gettext("Liked Profiles") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Liked Profiles") %>
+          <% end) %>
         </h3>
 
         <h3 :if={@reason == :most_often_visited} class="text-lg font-medium dark:text-white">
-          <%= gettext("Most Often Visited Profiles") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Most Often Visited Profiles") %>
+          <% end) %>
         </h3>
         <h3 :if={@reason == :longest_overall_visited} class="text-lg font-medium dark:text-white">
-          <%= gettext("Longest Overall Visited Profiles") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Longest Overall Visited Profiles") %>
+          <% end) %>
         </h3>
       </div>
 
@@ -205,7 +218,9 @@ defmodule AniminaWeb.BookmarksListLive do
           </svg>
 
           <p class="text-lg ">
-            <%= gettext("No bookmarks found") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("No bookmarks found") %>
+            <% end) %>
           </p>
         </div>
       <% end %>

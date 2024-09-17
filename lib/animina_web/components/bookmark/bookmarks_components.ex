@@ -6,6 +6,7 @@ defmodule AniminaWeb.BookmarksComponents do
   use Phoenix.Component
   import AniminaWeb.Gettext
   alias Animina.Accounts.Photo
+  import Gettext, only: [with_locale: 2]
 
   attr :bookmark, :any, required: true
   attr :dom_id, :any, required: false
@@ -37,7 +38,7 @@ defmodule AniminaWeb.BookmarksComponents do
                 }
                 class={"p-1 text-[10px] #{get_photo_state_styling(@bookmark.user.profile_photo.state)} absolute top-2 left-2 rounded-md "}
               >
-                <%= get_photo_state_name(@bookmark.user.profile_photo.state) %>
+                <%= get_photo_state_name(@bookmark.user.profile_photo.state, @language) %>
               </p>
             </div>
           </div>
@@ -109,28 +110,28 @@ defmodule AniminaWeb.BookmarksComponents do
     "bg-blue-500 text-white"
   end
 
-  defp get_photo_state_name(:error) do
-    gettext("Error")
+  defp get_photo_state_name(:error, language) do
+    with_locale(language, fn -> gettext("Error") end)
   end
 
-  defp get_photo_state_name(:nsfw) do
-    gettext("NSFW")
+  defp get_photo_state_name(:nsfw, language) do
+    with_locale(language, fn -> gettext("NSFW") end)
   end
 
-  defp get_photo_state_name(:rejected) do
-    gettext("Rejected")
+  defp get_photo_state_name(:rejected, language) do
+    with_locale(language, fn -> gettext("Rejected") end)
   end
 
-  defp get_photo_state_name(:pending_review) do
-    gettext("Pending review")
+  defp get_photo_state_name(:pending_review, language) do
+    with_locale(language, fn -> gettext("Pending review") end)
   end
 
-  defp get_photo_state_name(:in_review) do
-    gettext("In review")
+  defp get_photo_state_name(:in_review, language) do
+    with_locale(language, fn -> gettext("In review") end)
   end
 
-  defp get_photo_state_name(_) do
-    gettext("Error")
+  defp get_photo_state_name(_, language) do
+    with_locale(language, fn -> gettext("Error") end)
   end
 
   def display_image(:pending_review, _, _) do
