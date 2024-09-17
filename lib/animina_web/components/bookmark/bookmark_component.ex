@@ -5,6 +5,7 @@ defmodule AniminaWeb.BookmarkComponent do
   use AniminaWeb, :live_component
   alias Animina.Traits.UserFlags
   alias Phoenix.PubSub
+  import Gettext, only: [with_locale: 2]
 
   @impl true
   def mount(socket) do
@@ -64,7 +65,9 @@ defmodule AniminaWeb.BookmarkComponent do
         language={@language}
         reason={@reason}
         current_user={@current_user}
-        delete_bookmark_modal_text={gettext("Do you really want to delete this bookmark?")}
+        delete_bookmark_modal_text={
+          with_locale(@language, fn -> gettext("Do you really want to delete this bookmark?") end)
+        }
         intersecting_green_flags_count={
           get_intersecting_flags_count(
             filter_flags(@current_user.id, :green, @language),
