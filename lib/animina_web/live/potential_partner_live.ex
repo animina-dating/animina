@@ -51,7 +51,12 @@ defmodule AniminaWeb.PotentialPartnerLive do
       |> assign(current_user: user)
       |> assign(active_tab: :home)
       |> assign(language: language)
-      |> assign(page_title: gettext("Preferences for your future partner"))
+      |> assign(
+        page_title:
+          with_locale(language, fn ->
+            gettext("Preferences for your future partner")
+          end)
+      )
 
     {:ok, socket}
   end
@@ -160,9 +165,15 @@ defmodule AniminaWeb.PotentialPartnerLive do
   def render(assigns) do
     ~H"""
     <div class="px-5 space-y-5 dark:text-white">
-      <h2 class="text-xl font-bold"><%= gettext("Criteria for your new partner") %></h2>
+      <h2 class="text-xl font-bold">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Criteria for your new partner") %>
+        <% end) %>
+      </h2>
       <p>
-        <%= gettext("We will use this information to find suitable partners for you.") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("We will use this information to find suitable partners for you.") %>
+        <% end) %>
       </p>
       <.form
         :let={f}
@@ -177,14 +188,16 @@ defmodule AniminaWeb.PotentialPartnerLive do
               for="user_partner_gender"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Gender") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Gender") %>
+              <% end) %>
             </label>
           </div>
           <div class="mt-2" phx-no-format>
 
         <%
           item_code = "male"
-          item_title = gettext("Male")
+          item_title = with_locale(@language, fn -> gettext("Male") end)
         %>
         <div class="flex items-center mb-4">
           <%= radio_button(f, :partner_gender, item_code,
@@ -200,7 +213,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
         <%
           item_code = "female"
-          item_title = gettext("Female")
+          item_title = with_locale(@language, fn -> gettext("Female") end)
         %>
         <div class="flex items-center mb-4">
           <%= radio_button(f, :partner_gender, item_code,
@@ -215,7 +228,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
 
         <%
           item_code = "diverse"
-          item_title = gettext("Diverse")
+          item_title = with_locale(@language, fn -> gettext("Diverse") end)
         %>
         <div class="flex items-center mb-4">
           <%= radio_button(f, :partner_gender, item_code,
@@ -236,11 +249,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
               for="form_minimum_partner_height"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Minimum height") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Minimum height") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:minimum_partner_height].name} class="mt-2">
               <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-                prompt: gettext("doesn't matter"),
+                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 dark:bg-gray-700 dark:text-white focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(
@@ -254,7 +269,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
               <.error :for={
                 msg <- get_field_errors(f[:minimum_partner_height], :minimum_partner_height)
               }>
-                <%= gettext("Minimum height") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Minimum height") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -264,11 +281,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
               for="form_maximum_partner_height"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Maximum height") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Maximum height") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:maximum_partner_height].name} class="mt-2">
               <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-                prompt: gettext("doesn't matter"),
+                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(
@@ -281,7 +300,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
               <.error :for={
                 msg <- get_field_errors(f[:maximum_partner_height], :maximum_partner_height)
               }>
-                <%= gettext("Maximum height") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Maximum height") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -292,11 +313,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
               for="form_minimum_partner_age"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Minimum age") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Minimum age") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:minimum_partner_age].name} class="mt-2">
               <%= select(f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
-                prompt: gettext("doesn't matter"),
+                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
                 value: f[:minimum_partner_age].value,
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
@@ -307,7 +330,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:minimum_partner_age], :minimum_partner_age)}>
-                <%= gettext("Minimum age") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Minimum age") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -317,11 +342,13 @@ defmodule AniminaWeb.PotentialPartnerLive do
               for="form_maximum_partner_age"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Maximum age") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Maximum age") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:maximum_partner_age].name} class="mt-2">
               <%= select(f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
-                prompt: gettext("doesn't matter"),
+                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(get_field_errors(f[:maximum_partner_age], :maximum_partner_age) == [],
@@ -331,7 +358,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:maximum_partner_age], :maximum_partner_age)}>
-                <%= gettext("Maximum age") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Maximum age") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -342,9 +371,14 @@ defmodule AniminaWeb.PotentialPartnerLive do
             for="form_search_range"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("Search range") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Search range") %>
+            <% end) %>
             <span class="text-gray-400">
-              (<%= gettext("around") %> <%= @current_user.zip_code %> <%= @city_name.name %>)
+              (<%= with_locale(@language, fn -> %>
+                <%= gettext("around") %>
+              <% end) %>
+              <%= @current_user.zip_code %> <%= @city_name.name %>)
             </span>
           </label>
           <div phx-feedback-for={f[:search_range].name} class="mt-2">
@@ -364,7 +398,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
                 {"200 km", 200},
                 {"300 km", 300}
               ],
-              prompt: gettext("doesn't matter"),
+              prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
               class:
                 "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                   unless(get_field_errors(f[:search_range], :search_range) == [],
@@ -374,7 +408,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:search_range], :search_range)}>
-              <%= gettext("Search range") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Search range") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -385,7 +421,9 @@ defmodule AniminaWeb.PotentialPartnerLive do
             class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
           ) %>
           <p>
-            <%= gettext("Only users who I liked can initiate a chat.") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Only users who I liked can initiate a chat.") %>
+            <% end) %>
           </p>
         </div>
 
@@ -395,12 +433,14 @@ defmodule AniminaWeb.PotentialPartnerLive do
             class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
           ) %>
           <p>
-            <%= gettext("My profile is only visible for animina users.") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("My profile is only visible for animina users.") %>
+            <% end) %>
           </p>
         </div>
 
         <div>
-          <%= submit(gettext("Save"),
+          <%= submit(with_locale(@language, fn -> gettext("Save") end),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           ) %>
