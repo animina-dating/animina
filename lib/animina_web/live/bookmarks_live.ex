@@ -33,7 +33,9 @@ defmodule AniminaWeb.BookmarksLive do
     ~H"""
     <div class="px-4">
       <h1 class="text-2xl font-semibold dark:text-white">
-        <%= gettext("Bookmarks") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Bookmarks") %>
+        <% end) %>
       </h1>
 
       <div class="mt-4 space-x-2 space-y-2">
@@ -44,7 +46,9 @@ defmodule AniminaWeb.BookmarksLive do
 
             "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "liked", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
         >
-          <%= gettext("Liked") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Liked") %>
+          <% end) %>
         </.link>
 
         <.link
@@ -52,7 +56,9 @@ defmodule AniminaWeb.BookmarksLive do
           id="visited_tab"
           class={"cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
         >
-          <%= gettext("Visited") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Visited") %>
+          <% end) %>
         </.link>
 
         <.link
@@ -62,7 +68,9 @@ defmodule AniminaWeb.BookmarksLive do
 
             "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "most_often_visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
         >
-          <%= gettext("Most Often Visited") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Most Often Visited") %>
+          <% end) %>
         </.link>
 
         <.link
@@ -72,7 +80,9 @@ defmodule AniminaWeb.BookmarksLive do
 
             "cursor-pointer inline-flex items-center px-4 py-1 font-medium rounded-md " <> if(@bookmarks_tab == "longest_overall_visited", do: "text-blue-100 bg-blue-700", else: "text-blue-700 bg-blue-100")}
         >
-          <%= gettext("Longest Overall Visited") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Longest Overall Visited") %>
+          <% end) %>
         </.link>
       </div>
 
