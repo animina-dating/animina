@@ -182,8 +182,6 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              create_optimized_photos(record)
-             create_photo_flags(record)
-             #  spawn(fn -> create_photo_flags(record) end)
 
              {:ok, record}
            end),
