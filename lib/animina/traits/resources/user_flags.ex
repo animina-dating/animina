@@ -1,6 +1,6 @@
 defmodule Animina.Traits.UserFlags do
-  alias Animina.Validations
   alias Animina.Repo
+  alias Animina.Validations
 
   import Ecto.Query
 
