@@ -7,6 +7,7 @@ defmodule Animina.Accounts.UserFlagsTest do
 
   alias Animina.Traits.Category
   alias Animina.Traits.Flag
+  alias Animina.Traits.FlagTranslation
   alias Animina.Traits.UserFlags
 
   describe "Tests for the User Flags module" do
@@ -14,9 +15,11 @@ defmodule Animina.Accounts.UserFlagsTest do
       category = create_category()
       flag = create_flag(category)
       user = create_user()
+      user_two = create_user_two()
 
       [
         user: user,
+        user_two: user_two,
         flag: flag
       ]
     end
@@ -28,6 +31,25 @@ defmodule Animina.Accounts.UserFlagsTest do
          } do
       assert {:ok, _user_flag} = create_user_flag(user, flag, :green)
       assert {:error, _} = create_user_flag(user, flag, :red)
+    end
+
+    test "Intersecting flags",
+         %{
+           user: user,
+           user_two: user_two,
+           flag: flag
+         } do
+      # create user one green flags
+      {:ok, _user_flag} = create_user_flag(user, flag, :green)
+
+      # create user two white flags
+      {:ok, _user_flag} = create_user_flag(user_two, flag, :white)
+
+      # get intersecting flags
+      assert {:ok, [_flag | _]} = intersecting_flags(user.id, user_two.id, "green", "white")
+
+      # assert {:ok, _user_flag} = create_user_flag(user, flag, :green)
+      # assert {:error, _} = create_user_flag(user, flag, :red)
     end
   end
 
@@ -43,6 +65,26 @@ defmodule Animina.Accounts.UserFlagsTest do
         zip_code: "56068",
         gender: "male",
         mobile_phone: "0151-12345678",
+        language: "de",
+        country: "Germany",
+        legal_terms_accepted: true
+      })
+
+    user
+  end
+
+  defp create_user_two do
+    {:ok, user} =
+      User.create(%{
+        email: "alice@example.com",
+        username: "alice",
+        name: "Alice",
+        hashed_password: "zzzzzzzzzzz",
+        birthday: "1970-08-01",
+        height: 170,
+        zip_code: "56068",
+        gender: "female",
+        mobile_phone: "0151-32145678",
         language: "de",
         country: "Germany",
         legal_terms_accepted: true
@@ -68,6 +110,14 @@ defmodule Animina.Accounts.UserFlagsTest do
         category_id: category.id
       })
 
+    {:ok, _} =
+      FlagTranslation.create(%{
+        name: "Flag",
+        language: "en",
+        hashtag: "#flag",
+        flag_id: flag.id
+      })
+
     flag
   end
 
@@ -78,6 +128,17 @@ defmodule Animina.Accounts.UserFlagsTest do
       position: 1,
       color: color
     })
+  end
+
+  defp intersecting_flags(current_user_id, user_id, current_user_color, user_color) do
+    Traits.UserFlags
+    |> Ash.ActionInput.for_action(:intersecting_flags_by_color, %{
+      current_user: current_user_id,
+      current_user_color: current_user_color,
+      user: user_id,
+      user_color: user_color
+    })
+    |> Ash.run_action()
   end
 
   def opposite_color_flags_selected(user_id, color, flag_id) do
