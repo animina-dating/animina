@@ -17,6 +17,25 @@ msgid "10 seconds"
 msgstr "10 Sekunden"
 
 
+
+msgid "Optimize a Story"
+msgstr "Eine Story optimieren"
+
+
+msgid "Fix spelling and grammar errors"
+msgstr "Rechtschreib- und Grammatikfehler beheben"
+
+
+msgid "Generate story"
+msgstr "Story generieren"
+
+msgid "Photo"
+msgstr "Foto"
+
+
+
+
+
 msgid "Language switched successfully"
 msgstr "Sprache erfolgreich umgeschaltet"
 
