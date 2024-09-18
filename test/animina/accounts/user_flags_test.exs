@@ -45,11 +45,11 @@ defmodule Animina.Accounts.UserFlagsTest do
       # create user two white flags
       {:ok, _user_flag} = create_user_flag(user_two, flag, :white)
 
-      # get intersecting flags
+      # user one has green flags intersecting with user two's white flags
       assert {:ok, [_flag | _]} = intersecting_flags(user.id, user_two.id, "green", "white")
 
-      # assert {:ok, _user_flag} = create_user_flag(user, flag, :green)
-      # assert {:error, _} = create_user_flag(user, flag, :red)
+      # user one has no white flags intersecting with user two's white flags
+      assert {:ok, []} = intersecting_flags(user.id, user_two.id, "white", "white")
     end
   end
 
