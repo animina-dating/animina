@@ -49,7 +49,10 @@ defmodule AniminaWeb.WaitlistLive do
 
     {:noreply,
      socket
-     |> put_flash(:info, gettext("User has been given access"))
+     |> put_flash(
+       :info,
+       with_locale(socket.assigns.language, fn -> gettext("User has been given access") end)
+     )
      |> assign(users_in_waitlist: users_in_waitlist)}
   end
 
@@ -102,7 +105,7 @@ defmodule AniminaWeb.WaitlistLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.waitlist_users_table users={@users_in_waitlist} />
+      <.waitlist_users_table language={@language} users={@users_in_waitlist} />
     </div>
     """
   end

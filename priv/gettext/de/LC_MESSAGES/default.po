@@ -112,11 +112,7 @@ msgstr "Eine neue Story hinzufügen"
 msgid "Alice"
 msgstr "Alice"
 
-#: lib/animina_web/live/report_live/all_reports.ex:40
-#: lib/animina_web/live/report_live/show_report.ex:40
-#, elixir-autogen, elixir-format
-msgid "All Reports"
-msgstr "Alle Berichte"
+
 
 #: lib/animina_web/live/root_live.ex:494
 #, elixir-autogen, elixir-format
@@ -545,6 +541,13 @@ msgstr "Zugang gewähren"
 msgid "Given"
 msgstr "Gegeben"
 
+
+
+msgid "All Reports"
+msgstr "Alle Berichte"
+
+
+
 #: lib/animina_web/live/story_live.ex:700
 #: lib/animina_web/live/story_live.ex:720
 #: lib/animina_web/live/story_live.ex:741
@@ -867,6 +870,10 @@ msgstr "Bericht überprüfen"
 #, elixir-autogen, elixir-format
 msgid "Review :"
 msgstr "Überprüfung:"
+
+
+msgid "Report reviewed successfully."
+msgstr "Bericht erfolgreich überprüft."
 
 #: lib/animina_web/components/report/report_components.ex:93
 #: lib/animina_web/components/report/report_components.ex:192

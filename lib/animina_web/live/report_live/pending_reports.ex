@@ -85,9 +85,9 @@ defmodule AniminaWeb.PendingReportsLive do
   def render(assigns) do
     ~H"""
     <div>
-      <.report_tabs current_report_tab="pending" />
+      <.report_tabs language={@language} current_report_tab="pending" />
 
-      <.reports_card reports={@reports} current_user={@current_user} />
+      <.reports_card language={@language} reports={@reports} current_user={@current_user} />
     </div>
     """
   end

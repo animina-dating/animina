@@ -72,7 +72,10 @@ defmodule AniminaWeb.ReviewReportLive do
         {:noreply,
          socket
          |> assign(:errors, [])
-         |> put_flash(:info, "Report reviewed successfully.")
+         |> put_flash(
+           :info,
+           with_locale(socket.assigns.language, fn -> gettext("Report reviewed successfully.") end)
+         )
          |> push_navigate(to: ~p"/admin/reports/pending")}
 
       _ ->
@@ -129,7 +132,9 @@ defmodule AniminaWeb.ReviewReportLive do
     ~H"""
     <div>
       <p class="dark:text-white text-black  text-xl">
-        Review Report
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Review Report") %>
+        <% end) %>
       </p>
 
       <div class="flex flex-col gap-2">
@@ -162,7 +167,9 @@ defmodule AniminaWeb.ReviewReportLive do
         </div>
         <div class="dark:text-white flex flex-col gap-1  text-black">
           <p class="font-medium ">
-            <%= gettext("Description :") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Description :") %>
+            <% end) %>
           </p>
           <p class="text-gray-900 text-sm ">
             <%= Markdown.format(@report.description) %>
@@ -179,18 +186,22 @@ defmodule AniminaWeb.ReviewReportLive do
         phx-submit="submit"
       >
         <p class="dark:text-white font-medium text-black">
-          <%= gettext("Your Review :") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Your Review :") %>
+          <% end) %>
         </p>
         <%= hidden_input(f, :admin_id, value: @current_user.id) %>
         <div phx-feedback-for={f[:state].name} class="">
           <label for="report_state" class="block  font-medium leading-6 text-gray-900 dark:text-white">
-            <%= gettext("State of the Report") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("State of the Report") %>
+            <% end) %>
           </label>
           <%= select(
             f,
             :state,
             [:accepted, :denied],
-            prompt: gettext("Select a state"),
+            prompt: with_locale(@language, fn -> gettext("Select a state") end),
             class:
               "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6  ring-gray-300 focus:ring-indigo-600",
             placeholder:
@@ -209,7 +220,9 @@ defmodule AniminaWeb.ReviewReportLive do
             for="report_internal_memo"
             class="block  font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("Write Internal Memo") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Write Internal Memo") %>
+            <% end) %>
           </label>
 
           <div phx-feedback-for={f[:internal_memo].name} class="mt-2">
@@ -219,9 +232,11 @@ defmodule AniminaWeb.ReviewReportLive do
               class:
                 "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 ring-gray-300 focus:ring-indigo-600 ",
               placeholder:
-                gettext(
-                  "Use normal text or the Markdown format to write your internal memo. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long."
-                ),
+                with_locale(@language, fn ->
+                  gettext(
+                    "Use normal text or the Markdown format to write your internal memo. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long."
+                  )
+                end),
               value: f[:internal_memo].value,
               rows: 12,
               type: :text,
@@ -233,7 +248,7 @@ defmodule AniminaWeb.ReviewReportLive do
         </div>
 
         <div>
-          <%= submit("Review User",
+          <%= submit(with_locale(@language, fn -> gettext("Review Report") end),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@form.source.source.valid? == false,
