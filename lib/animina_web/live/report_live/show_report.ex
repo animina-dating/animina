@@ -37,7 +37,7 @@ defmodule AniminaWeb.ShowReportLive do
       socket
       |> assign(active_tab: :reports)
       |> assign(:language, language)
-      |> assign(:page_title, gettext("All Reports"))
+      |> assign(:page_title, with_locale(language, fn -> gettext("Report") end))
       |> assign(:report, report)
 
     {:ok, socket}
@@ -88,9 +88,9 @@ defmodule AniminaWeb.ShowReportLive do
     ~H"""
     <div>
       <%= if @report do %>
-        <.report_show_card report={@report} current_user={@current_user} />
+        <.report_show_card language={@language} report={@report} current_user={@current_user} />
       <% else %>
-        <.no_report />
+        <.no_report language={@language} />
       <% end %>
     </div>
     """
