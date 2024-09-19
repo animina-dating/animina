@@ -20,8 +20,7 @@ defmodule AniminaWeb.EmailValidationLive do
           <%= with_locale(@language, fn -> %>
             <%= gettext("We just send you an email to") %>
           <% end) %>
-          <%= @current_user.email %>
-
+           <%= @current_user.email %>
           <%= with_locale(@language, fn -> %>
             <%= gettext(
               "with a confirmation link. Please click it to confirm your email address. The email is already on its way to you. Please check your spam folder in case it doesn't show up in your inbox"

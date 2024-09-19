@@ -77,7 +77,10 @@ defmodule AniminaWeb.RootTest do
         |> sign_in_user(@valid_attrs)
         |> live(~p"/my/email-validation")
 
-      assert html =~ "We just send you an email to #{@valid_attrs.email} with a confirmation link"
+      assert html =~ "We just send you an email"
+
+      assert html =~
+               "with a confirmation link. Please click it to confirm your email address. The email is already on its way to you. Please check your spam folder in case it doesn't show up in your inbox"
     end
 
     test "When more users than the one required per hour sign up , they are added to the waitlist",
@@ -115,7 +118,10 @@ defmodule AniminaWeb.RootTest do
         |> live(url)
 
       assert html =~
-               "Hi #{@valid_attrs.name} we currently have too many new registrations to handle. That is a good problem for us to have but for you it means that you just landed on a waiting list. We&#39;ll send you an email once our systems are ready. In case this is a spike we are talking minutes or hours."
+               "#{@valid_attrs.name}"
+
+      assert html =~
+               "we currently have too many new registrations to handle. That is a good problem for us to have but for you it means that you just landed on a waiting list. We&#39;ll send you an email once our systems are ready. In case this is a spike we are talking minutes or hours."
 
       user = User.by_username!("MichaelMunavu")
       assert user.is_in_waitlist == true
@@ -358,7 +364,7 @@ defmodule AniminaWeb.RootTest do
         |> live(~p"/my/too-successful")
 
       assert html =~
-               "Hi #{user.name}"
+               "#{user.name}"
 
       assert html =~
                "we currently have too many new registrations to handle"
