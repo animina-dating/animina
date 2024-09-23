@@ -27,7 +27,7 @@ defmodule AniminaWeb.StoryLive do
     story = Story.by_id!(story_id)
 
     reasons = [
-      gettext("Fix spelling and grammar errors.")
+      with_locale(language, fn -> gettext("Fix spelling and grammar errors") end)
     ]
 
     socket =
@@ -49,7 +49,9 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:generating_story, false)
       |> assign(
         :message_when_generating_story,
-        gettext("Feeding our internal AI with this text. Please wait a second ")
+        with_locale(language, fn ->
+          gettext("Feeding our internal AI with this text. Please wait a second")
+        end)
       )
       |> assign(:words, String.length(story.content))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
@@ -70,7 +72,7 @@ defmodule AniminaWeb.StoryLive do
     end
 
     reasons = [
-      gettext("Fix spelling and grammar errors.")
+      with_locale(language, fn -> gettext("Fix spelling and grammar errors") end)
     ]
 
     socket =
@@ -98,7 +100,9 @@ defmodule AniminaWeb.StoryLive do
       |> assign(:show_buttons, true)
       |> assign(
         :message_when_generating_story,
-        gettext("Feeding our internal AI with this text. Please wait a second ")
+        with_locale(language, fn ->
+          gettext("Feeding our internal AI with this text. Please wait a second")
+        end)
       )
       |> assign(:headlines, get_user_headlines(socket))
       |> assign(:default_headline, get_default_headline(socket))
@@ -203,7 +207,9 @@ defmodule AniminaWeb.StoryLive do
          assign(
            socket,
            :message_when_generating_story,
-           gettext("Feeding our internal AI with this text. Please wait a second ")
+           with_locale(socket.assigns.language, fn ->
+             gettext("Feeding our internal AI with this text. Please wait a second ")
+           end)
          )}
       else
         {:noreply, assign(socket, :message_when_generating_story, message_when_generating_story)}
@@ -250,16 +256,23 @@ defmodule AniminaWeb.StoryLive do
       end
 
     socket
-    |> assign(page_title: gettext("Edit your story"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Edit your story") end)
+    )
     |> assign(form_id: "edit-story-form")
-    |> assign(title: gettext("Edit your story"))
+    |> assign(title: with_locale(socket.assigns.language, fn -> gettext("Edit your story") end))
     |> assign(:image_required, false)
     |> assign(
       :either_content_or_photo_added,
       either_content_or_photo_added(socket.assigns.story.content, [], "")
     )
-    |> assign(:cta, gettext("Save story"))
-    |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
+    |> assign(:cta, with_locale(socket.assigns.language, fn -> gettext("Save story") end))
+    |> assign(
+      info_text:
+        with_locale(socket.assigns.language, fn ->
+          gettext("Use stories to tell potential partners about yourself")
+        end)
+    )
     |> assign(form: form)
   end
 
@@ -291,13 +304,26 @@ defmodule AniminaWeb.StoryLive do
       |> push_navigate(to: "/my/stories/#{about_me_story.id}/edit")
     else
       socket
-      |> assign(page_title: gettext("Create your first story"))
+      |> assign(
+        page_title:
+          with_locale(socket.assigns.language, fn -> gettext("Create your first story") end)
+      )
       |> assign(form_id: "create-story-form")
-      |> assign(title: gettext("Create your first story"))
-      |> assign(:cta, gettext("Create about me story"))
+      |> assign(
+        title: with_locale(socket.assigns.language, fn -> gettext("Create your first story") end)
+      )
+      |> assign(
+        :cta,
+        with_locale(socket.assigns.language, fn -> gettext("Create about me story") end)
+      )
       |> assign(:either_content_or_photo_added, either_content_or_photo_added("", [], :about_me))
       |> assign(:image_required, true)
-      |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
+      |> assign(
+        info_text:
+          with_locale(socket.assigns.language, fn ->
+            gettext("Use stories to tell potential partners about yourself")
+          end)
+      )
       |> assign(form: form)
     end
   end
@@ -318,13 +344,22 @@ defmodule AniminaWeb.StoryLive do
       |> to_form()
 
     socket
-    |> assign(page_title: gettext("Create a story"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Create a story") end)
+    )
     |> assign(image_required: false)
     |> assign(form_id: "create-story-form")
-    |> assign(title: gettext("Create your own story"))
+    |> assign(
+      title: with_locale(socket.assigns.language, fn -> gettext("Create your own story") end)
+    )
     |> assign(:either_content_or_photo_added, either_content_or_photo_added("", [], ""))
-    |> assign(:cta, gettext("Create new story"))
-    |> assign(info_text: gettext("Use stories to tell potential partners about yourself"))
+    |> assign(:cta, with_locale(socket.assigns.language, fn -> gettext("Create new story") end))
+    |> assign(
+      info_text:
+        with_locale(socket.assigns.language, fn ->
+          gettext("Use stories to tell potential partners about yourself")
+        end)
+    )
     |> assign(form: form)
   end
 
@@ -741,7 +776,9 @@ defmodule AniminaWeb.StoryLive do
             for="story_headline"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("Headline") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Headline") %>
+            <% end) %>
           </label>
 
           <div :if={@default_headline == nil} phx-feedback-for={f[:headline_id].name} class="mt-2">
@@ -760,13 +797,15 @@ defmodule AniminaWeb.StoryLive do
                   else
                     ""
                   end,
-              prompt: gettext("Select a headline"),
+              prompt: with_locale(@language, fn -> gettext("Select a headline") end),
               value: f[:headline_id].value,
               "phx-debounce": "200"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:headline_id], :headline_id)}>
-              <%= gettext("Headline") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Headline") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
 
@@ -786,13 +825,15 @@ defmodule AniminaWeb.StoryLive do
                   else
                     ""
                   end,
-              prompt: gettext("Select a headline"),
+              prompt: with_locale(@language, fn -> gettext("Select a headline") end),
               value: @default_headline,
               "phx-debounce": "200"
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:headline_id], :headline_id)}>
-              <%= gettext("Headline") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Headline") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -803,11 +844,15 @@ defmodule AniminaWeb.StoryLive do
               for="story_content"
               class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Content") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Content") %>
+              <% end) %>
             </label>
 
             <p class="text-sm text-gray-500 dark:text-white">
-              <%= gettext("Characters: ") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Characters: ") %>
+              <% end) %>
               <span class="font-semibold"><%= @words %> / 1024</span>
             </p>
           </div>
@@ -825,9 +870,11 @@ defmodule AniminaWeb.StoryLive do
                       end}"
                   ),
               placeholder:
-                gettext(
-                  "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
-                ),
+                with_locale(@language, fn ->
+                  gettext(
+                    "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
+                  )
+                end),
               value: f[:content].value,
               rows: 4,
               type: :text,
@@ -837,7 +884,9 @@ defmodule AniminaWeb.StoryLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:content], :content)}>
-              <%= gettext("Content") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Content") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
           <div :if={@generating_story == true} phx-feedback-for={f[:content].name} class="mt-2">
@@ -851,9 +900,11 @@ defmodule AniminaWeb.StoryLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder:
-                gettext(
-                  "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
-                ),
+                with_locale(@language, fn ->
+                  gettext(
+                    "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
+                  )
+                end),
               value: @message_when_generating_story,
               rows: 4,
               type: :text,
@@ -863,13 +914,20 @@ defmodule AniminaWeb.StoryLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:content], :content)}>
-              <%= gettext("Content") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Content") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
 
           <%= if @words > 50 do %>
             <div :if={@show_buttons == true} class="mt-4 flex flex-col md:flex-row  gap-3">
-              <legend class="sr-only">Optimize a Story</legend>
+              <legend class="sr-only">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Optimize a Story") %>
+                <% end) %>
+              </legend>
+
               <div>
                 <div class="space-y-5 grid grid-cols-1 md:grid-cols-5 items-center">
                   <div class="flex items-center space-x-4 flex-nowrap">
@@ -888,7 +946,9 @@ defmodule AniminaWeb.StoryLive do
                         for="comments"
                         class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
                       >
-                        <%= gettext("Fix spelling and grammar errors.") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Fix spelling and grammar errors") %>
+                        <% end) %>
                       </label>
                     </div>
                     <div class="flex items-center">
@@ -906,7 +966,9 @@ defmodule AniminaWeb.StoryLive do
                         for="funnier"
                         class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
                       >
-                        <%= gettext("Make Funnier") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Make Funnier") %>
+                        <% end) %>
                       </label>
                     </div>
                     <div class="flex items-center">
@@ -924,7 +986,9 @@ defmodule AniminaWeb.StoryLive do
                         for="exciting"
                         class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
                       >
-                        <%= gettext("More Exciting") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("More Exciting") %>
+                        <% end) %>
                       </label>
                     </div>
                     <div class="flex items-center">
@@ -942,7 +1006,9 @@ defmodule AniminaWeb.StoryLive do
                         for="lengthen"
                         class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
                       >
-                        <%= gettext("Lengthen Story") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Lengthen Story") %>
+                        <% end) %>
                       </label>
                     </div>
                     <div class="flex items-center">
@@ -960,7 +1026,9 @@ defmodule AniminaWeb.StoryLive do
                         for="shorten"
                         class="ml-3 font-medium dark:text-[#fff] text-gray-900 whitespace-nowrap"
                       >
-                        <%= gettext("Shorten Story") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Shorten Story") %>
+                        <% end) %>
                       </label>
                     </div>
                   </div>
@@ -974,14 +1042,18 @@ defmodule AniminaWeb.StoryLive do
               phx-click="generate_story"
               class="flex mt-5 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              <%= gettext("Generate story") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Generate story") %>
+              <% end) %>
             </button>
           <% end %>
         </div>
 
         <div :if={@photo != nil} class="w-full space-y-2">
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-            <%= gettext("Photo") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Photo") %>
+            <% end) %>
           </p>
 
           <img
@@ -992,7 +1064,10 @@ defmodule AniminaWeb.StoryLive do
 
         <.inputs_for :let={photo_form} :if={@photo == nil} field={@form[:photo]}>
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-            <%= gettext("Photo") %> <span :if={@image_required} class="text-red-600">* required</span>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Photo") %>
+            <% end) %>
+            <span :if={@image_required} class="text-red-600">* required</span>
           </p>
 
           <.live_file_input
@@ -1022,7 +1097,9 @@ defmodule AniminaWeb.StoryLive do
             <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
             <p class="text-sm dark:text-white">
-              Upload or drag & drop your photo file JPG, JPEG, PNG
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Upload or drag & drop your photo file JPG, JPEG, PNG") %>
+              <% end) %>
             </p>
           </div>
 
@@ -1050,7 +1127,9 @@ defmodule AniminaWeb.StoryLive do
                     phx-value-ref={entry.ref}
                     aria-label="cancel"
                   >
-                    <%= gettext("Cancel") %>
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext("Cancel") %>
+                    <% end) %>
                   </button>
                 </div>
               </div>
@@ -1064,7 +1143,7 @@ defmodule AniminaWeb.StoryLive do
               <ul class="error-messages">
                 <%= for err <- upload_errors(@uploads.photos, entry) do %>
                   <li>
-                    <p><%= error_to_string(err) %></p>
+                    <p><%= error_to_string(err, @language) %></p>
                   </li>
                 <% end %>
               </ul>
@@ -1099,12 +1178,20 @@ defmodule AniminaWeb.StoryLive do
     Enum.map(field.errors, &translate_error(&1))
   end
 
-  defp error_to_string(:too_large), do: gettext("Too large")
-  defp error_to_string(:not_accepted), do: gettext("You have selected an unacceptable file type")
-  defp error_to_string(:too_many_files), do: gettext("You have selected too many files")
+  defp error_to_string(:too_large, language),
+    do: with_locale(language, fn -> gettext("Too large") end)
 
-  defp error_to_string(_),
-    do: gettext("Something went wrong uploading your photo. Try again")
+  defp error_to_string(:not_accepted, language),
+    do: with_locale(language, fn -> gettext("You have selected an unacceptable file type") end)
+
+  defp error_to_string(:too_many_files, language),
+    do: with_locale(language, fn -> gettext("You have selected too many files") end)
+
+  defp error_to_string(_, language),
+    do:
+      with_locale(language, fn ->
+        gettext("Something went wrong uploading your photo. Try again")
+      end)
 
   defp ext(entry) do
     [ext | _] = MIME.extensions(entry.client_type)

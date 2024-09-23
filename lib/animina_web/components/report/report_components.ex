@@ -5,16 +5,19 @@ defmodule AniminaWeb.ReportComponents do
   use Phoenix.Component
   alias Animina.Markdown
   import AniminaWeb.Gettext
+  import Gettext, only: [with_locale: 2]
 
   def reports_card(assigns) do
     ~H"""
     <div :if={@reports != []} class="w-[100%] my-8 grid md:grid-cols-3 grid-cols-1 gap-8">
       <%= for report <- @reports do %>
-        <.report_card report={report} current_user={@current_user} />
+        <.report_card language={@language} report={report} current_user={@current_user} />
       <% end %>
     </div>
     <div :if={@reports == []} class="w-[100%] my-8 dark:text-white text-black gap-8">
-      <%= gettext("No Reports Availabile") %>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("No Reports Availabile") %>
+      <% end) %>
     </div>
     """
   end
@@ -36,7 +39,11 @@ defmodule AniminaWeb.ReportComponents do
 
           <div class="w-[100%]  flex justify-between items-center">
             <div class="flex flex-col gap-1">
-              <p class="italic"><%= gettext("Accuser") %></p>
+              <p class="italic">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Accuser") %>
+                <% end) %>
+              </p>
               <.link
                 class="text-blue-500 underline"
                 id={"accuser-#{@report.accuser_id}-report-#{@report.id}"}
@@ -47,7 +54,11 @@ defmodule AniminaWeb.ReportComponents do
             </div>
 
             <div class="flex flex-col justify-end items-end gap-1">
-              <p class="italic"><%= gettext("Accused") %></p>
+              <p class="italic">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Accused") %>
+                <% end) %>
+              </p>
               <.link
                 class="text-blue-500 underline"
                 id={"accused-#{@report.accused_id}-report-#{@report.id}"}
@@ -81,7 +92,9 @@ defmodule AniminaWeb.ReportComponents do
               navigate={"/admin/reports/#{@report.id}"}
               class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
             >
-              <%= gettext("View Report") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("view Report") %>
+              <% end) %>
             </.link>
           </div>
         <% else %>
@@ -90,7 +103,9 @@ defmodule AniminaWeb.ReportComponents do
             navigate={"/admin/reports/pending/#{@report.id}/review"}
             class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
           >
-            <%= gettext("Review Report") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Review Report") %>
+            <% end) %>
           </.link>
         <% end %>
       </div>
@@ -106,14 +121,18 @@ defmodule AniminaWeb.ReportComponents do
         id="all-reports-tab"
         class={" #{if @current_report_tab == "all" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
       >
-        All Reports
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("All Reports") %>
+        <% end) %>
       </.link>
       <.link
         navigate="/admin/reports/pending"
         id="pending-reports-tab"
         class={" #{if @current_report_tab == "pending" do "text-blue-500 underline" else "dark:text-white text-black" end }   md:text-xl"}
       >
-        Pending Reports
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Pending Reports") %>
+        <% end) %>
       </.link>
     </div>
     """
@@ -123,7 +142,9 @@ defmodule AniminaWeb.ReportComponents do
     ~H"""
     <div class="w-[100%] flex flex-col min-h-[30vh] justify-center dark:text-white items-center">
       <p>
-        <%= gettext("This report does not exist or you do not have permission to view it.") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("This report does not exist or you do not have permission to view it.") %>
+        <% end) %>
       </p>
     </div>
     """
@@ -162,7 +183,9 @@ defmodule AniminaWeb.ReportComponents do
         </div>
         <div class="dark:text-white flex flex-col gap-1  text-black">
           <p class="font-medium ">
-            <%= gettext("Description :") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Description :") %>
+            <% end) %>
           </p>
           <p class="text-gray-900 text-sm ">
             <%= Markdown.format(@report.description) %>
@@ -171,7 +194,9 @@ defmodule AniminaWeb.ReportComponents do
 
         <div class="dark:text-white flex flex-col gap-1  text-black">
           <p class="font-medium ">
-            <%= gettext("Review :") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Review :") %>
+            <% end) %>
           </p>
           <p class="text-gray-900 text-sm ">
             <%= Markdown.format(@report.internal_memo) %>
@@ -181,7 +206,10 @@ defmodule AniminaWeb.ReportComponents do
         <%= if @report.admin_id do %>
           <div class="flex w-[100%] flex-col gap-2">
             <p class="italic dark:text-white">
-              <%= gettext("Reviewed By") %> <%= @report.admin.name %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Reviewed By") %>
+              <% end) %>
+              <%= @report.admin.name %>
             </p>
           </div>
         <% else %>
@@ -189,7 +217,9 @@ defmodule AniminaWeb.ReportComponents do
             navigate={"/admin/reports/pending/#{@report.id}/review"}
             class="w-[100%] dark:bg-gray-900 bg-white  dark:text-white text-black cursor-pointer  rounded-md  flex justify-center items-center p-2"
           >
-            <%= gettext("Review Report") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Review Report") %>
+            <% end) %>
           </.link>
         <% end %>
       </div>
