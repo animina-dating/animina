@@ -37,6 +37,9 @@ defmodule Animina.Traits.UserFlags do
     define :by_id, get_by: [:id], action: :read
     define :destroy
     define :by_user_id, args: [:id]
+
+    define :intersecting_flags_by_color,
+      args: [:current_user, :user, :current_user_color, :user_color]
   end
 
   actions do

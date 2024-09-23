@@ -113,7 +113,7 @@ defmodule AniminaWeb.ProfileComponents do
         >
           <%= flag.emoji %>
           <span class="md:hidden block">
-            <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
+            <%= String.slice(flag.name, 0..3) %> ...
           </span>
           <span class="md:block hidden"><%= flag.name %></span>
 
@@ -143,7 +143,7 @@ defmodule AniminaWeb.ProfileComponents do
         >
           <%= flag.emoji %>
           <span class="md:hidden block">
-            <%= String.slice(Ash.CiString.value(flag.name), 0..3) %> ...
+            <%= String.slice(flag.name, 0..3) %> ...
           </span>
 
           <span class="md:block hidden"><%= flag.name %></span>
