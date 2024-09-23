@@ -20,7 +20,7 @@ defmodule AniminaWeb.ProfileLive do
   require Ash.Query
 
   defp profile_socket(socket, username, language, current_user, :same_profile) do
-    case Accounts.User.by_username_as_an_actor(username, actor: current_user) do
+    case get_user_from_username(username, current_user) do
       {:ok, user} ->
         subscribe(socket, current_user, user)
         active_tab = if current_user.id == user.id, do: :profile, else: ""
@@ -38,31 +38,17 @@ defmodule AniminaWeb.ProfileLive do
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
-        intersecting_green_flags_count =
-          get_intersecting_flags_count(
-            filter_flags(current_user, :green, language),
-            filter_flags(user, :white, language)
-          )
-
-        intersecting_red_flags_count =
-          get_intersecting_flags_count(
-            filter_flags(current_user, :red, language),
-            filter_flags(user, :white, language)
-          )
+        intersecting_green_flags =
+          get_intersecting_flags(current_user.id, user.id, :green, :white, language)
 
         intersecting_red_flags =
-          get_intersecting_flags(
-            filter_flags(current_user, :red, language),
-            filter_flags(user, :white, language)
-          )
-          |> Enum.take(3)
+          get_intersecting_flags(current_user.id, user.id, :red, :white, language)
 
-        intersecting_green_flags =
-          get_intersecting_flags(
-            filter_flags(current_user, :green, language),
-            filter_flags(user, :white, language)
-          )
-          |> Enum.take(3)
+        intersecting_green_flags_count = Enum.count(intersecting_green_flags)
+        intersecting_red_flags_count = Enum.count(intersecting_red_flags)
+
+        intersecting_red_flags = Enum.take(intersecting_red_flags, 3)
+        intersecting_green_flags = Enum.take(intersecting_green_flags, 3)
 
         # we set it to be the current time and date by default so that we can display the profile to the user if
         # the user is the same as the current user
@@ -155,31 +141,17 @@ defmodule AniminaWeb.ProfileLive do
 
         update_visit_log_entry_for_bookmark_and_user(current_user, user)
 
-        intersecting_green_flags_count =
-          get_intersecting_flags_count(
-            filter_flags(current_user, :green, language),
-            filter_flags(user, :white, language)
-          )
-
-        intersecting_red_flags_count =
-          get_intersecting_flags_count(
-            filter_flags(current_user, :red, language),
-            filter_flags(user, :white, language)
-          )
+        intersecting_green_flags =
+          get_intersecting_flags(current_user.id, user.id, :green, :white, language)
 
         intersecting_red_flags =
-          get_intersecting_flags(
-            filter_flags(current_user, :red, language),
-            filter_flags(user, :white, language)
-          )
-          |> Enum.take(3)
+          get_intersecting_flags(current_user.id, user.id, :red, :white, language)
 
-        intersecting_green_flags =
-          get_intersecting_flags(
-            filter_flags(current_user, :green, language),
-            filter_flags(user, :white, language)
-          )
-          |> Enum.take(3)
+        intersecting_green_flags_count = Enum.count(intersecting_green_flags)
+        intersecting_red_flags_count = Enum.count(intersecting_red_flags)
+
+        intersecting_red_flags = Enum.take(intersecting_red_flags, 3)
+        intersecting_green_flags = Enum.take(intersecting_green_flags, 3)
 
         # we set it to be the current time and date by default so that we can display the profile to the user if
         # the user is the same as the current user
@@ -757,10 +729,30 @@ defmodule AniminaWeb.ProfileLive do
     end
   end
 
-  def get_intersecting_flags(first_flag_array, second_flag_array) do
-    Enum.filter(first_flag_array, fn x ->
-      x.id in Enum.map(second_flag_array, fn x -> x.id end)
-    end)
+  defp get_user_from_username(username, actor) do
+    Accounts.User
+    |> Ash.Query.for_read(:by_username_as_an_actor, %{username: username})
+    |> Ash.read_one(actor: actor)
+  end
+
+  defp get_intersecting_flags(current_user, user, current_user_color, user_color, language) do
+    case UserFlags.intersecting_flags_by_color(current_user, user, current_user_color, user_color) do
+      {:ok, flags} ->
+        Enum.group_by(flags, fn flag -> flag.flag_id end)
+        |> Enum.map(fn {id, traits} ->
+          trait = Enum.at(traits, 0)
+
+          %{
+            id: id,
+            name: get_translation(trait.flag.flag_translations, language),
+            emoji: trait.flag.emoji,
+            position: trait.position
+          }
+        end)
+
+      _ ->
+        []
+    end
   end
 
   defp get_translation(translations, language) do
