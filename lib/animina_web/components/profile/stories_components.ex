@@ -285,6 +285,7 @@ defmodule AniminaWeb.StoriesComponents do
         phx-value-id={@story.id}
         phx-value-dom_id={@dom_id}
         data-confirm={@delete_story_modal_text}
+        :if={@story.headline.subject != "About me"}
       >
         <path
           fill-rule="evenodd"
