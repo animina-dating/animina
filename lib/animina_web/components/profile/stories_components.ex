@@ -275,6 +275,7 @@ defmodule AniminaWeb.StoriesComponents do
       </.link>
 
       <svg
+        :if={@story.headline.subject != "About me"}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 20 20"
         width="25"
@@ -285,7 +286,6 @@ defmodule AniminaWeb.StoriesComponents do
         phx-value-id={@story.id}
         phx-value-dom_id={@dom_id}
         data-confirm={@delete_story_modal_text}
-        :if={@story.headline.subject != "About me"}
       >
         <path
           fill-rule="evenodd"
