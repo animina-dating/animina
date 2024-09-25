@@ -538,6 +538,7 @@ defmodule AniminaWeb.ChatLive do
       <.chat_messages_component
         sender={@sender}
         receiver={@receiver}
+        language={@language}
         messages={@messages}
         profile_points={@profile_points}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}
