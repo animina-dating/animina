@@ -31,6 +31,8 @@ defmodule Animina.Repo.Migrations.DropTranslations do
       :traits_flag_translations,
       "traits_flag_translations_flag_id_fkey"
     )
+
+    drop table(:traits_flag_translations)
   end
 
   def down do
