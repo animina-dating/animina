@@ -24,23 +24,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
     end
 
     user =
-      if socket.assigns.current_user.maximum_partner_height == nil do
-        socket.assigns.current_user
-        |> Map.put(
-          :maximum_partner_height,
-          cal_maximum_partner_height(socket.assigns.current_user)
-        )
-        |> Map.put(
-          :minimum_partner_height,
-          cal_minimum_partner_height(socket.assigns.current_user)
-        )
-        |> Map.put(:maximum_partner_age, cal_maximum_partner_age(socket.assigns.current_user))
-        |> Map.put(:minimum_partner_age, cal_minimum_partner_age(socket.assigns.current_user))
-        |> Map.put(:partner_gender, guess_partner_gender(socket.assigns.current_user))
-        |> Map.put(:search_range, 50)
-      else
-        socket.assigns.current_user
-      end
+      socket.assigns.current_user
 
     update_last_registration_page_visited(user, "/my/potential-partner")
 
@@ -254,8 +238,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
               <% end) %>
             </label>
             <div phx-feedback-for={f[:minimum_partner_height].name} class="mt-2">
-              <%= select(f, :minimum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+              <%= select(
+                f,
+                :minimum_partner_height,
+                [{with_locale(@language, fn -> gettext("doesn't matter") end), nil}] ++
+                  Enum.map(140..210, &{"#{&1} cm", &1}),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 dark:bg-gray-700 dark:text-white focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(
@@ -286,8 +273,11 @@ defmodule AniminaWeb.PotentialPartnerLive do
               <% end) %>
             </label>
             <div phx-feedback-for={f[:maximum_partner_height].name} class="mt-2">
-              <%= select(f, :maximum_partner_height, Enum.map(140..210, &{"#{&1} cm", &1}),
-                prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+              <%= select(
+                f,
+                :maximum_partner_height,
+                [{with_locale(@language, fn -> gettext("doesn't matter") end), nil}] ++
+                  Enum.map(140..210, &{"#{&1} cm", &1}),
                 class:
                   "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
                     unless(
