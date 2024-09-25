@@ -5,6 +5,7 @@ defmodule AniminaWeb.ProfileComponents do
   use Phoenix.Component
   import AniminaWeb.Gettext
   alias Animina.Accounts.Photo
+  import Gettext, only: [with_locale: 2]
 
   def profile_details(assigns) do
     ~H"""
@@ -80,10 +81,12 @@ defmodule AniminaWeb.ProfileComponents do
           <.intersecting_green_flags
             green_flags={@intersecting_green_flags}
             count={@intersecting_green_flags_count}
+            language={@language}
           />
           <.intersecting_red_flags
             red_flags={@intersecting_red_flags}
             count={@intersecting_red_flags_count}
+            language={@language}
           />
         </div>
       </div>
@@ -113,9 +116,18 @@ defmodule AniminaWeb.ProfileComponents do
         >
           <%= flag.emoji %>
           <span class="md:hidden block">
-            <%= String.slice(flag.name, 0..3) %> ...
+            <%= String.slice(
+              with_locale(@language, fn ->
+                Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name))
+              end),
+              0..3
+            ) %> ...
           </span>
-          <span class="md:block hidden"><%= flag.name %></span>
+          <span class="md:block hidden">
+            <%= with_locale(@language, fn ->
+              Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name))
+            end) %>
+          </span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-red-500 rounded-full" />
@@ -143,10 +155,19 @@ defmodule AniminaWeb.ProfileComponents do
         >
           <%= flag.emoji %>
           <span class="md:hidden block">
-            <%= String.slice(flag.name, 0..3) %> ...
+            <%= String.slice(
+              with_locale(@language, fn ->
+                Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name))
+              end),
+              0..3
+            ) %> ...
           </span>
 
-          <span class="md:block hidden"><%= flag.name %></span>
+          <span class="md:block hidden">
+            <%= with_locale(@language, fn ->
+              Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name))
+            end) %>
+          </span>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />
@@ -669,7 +690,9 @@ defmodule AniminaWeb.ProfileComponents do
           <%= @category.flag.emoji %>
         </span>
 
-        <%= @category.flag.name %>
+        <%= with_locale(@language, fn -> %>
+          <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(@category.flag.name)) %>
+        <% end) %>
 
         <.tooltip name={@category.category.name} />
       </div>

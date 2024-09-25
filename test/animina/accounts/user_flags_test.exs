@@ -1,13 +1,11 @@
 defmodule Animina.Accounts.UserFlagsTest do
   use Animina.DataCase, async: true
   require Ash.Query
-  alias Animina.Traits
 
   alias Animina.Accounts.User
-
+  alias Animina.Traits
   alias Animina.Traits.Category
   alias Animina.Traits.Flag
-  alias Animina.Traits.FlagTranslation
   alias Animina.Traits.UserFlags
 
   describe "Tests for the User Flags module" do
@@ -108,14 +106,6 @@ defmodule Animina.Accounts.UserFlagsTest do
         name: "Flag",
         emoji: "🚩",
         category_id: category.id
-      })
-
-    {:ok, _} =
-      FlagTranslation.create(%{
-        name: "Flag",
-        language: "en",
-        hashtag: "#flag",
-        flag_id: flag.id
       })
 
     flag

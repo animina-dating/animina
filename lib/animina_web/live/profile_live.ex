@@ -634,6 +634,7 @@ defmodule AniminaWeb.ProfileLive do
     <div class="px-5 pb-8">
       <.profile_details
         user={@user}
+        language={@language}
         display_chat_icon={true}
         current_user={@current_user}
         display_profile_image_next_to_name={false}
@@ -707,7 +708,7 @@ defmodule AniminaWeb.ProfileLive do
     []
   end
 
-  defp filter_flags(user, color, language) do
+  defp filter_flags(user, color, _language) do
     case UserFlags.by_user_id(user.id) do
       {:ok, traits} ->
         traits
@@ -717,7 +718,7 @@ defmodule AniminaWeb.ProfileLive do
         |> Enum.map(fn trait ->
           %{
             id: trait.flag.id,
-            name: get_translation(trait.flag.flag_translations, language),
+            name: trait.flag.name,
             emoji: trait.flag.emoji,
             position: trait.position
           }
@@ -735,7 +736,7 @@ defmodule AniminaWeb.ProfileLive do
     |> Ash.read_one(actor: actor)
   end
 
-  defp get_intersecting_flags(current_user, user, current_user_color, user_color, language) do
+  defp get_intersecting_flags(current_user, user, current_user_color, user_color, _language) do
     case UserFlags.intersecting_flags_by_color(current_user, user, current_user_color, user_color) do
       {:ok, flags} ->
         Enum.group_by(flags, fn flag -> flag.flag_id end)
@@ -744,7 +745,7 @@ defmodule AniminaWeb.ProfileLive do
 
           %{
             id: id,
-            name: get_translation(trait.flag.flag_translations, language),
+            name: trait.flag.name,
             emoji: trait.flag.emoji,
             position: trait.position
           }
@@ -753,14 +754,5 @@ defmodule AniminaWeb.ProfileLive do
       _ ->
         []
     end
-  end
-
-  defp get_translation(translations, language) do
-    language = String.split(language, "-") |> Enum.at(0)
-
-    translation =
-      Enum.find(translations, nil, fn translation -> translation.language == language end)
-
-    translation.name
   end
 end

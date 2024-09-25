@@ -36,10 +36,6 @@ defmodule Animina.Traits.Flag do
     end
   end
 
-  preparations do
-    prepare build(load: [:flag_translations])
-  end
-
   attributes do
     uuid_primary_key :id
     attribute :name, :ci_string, allow_nil?: false
@@ -48,8 +44,6 @@ defmodule Animina.Traits.Flag do
   end
 
   relationships do
-    has_many :flag_translations, Animina.Traits.FlagTranslation
-
     belongs_to :category, Animina.Traits.Category do
       attribute_writable? true
     end

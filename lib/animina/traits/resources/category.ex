@@ -33,7 +33,7 @@ defmodule Animina.Traits.Category do
   end
 
   preparations do
-    prepare build(load: [:category_translations, :flags])
+    prepare build(load: [:flags])
   end
 
   attributes do
@@ -42,7 +42,6 @@ defmodule Animina.Traits.Category do
   end
 
   relationships do
-    has_many :category_translations, Animina.Traits.CategoryTranslation
     has_many :flags, Animina.Traits.Flag
   end
 

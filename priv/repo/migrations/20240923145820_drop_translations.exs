@@ -36,7 +36,7 @@ defmodule Animina.Repo.Migrations.DropTranslations do
   end
 
   def down do
-    create table(:traits_flag_translations, primary_key: false) do
+    create_if_not_exists table(:traits_flag_translations, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :language, :text, null: false
       add :name, :citext, null: false
@@ -52,19 +52,19 @@ defmodule Animina.Repo.Migrations.DropTranslations do
           )
     end
 
-    create unique_index(
+    create_if_not_exists unique_index(
       :traits_flag_translations,
       [:hashtag, :language],
       name: "traits_flag_translations_hashtag_index"
     )
 
-    create unique_index(
+    create_if_not_exists unique_index(
       :traits_flag_translations,
       [:name, :language, :flag_id],
       name: "traits_flag_translations_unique_name_index"
     )
 
-    create table(:traits_category_translations, primary_key: false) do
+    create_if_not_exists table(:traits_category_translations, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :language, :text, null: false
       add :name, :citext, null: false

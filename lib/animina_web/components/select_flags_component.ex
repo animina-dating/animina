@@ -128,7 +128,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
     ~H"""
     <div class="py-4 space-y-2">
       <h3 class="font-semibold text-gray-800 dark:text-white truncate">
-        <%= get_translation(@category.category_translations, @language) %>
+        <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(@category.name)) %>
       </h3>
 
       <ol class="flex flex-wrap gap-2 w-full">
@@ -165,7 +165,7 @@ defmodule AniminaWeb.SelectFlagsComponent do
             }
           >
             <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
-            <%= get_translation(flag.flag_translations, @language) %>
+            <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
 
             <span
               :if={Map.get(@selected_flags, flag.id) != nil}
@@ -182,19 +182,6 @@ defmodule AniminaWeb.SelectFlagsComponent do
       </ol>
     </div>
     """
-  end
-
-  defp get_translation(translations, language) when translations != [] do
-    language = String.split(language, "-") |> Enum.at(0)
-
-    translation =
-      Enum.find(translations, nil, fn translation -> translation.language == language end)
-
-    translation.name
-  end
-
-  defp get_translation(_, _) do
-    nil
   end
 
   defp get_flag_styling(
