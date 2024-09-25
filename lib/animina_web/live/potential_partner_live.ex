@@ -120,6 +120,7 @@ defmodule AniminaWeb.PotentialPartnerLive do
   @impl true
   def handle_event("update_user", %{"form" => form_params}, socket) do
     form = Form.validate(socket.assigns.update_form, form_params)
+
     case Form.errors(form) do
       [] ->
         current_user =
