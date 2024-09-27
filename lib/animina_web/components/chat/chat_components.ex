@@ -40,6 +40,7 @@ defmodule AniminaWeb.ChatComponents do
           <.link navigate={"/#{@receiver.username}"}>
             <ProfileComponents.profile_details
               user={@receiver}
+              language={@language}
               current_user={@sender}
               current_user_has_liked_profile?={@current_user_has_liked_profile?}
               profile_points={@profile_points}

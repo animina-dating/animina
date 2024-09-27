@@ -23,9 +23,7 @@ defmodule Animina.Accounts do
     resource Animina.Accounts.UserRole
     resource Animina.Traits.UserFlags
     resource Animina.Traits.Flag
-    resource Animina.Traits.FlagTranslation
     resource Animina.Traits.Category
-    resource Animina.Traits.CategoryTranslation
     resource Animina.Accounts.PhotoFlags
   end
 

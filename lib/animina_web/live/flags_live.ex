@@ -340,7 +340,9 @@ defmodule AniminaWeb.FlagsLive do
       <div :for={category <- @categories}>
         <div class="py-4 space-y-2">
           <h3 class="font-semibold text-gray-800 dark:text-white truncate">
-            <%= get_translation(category.category_translations, @language) %>
+            <%= with_locale(@language, fn -> %>
+              <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(category.name)) %>
+            <% end) %>
           </h3>
 
           <ol class="flex flex-wrap gap-2 w-full">
@@ -379,7 +381,10 @@ defmodule AniminaWeb.FlagsLive do
             }
               >
                 <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
-                <%= get_translation(flag.flag_translations, @language) %>
+
+                <%= with_locale(@language, fn -> %>
+                  <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
+                <% end) %>
 
                 <span
                   :if={Enum.member?(@flags_for_user_with_current_color, flag.id)}
@@ -410,19 +415,6 @@ defmodule AniminaWeb.FlagsLive do
       </button>
     </div>
     """
-  end
-
-  defp get_translation(translations, language) when translations != [] do
-    language = String.split(language, "-") |> Enum.at(0)
-
-    translation =
-      Enum.find(translations, nil, fn translation -> translation.language == language end)
-
-    translation.name
-  end
-
-  defp get_translation(_, _) do
-    nil
   end
 
   defp get_flag_styling(

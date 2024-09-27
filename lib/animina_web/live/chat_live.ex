@@ -213,7 +213,7 @@ defmodule AniminaWeb.ChatLive do
      |> assign(:generating_message, true)}
   end
 
-  defp filter_flags(user, color, language) do
+  defp filter_flags(user, color, _language) do
     case UserFlags.by_user_id(user.id) do
       {:ok, traits} ->
         traits
@@ -223,7 +223,7 @@ defmodule AniminaWeb.ChatLive do
         |> Enum.map(fn trait ->
           %{
             id: trait.flag.id,
-            name: get_translation(trait.flag.flag_translations, language),
+            name: trait.flag.name,
             emoji: trait.flag.emoji,
             position: trait.position
           }
@@ -249,15 +249,6 @@ defmodule AniminaWeb.ChatLive do
     else
       "Chat: #{sender.username} <-> #{receiver.username}"
     end
-  end
-
-  defp get_translation(translations, language) do
-    language = String.split(language, "-") |> Enum.at(0)
-
-    translation =
-      Enum.find(translations, nil, fn translation -> translation.language == language end)
-
-    translation.name
   end
 
   defp current_user_has_liked_profile(user_id, current_user_id) do
@@ -547,6 +538,7 @@ defmodule AniminaWeb.ChatLive do
       <.chat_messages_component
         sender={@sender}
         receiver={@receiver}
+        language={@language}
         messages={@messages}
         profile_points={@profile_points}
         current_user_has_liked_profile?={@current_user_has_liked_profile?}

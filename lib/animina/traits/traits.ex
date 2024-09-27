@@ -7,9 +7,7 @@ defmodule Animina.Traits do
 
   resources do
     resource Animina.Traits.Category
-    resource Animina.Traits.CategoryTranslation
     resource Animina.Traits.Flag
-    resource Animina.Traits.FlagTranslation
     resource Animina.Traits.UserFlags
   end
 

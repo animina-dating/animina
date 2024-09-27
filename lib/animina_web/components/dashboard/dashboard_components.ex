@@ -390,7 +390,11 @@ defmodule AniminaWeb.DashboardComponents do
           :if={flag != %{}}
           class="inline-flex items-center px-2 py-1 mx-1 my-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-md"
         >
-          <%= flag.emoji %> <%= flag.name %>
+          <%= flag.emoji %>
+
+          <%= with_locale(@language, fn -> %>
+            <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
+          <% end) %>
 
           <div class="pl-2">
             <p class="w-2 h-2 bg-green-500 rounded-full" />

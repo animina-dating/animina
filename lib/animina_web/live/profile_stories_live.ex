@@ -253,7 +253,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
     []
   end
 
-  defp filter_flags(flags, color, language) do
+  defp filter_flags(flags, color, _language) do
     flags =
       flags
       |> Enum.filter(fn trait ->
@@ -263,7 +263,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
     Enum.map(flags, fn trait ->
       %{
         id: trait.flag.id,
-        name: get_translation(trait.flag.flag_translations, language),
+        name: trait.flag.name,
         emoji: trait.flag.emoji
       }
     end)
@@ -340,7 +340,12 @@ defmodule AniminaWeb.ProfileStoriesLive do
             :if={flag != %{}}
             class="inline-flex items-center px-3 py-2 text-base font-medium text-gray-900 bg-white rounded-md ring-1 ring-inset ring-gray-200"
           >
-            <%= flag.emoji %> <%= flag.name %>
+            <%= flag.emoji %>
+
+            <%= with_locale(@language, fn -> %>
+              <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
+            <% end) %>
+
             <.get_styling_for_matching_flags
               flag={flag}
               current_user_green_flags={@current_user_green_flags}
@@ -351,14 +356,5 @@ defmodule AniminaWeb.ProfileStoriesLive do
       </div>
     </div>
     """
-  end
-
-  defp get_translation(translations, language) do
-    language = String.split(language, "-") |> Enum.at(0)
-
-    translation =
-      Enum.find(translations, nil, fn translation -> translation.language == language end)
-
-    translation.name
   end
 end

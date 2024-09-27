@@ -17,28 +17,16 @@ defmodule Animina.Repo.Migrations.SeedFlag do
     |> Enum.map(&{&1.category_id, &1.category_name, &1.items})
     |> Enum.map(fn val ->
       case val do
-        {name, %{de: name_de, en: name_en}, items} ->
+        {name, %{en: name_en}, items} ->
           {:ok, category} = repo().insert(%Animina.Traits.Category{
             name: name,
             id: Ecto.UUID.generate()
           })
 
-          repo().insert(%Animina.Traits.CategoryTranslation{
-            category_id: category.id,
-            name: name_de,
-            language: "de"
-          })
-
-          repo().insert(%Animina.Traits.CategoryTranslation{
-            category_id: category.id,
-            name: name_en,
-            language: "en"
-          })
-
           Enum.map(items, fn item ->
             case item do
               %{
-                name: %{de: name_de, en: name_en},
+                name: %{ en: name_en},
                 hashtags: %{de: hashtags_de, en: hashtags_en},
                 emoji: emoji
               } ->
@@ -48,20 +36,6 @@ defmodule Animina.Repo.Migrations.SeedFlag do
                   emoji: emoji,
                   photo_flagable: false,
                   id: Ecto.UUID.generate()
-                })
-
-                repo().insert(%Animina.Traits.FlagTranslation{
-                  flag_id: flag.id,
-                  name: name_de,
-                  language: "de",
-                  hashtag: hashtags_de
-                })
-
-                repo().insert(%Animina.Traits.FlagTranslation{
-                  flag_id: flag.id,
-                  name: name_en,
-                  language: "en",
-                  hashtag: hashtags_en
                 })
             end
           end)
