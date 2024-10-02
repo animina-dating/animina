@@ -104,11 +104,21 @@ defmodule AniminaWeb.PostLive do
       |> to_form()
 
     socket
-    |> assign(page_title: gettext("Edit your post"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Edit your post") end)
+    )
     |> assign(form_id: "edit-post-form")
-    |> assign(title: gettext("Edit your post"))
-    |> assign(:cta, gettext("Save post"))
-    |> assign(info_text: gettext("Use posts to write about things that interest you"))
+    |> assign(title: with_locale(socket.assigns.language, fn -> gettext("Edit your post") end))
+    |> assign(
+      :cta,
+      with_locale(socket.assigns.language, fn -> gettext("Save post") end)
+    )
+    |> assign(
+      info_text:
+        with_locale(socket.assigns.language, fn ->
+          gettext("Use posts to write about things that interest you")
+        end)
+    )
     |> assign(form: form)
   end
 
@@ -123,11 +133,23 @@ defmodule AniminaWeb.PostLive do
       |> to_form()
 
     socket
-    |> assign(page_title: gettext("Create a post"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Create a post") end)
+    )
     |> assign(form_id: "create-post-form")
-    |> assign(title: gettext("Create your own post"))
-    |> assign(:cta, gettext("Create new post"))
-    |> assign(info_text: gettext("Use posts to write about things that interest you"))
+    |> assign(
+      title: with_locale(socket.assigns.language, fn -> gettext("Create your own post") end)
+    )
+    |> assign(
+      :cta,
+      with_locale(socket.assigns.language, fn -> gettext("Create new post") end)
+    )
+    |> assign(
+      info_text:
+        with_locale(socket.assigns.language, fn ->
+          gettext("Use posts to write about things that interest you")
+        end)
+    )
     |> assign(form: form)
   end
 
@@ -192,14 +214,14 @@ defmodule AniminaWeb.PostLive do
           <%= text_input(f, :id, type: :hidden, value: f[:id].value) %>
         <% end %>
 
-        <%!-- <%= text_input(f, :user_id, type: :hidden, value: @current_user.id) %> --%>
-
         <div>
           <label
             for="post_title"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("Title") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Title") %>
+            <% end) %>
           </label>
 
           <div phx-feedback-for={f[:title].name} class="mt-2">
@@ -212,7 +234,7 @@ defmodule AniminaWeb.PostLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("Your post title"),
+              placeholder: with_locale(@language, fn -> gettext("Your post title") end),
               value: f[:title].value,
               type: :text,
               "phx-debounce": "200",
@@ -220,7 +242,9 @@ defmodule AniminaWeb.PostLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:title], :title)}>
-              <%= gettext("Title") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Title") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -230,7 +254,9 @@ defmodule AniminaWeb.PostLive do
             for="post_content"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("Content") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Content") %>
+            <% end) %>
           </label>
 
           <div phx-feedback-for={f[:content].name} class="mt-2">
@@ -244,9 +270,11 @@ defmodule AniminaWeb.PostLive do
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
               placeholder:
-                gettext(
-                  "Use normal text or the Markdown format to write your post. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
-                ),
+                with_locale(@language, fn ->
+                  gettext(
+                    "Use normal text or the Markdown format to write your post. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
+                  )
+                end),
               value: f[:content].value,
               rows: 16,
               type: :text,
@@ -255,7 +283,9 @@ defmodule AniminaWeb.PostLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:content], :content)}>
-              <%= gettext("Content") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Content") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>

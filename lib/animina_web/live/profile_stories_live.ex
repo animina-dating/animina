@@ -287,6 +287,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
               photo={photo}
               user={@user}
               dom_id={dom_id}
+              language={@language}
               current_user={@current_user}
               current_user_green_flags={@current_user_green_flags}
               current_user_red_flags={@current_user_red_flags}
@@ -323,9 +324,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
                 </h3>
                 <div class="mt-2 text-sm text-blue-700">
                   <p>
-                    <%= gettext(
-                      "To activate your profile you have to have at least an about me story and a profile picture uploaded. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
-                    ) %>
+                    <%= with_locale(@language, fn -> %>
+                      <%= gettext(
+                        "To activate your profile you have to have at least an about me story and a profile picture uploaded. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
+                      ) %>
+                    <% end) %>
                   </p>
                 </div>
               </div>

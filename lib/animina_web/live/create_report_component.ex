@@ -65,9 +65,11 @@ defmodule AniminaWeb.Live.CreateReportComponent do
     ~H"""
     <div class="flex flex-col gap-2">
       <p class="dark:text-white text-sm">
-        <%= gettext(
-          "To report an account is a serious act. The account will be deactivated right away and will be investigated by our team. Please tell us why you report the account."
-        ) %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext(
+            "To report an account is a serious act. The account will be deactivated right away and will be investigated by our team. Please tell us why you report the account."
+          ) %>
+        <% end) %>
 
         <.form
           :let={f}
@@ -87,7 +89,9 @@ defmodule AniminaWeb.Live.CreateReportComponent do
               for="report_description"
               class="block  font-medium leading-6 text-gray-900 dark:text-white"
             >
-              <%= gettext("Description") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Description") %>
+              <% end) %>
             </label>
 
             <div phx-feedback-for={f[:description].name} class="mt-2">
@@ -101,9 +105,11 @@ defmodule AniminaWeb.Live.CreateReportComponent do
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
                 placeholder:
-                  gettext(
-                    "Use normal text or the Markdown format to write your description. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
-                  ),
+                  with_locale(@language, fn ->
+                    gettext(
+                      "Use normal text or the Markdown format to write your description. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
+                    )
+                  end),
                 value: f[:description].value,
                 rows: 12,
                 type: :text,
@@ -112,13 +118,15 @@ defmodule AniminaWeb.Live.CreateReportComponent do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:description], :description)}>
-                <%= gettext("Description") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Description") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
 
           <div>
-            <%= submit("Report User",
+            <%= submit(with_locale(@language, fn -> gettext("Report User") end),
               class:
                 "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                   unless(@form.source.source.valid? == false,

@@ -35,7 +35,9 @@ defmodule AniminaWeb.PostViewLive do
       case socket.assigns.post do
         nil ->
           socket
-          |> assign(page_title: gettext("Post not found"))
+          |> assign(
+            page_title: with_locale(socket.assigns.language, fn -> gettext("Post not found") end)
+          )
 
         _ ->
           socket
@@ -93,7 +95,9 @@ defmodule AniminaWeb.PostViewLive do
     <div class="py-4">
       <div :if={@post == nil} class="px-12 pb-8">
         <h1 class="text-2xl font-semibold dark:text-white">
-          <%= gettext("Something went wrong. We couldn't find this post") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Something went wrong. We couldn't find this post") %>
+          <% end) %>
         </h1>
       </div>
 
@@ -101,8 +105,8 @@ defmodule AniminaWeb.PostViewLive do
         <.post_header
           post={@post}
           current_user={@current_user}
-          edit_post_title={gettext("Edit post")}
-          subtitle={"#{gettext("By")} #{@post.user.name}"}
+          edit_post_title={with_locale(@language, fn -> gettext("Edit your post") end)}
+          subtitle={(with_locale(@language, fn -> gettext("By") end)) <>  @post.user.name}
         />
 
         <.post_body content={@post.content} />

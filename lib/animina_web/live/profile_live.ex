@@ -645,10 +645,10 @@ defmodule AniminaWeb.ProfileLive do
         current_user_credit_points={@current_user_credit_points}
         intersecting_green_flags_count={@intersecting_green_flags_count}
         intersecting_red_flags_count={@intersecting_red_flags_count}
-        years_text={gettext("years")}
+        years_text={with_locale(@language, fn -> gettext("years") end)}
         show_intersecting_flags_count={true}
-        centimeters_text={gettext("cm")}
-        add_new_story_title={gettext("Add a new story")}
+        centimeters_text={with_locale(@language, fn -> gettext("cm") end)}
+        add_new_story_title={with_locale(@language, fn -> gettext("Add new story") end)}
       />
 
       <%= live_render(
@@ -679,7 +679,9 @@ defmodule AniminaWeb.ProfileLive do
           id={"report-user-#{@user.username}"}
           class="flex justify-center px-2 py-1 text-sm font-semibold leading-6 text-white bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          <%= gettext("Report Account") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Report Account") %>
+          <% end) %>
         </.link>
       </div>
 

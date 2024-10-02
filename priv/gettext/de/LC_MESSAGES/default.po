@@ -845,6 +845,19 @@ msgstr "Ausstehende Berichte"
 msgid "Rejected"
 msgstr "Abgelehnt"
 
+
+msgid "Pending review"
+msgstr "Ausstehende Überprüfung"
+
+
+msgid "Report User"
+msgstr "Benutzer melden"
+
+
+
+msgid "Add new story"
+msgstr "Neue Story hinzufügen"
+
 #: lib/animina_web/live/profile_live.ex:805
 #, elixir-autogen, elixir-format
 msgid "Report Account"
