@@ -15,6 +15,7 @@ defmodule AniminaWeb.PostsComponents do
   attr :dom_id, :any, required: false
   attr :delete_post_modal_text, :string
   attr :read_post_title, :string
+  attr :language, :string
 
   def post_card(assigns) do
     ~H"""

@@ -15,6 +15,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :add_new_story_title, :string, required: true
   attr :delete_story_modal_text, :string, required: true
   attr :user, :any, required: false
+  attr :language, :any, required: true
 
   def stories_display(assigns) do
     ~H"""
@@ -25,6 +26,7 @@ defmodule AniminaWeb.StoriesComponents do
             story={story}
             current_user={@current_user}
             flags={flags}
+            language={@language}
             delete_story_modal_text={@delete_story_modal_text}
             user={@user}
             current_user_green_flags={@current_user_green_flags}
