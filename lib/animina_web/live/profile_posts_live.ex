@@ -136,14 +136,18 @@ defmodule AniminaWeb.ProfilePostsLive do
             navigate="/my/posts/new"
             class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            <%= gettext("Add a new post") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Add a new post") %>
+            <% end) %>
           </.link>
         </div>
       </div>
       <%= if @streams.posts.inserts != [] do %>
         <div>
           <h1 class="text-2xl font-semibold dark:text-white">
-            <%= gettext("My Posts") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("My Posts") %>
+            <% end) %>
           </h1>
         </div>
 
@@ -158,8 +162,11 @@ defmodule AniminaWeb.ProfilePostsLive do
               dom_id={dom_id}
               current_user={@current_user}
               user={@user}
-              delete_post_modal_text={gettext("Do you really want to delete this post?")}
-              read_post_title={gettext("Read Post")}
+              language={@language}
+              delete_post_modal_text={
+                with_locale(@language, fn -> gettext("Do you really want to delete this post?") end)
+              }
+              read_post_title={with_locale(@language, fn -> gettext("Read Post") end)}
             />
           </div>
         </div>

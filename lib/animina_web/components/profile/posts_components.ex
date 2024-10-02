@@ -5,6 +5,7 @@ defmodule AniminaWeb.PostsComponents do
   use Phoenix.Component
   alias Animina.Markdown
   import AniminaWeb.Gettext
+  import Gettext, only: [with_locale: 2]
 
   use Timex
 
@@ -48,7 +49,9 @@ defmodule AniminaWeb.PostsComponents do
             ) %>
           </p>
           <.link navigate={@post.url} class="text-blue-500">
-            <%= gettext("Continue Reading..") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Continue Reading..") %>
+            <% end) %>
           </.link>
         </div>
       </div>

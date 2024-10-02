@@ -18,7 +18,7 @@ defmodule AniminaWeb.LanguageSwitchLive do
      |> redirect(to: "/language-switch?locale=#{language}")
      |> put_flash(
        :info,
-       with_locale(socket.assigns.language, fn -> gettext("Language switched successfully") end)
+       with_locale(language, fn -> gettext("Language switched successfully") end)
      )}
   end
 

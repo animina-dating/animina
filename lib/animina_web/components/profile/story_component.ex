@@ -35,8 +35,11 @@ defmodule AniminaWeb.StoryComponent do
         dom_id={@dom_id}
         user={@user}
         current_user_green_flags={@current_user_green_flags}
+        language={@language}
         current_user_red_flags={@current_user_red_flags}
-        delete_story_modal_text={gettext("Do you really want to delete this story?")}
+        delete_story_modal_text={
+          with_locale(@language, fn -> gettext("Do you really want to delete this story?") end)
+        }
       />
     </div>
     """

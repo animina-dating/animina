@@ -6,6 +6,7 @@ defmodule AniminaWeb.StoriesComponents do
   alias Animina.Markdown
   import AniminaWeb.Gettext
   alias Animina.Accounts.Photo
+  import Gettext, only: [with_locale: 2]
 
   attr :stories_and_flags, :list, required: true
   attr :current_user, :any, required: true
@@ -40,6 +41,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :dom_id, :any, required: false
   attr :flags, :list, required: false
   attr :current_user, :any, required: true
+  attr :language, :any, required: true
   attr :user, :any, required: false
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
@@ -71,7 +73,7 @@ defmodule AniminaWeb.StoriesComponents do
             }
             class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
           >
-            <%= get_photo_state_name(@story.photo.state) %>
+            <%= get_photo_state_name(@story.photo.state, @language) %>
           </p>
         </h3>
       </div>
@@ -165,28 +167,28 @@ defmodule AniminaWeb.StoriesComponents do
     "bg-blue-500 text-white"
   end
 
-  defp get_photo_state_name(:error) do
-    gettext("Error")
+  defp get_photo_state_name(:error, language) do
+    with_locale(language, fn -> gettext("Error") end)
   end
 
-  defp get_photo_state_name(:nsfw) do
-    gettext("NSFW")
+  defp get_photo_state_name(:nsfw, language) do
+    with_locale(language, fn -> gettext("NSFW") end)
   end
 
-  defp get_photo_state_name(:rejected) do
-    gettext("Rejected")
+  defp get_photo_state_name(:rejected, language) do
+    with_locale(language, fn -> gettext("Rejected") end)
   end
 
-  defp get_photo_state_name(:pending_review) do
-    gettext("Pending review")
+  defp get_photo_state_name(:pending_review, language) do
+    with_locale(language, fn -> gettext("Pending review") end)
   end
 
-  defp get_photo_state_name(:in_review) do
-    gettext("In review")
+  defp get_photo_state_name(:in_review, language) do
+    with_locale(language, fn -> gettext("In review") end)
   end
 
-  defp get_photo_state_name(_) do
-    gettext("Error")
+  defp get_photo_state_name(_, language) do
+    with_locale(language, fn -> gettext("Error") end)
   end
 
   attr :story, :any, required: true
