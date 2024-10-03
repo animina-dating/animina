@@ -82,7 +82,9 @@ defmodule AniminaWeb.ChatLive do
       |> assign(:show_use_ai_button, true)
       |> assign(
         :message_when_generating,
-        gettext("Feeding our internal AI with this text. Please wait a second")
+        with_locale(language, fn ->
+          gettext("Feeding our internal AI with this text. Please wait a second")
+        end)
       )
       |> assign(:intersecting_green_flags_count, intersecting_green_flags_count)
       |> assign(:intersecting_red_flags_count, intersecting_red_flags_count)
@@ -296,7 +298,9 @@ defmodule AniminaWeb.ChatLive do
          assign(
            socket,
            :message_when_generating,
-           gettext("Feeding our internal AI with this text. Please wait a second ")
+           with_locale(socket.assigns.language, fn ->
+             gettext("Feeding our internal AI with this text. Please wait a second ")
+           end)
          )}
       else
         {:noreply, assign(socket, :message_when_generating, message_when_generating_story)}
@@ -477,7 +481,12 @@ defmodule AniminaWeb.ChatLive do
 
         {:error, _} ->
           socket
-          |> put_flash(:error, gettext("Could not generate message with AI, Kindly Try Again"))
+          |> put_flash(
+            :error,
+            with_locale(socket.assigns.language, fn ->
+              gettext("Could not generate message with AI, Kindly Try Again")
+            end)
+          )
       end
 
     {:noreply, socket}
@@ -546,8 +555,8 @@ defmodule AniminaWeb.ChatLive do
         intersecting_red_flags_count={@intersecting_red_flags_count}
         intersecting_green_flags={@intersecting_green_flags}
         intersecting_red_flags={@intersecting_red_flags}
-        years_text={gettext("years")}
-        centimeters_text={gettext("cm")}
+        years_text={with_locale(@language, fn -> gettext("years") end)}
+        centimeters_text={with_locale(@language, fn -> gettext("cm") end)}
       />
       <div class="w-[100%]  absolute bottom-0">
         <.form
@@ -568,7 +577,7 @@ defmodule AniminaWeb.ChatLive do
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
                   ),
-              placeholder: gettext("Your message here..."),
+              placeholder: with_locale(@language, fn -> gettext("Your message here...") end),
               value: @message_value,
               type: :text,
               required: true,
@@ -615,7 +624,9 @@ defmodule AniminaWeb.ChatLive do
               <%= if @generating_message do %>
                 <%= @message_when_generating %>
               <% else %>
-                <%= gettext("Need help with your first message?") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Need help with your first message?") %>
+                <% end) %>
               <% end %>
             </p>
           </div>
@@ -626,7 +637,9 @@ defmodule AniminaWeb.ChatLive do
           class="flex flex-col gap-1 mt-2 text-black dark:text-white"
         >
           <p class="font-bold ">
-            <%= gettext("Here are some ideas. Copy one and customize it (e.g. add a greeting).") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Here are some ideas. Copy one and customize it (e.g. add a greeting).") %>
+            <% end) %>
           </p>
 
           <ul class="pl-5 list-disc">
@@ -644,7 +657,9 @@ defmodule AniminaWeb.ChatLive do
                         phx-click="use_ai_message"
                         class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
                       >
-                        <%= gettext("Copy ") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Copy ") %>
+                        <% end) %>
                       </button>
                     <% else %>
                       <button
@@ -653,7 +668,9 @@ defmodule AniminaWeb.ChatLive do
                         phx-click="use_ai_message"
                         class="flex  text-sm justify-center  items-center rounded-md bg-indigo-600 dark:bg-indigo-500  px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
                       >
-                        <%= gettext("Copy") %>
+                        <%= with_locale(@language, fn -> %>
+                          <%= gettext("Copy") %>
+                        <% end) %>
                       </button>
                     <% end %>
                   </span>
