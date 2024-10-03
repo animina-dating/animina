@@ -56,16 +56,22 @@ defmodule AniminaWeb.FlagsLive do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/white")
 
     socket
-    |> assign(page_title: gettext("Select your own flags"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Select your own flags") end)
+    )
     |> assign(color: :white)
     |> assign(navigate_to: "/my/flags/green")
-    |> assign(title: gettext("Choose Your Own Flags"))
+    |> assign(
+      title: with_locale(socket.assigns.language, fn -> gettext("Choose Your Own Flags") end)
+    )
     |> assign(
       info_text:
-        gettext(
-          "We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important.",
-          number_of_flags: @max_flags
-        )
+        with_locale(socket.assigns.language, fn ->
+          gettext(
+            "We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important.",
+            number_of_flags: @max_flags
+          )
+        end)
     )
   end
 
@@ -75,16 +81,22 @@ defmodule AniminaWeb.FlagsLive do
     current_user = socket.assigns.current_user
 
     socket
-    |> assign(page_title: gettext("Select your red flags"))
+    |> assign(
+      page_title: with_locale(socket.assigns.language, fn -> gettext("Select your red flags") end)
+    )
     |> assign(color: :red)
     |> assign(navigate_to: redirect_url(current_user))
-    |> assign(title: gettext("Choose Your Red Flags"))
+    |> assign(
+      title: with_locale(socket.assigns.language, fn -> gettext("Choose Your Red Flags") end)
+    )
     |> assign(
       info_text:
-        gettext(
-          "Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important.",
-          number_of_flags: @max_flags
-        )
+        with_locale(socket.assigns.language, fn ->
+          gettext(
+            "Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important.",
+            number_of_flags: @max_flags
+          )
+        end)
     )
   end
 
@@ -92,16 +104,23 @@ defmodule AniminaWeb.FlagsLive do
     update_last_registration_page_visited(socket.assigns.current_user, "/my/flags/green")
 
     socket
-    |> assign(page_title: gettext("Select your green flags"))
+    |> assign(
+      page_title:
+        with_locale(socket.assigns.language, fn -> gettext("Select your green flags") end)
+    )
     |> assign(color: :green)
     |> assign(navigate_to: "/my/flags/red")
-    |> assign(title: gettext("Choose Your Green Flags"))
+    |> assign(
+      title: with_locale(socket.assigns.language, fn -> gettext("Choose Your Green Flags") end)
+    )
     |> assign(
       info_text:
-        gettext(
-          "Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important.",
-          number_of_flags: @max_flags
-        )
+        with_locale(socket.assigns.language, fn ->
+          gettext(
+            "Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important.",
+            number_of_flags: @max_flags
+          )
+        end)
     )
   end
 
@@ -140,7 +159,14 @@ defmodule AniminaWeb.FlagsLive do
 
     case bulk_result.status do
       :error ->
-        {:noreply, socket |> put_flash(:error, gettext("Something went wrong adding your flags"))}
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             gettext("Something went wrong adding your flags")
+           end)
+         )}
 
       _ ->
         case socket.assigns.selected do
@@ -327,9 +353,13 @@ defmodule AniminaWeb.FlagsLive do
                 )}
           >
             <%= if @selected == 0 do %>
-              <%= gettext("Proceed ") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Proceed ") %>
+              <% end) %>
             <% else %>
-              <%= gettext("Save flags") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Save flags") %>
+              <% end) %>
             <% end %>
           </button>
         </div>
@@ -408,9 +438,13 @@ defmodule AniminaWeb.FlagsLive do
                 )}
       >
         <%= if @selected == 0 do %>
-          <%= gettext("Proceed without selecting a flag") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Proceed without selecting a flag") %>
+          <% end) %>
         <% else %>
-          <%= gettext("Save flags") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Save flags") %>
+          <% end) %>
         <% end %>
       </button>
     </div>
