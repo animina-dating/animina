@@ -1,6 +1,7 @@
 defmodule Animina.Validations.AboutStory do
   use Ash.Resource.Validation
   alias Animina.Narratives.Headline
+
   alias Animina.Narratives.Story
 
   @moduledoc """

@@ -228,32 +228,18 @@ defmodule AniminaWeb.StoryLive do
 
   defp apply_action(socket, :edit, _params) do
     form =
-      if socket.assigns.story.photo do
-        Form.for_update(socket.assigns.story, :update,
-          domain: Narratives,
-          as: "story",
-          forms: [
-            photo: [
-              resource: Photo,
-              create_action: :create
-            ]
+      Form.for_update(socket.assigns.story, :update,
+        domain: Narratives,
+        as: "story",
+        forms: [
+          photo: [
+            resource: Photo,
+            create_action: :create
           ]
-        )
-        |> to_form()
-      else
-        Form.for_update(socket.assigns.story, :update,
-          domain: Narratives,
-          as: "story",
-          forms: [
-            photo: [
-              resource: Photo,
-              create_action: :create
-            ]
-          ]
-        )
-        |> AshPhoenix.Form.add_form([:photo], validate?: false)
-        |> to_form()
-      end
+        ]
+      )
+      |> AshPhoenix.Form.add_form([:photo], validate?: false)
+      |> to_form()
 
     socket
     |> assign(
@@ -411,43 +397,6 @@ defmodule AniminaWeb.StoryLive do
   end
 
   @impl true
-  def handle_event("submit", %{"story" => story}, socket)
-      when is_nil(socket.assigns.photo) == false do
-    form =
-      Form.validate(socket.assigns.form, story)
-
-    with [] <- Form.errors(form), {:ok, story} <- Form.submit(form, params: story) do
-      Ash.Changeset.for_create(
-        Photo,
-        :create,
-        %{
-          user_id: socket.assigns.photo.user_id,
-          filename: socket.assigns.photo.filename,
-          original_filename: socket.assigns.photo.original_filename,
-          mime: socket.assigns.photo.mime,
-          size: socket.assigns.photo.size,
-          ext: socket.assigns.photo.ext,
-          dimensions: socket.assigns.photo.dimensions,
-          state: socket.assigns.photo.state,
-          story_id: story.id
-        }
-      )
-      |> Ash.create()
-
-      {:noreply,
-       socket
-       |> assign(:errors, [])
-       |> push_navigate(to: ~p"/#{socket.assigns.current_user.username}")}
-    else
-      {:error, form} ->
-        {:noreply, socket |> assign(:form, form)}
-
-      errors ->
-        {:noreply, socket |> assign(:errors, errors)}
-    end
-  end
-
-  @impl true
   def handle_event("submit", %{"story" => story}, socket) do
     form =
       consume_uploaded_entries(socket, :photos, fn %{path: path}, entry ->
@@ -474,6 +423,9 @@ defmodule AniminaWeb.StoryLive do
         [%{} = file] ->
           photo = Map.get(story, "photo") |> Map.merge(file)
           story = Map.merge(story, %{"photo" => photo})
+
+          delete_or_remove_photo_from_story(story["id"], socket.assigns.photo)
+
           Form.validate(socket.assigns.form, story)
       end
 
@@ -726,6 +678,17 @@ defmodule AniminaWeb.StoryLive do
 
   defp get_default_headline(_socket) do
     nil
+  end
+
+  defp delete_or_remove_photo_from_story(story_id, photo) do
+    case Story.by_id_with_headline(story_id) do
+      {:ok, story} ->
+        if story.headline.subject == "About me" do
+          photo && Photo.update(photo, %{"story_id" => nil})
+        else
+          photo && Photo.destroy(photo)
+        end
+    end
   end
 
   defp either_content_or_photo_added(content, uploads, :about_me) do
@@ -1062,11 +1025,17 @@ defmodule AniminaWeb.StoryLive do
           />
         </div>
 
-        <.inputs_for :let={photo_form} :if={@photo == nil} field={@form[:photo]}>
+        <.inputs_for :let={photo_form} field={@form[:photo]}>
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Photo") %>
-            <% end) %>
+            <%= if @form_id == "edit-story-form" do %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Update Photo") %>
+              <% end) %>
+            <% else %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Photo") %>
+              <% end) %>
+            <% end %>
             <span :if={@image_required} class="text-red-600">* required</span>
           </p>
 
