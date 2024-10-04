@@ -27,6 +27,7 @@ defmodule Animina.Narratives.Story do
     define :update
     define :destroy
     define :by_id, get_by: [:id], action: :read
+    define :by_id_with_headline, args: [:id], get?: true
     define :by_user_id_with_headline, args: [:user_id]
     define :by_user_id, args: [:user_id]
     define :descending_by_user_id, args: [:user_id]
@@ -90,6 +91,18 @@ defmodule Animina.Narratives.Story do
       prepare build(load: [:headline])
 
       filter expr(user_id == ^arg(:user_id))
+    end
+
+    read :by_id_with_headline do
+      pagination offset?: true, keyset?: true, required?: false
+
+      argument :id, :uuid do
+        allow_nil? false
+      end
+
+      prepare build(load: [:headline])
+
+      filter expr(id == ^arg(:id))
     end
 
     read :descending_by_user_id do
