@@ -1,6 +1,6 @@
 defmodule Animina.Validations.AboutPhoto do
   use Ash.Resource.Validation
-  alias Animina.Accounts.Photo
+  alias Animina.Narratives.Story
 
   @moduledoc """
   This is a module for validating the 'About me' story has a photo
