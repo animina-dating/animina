@@ -1,15 +1,16 @@
 <div>
   <.top_navigation
     active_tab={@active_tab}
+    language={@language}
     current_user={@current_user}
     current_user_credit_points={@current_user_credit_points}
     number_of_unread_messages={@number_of_unread_messages}
-    language={@language}
   />
   <div class="w-[100%] text-base flex justify-between">
     <.desktop_sidebar_navigation
       active_tab={@active_tab}
       current_user={@current_user}
+      language={@language}
       current_user_credit_points={@current_user_credit_points}
       number_of_unread_messages={@number_of_unread_messages}
     />
