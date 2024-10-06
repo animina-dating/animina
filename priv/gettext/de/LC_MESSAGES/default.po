@@ -432,6 +432,10 @@ msgstr "E-Mail-Adresse oder Benutzername"
 msgid "Edit Green Flags"
 msgstr "Grüne Flags bearbeiten"
 
+
+msgid "Points"
+msgstr "Punkte"
+
 #: lib/animina_web/components/top_navigation_components.ex:199
 #, elixir-autogen, elixir-format
 msgid "Edit Potential Partner Preferences"

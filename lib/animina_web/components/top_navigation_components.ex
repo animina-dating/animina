@@ -9,6 +9,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
   alias Animina.StringHelper
+  import Gettext, only: [with_locale: 2]
 
   # -------------------------------------------------------------
   @doc """
@@ -86,8 +87,8 @@ defmodule AniminaWeb.TopNavigationCompontents do
               class="absolute py-3 top-8 right-2"
             >
               <.dropdown_items
-                language={@language}
                 current_user={@current_user}
+                language={@language}
                 active_tab={@active_tab}
               />
             </div>
@@ -99,7 +100,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
         <div :if={@current_user == nil} class="flex items-center gap-3 md:gap-5">
           <div :if={@active_tab == :sign_in}>
             <p class="text-base font-bold text-gray-400 md:block hidden  cursor-not-allowed dark:text-gray-500">
-              <%= gettext("Login") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Login") %>
+              <% end) %>
             </p>
           </div>
 
@@ -108,7 +111,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
               class="text-base font-bold text-gray-700 cursor-pointer dark:text-white"
               navigate="/sign-in"
             >
-              <%= gettext("Login") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Login") %>
+              <% end) %>
             </.link>
           </div>
         </div>
@@ -186,7 +191,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <%= if @current_user  do %>
         <div class="dark:bg-gray-900 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
           <div class="border-gray-100 border-b-[1px]  py-1">
-            <p class="px-2 text-sm " role="none"><%= gettext("Signed in as") %></p>
+            <p class="px-2 text-sm " role="none">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Signed in as") %>
+              <% end) %>
+            </p>
             <p class="px-2 text-sm font-medium text-gray-900 truncate dark:text-gray-400">
               <%= StringHelper.truncate_username(@current_user.username) %>
             </p>
@@ -196,33 +205,52 @@ defmodule AniminaWeb.TopNavigationCompontents do
             class=" border-b-[0.5px] px-2 pb-2 border-gray-100"
             navigate={"/#{@current_user.username}"}
           >
-            <%= gettext("Show Profile") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Show Profile") %>
+            <% end) %>
           </.link>
           <.link class="px-2" navigate="/my/profile/edit">
-            <%= gettext("Edit Profile") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit Profile") %>
+            <% end) %>
           </.link>
           <.link class="px-2" navigate="/my/profile-photo">
-            <%= gettext("Change Profile Photo") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Change Profile Photo") %>
+            <% end) %>
           </.link>
           <.link class="px-2" navigate="/my/flags/white">
-            <%= gettext("Edit White Flags") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit White Flags") %>
+            <% end) %>
           </.link>
           <.link class="px-2" navigate="/my/flags/green">
             <div class="flex items-center gap-2">
-              <%= gettext("Edit Green Flags") %> <p class="w-2 h-2 bg-green-500 rounded-full" />
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Edit Green Flags") %>
+              <% end) %>
+
+              <p class="w-2 h-2 bg-green-500 rounded-full" />
             </div>
           </.link>
           <.link class="px-2" navigate="/my/flags/red">
             <div class="flex items-center gap-2">
-              <%= gettext("Edit Red Flags") %> <p class="w-2 h-2 bg-red-500 rounded-full" />
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Edit Red Flags") %>
+              <% end) %>
+              <p class="w-2 h-2 bg-red-500 rounded-full" />
             </div>
           </.link>
           <.link class="px-2" navigate="/my/potential-partner">
-            <%= gettext("Edit Potential Partner Preferences") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Edit Potential Partner Preferences") %>
+            <% end) %>
           </.link>
           <.link class="px-2" navigate="/my/profile/visibility">
             <div class="flex items-center gap-2">
-              <%= gettext("Change Visibility") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Change Visibility") %>
+              <% end) %>
             </div>
           </.link>
           <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
@@ -231,16 +259,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
           </div>
           <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
           <.link class="px-2" navigate="/auth/user/sign-out">
-            <%= gettext("Sign Out") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Sign Out") %>
+            <% end) %>
           </.link>
         </div>
       <% else %>
         <div class="flex flex-col gap-2 p-4 text-sm text-gray-700 bg-white rounded-md shadow-lg dark:bg-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:text-white ">
           <.link :if={@active_tab != :register} navigate="/">
-            <%= gettext("Register") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Register") %>
+            <% end) %>
           </.link>
           <.link navigate="/sign-in">
-            <%= gettext("Login") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Login") %>
+            <% end) %>
           </.link>
         </div>
       <% end %>
@@ -252,13 +286,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="flex flex-col gap-2 p-4">
       <div :if={@current_user} class="flex flex-col gap-2">
-        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.home_nav_item current_user={@current_user} language={@language} active_tab={@active_tab} />
 
-        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.waitlist_nav_item current_user={@current_user} active_tab={@active_tab} />
+        <.bookmarks_nav_item
+          current_user={@current_user}
+          language={@language}
+          active_tab={@active_tab}
+        />
+        <.reports_nav_item current_user={@current_user} language={@language} active_tab={@active_tab} />
+        <.waitlist_nav_item
+          current_user={@current_user}
+          language={@language}
+          active_tab={@active_tab}
+        />
         <.user_profile_item
           current_user={@current_user}
+          language={@language}
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
@@ -268,7 +311,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
         </div>
       </div>
       <div :if={six_random_public_users(@current_user) != []} class="flex w-[100%]  flex-col gap-2">
-        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+        <p class=" dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Could Interest You") %>
+          <% end) %>
+        </p>
 
         <div class="flex w-[100%] flex-col gap-2">
           <.random_interests
@@ -288,13 +335,22 @@ defmodule AniminaWeb.TopNavigationCompontents do
   def desktop_sidebar_navigation(assigns) do
     ~H"""
     <div class="w-[20%] md:block hidden z-40 h-[100vh] fixed top-0 pt-[60px] dark:bg-gray-900 bg-white border-[1px] dark:border-gray-800 border-gray-200">
-      <div :if={@current_user} class="flex flex-col gap-2 p-4">
-        <.home_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.bookmarks_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.reports_nav_item current_user={@current_user} active_tab={@active_tab} />
-        <.waitlist_nav_item current_user={@current_user} active_tab={@active_tab} />
+      <div :if={@current_user} class="flex flex-col  gap-2 p-4">
+        <.home_nav_item current_user={@current_user} language={@language} active_tab={@active_tab} />
+        <.bookmarks_nav_item
+          current_user={@current_user}
+          language={@language}
+          active_tab={@active_tab}
+        />
+        <.reports_nav_item current_user={@current_user} language={@language} active_tab={@active_tab} />
+        <.waitlist_nav_item
+          current_user={@current_user}
+          language={@language}
+          active_tab={@active_tab}
+        />
         <.user_profile_item
           current_user={@current_user}
+          language={@language}
           active_tab={@active_tab}
           current_user_credit_points={@current_user_credit_points}
         />
@@ -304,7 +360,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
         :if={six_random_public_users(@current_user) != []}
         class="flex w-[100%]  p-4 flex-col gap-2"
       >
-        <p class=" dark:text-white"><%= gettext("Could Interest You") %></p>
+        <p class=" dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Could Interest You") %>
+          <% end) %>
+        </p>
 
         <div class={"flex w-[100%] #{if @current_user do " h-[100%] overflow-y-scroll" end } flex-col gap-2"}>
           <.random_interests
@@ -489,6 +549,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :language, :any, doc: "current language"
   attr :current_user_credit_points, :integer, doc: "current user credit points"
 
   def user_profile_item(assigns) do
@@ -512,9 +573,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
       <% end %>
         <span class="flex items-center gap-0.5" aria-hidden="true">
         <%= if @current_user do %>
-          <%= gettext("Points") %>: <span id="current-user-credit-points"> <%= if is_number @current_user_credit_points  do  Points.humanized_points(@current_user_credit_points) else    @current_user_credit_points end  %> </span>
+
+        <%= with_locale(@language, fn -> %>
+        <%= gettext("Points") %>
+                  <% end) %>: <span id="current-user-credit-points"> <%= if is_number @current_user_credit_points  do  Points.humanized_points(@current_user_credit_points) else    @current_user_credit_points end  %> </span>
         <% else %>
-          <%= gettext("Points") %>: 0
+        <%= with_locale(@language, fn -> %>
+        <%= gettext("Points") %>
+                  <% end) %>: 0
         <% end %>
         </span>
       </.top_navigation_entry>
@@ -534,7 +600,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
     </svg>
 
-      <span><%= gettext("Reports") %></span>
+      <span>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Reports") %>
+                  <% end) %>
+
+      </span>
       </div>
 
       </.top_navigation_entry>
@@ -554,7 +625,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
     </svg>
 
 
-      <span><%= gettext("Waitlist") %></span>
+      <span>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Waitlist") %>
+                  <% end) %>
+
+      </span>
       </div>
 
       </.top_navigation_entry>
@@ -659,6 +735,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, doc: "current user"
+  attr :language, :any, doc: "current language"
 
   def home_nav_item(assigns) do
     ~H"""
@@ -686,7 +763,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
           fill="fill-current"
         />
       </svg>
-      <span><%= gettext("Home") %></span>
+      <span>
+      <%= with_locale(@language, fn -> %>
+                    <%= gettext("Home") %>
+                  <% end) %>
+
+
+     </span>
       </div>
       </div>
 
@@ -710,7 +793,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
           fill="fill-current"
         />
       </svg>
-      <span><%= gettext("Home") %></span>
+      <span>
+      <%= with_locale(@language, fn -> %>
+                    <%= gettext("Home") %>
+                  <% end) %>
+      </span>
       </div>
       </div>
 
@@ -729,6 +816,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
   attr :number_of_unread_messages, :integer, doc: "number of unread messages"
+  attr :language, :any, doc: "current language"
 
   def chat_nav_item(assigns) do
     ~H"""
@@ -745,7 +833,13 @@ defmodule AniminaWeb.TopNavigationCompontents do
           stroke-linecap="round" stroke-linejoin="round"
         />
       </svg>
-      <span><%= gettext("Chat") %></span>
+      <span>
+      <%= with_locale(@language, fn -> %>
+      <%= gettext("Chat") %>
+                  <% end) %>
+
+
+      </span>
       <div class="flex -space-x-1.5 absolute top-2 left-1/2">
         <div
           class="w-4 h-4 overflow-hidden rounded-full shrink-0"
@@ -787,6 +881,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :language, :any, doc: "current language"
 
   def bookmarks_nav_item(assigns) do
     ~H"""
@@ -804,7 +899,11 @@ defmodule AniminaWeb.TopNavigationCompontents do
         Fonticons, Inc.-->
     <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
     </svg>
-    <span><%= gettext("Bookmarks") %></span>
+    <span>
+    <%= with_locale(@language, fn -> %>
+    <%= gettext("Bookmarks") %>
+                  <% end) %>
+     </span>
 
     </div>
 
@@ -816,7 +915,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
     Fonticons, Inc.-->
      <path d="M0 48C0 21.5 21.5 0 48 0l0 48V441.4l130.1-92.9c8.3-6 19.6-6 27.9 0L336 441.4V48H48V0H336c26.5 0 48 21.5 48 48V488c0 9-5 17.2-13 21.3s-17.6 3.4-24.9-1.8L192 397.5 37.9 507.5c-7.3 5.2-16.9 5.9-24.9 1.8S0 497 0 488V48z" />
     </svg>
-       <span><%= gettext("Bookmarks") %></span>
+       <span>
+       <%= with_locale(@language, fn -> %>
+    <%= gettext("Bookmarks") %>
+                  <% end) %>
+
+       </span>
 
     </div>
     </div>
@@ -834,6 +938,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   """
   attr :active_tab, :atom, default: nil, doc: "active tab"
   attr :current_user, :any, default: nil, doc: "current user"
+  attr :language, :any, doc: "current language"
 
   def profile_nav_item(assigns) do
     ~H"""
@@ -860,7 +965,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
             stroke-linecap="round" stroke-linejoin="round"
           />
         </svg>
-    <span><%= gettext("Profile") %></span>
+    <span>
+    <%= with_locale(@language, fn -> %>
+    <%= gettext("Profile") %>
+                  <% end) %>
+
+    </span>
 
     </div>
 
@@ -878,7 +988,12 @@ defmodule AniminaWeb.TopNavigationCompontents do
             stroke-linecap="round" stroke-linejoin="round"
           />
         </svg>
-       <span><%= gettext("Profile") %></span>
+       <span>
+       <%= with_locale(@language, fn -> %>
+    <%= gettext("Profile") %>
+                  <% end) %>
+
+       </span>
 
     </div>
     </div>
