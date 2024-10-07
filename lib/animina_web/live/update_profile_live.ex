@@ -117,7 +117,9 @@ defmodule AniminaWeb.UpdateProfileLive do
     ~H"""
     <div class="flex flex-col gap-3">
       <h1 class="text-4xl dark:text-white font-semibold">
-        <%= gettext("Update Your Profile") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Update Your Profile") %>
+        <% end) %>
       </h1>
 
       <.form
@@ -134,7 +136,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               for="user_username"
               class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
             >
-              <%= gettext("Username") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Username") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:username].name} class="mt-2">
               <%= text_input(
@@ -146,7 +150,7 @@ defmodule AniminaWeb.UpdateProfileLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Pusteblume1977"),
+                placeholder: with_locale(@language, fn -> gettext("Pusteblume1977") end),
                 value: f[:username].value,
                 type: :text,
                 required: true,
@@ -155,7 +159,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:username], :username)}>
-                <%= gettext("Username") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Username") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -167,7 +173,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               for="user_name"
               class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
             >
-              <%= gettext("Name") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Name") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:name].name} class="mt-2">
               <%= text_input(f, :name,
@@ -177,7 +185,7 @@ defmodule AniminaWeb.UpdateProfileLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Alice"),
+                placeholder: with_locale(@language, fn -> gettext("Alice") end),
                 value: f[:name].value,
                 type: :text,
                 required: true,
@@ -185,7 +193,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:name], :name)}>
-                <%= gettext("Name") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Name") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -197,7 +207,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               for="user_birthday"
               class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
             >
-              <%= gettext("Date of birth") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Date of birth") %>
+              <% end) %>
             </label>
           </div>
           <div phx-feedback-for={f[:birthday].name} class="mt-2">
@@ -215,7 +227,9 @@ defmodule AniminaWeb.UpdateProfileLive do
             ) %>
 
             <.error :for={msg <- get_field_errors(f[:birthday], :birthday)}>
-              <%= gettext("Date of birth") <> " " <> msg %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Date of birth") <> " " <> msg %>
+              <% end) %>
             </.error>
           </div>
         </div>
@@ -226,14 +240,16 @@ defmodule AniminaWeb.UpdateProfileLive do
               for="user_gender"
               class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
             >
-              <%= gettext("Gender") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Gender") %>
+              <% end) %>
             </label>
           </div>
           <div class="mt-2" phx-no-format>
 
           <%
             item_code = "male"
-            item_title = gettext("Male")
+            item_title = with_locale(@language, fn -> gettext("Male") end)
           %>
           <div class="flex items-center mb-4">
             <%= radio_button(f, :gender, item_code,
@@ -249,7 +265,7 @@ defmodule AniminaWeb.UpdateProfileLive do
 
           <%
             item_code = "female"
-            item_title = gettext("Female")
+            item_title = with_locale(@language, fn -> gettext("Female") end)
           %>
           <div class="flex items-center mb-4">
             <%= radio_button(f, :gender, item_code,
@@ -264,7 +280,7 @@ defmodule AniminaWeb.UpdateProfileLive do
 
           <%
             item_code = "diverse"
-            item_title = gettext("Diverse")
+            item_title = with_locale(@language, fn -> gettext("Diverse") end)
           %>
           <div class="flex items-center mb-4">
             <%= radio_button(f, :gender, item_code,
@@ -284,7 +300,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               for="user_occupation"
               class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
             >
-              <%= gettext("Occupation") %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Occupation") %>
+              <% end) %>
             </label>
             <div phx-feedback-for={f[:occupation].name} class="mt-2">
               <%= text_input(f, :occupation,
@@ -294,7 +312,7 @@ defmodule AniminaWeb.UpdateProfileLive do
                       do: "ring-red-600 focus:ring-red-600",
                       else: "ring-gray-300 focus:ring-indigo-600"
                     ),
-                placeholder: gettext("Dating Coach"),
+                placeholder: with_locale(@language, fn -> gettext("Dating Coach") end),
                 value: f[:occupation].value,
                 type: :text,
                 required: false,
@@ -302,7 +320,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:occupation], :name)}>
-                <%= gettext("Occupation") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Occupation") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -313,7 +333,9 @@ defmodule AniminaWeb.UpdateProfileLive do
                 for="user_zip_code"
                 class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
               >
-                <%= gettext("Zip code") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Zip code") %>
+                <% end) %>
               </label>
             </div>
             <div phx-feedback-for={f[:zip_code].name} class="mt-2">
@@ -333,7 +355,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:zip_code], :zip_code)}>
-                <%= gettext("Zip code") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Zip code") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -344,9 +368,13 @@ defmodule AniminaWeb.UpdateProfileLive do
                 for="user_height"
                 class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
               >
-                <%= gettext("Height") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Height") %>
+                <% end) %>
                 <span class="text-gray-400 dark:text-gray-100">
-                  (<%= gettext("in cm") %>)
+                  <%= with_locale(@language, fn -> %>
+                    (<%= gettext("in cm") %>)
+                  <% end) %>
                 </span>
               </label>
             </div>
@@ -365,7 +393,9 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:height], :height)}>
-                <%= gettext("Height") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Height") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
@@ -376,7 +406,9 @@ defmodule AniminaWeb.UpdateProfileLive do
                 for="user_mobile_phone"
                 class="block text-sm font-medium leading-6 dark:text-white text-gray-900"
               >
-                <%= gettext("Mobile phone number") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Mobile phone number") %>
+                <% end) %>
                 <span class="text-gray-400 dark:text-gray-100"></span>
               </label>
             </div>
@@ -395,14 +427,16 @@ defmodule AniminaWeb.UpdateProfileLive do
               ) %>
 
               <.error :for={msg <- get_field_errors(f[:mobile_phone], :mobile_phone)}>
-                <%= gettext("Mobile phone number") <> " " <> msg %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Mobile phone number") <> " " <> msg %>
+                <% end) %>
               </.error>
             </div>
           </div>
         </div>
 
         <div>
-          <%= submit(gettext("Save Profile Details"),
+          <%= submit(with_locale(@language, fn -> gettext("Save Profile Details") end),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@form.errors != [],
