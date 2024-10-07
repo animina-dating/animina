@@ -424,7 +424,7 @@ defmodule AniminaWeb.StoryLive do
           photo = Map.get(story, "photo") |> Map.merge(file)
           story = Map.merge(story, %{"photo" => photo})
 
-          delete_or_remove_photo_from_story(story["id"], socket.assigns.photo)
+          delete_or_remove_photo_from_story(story, socket.assigns.photo)
 
           Form.validate(socket.assigns.form, story)
       end
@@ -680,14 +680,23 @@ defmodule AniminaWeb.StoryLive do
     nil
   end
 
-  defp delete_or_remove_photo_from_story(story_id, photo) do
-    case Story.by_id_with_headline(story_id) do
+  defp delete_or_remove_photo_from_story(story, photo) do
+    if Map.has_key?(story, "id") do
+      delete_or_remove_photo_from_story(story, photo, "delete_or_remove")
+    end
+  end
+
+  defp delete_or_remove_photo_from_story(story, photo, "delete_or_remove") do
+    case Story.by_id_with_headline(story["id"]) do
       {:ok, story} ->
         if story.headline.subject == "About me" do
           photo && Photo.update(photo, %{"story_id" => nil})
         else
           photo && Photo.destroy(photo)
         end
+
+      _ ->
+        :ok
     end
   end
 
