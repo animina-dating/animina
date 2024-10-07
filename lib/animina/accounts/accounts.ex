@@ -25,6 +25,7 @@ defmodule Animina.Accounts do
     resource Animina.Traits.Flag
     resource Animina.Traits.Category
     resource Animina.Accounts.PhotoFlags
+    resource Animina.Accounts.FastUser
   end
 
   authorization do
