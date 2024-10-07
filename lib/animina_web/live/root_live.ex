@@ -476,7 +476,9 @@ defmodule AniminaWeb.RootLive do
                   <%= gettext("Height") %>
                 <% end) %>
                 <span class="text-gray-400 dark:text-gray-100">
-                  (<%= gettext("in cm") %>)
+                  <%= with_locale(@language, fn -> %>
+                    (<%= gettext("in cm") %>)
+                  <% end) %>
                 </span>
               </label>
             </div>
