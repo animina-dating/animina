@@ -4,6 +4,7 @@ defmodule Animina.Accounts.Message do
   """
 
   alias Phoenix.PubSub
+  require Ash.Query
 
   use Ash.Resource,
     data_layer: AshPostgres.DataLayer,
@@ -113,7 +114,7 @@ defmodule Animina.Accounts.Message do
         allow_nil? false
       end
 
-      prepare build(load: [:sender])
+      prepare build(load: [:sender, :receiver])
       prepare build(sort: [created_at: :desc])
 
       filter expr(receiver_id == ^arg(:user_id) and is_nil(read_at))
@@ -153,6 +154,14 @@ defmodule Animina.Accounts.Message do
              {:ok, record}
            end),
            on: [:create]
+  end
+
+  def unique_new_messages_for_user(user_id) do
+    messages = unread_messages_for_user!(user_id)
+
+    messages
+    |> Enum.group_by(& &1.sender_id)
+    |> Enum.map(fn {_, messages} -> List.first(messages) end)
   end
 
   attributes do

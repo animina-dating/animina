@@ -78,6 +78,7 @@ defmodule AniminaWeb.Router do
       live "/my/bookmarks", BookmarksLive, :bookmarks
       live "/my/bookmarks/:filter_type", BookmarksLive, :bookmarks
       live "/my/messages/:profile", ChatLive, :index
+      live "/my/messages", MessagesLive, :index
       live "/my", DashboardLive, :index
       live "/my/dashboard", DashboardLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
