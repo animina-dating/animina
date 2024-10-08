@@ -700,7 +700,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   def top_notification_bell(assigns) do
     ~H"""
-    <div class="flex gap-1 dark:text-white">
+    <.link navigate="/my/messages" class="flex gap-1 dark:text-white">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -720,7 +720,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
           <%= @number_of_unread_messages %>
         </div>
       <% end %>
-    </div>
+    </.link>
     """
   end
 
