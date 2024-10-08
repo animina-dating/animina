@@ -593,7 +593,7 @@ defmodule AniminaWeb.ChatLive do
             <%= submit(
             class:
               "flex w-full justify-center items-center rounded-md bg-indigo-600 dark:bg-indigo-500 h-[100%] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.source.valid? == false || @generating_message == false,
+                unless(@form.source.valid? == false || @generating_message == true,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
