@@ -32,23 +32,6 @@ let csrfToken = document
 
 let Hooks = {};
 
-Hooks.AutoResizeTextarea = {
-  mounted() {
-    this.adjustHeight();
-    this.el.addEventListener("input", this.adjustHeight.bind(this));
-    this.el.addEventListener("change", this.adjustHeight.bind(this));
-  },
-  updated() {
-    this.adjustHeight();
-  },
-  adjustHeight() {
-    this.el.style.height = "auto";
-    this.el.style.height = this.el.scrollHeight + "px";
-  },
-};
-
-export default Hooks;
-
 Hooks.ScrollToBottom = {
   mounted() {
     var div = document.getElementById("ChatMessagesBox");

@@ -848,10 +848,9 @@ defmodule AniminaWeb.StoryLive do
                   )
                 end),
               value: f[:content].value,
-              rows: 4,
+              rows: 7,
               type: :text,
               "phx-debounce": "200",
-              phx_hook: "AutoResizeTextarea",
               readonly: make_readonly(@words),
               maxlength: "1024"
             ) %>
