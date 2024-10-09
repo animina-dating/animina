@@ -833,7 +833,7 @@ defmodule AniminaWeb.StoryLive do
               f,
               :content,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 resize-none " <>
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else:
@@ -851,6 +851,7 @@ defmodule AniminaWeb.StoryLive do
               rows: 4,
               type: :text,
               "phx-debounce": "200",
+              phx_hook: "AutoResizeTextarea",
               readonly: make_readonly(@words),
               maxlength: "1024"
             ) %>
