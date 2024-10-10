@@ -424,7 +424,7 @@ defmodule AniminaWeb.StoryLive do
           photo = Map.get(story, "photo") |> Map.merge(file)
           story = Map.merge(story, %{"photo" => photo})
 
-          delete_or_remove_photo_from_story(story["id"], socket.assigns.photo)
+          delete_or_remove_photo_from_story(story, socket.assigns.photo)
 
           Form.validate(socket.assigns.form, story)
       end
@@ -680,14 +680,23 @@ defmodule AniminaWeb.StoryLive do
     nil
   end
 
-  defp delete_or_remove_photo_from_story(story_id, photo) do
-    case Story.by_id_with_headline(story_id) do
+  defp delete_or_remove_photo_from_story(story, photo) do
+    if Map.has_key?(story, "id") do
+      delete_or_remove_photo_from_story(story, photo, "delete_or_remove")
+    end
+  end
+
+  defp delete_or_remove_photo_from_story(story, photo, "delete_or_remove") do
+    case Story.by_id_with_headline(story["id"]) do
       {:ok, story} ->
         if story.headline.subject == "About me" do
           photo && Photo.update(photo, %{"story_id" => nil})
         else
           photo && Photo.destroy(photo)
         end
+
+      _ ->
+        :ok
     end
   end
 
@@ -824,7 +833,7 @@ defmodule AniminaWeb.StoryLive do
               f,
               :content,
               class:
-                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+                "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 resize-none " <>
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else:
@@ -839,7 +848,7 @@ defmodule AniminaWeb.StoryLive do
                   )
                 end),
               value: f[:content].value,
-              rows: 4,
+              rows: 7,
               type: :text,
               "phx-debounce": "200",
               readonly: make_readonly(@words),

@@ -131,6 +131,7 @@ defmodule AniminaWeb.DashboardComponents do
             <div class="w-[100%]  absolute bottom-0">
               <.send_message_from_dashboard_box
                 sender={@current_user}
+                language={@language}
                 receiver={@last_unread_message.sender}
                 form={@form}
               />
