@@ -480,10 +480,11 @@ defmodule AniminaWeb.ProfileComponents do
   def user_state_cards(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
-      <%= for state <- user_states_to_display_to_profile() do %>
+      <%= for state <- user_states_to_display_to_profile(@language) do %>
         <.user_state_card
           state={@current_user.state}
           name={state["name"]}
+          language={@language}
           similar_value={state["similar_value"]}
           value={state["value"]}
           description={state["description"]}
@@ -491,7 +492,14 @@ defmodule AniminaWeb.ProfileComponents do
         />
       <% end %>
 
-      <.delete_account_card confirm_text={gettext("Are you sure you want to delete your account?")} />
+      <.delete_account_card
+        language={@language}
+        confirm_text={
+          with_locale(@language, fn ->
+            gettext("Are you sure you want to delete your account?")
+          end)
+        }
+      />
     </div>
     """
   end
@@ -506,10 +514,16 @@ defmodule AniminaWeb.ProfileComponents do
       <div class="w-[100%] flex justify-between items-start">
         <div class="flex   flex-col gap-1">
           <p class="text-xl group-hover:text-red-500 text-red-500 transition-all ease-in-out duration-500 text-black  ">
-            <%= gettext("Delete Account") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Delete Account") %>
+            <% end) %>
           </p>
           <p class="group-hover:text-red-600 text-red-500">
-            <%= gettext("Permanently delete your account and all data , this action is irreversible.") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext(
+                "Permanently delete your account and all data , this action is irreversible."
+              ) %>
+            <% end) %>
           </p>
         </div>
       </div>
@@ -543,7 +557,11 @@ defmodule AniminaWeb.ProfileComponents do
           </p>
         </div>
 
-        <.active_mark :if={@state == @value || @state == @similar_value} value={@value} />
+        <.active_mark
+          :if={@state == @value || @state == @similar_value}
+          value={@value}
+          language={@language}
+        />
       </div>
 
       <p class="h-[1px] w-[100%] bg-black dark:bg-white" />
@@ -551,25 +569,31 @@ defmodule AniminaWeb.ProfileComponents do
     """
   end
 
-  defp user_states_to_display_to_profile do
+  defp user_states_to_display_to_profile(language) do
     [
       %{
-        "name" => gettext("Normal"),
+        "name" => with_locale(language, fn -> gettext("Normal") end),
         "value" => :normal,
         "similar_value" => :validated,
         "action" => "normalize",
         "description" =>
-          gettext("The user is actively using the account, engaging with posts and other users.")
+          with_locale(language, fn ->
+            gettext(
+              "The user is actively using the account, engaging with posts and other users."
+            )
+          end)
       },
       %{
-        "name" => gettext("Hibernate"),
+        "name" => with_locale(language, fn -> gettext("Hibernate") end),
         "value" => :hibernate,
         "similar_value" => :hibernate,
         "action" => "hibernate",
         "description" =>
-          gettext(
-            "The user is temporarily inactive but retains their account and data for future use."
-          )
+          with_locale(language, fn ->
+            gettext(
+              "The user is temporarily inactive but retains their account and data for future use."
+            )
+          end)
       }
     ]
   end
@@ -580,7 +604,9 @@ defmodule AniminaWeb.ProfileComponents do
       class="text-green-500 group-hover:text-blue-600  flex items-center gap-1"
       id={"active-mark-#{@value}"}
     >
-      <%= gettext("Active") %>
+      <%= with_locale(@language, fn -> %>
+        <%= gettext("Active") %>
+      <% end) %>
     </div>
     """
   end

@@ -119,12 +119,18 @@ defmodule AniminaWeb.ProfileVisibilityLive do
   def render(assigns) do
     ~H"""
     <div class="px-5 flex flex-col gap-2 pb-8">
-      <p class="text-xl text-black dark:text-white"><%= gettext("Change Profile Visibility") %></p>
+      <p class="text-xl text-black dark:text-white">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Change Profile Visibility") %>
+        <% end) %>
+      </p>
       <p class="text-sm text-gray-500">
-        <%= gettext("Select And Change the visibility of your profile") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Select And Change the visibility of your profile") %>
+        <% end) %>
       </p>
 
-      <.user_state_cards current_user={@current_user} />
+      <.user_state_cards language={@language} current_user={@current_user} />
     </div>
     """
   end

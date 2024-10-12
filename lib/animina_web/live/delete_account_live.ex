@@ -14,7 +14,12 @@ defmodule AniminaWeb.DeleteAccountLive do
       |> assign(active_tab: :home)
       |> assign(language: language)
       |> assign(counter: 10)
-      |> assign(page_title: "#{gettext("Delete Profile")}")
+      |> assign(
+        page_title:
+          with_locale(language, fn ->
+            gettext("Delete Profile")
+          end)
+      )
 
     Process.sleep(1000)
 
@@ -106,25 +111,39 @@ defmodule AniminaWeb.DeleteAccountLive do
     ~H"""
     <div class="flex flex-col min-h-[90vh] justify-center gap-4  items-center gap-3">
       <h1 class="text-2xl dark:text-white font-semibold">
-        <%= gettext("Delete Your Account") %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Delete Your Account") %>
+        <% end) %>
       </h1>
 
       <div class="text-xl w-[90%] text-center md:w-[60%] text-gray-400 font-medium">
-        <%= gettext("You can delete your account here but you have to wait ") %>
-        <span class="font-semibold dark:text-white text-black"><%= gettext("10 seconds") %></span> <%= gettext(
-          "to make sure that this is not an accident."
-        ) %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("You can delete your account here but you have to wait ") %>
+        <% end) %>
+        <span class="font-semibold dark:text-white text-black">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("10 seconds") %>
+          <% end) %>
+        </span>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("to make sure that this is not an accident.") %>
+        <% end) %>
       </div>
 
       <div :if={@counter > 0} class="text-2xl dark:text-white font-semibold">
-        <%= @counter %> <%= gettext("Seconds Remaining") %>
+        <%= @counter %>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Seconds Remaining") %>
+        <% end) %>
       </div>
 
       <div :if={@counter == 0} class=" w-[100%] flex flex-col justify-center items-center">
         <p class="text-red-500 text-xl w-[90%] text-center ">
-          <%= gettext(
-            "If you want to delete your account, click the button below, this action is irreversible"
-          ) %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext(
+              "If you want to delete your account, click the button below, this action is irreversible"
+            ) %>
+          <% end) %>
         </p>
         <button
           phx-click="delete_account"
@@ -132,7 +151,9 @@ defmodule AniminaWeb.DeleteAccountLive do
           data-confirm={gettext("Are You Sure You want to delete your account.")}
           class="bg-red-500 px-4 py-2 mt-4 rounded-md text-white cursor-pointer hover:scale-105 transition-all ease-in-out duration-500"
         >
-          <%= gettext("Delete Account") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Delete Account") %>
+          <% end) %>
         </button>
       </div>
     </div>
