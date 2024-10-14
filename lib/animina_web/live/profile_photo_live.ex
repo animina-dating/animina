@@ -115,7 +115,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
         params = Map.merge(params, file)
         form = Form.validate(socket.assigns.form, params, errors: true)
 
-        Photo.destroy(socket.assigns.current_user.profile_photo)
+        Photo.delete_photo_and_optimized_photos(socket.assigns.current_user.profile_photo)
 
         with [] <- Form.errors(form), {:ok, _photo} <- Form.submit(form, params: params) do
           {:noreply,
@@ -151,7 +151,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   def handle_event("delete_photo", _, socket) do
     photo = socket.assigns.current_user.profile_photo
 
-    Photo.destroy(photo)
+    Photo.delete_photo_and_optimized_photos(photo)
 
     current_user = User.by_id!(socket.assigns.current_user.id)
 

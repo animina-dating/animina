@@ -7,11 +7,12 @@ defmodule Animina.Accounts.Photo do
   alias Animina.Accounts.PhotoFlags
   alias Animina.ImageTagging
   alias Animina.Narratives
-  alias Animina.Validations
 
   Animina.Validations.AboutPhoto
 
   alias Animina.Traits.Flag
+
+  require Ash.Query
 
   require Logger
 
@@ -197,9 +198,9 @@ defmodule Animina.Accounts.Photo do
            on: [:create, :destroy]
   end
 
-  validations do
-    validate {Validations.AboutPhoto, story: :story_id, user: :user_id}, on: :destroy
-  end
+  # validations do
+  #   validate {Validations.AboutPhoto, story: :story_id, user: :user_id}, on: :destroy
+  # end
 
   attributes do
     uuid_primary_key :id
@@ -244,6 +245,14 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
+  def delete_photo_and_optimized_photos(photo) do
+    case destroy(photo) do
+      :ok ->
+        delete_optimized_photos(photo)
+        delete_photo_from_filesystem(photo)
+    end
+  end
+
   def get_optimized_photo_to_use(photo, type) do
     case OptimizedPhoto.by_type_and_photo_id(%{type: type, photo_id: photo.id}) do
       {:ok, optimized_photo} ->
@@ -251,6 +260,47 @@ defmodule Animina.Accounts.Photo do
 
       _ ->
         "/uploads/#{photo.filename}"
+    end
+  end
+
+  defp delete_photo_from_filesystem(photo) do
+    file_path = "priv/static/uploads/#{photo.filename}"
+
+    if File.exists?(file_path) do
+      case File.rm(file_path) do
+        :ok ->
+          Logger.info("Deleted photo file: #{file_path}")
+          :ok
+
+        {:error, reason} ->
+          Logger.error("Failed to delete photo file: #{file_path}, reason: #{reason}")
+          {:error, reason}
+      end
+    else
+      :ok
+    end
+  end
+
+  defp delete_optimized_photos(photo) do
+    for type <- [:thumbnail, :normal, :big] do
+      optimized_photo_path = "priv/static/uploads/optimized/#{type}/#{photo.filename}"
+
+      if File.exists?(optimized_photo_path) do
+        case File.rm(optimized_photo_path) do
+          :ok ->
+            Logger.info("Deleted optimized photo file: #{optimized_photo_path}")
+            :ok
+
+          {:error, reason} ->
+            Logger.error(
+              "Failed to delete optimized photo file: #{optimized_photo_path}, reason: #{reason}"
+            )
+
+            {:error, reason}
+        end
+      else
+        :ok
+      end
     end
   end
 
