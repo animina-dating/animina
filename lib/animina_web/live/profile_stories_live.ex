@@ -105,7 +105,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
         case changeset.errors do
           [%Ash.Error.Changes.InvalidAttribute{message: message}]
           when message == "would leave records behind" ->
-            Accounts.Photo.delete_photo_and_optimized_photos(story.photo)
+            Accounts.Photo.destroy(story.photo)
             Narratives.Story.destroy(story)
 
             {:noreply,

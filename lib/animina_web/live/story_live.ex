@@ -687,7 +687,7 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp delete_or_remove_photo_from_story(_story, photo, "delete_or_remove") do
-    photo && Photo.delete_photo_and_optimized_photos(photo)
+    photo && Photo.destroy(photo)
   end
 
   defp either_content_or_photo_added(content, uploads, :about_me) do

@@ -196,6 +196,13 @@ defmodule Animina.Accounts.Photo do
              {:ok, record}
            end),
            on: [:create, :destroy]
+
+    change after_action(fn changeset, record, _ ->
+             delete_photo_and_optimized_photos(record)
+
+             {:ok, record}
+           end),
+           on: [:destroy]
   end
 
   # validations do
@@ -246,11 +253,8 @@ defmodule Animina.Accounts.Photo do
   end
 
   def delete_photo_and_optimized_photos(photo) do
-    case destroy(photo) do
-      :ok ->
-        delete_optimized_photos(photo)
-        delete_photo_from_filesystem(photo)
-    end
+    delete_optimized_photos(photo)
+    delete_photo_from_filesystem(photo)
   end
 
   def get_optimized_photo_to_use(photo, type) do
