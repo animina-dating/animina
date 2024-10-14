@@ -30,7 +30,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
       |> assign(language: language)
       |> assign(uploading: false)
       |> assign(preview_url: nil)
-      |> assign(page_title: gettext("Upload a profile photo"))
+      |> assign(page_title: with_locale(language, fn -> gettext("Upload a profile photo") end))
       |> allow_upload(:photos, accept: ~w(.jpg .jpeg .png), max_entries: 1, id: "photo_file")
       |> assign(
         :form,
@@ -158,7 +158,12 @@ defmodule AniminaWeb.ProfilePhotoLive do
     {:noreply,
      socket
      |> assign(current_user: current_user)
-     |> put_flash(:info, gettext("Profile photo deleted successfully"))}
+     |> put_flash(
+       :info,
+       with_locale(socket.assigns.language, fn ->
+         gettext("Profile photo deleted successfully")
+       end)
+     )}
   end
 
   defp user_states_to_be_auto_logged_out do
@@ -193,11 +198,15 @@ defmodule AniminaWeb.ProfilePhotoLive do
     <div class="px-5 space-y-10">
       <%= if @current_user.profile_photo == nil do %>
         <h2 class="text-xl font-bold dark:text-white">
-          <%= gettext("Upload an avatar photo for your account") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Upload an avatar photo for your account") %>
+          <% end) %>
         </h2>
       <% else %>
         <h2 class="text-xl font-bold dark:text-white">
-          <%= gettext("Update your avatar photo for your account") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Update your avatar photo for your account") %>
+          <% end) %>
         </h2>
       <% end %>
 
@@ -225,10 +234,14 @@ defmodule AniminaWeb.ProfilePhotoLive do
           <.icon name="hero-cloud-arrow-up" class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
 
           <p if={@current_user.profile_photo == nil} class="text-sm dark:text-white">
-            <%= gettext("Upload or drag & drop your photo file JPG, JPEG, PNG") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Upload or drag & drop your photo file JPG, JPEG, PNG") %>
+            <% end) %>
           </p>
           <p if={@current_user.profile_photo != nil} class="text-sm dark:text-white">
-            <%= gettext("Update your profile photo & drop your photo file JPG, JPEG, PNG") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Update your profile photo & drop your photo file JPG, JPEG, PNG") %>
+            <% end) %>
           </p>
         </div>
 
@@ -256,7 +269,9 @@ defmodule AniminaWeb.ProfilePhotoLive do
                   phx-value-ref={entry.ref}
                   aria-label="cancel"
                 >
-                  <%= gettext("Cancel") %>
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Cancel") %>
+                  <% end) %>
                 </button>
               </div>
             </div>
@@ -270,7 +285,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
             <ul class="error-messages">
               <%= for err <- upload_errors(@uploads.photos, entry) do %>
                 <li>
-                  <p><%= error_to_string(err) %></p>
+                  <p><%= error_to_string(err, @language) %></p>
                 </li>
               <% end %>
             </ul>
@@ -282,7 +297,9 @@ defmodule AniminaWeb.ProfilePhotoLive do
           class="w-full space-y-2"
         >
           <p class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
-            <%= gettext("Current Photo") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Current Photo") %>
+            <% end) %>
           </p>
           <div class="md:w-[300px] w-[100%] relative">
             <img
@@ -293,8 +310,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
         </div>
 
         <div>
-          <%= submit(gettext("Upload"),
-            phx_disable_with: gettext("Uploading..."),
+          <%= submit(with_locale(@language, fn -> gettext("Upload") end),
+            phx_disable_with: with_locale(@language, fn -> gettext("Uploading...") end),
             class:
               "flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
                 unless(@uploads.photos.entries == [],
@@ -309,12 +326,20 @@ defmodule AniminaWeb.ProfilePhotoLive do
     """
   end
 
-  defp error_to_string(:too_large), do: gettext("Too large")
-  defp error_to_string(:not_accepted), do: gettext("You have selected an unacceptable file type")
-  defp error_to_string(:too_many_files), do: gettext("You have selected too many files")
+  defp error_to_string(:too_large, language),
+    do: with_locale(language, fn -> gettext("Too large") end)
 
-  defp error_to_string(_),
-    do: gettext("Something went wrong uploading your photo. Try again")
+  defp error_to_string(:not_accepted, language),
+    do: with_locale(language, fn -> gettext("You have selected an unacceptable file type") end)
+
+  defp error_to_string(:too_many_files, language),
+    do: with_locale(language, fn -> gettext("You have selected too many files") end)
+
+  defp error_to_string(_, language),
+    do:
+      with_locale(language, fn ->
+        gettext("Something went wrong uploading your photo. Try again")
+      end)
 
   defp ext(entry) do
     [ext | _] = MIME.extensions(entry.client_type)

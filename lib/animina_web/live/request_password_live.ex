@@ -13,10 +13,13 @@ defmodule AniminaWeb.RequestPasswordLive do
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
       |> assign(:errors, [])
-      |> assign(page_title: gettext("Request Password Reset"))
-      |> assign(:cta, gettext("Send Reset Password Link"))
+      |> assign(page_title: with_locale(language, fn -> gettext("Request Password Reset") end))
+      |> assign(:cta, with_locale(language, fn -> gettext("Send Reset Password Link") end))
       |> assign(active_tab: :register)
-      |> assign(page_title: "Animina #{gettext("Request Password Reset")}")
+      |> assign(
+        page_title:
+          with_locale(language, fn -> "Animina #{gettext("Request Password Reset")}" end)
+      )
       |> assign(:action, "/auth/user/password/reset_request")
       |> assign(
         :form,
@@ -65,7 +68,9 @@ defmodule AniminaWeb.RequestPasswordLive do
         phx-submit="submit"
       >
         <p class="text-xl dark:text-white text-black font-medium">
-          <%= gettext("Enter your email address to receive a password reset link") %>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Enter your email address to receive a password reset link") %>
+          <% end) %>
         </p>
 
         <div class="w-[100%] md:grid grid-cols-1 gap-1">
@@ -73,7 +78,9 @@ defmodule AniminaWeb.RequestPasswordLive do
             for="user_email"
             class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
           >
-            <%= gettext("E-mail address") %>
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("E-mail address") %>
+            <% end) %>
           </label>
           <div phx-feedback-for={f[:email].name} class="mt-2">
             <%= text_input(f, :email,
@@ -89,7 +96,9 @@ defmodule AniminaWeb.RequestPasswordLive do
           <div class="mt-3">
             <.link navigate="/sign-in">
               <p class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline">
-                <%= gettext("Back to Sign In") %>
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Back to Sign In") %>
+                <% end) %>
               </p>
             </.link>
           </div>
