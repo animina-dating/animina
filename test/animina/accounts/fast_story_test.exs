@@ -49,8 +49,10 @@ defmodule Animina.Accounts.FastStoryTest do
 
       # atleast one of the stories has a photo with an id equal to the other_story_photo id
       assert [] !=
-               Enum.filter(offset.results, &(&1.photo != nil))
-               |> Enum.filter(&(&1.photo.id == other_story_photo.id))
+               Enum.filter(
+                 offset.results,
+                 &(&1.photo != nil && &1.photo.id == other_story_photo.id)
+               )
     end
   end
 
