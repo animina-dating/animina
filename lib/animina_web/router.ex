@@ -83,6 +83,7 @@ defmodule AniminaWeb.Router do
       live "/my/dashboard", DashboardLive, :index
       live "/:current_user/messages/:profile", ChatLive, :index
       live "/:username/report", ProfileLive, :report
+      live "/v2/:username/report", FastProfileLive, :report
     end
 
     ash_authentication_live_session :user_optional_home,

@@ -2,8 +2,7 @@ defmodule Animina.Accounts.Credit do
   @moduledoc """
   This is the Credit module which we use to manage points.
   """
-  alias Animina.Accounts.BasicUser
-  alias Animina.Accounts.User
+  alias Animina.Accounts.FastUser
   alias Phoenix.PubSub
 
   use Ash.Resource,
@@ -57,17 +56,18 @@ defmodule Animina.Accounts.Credit do
 
   changes do
     change after_action(fn changeset, record, _context ->
+             user = get_user(record.user_id)
+
              PubSub.broadcast(
                Animina.PubSub,
                record.user_id,
-               {:user, User.by_id!(record.user_id)}
+               {:user, user}
              )
 
              PubSub.broadcast(
                Animina.PubSub,
                "credits",
-               {:credit_updated,
-                %{"points" => get_points_for_a_user(record.user_id), "user_id" => record.user_id}}
+               {:credit_updated, %{"points" => user.credit_points, "user_id" => record.user_id}}
              )
 
              {:ok, record}
@@ -96,9 +96,12 @@ defmodule Animina.Accounts.Credit do
     end
   end
 
-  defp get_points_for_a_user(user_id) do
-    {:ok, user} = BasicUser.by_id(user_id)
+  defp get_user(user_id) do
+    {:ok, user} =
+      FastUser
+      |> Ash.ActionInput.for_action(:by_id_email_or_username, %{id: user_id})
+      |> Ash.run_action()
 
-    user.credit_points
+    user
   end
 end
