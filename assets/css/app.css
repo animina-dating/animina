@@ -72,6 +72,16 @@ input[type="week"] {
   border: gray 1px solid !important;
 }
 
+.select-styling-root {
+  --tw-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.39), 0 -1px 1px #fff,
+    0 1px 0 #fff;
+  --tw-shadow-colored: inset 0 1px 2px var(--tw-shadow-color),
+    0 -1px 1px var(--tw-shadow-color), 0 1px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border: gray 1px solid !important;
+}
+
 input[type="checkbox"],
 input[type="radio"] {
   @apply drop-shadow-md;
