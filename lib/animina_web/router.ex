@@ -90,6 +90,7 @@ defmodule AniminaWeb.Router do
       live "/:username", ProfileLive
       live "/my/profile", ProfileLive
       live "/:username/:year/:month/:day/:slug", PostViewLive
+      live "/v2/:username", FastProfileLive
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in
