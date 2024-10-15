@@ -168,15 +168,15 @@ defmodule Animina.Accounts.FastUser do
         # cast roles, city, profile_photo to struct
         roles =
           Enum.map(result.roles, fn user_role ->
-            user_role = struct(UserRole, keys_to_atoms(user_role))
+            user_role = struct(UserRole, Animina.keys_to_atoms(user_role))
 
             Map.merge(user_role, %{
               role: struct(Role, user_role.role)
             })
           end)
 
-        city = struct(City, keys_to_atoms(result.city))
-        profile_photo = struct(Photo, keys_to_atoms(result.profile_photo))
+        city = struct(City, Animina.keys_to_atoms(result.city))
+        profile_photo = struct(Photo, Animina.keys_to_atoms(result.profile_photo))
         age = UserAge.calculate_age(result.birthday)
 
         optimized_photos =
@@ -232,15 +232,4 @@ defmodule Animina.Accounts.FastUser do
     create_timestamp :created_at
     update_timestamp :updated_at
   end
-
-  def keys_to_atoms(string_key_map) when is_map(string_key_map) do
-    for {key, val} <- string_key_map, into: %{}, do: {String.to_atom(key), keys_to_atoms(val)}
-  end
-
-  def keys_to_atoms(string_key_list) when is_list(string_key_list) do
-    string_key_list
-    |> Enum.map(&keys_to_atoms/1)
-  end
-
-  def keys_to_atoms(value), do: value
 end

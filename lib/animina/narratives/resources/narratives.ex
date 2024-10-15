@@ -6,6 +6,7 @@ defmodule Animina.Narratives do
   use Ash.Domain
 
   resources do
+    resource Animina.Narratives.FastStory
     resource Animina.Narratives.Headline
     resource Animina.Narratives.Story
     resource Animina.Narratives.Post
