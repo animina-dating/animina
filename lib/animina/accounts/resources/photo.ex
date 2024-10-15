@@ -7,6 +7,7 @@ defmodule Animina.Accounts.Photo do
   alias Animina.Accounts.PhotoFlags
   alias Animina.ImageTagging
   alias Animina.Narratives
+  alias Animina.Validations
 
   Animina.Validations.AboutPhoto
 
@@ -205,9 +206,9 @@ defmodule Animina.Accounts.Photo do
            on: [:destroy]
   end
 
-  # validations do
-  #   validate {Validations.AboutPhoto, story: :story_id, user: :user_id}, on: :destroy
-  # end
+  validations do
+    validate {Validations.AboutPhoto, story: :story_id, user: :user_id}, on: :destroy
+  end
 
   attributes do
     uuid_primary_key :id
