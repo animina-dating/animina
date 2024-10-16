@@ -515,23 +515,21 @@ defmodule AniminaWeb.ProfileComponents do
         <div class="min-w-0">
           <div class="flex items-start gap-x-3">
             <p class="text-xl text-red-600  font-semibold leading-6 ">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Delete Account") %>
-            <% end) %></p>
-
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Delete Account") %>
+              <% end) %>
+            </p>
           </div>
           <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
             <p class="group-hover:text-red-600 text-red-500">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext(
-                "Permanently delete your account and all data , this action is irreversible."
-              ) %>
-            <% end) %>
+              <%= with_locale(@language, fn -> %>
+                <%= gettext(
+                  "Permanently delete your account and all data , this action is irreversible."
+                ) %>
+              <% end) %>
             </p>
           </div>
         </div>
-
-
       </div>
 
       <p class="h-[1px] w-[100%] bg-red-500" />
@@ -556,21 +554,17 @@ defmodule AniminaWeb.ProfileComponents do
       <div class="flex items-center justify-between gap-x-6">
         <div class="min-w-0">
           <div class="flex items-start gap-x-3">
-            <p class="text-xl dark:text-white group-hover:text-blue-600  font-semibold leading-6 "><%= @name %></p>
-            <.active_or_inactive_mark
-              state={@state}
-              value={@value}
-              language={@language}
-            />
+            <p class="text-xl dark:text-white group-hover:text-blue-600  font-semibold leading-6 ">
+              <%= @name %>
+            </p>
+            <.active_or_inactive_mark state={@state} value={@value} language={@language} />
           </div>
           <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-            <p >
+            <p>
               <%= @description %>
             </p>
           </div>
         </div>
-
-
       </div>
 
       <p class="h-[1px] w-[100%] bg-gray-500 dark:bg-gray-100" />
@@ -616,7 +610,6 @@ defmodule AniminaWeb.ProfileComponents do
     <% end %>
     """
   end
-
 
   defp inactive_mark(assigns) do
     ~H"""
