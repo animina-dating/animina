@@ -686,18 +686,8 @@ defmodule AniminaWeb.StoryLive do
     end
   end
 
-  defp delete_or_remove_photo_from_story(story, photo, "delete_or_remove") do
-    case Story.by_id_with_headline(story["id"]) do
-      {:ok, story} ->
-        if story.headline.subject == "About me" do
-          photo && Photo.update(photo, %{"story_id" => nil})
-        else
-          photo && Photo.destroy(photo)
-        end
-
-      _ ->
-        :ok
-    end
+  defp delete_or_remove_photo_from_story(_story, photo, "delete_or_remove") do
+    photo && Photo.destroy(photo)
   end
 
   defp either_content_or_photo_added(content, uploads, :about_me) do
