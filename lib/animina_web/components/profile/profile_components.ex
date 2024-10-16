@@ -530,6 +530,13 @@ defmodule AniminaWeb.ProfileComponents do
             </p>
           </div>
         </div>
+        <div class="flex flex-none items-center gap-x-4">
+          <p class="hidden rounded-md bg-red-500 text-white px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-inset ring-red-500 hover:bg-red-600 sm:block">
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Delete Account") %>
+            <% end) %>
+          </p>
+        </div>
       </div>
 
       <p class="h-[1px] w-[100%] bg-red-500" />
@@ -564,6 +571,13 @@ defmodule AniminaWeb.ProfileComponents do
               <%= @description %>
             </p>
           </div>
+        </div>
+        <div :if={@state != @value} class="flex flex-none items-center gap-x-4">
+          <p class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Activate") %>
+            <% end) %>
+          </p>
         </div>
       </div>
 
