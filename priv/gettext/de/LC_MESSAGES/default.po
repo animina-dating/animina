@@ -11,43 +11,17 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/animina_web/live/delete_account_live.ex:114
+#: lib/animina_web/live/delete_account_live.ex:125
 #, elixir-autogen, elixir-format
 msgid "10 seconds"
 msgstr "10 Sekunden"
-
-
-
-msgid "Optimize a Story"
-msgstr "Eine Story optimieren"
-
-
-msgid "Fix spelling and grammar errors"
-msgstr "Rechtschreib- und Grammatikfehler beheben"
-
-
-msgid "Generate story"
-msgstr "Story generieren"
-
-msgid "Photo"
-msgstr "Foto"
-
-
-
-
-
-msgid "Language switched successfully"
-msgstr "Sprache erfolgreich umgeschaltet"
-
-msgid "Please select your preferred language"
-msgstr "Bitte wählen Sie Ihre bevorzugte Sprache"
 
 #: lib/animina_web/live/dashboard_live.ex:92
 #, elixir-autogen, elixir-format
 msgid "ANIMINA dashboard - "
 msgstr "ANIMINA-Dashboard - "
 
-#: lib/animina_web/live/story_live.ex:728
+#: lib/animina_web/live/story_live.ex:788
 #, elixir-autogen, elixir-format
 msgid "About me"
 msgstr "Über mich"
@@ -67,21 +41,21 @@ msgstr "Konto ist gesperrt, bitte wenden Sie sich an den Support"
 msgid "Account is under investigation, kindly try and log in after 24 hours"
 msgstr "Das Konto wird untersucht, bitte versuchen Sie es in 24 Stunden erneut"
 
-#: lib/animina_web/components/report/report_components.ex:50
-#: lib/animina_web/components/report/report_components.ex:156
-#: lib/animina_web/live/report_live/review_report.ex:156
+#: lib/animina_web/components/report/report_components.ex:59
+#: lib/animina_web/components/report/report_components.ex:177
+#: lib/animina_web/live/report_live/review_report.ex:161
 #, elixir-autogen, elixir-format
 msgid "Accused"
 msgstr "Beschuldigt"
 
-#: lib/animina_web/components/report/report_components.ex:39
-#: lib/animina_web/components/report/report_components.ex:149
-#: lib/animina_web/live/report_live/review_report.ex:149
+#: lib/animina_web/components/report/report_components.ex:44
+#: lib/animina_web/components/report/report_components.ex:170
+#: lib/animina_web/live/report_live/review_report.ex:154
 #, elixir-autogen, elixir-format
 msgid "Accuser"
 msgstr "Ankläger"
 
-#: lib/animina_web/components/waitlist_components.ex:23
+#: lib/animina_web/components/waitlist_components.ex:42
 #, elixir-autogen, elixir-format
 msgid "Action"
 msgstr "Aktion"
@@ -91,35 +65,34 @@ msgstr "Aktion"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lib/animina_web/components/profile/profile_components.ex:570
+#: lib/animina_web/components/profile/profile_components.ex:645
 #, elixir-autogen, elixir-format
 msgid "Active"
 msgstr "Aktiv"
 
-#: lib/animina_web/live/profile_posts_live.ex:139
+#: lib/animina_web/live/profile_posts_live.ex:140
 #, elixir-autogen, elixir-format
 msgid "Add a new post"
 msgstr "Einen neuen Beitrag hinzufügen"
 
-#: lib/animina_web/live/profile_live.ex:774
-#, elixir-autogen, elixir-format
-msgid "Add a new story"
-msgstr "Eine neue Story hinzufügen"
-
-#: lib/animina_web/live/root_live.ex:180
-#: lib/animina_web/live/update_profile_live.ex:180
+#: lib/animina_web/live/root_live.ex:198
+#: lib/animina_web/live/update_profile_live.ex:188
 #, elixir-autogen, elixir-format
 msgid "Alice"
 msgstr "Alice"
 
+#: lib/animina_web/components/report/report_components.ex:125
+#: lib/animina_web/live/report_live/all_reports.ex:40
+#, elixir-autogen, elixir-format
+msgid "All Reports"
+msgstr "Alle Berichte"
 
-
-#: lib/animina_web/live/root_live.ex:494
+#: lib/animina_web/live/root_live.ex:583
 #, elixir-autogen, elixir-format
 msgid "Already have an account? Sign in"
 msgstr "Bereits ein Konto? Anmelden"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:75
+#: lib/animina_web/live/bookmarks_list_live.ex:78
 #, elixir-autogen, elixir-format
 msgid "An error occurred while deleting the bookmark"
 msgstr "Beim Löschen des Lesezeichens ist ein Fehler aufgetreten"
@@ -134,361 +107,329 @@ msgstr "Beim Löschen des Beitrags ist ein Fehler aufgetreten"
 msgid "An error occurred while deleting the story"
 msgstr "Beim Löschen der Story ist ein Fehler aufgetreten"
 
-#: lib/animina_web/live/profile_live.ex:94
-#: lib/animina_web/live/profile_live.ex:123
-#: lib/animina_web/live/profile_live.ex:211
-#: lib/animina_web/live/profile_live.ex:256
-#: lib/animina_web/live/profile_live.ex:329
+#: lib/animina_web/live/profile_live.ex:80
+#: lib/animina_web/live/profile_live.ex:109
+#: lib/animina_web/live/profile_live.ex:183
 #, elixir-autogen, elixir-format
 msgid "Animina Profile"
 msgstr "Animina-Profil"
 
-#: lib/animina_web/live/root_live.ex:28
+#: lib/animina_web/live/root_live.ex:29
 #, elixir-autogen, elixir-format
 msgid "Animina dating app"
 msgstr "Animina-Dating-App"
 
-#: lib/animina_web/live/delete_account_live.ex:132
+#: lib/animina_web/live/delete_account_live.ex:151
 #, elixir-autogen, elixir-format
 msgid "Are You Sure You want to delete your account."
 msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
 
-#: lib/animina_web/live/profile_photo_live.ex:288
-#, elixir-autogen, elixir-format
-msgid "Are you sure you want to delete this photo?"
-msgstr "Sind Sie sicher, dass Sie dieses Foto löschen möchten?"
-
-#: lib/animina_web/components/profile/profile_components.ex:473
+#: lib/animina_web/components/profile/profile_components.ex:499
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete your account?"
 msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
 
-#: lib/animina_web/live/request_password_live.ex:92
+#: lib/animina_web/live/request_password_live.ex:100
 #, elixir-autogen, elixir-format
 msgid "Back to Sign In"
 msgstr "Zurück zur Anmeldung"
 
-#: lib/animina_web/components/top_navigation_components.ex:773
-#: lib/animina_web/components/top_navigation_components.ex:785
-#: lib/animina_web/live/bookmarks_live.ex:36
+#: lib/animina_web/components/top_navigation_components.ex:904
+#: lib/animina_web/components/top_navigation_components.ex:920
+#: lib/animina_web/live/bookmarks_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Bookmarks"
 msgstr "Lesezeichen"
 
-#: lib/animina_web/live/post_view_live.ex:105
+#: lib/animina_web/live/post_view_live.ex:109
 #, elixir-autogen, elixir-format
 msgid "By"
 msgstr "Von"
 
-#: lib/animina_web/live/profile_photo_live.ex:258
-#: lib/animina_web/live/story_live.ex:917
+#: lib/animina_web/live/profile_photo_live.ex:273
+#: lib/animina_web/live/story_live.ex:1109
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: lib/animina_web/components/top_navigation_components.ex:183
+#: lib/animina_web/components/top_navigation_components.ex:219
 #, elixir-autogen, elixir-format
 msgid "Change Profile Photo"
 msgstr "Profilfoto ändern"
 
-#: lib/animina_web/live/profile_visibility.ex:126
+#: lib/animina_web/live/profile_visibility.ex:124
 #, elixir-autogen, elixir-format
 msgid "Change Profile Visibility"
 msgstr "Profil-Sichtbarkeit ändern"
 
-#: lib/animina_web/components/top_navigation_components.ex:203
+#: lib/animina_web/components/top_navigation_components.ex:252
 #, elixir-autogen, elixir-format
 msgid "Change Visibility"
 msgstr "Sichtbarkeit ändern"
 
-#: lib/animina_web/live/story_live.ex:756
+#: lib/animina_web/live/story_live.ex:826
 #, elixir-autogen, elixir-format
 msgid "Characters: "
 msgstr "Zeichen: "
 
-#: lib/animina_web/components/top_navigation_components.ex:714
+#: lib/animina_web/components/top_navigation_components.ex:838
 #, elixir-autogen, elixir-format
 msgid "Chat"
 msgstr "Chat"
 
-#: lib/animina_web/live/flags_live.ex:98
+#: lib/animina_web/live/flags_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Choose Your Green Flags"
 msgstr "Wählen Sie Ihre grünen Flags"
 
-#: lib/animina_web/live/flags_live.ex:62
+#: lib/animina_web/live/flags_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "Choose Your Own Flags"
 msgstr "Wählen Sie Ihre eigenen Flags"
 
-#: lib/animina_web/live/flags_live.ex:81
+#: lib/animina_web/live/flags_live.ex:90
 #, elixir-autogen, elixir-format
 msgid "Choose Your Red Flags"
 msgstr "Wählen Sie Ihre roten Flags"
 
-#: lib/animina_web/live/flags_live.ex:84
+#: lib/animina_web/live/flags_live.ex:95
 #, elixir-autogen, elixir-format
 msgid "Choose up to %{number_of_flags} flags that you don't want to have in a partner. The ones selected first are the most important."
 msgstr "Wählen Sie bis zu %{number_of_flags} Flags, die Ihr Partner nicht haben soll. Die zuerst ausgewählten sind die wichtigsten."
 
-#: lib/animina_web/live/flags_live.ex:101
+#: lib/animina_web/live/flags_live.ex:119
 #, elixir-autogen, elixir-format
 msgid "Choose up to %{number_of_flags} flags that you want your partner to have. The ones selected first are the most important."
 msgstr "Wählen Sie bis zu %{number_of_flags} Flags, die Ihr Partner haben soll. Die zuerst ausgewählten sind die wichtigsten."
 
-#: lib/animina_web/live/post_live.ex:233
 #: lib/animina_web/live/post_live.ex:258
-#: lib/animina_web/live/story_live.ex:752
-#: lib/animina_web/live/story_live.ex:786
-#: lib/animina_web/live/story_live.ex:812
+#: lib/animina_web/live/post_live.ex:287
+#: lib/animina_web/live/story_live.ex:820
+#: lib/animina_web/live/story_live.ex:860
+#: lib/animina_web/live/story_live.ex:890
 #, elixir-autogen, elixir-format
 msgid "Content"
 msgstr "Inhalt"
 
-#: lib/animina_web/components/profile/posts_components.ex:51
+#: lib/animina_web/components/profile/posts_components.ex:54
 #, elixir-autogen, elixir-format
 msgid "Continue Reading.."
 msgstr "Weiterlesen..."
 
-#: lib/animina_web/live/chat_live.ex:622
+#: lib/animina_web/live/chat_live.ex:672
 #, elixir-autogen, elixir-format
 msgid "Copy"
 msgstr "Kopieren"
 
-#: lib/animina_web/live/chat_live.ex:613
+#: lib/animina_web/live/chat_live.ex:661
 #, elixir-autogen, elixir-format
 msgid "Copy "
 msgstr "Kopieren"
 
-#: lib/animina_web/live/story_live.ex:822
-#, elixir-autogen, elixir-format
-msgid "Correct Errors"
-msgstr "Fehler korrigieren"
-
-#: lib/animina_web/components/top_navigation_components.ex:241
-#: lib/animina_web/components/top_navigation_components.ex:273
+#: lib/animina_web/components/top_navigation_components.ex:316
+#: lib/animina_web/components/top_navigation_components.ex:365
 #, elixir-autogen, elixir-format
 msgid "Could Interest You"
 msgstr "Könnte Sie interessieren"
 
-#: lib/animina_web/live/chat_live.ex:455
+#: lib/animina_web/live/chat_live.ex:487
 #, elixir-autogen, elixir-format
 msgid "Could not generate message with AI, Kindly Try Again"
 msgstr "Nachricht konnte nicht mit KI generiert werden, bitte versuchen Sie es erneut"
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:46
+#: lib/animina_web/components/dashboard/dashboard_components.ex:57
 #, elixir-autogen, elixir-format
 msgid "Count"
 msgstr "Anzahl"
 
-#: lib/animina_web/live/post_live.ex:126
+#: lib/animina_web/live/post_live.ex:137
 #, elixir-autogen, elixir-format
 msgid "Create a post"
 msgstr "Einen Beitrag erstellen"
 
-#: lib/animina_web/live/story_live.ex:306
+#: lib/animina_web/live/story_live.ex:334
 #, elixir-autogen, elixir-format
 msgid "Create a story"
 msgstr "Eine Story erstellen"
 
-#: lib/animina_web/live/story_live.ex:284
+#: lib/animina_web/live/story_live.ex:303
 #, elixir-autogen, elixir-format
 msgid "Create about me story"
 msgstr "Über mich-Story erstellen"
 
-#: lib/animina_web/live/post_live.ex:129
+#: lib/animina_web/live/post_live.ex:145
 #, elixir-autogen, elixir-format
 msgid "Create new post"
 msgstr "Neuen Beitrag erstellen"
 
-#: lib/animina_web/live/story_live.ex:309
+#: lib/animina_web/live/story_live.ex:342
 #, elixir-autogen, elixir-format
 msgid "Create new story"
 msgstr "Neue Story erstellen"
 
-#: lib/animina_web/live/story_live.ex:281
-#: lib/animina_web/live/story_live.ex:283
+#: lib/animina_web/live/story_live.ex:295
+#: lib/animina_web/live/story_live.ex:299
 #, elixir-autogen, elixir-format
 msgid "Create your first story"
 msgstr "Erstellen Sie Ihre erste Story"
 
-#: lib/animina_web/live/post_live.ex:128
+#: lib/animina_web/live/post_live.ex:141
 #, elixir-autogen, elixir-format
 msgid "Create your own post"
 msgstr "Erstellen Sie Ihren eigenen Beitrag"
 
-#: lib/animina_web/live/story_live.ex:308
+#: lib/animina_web/live/story_live.ex:339
 #, elixir-autogen, elixir-format
 msgid "Create your own story"
 msgstr "Erstellen Sie Ihre eigene Story"
 
-#: lib/animina_web/live/potential_partner_live.ex:162
+#: lib/animina_web/live/potential_partner_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Criteria for your new partner"
 msgstr "Kriterien für Ihren neuen Partner"
 
-#: lib/animina_web/live/profile_photo_live.ex:284
+#: lib/animina_web/live/profile_photo_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "Current Photo"
 msgstr "Aktuelles Foto"
 
-#: lib/animina_web/live/root_live.ex:257
-#: lib/animina_web/live/root_live.ex:275
-#: lib/animina_web/live/update_profile_live.ex:200
-#: lib/animina_web/live/update_profile_live.ex:218
+#: lib/animina_web/live/root_live.ex:284
+#: lib/animina_web/live/root_live.ex:304
+#: lib/animina_web/live/update_profile_live.ex:211
+#: lib/animina_web/live/update_profile_live.ex:231
 #, elixir-autogen, elixir-format
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
-#: lib/animina_web/live/root_live.ex:354
-#: lib/animina_web/live/update_profile_live.ex:297
+#: lib/animina_web/live/root_live.ex:419
+#: lib/animina_web/live/update_profile_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Dating Coach"
 msgstr "Dating-Coach"
 
-
-#: lib/animina_web/live/root_live.ex:310
-#:, elixir-autogen, elixir-format
-msgid "Country"
-msgstr "Land"
-
-#: lib/animina_web/live/root_live.ex:318
-#:, elixir-autogen, elixir-format
-msgid "Select your country"
-msgstr "Wählen Sie Ihr Land aus"
-
-
-
-#: lib/animina_web/components/profile/profile_components.ex:488
-#: lib/animina_web/live/delete_account_live.ex:135
+#: lib/animina_web/components/profile/profile_components.ex:519
+#: lib/animina_web/components/profile/profile_components.ex:536
+#: lib/animina_web/live/delete_account_live.ex:155
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Konto löschen"
 
-#: lib/animina_web/live/delete_account_live.ex:17
+#: lib/animina_web/live/delete_account_live.ex:20
 #, elixir-autogen, elixir-format
 msgid "Delete Profile"
 msgstr "Profil löschen"
 
-#: lib/animina_web/live/delete_account_live.ex:109
+#: lib/animina_web/live/delete_account_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Delete Your Account"
 msgstr "Löschen Sie Ihr Konto"
 
-#: lib/animina_web/live/create_report_component.ex:90
-#: lib/animina_web/live/create_report_component.ex:115
+#: lib/animina_web/live/create_report_component.ex:93
+#: lib/animina_web/live/create_report_component.ex:122
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr "Beschreibung"
 
-#: lib/animina_web/components/report/report_components.ex:165
-#: lib/animina_web/live/report_live/review_report.ex:165
+#: lib/animina_web/components/report/report_components.ex:187
+#: lib/animina_web/live/report_live/review_report.ex:171
 #, elixir-autogen, elixir-format
 msgid "Description :"
 msgstr "Beschreibung:"
 
-#: lib/animina_web/live/potential_partner_live.ex:217
-#: lib/animina_web/live/root_live.ex:324
-#: lib/animina_web/live/update_profile_live.ex:267
+#: lib/animina_web/live/potential_partner_live.ex:215
+#: lib/animina_web/live/root_live.ex:387
+#: lib/animina_web/live/update_profile_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Diverse"
 msgstr "Vielfältig"
 
-#: lib/animina_web/components/bookmark/bookmark_component.ex:67
+#: lib/animina_web/components/bookmark/bookmark_component.ex:69
 #, elixir-autogen, elixir-format
 msgid "Do you really want to delete this bookmark?"
 msgstr "Möchten Sie dieses Lesezeichen wirklich löschen?"
 
-#: lib/animina_web/live/profile_posts_live.ex:161
+#: lib/animina_web/live/profile_posts_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Do you really want to delete this post?"
 msgstr "Möchten Sie diesen Beitrag wirklich löschen?"
 
-#: lib/animina_web/components/profile/story_component.ex:39
+#: lib/animina_web/components/profile/story_component.ex:41
 #, elixir-autogen, elixir-format
 msgid "Do you really want to delete this story?"
 msgstr "Möchten Sie diese Story wirklich löschen?"
 
-#: lib/animina_web/live/root_live.ex:584
+#: lib/animina_web/live/root_live.ex:681
 #, elixir-autogen, elixir-format
 msgid "Don't have an account? Sign up"
 msgstr "Noch kein Konto? Registrieren"
 
-#: lib/animina_web/live/request_password_live.ex:76
-#: lib/animina_web/live/root_live.ex:198
-#: lib/animina_web/live/root_live.ex:216
-#: lib/animina_web/live/root_live.ex:547
+#: lib/animina_web/live/request_password_live.ex:82
+#: lib/animina_web/live/root_live.ex:218
+#: lib/animina_web/live/root_live.ex:237
+#: lib/animina_web/live/root_live.ex:639
 #, elixir-autogen, elixir-format
 msgid "E-mail address"
 msgstr "E-Mail-Adresse"
 
-#: lib/animina_web/live/root_live.ex:529
+#: lib/animina_web/live/root_live.ex:620
 #, elixir-autogen, elixir-format
 msgid "E-mail address or Username"
 msgstr "E-Mail-Adresse oder Benutzername"
 
-#: lib/animina_web/components/top_navigation_components.ex:190
+#: lib/animina_web/components/top_navigation_components.ex:230
 #, elixir-autogen, elixir-format
 msgid "Edit Green Flags"
 msgstr "Grüne Flags bearbeiten"
 
-
-msgid "Points"
-msgstr "Punkte"
-
-#: lib/animina_web/components/top_navigation_components.ex:199
+#: lib/animina_web/components/top_navigation_components.ex:246
 #, elixir-autogen, elixir-format
 msgid "Edit Potential Partner Preferences"
 msgstr "Potentielle Partnerpräferenzen bearbeiten"
 
-#: lib/animina_web/components/top_navigation_components.ex:180
+#: lib/animina_web/components/top_navigation_components.ex:214
 #, elixir-autogen, elixir-format
 msgid "Edit Profile"
 msgstr "Profil bearbeiten"
 
-#: lib/animina_web/components/top_navigation_components.ex:195
+#: lib/animina_web/components/top_navigation_components.ex:239
 #, elixir-autogen, elixir-format
 msgid "Edit Red Flags"
 msgstr "Rote Flags bearbeiten"
 
-#: lib/animina_web/components/top_navigation_components.ex:186
+#: lib/animina_web/components/top_navigation_components.ex:224
 #, elixir-autogen, elixir-format
 msgid "Edit White Flags"
 msgstr "Weiße Flags bearbeiten"
 
-#: lib/animina_web/live/post_view_live.ex:104
-#, elixir-autogen, elixir-format
-msgid "Edit post"
-msgstr "Beitrag bearbeiten"
-
-#: lib/animina_web/live/post_live.ex:107
-#: lib/animina_web/live/post_live.ex:109
+#: lib/animina_web/live/post_live.ex:108
+#: lib/animina_web/live/post_live.ex:111
+#: lib/animina_web/live/post_view_live.ex:108
 #, elixir-autogen, elixir-format
 msgid "Edit your post"
 msgstr "Bearbeiten Sie Ihren Beitrag"
 
-#: lib/animina_web/live/story_live.ex:245
-#: lib/animina_web/live/story_live.ex:247
+#: lib/animina_web/live/story_live.ex:246
+#: lib/animina_web/live/story_live.ex:249
 #, elixir-autogen, elixir-format
 msgid "Edit your story"
 msgstr "Bearbeiten Sie Ihre Story"
 
-#: lib/animina_web/components/waitlist_components.ex:22
+#: lib/animina_web/components/waitlist_components.ex:37
 #, elixir-autogen, elixir-format
 msgid "Email"
 msgstr "E-Mail"
 
-#: lib/animina_web/live/request_password_live.ex:68
+#: lib/animina_web/live/request_password_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Enter your email address to receive a password reset link"
 msgstr "Geben Sie Ihre E-Mail-Adresse ein, um einen Link zum Zurücksetzen des Passworts zu erhalten"
 
-#: lib/animina_web/components/bookmark/bookmarks_components.ex:113
-#: lib/animina_web/components/bookmark/bookmarks_components.ex:133
-#: lib/animina_web/components/profile/stories_components.ex:169
-#: lib/animina_web/components/profile/stories_components.ex:189
-#: lib/animina_web/live/dashboard_live.ex:530
-#: lib/animina_web/live/dashboard_live.ex:550
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:114
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:134
+#: lib/animina_web/components/profile/stories_components.ex:173
+#: lib/animina_web/components/profile/stories_components.ex:193
+#: lib/animina_web/live/dashboard_live.ex:545
+#: lib/animina_web/live/dashboard_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr "Fehler"
@@ -498,178 +439,160 @@ msgstr "Fehler"
 msgid "Error!"
 msgstr "Fehler!"
 
-#: lib/animina_web/live/story_live.ex:48
-#: lib/animina_web/live/story_live.ex:92
-#: lib/animina_web/live/story_live.ex:198
+#: lib/animina_web/live/chat_live.ex:302
+#: lib/animina_web/live/story_live.ex:211
 #, elixir-autogen, elixir-format
 msgid "Feeding our internal AI with this text. Please wait a second "
 msgstr "Unsere interne KI wird mit diesem Text gefüttert. Bitte einen Moment warten"
 
-#: lib/animina_web/live/potential_partner_live.ex:202
-#: lib/animina_web/live/root_live.ex:309
-#: lib/animina_web/live/update_profile_live.ex:252
+#: lib/animina_web/live/potential_partner_live.ex:200
+#: lib/animina_web/live/root_live.ex:372
+#: lib/animina_web/live/update_profile_live.ex:268
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr "Weiblich"
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:57
-#: lib/animina_web/components/dashboard/dashboard_components.ex:66
+#: lib/animina_web/components/dashboard/dashboard_components.ex:84
+#: lib/animina_web/components/dashboard/dashboard_components.ex:99
 #, elixir-autogen, elixir-format
 msgid "Forever"
 msgstr "Für immer"
 
-#: lib/animina_web/live/root_live.ex:589
+#: lib/animina_web/live/root_live.ex:688
 #, elixir-autogen, elixir-format
 msgid "Forgot Your Password?"
 msgstr "Passwort vergessen?"
 
-#: lib/animina_web/live/potential_partner_live.ex:179
-#: lib/animina_web/live/root_live.ex:286
-#: lib/animina_web/live/update_profile_live.ex:229
+#: lib/animina_web/live/potential_partner_live.ex:176
+#: lib/animina_web/live/root_live.ex:348
+#: lib/animina_web/live/update_profile_live.ex:244
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr "Geschlecht"
 
-#: lib/animina_web/live/chat_live.ex:582
-#, elixir-autogen, elixir-format
-msgid "Generating your message. This may take up to 30 seconds..."
-msgstr "Ihre Nachricht wird generiert. Dies kann bis zu 30 Sekunden dauern..."
-
-#: lib/animina_web/components/waitlist_components.ex:41
+#: lib/animina_web/components/waitlist_components.ex:64
 #, elixir-autogen, elixir-format
 msgid "Give Access"
 msgstr "Zugang gewähren"
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:63
+#: lib/animina_web/components/dashboard/dashboard_components.ex:93
 #, elixir-autogen, elixir-format
 msgid "Given"
 msgstr "Gegeben"
 
-
-
-msgid "All Reports"
-msgstr "Alle Berichte"
-
-
-
-#: lib/animina_web/live/story_live.ex:700
-#: lib/animina_web/live/story_live.ex:720
-#: lib/animina_web/live/story_live.ex:741
+#: lib/animina_web/live/story_live.ex:752
+#: lib/animina_web/live/story_live.ex:779
+#: lib/animina_web/live/story_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Headline"
 msgstr "Überschrift"
 
-#: lib/animina_web/live/root_live.ex:404
-#: lib/animina_web/live/root_live.ex:425
-#: lib/animina_web/live/update_profile_live.ex:347
-#: lib/animina_web/live/update_profile_live.ex:368
+#: lib/animina_web/live/root_live.ex:475
+#: lib/animina_web/live/root_live.ex:500
+#: lib/animina_web/live/update_profile_live.ex:372
+#: lib/animina_web/live/update_profile_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Height"
 msgstr "Größe"
 
-#: lib/animina_web/live/chat_live.ex:595
+#: lib/animina_web/live/chat_live.ex:641
 #, elixir-autogen, elixir-format
 msgid "Here are some ideas. Copy one and customize it (e.g. add a greeting)."
 msgstr "Hier sind einige Ideen. Kopieren Sie eine und passen Sie sie an (z. B. eine Begrüßung hinzufügen)."
 
-#: lib/animina_web/live/too_successful_live.ex:19
+#: lib/animina_web/live/too_successful_live.ex:21
 #, elixir-autogen, elixir-format
 msgid "Hi"
 msgstr "Hallo"
 
-#: lib/animina_web/components/profile/profile_components.ex:544
+#: lib/animina_web/components/profile/profile_components.ex:604
 #, elixir-autogen, elixir-format
 msgid "Hibernate"
 msgstr "Ruhezustand"
 
-#: lib/animina_web/components/top_navigation_components.ex:655
-#: lib/animina_web/components/top_navigation_components.ex:679
+#: lib/animina_web/components/top_navigation_components.ex:768
+#: lib/animina_web/components/top_navigation_components.ex:798
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr "Startseite"
 
-#: lib/animina_web/live/root_live.ex:486
+#: lib/animina_web/live/root_live.ex:573
 #, elixir-autogen, elixir-format
 msgid "I accept the legal terms of animina"
 msgstr "Ich akzeptiere die rechtlichen Bedingungen von Animina"
 
-#: lib/animina_web/live/root_live.ex:478
+#: lib/animina_web/live/root_live.ex:561
 #, elixir-autogen, elixir-format
 msgid "I accept the legal terms of animina."
 msgstr "Ich akzeptiere die rechtlichen Bedingungen von Animina."
 
-#: lib/animina_web/live/delete_account_live.ex:125
+#: lib/animina_web/live/delete_account_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "If you want to delete your account, click the button below, this action is irreversible"
 msgstr "Wenn Sie Ihr Konto löschen möchten, klicken Sie unten auf den Button, diese Aktion ist irreversibel"
 
-#: lib/animina_web/live/dashboard_live.ex:400
+#: lib/animina_web/live/dashboard_live.ex:393
 #, elixir-autogen, elixir-format
 msgid "Image of %{name}."
 msgstr "Bild von %{name}."
 
-#: lib/animina_web/components/bookmark/bookmarks_components.ex:129
-#: lib/animina_web/components/profile/stories_components.ex:185
-#: lib/animina_web/live/dashboard_live.ex:546
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:130
+#: lib/animina_web/components/profile/stories_components.ex:189
+#: lib/animina_web/live/dashboard_live.ex:561
 #, elixir-autogen, elixir-format
 msgid "In review"
 msgstr "In Überprüfung"
 
-#: lib/animina_web/components/profile/profile_components.ex:554
-#, elixir-autogen, elixir-format
-msgid "Incognito"
-msgstr "Inkognito"
-
-#: lib/animina_web/controllers/auth_controller.ex:98
+#: lib/animina_web/controllers/auth_controller.ex:100
 #, elixir-autogen, elixir-format
 msgid "Invalid Email Confirmation Link"
 msgstr "Ungültiger E-Mail-Bestätigungslink"
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:52
+#: lib/animina_web/components/dashboard/dashboard_components.ex:71
 #, elixir-autogen, elixir-format
 msgid "Last 7 days"
 msgstr "Letzte 7 Tage"
 
-#: lib/animina_web/live/dashboard_live.ex:478
+#: lib/animina_web/live/dashboard_live.ex:491
 #, elixir-autogen, elixir-format
 msgid "Latest Chat"
 msgstr "Letzter Chat"
 
-#: lib/animina_web/live/story_live.ex:840
+#: lib/animina_web/live/story_live.ex:974
+#: lib/animina_web/live/story_live.ex:982
 #, elixir-autogen, elixir-format
 msgid "Lengthen Story"
 msgstr "Story verlängern"
 
-#: lib/animina_web/live/bookmarks_live.ex:47
+#: lib/animina_web/live/bookmarks_live.ex:50
 #, elixir-autogen, elixir-format
 msgid "Liked"
 msgstr "Gemocht"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:166
+#: lib/animina_web/live/bookmarks_list_live.ex:174
 #, elixir-autogen, elixir-format
 msgid "Liked Profiles"
 msgstr "Gemocht Profile"
 
-#: lib/animina_web/live/dashboard_live.ex:463
+#: lib/animina_web/live/dashboard_live.ex:467
 #, elixir-autogen, elixir-format
 msgid "Likes"
 msgstr "Gefällt mir"
 
-#: lib/animina_web/components/top_navigation_components.ex:94
-#: lib/animina_web/components/top_navigation_components.ex:103
-#: lib/animina_web/components/top_navigation_components.ex:217
-#: lib/animina_web/live/root_live.ex:47
-#: lib/animina_web/live/root_live.ex:116
+#: lib/animina_web/components/top_navigation_components.ex:104
+#: lib/animina_web/components/top_navigation_components.ex:115
+#: lib/animina_web/components/top_navigation_components.ex:276
+#: lib/animina_web/live/root_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "Login"
 msgstr "Anmelden"
 
-#: lib/animina_web/live/bookmarks_live.ex:75
+#: lib/animina_web/live/bookmarks_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Longest Overall Visited"
 msgstr "Am häufigsten besucht"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:173
+#: lib/animina_web/live/bookmarks_list_live.ex:185
 #, elixir-autogen, elixir-format
 msgid "Longest Overall Visited Profiles"
 msgstr "Am häufigsten besuchte Profile"
@@ -679,201 +602,280 @@ msgstr "Am häufigsten besuchte Profile"
 msgid "Lost connection to server!"
 msgstr "Verbindung zum Server verloren!"
 
-#: lib/animina_web/live/story_live.ex:828
+#: lib/animina_web/live/story_live.ex:934
+#: lib/animina_web/live/story_live.ex:942
 #, elixir-autogen, elixir-format
 msgid "Make Funnier"
 msgstr "Witziger machen"
 
-#: lib/animina_web/live/story_live.ex:834
-#, elixir-autogen, elixir-format
-msgid "Make More Exciting"
-msgstr "Spannender machen"
-
-#: lib/animina_web/live/potential_partner_live.ex:186
-#: lib/animina_web/live/root_live.ex:293
-#: lib/animina_web/live/update_profile_live.ex:236
+#: lib/animina_web/live/potential_partner_live.ex:184
+#: lib/animina_web/live/root_live.ex:356
+#: lib/animina_web/live/update_profile_live.ex:252
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr "Männlich"
 
-#: lib/animina_web/live/potential_partner_live.ex:319
-#: lib/animina_web/live/potential_partner_live.ex:333
+#: lib/animina_web/live/potential_partner_live.ex:336
+#: lib/animina_web/live/potential_partner_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Maximum age"
 msgstr "Maximales Alter"
 
-#: lib/animina_web/live/potential_partner_live.ex:266
-#: lib/animina_web/live/potential_partner_live.ex:283
+#: lib/animina_web/live/potential_partner_live.ex:272
+#: lib/animina_web/live/potential_partner_live.ex:294
 #, elixir-autogen, elixir-format
 msgid "Maximum height"
 msgstr "Maximale Größe"
 
-#: lib/animina_web/live/potential_partner_live.ex:294
-#: lib/animina_web/live/potential_partner_live.ex:309
+#: lib/animina_web/live/potential_partner_live.ex:307
+#: lib/animina_web/live/potential_partner_live.ex:324
 #, elixir-autogen, elixir-format
 msgid "Minimum age"
 msgstr "Mindestalter"
 
-#: lib/animina_web/live/potential_partner_live.ex:238
-#: lib/animina_web/live/potential_partner_live.ex:256
+#: lib/animina_web/live/potential_partner_live.ex:237
+#: lib/animina_web/live/potential_partner_live.ex:260
 #, elixir-autogen, elixir-format
 msgid "Minimum height"
 msgstr "Mindestgröße"
 
-#: lib/animina_web/live/root_live.ex:436
-#: lib/animina_web/live/root_live.ex:457
-#: lib/animina_web/live/update_profile_live.ex:379
-#: lib/animina_web/live/update_profile_live.ex:398
+#: lib/animina_web/live/root_live.ex:513
+#: lib/animina_web/live/root_live.ex:538
+#: lib/animina_web/live/update_profile_live.ex:410
+#: lib/animina_web/live/update_profile_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Mobile phone number"
 msgstr "Mobiltelefonnummer"
 
-#: lib/animina_web/live/bookmarks_live.ex:65
+#: lib/animina_web/live/bookmarks_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Most Often Visited"
 msgstr "Am häufigsten besucht"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:170
+#: lib/animina_web/live/bookmarks_list_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "Most Often Visited Profiles"
 msgstr "Am häufigsten besuchte Profile"
 
-#: lib/animina_web/live/profile_posts_live.ex:146
+#: lib/animina_web/live/profile_posts_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "My Posts"
 msgstr "Meine Beiträge"
 
-#: lib/animina_web/live/potential_partner_live.ex:397
+#: lib/animina_web/live/potential_partner_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "My profile is only visible for animina users."
 msgstr "Mein Profil ist nur für Animina-Nutzer sichtbar."
 
-#: lib/animina_web/components/bookmark/bookmarks_components.ex:117
-#: lib/animina_web/components/profile/stories_components.ex:173
-#: lib/animina_web/live/dashboard_live.ex:534
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:118
+#: lib/animina_web/components/profile/stories_components.ex:177
+#: lib/animina_web/live/dashboard_live.ex:549
 #, elixir-autogen, elixir-format
 msgid "NSFW"
 msgstr "NSFW"
 
-#: lib/animina_web/components/waitlist_components.ex:20
-#: lib/animina_web/live/root_live.ex:170
-#: lib/animina_web/live/root_live.ex:188
-#: lib/animina_web/live/update_profile_live.ex:170
-#: lib/animina_web/live/update_profile_live.ex:188
+#: lib/animina_web/components/waitlist_components.ex:25
+#: lib/animina_web/live/root_live.ex:187
+#: lib/animina_web/live/root_live.ex:206
+#: lib/animina_web/live/update_profile_live.ex:177
+#: lib/animina_web/live/update_profile_live.ex:197
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Name"
 
-#: lib/animina_web/live/chat_live.ex:584
+#: lib/animina_web/live/chat_live.ex:628
 #, elixir-autogen, elixir-format
 msgid "Need help with your first message?"
 msgstr "Brauchen Sie Hilfe bei Ihrer ersten Nachricht?"
 
-#: lib/animina_web/components/report/report_components.ex:17
+#: lib/animina_web/components/report/report_components.ex:19
 #, elixir-autogen, elixir-format
 msgid "No Reports Availabile"
 msgstr "Keine Berichte verfügbar"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:208
+#: lib/animina_web/live/bookmarks_list_live.ex:222
 #, elixir-autogen, elixir-format
 msgid "No bookmarks found"
 msgstr "Keine Lesezeichen gefunden"
 
-
-#: lib/animina_web/components/dashboard/dashboard_components.ex:289
-#, elixir-autogen, elixir-format
-msgid "No Unread Messages"
-msgstr "Keine ungelesenen Nachrichten"
-
-#: lib/animina_web/components/profile/profile_components.ex:536
+#: lib/animina_web/components/profile/profile_components.ex:592
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
 
-
-#: lib/animina_web/components/dashboard/dashboard_components.ex:53
-#, elixir-autogen, elixir-format
-msgid "Period Of Time"
-msgstr "Zeitraum"
-
-
-#: lib/animina_web/live/root_live.ex:344
-#: lib/animina_web/live/root_live.ex:362
-#: lib/animina_web/live/update_profile_live.ex:287
-#: lib/animina_web/live/update_profile_live.ex:305
+#: lib/animina_web/live/root_live.ex:408
+#: lib/animina_web/live/root_live.ex:427
+#: lib/animina_web/live/update_profile_live.ex:304
+#: lib/animina_web/live/update_profile_live.ex:324
 #, elixir-autogen, elixir-format
 msgid "Occupation"
 msgstr "Beruf"
 
-#: lib/animina_web/live/potential_partner_live.ex:387
+#: lib/animina_web/live/potential_partner_live.ex:415
 #, elixir-autogen, elixir-format
 msgid "Only users who I liked can initiate a chat."
 msgstr "Nur Nutzer, die ich mag, können einen Chat initiieren."
 
-#: lib/animina_web/live/root_live.ex:104
+#: lib/animina_web/live/root_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
 msgstr "Unsere Mitbewerber berechnen monatlich, auch wenn Sie kein Match finden. Wir berechnen nur 20 €, nachdem Sie Ihres gefunden haben. Und für Beta-Tester ist es kostenlos! 🎉"
 
-#: lib/animina_web/live/root_live.ex:227
-#: lib/animina_web/live/root_live.ex:238
-#: lib/animina_web/live/root_live.ex:245
-#: lib/animina_web/live/root_live.ex:558
-#: lib/animina_web/live/root_live.ex:569
-#: lib/animina_web/live/root_live.ex:576
+#: lib/animina_web/live/root_live.ex:250
+#: lib/animina_web/live/root_live.ex:262
+#: lib/animina_web/live/root_live.ex:270
+#: lib/animina_web/live/root_live.ex:652
+#: lib/animina_web/live/root_live.ex:664
+#: lib/animina_web/live/root_live.ex:671
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Passwort"
 
-#: lib/animina_web/controllers/auth_controller.ex:42
-#: lib/animina_web/controllers/auth_controller.ex:222
+#: lib/animina_web/controllers/auth_controller.ex:44
+#: lib/animina_web/controllers/auth_controller.ex:224
 #, elixir-autogen, elixir-format
 msgid "Password reset email has been sent to your email address"
 msgstr "Eine E-Mail zum Zurücksetzen des Passworts wurde an Ihre E-Mail-Adresse gesendet"
 
-#: lib/animina_web/controllers/auth_controller.ex:34
-#: lib/animina_web/controllers/auth_controller.ex:231
+#: lib/animina_web/controllers/auth_controller.ex:36
+#: lib/animina_web/controllers/auth_controller.ex:233
 #, elixir-autogen, elixir-format
 msgid "Password reset successful"
 msgstr "Passwort zurücksetzen erfolgreich"
 
+#: lib/animina_web/components/report/report_components.ex:134
 #: lib/animina_web/live/report_live/pending_reports.ex:38
 #, elixir-autogen, elixir-format
 msgid "Pending Reports"
 msgstr "Ausstehende Berichte"
 
-#: lib/animina_web/components/bookmark/bookmarks_components.ex:125
-#: lib/animina_web/components/profile/stories_components.ex:177
-#: lib/animina_web/live/dashboard_live.ex:538
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:126
+#: lib/animina_web/components/profile/stories_components.ex:185
+#: lib/animina_web/live/dashboard_live.ex:557
+#, elixir-autogen, elixir-format
+msgid "Pending review"
+msgstr "Ausstehende Überprüfung"
+
+#: lib/animina_web/components/profile/profile_components.ex:526
+#, elixir-autogen, elixir-format
+msgid "Permanently delete your account and all data , this action is irreversible."
+msgstr "Löschen Sie Ihr Konto und alle Daten dauerhaft, diese Aktion ist nicht rückgängig zu machen."
+
+#: lib/animina_web/live/story_live.ex:1027
+#: lib/animina_web/live/story_live.ex:1045
+#, elixir-autogen, elixir-format
+msgid "Photo"
+msgstr "Foto"
+
+#: lib/animina_web/components/core_components.ex:176
+#, elixir-autogen, elixir-format
+msgid "Please wait a second. We are working on it."
+msgstr "Bitte warten Sie einen Moment. Wir arbeiten daran."
+
+#: lib/animina_web/components/top_navigation_components.ex:578
+#: lib/animina_web/components/top_navigation_components.ex:582
+#, elixir-autogen, elixir-format
+msgid "Points"
+msgstr "Punkte"
+
+#: lib/animina_web/live/post_view_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "Post not found"
+msgstr "Beitrag nicht gefunden"
+
+#: lib/animina_web/live/dashboard_live.ex:365
+#, elixir-autogen, elixir-format
+msgid "Potential Matches"
+msgstr "Potenzielle Übereinstimmungen"
+
+#: lib/animina_web/live/potential_partner_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Preferences for your future partner"
+msgstr "Präferenzen für Ihren zukünftigen Partner"
+
+#: lib/animina_web/live/flags_live.ex:357
+#, elixir-autogen, elixir-format
+msgid "Proceed "
+msgstr "Fortfahren"
+
+#: lib/animina_web/live/flags_live.ex:442
+#, elixir-autogen, elixir-format
+msgid "Proceed without selecting a flag"
+msgstr "Fortfahren, ohne ein Flag auszuwählen"
+
+#: lib/animina_web/components/top_navigation_components.ex:970
+#: lib/animina_web/components/top_navigation_components.ex:993
+#: lib/animina_web/components/waitlist_components.ex:32
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Profile"
+msgstr "Profil anzeigen"
+
+#: lib/animina_web/live/profile_photo_live.ex:164
+#, elixir-autogen, elixir-format
+msgid "Profile photo deleted successfully"
+msgstr "Profilfoto erfolgreich gelöscht"
+
+#: lib/animina_web/live/update_profile_live.ex:46
+#, elixir-autogen, elixir-format
+msgid "Profile updated successfully"
+msgstr "Profil erfolgreich aktualisiert"
+
+#: lib/animina_web/live/profile_visibility.ex:85
+#, elixir-autogen, elixir-format
+msgid "Profile visibility change failed."
+msgstr "Profil-Sichtbarkeitsänderung fehlgeschlagen."
+
+#: lib/animina_web/live/profile_visibility.ex:82
+#, elixir-autogen, elixir-format
+msgid "Profile visibility changed successfully."
+msgstr "Profil-Sichtbarkeit erfolgreich geändert."
+
+#: lib/animina_web/live/root_live.ex:164
+#: lib/animina_web/live/update_profile_live.ex:153
+#, elixir-autogen, elixir-format
+msgid "Pusteblume1977"
+msgstr ""
+
+#: lib/animina_web/live/profile_posts_live.ex:169
+#, elixir-autogen, elixir-format
+msgid "Read Post"
+msgstr "Beitrag lesen"
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:66
+#: lib/animina_web/components/dashboard/dashboard_components.ex:79
+#, elixir-autogen, elixir-format
+msgid "Received"
+msgstr "Erhalten"
+
+#: lib/animina_web/components/top_navigation_components.ex:271
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr "Registrieren"
+
+#: lib/animina_web/live/root_live.ex:34
+#, elixir-autogen, elixir-format
+msgid "Register new account"
+msgstr "Neues Konto registrieren"
+
+#: lib/animina_web/components/bookmark/bookmarks_components.ex:122
+#: lib/animina_web/components/profile/stories_components.ex:181
+#: lib/animina_web/live/dashboard_live.ex:553
 #, elixir-autogen, elixir-format
 msgid "Rejected"
 msgstr "Abgelehnt"
 
-
-msgid "Pending review"
-msgstr "Ausstehende Überprüfung"
-
-
-msgid "Report User"
-msgstr "Benutzer melden"
-
-
-
-msgid "Add new story"
-msgstr "Neue Story hinzufügen"
-
-#: lib/animina_web/live/profile_live.ex:805
+#: lib/animina_web/live/profile_live.ex:683
 #, elixir-autogen, elixir-format
 msgid "Report Account"
 msgstr "Konto melden"
 
-#: lib/animina_web/components/top_navigation_components.ex:503
+#: lib/animina_web/components/top_navigation_components.ex:605
 #, elixir-autogen, elixir-format
 msgid "Reports"
 msgstr "Berichte"
 
 #: lib/animina_web/live/request_password_live.ex:16
-#: lib/animina_web/live/request_password_live.ex:19
+#: lib/animina_web/live/request_password_live.ex:21
 #, elixir-autogen, elixir-format
 msgid "Request Password Reset"
 msgstr "Passwort zurücksetzen anfordern"
@@ -883,91 +885,89 @@ msgstr "Passwort zurücksetzen anfordern"
 msgid "Review  Report"
 msgstr "Bericht überprüfen"
 
-#: lib/animina_web/components/report/report_components.ex:174
+#: lib/animina_web/components/report/report_components.ex:198
 #, elixir-autogen, elixir-format
 msgid "Review :"
 msgstr "Überprüfung:"
 
-
-msgid "Report reviewed successfully."
-msgstr "Bericht erfolgreich überprüft."
-
-#: lib/animina_web/components/report/report_components.ex:93
-#: lib/animina_web/components/report/report_components.ex:192
+#: lib/animina_web/components/report/report_components.ex:107
+#: lib/animina_web/components/report/report_components.ex:221
+#: lib/animina_web/live/report_live/review_report.ex:136
+#: lib/animina_web/live/report_live/review_report.ex:251
 #, elixir-autogen, elixir-format
 msgid "Review Report"
 msgstr "Bericht überprüfen"
 
-#: lib/animina_web/components/report/report_components.ex:77
-#: lib/animina_web/components/report/report_components.ex:184
+#: lib/animina_web/components/report/report_components.ex:88
+#: lib/animina_web/components/report/report_components.ex:210
 #, elixir-autogen, elixir-format
 msgid "Reviewed By"
 msgstr "Überprüft von"
 
-#: lib/animina_web/live/potential_partner_live.ex:402
+#: lib/animina_web/live/potential_partner_live.ex:433
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Speichern"
 
-#: lib/animina_web/live/update_profile_live.ex:405
+#: lib/animina_web/live/update_profile_live.ex:439
 #, elixir-autogen, elixir-format
 msgid "Save Profile Details"
 msgstr "Profildetails speichern"
 
-#: lib/animina_web/live/flags_live.ex:332
-#: lib/animina_web/live/flags_live.ex:408
+#: lib/animina_web/live/flags_live.ex:361
+#: lib/animina_web/live/flags_live.ex:446
 #, elixir-autogen, elixir-format
 msgid "Save flags"
 msgstr "Flags speichern"
 
-#: lib/animina_web/live/post_live.ex:110
+#: lib/animina_web/live/post_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Save post"
 msgstr "Beitrag speichern"
 
-#: lib/animina_web/live/story_live.ex:248
+#: lib/animina_web/live/story_live.ex:255
 #, elixir-autogen, elixir-format
 msgid "Save story"
 msgstr "Story speichern"
 
-#: lib/animina_web/live/potential_partner_live.ex:344
-#: lib/animina_web/live/potential_partner_live.ex:376
+#: lib/animina_web/live/potential_partner_live.ex:365
+#: lib/animina_web/live/potential_partner_live.ex:402
 #, elixir-autogen, elixir-format
 msgid "Search range"
 msgstr "Suchbereich"
 
-#: lib/animina_web/live/delete_account_live.ex:120
+#: lib/animina_web/live/delete_account_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Seconds Remaining"
 msgstr "Verbleibende Sekunden"
 
-#: lib/animina_web/live/profile_visibility.ex:128
+#: lib/animina_web/live/profile_visibility.ex:129
 #, elixir-autogen, elixir-format
 msgid "Select And Change the visibility of your profile"
 msgstr "Wählen und ändern Sie die Sichtbarkeit Ihres Profils"
 
-#: lib/animina_web/live/story_live.ex:714
-#: lib/animina_web/live/story_live.ex:735
+#: lib/animina_web/live/story_live.ex:772
+#: lib/animina_web/live/story_live.ex:800
 #, elixir-autogen, elixir-format
 msgid "Select a headline"
 msgstr "Eine Überschrift auswählen"
 
-#: lib/animina_web/live/report_live/review_report.ex:193
+#: lib/animina_web/live/report_live/review_report.ex:204
 #, elixir-autogen, elixir-format
 msgid "Select a state"
 msgstr "Einen Status auswählen"
 
-#: lib/animina_web/live/flags_live.ex:95
+#: lib/animina_web/live/flags_live.ex:109
 #, elixir-autogen, elixir-format
 msgid "Select your green flags"
 msgstr "Wählen Sie Ihre grünen Flags"
 
-#: lib/animina_web/live/flags_live.ex:59
+#: lib/animina_web/live/flags_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "Select your own flags"
 msgstr "Wählen Sie Ihre eigenen Flags"
 
-#: lib/animina_web/live/flags_live.ex:78
+#: lib/animina_web/live/flags_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Select your red flags"
 msgstr "Wählen Sie Ihre roten Flags"
@@ -982,60 +982,55 @@ msgstr "Link zum Zurücksetzen des Passworts senden"
 msgid "Server problem!"
 msgstr "Serverproblem!"
 
-#: lib/animina_web/live/story_live.ex:846
+#: lib/animina_web/live/story_live.ex:994
+#: lib/animina_web/live/story_live.ex:1002
 #, elixir-autogen, elixir-format
 msgid "Shorten Story"
 msgstr "Story verkürzen"
 
-#: lib/animina_web/components/top_navigation_components.ex:177
+#: lib/animina_web/components/top_navigation_components.ex:209
 #, elixir-autogen, elixir-format
 msgid "Show Profile"
 msgstr "Profil anzeigen"
 
-#: lib/animina_web/components/top_navigation_components.ex:208
+#: lib/animina_web/components/top_navigation_components.ex:263
 #, elixir-autogen, elixir-format
 msgid "Sign Out"
 msgstr "Abmelden"
 
-#: lib/animina_web/live/root_live.ex:45
+#: lib/animina_web/live/root_live.ex:49
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Anmelden"
 
-
-#: lib/animina_web/live/root_live.ex:34
-#, elixir-autogen, elixir-format
-msgid "Register new account"
-msgstr "Neues Konto registrieren"
-
-#: lib/animina_web/components/top_navigation_components.ex:167
+#: lib/animina_web/components/top_navigation_components.ex:196
 #, elixir-autogen, elixir-format
 msgid "Signed in as"
 msgstr "Angemeldet als"
 
-#: lib/animina_web/live/flags_live.ex:143
+#: lib/animina_web/live/flags_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Something went wrong adding your flags"
 msgstr "Beim Hinzufügen Ihrer Flags ist ein Fehler aufgetreten"
 
-#: lib/animina_web/live/profile_photo_live.ex:336
-#: lib/animina_web/live/story_live.ex:964
+#: lib/animina_web/live/profile_photo_live.ex:341
+#: lib/animina_web/live/story_live.ex:1171
 #, elixir-autogen, elixir-format
 msgid "Something went wrong uploading your photo. Try again"
 msgstr "Beim Hochladen Ihres Fotos ist ein Fehler aufgetreten. Versuchen Sie es erneut"
 
-#: lib/animina_web/controllers/auth_controller.ex:111
-#: lib/animina_web/controllers/auth_controller.ex:125
+#: lib/animina_web/controllers/auth_controller.ex:113
+#: lib/animina_web/controllers/auth_controller.ex:127
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Try again."
 msgstr "Etwas ist schief gelaufen. Versuchen Sie es erneut."
 
-#: lib/animina_web/live/post_view_live.ex:96
+#: lib/animina_web/live/post_view_live.ex:99
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. We couldn't find this post"
 msgstr "Etwas ist schief gelaufen. Wir konnten diesen Beitrag nicht finden"
 
-#: lib/animina_web/live/report_live/review_report.ex:187
+#: lib/animina_web/live/report_live/review_report.ex:197
 #, elixir-autogen, elixir-format
 msgid "State of the Report"
 msgstr "Status des Berichts"
@@ -1045,69 +1040,59 @@ msgstr "Status des Berichts"
 msgid "Success!"
 msgstr "Erfolg!"
 
-#: lib/animina_web/live/profile_stories_live.ex:319
+#: lib/animina_web/live/profile_stories_live.ex:323
 #, elixir-autogen, elixir-format
 msgid "Tell us more about yourself!"
 msgstr "Erzählen Sie uns mehr über sich!"
 
-#: lib/animina_web/live/too_successful_live.ex:27
+#: lib/animina_web/live/too_successful_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "The buck stops in my inbox."
 msgstr "Der Ball bleibt in meinem Posteingang."
 
-#: lib/animina_web/components/waitlist_components.ex:13
+#: lib/animina_web/components/waitlist_components.ex:15
 #, elixir-autogen, elixir-format
 msgid "The following users are on the waitlist"
 msgstr "Die folgenden Nutzer stehen auf der Warteliste"
 
-#: lib/animina_web/components/profile/profile_components.ex:559
-#, elixir-autogen, elixir-format
-msgid "The user can browse and read posts anonymously, without being seen by others."
-msgstr "Der Nutzer kann anonym surfen und Beiträge lesen, ohne von anderen gesehen zu werden."
-
-#: lib/animina_web/components/profile/profile_components.ex:541
+#: lib/animina_web/components/profile/profile_components.ex:598
 #, elixir-autogen, elixir-format
 msgid "The user is actively using the account, engaging with posts and other users."
 msgstr "Der Nutzer verwendet das Konto aktiv und interagiert mit Beiträgen und anderen Nutzern."
 
-#: lib/animina_web/components/profile/profile_components.ex:549
+#: lib/animina_web/components/profile/profile_components.ex:610
 #, elixir-autogen, elixir-format
 msgid "The user is temporarily inactive but retains their account and data for future use."
 msgstr "Der Nutzer ist vorübergehend inaktiv, behält jedoch sein Konto und seine Daten für die zukünftige Nutzung."
 
-#: lib/animina_web/components/report/report_components.ex:126
+#: lib/animina_web/components/report/report_components.ex:146
 #, elixir-autogen, elixir-format
 msgid "This report does not exist or you do not have permission to view it."
 msgstr "Dieser Bericht existiert nicht oder Sie haben keine Berechtigung, ihn anzusehen."
 
-#: lib/animina_web/live/post_live.ex:202
 #: lib/animina_web/live/post_live.ex:223
+#: lib/animina_web/live/post_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Title"
 msgstr "Titel"
 
-#: lib/animina_web/live/profile_stories_live.ex:323
-#, elixir-autogen, elixir-format
-msgid "To activate your profile you have to have at least one story. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
-msgstr "Um Ihr Profil zu aktivieren, müssen Sie mindestens eine Story haben. Eine Story kann nur ein Foto, nur einen Text oder beides enthalten. Sie können Stories jederzeit hinzufügen, bearbeiten und löschen. Mit Stories präsentieren Sie sich anderen. Sie haben mehr Erfolg, wenn Sie mindestens drei davon in Ihrem Profil haben."
-
-#: lib/animina_web/live/create_report_component.ex:68
+#: lib/animina_web/live/create_report_component.ex:69
 #, elixir-autogen, elixir-format
 msgid "To report an account is a serious act. The account will be deactivated right away and will be investigated by our team. Please tell us why you report the account."
 msgstr "Ein Konto zu melden ist eine ernste Angelegenheit. Das Konto wird sofort deaktiviert und von unserem Team untersucht. Bitte teilen Sie uns mit, warum Sie das Konto melden."
 
-#: lib/animina_web/live/profile_photo_live.ex:331
-#: lib/animina_web/live/story_live.ex:959
+#: lib/animina_web/live/profile_photo_live.ex:330
+#: lib/animina_web/live/story_live.ex:1160
 #, elixir-autogen, elixir-format
 msgid "Too large"
 msgstr "Zu groß"
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:44
+#: lib/animina_web/components/dashboard/dashboard_components.ex:47
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr "Typ"
 
-#: lib/animina_web/live/dashboard_live.ex:470
+#: lib/animina_web/live/dashboard_live.ex:479
 #, elixir-autogen, elixir-format
 msgid "Unread Chats"
 msgstr "Ungelesene Chats"
@@ -1117,125 +1102,121 @@ msgstr "Ungelesene Chats"
 msgid "Update Profile For "
 msgstr "Profil aktualisieren für "
 
-#: lib/animina_web/live/update_profile_live.ex:120
+#: lib/animina_web/live/update_profile_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "Update Your Profile"
 msgstr "Aktualisieren Sie Ihr Profil"
 
-#: lib/animina_web/live/profile_photo_live.ex:199
+#: lib/animina_web/live/profile_photo_live.ex:208
 #, elixir-autogen, elixir-format
 msgid "Update your avatar photo for your account"
 msgstr "Aktualisieren Sie Ihr Avatar-Foto für Ihr Konto"
 
-#: lib/animina_web/live/profile_photo_live.ex:230
+#: lib/animina_web/live/profile_photo_live.ex:243
 #, elixir-autogen, elixir-format
 msgid "Update your profile photo & drop your photo file JPG, JPEG, PNG"
 msgstr "Aktualisieren Sie Ihr Profilfoto und ziehen Sie Ihre Fotodatei JPG, JPEG, PNG hierher"
 
-#: lib/animina_web/live/profile_photo_live.ex:315
+#: lib/animina_web/live/profile_photo_live.ex:313
 #, elixir-autogen, elixir-format
 msgid "Upload"
 msgstr "Hochladen"
 
-#: lib/animina_web/live/profile_photo_live.ex:32
+#: lib/animina_web/live/profile_photo_live.ex:33
 #, elixir-autogen, elixir-format
 msgid "Upload a profile photo"
 msgstr "Ein Profilfoto hochladen"
 
-#: lib/animina_web/live/profile_photo_live.ex:195
+#: lib/animina_web/live/profile_photo_live.ex:202
 #, elixir-autogen, elixir-format
 msgid "Upload an avatar photo for your account"
 msgstr "Ein Avatar-Foto für Ihr Konto hochladen"
 
-#: lib/animina_web/live/profile_photo_live.ex:227
+#: lib/animina_web/live/profile_photo_live.ex:238
+#: lib/animina_web/live/story_live.ex:1079
 #, elixir-autogen, elixir-format
 msgid "Upload or drag & drop your photo file JPG, JPEG, PNG"
 msgstr "Laden Sie Ihre Fotodatei JPG, JPEG, PNG hoch oder ziehen Sie sie per Drag & Drop hierher"
 
-#: lib/animina_web/live/profile_photo_live.ex:316
+#: lib/animina_web/live/profile_photo_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "Uploading..."
 msgstr "Wird hochgeladen..."
 
-#: lib/animina_web/live/create_report_component.ex:104
+#: lib/animina_web/live/create_report_component.ex:109
 #, elixir-autogen, elixir-format
 msgid "Use normal text or the Markdown format to write your description. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
 msgstr "Verwenden Sie normalen Text oder das Markdown-Format, um Ihre Beschreibung zu schreiben. Sie können **fett**, *kursiv*, ~durchgestrichen~, [Links](https://example.com) und mehr verwenden. Jeder Beitrag kann bis zu 8.192 Zeichen lang sein. Schreiben Sie bitte mehrere Beiträge, um Ihre Gedanken zu teilen."
 
-#: lib/animina_web/live/report_live/review_report.ex:222
+#: lib/animina_web/live/report_live/review_report.ex:236
 #, elixir-autogen, elixir-format
 msgid "Use normal text or the Markdown format to write your internal memo. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long."
 msgstr "Verwenden Sie normalen Text oder das Markdown-Format, um Ihr internes Memo zu schreiben. Sie können **fett**, *kursiv*, ~durchgestrichen~, [Links](https://example.com) und mehr verwenden. Jeder Beitrag kann bis zu 8.192 Zeichen lang sein."
 
-#: lib/animina_web/live/report_live/review_report.ex:197
+#: lib/animina_web/live/report_live/review_report.ex:208
 #, elixir-autogen, elixir-format
 msgid "Use normal text or the Markdown format to write your internal_memo. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
 msgstr "Verwenden Sie normalen Text oder das Markdown-Format, um Ihr internes Memo zu schreiben. Sie können **fett**, *kursiv*, ~durchgestrichen~, [Links](https://example.com) und mehr verwenden. Jeder Beitrag kann bis zu 8.192 Zeichen lang sein. Schreiben Sie bitte mehrere Beiträge, um Ihre Gedanken zu teilen."
 
-#: lib/animina_web/live/post_live.ex:247
+#: lib/animina_web/live/post_live.ex:274
 #, elixir-autogen, elixir-format
 msgid "Use normal text or the Markdown format to write your post. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each post can be up to 8,192 characters long. Please do write multiple posts to share your thoughts."
 msgstr "Verwenden Sie normalen Text oder das Markdown-Format, um Ihren Beitrag zu schreiben. Sie können **fett**, *kursiv*, ~durchgestrichen~, [Links](https://example.com) und mehr verwenden. Jeder Beitrag kann bis zu 8.192 Zeichen lang sein. Schreiben Sie bitte mehrere Beiträge, um Ihre Gedanken zu teilen."
 
-#: lib/animina_web/live/story_live.ex:774
-#: lib/animina_web/live/story_live.ex:800
+#: lib/animina_web/live/story_live.ex:846
+#: lib/animina_web/live/story_live.ex:876
 #, elixir-autogen, elixir-format
 msgid "Use normal text or the Markdown format to write your story. You can use **bold**, *italic*, ~line-through~, [links](https://example.com) and more. Each story can be up to 1,024 characters long. Please do write multiple stories to tell potential partners more about yourself."
 msgstr "Verwenden Sie normalen Text oder das Markdown-Format, um Ihre Story zu schreiben. Sie können **fett**, *kursiv*, ~durchgestrichen~, [Links](https://example.com) und mehr verwenden. Jede Story kann bis zu 1.024 Zeichen lang sein. Schreiben Sie bitte mehrere Storys, um potenziellen Partnern mehr über sich zu erzählen."
 
-#: lib/animina_web/live/post_live.ex:111
-#: lib/animina_web/live/post_live.ex:130
+#: lib/animina_web/live/post_live.ex:119
+#: lib/animina_web/live/post_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Use posts to write about things that interest you"
 msgstr "Verwenden Sie Beiträge, um über Dinge zu schreiben, die Sie interessieren"
 
-#: lib/animina_web/live/story_live.ex:249
-#: lib/animina_web/live/story_live.ex:285
+#: lib/animina_web/live/story_live.ex:259
 #: lib/animina_web/live/story_live.ex:310
+#: lib/animina_web/live/story_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Use stories to tell potential partners about yourself"
 msgstr "Verwenden Sie Storys, um potenziellen Partnern mehr über sich zu erzählen"
 
-#: lib/animina_web/live/waitlist_live.ex:52
+#: lib/animina_web/live/waitlist_live.ex:54
 #, elixir-autogen, elixir-format
 msgid "User has been given access"
 msgstr "Benutzer hat Zugang erhalten"
 
-#: lib/animina_web/live/root_live.ex:137
-#: lib/animina_web/live/root_live.ex:158
-#: lib/animina_web/live/update_profile_live.ex:137
-#: lib/animina_web/live/update_profile_live.ex:158
+#: lib/animina_web/live/root_live.ex:151
+#: lib/animina_web/live/root_live.ex:173
+#: lib/animina_web/live/update_profile_live.ex:140
+#: lib/animina_web/live/update_profile_live.ex:163
 #, elixir-autogen, elixir-format
 msgid "Username"
 msgstr "Benutzername"
 
-#: lib/animina_web/controllers/auth_controller.ex:85
+#: lib/animina_web/controllers/auth_controller.ex:87
 #, elixir-autogen, elixir-format
 msgid "Username or password is incorrect"
 msgstr "Benutzername oder Passwort ist falsch"
 
-#: lib/animina_web/components/report/report_components.ex:84
-#, elixir-autogen, elixir-format
-msgid "View Report"
-msgstr "Bericht anzeigen"
-
-#: lib/animina_web/live/bookmarks_live.ex:55
+#: lib/animina_web/live/bookmarks_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "Visited"
 msgstr "Besucht"
 
-#: lib/animina_web/live/bookmarks_list_live.ex:163
+#: lib/animina_web/live/bookmarks_list_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Visited Profiles"
 msgstr "Besuchte Profile"
 
-#: lib/animina_web/components/top_navigation_components.ex:523
+#: lib/animina_web/components/top_navigation_components.ex:630
 #: lib/animina_web/live/waitlist_live.ex:31
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
 msgstr "Warteliste"
 
-#: lib/animina_web/live/root_live.ex:481
+#: lib/animina_web/live/root_live.ex:566
 #, elixir-autogen, elixir-format
 msgid "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
 msgstr "Warnung: Wir werden Ihre Daten an den Teufel und den Weihnachtsmann verkaufen. Im Ernst, wenn Sie uns nicht vertrauen, ist eine Dating-Plattform kein guter Ort, um Ihre persönlichen Daten zu teilen."
@@ -1245,106 +1226,105 @@ msgstr "Warnung: Wir werden Ihre Daten an den Teufel und den Weihnachtsmann verk
 msgid "We are deploying an update. Doesn't take long."
 msgstr "Wir spielen ein Update ein. Dauert nicht lange."
 
-#: lib/animina_web/live/email_validation_live.ex:19
+#: lib/animina_web/live/email_validation_live.ex:21
 #, elixir-autogen, elixir-format
 msgid "We just send you an email to"
 msgstr "Wir haben Ihnen gerade eine E-Mail geschickt an"
 
-#: lib/animina_web/live/flags_live.ex:65
+#: lib/animina_web/live/flags_live.ex:70
 #, elixir-autogen, elixir-format
 msgid "We use flags to match people. You can select red and green flags later. But first tell us something about yourself and select up to %{number_of_flags} flags that describe yourself. The ones selected first are the most important."
 msgstr "Wir verwenden Flags, um Menschen zu matchen. Sie können später rote und grüne Flags auswählen. Aber erzählen Sie uns zuerst etwas über sich selbst und wählen Sie bis zu %{number_of_flags} Flags, die Sie beschreiben. Die zuerst ausgewählten sind die wichtigsten."
 
-#: lib/animina_web/live/potential_partner_live.ex:164
+#: lib/animina_web/live/potential_partner_live.ex:159
 #, elixir-autogen, elixir-format
 msgid "We will use this information to find suitable partners for you."
 msgstr "Wir werden diese Informationen verwenden, um passende Partner für Sie zu finden."
 
-#: lib/animina_web/live/report_live/review_report.ex:212
+#: lib/animina_web/live/report_live/review_report.ex:224
 #, elixir-autogen, elixir-format
 msgid "Write Internal Memo"
 msgstr "Internes Memo schreiben"
 
-#: lib/animina_web/live/delete_account_live.ex:113
+#: lib/animina_web/live/delete_account_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "You can delete your account here but you have to wait "
 msgstr "Sie können Ihr Konto hier löschen, aber Sie müssen warten "
 
-#: lib/animina_web/live/profile_photo_live.ex:332
-#: lib/animina_web/live/story_live.ex:960
+#: lib/animina_web/live/profile_photo_live.ex:333
+#: lib/animina_web/live/story_live.ex:1163
 #, elixir-autogen, elixir-format
 msgid "You have selected an unacceptable file type"
 msgstr "Sie haben einen unzulässigen Dateityp ausgewählt"
 
-#: lib/animina_web/live/profile_photo_live.ex:333
-#: lib/animina_web/live/story_live.ex:961
+#: lib/animina_web/live/profile_photo_live.ex:336
+#: lib/animina_web/live/story_live.ex:1166
 #, elixir-autogen, elixir-format
 msgid "You have selected too many files"
 msgstr "Sie haben zu viele Dateien ausgewählt"
 
-#: lib/animina_web/controllers/auth_controller.ex:214
+#: lib/animina_web/controllers/auth_controller.ex:216
 #, elixir-autogen, elixir-format
 msgid "You have signed out successfully"
 msgstr "Sie haben sich erfolgreich abgemeldet"
 
-#: lib/animina_web/live/report_live/review_report.ex:182
+#: lib/animina_web/live/report_live/review_report.ex:190
 #, elixir-autogen, elixir-format
 msgid "Your Review :"
 msgstr "Ihre Bewertung:"
 
-#: lib/animina_web/controllers/auth_controller.ex:247
+#: lib/animina_web/controllers/auth_controller.ex:249
 #, elixir-autogen, elixir-format
 msgid "Your account has been archived"
 msgstr "Ihr Konto wurde archiviert"
 
-#: lib/animina_web/controllers/auth_controller.ex:244
-#: lib/animina_web/controllers/auth_controller.ex:250
+#: lib/animina_web/controllers/auth_controller.ex:246
+#: lib/animina_web/controllers/auth_controller.ex:252
 #, elixir-autogen, elixir-format
 msgid "Your account has been banned. Please contact support for more information."
 msgstr "Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support für weitere Informationen."
 
-#: lib/animina_web/controllers/auth_controller.ex:239
+#: lib/animina_web/controllers/auth_controller.ex:241
 #, elixir-autogen, elixir-format
 msgid "Your account is currently under investigation. Please try again to login in 24 hours."
 msgstr "Ihr Konto wird derzeit untersucht. Bitte versuchen Sie, sich in 24 Stunden erneut anzumelden."
 
-#: lib/animina_web/components/dashboard/dashboard_components.ex:291
-#: lib/animina_web/live/chat_live.ex:545
+#: lib/animina_web/live/chat_live.ex:580
 #, elixir-autogen, elixir-format
 msgid "Your message here..."
 msgstr "Ihre Nachricht hier..."
 
-#: lib/animina_web/live/post_live.ex:215
+#: lib/animina_web/live/post_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Your post title"
 msgstr "Titel Ihres Beitrags"
 
-#: lib/animina_web/live/root_live.ex:373
-#: lib/animina_web/live/root_live.ex:393
-#: lib/animina_web/live/update_profile_live.ex:316
-#: lib/animina_web/live/update_profile_live.ex:336
+#: lib/animina_web/live/root_live.ex:440
+#: lib/animina_web/live/root_live.ex:462
+#: lib/animina_web/live/update_profile_live.ex:337
+#: lib/animina_web/live/update_profile_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "Zip code"
 msgstr "Postleitzahl"
 
-#: lib/animina_web/live/request_password_live.ex:82
-#: lib/animina_web/live/root_live.ex:208
+#: lib/animina_web/live/request_password_live.ex:89
+#: lib/animina_web/live/root_live.ex:229
 #, elixir-autogen, elixir-format
 msgid "alice@example.net"
 msgstr "alice@example.net"
 
-#: lib/animina_web/live/root_live.ex:539
+#: lib/animina_web/live/root_live.ex:631
 #, elixir-autogen, elixir-format
 msgid "alice@example.net or alice"
 msgstr "alice@example.net oder alice"
 
-#: lib/animina_web/live/potential_partner_live.ex:346
+#: lib/animina_web/live/potential_partner_live.ex:369
 #, elixir-autogen, elixir-format
 msgid "around"
 msgstr "um"
 
-#: lib/animina_web/live/root_live.ex:270
-#: lib/animina_web/live/update_profile_live.ex:213
+#: lib/animina_web/live/root_live.ex:298
+#: lib/animina_web/live/update_profile_live.ex:225
 #, elixir-autogen, elixir-format
 msgid "bday"
 msgstr "Geburtstag"
@@ -1355,63 +1335,63 @@ msgstr "Geburtstag"
 msgid "close"
 msgstr "schließen"
 
-#: lib/animina_web/live/chat_live.ex:524
-#: lib/animina_web/live/dashboard_live.ex:444
-#: lib/animina_web/live/profile_live.ex:773
+#: lib/animina_web/live/chat_live.ex:559
+#: lib/animina_web/live/dashboard_live.ex:442
+#: lib/animina_web/live/profile_live.ex:650
 #, elixir-autogen, elixir-format
 msgid "cm"
 msgstr "cm"
 
-#: lib/animina_web/live/potential_partner_live.ex:242
-#: lib/animina_web/live/potential_partner_live.ex:270
-#: lib/animina_web/live/potential_partner_live.ex:298
-#: lib/animina_web/live/potential_partner_live.ex:323
-#: lib/animina_web/live/potential_partner_live.ex:366
+#: lib/animina_web/live/potential_partner_live.ex:244
+#: lib/animina_web/live/potential_partner_live.ex:279
+#: lib/animina_web/live/potential_partner_live.ex:312
+#: lib/animina_web/live/potential_partner_live.ex:341
+#: lib/animina_web/live/potential_partner_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "doesn't matter"
 msgstr "egal"
 
-#: lib/animina_web/live/root_live.ex:406
-#: lib/animina_web/live/update_profile_live.ex:349
+#: lib/animina_web/live/root_live.ex:479
+#: lib/animina_web/live/update_profile_live.ex:376
 #, elixir-autogen, elixir-format
 msgid "in cm"
 msgstr "in cm"
 
-#: lib/animina_web/live/root_live.ex:240
-#: lib/animina_web/live/root_live.ex:571
+#: lib/animina_web/live/root_live.ex:264
+#: lib/animina_web/live/root_live.ex:666
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "neues Passwort"
 
-#: lib/animina_web/live/root_live.ex:388
-#: lib/animina_web/live/update_profile_live.ex:331
+#: lib/animina_web/live/root_live.ex:456
+#: lib/animina_web/live/update_profile_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "postal code"
 msgstr "Postleitzahl"
 
-#: lib/animina_web/live/delete_account_live.ex:114
+#: lib/animina_web/live/delete_account_live.ex:129
 #, elixir-autogen, elixir-format
 msgid "to make sure that this is not an accident."
 msgstr "um sicherzustellen, dass dies kein Unfall ist."
 
-#: lib/animina_web/live/root_live.ex:438
+#: lib/animina_web/live/root_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "to receive a verification code"
 msgstr "um einen Bestätigungscode zu erhalten"
 
-#: lib/animina_web/live/too_successful_live.ex:19
+#: lib/animina_web/live/too_successful_live.ex:25
 #, elixir-autogen, elixir-format
 msgid "we currently have too many new registrations to handle. That is a good problem for us to have but for you it means that you just landed on a waiting list. We'll send you an email once our systems are ready. In case this is a spike we are talking minutes or hours. In case we need to add new server hardware this means days. Thank you for your patients. Viele Grüße Stefan Wintermeyer PS: Do not hesitate to complain by email to "
 msgstr "wir haben derzeit zu viele Neuanmeldungen zu bearbeiten. Das ist ein gutes Problem für uns, aber für Sie bedeutet das, dass Sie auf einer Warteliste gelandet sind. Wir werden Ihnen eine E-Mail senden, sobald unsere Systeme bereit sind. Falls dies ein Spitzenwert ist, sprechen wir von Minuten oder Stunden. Falls wir neue Serverhardware hinzufügen müssen, bedeutet dies Tage. Vielen Dank für Ihre Geduld. Viele Grüße Stefan Wintermeyer PS: Zögern Sie nicht, sich per E-Mail zu beschweren an "
 
-#: lib/animina_web/live/email_validation_live.ex:19
+#: lib/animina_web/live/email_validation_live.ex:25
 #, elixir-autogen, elixir-format
 msgid "with a confirmation link. Please click it to confirm your email address. The email is already on its way to you. Please check your spam folder in case it doesn't show up in your inbox"
 msgstr "mit einem Bestätigungslink. Bitte klicken Sie darauf, um Ihre E-Mail-Adresse zu bestätigen. Die E-Mail ist bereits auf dem Weg zu Ihnen. Bitte überprüfen Sie Ihren Spam-Ordner, falls sie nicht in Ihrem Posteingang erscheint."
 
-#: lib/animina_web/live/chat_live.ex:523
-#: lib/animina_web/live/dashboard_live.ex:441
-#: lib/animina_web/live/profile_live.ex:771
+#: lib/animina_web/live/chat_live.ex:558
+#: lib/animina_web/live/dashboard_live.ex:436
+#: lib/animina_web/live/profile_live.ex:648
 #, elixir-autogen, elixir-format
 msgid "years"
 msgstr "Jahre"
@@ -1425,3 +1405,134 @@ msgstr "👫❤️ Bestätigen Sie die E-Mail-Adresse für Ihr neues ANIMINA-Kon
 #, elixir-autogen, elixir-format
 msgid "👫❤️ Reset Your Password for your ANIMINA account"
 msgstr "👫❤️ Setzen Sie Ihr Passwort für Ihr ANIMINA-Konto zurück"
+
+#: lib/animina_web/components/profile/profile_components.ex:578
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Activate"
+msgstr "Aktiv"
+
+#: lib/animina_web/live/profile_live.ex:651
+#, elixir-autogen, elixir-format
+msgid "Add new story"
+msgstr "Neue Story hinzufügen"
+
+#: lib/animina_web/live/root_live.ex:53
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Animina Login"
+msgstr "Animina-Profil"
+
+#: lib/animina_web/live/root_live.ex:315
+#: lib/animina_web/live/root_live.ex:334
+#, elixir-autogen, elixir-format
+msgid "Country"
+msgstr "Land"
+
+#: lib/animina_web/live/chat_live.ex:86
+#: lib/animina_web/live/story_live.ex:53
+#: lib/animina_web/live/story_live.ex:104
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Feeding our internal AI with this text. Please wait a second"
+msgstr "Unsere interne KI wird mit diesem Text gefüttert. Bitte einen Moment warten"
+
+#: lib/animina_web/live/story_live.ex:30
+#: lib/animina_web/live/story_live.ex:75
+#: lib/animina_web/live/story_live.ex:922
+#, elixir-autogen, elixir-format
+msgid "Fix spelling and grammar errors"
+msgstr "Rechtschreib- und Grammatikfehler beheben"
+
+#: lib/animina_web/live/story_live.ex:914
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Fix spelling and grammar errors."
+msgstr "Rechtschreib- und Grammatikfehler beheben"
+
+#: lib/animina_web/live/story_live.ex:1018
+#, elixir-autogen, elixir-format
+msgid "Generate story"
+msgstr "Story generieren"
+
+#: lib/animina_web/live/language_switch_live.ex:21
+#, elixir-autogen, elixir-format
+msgid "Language switched successfully"
+msgstr "Sprache erfolgreich umgeschaltet"
+
+#: lib/animina_web/live/story_live.ex:954
+#: lib/animina_web/live/story_live.ex:962
+#, elixir-autogen, elixir-format, fuzzy
+msgid "More Exciting"
+msgstr "Spannender machen"
+
+#: lib/animina_web/live/messages_live.ex:60
+#, elixir-autogen, elixir-format
+msgid "New Messages"
+msgstr "Neue Nachrichten"
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:298
+#, elixir-autogen, elixir-format
+msgid "No Unread Messages"
+msgstr "Keine ungelesenen Nachrichten"
+
+#: lib/animina_web/components/profile/profile_components.ex:633
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Non Active"
+msgstr "Aktiv"
+
+#: lib/animina_web/live/story_live.ex:899
+#, elixir-autogen, elixir-format
+msgid "Optimize a Story"
+msgstr "Eine Story optimieren"
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:52
+#, elixir-autogen, elixir-format
+msgid "Period Of Time"
+msgstr "Zeitraum"
+
+#: lib/animina_web/live/language_switch_live.ex:32
+#, elixir-autogen, elixir-format
+msgid "Please select your preferred language"
+msgstr "Bitte wählen Sie Ihre bevorzugte Sprache"
+
+#: lib/animina_web/live/report_live/show_report.ex:40
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Report"
+msgstr "Berichte"
+
+#: lib/animina_web/live/create_report_component.ex:129
+#, elixir-autogen, elixir-format
+msgid "Report User"
+msgstr "Benutzer melden"
+
+#: lib/animina_web/live/report_live/review_report.ex:77
+#, elixir-autogen, elixir-format
+msgid "Report reviewed successfully."
+msgstr "Bericht erfolgreich überprüft."
+
+#: lib/animina_web/live/story_live.ex:1134
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr "Wird gespeichert..."
+
+#: lib/animina_web/live/root_live.ex:323
+#, elixir-autogen, elixir-format
+msgid "Select your country"
+msgstr "Wählen Sie Ihr Land aus"
+
+#: lib/animina_web/live/profile_stories_live.ex:328
+#, elixir-autogen, elixir-format, fuzzy
+msgid "To activate your profile you have to have at least an about me story and a profile picture uploaded. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
+msgstr "Um Ihr Profil zu aktivieren, müssen Sie mindestens eine Story haben. Eine Story kann nur ein Foto, nur einen Text oder beides enthalten. Sie können Stories jederzeit hinzufügen, bearbeiten und löschen. Mit Stories präsentieren Sie sich anderen. Sie haben mehr Erfolg, wenn Sie mindestens drei davon in Ihrem Profil haben."
+
+#: lib/animina_web/live/story_live.ex:1041
+#, elixir-autogen, elixir-format
+msgid "Update Photo"
+msgstr "Foto aktualisieren"
+
+#: lib/animina_web/components/dashboard/dashboard_components.ex:331
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Your Message here ..."
+msgstr "Ihre Nachricht hier..."
+
+#: lib/animina_web/components/report/report_components.ex:96
+#, elixir-autogen, elixir-format, fuzzy
+msgid "view Report"
+msgstr "Bericht anzeigen"
