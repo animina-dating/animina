@@ -509,7 +509,7 @@ defmodule AniminaWeb.ProfileComponents do
     <div
       phx-click="redirect_to_delete_account_page"
       id="redirect_to_delete_account_page"
-      class="flex hover:bg-red-100 group cursor-pointer hover:text-red-500 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
+      class="flex hover:bg-red-100 group cursor-pointer hover:text-red-500 transition-all ease-in-out duration-500 flex-col gap-1 "
     >
       <div class="flex items-center justify-between gap-x-6">
         <div class="min-w-0">
@@ -531,7 +531,7 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
         </div>
         <div class="flex flex-none items-center gap-x-4">
-          <p class="hidden rounded-md bg-red-500 text-white px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-inset ring-red-500 hover:bg-red-600 sm:block">
+          <p class="hidden rounded-md w-[150px] text-center bg-red-500 text-white px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-inset ring-red-500 hover:bg-red-600 sm:block">
             <%= with_locale(@language, fn -> %>
               <%= gettext("Delete Account") %>
             <% end) %>
@@ -556,7 +556,7 @@ defmodule AniminaWeb.ProfileComponents do
       phx-value-state={@state}
       phx-value-action={@action}
       id={"user-state-#{@value}"}
-      class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 p-3 transition-all ease-in-out duration-500 flex-col gap-1 "
+      class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 transition-all ease-in-out duration-500 flex-col gap-1 "
     >
       <div class="flex items-center justify-between gap-x-6">
         <div class="min-w-0">
@@ -573,7 +573,7 @@ defmodule AniminaWeb.ProfileComponents do
           </div>
         </div>
         <div :if={@state != @value} class="flex flex-none items-center gap-x-4">
-          <p class="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
+          <p class="hidden w-[150px] text-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
             <%= with_locale(@language, fn -> %>
               <%= gettext("Activate") %>
             <% end) %>
@@ -619,21 +619,7 @@ defmodule AniminaWeb.ProfileComponents do
     ~H"""
     <%= if @state == @value do %>
       <.active_mark language={@language} value={@value} />
-    <% else %>
-      <.inactive_mark language={@language} value={@value} />
     <% end %>
-    """
-  end
-
-  defp inactive_mark(assigns) do
-    ~H"""
-    <div id={"inactive-mark-#{@value}"}>
-      <p class="mt-0.5 whitespace-nowrap rounded-md bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("Non Active") %>
-        <% end) %>
-      </p>
-    </div>
     """
   end
 
