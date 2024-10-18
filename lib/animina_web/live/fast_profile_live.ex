@@ -270,6 +270,28 @@ defmodule AniminaWeb.FastProfileLive do
         add_new_story_title={with_locale(@language, fn -> gettext("Add new story") end)}
       />
 
+      <%= live_render(
+        @socket,
+        AniminaWeb.ProfileStoriesLive,
+        session: %{
+          "user" => @user,
+          "current_user" => @current_user,
+          "language" => @language
+        },
+        id: "profile_stories_live"
+      ) %>
+
+      <%= live_render(
+        @socket,
+        AniminaWeb.ProfilePostsLive,
+        session: %{
+          "user" => @user,
+          "current_user" => @current_user,
+          "language" => @language
+        },
+        id: "profile_posts_live"
+      ) %>
+
       <div :if={@current_user && @current_user.id != @user.id} class="w-[100%] py-6 flex justify-end">
         <.link
           navigate={"/v2/#{@user.username}/report"}
