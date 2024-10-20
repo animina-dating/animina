@@ -314,13 +314,11 @@ defmodule Animina.Accounts.Photo do
   end
 
   def create_photo_flags(record) do
-    IO.inspect(record)
-
     if File.exists?("priv/static/uploads/" <> record.filename) do
       {flags, description} =
-        ImageTagging.tag_image_using_llava("#{record.filename}") |> IO.inspect()
+        ImageTagging.tag_image_using_llava("#{record.filename}")
 
-      case update(record, %{description: description, tagged: true}) |> IO.inspect() do
+      case update(record, %{description: description, tagged: true}) do
         {:ok, record} ->
           create_photo_flags(record, flags)
 
@@ -332,10 +330,7 @@ defmodule Animina.Accounts.Photo do
 
   def create_photo_flags(record, flags) do
     Enum.each(flags, fn flag ->
-      IO.inspect(flag)
-
       Flag.by_name(flag)
-      |> IO.inspect()
       |> case do
         {:ok, flag} ->
           PhotoFlags.create(%{
@@ -343,7 +338,6 @@ defmodule Animina.Accounts.Photo do
             photo_id: record.id,
             flag_id: flag.id
           })
-          |> IO.inspect(label: "PhotoFlags.create")
 
         {:error, _} ->
           nil
