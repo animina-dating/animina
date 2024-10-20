@@ -71,7 +71,8 @@ defmodule Animina.Accounts.Photo do
         :error_state,
         :state,
         :user_id,
-        :story_id
+        :story_id,
+        :tagged
       ]
 
       primary? true
@@ -90,7 +91,8 @@ defmodule Animina.Accounts.Photo do
         :state,
         :user_id,
         :story_id,
-        :description
+        :description,
+        :tagged
       ]
 
       require_atomic? false
@@ -226,6 +228,8 @@ defmodule Animina.Accounts.Photo do
     attribute :error, :string
     attribute :error_state, :string
 
+    attribute :tagged, :boolean, default: false
+
     attribute :state, :atom do
       constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
 
@@ -310,10 +314,13 @@ defmodule Animina.Accounts.Photo do
   end
 
   def create_photo_flags(record) do
-    if File.exists?("priv/static/uploads/" <> record.filename) do
-      {flags, description} = ImageTagging.tag_image_using_llava("#{record.filename}")
+    IO.inspect(record)
 
-      case update(record, %{description: description}) do
+    if File.exists?("priv/static/uploads/" <> record.filename) do
+      {flags, description} =
+        ImageTagging.tag_image_using_llava("#{record.filename}") |> IO.inspect()
+
+      case update(record, %{description: description, tagged: true}) |> IO.inspect() do
         {:ok, record} ->
           create_photo_flags(record, flags)
 
@@ -323,9 +330,12 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  defp create_photo_flags(record, flags) do
+  def create_photo_flags(record, flags) do
     Enum.each(flags, fn flag ->
+      IO.inspect(flag)
+
       Flag.by_name(flag)
+      |> IO.inspect()
       |> case do
         {:ok, flag} ->
           PhotoFlags.create(%{
@@ -333,13 +343,14 @@ defmodule Animina.Accounts.Photo do
             photo_id: record.id,
             flag_id: flag.id
           })
+          |> IO.inspect(label: "PhotoFlags.create")
 
         {:error, _} ->
           nil
       end
     end)
 
-    {:ok, record}
+    :ok
   end
 
   defp update_user_registration_completed_at(user_id) do
