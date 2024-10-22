@@ -283,6 +283,16 @@ defmodule AniminaWeb.LiveUserAuth do
     Enum.any?(user.roles, fn role -> role.name == :admin end)
   end
 
+  defp user_in_waitlist_socket(socket, nil) do
+    {:halt,
+     socket
+     |> Phoenix.LiveView.redirect(to: "/")
+     |> Phoenix.LiveView.put_flash(
+       :error,
+       "You need to login or sign up to access this page"
+     )}
+  end
+
   defp user_in_waitlist_socket(socket, user) do
     if user.is_in_waitlist do
       {:halt,
