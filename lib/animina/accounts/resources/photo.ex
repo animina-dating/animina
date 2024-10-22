@@ -316,9 +316,12 @@ defmodule Animina.Accounts.Photo do
   def create_photo_flags(record) do
     if File.exists?("priv/static/uploads/" <> record.filename) do
       {flags, description} =
-        ImageTagging.tag_image_using_llava("#{record.filename}")
+        ImageTagging.auto_tag_image("#{record.filename}")
 
-      case update(record, %{description: description, tagged: true}) do
+      record
+      |> Ash.Changeset.for_update(:update, %{description: description, tagged: true})
+      |> Ash.update(authorize?: false)
+      |> case do
         {:ok, record} ->
           create_photo_flags(record, flags)
 
@@ -326,6 +329,14 @@ defmodule Animina.Accounts.Photo do
           :ok
       end
     end
+  end
+
+  def get_all_untagged_photos do
+    __MODULE__
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(tagged == ^false)
+    |> Ash.Query.sort(created_at: :asc)
+    |> Ash.read!(authorize?: false)
   end
 
   def create_photo_flags(record, flags) do
