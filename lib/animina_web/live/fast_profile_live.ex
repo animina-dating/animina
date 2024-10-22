@@ -23,6 +23,20 @@ defmodule AniminaWeb.FastProfileLive do
   end
 
   @impl true
+  def mount(_params, %{"language" => _language}, socket) do
+    current_user =
+      socket.assigns.current_user
+
+    if current_user do
+      {:ok,
+       socket
+       |> push_navigate(to: ~p"/v2/#{current_user.username}")}
+    else
+      raise Animina.Fallback
+    end
+  end
+
+  @impl true
   def mount(_params, _session, _socket) do
     raise Animina.Fallback
   end
