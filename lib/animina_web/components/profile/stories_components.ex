@@ -68,14 +68,21 @@ defmodule AniminaWeb.StoriesComponents do
 
         <h3 class="mt-3 text-lg font-semibold leading-6 text-white">
           <span class="absolute inset-0"></span> <%= @story.headline.subject %>
+
+          <%= state =
+            if(
+              is_atom(@story.photo.state),
+              do: @story.photo.state,
+              else: String.to_atom(@story.photo.state)
+            ) %>
           <p
             :if={
               @current_user && @story.photo.state != :approved &&
                 (@story.user_id == @current_user.id || admin_user?(@current_user))
             }
-            class={"p-1 text-[10px] #{get_photo_state_styling(@story.photo.state)} absolute top-2 left-2 rounded-md "}
+            class={"p-1 text-[10px] #{get_photo_state_styling(state)} absolute top-2 left-2 rounded-md "}
           >
-            <%= get_photo_state_name(@story.photo.state, @language) %>
+            <%= get_photo_state_name(state, @language) %>
           </p>
         </h3>
       </div>

@@ -7,89 +7,53 @@ defmodule AniminaWeb.ProfileStoriesLive do
   alias Animina.Accounts
   alias Animina.Narratives
   alias Animina.Traits
-  alias Phoenix.LiveView.AsyncResult
 
   require Ash.Query
 
   @impl true
   def mount(
         _params,
-        %{"user_id" => user_id, "current_user" => current_user, "language" => language},
+        %{"user" => user, "current_user" => current_user, "language" => language},
         socket
       ) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Animina.PubSub, "story:created:#{user.id}")
+      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{user.id}")
+    end
+
     current_user_green_flags =
       if current_user do
-        fetch_flags(current_user.id, :green) |> filter_flags(:green, language)
+        fetch_flags(current_user.id, :green) |> filter_flags(:green)
       else
         []
       end
-
-    if connected?(socket) do
-      Phoenix.PubSub.subscribe(Animina.PubSub, "story:created:#{user_id}")
-      Phoenix.PubSub.subscribe(Animina.PubSub, "user_flag:created:#{user_id}")
-    end
 
     current_user_red_flags =
       if current_user do
-        fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
+        fetch_flags(current_user.id, :red) |> filter_flags(:red)
       else
         []
       end
 
-    flags = fetch_flags(user_id, :white) |> filter_flags(:white, language)
+    flags = fetch_flags(user.id, :white) |> filter_flags(:white)
+
+    {count, stories} = fetch_stories(user.id)
 
     socket =
       socket
       |> assign(stories: AsyncResult.loading())
       |> assign(:stories_items, [])
       |> assign(profile_stories: fetch_stories(user_id, language))
+      |> assign(count: count)
       |> assign(language: language)
       |> assign(flags: flags)
       |> assign(current_user: current_user)
-      |> assign(user: Accounts.User.by_id!(user_id))
+      |> assign(user: user)
       |> assign(current_user_green_flags: current_user_green_flags)
       |> assign(current_user_red_flags: current_user_red_flags)
-      |> stream(:stories, fetch_stories(user_id, language))
+      |> stream(:stories, stories)
 
     {:ok, socket, layout: false}
-  end
-
-  @impl true
-  def handle_async(:fetch_stories, {:ok, data}, socket) do
-    %{stories: stories, current_user: current_user, language: language} =
-      socket.assigns
-
-    current_user_green_flags =
-      if current_user do
-        fetch_flags(current_user.id, :green) |> filter_flags(:green, language)
-      else
-        []
-      end
-
-    current_user_red_flags =
-      if current_user do
-        fetch_flags(current_user.id, :red) |> filter_flags(:red, language)
-      else
-        []
-      end
-
-    {:noreply,
-     socket
-     |> assign(
-       :stories,
-       AsyncResult.ok(stories, data)
-     )
-     |> assign(stories_items: data)
-     |> assign(current_user_green_flags: current_user_green_flags)
-     |> assign(current_user_red_flags: current_user_red_flags)
-     |> stream(:stories, data)}
-  end
-
-  @impl true
-  def handle_async(:fetch_stories, {:exit, reason}, socket) do
-    %{stories: stories} = socket.assigns
-
-    {:noreply, assign(socket, :stories, AsyncResult.failed(stories, {:exit, reason}))}
   end
 
   @impl true
@@ -146,27 +110,44 @@ defmodule AniminaWeb.ProfileStoriesLive do
         %{event: "create", payload: %{data: %Narratives.Story{} = story}},
         socket
       ) do
+    item = %{
+      id: story.id,
+      photo: story.photo,
+      story: story
+    }
+
     {:noreply,
      socket
-     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id, socket.assigns.language))
-     |> stream(
-       :stories,
-       fetch_stories(story.user_id, socket.assigns.language),
-       reset: true
-     )}
+     |> assign(:count, socket.assigns.count + 1)
+     |> stream_insert(:stories, item, at: 0)}
   end
 
+  @impl true
   def handle_info(
-        %{event: "create", payload: %{data: %Traits.UserFlags{} = user_flag}},
+        %{event: "create", payload: %{data: %Traits.UserFlags{} = _user_flag}},
         socket
       ) do
+    current_user_green_flags =
+      if socket.assigns.current_user do
+        fetch_flags(socket.assigns.current_user.id, :green) |> filter_flags(:green)
+      else
+        []
+      end
+
+    current_user_red_flags =
+      if socket.assigns.current_user do
+        fetch_flags(socket.assigns.urrent_user.id, :red) |> filter_flags(:red)
+      else
+        []
+      end
+
+    flags = fetch_flags(socket.assigns.user.id, :white) |> filter_flags(:white)
+
     {:noreply,
      socket
-     |> stream(
-       :stories,
-       fetch_stories(user_flag.user_id, socket.assigns.language),
-       reset: true
-     )}
+     |> assign(current_user_green_flags: current_user_green_flags)
+     |> assign(current_user_red_flags: current_user_red_flags)
+     |> assign(flags: flags)}
   end
 
   @impl true
@@ -192,29 +173,28 @@ defmodule AniminaWeb.ProfileStoriesLive do
       ) do
     {:noreply,
      socket
-     |> assign(:profile_stories, fetch_stories(socket.assigns.user.id, socket.assigns.language))
      |> delete_story_by_dom_id("stories-" <> story.id)}
   end
 
   defp update_photo(socket, photo) do
-    item =
-      Enum.find(socket.assigns.stories_items, fn item ->
-        item.photo != nil && item.photo.id == photo.id
-      end)
+    {:ok, story} = Narratives.Story.by_id(photo.story_id)
 
-    item = Map.merge(item, %{photo: photo, story: %{item.story | photo: photo}})
+    item = %{
+      id: story.id,
+      photo: photo,
+      story: story
+    }
 
     socket
     |> stream_insert(:stories, item, at: -1)
   end
 
   defp update_story(socket, story) do
-    item =
-      Enum.find(socket.assigns.stories_items, fn item ->
-        item.story.id == story.id
-      end)
-
-    item = Map.merge(item, %{story: story})
+    item = %{
+      id: story.id,
+      photo: story.photo,
+      story: story
+    }
 
     socket
     |> stream_insert(:stories, item, at: -1)
@@ -223,11 +203,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
   defp delete_story_by_dom_id(socket, dom_id) do
     socket
     |> stream_delete_by_dom_id(:stories, dom_id)
-    |> stream(
-      :stories,
-      fetch_stories(socket.assigns.user.id, socket.assigns.language),
-      reset: true
-    )
+    |> assign(:count, socket.assigns.count - 1)
   end
 
   defp fetch_flags(user_id, _color) do
@@ -237,28 +213,30 @@ defmodule AniminaWeb.ProfileStoriesLive do
     |> Ash.read!()
   end
 
-  defp fetch_stories(user_id, _) do
-    stories =
-      Narratives.Story
-      |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-      |> Ash.read!(page: [limit: 50])
-      |> then(& &1.results)
+  defp fetch_stories(user_id) do
+    {:ok, offset} =
+      Narratives.FastStory
+      |> Ash.ActionInput.for_action(:by_user_id, %{id: user_id, limit: 50})
+      |> Ash.run_action()
 
-    stories
-    |> Enum.map(fn story ->
-      %{
-        id: story.id,
-        photo: story.photo,
-        story: story
-      }
-    end)
+    stories =
+      offset.results
+      |> Enum.map(fn story ->
+        %{
+          id: story.id,
+          photo: story.photo,
+          story: story
+        }
+      end)
+
+    {offset.count, stories}
   end
 
-  defp filter_flags(nil, _color, _language) do
+  defp filter_flags(nil, _color) do
     []
   end
 
-  defp filter_flags(flags, color, _language) do
+  defp filter_flags(flags, color) do
     flags =
       flags
       |> Enum.filter(fn trait ->
@@ -278,7 +256,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col gap-4 w-[100%]">
-      <div class={"gap-8 columns  #{if Enum.count(@profile_stories) > 0 do "md:columns-2 lg:columns-3 " else "columns-1" end } "}>
+      <div class={"gap-8 columns  #{if @count > 0 do "md:columns-2 lg:columns-3 " else "columns-1" end } "}>
         <div id="stream_stories" phx-update="stream">
           <div
             :for={{dom_id, %{story: story, photo: photo}} <- @streams.stories}

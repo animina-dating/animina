@@ -108,7 +108,7 @@ defmodule Animina.Accounts.FastUser do
             left_join: c in subquery(city_query),
             on: u.zip_code == c.zip_code,
             left_join: p in subquery(photo_query),
-            on: u.id == p.user_id,
+            on: u.id == p.user_id and is_nil(p.story_id),
             left_join: op in subquery(optimized_photo_query),
             on: p.id == op.photo_id,
             left_join: cr in subquery(credit_points_query),
@@ -165,34 +165,38 @@ defmodule Animina.Accounts.FastUser do
         result =
           Repo.one(query)
 
-        # cast roles, city, profile_photo to struct
-        roles =
-          Enum.map(result.roles, fn user_role ->
-            user_role = struct(UserRole, Animina.keys_to_atoms(user_role))
+        if is_nil(result) do
+          {:error, :user_not_found}
+        else
+          # cast roles, city, profile_photo to struct
+          roles =
+            Enum.map(result.roles, fn user_role ->
+              user_role = struct(UserRole, Animina.keys_to_atoms(user_role))
 
-            Map.merge(user_role, %{
-              role: struct(Role, user_role.role)
+              Map.merge(user_role, %{
+                role: struct(Role, user_role.role)
+              })
+            end)
+
+          city = struct(City, Animina.keys_to_atoms(result.city))
+          profile_photo = struct(Photo, Animina.keys_to_atoms(result.profile_photo))
+          age = UserAge.calculate_age(result.birthday)
+
+          optimized_photos =
+            Enum.map(profile_photo.optimized_photos, fn optimized_photo ->
+              struct(OptimizedPhoto, optimized_photo)
+            end)
+
+          result =
+            Map.merge(result, %{
+              roles: roles,
+              age: age,
+              city: city,
+              profile_photo: Map.merge(profile_photo, %{optimized_photos: optimized_photos})
             })
-          end)
 
-        city = struct(City, Animina.keys_to_atoms(result.city))
-        profile_photo = struct(Photo, Animina.keys_to_atoms(result.profile_photo))
-        age = UserAge.calculate_age(result.birthday)
-
-        optimized_photos =
-          Enum.map(profile_photo.optimized_photos, fn optimized_photo ->
-            struct(OptimizedPhoto, optimized_photo)
-          end)
-
-        result =
-          Map.merge(result, %{
-            roles: roles,
-            age: age,
-            city: city,
-            profile_photo: Map.merge(profile_photo, %{optimized_photos: optimized_photos})
-          })
-
-        {:ok, result}
+          {:ok, result}
+        end
       end
     end
   end
@@ -216,6 +220,7 @@ defmodule Animina.Accounts.FastUser do
     attribute :partner_gender, :string, public?: true
     attribute :search_range, :integer, public?: true
     attribute :language, :string, public?: true
+    attribute :state, :atom, public?: true
     attribute :legal_terms_accepted, :boolean, public?: true
     attribute :registration_completed_at, :utc_datetime_usec, public?: true
     attribute :preapproved_communication_only, :boolean, public?: true

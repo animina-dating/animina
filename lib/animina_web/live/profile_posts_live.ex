@@ -22,20 +22,19 @@ defmodule AniminaWeb.ProfilePostsLive do
       |> assign(language: language)
       |> assign(current_user: current_user)
       |> assign(user: user)
-      |> assign(stories: fetch_stories(user.id))
+      |> assign(stories_count: fetch_stories_count(user.id))
       |> stream(:posts, fetch_posts(user.id, current_user))
 
     {:ok, socket, layout: false}
   end
 
-  defp fetch_stories(user_id) do
-    stories =
-      Narratives.Story
-      |> Ash.Query.for_read(:by_user_id, %{user_id: user_id})
-      |> Ash.read!(page: [limit: 50])
-      |> then(& &1.results)
+  defp fetch_stories_count(user_id) do
+    {:ok, offset} =
+      Narratives.FastStory
+      |> Ash.ActionInput.for_action(:by_user_id, %{id: user_id})
+      |> Ash.run_action()
 
-    stories
+    offset.count
   end
 
   @impl true
@@ -70,7 +69,7 @@ defmodule AniminaWeb.ProfilePostsLive do
       ) do
     {:noreply,
      socket
-     |> assign(:stories, fetch_stories(socket.assigns.user.id))}
+     |> assign(:stories_count, socket.assigns.stories_count + 1)}
   end
 
   @impl true
@@ -80,7 +79,7 @@ defmodule AniminaWeb.ProfilePostsLive do
       ) do
     {:noreply,
      socket
-     |> assign(:stories, fetch_stories(socket.assigns.user.id))}
+     |> assign(:stories_count, socket.assigns.stories_count - 1)}
   end
 
   @impl true
@@ -131,7 +130,7 @@ defmodule AniminaWeb.ProfilePostsLive do
     ~H"""
     <div class="py-8 space-y-8">
       <div class="flex  justify-end w-[100%]">
-        <div :if={@current_user && @current_user.id == @user.id && Enum.count(@stories) >= 3}>
+        <div :if={@current_user && @current_user.id == @user.id && @stories_count >= 3}>
           <.link
             navigate="/my/posts/new"
             class="flex justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
