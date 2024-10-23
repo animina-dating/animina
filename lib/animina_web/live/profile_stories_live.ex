@@ -41,9 +41,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     socket =
       socket
-      |> assign(stories: AsyncResult.loading())
       |> assign(:stories_items, [])
-      |> assign(profile_stories: fetch_stories(user_id, language))
       |> assign(count: count)
       |> assign(language: language)
       |> assign(flags: flags)
