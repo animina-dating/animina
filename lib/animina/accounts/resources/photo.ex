@@ -319,7 +319,10 @@ defmodule Animina.Accounts.Photo do
         ImageTagging.auto_tag_image("#{record.filename}")
 
       record
-      |> Ash.Changeset.for_update(:update, %{description: description, tagged_at: DateTime.utc_now()})
+      |> Ash.Changeset.for_update(:update, %{
+        description: description,
+        tagged_at: DateTime.utc_now()
+      })
       |> Ash.update(authorize?: false)
       |> case do
         {:ok, record} ->
