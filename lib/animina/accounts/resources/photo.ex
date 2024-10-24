@@ -72,7 +72,7 @@ defmodule Animina.Accounts.Photo do
         :state,
         :user_id,
         :story_id,
-        :tagged
+        :tagged_at
       ]
 
       primary? true
@@ -92,7 +92,7 @@ defmodule Animina.Accounts.Photo do
         :user_id,
         :story_id,
         :description,
-        :tagged
+        :tagged_at
       ]
 
       require_atomic? false
@@ -228,7 +228,7 @@ defmodule Animina.Accounts.Photo do
     attribute :error, :string
     attribute :error_state, :string
 
-    attribute :tagged, :boolean, default: false
+    attribute :tagged_at, :utc_datetime, allow_nil?: true
 
     attribute :state, :atom do
       constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
@@ -319,7 +319,7 @@ defmodule Animina.Accounts.Photo do
         ImageTagging.auto_tag_image("#{record.filename}")
 
       record
-      |> Ash.Changeset.for_update(:update, %{description: description, tagged: true})
+      |> Ash.Changeset.for_update(:update, %{description: description, tagged_at: DateTime.utc_now()})
       |> Ash.update(authorize?: false)
       |> case do
         {:ok, record} ->
@@ -334,7 +334,7 @@ defmodule Animina.Accounts.Photo do
   def get_all_untagged_photos do
     __MODULE__
     |> Ash.Query.for_read(:read)
-    |> Ash.Query.filter(tagged == ^false)
+    |> Ash.Query.filter(tagged_at == nil)
     |> Ash.Query.sort(created_at: :asc)
     |> Ash.read!(authorize?: false)
   end

@@ -47,7 +47,7 @@ defmodule Animina.GenServers.PhotoTag do
       Photo
       |> Ash.Query.for_read(:read)
       |> Ash.Query.sort(created_at: :asc)
-      |> Ash.Query.filter(tagged == ^false)
+      |> Ash.Query.filter(tagged_at == nil)
       |> Ash.Query.sort(created_at: :asc)
       |> Ash.read!(authorize?: false, page: [limit: 6])
 
