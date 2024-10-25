@@ -4,7 +4,7 @@ defmodule Animina.ImageTagging do
   """
   alias Animina.Traits.Flag
 
-  def tag_image_using_llava(image) do
+  def auto_tag_image(image) do
     new_image = "priv/static/uploads/#{image}"
 
     tmp_image_path = "/tmp/test-photo.jpg"

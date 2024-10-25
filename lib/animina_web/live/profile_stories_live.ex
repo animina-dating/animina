@@ -41,6 +41,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
 
     socket =
       socket
+      |> assign(:stories_items, [])
       |> assign(count: count)
       |> assign(language: language)
       |> assign(flags: flags)
@@ -87,7 +88,11 @@ defmodule AniminaWeb.ProfileStoriesLive do
         %{event: "update", payload: %{data: %Accounts.Photo{} = photo}},
         socket
       ) do
-    {:noreply, update_photo(socket, photo)}
+    if socket.assigns[:mounted] do
+      {:noreply, update_photo(socket, photo)}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
