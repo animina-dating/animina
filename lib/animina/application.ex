@@ -36,7 +36,9 @@ defmodule Animina.Application do
              serving: Servings.NsfwDetectionServing.serving(),
              batch_timeout: 100},
             {Animina.GenServers.Photo, 0},
-            {Animina.GenServers.PhotoConsumerSupervisor, []}
+            {Animina.GenServers.PhotoTag, 0},
+            {Animina.GenServers.PhotoConsumerSupervisor, []},
+            {Animina.GenServers.PhotoTagConsumerSupervisor, []}
           ]
 
         # children

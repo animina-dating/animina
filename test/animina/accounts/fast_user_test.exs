@@ -61,6 +61,18 @@ defmodule Animina.Accounts.FastUserTest do
       assert {:ok, user_result} = result
       assert [] != Enum.filter(user_result.roles, fn role -> role.id == user_role.id end)
     end
+
+    test "An error is returned for a user does not exist",
+         %{
+           user: _user
+         } do
+      result =
+        FastUser
+        |> Ash.ActionInput.for_action(:by_id_email_or_username, %{email: "a@example.com"})
+        |> Ash.run_action()
+
+      assert {:error, _} = result
+    end
   end
 
   defp create_user do

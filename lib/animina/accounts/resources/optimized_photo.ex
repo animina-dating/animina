@@ -23,6 +23,7 @@ defmodule Animina.Accounts.OptimizedPhoto do
     define :create
     define :destroy
     define :by_type_and_photo_id, get?: true
+    define :by_photo_id
   end
 
   actions do
@@ -56,6 +57,16 @@ defmodule Animina.Accounts.OptimizedPhoto do
       pagination offset?: true, keyset?: true, required?: false
 
       filter expr(type == ^arg(:type) and photo_id == ^arg(:photo_id))
+    end
+
+    read :by_photo_id do
+      argument :photo_id, :uuid do
+        allow_nil? false
+      end
+
+      pagination offset?: true, keyset?: true, required?: false
+
+      filter expr(photo_id == ^arg(:photo_id))
     end
   end
 

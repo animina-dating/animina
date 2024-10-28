@@ -71,7 +71,8 @@ defmodule Animina.Accounts.Photo do
         :error_state,
         :state,
         :user_id,
-        :story_id
+        :story_id,
+        :tagged_at
       ]
 
       primary? true
@@ -90,7 +91,8 @@ defmodule Animina.Accounts.Photo do
         :state,
         :user_id,
         :story_id,
-        :description
+        :description,
+        :tagged_at
       ]
 
       require_atomic? false
@@ -226,6 +228,8 @@ defmodule Animina.Accounts.Photo do
     attribute :error, :string
     attribute :error_state, :string
 
+    attribute :tagged_at, :utc_datetime, allow_nil?: true
+
     attribute :state, :atom do
       constraints one_of: [:pending_review, :in_review, :approved, :rejected, :error, :nsfw]
 
@@ -311,9 +315,16 @@ defmodule Animina.Accounts.Photo do
 
   def create_photo_flags(record) do
     if File.exists?("priv/static/uploads/" <> record.filename) do
-      {flags, description} = ImageTagging.tag_image_using_llava("#{record.filename}")
+      {flags, description} =
+        ImageTagging.auto_tag_image("#{record.filename}")
 
-      case update(record, %{description: description}) do
+      record
+      |> Ash.Changeset.for_update(:update, %{
+        description: description,
+        tagged_at: DateTime.utc_now()
+      })
+      |> Ash.update(authorize?: false)
+      |> case do
         {:ok, record} ->
           create_photo_flags(record, flags)
 
@@ -323,7 +334,15 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  defp create_photo_flags(record, flags) do
+  def get_all_untagged_photos do
+    __MODULE__
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.filter(tagged_at == nil)
+    |> Ash.Query.sort(created_at: :asc)
+    |> Ash.read!(authorize?: false)
+  end
+
+  def create_photo_flags(record, flags) do
     Enum.each(flags, fn flag ->
       Flag.by_name(flag)
       |> case do
@@ -339,7 +358,7 @@ defmodule Animina.Accounts.Photo do
       end
     end)
 
-    {:ok, record}
+    :ok
   end
 
   defp update_user_registration_completed_at(user_id) do
