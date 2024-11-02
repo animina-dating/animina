@@ -6,15 +6,13 @@ defmodule Animina.UserEmail do
   import Swoosh.Email
   import AniminaWeb.Gettext
   alias Animina.Mailer
-  use AshAuthentication.Sender
 
-  def send(user, confirm, _opts) do
+  def send_pin(user) do
     subject = gettext("👫❤️ Confirm the email address for your new ANIMINA account")
 
     body =
       construct_salutation(user) <>
-        construct_email_body() <>
-        construct_link(confirm) <>
+        construct_email_body(user) <>
         construct_signature()
 
     send_email(
@@ -29,20 +27,19 @@ defmodule Animina.UserEmail do
     "Hi #{user.name}!\n"
   end
 
-  defp construct_email_body do
-    ~S"""
-
-    Your new ANIMINA https://animina.de account has been created with this
+  defp construct_email_body(user) do
+    "Your new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Please confirm the email address by clicking the monstrosity of a link
-    below or do nothing in case you didn't create the account.
+    Below is your super secret 6 digit pin that you can use to verify your account once you
+    visit  https://animina.de/my/email-validation , you have only 3 attemps so make sure
+    you get it right.
 
-    """
-  end
 
-  defp construct_link(confirm) do
-    "\n #{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
+    #{user.confirmation_pin}
+
+
+    "
   end
 
   defp construct_signature do
@@ -58,14 +55,6 @@ defmodule Animina.UserEmail do
     human boss Stefan Wintermeyer <stefan@wintermeyer.de> in case you
     have any questions or concerns.
     """
-  end
-
-  defp get_link(:prod) do
-    "https://animina.de"
-  end
-
-  defp get_link(_) do
-    "http://localhost:4000"
   end
 
   def send_email(

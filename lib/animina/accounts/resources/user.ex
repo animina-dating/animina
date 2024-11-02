@@ -57,16 +57,6 @@ defmodule Animina.Accounts.User do
       end
     end
 
-    add_ons do
-      confirmation :confirm_new_user do
-        monitor_fields [:email]
-        confirm_on_create? true
-        confirm_on_update? false
-        sender Animina.UserEmail
-        token_lifetime {365, :days}
-      end
-    end
-
     tokens do
       enabled? true
       token_resource Accounts.Token
@@ -201,7 +191,9 @@ defmodule Animina.Accounts.User do
         :confirmed_at,
         :is_in_waitlist,
         :registration_completed_at,
-        :country
+        :country,
+        :confirmation_pin,
+        :confirmation_pin_attempts
       ]
 
       primary? true
@@ -407,6 +399,7 @@ defmodule Animina.Accounts.User do
     change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
              insert_user_into_waitlist_if_needed(record)
+             add_confirmation_pin_to_user_and_send_email(record)
 
              # First user in dev becomes admin by default.
              if Mix.env() == :dev && Enum.count(Accounts.User.read!()) == 1 do
@@ -502,6 +495,12 @@ defmodule Animina.Accounts.User do
 
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
+
+    attribute :confirmation_pin, :integer do
+      allow_nil? true
+    end
+
+    attribute :confirmation_pin_attempts, :integer, default: 0
 
     attribute :minimum_partner_age, :integer do
       allow_nil? true
@@ -619,6 +618,14 @@ defmodule Animina.Accounts.User do
       {:ok, user} = Accounts.User.update(record, %{is_in_waitlist: true})
       send_notification_email_to_admin(user)
     end
+  end
+
+  defp add_confirmation_pin_to_user_and_send_email(record) do
+    random_pin = :rand.uniform(900_000) + 100_000
+
+    {:ok, user} = Accounts.User.update(record, %{confirmation_pin: random_pin})
+
+    UserEmail.send_pin(user)
   end
 
   defp send_notification_email_to_admin(user) do
