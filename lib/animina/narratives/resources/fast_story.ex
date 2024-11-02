@@ -21,6 +21,11 @@ defmodule Animina.Narratives.FastStory do
     repo Animina.Repo
   end
 
+  code_interface do
+    domain Animina.Accounts
+    define :by_user_id
+  end
+
   actions do
     defaults []
 

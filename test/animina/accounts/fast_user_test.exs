@@ -62,7 +62,21 @@ defmodule Animina.Accounts.FastUserTest do
       assert [] != Enum.filter(user_result.roles, fn role -> role.id == user_role.id end)
     end
 
-    test "An error is returned for a user does not exist",
+    test "Can read a list of users",
+         %{
+           user: user
+         } do
+      result =
+        FastUser
+        |> Ash.ActionInput.for_action(:list, %{})
+        |> Ash.run_action()
+
+      assert {:ok, users} = result
+      assert users.count > 0
+      assert [] != Enum.filter(users.results, fn u -> u.id == user.id end)
+    end
+
+    test "An error is returned for a user that does not exist",
          %{
            user: _user
          } do
