@@ -1,8 +1,7 @@
 defmodule AniminaWeb.EmailValidationLive do
   use AniminaWeb, :live_view
-  alias Animina.UserEmail
   alias Animina.Accounts.User
-
+  alias Animina.UserEmail
   @impl true
   def mount(_, %{"language" => language} = _session, socket) do
     socket =
