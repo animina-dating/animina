@@ -7,36 +7,34 @@ defmodule Animina.UserEmail do
   import AniminaWeb.Gettext
   alias Animina.Mailer
 
-  def send_pin(user) do
+  def send_pin(name, email, pin) do
     subject = gettext("👫❤️ Confirm the email address for your new ANIMINA account")
 
     body =
-      construct_salutation(user) <>
-        construct_email_body(user) <>
+      construct_salutation(name) <>
+        construct_email_body(pin) <>
         construct_signature()
 
     send_email(
-      user.name,
-      Ash.CiString.value(user.email),
+      name,
+      Ash.CiString.value(email),
       subject,
       body
     )
   end
 
-  defp construct_salutation(user) do
-    "Hi #{user.name}!\n"
+  defp construct_salutation(name) do
+    "Hi #{name}!\n"
   end
 
-  defp construct_email_body(user) do
+  defp construct_email_body(pin) do
     "Your new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Below is your super secret 6 digit pin that you can use to verify your account once you
-    visit  https://animina.de/my/email-validation , you have only 3 attemps so make sure
-    you get it right.
+    Please use this 6 digit PIN to verify your new ANIMINA account.
 
 
-    #{user.confirmation_pin}
+    #{pin}
 
 
     "

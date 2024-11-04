@@ -9,7 +9,7 @@ defmodule Animina.Repo.Migrations.MigrateResources18 do
 
   def up do
     alter table(:users) do
-      add :confirmation_pin, :bigint
+      add :confirmation_pin, :text
       add :confirmation_pin_attempts, :bigint, default: 0
     end
   end

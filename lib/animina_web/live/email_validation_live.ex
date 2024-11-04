@@ -21,17 +21,15 @@ defmodule AniminaWeb.EmailValidationLive do
   end
 
   def handle_event("verify_pin", %{"user" => %{"pin" => pin}}, socket) do
-    case String.to_integer(pin) == socket.assigns.current_user.confirmation_pin do
-      true ->
-        correct_pin_socket(socket)
-
-      _ ->
-        incorrect_pin_socket(socket)
+    if Bcrypt.verify_pass(pin, socket.assigns.current_user.confirmation_pin) do
+      correct_pin_socket(socket)
+    else
+      incorrect_pin_socket(socket)
     end
   end
 
   def handle_event("resend_pin", _params, socket) do
-    UserEmail.send_pin(socket.assigns.current_user)
+    set_new_pin_and_send_by_email(socket.assigns.current_user)
 
     {:noreply,
      socket
@@ -40,6 +38,8 @@ defmodule AniminaWeb.EmailValidationLive do
        with_locale(socket.assigns.language, fn -> gettext("Email Sent Successfully") end)
      )}
   end
+
+  # 315223
 
   defp incorrect_pin_socket(socket) do
     if socket.assigns.current_user.confirmation_pin_attempts == 2 do
@@ -79,6 +79,23 @@ defmodule AniminaWeb.EmailValidationLive do
        :info,
        with_locale(socket.assigns.language, fn -> gettext("Account Confirmed Successfully") end)
      )}
+  end
+
+  defp set_new_pin_and_send_by_email(user) do
+    random_pin =
+      (:rand.uniform(900_000) + 100_000)
+      |> Integer.to_string()
+
+    hashed_pin =
+      random_pin
+      |> Bcrypt.hash_pwd_salt()
+
+    User.update(user, %{
+      confirmation_pin: hashed_pin,
+      confirmation_pin_attempts: 0
+    })
+
+    UserEmail.send_pin(user.name, user.email, random_pin)
   end
 
   @impl true

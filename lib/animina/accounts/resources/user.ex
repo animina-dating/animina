@@ -399,14 +399,35 @@ defmodule Animina.Accounts.User do
     change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
              insert_user_into_waitlist_if_needed(record)
-             add_confirmation_pin_to_user_and_send_email(record)
-
              # First user in dev becomes admin by default.
              if Mix.env() == :dev && Enum.count(Accounts.User.read!()) == 1 do
                add_role(changeset, :admin)
              end
 
              {:ok, record}
+           end),
+           on: [:create]
+
+    change before_action(fn changeset, record ->
+             random_pin =
+               (:rand.uniform(900_000) + 100_000)
+               |> Integer.to_string()
+
+             hashed_pin =
+               random_pin
+               |> Bcrypt.hash_pwd_salt()
+
+             changeset =
+               changeset
+               |> Ash.Changeset.force_change_new_attribute(:confirmation_pin, hashed_pin)
+
+             UserEmail.send_pin(
+               changeset.attributes.name,
+               changeset.attributes.email,
+               random_pin
+             )
+
+             changeset
            end),
            on: [:create]
 
@@ -496,8 +517,8 @@ defmodule Animina.Accounts.User do
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
 
-    attribute :confirmation_pin, :integer do
-      allow_nil? true
+    attribute :confirmation_pin, :string do
+      allow_nil? false
     end
 
     attribute :confirmation_pin_attempts, :integer, default: 0
@@ -618,14 +639,6 @@ defmodule Animina.Accounts.User do
       {:ok, user} = Accounts.User.update(record, %{is_in_waitlist: true})
       send_notification_email_to_admin(user)
     end
-  end
-
-  defp add_confirmation_pin_to_user_and_send_email(record) do
-    random_pin = :rand.uniform(900_000) + 100_000
-
-    {:ok, user} = Accounts.User.update(record, %{confirmation_pin: random_pin})
-
-    UserEmail.send_pin(user)
   end
 
   defp send_notification_email_to_admin(user) do
