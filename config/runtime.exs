@@ -116,30 +116,29 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   if System.get_env("INVOCATION_ID") do
-      config :logger, default_handler: false
-  
-      config :animina, :logger, [
-        # this handler implements journald protocol for structured logs 
-        {:handler, :systemd, :systemd_journal_h,
-         %{
-           config: %{
-             fields: [
-               # default metadata
-               :syslog_timestamp,
-               :level,
-               :priority,
-               {"SYSLOG_IDENTIFIER", ~c"animina"},
-               {"SERVICE_VERSION", System.get_env("RELEASE_VSN")},
-               # custom metadata
-               :request_id,
-               :current_user_id,
-               :my_other_var
-             ]
-           },
-           formatter:
-             Logger.Formatter.new(format: "$metadata[$level] $message", metadata: [:request_id])
-         }}
-      ]
-    end
+    config :logger, default_handler: false
+
+    config :animina, :logger, [
+      # this handler implements journald protocol for structured logs 
+      {:handler, :systemd, :systemd_journal_h,
+       %{
+         config: %{
+           fields: [
+             # default metadata
+             :syslog_timestamp,
+             :level,
+             :priority,
+             {"SYSLOG_IDENTIFIER", ~c"animina"},
+             {"SERVICE_VERSION", System.get_env("RELEASE_VSN")},
+             # custom metadata
+             :request_id,
+             :current_user_id,
+             :my_other_var
+           ]
+         },
+         formatter:
+           Logger.Formatter.new(format: "$metadata[$level] $message", metadata: [:request_id])
+       }}
+    ]
   end
 end
