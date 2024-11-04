@@ -9,7 +9,7 @@ defmodule Animina.Application do
   @impl true
   def start(_type, _args) do
     Logger.add_handlers(:animina)
-    
+
     children = [
       AniminaWeb.Telemetry,
       Animina.Repo,
