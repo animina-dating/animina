@@ -1,7 +1,7 @@
 defmodule AniminaWeb.EmailValidationLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts.User
-  alias Animina.UserEmail
+
   @impl true
   def mount(_, %{"language" => language} = _session, socket) do
     socket =
@@ -17,29 +17,33 @@ defmodule AniminaWeb.EmailValidationLive do
   def handle_event("verify_pin", %{"user" => %{"pin" => ""}}, socket) do
     {:noreply,
      socket
-     |> put_flash(:error, "Please enter the PIN")}
+     |> put_flash(
+       :error,
+       with_locale(socket.assigns.language, fn -> gettext("Please enter the PIN") end)
+     )}
   end
 
   def handle_event("verify_pin", %{"user" => %{"pin" => pin}}, socket) do
-    if Bcrypt.verify_pass(pin, socket.assigns.current_user.confirmation_pin) do
+    email = Ash.CiString.value(socket.assigns.current_user.email)
+
+    if Bcrypt.verify_pass(email <> pin, socket.assigns.current_user.confirmation_pin) do
       correct_pin_socket(socket)
     else
       incorrect_pin_socket(socket)
     end
   end
 
-  def handle_event("resend_pin", _params, socket) do
-    set_new_pin_and_send_by_email(socket.assigns.current_user)
+  def handle_event("send_a_new_pin", _params, socket) do
+    user = User.generate_pin_and_email_it(socket.assigns.current_user, "update")
 
     {:noreply,
      socket
+     |> assign(current_user: user)
      |> put_flash(
        :info,
        with_locale(socket.assigns.language, fn -> gettext("Email Sent Successfully") end)
      )}
   end
-
-  # 315223
 
   defp incorrect_pin_socket(socket) do
     if socket.assigns.current_user.confirmation_pin_attempts == 2 do
@@ -51,7 +55,9 @@ defmodule AniminaWeb.EmailValidationLive do
        |> put_flash(
          :error,
          with_locale(socket.assigns.language, fn ->
-           gettext("Account Deleted , Kindly Sign Up Again")
+           gettext(
+             "You entered a wrong PIN three times. Therefore we deleted the account. But you can create a new one right away.!"
+           )
          end)
        )}
     else
@@ -64,7 +70,9 @@ defmodule AniminaWeb.EmailValidationLive do
        |> push_navigate(to: "/my/email-validation")
        |> put_flash(
          :error,
-         with_locale(socket.assigns.language, fn -> gettext("Wrong PIN Entered !") end)
+         with_locale(socket.assigns.language, fn ->
+           gettext("Wrong PIN Entered!")
+         end)
        )}
     end
   end
@@ -79,23 +87,6 @@ defmodule AniminaWeb.EmailValidationLive do
        :info,
        with_locale(socket.assigns.language, fn -> gettext("Account Confirmed Successfully") end)
      )}
-  end
-
-  defp set_new_pin_and_send_by_email(user) do
-    random_pin =
-      (:rand.uniform(900_000) + 100_000)
-      |> Integer.to_string()
-
-    hashed_pin =
-      random_pin
-      |> Bcrypt.hash_pwd_salt()
-
-    User.update(user, %{
-      confirmation_pin: hashed_pin,
-      confirmation_pin_attempts: 0
-    })
-
-    UserEmail.send_pin(user.name, user.email, random_pin)
   end
 
   @impl true
@@ -152,7 +143,7 @@ defmodule AniminaWeb.EmailValidationLive do
           </button>
 
           <p
-            phx-click="resend_pin"
+            phx-click="send_a_new_pin"
             class="block text-sm leading-6 text-blue-600 transition-all duration-500 ease-in-out hover:text-blue-500 dark:hover:text-blue-500 hover:cursor-pointer hover:underline"
           >
             <%= with_locale(@language, fn -> %>

@@ -20,6 +20,8 @@ config :animina, env: Mix.env()
 
 config :animina, :max_users_per_hour, 100
 
+config :animina, :length_of_confirmation_pin, 6
+
 # Configures the number of stories required for complete registration
 config :animina, :number_of_stories_required_for_complete_registration, 1
 

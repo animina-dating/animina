@@ -8,7 +8,7 @@ defmodule Animina.UserEmail do
   alias Animina.Mailer
 
   def send_pin(name, email, pin) do
-    subject = gettext("👫❤️ Confirm the email address for your new ANIMINA account")
+    subject = gettext("👫❤️ Confirm your ANIMINA account")
 
     body =
       construct_salutation(name) <>
@@ -31,10 +31,13 @@ defmodule Animina.UserEmail do
     "Your new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Please use this 6 digit PIN to verify your new ANIMINA account.
+    Please use this #{Application.get_env(:animina, :length_of_confirmation_pin)} digit PIN to verify your new ANIMINA account.
 
 
     #{pin}
+
+
+    If you didn't create an account just do nothing. We will auto delete the entry within 24 hours.
 
 
     "

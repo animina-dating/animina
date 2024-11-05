@@ -409,23 +409,16 @@ defmodule Animina.Accounts.User do
            on: [:create]
 
     change before_action(fn changeset, record ->
-             random_pin =
-               (:rand.uniform(900_000) + 100_000)
-               |> Integer.to_string()
-
-             hashed_pin =
-               random_pin
-               |> Bcrypt.hash_pwd_salt()
+             new_pin =
+               generate_pin_and_email_it(
+                 changeset.attributes.name,
+                 changeset.attributes.email,
+                 "create"
+               )
 
              changeset =
                changeset
-               |> Ash.Changeset.force_change_new_attribute(:confirmation_pin, hashed_pin)
-
-             UserEmail.send_pin(
-               changeset.attributes.name,
-               changeset.attributes.email,
-               random_pin
-             )
+               |> Ash.Changeset.force_change_new_attribute(:confirmation_pin, new_pin)
 
              changeset
            end),
@@ -664,5 +657,46 @@ defmodule Animina.Accounts.User do
 
   defp send_notification_to_user_if_they_are_removed_from_waitlist(_, _) do
     :ok
+  end
+
+  def generate_pin_and_email_it(name, email, "create") do
+    new_pin =
+      generate_pin()
+
+    hashed_pin =
+      hash_pin(email, new_pin)
+
+    UserEmail.send_pin(name, email, new_pin)
+
+    hashed_pin
+  end
+
+  def generate_pin_and_email_it(user, "update") do
+    new_pin =
+      generate_pin()
+
+    hashed_pin =
+      hash_pin(user.email, new_pin)
+
+    {:ok, user} =
+      Accounts.User.update(user, %{
+        confirmation_pin: hashed_pin,
+        confirmation_pin_attempts: 0
+      })
+
+    UserEmail.send_pin(user.name, user.email, new_pin)
+
+    user
+  end
+
+  defp generate_pin do
+    Enum.map_join(1..Application.get_env(:animina, :length_of_confirmation_pin), "", fn _ ->
+      Integer.to_string(Enum.random(0..9))
+    end)
+  end
+
+  defp hash_pin(email, pin) do
+    email = email |> Ash.CiString.value()
+    Bcrypt.hash_pwd_salt(email <> pin)
   end
 end
