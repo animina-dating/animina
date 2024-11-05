@@ -531,7 +531,7 @@ msgstr "Ich akzeptiere die rechtlichen Bedingungen von Animina."
 #: lib/animina_web/live/delete_account_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "If you want to delete your account, click the button below, this action is irreversible"
-msgstr "Wenn Sie Ihr Konto löschen möchten, klicken Sie unten auf den Button, diese Aktion ist irreversibel"
+msgstr "Wenn Sie Ihr Konto löschen möchten, klicken Sie unten auf den Button, diese Aktion ist irreversibel!"
 
 #: lib/animina_web/live/dashboard_live.ex:393
 #, elixir-autogen, elixir-format
@@ -667,7 +667,7 @@ msgstr "Meine Beiträge"
 #: lib/animina_web/live/potential_partner_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "My profile is only visible for animina users."
-msgstr "Mein Profil ist nur für Animina-Nutzer sichtbar."
+msgstr "Mein Profil ist nur für eingeloggte ANIMINA-Nutzer sichtbar."
 
 #: lib/animina_web/components/bookmark/bookmarks_components.ex:118
 #: lib/animina_web/components/profile/stories_components.ex:184
@@ -716,7 +716,7 @@ msgstr "Beruf"
 #: lib/animina_web/live/potential_partner_live.ex:415
 #, elixir-autogen, elixir-format
 msgid "Only users who I liked can initiate a chat."
-msgstr "Nur Nutzer, die ich mag, können einen Chat initiieren."
+msgstr "Nur Nutzer, die ich mit einem Herzen geliked habe, können einen Chat initiieren."
 
 #: lib/animina_web/live/root_live.ex:112
 #, elixir-autogen, elixir-format
@@ -1376,7 +1376,7 @@ msgstr "Postleitzahl"
 #: lib/animina_web/live/delete_account_live.ex:129
 #, elixir-autogen, elixir-format
 msgid "to make sure that this is not an accident."
-msgstr "um sicherzustellen, dass dies kein Unfall ist."
+msgstr "um sicherzustellen, dass dies kein Versehen war."
 
 #: lib/animina_web/live/root_live.ex:517
 #, elixir-autogen, elixir-format
