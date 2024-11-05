@@ -28,10 +28,9 @@ defmodule Animina.UserEmail do
   end
 
   defp construct_email_body(pin) do
-    "Your new ANIMINA https://animina.de account has been created with this
-    email address.
+    "
 
-    Please use this #{Application.get_env(:animina, :length_of_confirmation_pin)} digit PIN to verify your new ANIMINA account.
+    Please use this  PIN to verify your new ANIMINA account.
 
 
     #{pin}
