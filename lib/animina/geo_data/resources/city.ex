@@ -10,6 +10,10 @@ defmodule Animina.GeoData.City do
   postgres do
     table "geo_data_cities"
     repo Animina.Repo
+
+    custom_indexes do
+      index [:zip_code]
+    end
   end
 
   code_interface do
