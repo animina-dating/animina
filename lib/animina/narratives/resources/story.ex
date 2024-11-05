@@ -18,6 +18,11 @@ defmodule Animina.Narratives.Story do
     references do
       reference :user, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:headline_id]
+      index [:user_id]
+    end
   end
 
   code_interface do

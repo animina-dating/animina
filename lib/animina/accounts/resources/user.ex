@@ -25,6 +25,15 @@ defmodule Animina.Accounts.User do
     table "users"
 
     repo Animina.Repo
+
+    custom_indexes do
+      index [:registration_completed_at]
+      index [:state]
+      index [:gender]
+      index [:created_at]
+      index [:is_private]
+      index [:zip_code]
+    end
   end
 
   authentication do

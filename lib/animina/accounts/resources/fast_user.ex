@@ -55,9 +55,9 @@ defmodule Animina.Accounts.FastUser do
           from u in user_query(),
             where: u.is_private == ^false,
             where: u.gender == ^input.arguments.gender,
-            where: u.state == ^:normal or u.state == ^:validated,
-            where: u.created_at >= ^date,
-            where: is_nil(u.registration_completed_at) == ^false,
+            # where: u.state == ^:normal or u.state == ^:validated,
+            # where: u.created_at >= ^date,
+            # where: is_nil(u.registration_completed_at) == ^false,
             select: count(u.id)
 
         # merge pagination and count to query
@@ -67,10 +67,10 @@ defmodule Animina.Accounts.FastUser do
             offset: ^offset,
             where: u.is_private == ^false,
             where: u.gender == ^input.arguments.gender,
-            where: u.state == ^:normal or u.state == ^:validated,
-            where: u.created_at >= ^date,
-            where: is_nil(u.registration_completed_at) == ^false,
-            order_by: fragment("RANDOM()"),
+            # where: u.state == ^:normal or u.state == ^:validated,
+            # where: u.created_at >= ^date,
+            # where: is_nil(u.registration_completed_at) == ^false,
+            # order_by: fragment("RANDOM()"),
             select_merge: %{count: subquery(total_count_query)}
 
         # load the results
