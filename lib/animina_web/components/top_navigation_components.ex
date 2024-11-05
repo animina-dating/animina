@@ -7,7 +7,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   import AniminaWeb.Gettext
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
-  alias Animina.Accounts.User
+  alias Animina.Accounts.FastUser
   alias Animina.StringHelper
   import Gettext, only: [with_locale: 2]
 
@@ -124,7 +124,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp flag_language_switcher(assigns) do
     ~H"""
-    <div class="flex gap-4 items-center items-center">
+    <div class="flex gap-4 items-center">
       <.link navigate="/language-switch">
         <%= if @language == "en" do %>
           🇺🇸
@@ -1012,7 +1012,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_female_users do
-    case User.female_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+           limit: 3,
+           gender: "female"
+         }) do
       {:ok, offset} ->
         offset.results
 
@@ -1022,7 +1025,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_male_users do
-    case User.male_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+           limit: 3,
+           gender: "male"
+         }) do
       {:ok, offset} ->
         offset.results
 
