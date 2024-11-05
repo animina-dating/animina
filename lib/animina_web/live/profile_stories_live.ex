@@ -263,7 +263,7 @@ defmodule AniminaWeb.ProfileStoriesLive do
           >
             <.live_component
               module={AniminaWeb.StoryComponent}
-              id={"story_#{story.id}"}
+              id={"story_#{story.id}_#{story.created_at}"}
               story={story}
               photo={photo}
               user={@user}
