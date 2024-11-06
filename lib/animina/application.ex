@@ -8,6 +8,8 @@ defmodule Animina.Application do
 
   @impl true
   def start(_type, _args) do
+    Logger.add_handlers(:animina)
+
     children = [
       AniminaWeb.Telemetry,
       Animina.Repo,
@@ -22,7 +24,8 @@ defmodule Animina.Application do
       # {Animina.Worker, arg},
       # Start to serve requests, typically the last entry
       AniminaWeb.Endpoint,
-      {AshAuthentication.Supervisor, otp_app: :animina}
+      {AshAuthentication.Supervisor, otp_app: :animina},
+      :systemd.ready()
     ]
 
     children =

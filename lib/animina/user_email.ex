@@ -6,43 +6,41 @@ defmodule Animina.UserEmail do
   import Swoosh.Email
   import AniminaWeb.Gettext
   alias Animina.Mailer
-  use AshAuthentication.Sender
 
-  def send(user, confirm, _opts) do
-    subject = gettext("👫❤️ Confirm the email address for your new ANIMINA account")
+  def send_pin(name, email, pin) do
+    subject = gettext("👫❤️ Confirm your ANIMINA account")
 
     body =
-      construct_salutation(user) <>
-        construct_email_body() <>
-        construct_link(confirm) <>
+      construct_salutation(name) <>
+        construct_email_body(pin) <>
         construct_signature()
 
     send_email(
-      user.name,
-      Ash.CiString.value(user.email),
+      name,
+      Ash.CiString.value(email),
       subject,
       body
     )
   end
 
-  defp construct_salutation(user) do
-    "Hi #{user.name}!\n"
+  defp construct_salutation(name) do
+    "Hi #{name}!\n"
   end
 
-  defp construct_email_body do
-    ~S"""
-
-    Your new ANIMINA https://animina.de account has been created with this
+  defp construct_email_body(pin) do
+    "Your new ANIMINA https://animina.de account has been created with this
     email address.
 
-    Please confirm the email address by clicking the monstrosity of a link
-    below or do nothing in case you didn't create the account.
+    Please use this #{Application.get_env(:animina, :length_of_confirmation_pin)} digit PIN to verify your new ANIMINA account.
 
-    """
-  end
 
-  defp construct_link(confirm) do
-    "\n #{"#{get_link(Application.get_env(:animina, :env))}/auth/user/confirm_new_user?#{URI.encode_query(confirm: confirm)}"}"
+    #{pin}
+
+
+    If you didn't create an account just do nothing. We will auto delete the entry within 24 hours.
+
+
+    "
   end
 
   defp construct_signature do
@@ -58,14 +56,6 @@ defmodule Animina.UserEmail do
     human boss Stefan Wintermeyer <stefan@wintermeyer.de> in case you
     have any questions or concerns.
     """
-  end
-
-  defp get_link(:prod) do
-    "https://animina.de"
-  end
-
-  defp get_link(_) do
-    "http://localhost:4000"
   end
 
   def send_email(

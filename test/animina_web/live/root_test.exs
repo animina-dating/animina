@@ -80,7 +80,7 @@ defmodule AniminaWeb.RootTest do
       assert html =~ "We just send you an email"
 
       assert html =~
-               "with a confirmation link. Please click it to confirm your email address. The email is already on its way to you."
+               "Please enter the PIN to verify your email address."
     end
 
     test "When more users than the one required per hour sign up , they are added to the waitlist",
