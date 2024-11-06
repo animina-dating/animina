@@ -319,8 +319,7 @@ defmodule AniminaWeb.RootLive do
               <%= select(
                 f,
                 :country,
-                ["Germany"],
-                prompt: with_locale(@language, fn -> gettext("Select your country") end),
+                [{with_locale(@language, fn -> gettext("Germany") end), "Germany"}],
                 class:
                   "block w-full select-styling-root rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
                     unless(get_field_errors(f[:country], :country) == [],

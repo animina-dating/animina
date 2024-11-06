@@ -1545,6 +1545,11 @@ msgstr "Konto erfolgreich bestätigt"
 msgid "Chats"
 msgstr "Chat"
 
+
+msgid "Germany"
+msgstr "Deutschland"
+
+
 #: lib/animina_web/live/email_validation_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Did not receive the email? Click here to resend."
