@@ -57,16 +57,6 @@ defmodule Animina.Accounts.User do
       end
     end
 
-    add_ons do
-      confirmation :confirm_new_user do
-        monitor_fields [:email]
-        confirm_on_create? true
-        confirm_on_update? false
-        sender Animina.UserEmail
-        token_lifetime {365, :days}
-      end
-    end
-
     tokens do
       enabled? true
       token_resource Accounts.Token
@@ -201,7 +191,9 @@ defmodule Animina.Accounts.User do
         :confirmed_at,
         :is_in_waitlist,
         :registration_completed_at,
-        :country
+        :country,
+        :confirmation_pin,
+        :confirmation_pin_attempts
       ]
 
       primary? true
@@ -407,13 +399,28 @@ defmodule Animina.Accounts.User do
     change after_action(fn changeset, record, _ ->
              add_role(changeset, :user)
              insert_user_into_waitlist_if_needed(record)
-
              # First user in dev becomes admin by default.
              if Mix.env() == :dev && Enum.count(Accounts.User.read!()) == 1 do
                add_role(changeset, :admin)
              end
 
              {:ok, record}
+           end),
+           on: [:create]
+
+    change before_action(fn changeset, record ->
+             new_pin =
+               generate_pin_and_email_it(
+                 changeset.attributes.name,
+                 changeset.attributes.email,
+                 "create"
+               )
+
+             changeset =
+               changeset
+               |> Ash.Changeset.force_change_new_attribute(:confirmation_pin, new_pin)
+
+             changeset
            end),
            on: [:create]
 
@@ -502,6 +509,12 @@ defmodule Animina.Accounts.User do
 
     attribute :minimum_partner_height, :integer, allow_nil?: true
     attribute :maximum_partner_height, :integer, allow_nil?: true
+
+    attribute :confirmation_pin, :string do
+      allow_nil? false
+    end
+
+    attribute :confirmation_pin_attempts, :integer, default: 0
 
     attribute :minimum_partner_age, :integer do
       allow_nil? true
@@ -644,5 +657,46 @@ defmodule Animina.Accounts.User do
 
   defp send_notification_to_user_if_they_are_removed_from_waitlist(_, _) do
     :ok
+  end
+
+  def generate_pin_and_email_it(name, email, "create") do
+    new_pin =
+      generate_pin()
+
+    hashed_pin =
+      hash_pin(email, new_pin)
+
+    UserEmail.send_pin(name, email, new_pin)
+
+    hashed_pin
+  end
+
+  def generate_pin_and_email_it(user, "update") do
+    new_pin =
+      generate_pin()
+
+    hashed_pin =
+      hash_pin(user.email, new_pin)
+
+    {:ok, user} =
+      Accounts.User.update(user, %{
+        confirmation_pin: hashed_pin,
+        confirmation_pin_attempts: 0
+      })
+
+    UserEmail.send_pin(user.name, user.email, new_pin)
+
+    user
+  end
+
+  defp generate_pin do
+    Enum.map_join(1..Application.get_env(:animina, :length_of_confirmation_pin), "", fn _ ->
+      Integer.to_string(Enum.random(0..9))
+    end)
+  end
+
+  defp hash_pin(email, pin) do
+    email = email |> Ash.CiString.value()
+    Bcrypt.hash_pwd_salt(email <> pin)
   end
 end

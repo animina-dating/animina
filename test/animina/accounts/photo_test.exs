@@ -73,7 +73,7 @@ defmodule Animina.Accounts.PhotoTest do
 
       assert Enum.empty?(photos) == true
 
-      assert {:ok, photo} =
+      assert {:ok, _photo} =
                Photo.create(%{
                  filename: "filename",
                  original_filename: "original_filename",
@@ -115,7 +115,7 @@ defmodule Animina.Accounts.PhotoTest do
 
       assert {:error, _} = Photo.create(%{})
 
-      assert {:ok, photo} =
+      assert {:ok, _photo} =
                Photo.create(%{
                  filename: "filename",
                  original_filename: "original_filename",
