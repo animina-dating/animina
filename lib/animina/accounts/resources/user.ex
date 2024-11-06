@@ -666,7 +666,7 @@ defmodule Animina.Accounts.User do
     hashed_pin =
       hash_pin(email, new_pin)
 
-    UserEmail.send_pin(name, email, new_pin)
+    spawn(fn -> UserEmail.send_pin(name, email, new_pin) end)
 
     hashed_pin
   end
@@ -684,7 +684,7 @@ defmodule Animina.Accounts.User do
         confirmation_pin_attempts: 0
       })
 
-    UserEmail.send_pin(user.name, user.email, new_pin)
+    spawn(fn -> UserEmail.send_pin(user.name, user.email, new_pin) end)
 
     user
   end
