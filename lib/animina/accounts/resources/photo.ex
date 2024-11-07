@@ -30,6 +30,11 @@ defmodule Animina.Accounts.Photo do
     references do
       reference :user, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:story_id]
+      index [:user_id]
+    end
   end
 
   state_machine do

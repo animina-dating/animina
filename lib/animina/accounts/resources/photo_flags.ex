@@ -18,6 +18,12 @@ defmodule Animina.Accounts.PhotoFlags do
       reference :photo, on_delete: :delete
       reference :flag, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:photo_id]
+      index [:user_id]
+      index [:flag_id]
+    end
   end
 
   code_interface do

@@ -10,6 +10,10 @@ defmodule Animina.Traits.Flag do
   postgres do
     table "traits_flags"
     repo Animina.Repo
+
+    custom_indexes do
+      index [:category_id]
+    end
   end
 
   code_interface do

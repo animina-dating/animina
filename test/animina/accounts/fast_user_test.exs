@@ -9,6 +9,8 @@ defmodule Animina.Accounts.FastUserTest do
   describe "Tests for the FastUser resource" do
     setup do
       user = create_user()
+      male_user = create_male_user()
+      female_user = create_female_user()
       role = create_admin_role()
       user_role = create_user_role(role, user)
       profile_photo = create_profile_picture(user)
@@ -16,7 +18,9 @@ defmodule Animina.Accounts.FastUserTest do
       [
         user: user,
         user_role: user_role,
-        profile_photo: profile_photo
+        profile_photo: profile_photo,
+        male_user: male_user,
+        female_user: female_user
       ]
     end
 
@@ -76,6 +80,40 @@ defmodule Animina.Accounts.FastUserTest do
       assert [] != Enum.filter(users.results, fn u -> u.id == user.id end)
     end
 
+    test "Can read a public list of male users registered in the last 60 days",
+         %{
+           male_user: user
+         } do
+      result =
+        FastUser
+        |> Ash.ActionInput.for_action(:public_users_who_created_an_account_in_the_last_60_days, %{
+          gender: "male"
+        })
+        |> Ash.run_action()
+
+      assert {:ok, users} = result
+      assert users.count > 0
+
+      assert [] != Enum.filter(users.results, fn u -> u.id == user.id end)
+    end
+
+    test "Can read a public list of female users registered in the last 60 days",
+         %{
+           female_user: user
+         } do
+      result =
+        FastUser
+        |> Ash.ActionInput.for_action(:public_users_who_created_an_account_in_the_last_60_days, %{
+          gender: "female"
+        })
+        |> Ash.run_action()
+
+      assert {:ok, users} = result
+      assert users.count > 0
+
+      assert [] != Enum.filter(users.results, fn u -> u.id == user.id end)
+    end
+
     test "An error is returned for a user that does not exist",
          %{
            user: _user
@@ -104,6 +142,50 @@ defmodule Animina.Accounts.FastUserTest do
         language: "de",
         country: "Germany",
         legal_terms_accepted: true
+      })
+
+    user
+  end
+
+  defp create_male_user do
+    {:ok, user} =
+      User.create(%{
+        email: "john@example.com",
+        username: "john",
+        name: "John",
+        hashed_password: "zzzzzzzzzzz",
+        birthday: "1950-01-01",
+        height: 180,
+        zip_code: "56068",
+        gender: "male",
+        mobile_phone: "0151-12345679",
+        language: "de",
+        country: "Germany",
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now(),
+        registration_completed_at: DateTime.utc_now()
+      })
+
+    user
+  end
+
+  defp create_female_user do
+    {:ok, user} =
+      User.create(%{
+        email: "alice@example.com",
+        username: "alice",
+        name: "Alice",
+        hashed_password: "zzzzzzzzzzz",
+        birthday: "1970-01-01",
+        height: 180,
+        zip_code: "56068",
+        gender: "female",
+        mobile_phone: "0151-12345689",
+        language: "de",
+        country: "Germany",
+        legal_terms_accepted: true,
+        confirmed_at: DateTime.utc_now(),
+        registration_completed_at: DateTime.utc_now()
       })
 
     user

@@ -29,10 +29,78 @@ defmodule Animina.Accounts.FastUser do
     domain Animina.Accounts
     define :by_id_email_or_username
     define :list
+    define :public_users_who_created_an_account_in_the_last_60_days
   end
 
   actions do
     defaults []
+
+    action :public_users_who_created_an_account_in_the_last_60_days, :map do
+      argument :limit, :integer, default: 10
+      argument :page, :integer, default: 1, constraints: [min: 1]
+      argument :gender, :string, allow_nil?: false
+
+      run fn input, _ ->
+        date = DateTime.add(DateTime.utc_now(), -60, :day)
+
+        # we dont need to filter by id, username or email. So we pass true as filter
+        # but pass extra filters in the options keyword list
+
+        query =
+          build_query(true, true, true,
+            filter_by_gender: dynamic([u], u.gender == ^input.arguments.gender),
+            filter_by_private_profile: dynamic([u], u.is_private == ^false),
+            filter_by_created_at: dynamic([u], u.created_at >= ^date),
+            filter_by_state: dynamic([u], u.state == ^:normal or u.state == ^:validated),
+            filter_by_registration_completed_at:
+              dynamic([u], is_nil(u.registration_completed_at) == ^false)
+          )
+
+        # query pagination
+        limit = input.arguments.limit
+        offset = (input.arguments.page - 1) * input.arguments.limit
+
+        # total users query
+        total_count_query =
+          from u in user_query(),
+            where: u.is_private == ^false,
+            where: u.gender == ^input.arguments.gender,
+            where: u.state == ^:normal or u.state == ^:validated,
+            where: u.created_at >= ^date,
+            where: is_nil(u.registration_completed_at) == ^false,
+            select: count(u.id)
+
+        # merge pagination and count to query
+        query =
+          from u in query,
+            limit: ^limit,
+            offset: ^offset,
+            order_by: fragment("RANDOM()"),
+            select_merge: %{count: subquery(total_count_query)}
+
+        # load the results
+        results =
+          Repo.all(query)
+
+        # get count of total results
+        count = Enum.at(results, 0, %{}) |> Map.get(:count, 0)
+
+        # map results to user struct
+        results = Enum.map(results, fn user -> to_user_struct(user) end)
+
+        results =
+          struct(Ash.Page.Offset, %{
+            count: count,
+            results: results,
+            offset: offset,
+            more?: count > input.arguments.page * input.arguments.limit,
+            page: input.arguments.page,
+            limit: input.arguments.limit
+          })
+
+        {:ok, results}
+      end
+    end
 
     action :list, :map do
       argument :limit, :integer, default: 10
@@ -63,7 +131,7 @@ defmodule Animina.Accounts.FastUser do
           Repo.all(query)
 
         # get count of total results
-        count = Enum.at(results, 0, %{}) |> Map.get(:count)
+        count = Enum.at(results, 0, %{}) |> Map.get(:count, 0)
 
         # map results to user struct
         results = Enum.map(results, fn user -> to_user_struct(user) end)
@@ -165,7 +233,7 @@ defmodule Animina.Accounts.FastUser do
     update_timestamp :updated_at
   end
 
-  defp build_query(filter_by_id, filter_by_username, filter_by_email) do
+  defp build_query(filter_by_id, filter_by_username, filter_by_email, opts \\ []) do
     query = user_query()
     user_roles_query = user_roles_query()
     roles_query = roles_query()
@@ -174,10 +242,30 @@ defmodule Animina.Accounts.FastUser do
     optimized_photo_query = optimized_photo_query()
     credit_points_query = credit_points_query()
 
+    filter_by_private_profile =
+      Keyword.get(opts, :filter_by_private_profile, true)
+
+    filter_by_gender =
+      Keyword.get(opts, :filter_by_gender, true)
+
+    filter_by_state =
+      Keyword.get(opts, :filter_by_state, true)
+
+    filter_by_created_at =
+      Keyword.get(opts, :filter_by_created_at, true)
+
+    filter_by_registration_completed_at =
+      Keyword.get(opts, :filter_by_registration_completed_at, true)
+
     from u in query,
       where: ^filter_by_username,
       where: ^filter_by_id,
       where: ^filter_by_email,
+      where: ^filter_by_private_profile,
+      where: ^filter_by_state,
+      where: ^filter_by_gender,
+      where: ^filter_by_created_at,
+      where: ^filter_by_registration_completed_at,
       left_join: ur in subquery(user_roles_query),
       on: u.id == ur.user_id,
       left_join: r in subquery(roles_query),
