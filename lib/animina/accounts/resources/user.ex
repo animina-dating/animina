@@ -422,6 +422,7 @@ defmodule Animina.Accounts.User do
                generate_pin_and_email_it(
                  changeset.attributes.name,
                  changeset.attributes.email,
+                 changeset.attributes.language,
                  "create"
                )
 
@@ -668,19 +669,19 @@ defmodule Animina.Accounts.User do
     :ok
   end
 
-  def generate_pin_and_email_it(name, email, "create") do
+  def generate_pin_and_email_it(name, email, language, "create") do
     new_pin =
       generate_pin()
 
     hashed_pin =
       hash_pin(email, new_pin)
 
-    spawn(fn -> UserEmail.send_pin(name, email, new_pin) end)
+    spawn(fn -> UserEmail.send_pin(name, email, new_pin, language) end)
 
     hashed_pin
   end
 
-  def generate_pin_and_email_it(user, "update") do
+  def generate_pin_and_email_it(user, language, "update") do
     new_pin =
       generate_pin()
 
@@ -693,7 +694,7 @@ defmodule Animina.Accounts.User do
         confirmation_pin_attempts: 0
       })
 
-    spawn(fn -> UserEmail.send_pin(user.name, user.email, new_pin) end)
+    spawn(fn -> UserEmail.send_pin(user.name, user.email, new_pin, language) end)
 
     user
   end
