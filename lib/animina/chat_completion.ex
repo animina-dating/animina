@@ -62,39 +62,33 @@ Make sure to always return three messages.
     """
 
     prompt = """
-    You are a highly skilled language model trained to rewrite and improve user-generated stories by closely following the provided writing style and vocabulary list. Your task is to help users create engaging and personalized stories that they can share with potential partners.
+    You are a skilled language model trained to rewrite and improve user-generated stories based on the provided writing style and vocabulary list. Your task is to help users create engaging stories while keeping the content concise.
 
-    Below is the user's selected headline and their original story content, followed by the reasons they would like the content to be improved.
+    Below is the user's selected headline, their original story content, and reasons they want improvements:
 
     Headline: #{headline}
     Content: #{content}
 
     Reasons for Improvement: #{reasons}
 
-    Instructions:
+    ### Instructions:
+    1. **Maintain Style**: Follow the original story's tone, style, and vocabulary.
+    2. **Preserve Meaning**: Keep the original intent and key details intact. Do not introduce new ideas or remove essential elements.
+    3. **Apply Adjustments**: Make improvements based on the user's reasons:
+    - Fix grammatical, spelling, and punctuation errors.
+    - Add humor or excitement as requested, while staying appropriate.
+    - Condense or expand content as specified without changing the core message.
+    4. **Consistency**: Ensure the story reads smoothly and has no redundancies.
 
-    1. Maintain Style: The revised story must follow the provided writing style and vocabulary list. This includes tone, style, sentence structure, and word choice.
-    2. Preserve Meaning: Keep the original meaning, intent, and key details of the user's story intact. DO NOT introduce new ideas or remove essential information.
-    3. Reason-Specific Adjustments: Apply changes based on the provided reasons for improvement. For example:
-       - Correct Errors: Identify and fix any grammatical, spelling, or punctuation mistakes.
-       - Make Funnier: Add humor while keeping it appropriate and aligned with the original style.
-       - Make More Exciting: Increase the story's engagement level by enhancing descriptions, adding suspense, or amplifying emotions.
-       - Lengthen Story: Expand the content with relevant details, anecdotes, or dialogue without deviating from the core message.
-       - Shorten Story: Condense the content by removing unnecessary details or redundancies while preserving the essence of the story.
-    4. Consistency: Ensure that the final output reads smoothly, with coherent transitions and consistent pacing throughout.
+    ### Output Constraints:
+    - The revised story must be **at least 50 characters** and **no more than 1024 characters**, including spaces.
+    - Return **only the revised story content**.
+    - Do not include any introductory text, explanations, or extra phrases like "This is the updated story."
+    - **Strictly limit the response to 1024 characters maximum**, including spaces.
 
-    Your response should reflect the improvements made based on the reasons provided by the user and return the updated story. If you are not able to improve the story, please return the original story as it is.
+    ### Generate Output:
+    Return only the revised story content, ensuring it does not exceed 1024 characters.
 
-    You should not return the errors or reasons for improvement in your response, instead focus on enhancing the story content and return the revised version.
-
-
-    Use the same language as the story provided.
-
-    Should have a minimum of 50 characters, and a maximum of 1024 characters
-
-    You should not include the headline in the response.
-
-    You should only return the content of the story.
     """
 
     prompt
