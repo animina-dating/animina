@@ -1541,9 +1541,6 @@ msgid "Chats"
 msgstr "Chat"
 
 
-msgid "Germany"
-msgstr "Deutschland"
-
 
 #: lib/animina_web/live/email_validation_live.ex:150
 #, elixir-autogen, elixir-format
