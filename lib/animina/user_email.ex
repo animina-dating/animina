@@ -30,23 +30,16 @@ defmodule Animina.UserEmail do
 
   defp construct_email_body(pin, language) do
     "
-
     #{with_locale(language, fn -> gettext("Please use this PIN to verify your new ANIMINA account.") end)}
-
 
     #{pin}
 
-
     #{with_locale(language, fn -> gettext("If you didn't create an account just do nothing. We will auto delete the entry within 24 hours.") end)}
-
-
     "
   end
 
   defp construct_signature(language) do
     "
-
-
    #{with_locale(language, fn -> gettext("Best regards") end)},
    #{with_locale(language, fn -> gettext(" ANIMINA Team") end)}
 
