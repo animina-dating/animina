@@ -87,7 +87,7 @@ msgstr "Alice"
 msgid "All Reports"
 msgstr "Alle Berichte"
 
-#: lib/animina_web/live/root_live.ex:583
+#: lib/animina_web/live/root_live.ex:582
 #, elixir-autogen, elixir-format
 msgid "Already have an account? Sign in"
 msgstr "Bereits ein Konto? Anmelden"
@@ -303,7 +303,7 @@ msgstr "Aktuelles Foto"
 msgid "Date of birth"
 msgstr "Geburtsdatum"
 
-#: lib/animina_web/live/root_live.ex:419
+#: lib/animina_web/live/root_live.ex:418
 #: lib/animina_web/live/update_profile_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Dating Coach"
@@ -339,7 +339,7 @@ msgid "Description :"
 msgstr "Beschreibung:"
 
 #: lib/animina_web/live/potential_partner_live.ex:215
-#: lib/animina_web/live/root_live.ex:387
+#: lib/animina_web/live/root_live.ex:386
 #: lib/animina_web/live/update_profile_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Diverse"
@@ -360,7 +360,7 @@ msgstr "Möchten Sie diesen Beitrag wirklich löschen?"
 msgid "Do you really want to delete this story?"
 msgstr "Möchten Sie diese Story wirklich löschen?"
 
-#: lib/animina_web/live/root_live.ex:681
+#: lib/animina_web/live/root_live.ex:680
 #, elixir-autogen, elixir-format
 msgid "Don't have an account? Sign up"
 msgstr "Noch kein Konto? Registrieren"
@@ -368,12 +368,12 @@ msgstr "Noch kein Konto? Registrieren"
 #: lib/animina_web/live/request_password_live.ex:82
 #: lib/animina_web/live/root_live.ex:218
 #: lib/animina_web/live/root_live.ex:237
-#: lib/animina_web/live/root_live.ex:639
+#: lib/animina_web/live/root_live.ex:638
 #, elixir-autogen, elixir-format
 msgid "E-mail address"
 msgstr "E-Mail-Adresse"
 
-#: lib/animina_web/live/root_live.ex:620
+#: lib/animina_web/live/root_live.ex:619
 #, elixir-autogen, elixir-format
 msgid "E-mail address or Username"
 msgstr "E-Mail-Adresse oder Benutzername"
@@ -448,7 +448,7 @@ msgid "Feeding our internal AI with this text. Please wait a second "
 msgstr "Unsere interne KI wird mit diesem Text gefüttert. Bitte einen Moment warten"
 
 #: lib/animina_web/live/potential_partner_live.ex:200
-#: lib/animina_web/live/root_live.ex:372
+#: lib/animina_web/live/root_live.ex:371
 #: lib/animina_web/live/update_profile_live.ex:268
 #, elixir-autogen, elixir-format
 msgid "Female"
@@ -460,13 +460,13 @@ msgstr "Weiblich"
 msgid "Forever"
 msgstr "Für immer"
 
-#: lib/animina_web/live/root_live.ex:688
+#: lib/animina_web/live/root_live.ex:687
 #, elixir-autogen, elixir-format
 msgid "Forgot Your Password?"
 msgstr "Passwort vergessen?"
 
 #: lib/animina_web/live/potential_partner_live.ex:176
-#: lib/animina_web/live/root_live.ex:348
+#: lib/animina_web/live/root_live.ex:347
 #: lib/animina_web/live/update_profile_live.ex:244
 #, elixir-autogen, elixir-format
 msgid "Gender"
@@ -489,8 +489,8 @@ msgstr "Gegeben"
 msgid "Headline"
 msgstr "Überschrift"
 
-#: lib/animina_web/live/root_live.ex:475
-#: lib/animina_web/live/root_live.ex:500
+#: lib/animina_web/live/root_live.ex:474
+#: lib/animina_web/live/root_live.ex:499
 #: lib/animina_web/live/update_profile_live.ex:372
 #: lib/animina_web/live/update_profile_live.ex:397
 #, elixir-autogen, elixir-format
@@ -518,12 +518,12 @@ msgstr "Ruhezustand"
 msgid "Home"
 msgstr "Startseite"
 
-#: lib/animina_web/live/root_live.ex:573
+#: lib/animina_web/live/root_live.ex:572
 #, elixir-autogen, elixir-format
 msgid "I accept the legal terms of animina"
 msgstr "Ich akzeptiere die rechtlichen Bedingungen von Animina"
 
-#: lib/animina_web/live/root_live.ex:561
+#: lib/animina_web/live/root_live.ex:560
 #, elixir-autogen, elixir-format
 msgid "I accept the legal terms of animina."
 msgstr "Ich akzeptiere die rechtlichen Bedingungen von Animina."
@@ -611,7 +611,7 @@ msgid "Make Funnier"
 msgstr "Witziger machen"
 
 #: lib/animina_web/live/potential_partner_live.ex:184
-#: lib/animina_web/live/root_live.ex:356
+#: lib/animina_web/live/root_live.ex:355
 #: lib/animina_web/live/update_profile_live.ex:252
 #, elixir-autogen, elixir-format
 msgid "Male"
@@ -641,8 +641,8 @@ msgstr "Mindestalter"
 msgid "Minimum height"
 msgstr "Mindestgröße"
 
-#: lib/animina_web/live/root_live.ex:513
-#: lib/animina_web/live/root_live.ex:538
+#: lib/animina_web/live/root_live.ex:512
+#: lib/animina_web/live/root_live.ex:537
 #: lib/animina_web/live/update_profile_live.ex:410
 #: lib/animina_web/live/update_profile_live.ex:431
 #, elixir-autogen, elixir-format
@@ -705,8 +705,8 @@ msgstr "Keine Lesezeichen gefunden"
 msgid "Normal"
 msgstr "Normal"
 
-#: lib/animina_web/live/root_live.ex:408
-#: lib/animina_web/live/root_live.ex:427
+#: lib/animina_web/live/root_live.ex:407
+#: lib/animina_web/live/root_live.ex:426
 #: lib/animina_web/live/update_profile_live.ex:304
 #: lib/animina_web/live/update_profile_live.ex:324
 #, elixir-autogen, elixir-format
@@ -726,9 +726,9 @@ msgstr "Unsere Mitbewerber berechnen monatlich, auch wenn Sie kein Match finden.
 #: lib/animina_web/live/root_live.ex:250
 #: lib/animina_web/live/root_live.ex:262
 #: lib/animina_web/live/root_live.ex:270
-#: lib/animina_web/live/root_live.ex:652
-#: lib/animina_web/live/root_live.ex:664
-#: lib/animina_web/live/root_live.ex:671
+#: lib/animina_web/live/root_live.ex:651
+#: lib/animina_web/live/root_live.ex:663
+#: lib/animina_web/live/root_live.ex:670
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Passwort"
@@ -1219,7 +1219,7 @@ msgstr "Besuchte Profile"
 msgid "Waitlist"
 msgstr "Warteliste"
 
-#: lib/animina_web/live/root_live.ex:566
+#: lib/animina_web/live/root_live.ex:565
 #, elixir-autogen, elixir-format
 msgid "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
 msgstr "Warnung: Wir werden Ihre Daten an den Teufel und den Weihnachtsmann verkaufen. Im Ernst, wenn Sie uns nicht vertrauen, ist eine Dating-Plattform kein guter Ort, um Ihre persönlichen Daten zu teilen."
@@ -1302,8 +1302,8 @@ msgstr "Ihre Nachricht hier..."
 msgid "Your post title"
 msgstr "Titel Ihres Beitrags"
 
-#: lib/animina_web/live/root_live.ex:440
-#: lib/animina_web/live/root_live.ex:462
+#: lib/animina_web/live/root_live.ex:439
+#: lib/animina_web/live/root_live.ex:461
 #: lib/animina_web/live/update_profile_live.ex:337
 #: lib/animina_web/live/update_profile_live.ex:359
 #, elixir-autogen, elixir-format
@@ -1316,7 +1316,7 @@ msgstr "Postleitzahl"
 msgid "alice@example.net"
 msgstr "alice@example.net"
 
-#: lib/animina_web/live/root_live.ex:631
+#: lib/animina_web/live/root_live.ex:630
 #, elixir-autogen, elixir-format
 msgid "alice@example.net or alice"
 msgstr "alice@example.net oder alice"
@@ -1355,19 +1355,19 @@ msgstr "cm"
 msgid "doesn't matter"
 msgstr "egal"
 
-#: lib/animina_web/live/root_live.ex:479
+#: lib/animina_web/live/root_live.ex:478
 #: lib/animina_web/live/update_profile_live.ex:376
 #, elixir-autogen, elixir-format
 msgid "in cm"
 msgstr "in cm"
 
 #: lib/animina_web/live/root_live.ex:264
-#: lib/animina_web/live/root_live.ex:666
+#: lib/animina_web/live/root_live.ex:665
 #, elixir-autogen, elixir-format
 msgid "new password"
 msgstr "neues Passwort"
 
-#: lib/animina_web/live/root_live.ex:456
+#: lib/animina_web/live/root_live.ex:455
 #: lib/animina_web/live/update_profile_live.ex:353
 #, elixir-autogen, elixir-format
 msgid "postal code"
@@ -1378,7 +1378,7 @@ msgstr "Postleitzahl"
 msgid "to make sure that this is not an accident."
 msgstr "um sicherzustellen, dass dies kein Versehen war."
 
-#: lib/animina_web/live/root_live.ex:517
+#: lib/animina_web/live/root_live.ex:516
 #, elixir-autogen, elixir-format
 msgid "to receive a verification code"
 msgstr "um einen Bestätigungscode zu erhalten"
@@ -1418,7 +1418,7 @@ msgid "Animina Login"
 msgstr "Animina-Profil"
 
 #: lib/animina_web/live/root_live.ex:315
-#: lib/animina_web/live/root_live.ex:334
+#: lib/animina_web/live/root_live.ex:333
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr "Land"
@@ -1503,11 +1503,6 @@ msgstr "Bericht erfolgreich überprüft."
 msgid "Saving..."
 msgstr "Wird gespeichert..."
 
-#: lib/animina_web/live/root_live.ex:323
-#, elixir-autogen, elixir-format
-msgid "Select your country"
-msgstr "Wählen Sie Ihr Land aus"
-
 #: lib/animina_web/live/profile_stories_live.ex:309
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To activate your profile you have to have at least an about me story and a profile picture uploaded. A story can contain just a photo, just a text or both combined. You can add, edit and delete stories anytime. With stories you present yourself to others. You have more success with at least three of them in your profile."
@@ -1546,9 +1541,6 @@ msgid "Chats"
 msgstr "Chat"
 
 
-msgid "Germany"
-msgstr "Deutschland"
-
 
 #: lib/animina_web/live/email_validation_live.ex:150
 #, elixir-autogen, elixir-format
@@ -1570,7 +1562,6 @@ msgstr "Stellen Sie sicher, dass Sie die richtige PIN eingeben, die an Ihre E-Ma
 msgid "Please enter the PIN"
 msgstr "Bitte gib die PIN ein"
 
-
 #: lib/animina_web/live/email_validation_live.ex:120
 #, elixir-autogen, elixir-format
 msgid "Please enter the PIN to verify your email address."
@@ -1587,8 +1578,8 @@ msgid "Wrong PIN Entered!"
 msgstr "Falsche PIN eingegeben!"
 
 #: lib/animina_web/live/email_validation_live.ex:58
-#, elixir-autogen, elixir-format
-msgid "You entered a wrong PIN three times. Therefore we deleted the account. But you can create a new one right away!"
+#, elixir-autogen, elixir-format, fuzzy
+msgid "You entered a wrong PIN three times. Therefore we deleted the account. But you can create a new one right away.!"
 msgstr "Du hast dreimal eine falsche PIN eingegeben. Daher haben wir das Konto gelöscht. Aber du kannst sofort ein neues erstellen!"
 
 #: lib/animina_web/live/email_validation_live.ex:126
@@ -1606,7 +1597,41 @@ msgstr "Sie haben nur noch einen Versuch, bevor wir Ihr Konto löschen."
 msgid "with a 6 digit PIN."
 msgstr "mit einer 6-stelligen PIN."
 
-#: lib/animina/user_email.ex:11
+#: lib/animina/user_email.ex:12
 #, elixir-autogen, elixir-format
 msgid "👫❤️ Confirm your ANIMINA account"
 msgstr "👫❤️ Bestätige dein ANIMINA-Konto"
+
+#: lib/animina/user_email.ex:51
+#, elixir-autogen, elixir-format
+msgid " ANIMINA Team"
+msgstr ""
+
+#: lib/animina/user_email.ex:50
+#, elixir-autogen, elixir-format
+msgid "Best regards"
+msgstr "Mit freundlichen Grüßen"
+
+#: lib/animina_web/live/root_live.ex:322
+#, elixir-autogen, elixir-format
+msgid "Germany"
+msgstr "Deutschland"
+#: lib/animina/user_email.ex:55
+#, elixir-autogen, elixir-format
+msgid "I am just dumb software and can't read your emails. Do contact my\n    human boss Stefan Wintermeyer <stefan@wintermeyer.de> in case you\n    have any questions or concerns."
+msgstr "Ich bin nur eine dumme Software und kann Ihre E-Mails nicht lesen. Kontaktieren Sie bitte meinen menschlichen Chef Stefan Wintermeyer <stefan@wintermeyer.de>, falls Sie Fragen oder Bedenken haben."
+
+#: lib/animina/user_email.ex:40
+#, elixir-autogen, elixir-format
+msgid "If you didn't create an account just do nothing. We will auto delete the entry within 24 hours."
+msgstr "Falls Sie kein Konto erstellt haben, ignorieren Sie diese Nachricht. Wir werden den Eintrag automatisch innerhalb von 24 Stunden löschen."
+
+#: lib/animina/user_email.ex:34
+#, elixir-autogen, elixir-format
+msgid "Please use this PIN to verify your new ANIMINA account."
+msgstr "Bitte verwenden Sie diesen PIN, um Ihr neues ANIMINA-Konto zu verifizieren."
+
+#: lib/animina/user_email.ex:54
+#, elixir-autogen, elixir-format
+msgid "This email was sent by the ANIMINA system. Please do not reply to it."
+msgstr "Diese E-Mail wurde vom ANIMINA-System gesendet. Bitte antworten Sie nicht darauf."
