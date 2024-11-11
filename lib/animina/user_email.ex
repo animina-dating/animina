@@ -5,15 +5,16 @@ defmodule Animina.UserEmail do
 
   import Swoosh.Email
   import AniminaWeb.Gettext
+  import Gettext, only: [with_locale: 2]
   alias Animina.Mailer
 
-  def send_pin(name, email, pin) do
-    subject = gettext("👫❤️ Confirm your ANIMINA account")
+  def send_pin(name, email, pin, language) do
+    subject = with_locale(language, fn -> gettext("👫❤️ Confirm your ANIMINA account") end)
 
     body =
       construct_salutation(name) <>
-        construct_email_body(pin) <>
-        construct_signature()
+        construct_email_body(pin, language) <>
+        construct_signature(language)
 
     send_email(
       name,
@@ -27,35 +28,27 @@ defmodule Animina.UserEmail do
     "Hi #{name}!\n"
   end
 
-  defp construct_email_body(pin) do
-    "Your new ANIMINA https://animina.de account has been created with this
-    email address.
-
-    Please use this #{Application.get_env(:animina, :length_of_confirmation_pin)} digit PIN to verify your new ANIMINA account.
-
+  defp construct_email_body(pin, language) do
+    "
+    #{with_locale(language, fn -> gettext("Please use this PIN to verify your new ANIMINA account.") end)}
 
     #{pin}
 
-
-    If you didn't create an account just do nothing. We will auto delete the entry within 24 hours.
-
-
+    #{with_locale(language, fn -> gettext("If you didn't create an account just do nothing. We will auto delete the entry within 24 hours.") end)}
     "
   end
 
-  defp construct_signature do
-    ~S"""
-
-
-    Best regards,
-      ANIMINA Team
+  defp construct_signature(language) do
+    "
+   #{with_locale(language, fn -> gettext("Best regards") end)},
+   #{with_locale(language, fn -> gettext(" ANIMINA Team") end)}
 
     --
-    This email was sent by the ANIMINA system. Please do not reply to it.
-    I am just dumb software and can't read your emails. Do contact my
+    #{with_locale(language, fn -> gettext("This email was sent by the ANIMINA system. Please do not reply to it.") end)}
+    #{with_locale(language, fn -> gettext("I am just dumb software and can't read your emails. Do contact my
     human boss Stefan Wintermeyer <stefan@wintermeyer.de> in case you
-    have any questions or concerns.
-    """
+    have any questions or concerns.") end)}
+    "
   end
 
   def send_email(
