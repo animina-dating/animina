@@ -189,7 +189,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div>
       <%= if @current_user  do %>
-        <div class="dark:bg-gray-900 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
+        <div class="dark:bg-gray-800 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
           <div class="border-gray-100 border-b-[1px]  py-1">
             <p class="px-2 text-sm " role="none">
               <%= with_locale(@language, fn -> %>
