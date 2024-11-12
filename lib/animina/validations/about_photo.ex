@@ -1,6 +1,5 @@
 defmodule Animina.Validations.AboutPhoto do
   use Ash.Resource.Validation
-  alias Animina.Narratives.Story
 
   @moduledoc """
   This is a module for validating the 'About me' story has a photo
@@ -16,8 +15,6 @@ defmodule Animina.Validations.AboutPhoto do
 
   @impl true
   def validate(changeset, _opts, _context) do
-    if changeset.data.story_id do
-      :ok
-    end
+    :ok
   end
 end
