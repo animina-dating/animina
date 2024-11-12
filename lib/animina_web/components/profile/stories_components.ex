@@ -17,6 +17,9 @@ defmodule AniminaWeb.StoriesComponents do
   attr :user, :any, required: false
   attr :language, :any, required: true
 
+  # we display the state as an atom in the photo struct, but we need to make sure it is an atom
+  # as we are using it for pattern matching
+
   def stories_display(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
@@ -71,6 +74,7 @@ defmodule AniminaWeb.StoriesComponents do
           }
           src={Photo.get_optimized_photo_to_use(@story.photo, :normal)}
           alt={@story.headline.subject}
+          id={"photo-for-story-#{@story.id}"}
           class="absolute inset-0 object-cover w-full h-full -z-10"
         />
 
@@ -88,6 +92,9 @@ defmodule AniminaWeb.StoriesComponents do
         </h3>
       </div>
       <div class="pb-2">
+        <p>
+          <%= @story.photo.state %>
+        </p>
         <.story_body
           story={@story}
           user={@user}

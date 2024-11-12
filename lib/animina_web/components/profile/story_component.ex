@@ -25,6 +25,9 @@ defmodule AniminaWeb.StoryComponent do
     {:ok, socket}
   end
 
+  # we display the state as an atom in the photo struct, but we need to make sure it is an atom
+  # as we are using it for pattern matching
+
   defp make_sure_photo_state_is_atom(nil) do
     ""
   end
