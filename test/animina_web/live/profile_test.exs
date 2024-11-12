@@ -141,6 +141,25 @@ defmodule AniminaWeb.ProfileTest do
       assert bookmark.reason == :visited
     end
 
+    test "Story images that have been approved are displayed", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user,
+      private_user_story: private_user_story
+    } do
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      assert html =~ private_user.name
+      # since the photo is approved , we will see it in the profile
+      assert has_element?(index_live, "#photo-for-story-#{private_user_story.id}")
+    end
+
     test "Once  a logged in user views a profile , a bookmark is created  and a visit log entry ",
          %{
            conn: conn,
@@ -556,6 +575,21 @@ defmodule AniminaWeb.ProfileTest do
         position: 1
       })
 
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user.id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      story_id: story.id,
+      mime: "image/jpeg",
+      state: :approved
+    })
+
     story
   end
 
@@ -570,7 +604,8 @@ defmodule AniminaWeb.ProfileTest do
       original_filename: file_path_without_uploads,
       size: 100,
       ext: "jpg",
-      mime: "image/jpeg"
+      mime: "image/jpeg",
+      state: :approved
     })
   end
 

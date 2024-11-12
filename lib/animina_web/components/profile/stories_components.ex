@@ -17,6 +17,9 @@ defmodule AniminaWeb.StoriesComponents do
   attr :user, :any, required: false
   attr :language, :any, required: true
 
+  # we display the state as an atom in the photo struct, but we need to make sure it is an atom
+  # as we are using it for pattern matching
+
   def stories_display(assigns) do
     ~H"""
     <div class="flex flex-col gap-4">
@@ -29,6 +32,13 @@ defmodule AniminaWeb.StoriesComponents do
             language={@language}
             delete_story_modal_text={@delete_story_modal_text}
             user={@user}
+            state={
+              if @story.photo && is_atom(@story.photo.state) do
+                @story.photo.state
+              else
+                make_sure_photo_state_is_atom(@story.photo)
+              end
+            }
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
           />
@@ -48,6 +58,7 @@ defmodule AniminaWeb.StoriesComponents do
   attr :current_user_green_flags, :list, required: true
   attr :current_user_red_flags, :list, required: true
   attr :delete_story_modal_text, :string, required: true
+  attr :state, :any, required: true
 
   def story_card(assigns) do
     ~H"""
@@ -59,30 +70,24 @@ defmodule AniminaWeb.StoriesComponents do
         <img
           :if={
             (@current_user && @story.user_id == @current_user.id) ||
-              display_image(@story.photo.state, @current_user, @story)
+              display_image(@state, @current_user, @story)
           }
           src={Photo.get_optimized_photo_to_use(@story.photo, :normal)}
           alt={@story.headline.subject}
+          id={"photo-for-story-#{@story.id}"}
           class="absolute inset-0 object-cover w-full h-full -z-10"
         />
 
         <h3 class="mt-3 text-lg font-semibold leading-6 text-white">
           <span class="absolute inset-0"></span> <%= @story.headline.subject %>
-
-          <%= state =
-            if(
-              is_atom(@story.photo.state),
-              do: @story.photo.state,
-              else: String.to_atom(@story.photo.state)
-            ) %>
           <p
             :if={
-              @current_user && @story.photo.state != :approved &&
+              @current_user && @state != :approved &&
                 (@story.user_id == @current_user.id || admin_user?(@current_user))
             }
-            class={"p-1 text-[10px] #{get_photo_state_styling(state)} absolute top-2 left-2 rounded-md "}
+            class={"p-1 text-[10px] #{get_photo_state_styling(@state)} absolute top-2 left-2 rounded-md "}
           >
-            <%= get_photo_state_name(state, @language) %>
+            <%= get_photo_state_name(@state, @language) %>
           </p>
         </h3>
       </div>
@@ -198,6 +203,14 @@ defmodule AniminaWeb.StoriesComponents do
 
   defp get_photo_state_name(_, language) do
     with_locale(language, fn -> gettext("Error") end)
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 
   attr :story, :any, required: true
