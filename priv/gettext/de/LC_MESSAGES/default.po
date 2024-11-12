@@ -1401,10 +1401,18 @@ msgstr "Jahre"
 msgid "👫❤️ Reset Your Password for your ANIMINA account"
 msgstr "👫❤️ Setzen Sie Ihr Passwort für Ihr ANIMINA-Konto zurück"
 
+
+
 #: lib/animina_web/components/profile/profile_components.ex:578
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Activate"
-msgstr "Aktiv"
+msgid "Change To This State"
+msgstr "Zu diesem Status wechseln"
+
+#: lib/animina_web/components/profile/profile_components.ex:631
+#, elixir-autogen, elixir-format
+msgid "Currently Active"
+msgstr "Derzeit aktiv"
+
 
 #: lib/animina_web/live/fast_profile_live.ex:284
 #: lib/animina_web/live/profile_live.ex:651
