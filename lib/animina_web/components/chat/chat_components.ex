@@ -115,7 +115,16 @@ defmodule AniminaWeb.ChatComponents do
             </div>
           </div>
         </div>
-        <.sender_user_image user={@sender} />
+        <.sender_user_image
+          state={
+            if @sender.profile_photo && is_atom(@sender.profile_photo.state) do
+              @sender.profile_photo.state
+            else
+              make_sure_photo_state_is_atom(@sender.profile_photo)
+            end
+          }
+          user={@sender}
+        />
       </div>
     <% end %>
     """
@@ -125,7 +134,17 @@ defmodule AniminaWeb.ChatComponents do
     ~H"""
     <%= if @sender.id != @message.sender_id do %>
       <div class="flex justify-start gap-4  item-start text-black">
-        <.receiver_user_image user={@receiver} current_user={@sender} />
+        <.receiver_user_image
+          state={
+            if @receiver.profile_photo && is_atom(@receiver.profile_photo.state) do
+              @receiver.profile_photo.state
+            else
+              make_sure_photo_state_is_atom(@receiver.profile_photo)
+            end
+          }
+          user={@receiver}
+          current_user={@sender}
+        />
         <div class="justify-start flex items-start flex-col">
           <p class="dark:text-white">
             <%= StringHelper.truncate_name(@receiver.name) %>
@@ -155,7 +174,7 @@ defmodule AniminaWeb.ChatComponents do
         />
 
         <p
-          :if={@user && @user.profile_photo.state != :approved}
+          :if={@user && @state != :approved}
           class={"absolute top-0 right-0 #{get_photo_state_styling(@user.profile_photo.state)} "}
         >
         </p>
@@ -181,7 +200,7 @@ defmodule AniminaWeb.ChatComponents do
 
   def receiver_user_image(assigns) do
     ~H"""
-    <%= if @user && @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
+    <%= if @user && @user.profile_photo && display_image(@state, @current_user, @user) do %>
       <div class="flex flex-col relative gap-1  items-center">
         <img
           class="object-cover w-8 h-8 rounded-full"
@@ -189,8 +208,8 @@ defmodule AniminaWeb.ChatComponents do
         />
 
         <p
-          :if={@user.profile_photo.state != :approved}
-          class={"absolute top-0 right-0 #{get_photo_state_styling(@user.profile_photo.state)}"}
+          :if={@state != :approved}
+          class={"absolute top-0 right-0 #{get_photo_state_styling(@state)}"}
         >
         </p>
       </div>
@@ -320,5 +339,13 @@ defmodule AniminaWeb.ChatComponents do
 
   def format_time(time) do
     NaiveDateTime.from_erl!({{2000, 1, 1}, Time.to_erl(time)}) |> Timex.format!("{h12}:{0m} {am}")
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 end

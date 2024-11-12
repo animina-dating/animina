@@ -384,7 +384,17 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div class="w-[100%]">
       <%= for interest <- @interests do %>
-        <.random_interest interest={interest} current_user={@current_user} />
+        <.random_interest
+          interest={interest}
+          state={
+            if interest.profile_photo && is_atom(interest.profile_photo.state) do
+              interest.profile_photo.state
+            else
+              make_sure_photo_state_is_atom(interest.profile_photo)
+            end
+          }
+          current_user={@current_user}
+        />
       <% end %>
     </div>
     """
@@ -395,10 +405,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <.top_navigation_entry phx-no-format is_active={false} link={"/#{@interest.username}"}>
 
     <div class="flex gap-2 w-[100%] flex-row items-center" >
-      <%= if @interest.profile_photo && display_image(@interest.profile_photo.state , @current_user, @interest.profile_photo) do %>
+      <%= if @interest.profile_photo && display_image(@state , @current_user, @interest.profile_photo) do %>
       <div class="relative">
         <.user_avatar_image12  current_user={@interest} />
-        <p :if={@interest.profile_photo.state != :approved && @current_user && (@current_user.id == @interest.id || admin_user?(@current_user)) } class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
+        <p :if={@state != :approved && @current_user && (@current_user.id == @interest.id || admin_user?(@current_user)) } class={"absolute top-0 right-0 #{get_photo_state_styling(@interest.profile_photo.state)}"}/>
       </div>
       <% else %>
         <.error_or_nsfw_profile_image />
@@ -484,6 +494,14 @@ defmodule AniminaWeb.TopNavigationCompontents do
         |> Enum.map(fn x -> x.name end)
         |> Enum.any?(fn x -> x == :admin end)
     end
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 
   defp error_or_nsfw_profile_image(assigns) do

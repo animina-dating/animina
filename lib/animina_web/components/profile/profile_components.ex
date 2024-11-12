@@ -14,7 +14,17 @@ defmodule AniminaWeb.ProfileComponents do
         <div class="w-[100%] flex justify-between items-center">
           <div class="flex items-center gap-2">
             <div :if={@display_profile_image_next_to_name}>
-              <.receiver_user_image user={@user} current_user={@current_user} />
+              <.receiver_user_image
+                state={
+                  if @user.profile_photo && is_atom(@user.profile_photo.state) do
+                    @user.profile_photo.state
+                  else
+                    make_sure_photo_state_is_atom(@user.profile_photo)
+                  end
+                }
+                user={@user}
+                current_user={@current_user}
+              />
             </div>
             <h1 class="md:text-2xl text-xl font-semibold dark:text-white">
               <%= @user.name %>
@@ -187,7 +197,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def receiver_user_image(assigns) do
     ~H"""
-    <%= if @user &&  @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
+    <%= if @user &&  @user.profile_photo && display_image(@state, @current_user, @user) do %>
       <div class="flex relative flex-col gap-1">
         <img
           class="object-cover w-8 h-8 rounded-full"
@@ -195,10 +205,10 @@ defmodule AniminaWeb.ProfileComponents do
         />
         <p
           :if={
-            @user && @user.profile_photo && @user.profile_photo.state != :approved &&
+            @user && @user.profile_photo && @state != :approved &&
               (admin_user?(@current_user) || (@current_user && @user.id == @current_user.id))
           }
-          class={"absolute top-0 right-0  #{get_photo_state_styling(@user.profile_photo.state)}  "}
+          class={"absolute top-0 right-0  #{get_photo_state_styling(@state)}  "}
         >
         </p>
       </div>
@@ -295,6 +305,14 @@ defmodule AniminaWeb.ProfileComponents do
 
   defp get_photo_state_styling(_) do
     "bg-green-500 text-white w-4 h-4 rounded-full"
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 
   def profile_location_card(assigns) do

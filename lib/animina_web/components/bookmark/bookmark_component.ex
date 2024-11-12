@@ -55,6 +55,17 @@ defmodule AniminaWeb.BookmarkComponent do
     end
   end
 
+  # we display the state as an atom in the photo struct, but we need to make sure it is an atom
+  # as we are using it for pattern matching
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -65,6 +76,13 @@ defmodule AniminaWeb.BookmarkComponent do
         language={@language}
         reason={@reason}
         current_user={@current_user}
+        state={
+          if @current_user.profile_photo && is_atom(@current_user.profile_photo.state) do
+            @current_user.profile_photo.state
+          else
+            make_sure_photo_state_is_atom(@current_user.profile_photo)
+          end
+        }
         delete_bookmark_modal_text={
           with_locale(@language, fn -> gettext("Do you really want to delete this bookmark?") end)
         }
