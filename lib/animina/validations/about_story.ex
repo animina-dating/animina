@@ -38,8 +38,10 @@ defmodule Animina.Validations.AboutStory do
     end
   end
 
-  defp get_stories_for_user(user_id) do
-    Story.read!()
-    |> Enum.filter(fn story -> story.user_id == user_id end)
+  def get_stories_for_user(user_id) do
+    Story
+    |> Ash.Query.filter(user_id == ^user_id)
+    |> Ash.Query.for_read(:read)
+    |> Ash.read!()
   end
 end
