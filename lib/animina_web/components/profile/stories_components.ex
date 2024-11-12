@@ -92,9 +92,6 @@ defmodule AniminaWeb.StoriesComponents do
         </h3>
       </div>
       <div class="pb-2">
-        <p>
-          <%= @story.photo.state %>
-        </p>
         <.story_body
           story={@story}
           user={@user}
