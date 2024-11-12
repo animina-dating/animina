@@ -681,9 +681,7 @@ defmodule AniminaWeb.StoryLive do
   end
 
   defp delete_or_remove_photo_from_story(story, photo) do
-    if Map.has_key?(story, "id") do
-      delete_or_remove_photo_from_story(story, photo, "delete_or_remove")
-    end
+    delete_or_remove_photo_from_story(story, photo, "delete_or_remove")
   end
 
   defp delete_or_remove_photo_from_story(_story, photo, "delete_or_remove") do

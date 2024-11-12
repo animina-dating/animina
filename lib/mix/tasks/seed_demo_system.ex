@@ -361,6 +361,35 @@ if Enum.member?([:dev, :test], Mix.env()) do
         }
       ]
 
+      raw_seed_data = [
+        %{
+          unsplash_photo_id: "photo-1531123897727-8f129e1688ce",
+          gender: "female",
+          about_me:
+            "I'm a passionate traveler and foodie. I love exploring new cultures and trying out exotic cuisines. When I'm not traveling, you can find me reading a good book or practicing yoga. My ultimate goal is to visit every continent and learn at least one dish from each country I visit. I believe that travel broadens the mind and enriches the soul, and I enjoy sharing my experiences with others through my travel blog.",
+          favorite_travel_story:
+            "One of my most unforgettable travel experiences was exploring the bustling markets of Marrakech. The vibrant colors, the fragrant spices, and the lively atmosphere were enchanting. I spent hours wandering through the narrow alleys, trying different street foods, and bargaining with local vendors. The highlight of the trip was a hot air balloon ride over the desert at sunrise, witnessing the golden dunes and the serene landscape from above. It was a magical experience that I'll cherish forever.",
+          occupation: nil,
+          my_idea_of_a_perfect_day:
+            "Waking up in a cozy beachside cottage, enjoying a leisurely breakfast with fresh fruits and pastries, followed by a day of exploring a charming coastal town, trying local delicacies, and ending the day with a peaceful sunset walk along the shore.",
+          a_book_that_changed_my_perspective:
+            "Eat, Pray, Love by Elizabeth Gilbert – This book opened my eyes to the transformative power of travel and self-discovery, and it inspired me to embrace new experiences with an open heart."
+        },
+        %{
+          unsplash_photo_id: "photo-1526080652727-5b77f74eacd2",
+          gender: "female",
+          about_me:
+            "As a software developer by day and a painter by night, I find joy in both logic and creativity. I enjoy hiking on weekends and volunteering at animal shelters. My paintings are often inspired by the beauty I see during my hikes, and I love creating art that captures the essence of nature. Volunteering at animal shelters brings me immense joy, as I believe in giving back to the community and helping animals in need.",
+          favorite_travel_story:
+            "My favorite travel memory is hiking through the Swiss Alps. The breathtaking scenery, the fresh mountain air, and the sense of accomplishment when reaching the summit were incredible. Along the way, I encountered charming mountain villages, serene lakes, and friendly locals who shared their stories and traditions. One evening, I painted the sunset over the Alps, capturing the stunning beauty and tranquility of the moment. It was a perfect blend of adventure and creativity.",
+          occupation: "Software Developer",
+          my_idea_of_a_perfect_day:
+            "Spending the morning hiking through a serene forest, painting a landscape inspired by the hike in the afternoon, and then relaxing at home with a good book and a cup of tea.",
+          a_book_that_changed_my_perspective:
+            "The Alchemist by Paulo Coelho – This book taught me the importance of pursuing one’s personal legend and the power of dreams and persistence."
+        }
+      ]
+
       Enum.each(raw_seed_data, fn seed_data ->
         create_demo_user(seed_data)
       end)
