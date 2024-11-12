@@ -140,7 +140,7 @@ defmodule Animina.Narratives.FastStory do
           Repo.all(query)
 
         # get count of total results
-        count = Enum.at(results, 0, %{}) |> Map.get(:count)
+        count = Enum.at(results, 0, %{}) |> Map.get(:count, 0)
 
         # cast photo, user to struct
         results =

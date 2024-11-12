@@ -827,7 +827,7 @@ defmodule AniminaWeb.StoryLive do
                   unless(get_field_errors(f[:content], :content) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else:
-                      "ring-gray-300 focus:ring-indigo-600 #{if @words == 1024 do
+                      "ring-gray-300 focus:ring-indigo-600 #{if @words > 1024 do
                         "ring-red-600 focus:ring-red-600"
                       end}"
                   ),

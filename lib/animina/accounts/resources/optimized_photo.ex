@@ -15,6 +15,11 @@ defmodule Animina.Accounts.OptimizedPhoto do
       reference :user, on_delete: :delete
       reference :photo, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:photo_id]
+      index [:user_id]
+    end
   end
 
   code_interface do

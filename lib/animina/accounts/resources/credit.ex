@@ -17,6 +17,11 @@ defmodule Animina.Accounts.Credit do
       reference :user, on_delete: :delete
       reference :donor, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:donor_id]
+      index [:user_id]
+    end
   end
 
   code_interface do

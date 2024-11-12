@@ -18,6 +18,11 @@ defmodule Animina.Accounts.UserRole do
       reference :user, on_delete: :delete
       reference :role, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:role_id]
+      index [:user_id]
+    end
   end
 
   code_interface do

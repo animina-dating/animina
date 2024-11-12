@@ -34,7 +34,12 @@ defmodule AniminaWeb.EmailValidationLive do
   end
 
   def handle_event("send_a_new_pin", _params, socket) do
-    user = User.generate_pin_and_email_it(socket.assigns.current_user, "update")
+    user =
+      User.generate_pin_and_email_it(
+        socket.assigns.current_user,
+        socket.assigns.language,
+        "update"
+      )
 
     {:noreply,
      socket

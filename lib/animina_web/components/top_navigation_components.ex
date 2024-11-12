@@ -5,9 +5,9 @@ defmodule AniminaWeb.TopNavigationCompontents do
   use Phoenix.Component
 
   import AniminaWeb.Gettext
+  alias Animina.Accounts.FastUser
   alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
-  alias Animina.Accounts.User
   alias Animina.StringHelper
   import Gettext, only: [with_locale: 2]
 
@@ -124,7 +124,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp flag_language_switcher(assigns) do
     ~H"""
-    <div class="flex gap-4 items-center items-center">
+    <div class="flex gap-4 items-center">
       <.link navigate="/language-switch">
         <%= if @language == "en" do %>
           🇺🇸
@@ -189,7 +189,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
     ~H"""
     <div>
       <%= if @current_user  do %>
-        <div class="dark:bg-gray-900 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
+        <div class="dark:bg-gray-800 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
           <div class="border-gray-100 border-b-[1px]  py-1">
             <p class="px-2 text-sm " role="none">
               <%= with_locale(@language, fn -> %>
@@ -1086,7 +1086,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_female_users do
-    case User.female_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+           limit: 3,
+           gender: "female"
+         }) do
       {:ok, offset} ->
         offset.results
 
@@ -1096,7 +1099,10 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_male_users do
-    case User.male_public_users_who_created_an_account_in_the_last_60_days(page: [limit: 3]) do
+    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+           limit: 3,
+           gender: "male"
+         }) do
       {:ok, offset} ->
         offset.results
 

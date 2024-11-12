@@ -21,6 +21,11 @@ defmodule Animina.Accounts.Reaction do
       reference :sender, on_delete: :delete
       reference :receiver, on_delete: :delete
     end
+
+    custom_indexes do
+      index [:sender_id]
+      index [:receiver_id]
+    end
   end
 
   code_interface do
