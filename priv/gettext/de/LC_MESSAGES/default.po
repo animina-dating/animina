@@ -1410,7 +1410,7 @@ msgstr "Zu diesem Status wechseln"
 
 #: lib/animina_web/components/profile/profile_components.ex:631
 #, elixir-autogen, elixir-format
-msgid "Currently Active"
+msgid "Currently active"
 msgstr "Derzeit aktiv"
 
 
