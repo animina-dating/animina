@@ -29,6 +29,13 @@ defmodule AniminaWeb.StoriesComponents do
             language={@language}
             delete_story_modal_text={@delete_story_modal_text}
             user={@user}
+            state={
+              if @story.photo && is_atom(@story.photo.state) do
+                @story.photo.state
+              else
+                make_sure_photo_state_is_atom(@story.photo)
+              end
+            }
             current_user_green_flags={@current_user_green_flags}
             current_user_red_flags={@current_user_red_flags}
           />
@@ -192,6 +199,14 @@ defmodule AniminaWeb.StoriesComponents do
 
   defp get_photo_state_name(_, language) do
     with_locale(language, fn -> gettext("Error") end)
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 
   attr :story, :any, required: true

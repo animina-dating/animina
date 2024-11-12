@@ -25,6 +25,14 @@ defmodule AniminaWeb.StoryComponent do
     {:ok, socket}
   end
 
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -34,6 +42,13 @@ defmodule AniminaWeb.StoryComponent do
         current_user={@current_user}
         dom_id={@dom_id}
         user={@user}
+        state={
+          if @story.photo && is_atom(@story.photo.state) do
+            @story.photo.state
+          else
+            make_sure_photo_state_is_atom(@story.photo)
+          end
+        }
         current_user_green_flags={@current_user_green_flags}
         language={@language}
         current_user_red_flags={@current_user_red_flags}
