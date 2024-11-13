@@ -351,6 +351,22 @@ defmodule AniminaWeb.DashboardLive do
     ]
   end
 
+  defp image_state(photo) do
+    if photo && is_atom(photo.state) do
+      photo.state
+    else
+      make_sure_photo_state_is_atom(photo)
+    end
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -382,7 +398,7 @@ defmodule AniminaWeb.DashboardLive do
                     :if={
                       potential_partner && potential_partner.profile_photo &&
                         display_potential_partner(
-                          potential_partner.profile_photo.state,
+                          image_state(potential_partner.profile_photo),
                           @current_user,
                           potential_partner
                         )
@@ -399,12 +415,12 @@ defmodule AniminaWeb.DashboardLive do
                   <p
                     :if={
                       @current_user && potential_partner.profile_photo &&
-                        potential_partner.profile_photo.state != :approved &&
+                        image_state(potential_partner.profile_photo) != :approved &&
                         current_user_admin?(@current_user)
                     }
-                    class={"p-1 text-[10px] #{get_photo_state_styling(potential_partner.profile_photo.state)} absolute top-2 left-2 rounded-md "}
+                    class={"p-1 text-[10px] #{get_photo_state_styling(image_state(potential_partner.profile_photo))} absolute top-2 left-2 rounded-md "}
                   >
-                    <%= get_photo_state_name(potential_partner.profile_photo.state) %>
+                    <%= get_photo_state_name(image_state(potential_partner.profile_photo)) %>
                   </p>
                 </div>
 

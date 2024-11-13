@@ -106,6 +106,28 @@ defmodule AniminaWeb.ChatTest do
       assert html =~ "#{private_user.height}"
     end
 
+    test "You see a user's Mini Profile with their image if you visit their chat live", %{
+      conn: conn,
+      public_user: public_user,
+      private_user: private_user
+    } do
+      # we visit the message box for public user and private user
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{public_user.username}/messages/#{private_user.username}")
+
+      assert html =~ private_user.name
+      assert html =~ "#{private_user.height}"
+
+      # We now ensure that the profile image of the user you are texting is seen in the chat box
+      assert has_element?(index_live, "#profile-image-for-receiver-#{private_user.id}")
+    end
+
     test "You can send a message through the message box", %{
       conn: conn,
       public_user: public_user,

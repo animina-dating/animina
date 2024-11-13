@@ -16,6 +16,7 @@ defmodule AniminaWeb.BookmarksComponents do
   attr :intersecting_green_flags_count, :any, required: true
   attr :intersecting_red_flags_count, :any, required: true
   attr :language, :any, required: true
+  attr :state, :any, required: true
 
   def bookmark(assigns) do
     ~H"""
@@ -23,22 +24,20 @@ defmodule AniminaWeb.BookmarksComponents do
       <.link navigate={"/#{@bookmark.user.username}" }>
         <div class="flex items-start justify-between space-x-4 mt-4">
           <div :if={@bookmark.user.profile_photo}>
-            <div
-              :if={display_image(@bookmark.user.profile_photo.state, @current_user, @bookmark)}
-              class="relative"
-            >
+            <div :if={display_image(@state, @current_user, @bookmark)} class="relative">
               <img
                 class="object-cover rounded-lg aspect-square h-24 w-24"
                 src={Photo.get_optimized_photo_to_use(@bookmark.user.profile_photo, :normal)}
+                id={"image-for-bookmarked-user-#{@bookmark.user.id}"}
               />
               <p
                 :if={
-                  @current_user && @bookmark.user.profile_photo.state != :approved &&
+                  @current_user && @state != :approved &&
                     admin_user?(@current_user)
                 }
-                class={"p-1 text-[10px] #{get_photo_state_styling(@bookmark.user.profile_photo.state)} absolute top-2 left-2 rounded-md "}
+                class={"p-1 text-[10px] #{get_photo_state_styling(@state)} absolute top-2 left-2 rounded-md "}
               >
-                <%= get_photo_state_name(@bookmark.user.profile_photo.state, @language) %>
+                <%= get_photo_state_name(@state, @language) %>
               </p>
             </div>
           </div>

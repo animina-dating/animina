@@ -181,7 +181,17 @@ defmodule AniminaWeb.DashboardComponents do
     ~H"""
     <div class="w-[100%]">
       <div class="flex justify-start gap-2  m-auto w-[95%] item-start text-black">
-        <.sender_user_image user={@sender} current_user={@receiver} />
+        <.sender_user_image
+          state={
+            if @sender.profile_photo && is_atom(@sender.profile_photo.state) do
+              @sender.profile_photo.state
+            else
+              make_sure_photo_state_is_atom(@sender.profile_photo)
+            end
+          }
+          user={@sender}
+          current_user={@receiver}
+        />
         <div class="justify-start w-[100%] flex items-start flex-col">
           <p class="text-xs dark:text-white">
             <%= StringHelper.truncate_name(@sender.name) %>
@@ -203,7 +213,7 @@ defmodule AniminaWeb.DashboardComponents do
 
   def sender_user_image(assigns) do
     ~H"""
-    <%= if @current_user && @user.profile_photo && display_image(@user.profile_photo.state, @current_user, @user) do %>
+    <%= if @current_user && @user.profile_photo && display_image(@state, @current_user, @user) do %>
       <div class="relative">
         <img
           class="object-cover w-6 h-6 rounded-full"
@@ -211,7 +221,7 @@ defmodule AniminaWeb.DashboardComponents do
         />
 
         <p
-          :if={@user.profile_photo.state == :nsfw}
+          :if={@state == :nsfw}
           class="absolute p-1 text-xs text-black bg-gray-200 rounded-md dark:bg-gray-800 bottom-2 right-4 dark:text-white"
         >
           nsfw
@@ -258,6 +268,14 @@ defmodule AniminaWeb.DashboardComponents do
 
   def display_image(_, _, _) do
     false
+  end
+
+  defp make_sure_photo_state_is_atom(nil) do
+    ""
+  end
+
+  defp make_sure_photo_state_is_atom(photo) do
+    String.to_atom(photo.state)
   end
 
   def admin_user?(current_user) do

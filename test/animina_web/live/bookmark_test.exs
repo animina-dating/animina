@@ -317,6 +317,59 @@ defmodule AniminaWeb.BookmarkTest do
 
       assert html =~ Ash.CiString.value(private_user.username)
     end
+
+    test "If a bookmarked profile has an approved profile image , they can see it",
+         %{
+           conn: conn,
+           public_user: public_user,
+           private_user: private_user
+         } do
+      # we visit the page of private_user , a bookmark and visit_log_entry is created
+      {:ok, _index_live, _html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/#{private_user.username}")
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live(~p"/my/bookmarks")
+
+      assert html =~ "Bookmarks"
+
+      assert html =~ "Liked Profiles"
+
+      refute html =~ Ash.CiString.value(private_user.username)
+
+      {_, {:live_redirect, %{kind: :push, to: url}}} =
+        index_live
+        |> element("#visited_tab", "Visited")
+        |> render_click()
+
+      assert url == "/my/bookmarks/visited"
+
+      {:ok, index_live, html} =
+        conn
+        |> login_user(%{
+          "username_or_email" => public_user.username,
+          "password" => "MichaelTheEngineer"
+        })
+        |> live("#{url}")
+
+      assert html =~ "Visited Profiles"
+      refute html =~ "Liked Profiles"
+
+      assert html =~ Ash.CiString.value(private_user.username)
+
+      # We now ensure that the profile image of the bookmarked user is displayed as the image is approved
+      assert has_element?(index_live, "#image-for-bookmarked-user-#{private_user.id}")
+    end
   end
 
   defp create_public_user do
@@ -413,6 +466,7 @@ defmodule AniminaWeb.BookmarkTest do
       original_filename: file_path_without_uploads,
       size: 100,
       ext: "jpg",
+      state: :approved,
       mime: "image/jpeg"
     })
   end
