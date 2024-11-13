@@ -202,6 +202,7 @@ defmodule AniminaWeb.ProfileComponents do
         <img
           class="object-cover w-8 h-8 rounded-full"
           src={Photo.get_optimized_photo_to_use(@user.profile_photo, :normal)}
+          id={"profile-image-for-receiver-#{@user.id}"}
         />
         <p
           :if={

@@ -28,6 +28,7 @@ defmodule AniminaWeb.BookmarksComponents do
               <img
                 class="object-cover rounded-lg aspect-square h-24 w-24"
                 src={Photo.get_optimized_photo_to_use(@bookmark.user.profile_photo, :normal)}
+                id={"image-for-bookmarked-user-#{@bookmark.user.id}"}
               />
               <p
                 :if={
