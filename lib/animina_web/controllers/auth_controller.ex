@@ -9,7 +9,12 @@ defmodule AniminaWeb.AuthController do
   alias AshAuthentication.TokenResource
 
   def success(conn, activity, user, _token) do
-    user = User.by_id!(user.id)
+    user =
+      if user do
+        User.by_id!(user.id)
+      else
+        nil
+      end
 
     return_to =
       case Map.get(conn.query_params, "redirect_to") do
