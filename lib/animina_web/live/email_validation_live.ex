@@ -6,7 +6,7 @@ defmodule AniminaWeb.EmailValidationLive do
   def mount(_, %{"language" => language} = _session, socket) do
     socket =
       socket
-      |> assign(active_tab: :home)
+      |> assign(active_tab: :verification)
       |> assign(language: language)
 
     {:ok, socket}

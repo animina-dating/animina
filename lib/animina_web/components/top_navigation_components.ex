@@ -190,79 +190,86 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div>
       <%= if @current_user  do %>
         <div class="dark:bg-gray-800 text-gray-700  w-[80%] ml-[20%]  py-2 text-sm bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none flex flex-col rounded-md gap-2  dark:text-white">
-          <div class="border-gray-100 border-b-[1px]  py-1">
-            <p class="px-2 text-sm " role="none">
-              <%= with_locale(@language, fn -> %>
-                <%= gettext("Signed in as") %>
-              <% end) %>
-            </p>
-            <p class="px-2 text-sm font-medium text-gray-900 truncate dark:text-gray-400">
-              <%= StringHelper.truncate_username(@current_user.username) %>
-            </p>
-          </div>
+          <%= if @active_tab != :verification do %>
+            <div class="border-gray-100 border-b-[1px] py-1">
+              <p class="px-2 text-sm" role="none">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Signed in as") %>
+                <% end) %>
+              </p>
+              <p class="px-2 text-sm font-medium text-gray-900 truncate dark:text-gray-400">
+                <%= StringHelper.truncate_username(@current_user.username) %>
+              </p>
+            </div>
 
-          <.link
-            class=" border-b-[0.5px] px-2 pb-2 border-gray-100"
-            navigate={"/#{@current_user.username}"}
-          >
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Show Profile") %>
-            <% end) %>
-          </.link>
-          <.link class="px-2" navigate="/my/profile/edit">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit Profile") %>
-            <% end) %>
-          </.link>
-          <.link class="px-2" navigate="/my/profile-photo">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Change Profile Photo") %>
-            <% end) %>
-          </.link>
-          <.link class="px-2" navigate="/my/flags/white">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit White Flags") %>
-            <% end) %>
-          </.link>
-          <.link class="px-2" navigate="/my/flags/green">
-            <div class="flex items-center gap-2">
+            <.link
+              class="border-b-[0.5px] px-2 pb-2 border-gray-100"
+              navigate={"/#{@current_user.username}"}
+            >
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Edit Green Flags") %>
+                <%= gettext("Show Profile") %>
               <% end) %>
-
-              <p class="w-2 h-2 bg-green-500 rounded-full" />
-            </div>
-          </.link>
-          <.link class="px-2" navigate="/my/flags/red">
-            <div class="flex items-center gap-2">
+            </.link>
+            <.link class="px-2" navigate="/my/profile/edit">
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Edit Red Flags") %>
+                <%= gettext("Edit Profile") %>
               <% end) %>
-              <p class="w-2 h-2 bg-red-500 rounded-full" />
-            </div>
-          </.link>
-          <.link class="px-2" navigate="/my/potential-partner">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Edit Potential Partner Preferences") %>
-            <% end) %>
-          </.link>
-          <.link class="px-2" navigate="/my/profile/visibility">
-            <div class="flex items-center gap-2">
+            </.link>
+            <.link class="px-2" navigate="/my/profile-photo">
               <%= with_locale(@language, fn -> %>
-                <%= gettext("Change Visibility") %>
+                <%= gettext("Change Profile Photo") %>
               <% end) %>
+            </.link>
+            <.link class="px-2" navigate="/my/flags/white">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Edit White Flags") %>
+              <% end) %>
+            </.link>
+            <.link class="px-2" navigate="/my/flags/green">
+              <div class="flex items-center gap-2">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Edit Green Flags") %>
+                <% end) %>
+                <p class="w-2 h-2 bg-green-500 rounded-full" />
+              </div>
+            </.link>
+            <.link class="px-2" navigate="/my/flags/red">
+              <div class="flex items-center gap-2">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Edit Red Flags") %>
+                <% end) %>
+                <p class="w-2 h-2 bg-red-500 rounded-full" />
+              </div>
+            </.link>
+            <.link class="px-2" navigate="/my/potential-partner">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Edit Potential Partner Preferences") %>
+              <% end) %>
+            </.link>
+            <.link class="px-2" navigate="/my/profile/visibility">
+              <div class="flex items-center gap-2">
+                <%= with_locale(@language, fn -> %>
+                  <%= gettext("Change Visibility") %>
+                <% end) %>
+              </div>
+            </.link>
+            <p class="h-[1px] bg-gray-100 my-1 w-[100%]"></p>
+            <div class="px-2">
+              <.flag_language_switcher base_url="/my/dashboard/" language={@language} />
             </div>
-          </.link>
-          <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
-          <div class="px-2">
-            <.flag_language_switcher base_url="/my/dashboard/" language={@language} />
-          </div>
-          <p class=" h-[1px] bg-gray-100 my-1 w-[100%]"></p>
-          <.link class="px-2" navigate="/auth/user/sign-out">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Sign Out") %>
-            <% end) %>
-          </.link>
+            <p class="h-[1px] bg-gray-100 my-1 w-[100%]"></p>
+            <.link class="px-2" navigate="/auth/user/sign-out">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Sign Out") %>
+              <% end) %>
+            </.link>
+          <% else %>
+            <.link class="px-2 w-[150px] text-center" navigate="/auth/user/sign-out">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Sign Out") %>
+              <% end) %>
+            </.link>
+          <% end %>
         </div>
       <% else %>
         <div class="flex flex-col gap-2 p-4 text-sm text-gray-700 bg-white rounded-md shadow-lg dark:bg-gray-900 ring-1 ring-black ring-opacity-5 focus:outline-none dark:text-white ">
