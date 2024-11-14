@@ -431,6 +431,21 @@ defmodule AniminaWeb.TopNavigationCompontents do
     """
   end
 
+  def hibernated_user_banner(assigns) do
+    ~H"""
+    <div
+      :if={@current_user && make_sure_user_state_is_atom(@current_user) == :hibernate}
+      class="mx-4 mb-4 p-2 text-center rounded-md  bg-blue-500 text-white"
+    >
+      <%= with_locale(@language, fn -> %>
+        <%= gettext(
+          "Your Account is Hibernated , This means users can't see your profile or send you messages. You can activate your account by ensuring you have a profile picture and an about me story with an image"
+        ) %>
+      <% end) %>
+    </div>
+    """
+  end
+
   defp get_photo_state_styling(:error) do
     "bg-red-500 text-white w-2 h-2 rounded-full"
   end
@@ -509,6 +524,16 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp make_sure_photo_state_is_atom(photo) do
     String.to_atom(photo.state)
+  end
+
+  # We Have This checker so that incase we receive the state as a string , we
+  # still convert it to an atom
+  defp make_sure_user_state_is_atom(user) do
+    if is_atom(user.state) do
+      user.state
+    else
+      String.to_atom(user.state)
+    end
   end
 
   defp error_or_nsfw_profile_image(assigns) do
