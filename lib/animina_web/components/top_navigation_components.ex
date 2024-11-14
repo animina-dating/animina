@@ -437,11 +437,24 @@ defmodule AniminaWeb.TopNavigationCompontents do
       :if={@current_user && make_sure_user_state_is_atom(@current_user) == :hibernate}
       class="mx-4 mb-4 p-2 text-center rounded-md  bg-blue-500 text-white"
     >
-      <%= with_locale(@language, fn -> %>
-        <%= gettext(
-          "Your Account is Hibernated , This means users can't see your profile or send you messages. You can activate your account by ensuring you have a profile picture and an about me story with an image"
-        ) %>
-      <% end) %>
+      <span>
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("This account is hibernated. Other users can't see it or send messages to you.") %>
+        <% end) %>
+      </span>
+
+      <span>
+        <%= gettext("Visit the") %>
+      </span>
+
+      <span>
+        <a href="/my/profile/visibility" class="underline">
+          <%= gettext("Change Visibility") %>
+        </a>
+      </span>
+      <span class="ml-4">
+        <%= gettext("page to activate it again.") %>
+      </span>
     </div>
     """
   end
