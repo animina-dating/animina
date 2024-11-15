@@ -131,8 +131,8 @@ msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
 msgid "Back to Sign In"
 msgstr "Zurück zur Anmeldung"
 
-#: lib/animina_web/components/top_navigation_components.ex:1026
-#: lib/animina_web/components/top_navigation_components.ex:1042
+#: lib/animina_web/components/top_navigation_components.ex:1041
+#: lib/animina_web/components/top_navigation_components.ex:1057
 #: lib/animina_web/live/bookmarks_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Bookmarks"
@@ -160,6 +160,7 @@ msgid "Change Profile Visibility"
 msgstr "Profil-Sichtbarkeit ändern"
 
 #: lib/animina_web/components/top_navigation_components.ex:252
+#: lib/animina_web/components/top_navigation_components.ex:452
 #, elixir-autogen, elixir-format
 msgid "Change Visibility"
 msgstr "Sichtbarkeit ändern"
@@ -169,7 +170,7 @@ msgstr "Sichtbarkeit ändern"
 msgid "Characters: "
 msgstr "Zeichen: "
 
-#: lib/animina_web/components/top_navigation_components.ex:889
+#: lib/animina_web/components/top_navigation_components.ex:904
 #, elixir-autogen, elixir-format
 msgid "Chat"
 msgstr "Chat"
@@ -507,8 +508,8 @@ msgstr "Hallo"
 msgid "Hibernate"
 msgstr "Ruhezustand"
 
-#: lib/animina_web/components/top_navigation_components.ex:819
-#: lib/animina_web/components/top_navigation_components.ex:849
+#: lib/animina_web/components/top_navigation_components.ex:834
+#: lib/animina_web/components/top_navigation_components.ex:864
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr "Startseite"
@@ -769,8 +770,8 @@ msgstr "Foto"
 msgid "Please wait a second. We are working on it."
 msgstr "Bitte warten Sie einen Moment. Wir arbeiten daran."
 
-#: lib/animina_web/components/top_navigation_components.ex:629
-#: lib/animina_web/components/top_navigation_components.ex:633
+#: lib/animina_web/components/top_navigation_components.ex:644
+#: lib/animina_web/components/top_navigation_components.ex:648
 #, elixir-autogen, elixir-format
 msgid "Points"
 msgstr "Punkte"
@@ -800,8 +801,8 @@ msgstr "Fortfahren"
 msgid "Proceed without selecting a flag"
 msgstr "Fortfahren, ohne ein Flag auszuwählen"
 
-#: lib/animina_web/components/top_navigation_components.ex:1092
-#: lib/animina_web/components/top_navigation_components.ex:1115
+#: lib/animina_web/components/top_navigation_components.ex:1107
+#: lib/animina_web/components/top_navigation_components.ex:1130
 #: lib/animina_web/components/waitlist_components.ex:32
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile"
@@ -867,7 +868,7 @@ msgstr "Abgelehnt"
 msgid "Report Account"
 msgstr "Konto melden"
 
-#: lib/animina_web/components/top_navigation_components.ex:656
+#: lib/animina_web/components/top_navigation_components.ex:671
 #, elixir-autogen, elixir-format
 msgid "Reports"
 msgstr "Berichte"
@@ -1209,7 +1210,7 @@ msgstr "Besucht"
 msgid "Visited Profiles"
 msgstr "Besuchte Profile"
 
-#: lib/animina_web/components/top_navigation_components.ex:681
+#: lib/animina_web/components/top_navigation_components.ex:696
 #: lib/animina_web/live/waitlist_live.ex:31
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
@@ -1524,8 +1525,8 @@ msgstr " Versuche übrig!"
 msgid "Account Confirmed Successfully"
 msgstr "Konto erfolgreich bestätigt"
 
-#: lib/animina_web/components/top_navigation_components.ex:961
-#: lib/animina_web/components/top_navigation_components.ex:983
+#: lib/animina_web/components/top_navigation_components.ex:976
+#: lib/animina_web/components/top_navigation_components.ex:998
 #: lib/animina_web/live/my_chats_live.ex:15
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Chats"
@@ -1636,7 +1637,17 @@ msgstr "Derzeit aktiv"
 msgid "Please use this PIN to verify your new ANIMINA account."
 msgstr "Bitte verwenden Sie diesen PIN, um Ihr neues ANIMINA-Konto zu verifizieren."
 
-#: lib/animina_web/components/top_navigation_components.ex:441
+#: lib/animina_web/components/top_navigation_components.ex:442
+#, elixir-autogen, elixir-format
+msgid "This account is hibernated. Other users can't see it or send messages to you."
+msgstr "Dieses Konto ist im Winterschlaf. Andere Benutzer können es nicht sehen oder Ihnen Nachrichten senden."
+
+#: lib/animina_web/components/top_navigation_components.ex:447
 #, elixir-autogen, elixir-format, fuzzy
-msgid "Your Account is Hibernated , This means users can't see your profile or send you messages. You can activate your account by ensuring you have a profile picture and an about me story with an image"
-msgstr "Ihr Konto befindet sich im Ruhezustand. Das bedeutet, dass Benutzer Ihr Profil nicht sehen oder Ihnen keine Nachrichten senden können. Sie können Ihr Konto aktivieren, indem Sie sicherstellen, dass Sie über ein Profilbild und ein Profilbild verfügen Über mich Geschichte mit einem Bild"
+msgid "Visit the"
+msgstr "Besucht"
+
+#: lib/animina_web/components/top_navigation_components.ex:456
+#, elixir-autogen, elixir-format
+msgid "page to activate it again."
+msgstr "Seite, um es wieder zu aktivieren."
