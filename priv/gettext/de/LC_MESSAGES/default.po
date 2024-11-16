@@ -339,7 +339,7 @@ msgstr "Beschreibung:"
 #: lib/animina_web/live/update_profile_live.ex:283
 #, elixir-autogen, elixir-format
 msgid "Diverse"
-msgstr "Vielfältig"
+msgstr "Divers"
 
 #: lib/animina_web/components/bookmark/bookmark_component.ex:87
 #, elixir-autogen, elixir-format
