@@ -28,7 +28,7 @@ defmodule AniminaWeb.AniminaComponents do
     ~H"""
     <div class="rotate-[24deg] w-[100%] rotate-[12deg] rotate-[0deg]" />
     <div
-      class="border border-purple-400 md:w-[100%] w-[100%] mx-auto  rounded-lg bg-blue-100 px-4 py-3.5 flex items-start justify-between gap-10 md:gap-8 drop-shadow xs:justify-start "
+      class="border border-purple-400 dark:border-gray-400 md:w-[100%] w-[100%] mx-auto rounded-lg bg-blue-100 dark:bg-slate-800 px-4 py-3.5 flex items-start justify-between gap-10 md:gap-8 drop-shadow xs:justify-start"
       phx-no-format
     >
       <%= unless Enum.empty?(@avatars_urls) do %>
@@ -76,7 +76,7 @@ defmodule AniminaWeb.AniminaComponents do
 
   def notification_title(assigns) do
     ~H"""
-    <h3 class="text-base font-bold text-brand-gray-700">
+    <h3 class="text-base font-bold text-brand-gray-700 dark:text-slate-400">
       <%= render_slot(@inner_block) %>
     </h3>
     """
@@ -95,7 +95,7 @@ defmodule AniminaWeb.AniminaComponents do
 
   def notification_message(assigns) do
     ~H"""
-    <p class="text-base font-normal text-brand-gray-700">
+    <p class="text-base font-normal text-brand-gray-700 dark:text-slate-400">
       <%= render_slot(@inner_block) %>
     </p>
     """
