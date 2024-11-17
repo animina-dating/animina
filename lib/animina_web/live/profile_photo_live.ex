@@ -303,7 +303,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
           </p>
           <div class="md:w-[300px] w-[100%] relative">
             <div
-              class="absolute z-50 top-4 right-2 h-[40px] text-white w-[40px] bg-red-500 p-2 rounded-md "
+              class="absolute z-50 cursor-pointer top-4 right-2 h-[40px] text-white w-[40px] bg-red-500 p-2 rounded-md "
               phx-click="delete_photo"
               data-confirm={
                 with_locale(@language, fn ->
