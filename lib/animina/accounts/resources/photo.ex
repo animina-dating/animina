@@ -9,7 +9,6 @@ defmodule Animina.Accounts.Photo do
   alias Animina.ImageTagging
   alias Animina.Narratives
   alias Animina.Narratives.Story
-  alias Ash.Changeset
 
   alias Animina.Traits.Flag
 
@@ -448,23 +447,6 @@ defmodule Animina.Accounts.Photo do
 
     if story.headline.subject == "About me" do
       User.hibernate(user)
-    end
-  end
-
-  defp activate_or_deactivate_user(user_id) do
-    user =
-      Accounts.User.by_id!(user_id)
-
-    case Narratives.Story.by_user_id(user_id) do
-      {:ok, stories} ->
-        if Enum.count(stories) >=
-             Application.get_env(:animina, :number_of_stories_required_for_complete_registration) and
-             user.registration_completed_at == nil and user.profile_photo != nil do
-          Accounts.User.update(user, %{registration_completed_at: DateTime.utc_now()})
-        end
-
-      _ ->
-        :ok
     end
   end
 
