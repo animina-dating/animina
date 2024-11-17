@@ -1037,7 +1037,7 @@ defmodule AniminaWeb.StoryLive do
                 if @story.headline && @story.headline.subject == "About me" do
                   with_locale(@language, fn ->
                     gettext(
-                      "Are you sure you want to delete your profile photo ? This will hibernate your account until you upload another photo"
+                      "Are you sure you want to delete your about me photo ? This will hibernate your account until you upload another photo"
                     )
                   end)
                 else
