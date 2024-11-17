@@ -5,11 +5,10 @@ defmodule Animina.Accounts.Photo do
   alias Animina.Accounts
   alias Animina.Accounts.OptimizedPhoto
   alias Animina.Accounts.PhotoFlags
+  alias Animina.Accounts.User
   alias Animina.ImageTagging
   alias Animina.Narratives
-  alias Animina.Validations
-
-  Animina.Validations.AboutPhoto
+  alias Animina.Narratives.Story
 
   alias Animina.Traits.Flag
 
@@ -201,9 +200,24 @@ defmodule Animina.Accounts.Photo do
 
     change after_action(fn changeset, record, _ ->
              update_user_registration_completed_at(record.user_id)
+
              {:ok, record}
            end),
            on: [:create, :destroy]
+
+    change after_action(fn changeset, record, _ ->
+             maybe_reactivate_user(record.user_id, record.story_id)
+
+             {:ok, record}
+           end),
+           on: [:create]
+
+    change after_action(fn changeset, record, _ ->
+             maybe_hibernate_user(record.user_id, record.story_id)
+
+             {:ok, record}
+           end),
+           on: [:destroy]
 
     change after_action(fn changeset, record, _ ->
              delete_photo_and_optimized_photos(record)
@@ -211,10 +225,6 @@ defmodule Animina.Accounts.Photo do
              {:ok, record}
            end),
            on: [:destroy]
-  end
-
-  validations do
-    validate {Validations.AboutPhoto, story: :story_id, user: :user_id}, on: :destroy
   end
 
   attributes do
@@ -381,6 +391,83 @@ defmodule Animina.Accounts.Photo do
       _ ->
         :ok
     end
+  end
+
+  # We pattern match for nil in story as for a profile picture we don't have a story_id.
+  # This is used for when someone uploads a profile picture.
+  defp maybe_reactivate_user(user_id, nil) do
+    user =
+      Accounts.User.by_id!(user_id)
+
+    case user.state do
+      :normal ->
+        :ok
+
+      :validated ->
+        :ok
+
+      _ ->
+        if user_has_an_about_me_story_with_image?(user) do
+          User.reactivate(user)
+        end
+    end
+  end
+
+  # We pattern match for the story_id as we are targeting an upload for the 'About me' story.
+
+  defp maybe_reactivate_user(user_id, story_id) do
+    story =
+      Narratives.Story.by_id_with_headline!(story_id)
+
+    user =
+      Accounts.User.by_id!(user_id)
+
+    if user.profile_photo != nil and story.headline.subject == "About me" do
+      User.reactivate(user)
+    end
+  end
+
+  # We pattern match for nil in story as for a profile picture we don't have a story_id.
+  # This is used for when someone destroys / deletes a profile picture.
+  defp maybe_hibernate_user(user_id, nil) do
+    user =
+      Accounts.User.by_id!(user_id)
+
+    User.hibernate(user)
+  end
+
+  # We pattern match for the story_id as we are targeting a deletion for the 'About me' story.
+
+  defp maybe_hibernate_user(user_id, story_id) do
+    story =
+      Narratives.Story.by_id_with_headline!(story_id)
+
+    user =
+      Accounts.User.by_id!(user_id)
+
+    if story.headline.subject == "About me" do
+      User.hibernate(user)
+    end
+  end
+
+  defp user_has_an_about_me_story_with_image?(user) do
+    case get_stories_for_a_user(user) do
+      [] ->
+        false
+
+      stories ->
+        stories
+        |> Enum.find(fn story -> story.headline.subject == "About me" end)
+        |> case do
+          nil -> false
+          story -> not is_nil(story.photo)
+        end
+    end
+  end
+
+  defp get_stories_for_a_user(user) do
+    {:ok, stories} = Story.by_user_id(user.id)
+    stories
   end
 
   def extract_uploads_path(path) do

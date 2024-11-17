@@ -36,6 +36,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
       raw_seed_data = [
         %{
           unsplash_photo_id: "photo-1531123897727-8f129e1688ce",
+          unsplash_about_me_photo_id: "photo-1524253482453-3fed8d2fe12b",
           gender: "female",
           about_me:
             "I'm a passionate traveler and foodie. I love exploring new cultures and trying out exotic cuisines. When I'm not traveling, you can find me reading a good book or practicing yoga. My ultimate goal is to visit every continent and learn at least one dish from each country I visit. I believe that travel broadens the mind and enriches the soul, and I enjoy sharing my experiences with others through my travel blog.",
@@ -49,6 +50,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1526080652727-5b77f74eacd2",
+          unsplash_about_me_photo_id: "photo-1535713875002-d1d0cf377fde",
           gender: "female",
           about_me:
             "As a software developer by day and a painter by night, I find joy in both logic and creativity. I enjoy hiking on weekends and volunteering at animal shelters. My paintings are often inspired by the beauty I see during my hikes, and I love creating art that captures the essence of nature. Volunteering at animal shelters brings me immense joy, as I believe in giving back to the community and helping animals in need.",
@@ -62,6 +64,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1598897516650-e4dc73d8e417",
+          unsplash_about_me_photo_id: "photo-1582169505937-d7885ebf3bc1",
           gender: "female",
           about_me:
             "Music is my life! I play the guitar and love attending live concerts. I also enjoy baking and often experiment with new dessert recipes. There's something magical about creating music and sharing it with others, and I hope to someday perform in front of a large audience. Baking is my therapy, and I find peace in the process of mixing ingredients and creating delicious treats for my loved ones.",
@@ -75,6 +78,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1536896407451-6e3dd976edd1",
+          unsplash_about_me_photo_id: "photo-1540479859555-17af45c37b3e",
           gender: "female",
           about_me:
             "I'm an avid runner and have completed several marathons. I love the thrill of pushing my limits. In my downtime, I enjoy binge-watching mystery series and gardening. Running has taught me the importance of perseverance and discipline, and it keeps me motivated to achieve my goals. Gardening is my way of connecting with nature and finding tranquility amidst the hustle and bustle of life.",
@@ -88,6 +92,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1499399244875-59ef3e1347e3",
+          unsplash_about_me_photo_id: "photo-1533577116850-9cc66cad8a9b",
           gender: "female",
           about_me:
             "I'm a nature enthusiast and spend most of my free time in the great outdoors. Hiking, camping, and bird watching are some of my favorite activities. I also enjoy photography and capturing the beauty of nature. My dream is to travel to all the national parks and document my journey through photographs and journals. There's something truly magical about being in the wild and experiencing nature in its purest form.",
@@ -101,6 +106,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1484608856193-968d2be4080e",
+          unsplash_about_me_photo_id: "photo-1521305916504-4a1121188589",
           gender: "female",
           about_me:
             "A history buff and a museum lover, I enjoy learning about different cultures and eras. I also love cooking and often host dinner parties for my friends. Exploring ancient ruins and visiting historical landmarks is my way of traveling back in time and understanding the world's rich history. Cooking is my way of expressing creativity, and I find joy in experimenting with different cuisines and flavors.",
@@ -114,6 +120,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1502768040783-423da5fd5fa0",
+          unsplash_about_me_photo_id: "photo-1502768040783-423da5fd5fa0",
           gender: "female",
           about_me:
             "I work as a graphic designer and have a keen eye for detail. I love visiting art galleries and attending creative workshops. My weekends are usually spent cycling around the city. Design is my passion, and I find inspiration in everyday life, whether it's the architecture of buildings or the colors of a sunset. Cycling helps me clear my mind and stay fit while exploring the urban landscape.",
@@ -127,6 +134,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1465406325903-9d93ee82f613",
+          unsplash_about_me_photo_id: "photo-1540206395-68808572332f",
           gender: "female",
           about_me:
             "I'm a fitness trainer and a health nut. I love helping people achieve their fitness goals. When I'm not at the gym, I enjoy reading about nutrition and wellness. Fitness is my way of life, and I believe in the power of a healthy body and mind. I enjoy sharing my knowledge with others and motivating them to lead healthier, happier lives. In my spare time, I experiment with new healthy recipes and stay updated with the latest in fitness science.",
@@ -140,6 +148,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1542596594-649edbc13630",
+          unsplash_about_me_photo_id: "photo-1542596594-649edbc13630",
           gender: "female",
           about_me:
             "I have a passion for fashion and work as a stylist. I enjoy experimenting with different looks and keeping up with the latest trends. In my spare time, I like to unwind with a good movie or a night out with friends. Fashion is not just a career for me; it's a way of expressing myself and making a statement. I love helping people find their style and feel confident in their own skin.",
@@ -153,6 +162,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1520466809213-7b9a56adcd45",
+          unsplash_about_me_photo_id: "photo-1520466809213-7b9a56adcd45",
           gender: "female",
           about_me:
             "I'm a scientist with a love for the stars. Astronomy fascinates me, and I spend many nights stargazing. I also enjoy playing chess and solving puzzles. Science is my calling, and I love unraveling the mysteries of the universe. Stargazing is my way of connecting with the cosmos and pondering our place in the vast expanse. Chess and puzzles keep my mind sharp and challenge me to think critically.",
@@ -166,6 +176,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1580489944761-15a19d654956",
+          unsplash_about_me_photo_id: "photo-1580489944761-15a19d654956",
           gender: "female",
           about_me:
             "I run a small bakery and love creating new recipes. My dream is to open a chain of bakeries someday. In my free time, I enjoy knitting and reading romantic novels. Baking is my passion, and I find joy in seeing people smile when they taste my creations. Knitting helps me relax, and I love crafting handmade gifts for my loved ones. Reading romantic novels transports me to a world of love and adventure, fueling my creativity.",
@@ -179,6 +190,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1567532939604-b6b5b0db2604",
+          unsplash_about_me_photo_id: "photo-1567532939604-b6b5b0db2604",
           gender: "female",
           about_me:
             "As a teacher, I find joy in shaping young minds. I love working with children and making learning fun. My hobbies include playing the piano and gardening. Teaching is my calling, and I believe in the power of education to change lives. I strive to create a positive and engaging learning environment for my students. Playing the piano helps me unwind, and gardening allows me to nurture life and witness the beauty of growth.",
@@ -192,6 +204,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1505640070685-2a70292000ff",
+          unsplash_about_me_photo_id: "photo-1505640070685-2a70292000ff",
           gender: "male",
           about_me:
             "As an engineer, I find satisfaction in solving complex problems and bringing innovative ideas to life. I enjoy working with technology and constantly learning about new advancements. My hobbies include cycling and woodworking. Engineering is my passion, and I believe in the impact of technology on improving lives. I strive to create efficient and sustainable solutions in my projects. Cycling helps me stay fit and clear my mind, while woodworking allows me to create tangible and functional pieces.",
@@ -205,6 +218,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1557862921-37829c790f19",
+          unsplash_about_me_photo_id: "photo-1557862921-37829c790f19",
           gender: "male",
           about_me:
             "As a doctor, I am dedicated to improving the health and well-being of my patients. I enjoy the challenges and rewards that come with the medical profession. My hobbies include running and cooking. Medicine is not just a career for me, but a calling. I believe in providing compassionate care and staying updated with the latest medical advancements. Running helps me stay fit and focused, while cooking allows me to relax and experiment with new recipes.",
@@ -218,6 +232,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1702449269565-8bbe32972f65",
+          unsplash_about_me_photo_id: "photo-1702449269565-8bbe32972f65",
           gender: "male",
           about_me:
             "As a software developer, I thrive on the creativity and logic required to build innovative solutions. I enjoy coding, learning new programming languages, and keeping up with technology trends. My hobbies include playing chess and hiking. Software development allows me to turn ideas into reality, and I believe in the power of technology to solve real-world problems. Playing chess sharpens my strategic thinking, while hiking provides me with an escape into nature and a chance to recharge.",
@@ -231,6 +246,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1700856417754-cb66c909f4d7",
+          unsplash_about_me_photo_id: "photo-1700856417754-cb66c909f4d7",
           gender: "male",
           about_me:
             "As a chef, I am passionate about creating delicious and innovative dishes. I enjoy experimenting with flavors and ingredients to surprise and delight my guests. My hobbies include painting and cycling. Cooking is an art for me, and I believe in the joy that good food can bring to people's lives. Painting allows me to express my creativity, while cycling helps me stay active and explore new places.",
@@ -244,6 +260,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1627837661889-6fc9434e12f6",
+          unsplash_about_me_photo_id: "photo-1627837661889-6fc9434e12f6",
           gender: "male",
           about_me:
             "As a journalist, I am dedicated to uncovering the truth and telling compelling stories. I enjoy investigating important issues and giving a voice to those who are often unheard. My hobbies include reading and photography. Journalism is my way of making a difference in the world, and I believe in the power of a well-told story to inspire change. Reading helps me stay informed, while photography allows me to capture moments and tell visual stories.",
@@ -257,6 +274,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1677759337999-ceae7a0a5faa",
+          unsplash_about_me_photo_id: "photo-1677759337999-ceae7a0a5faa",
           gender: "male",
           about_me:
             "As a musician, I find joy in creating and performing music that resonates with people. I enjoy exploring different genres and collaborating with other artists. My hobbies include traveling and learning new languages. Music is my universal language, and I believe in its ability to bring people together. Traveling inspires my creativity, while learning languages helps me connect with diverse cultures and audiences.",
@@ -270,6 +288,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1707139743543-590aeb0437d8",
+          unsplash_about_me_photo_id: "photo-1707139743543-590aeb0437d8",
           gender: "male",
           about_me:
             "As an architect, I am passionate about designing spaces that are both functional and beautiful. I enjoy the challenge of bringing creative visions to life and improving the environments where people live and work. My hobbies include photography and hiking. Architecture allows me to blend art and science, and I believe in the transformative power of good design. Photography helps me see the world from different perspectives, while hiking provides inspiration from nature.",
@@ -283,6 +302,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1506794778202-cad84cf45f1d",
+          unsplash_about_me_photo_id: "photo-1506794778202-cad84cf45f1d",
           gender: "male",
           about_me:
             "As a scientist, I am driven by curiosity and the desire to understand the natural world. I enjoy conducting experiments, analyzing data, and discovering new phenomena. My hobbies include stargazing and playing the guitar. Science is my way of making sense of the universe, and I believe in the importance of research and innovation. Stargazing fuels my sense of wonder, while playing the guitar helps me relax and express myself creatively.",
@@ -296,6 +316,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1531891570158-e71b35a485bc",
+          unsplash_about_me_photo_id: "photo-1531891570158-e71b35a485bc",
           gender: "male",
           about_me:
             "As a pilot, I find exhilaration in soaring through the skies and experiencing the world from above. I enjoy navigating complex airspaces and ensuring the safety of my passengers. My hobbies include skydiving and scuba diving. Aviation is my passion, and I believe in the freedom and adventure that flying brings. Skydiving pushes my limits, while scuba diving allows me to explore the mysteries of the underwater world.",
@@ -309,6 +330,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1582015752624-e8b1c75e3711",
+          unsplash_about_me_photo_id: "photo-1582015752624-e8b1c75e3711",
           gender: "male",
           about_me:
             "As a historian, I am fascinated by the stories and events that have shaped our world. I enjoy researching, writing, and teaching about history. My hobbies include visiting museums and collecting rare books. History is my passion, and I believe in preserving the past to understand the present and future. Visiting museums enriches my knowledge, while collecting rare books connects me to the historical periods I study.",
@@ -322,6 +344,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1525393839361-867d646aea41",
+          unsplash_about_me_photo_id: "photo-1525393839361-867d646aea41",
           gender: "male",
           about_me:
             "As a wildlife photographer, I am passionate about capturing the beauty and diversity of the natural world. I enjoy traveling to remote locations and patiently waiting for the perfect shot. My hobbies include birdwatching and hiking. Photography allows me to share the wonders of nature with others, and I believe in the importance of conservation. Birdwatching helps me appreciate the avian world, while hiking takes me to breathtaking landscapes.",
@@ -335,6 +358,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1614647444531-ac308ea848eb",
+          unsplash_about_me_photo_id: "photo-1614647444531-ac308ea848eb",
           gender: "male",
           about_me:
             "As a marine biologist, I am dedicated to studying and protecting marine life. I enjoy conducting research, diving, and exploring underwater ecosystems. My hobbies include sailing and underwater photography. Marine biology is my calling, and I believe in the importance of preserving our oceans. Sailing connects me to the marine environment, while underwater photography allows me to document the incredible diversity beneath the waves.",
@@ -348,6 +372,7 @@ if Enum.member?([:dev, :test], Mix.env()) do
         },
         %{
           unsplash_photo_id: "photo-1500648767791-00dcc994a43e",
+          unsplash_about_me_photo_id: "photo-1500648767791-00dcc994a43e",
           gender: "male",
           about_me:
             "As a paramedic, I am committed to providing emergency medical care and saving lives. I enjoy the fast-paced nature of my job and the opportunity to help people in critical situations. My hobbies include mountain biking and playing the drums. Being a paramedic is my way of making a difference, and I believe in the importance of quick and compassionate care. Mountain biking keeps me fit and adventurous, while playing the drums helps me unwind and express my rhythm.",
@@ -418,8 +443,11 @@ if Enum.member?([:dev, :test], Mix.env()) do
           position: 1
         })
 
+      about_me_photo =
+        download_photo(seed_data.unsplash_about_me_photo_id, "#{Faker.UUID.v4()}.png")
+
       # create about me story photo
-      Photo.create!(Map.merge(photo, %{user_id: user.id, story_id: story.id}))
+      Photo.create!(Map.merge(about_me_photo, %{user_id: user.id, story_id: story.id}))
 
       unused_photos = all_photos()
 
