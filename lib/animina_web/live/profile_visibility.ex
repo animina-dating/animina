@@ -127,7 +127,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
      )}
   end
 
-  defp maybe_change_user_state("normalize", socket, profile_photo, false) do
+  defp maybe_change_user_state("normalize", socket, _profile_photo, false) do
     {:noreply,
      socket
      |> put_flash(
@@ -140,7 +140,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
      )}
   end
 
-  defp maybe_change_user_state("normalize", socket, profile_photo, true) do
+  defp maybe_change_user_state("normalize", socket, _profile_photo, true) do
     case change_user_state("normalize", socket.assigns.current_user) do
       {:ok, user} ->
         {:noreply,
@@ -165,7 +165,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     end
   end
 
-  defp maybe_change_user_state("hibernate", socket, profile_photo, true) do
+  defp maybe_change_user_state("hibernate", socket, _profile_photo, true) do
     case change_user_state("hibernate", socket.assigns.current_user) do
       {:ok, user} ->
         {:noreply,
