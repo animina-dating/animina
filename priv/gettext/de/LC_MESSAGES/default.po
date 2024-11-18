@@ -154,7 +154,7 @@ msgstr "Abbrechen"
 msgid "Change Profile Photo"
 msgstr "Profilfoto ändern"
 
-#: lib/animina_web/live/profile_visibility.ex:124
+#: lib/animina_web/live/profile_visibility.ex:207
 #, elixir-autogen, elixir-format
 msgid "Change Profile Visibility"
 msgstr "Profil-Sichtbarkeit ändern"
@@ -503,7 +503,7 @@ msgstr "Hier sind einige Ideen. Kopieren Sie eine und passen Sie sie an (z. B. e
 msgid "Hi"
 msgstr "Hallo"
 
-#: lib/animina_web/components/profile/profile_components.ex:623
+#: lib/animina_web/components/profile/profile_components.ex:627
 #, elixir-autogen, elixir-format
 msgid "Hibernate"
 msgstr "Ruhezustand"
@@ -696,7 +696,7 @@ msgstr "Keine Berichte verfügbar"
 msgid "No bookmarks found"
 msgstr "Keine Lesezeichen gefunden"
 
-#: lib/animina_web/components/profile/profile_components.ex:611
+#: lib/animina_web/components/profile/profile_components.ex:615
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr "Normal"
@@ -818,12 +818,14 @@ msgstr "Profilfoto erfolgreich gelöscht"
 msgid "Profile updated successfully"
 msgstr "Profil erfolgreich aktualisiert"
 
-#: lib/animina_web/live/profile_visibility.ex:85
+#: lib/animina_web/live/profile_visibility.ex:162
+#: lib/animina_web/live/profile_visibility.ex:187
 #, elixir-autogen, elixir-format
 msgid "Profile visibility change failed."
 msgstr "Profil-Sichtbarkeitsänderung fehlgeschlagen."
 
-#: lib/animina_web/live/profile_visibility.ex:82
+#: lib/animina_web/live/profile_visibility.ex:152
+#: lib/animina_web/live/profile_visibility.ex:177
 #, elixir-autogen, elixir-format
 msgid "Profile visibility changed successfully."
 msgstr "Profil-Sichtbarkeit erfolgreich geändert."
@@ -940,7 +942,7 @@ msgstr "Suchbereich"
 msgid "Seconds Remaining"
 msgstr "Verbleibende Sekunden"
 
-#: lib/animina_web/live/profile_visibility.ex:129
+#: lib/animina_web/live/profile_visibility.ex:212
 #, elixir-autogen, elixir-format
 msgid "Select And Change the visibility of your profile"
 msgstr "Wählen und ändern Sie die Sichtbarkeit Ihres Profils"
@@ -1055,12 +1057,12 @@ msgstr "Der Ball bleibt in meinem Posteingang."
 msgid "The following users are on the waitlist"
 msgstr "Die folgenden Nutzer stehen auf der Warteliste"
 
-#: lib/animina_web/components/profile/profile_components.ex:617
+#: lib/animina_web/components/profile/profile_components.ex:621
 #, elixir-autogen, elixir-format
 msgid "The user is actively using the account, engaging with posts and other users."
 msgstr "Der Nutzer verwendet das Konto aktiv und interagiert mit Beiträgen und anderen Nutzern."
 
-#: lib/animina_web/components/profile/profile_components.ex:629
+#: lib/animina_web/components/profile/profile_components.ex:633
 #, elixir-autogen, elixir-format
 msgid "The user is temporarily inactive but retains their account and data for future use."
 msgstr "Der Nutzer ist vorübergehend inaktiv, behält jedoch sein Konto und seine Daten für die zukünftige Nutzung."
@@ -1622,12 +1624,12 @@ msgstr "Falls Sie kein Konto erstellt haben, ignorieren Sie diese Nachricht. Wir
 msgid "This email was sent by the ANIMINA system. Please do not reply to it."
 msgstr "Diese E-Mail wurde vom ANIMINA-System gesendet. Bitte antworten Sie nicht darauf."
 
-#: lib/animina_web/components/profile/profile_components.ex:597
+#: lib/animina_web/components/profile/profile_components.ex:601
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Change To This State"
 msgstr "Zu diesem Status wechseln"
 
-#: lib/animina_web/components/profile/profile_components.ex:650
+#: lib/animina_web/components/profile/profile_components.ex:654
 #, elixir-autogen, elixir-format
 msgid "Currently active"
 msgstr "Derzeit aktiv"
@@ -1657,7 +1659,6 @@ msgstr "Seite, um es wieder zu aktivieren."
 msgid "Are you sure you want to delete this photo ?"
 msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
 
-
 #: lib/animina_web/live/story_live.ex:1039
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete your about me photo ? This will hibernate your account until you upload another photo"
@@ -1672,3 +1673,18 @@ msgstr "Möchten Sie Ihr Profilfoto wirklich löschen? Ihr Konto wird pausiert, 
 #, elixir-autogen, elixir-format
 msgid "Photo removed successfully !"
 msgstr "Foto erfolgreich entfernt!"
+
+#: lib/animina_web/live/profile_visibility.ex:136
+#, elixir-autogen, elixir-format
+msgid "You need to have a photo for your about me story to change your profile visibility."
+msgstr "Sie müssen ein Foto für Ihre Über-mich-Geschichte haben, um die Sichtbarkeit Ihres Profils zu ändern."
+
+#: lib/animina_web/live/profile_visibility.ex:113
+#, elixir-autogen, elixir-format
+msgid "You need to have a profile photo and a photo for your about me story\n      to change your profile visibility."
+msgstr "Sie müssen ein Profilfoto und ein Foto für Ihre Über-mich-Geschichte haben,\n      um die Sichtbarkeit Ihres Profils zu ändern."
+
+#: lib/animina_web/live/profile_visibility.ex:125
+#, elixir-autogen, elixir-format
+msgid "You need to have a profile photo to change your profile visibility."
+msgstr "Sie müssen ein Profilfoto haben, um die Sichtbarkeit Ihres Profils zu ändern."
