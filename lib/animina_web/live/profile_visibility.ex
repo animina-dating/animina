@@ -165,7 +165,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     end
   end
 
-  defp maybe_change_user_state("hibernate", socket, _profile_photo, true) do
+  defp maybe_change_user_state("hibernate", socket, _profile_photo, _) do
     case change_user_state("hibernate", socket.assigns.current_user) do
       {:ok, user} ->
         {:noreply,
