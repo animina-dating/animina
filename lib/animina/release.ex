@@ -13,6 +13,17 @@ defmodule Animina.Release do
     end
   end
 
+  def reset do
+    load_app()
+
+    for repo <- repos() do
+      Ecto.Adapters.Postgres.storage_down(repo.config())
+      Ecto.Adapters.Postgres.storage_up(repo.config())
+    end
+
+    migrate()
+  end
+
   def rollback(repo, version) do
     load_app()
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
