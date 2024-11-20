@@ -118,7 +118,7 @@ defmodule AniminaWeb.LiveUserAuth do
     else
       {:halt,
        socket
-       |> Phoenix.LiveView.redirect(to: "/#{path}")
+       |> Phoenix.LiveView.redirect(to: "/my/email-validation")
        |> Phoenix.LiveView.put_flash(
          :error,
          "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
