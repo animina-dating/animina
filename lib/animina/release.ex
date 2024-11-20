@@ -5,11 +5,14 @@ defmodule Animina.Release do
   """
   @app :animina
 
+  alias Ecto.Adapters.Postgres
+  alias Ecto.Migrator
+
   def migrate do
     load_app()
 
     for repo <- repos() do
-      {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
+      {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :up, all: true))
     end
   end
 
@@ -17,8 +20,8 @@ defmodule Animina.Release do
     load_app()
 
     for repo <- repos() do
-      Ecto.Adapters.Postgres.storage_down(repo.config())
-      Ecto.Adapters.Postgres.storage_up(repo.config())
+      Postgres.storage_down(repo.config())
+      Postgres.storage_up(repo.config())
     end
 
     migrate()
@@ -26,7 +29,7 @@ defmodule Animina.Release do
 
   def rollback(repo, version) do
     load_app()
-    {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
+    {:ok, _, _} = Migrator.with_repo(repo, &Migrator.run(&1, :down, to: version))
   end
 
   defp repos do
