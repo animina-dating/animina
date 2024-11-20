@@ -67,7 +67,6 @@ defmodule AniminaWeb.Router do
       live "/my/flags/red", FlagsLive, :red
       live "/my/about-me", StoryLive, :about_me
       live "/my/profile/visibility", ProfileVisibilityLive, :index
-
     end
 
     ash_authentication_live_session :authentication_required_and_about_me_story,
