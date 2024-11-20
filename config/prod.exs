@@ -33,5 +33,9 @@ config :logger, level: :info
 # Configures the llama version
 config :animina, :llm_version, "llama3.1:8b"
 
+# configures the number of days behind we check when showing users on the sidebar for potential partners
+
+config :animina, :number_of_days_to_filter_registered_users, 600
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

@@ -86,9 +86,12 @@ defmodule Animina.Accounts.FastUserTest do
          } do
       result =
         FastUser
-        |> Ash.ActionInput.for_action(:public_users_who_created_an_account_in_the_last_60_days, %{
-          gender: "male"
-        })
+        |> Ash.ActionInput.for_action(
+          :public_users_who_created_an_account_in_the_last_number_of_days,
+          %{
+            gender: "male"
+          }
+        )
         |> Ash.run_action()
 
       assert {:ok, users} = result
@@ -103,9 +106,12 @@ defmodule Animina.Accounts.FastUserTest do
          } do
       result =
         FastUser
-        |> Ash.ActionInput.for_action(:public_users_who_created_an_account_in_the_last_60_days, %{
-          gender: "female"
-        })
+        |> Ash.ActionInput.for_action(
+          :public_users_who_created_an_account_in_the_last_number_of_days,
+          %{
+            gender: "female"
+          }
+        )
         |> Ash.run_action()
 
       assert {:ok, users} = result

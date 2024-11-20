@@ -33,6 +33,10 @@ config :logger, level: :warning
 
 config :animina, :max_users_per_hour, 5
 
+# configures the number of days behind we check when showing users on the sidebar for potential partners
+
+config :animina, :number_of_days_to_filter_registered_users, 60
+
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
 
