@@ -69,7 +69,7 @@ defmodule AniminaWeb.LiveUserAuth do
   end
 
   def on_mount(:live_user_required, _params, session, socket) do
-    path =
+    _path =
       case Map.get(socket.private.connect_info, :request_path, nil) do
         nil ->
           "sign-in"
