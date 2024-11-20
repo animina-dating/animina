@@ -69,21 +69,21 @@ defmodule AniminaWeb.LiveUserAuth do
   end
 
   def on_mount(:live_user_required, _params, session, socket) do
-    _path =
+    path =
       case Map.get(socket.private.connect_info, :request_path, nil) do
         nil ->
-          "sign-in"
+          "/"
 
         path ->
           case Map.get(socket.private.connect_info, :query_string, nil) do
             nil ->
-              "sign-in?redirect_to=" <> path
+              "/sign-in?redirect_to=" <> path
 
             "" ->
-              "sign-in?redirect_to=" <> path
+              "/sign-in?redirect_to=" <> path
 
             query_string ->
-              "sign-in?redirect_to=" <> path <> "?" <> query_string
+              "/sign-in?redirect_to=" <> path <> "?" <> query_string
           end
       end
 
@@ -118,7 +118,7 @@ defmodule AniminaWeb.LiveUserAuth do
     else
       {:halt,
        socket
-       |> Phoenix.LiveView.redirect(to: "/my/email-validation")
+       |> Phoenix.LiveView.redirect(to: path)
        |> Phoenix.LiveView.put_flash(
          :error,
          "You need to be authenticated  confirmed , and have an active account to access this page . If you are already signed up , check your email for the confirmation link"
@@ -148,8 +148,14 @@ defmodule AniminaWeb.LiveUserAuth do
 
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      {:halt,
-       Phoenix.LiveView.redirect(socket, to: ~p"/#{socket.assigns[:current_user].username}")}
+      path =
+        if socket.assigns[:current_user].confirmed_at do
+          "/#{socket.assigns[:current_user].username}"
+        else
+          "/my/email-validation"
+        end
+
+      {:halt, Phoenix.LiveView.redirect(socket, to: path)}
     else
       {:cont,
        socket
