@@ -154,7 +154,7 @@ msgstr ""
 msgid "Change Profile Photo"
 msgstr ""
 
-#: lib/animina_web/live/profile_visibility.ex:207
+#: lib/animina_web/live/profile_visibility.ex:189
 #, elixir-autogen, elixir-format
 msgid "Change Profile Visibility"
 msgstr ""
@@ -503,7 +503,7 @@ msgstr ""
 msgid "Hi"
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:627
+#: lib/animina_web/components/profile/profile_components.ex:632
 #, elixir-autogen, elixir-format
 msgid "Hibernate"
 msgstr ""
@@ -696,7 +696,7 @@ msgstr ""
 msgid "No bookmarks found"
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:615
+#: lib/animina_web/components/profile/profile_components.ex:620
 #, elixir-autogen, elixir-format
 msgid "Normal"
 msgstr ""
@@ -818,14 +818,12 @@ msgstr ""
 msgid "Profile updated successfully"
 msgstr ""
 
-#: lib/animina_web/live/profile_visibility.ex:162
-#: lib/animina_web/live/profile_visibility.ex:187
+#: lib/animina_web/live/profile_visibility.ex:169
 #, elixir-autogen, elixir-format
 msgid "Profile visibility change failed."
 msgstr ""
 
-#: lib/animina_web/live/profile_visibility.ex:152
-#: lib/animina_web/live/profile_visibility.ex:177
+#: lib/animina_web/live/profile_visibility.ex:159
 #, elixir-autogen, elixir-format
 msgid "Profile visibility changed successfully."
 msgstr ""
@@ -942,7 +940,7 @@ msgstr ""
 msgid "Seconds Remaining"
 msgstr ""
 
-#: lib/animina_web/live/profile_visibility.ex:212
+#: lib/animina_web/live/profile_visibility.ex:194
 #, elixir-autogen, elixir-format
 msgid "Select And Change the visibility of your profile"
 msgstr ""
@@ -1057,12 +1055,12 @@ msgstr ""
 msgid "The following users are on the waitlist"
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:621
+#: lib/animina_web/components/profile/profile_components.ex:626
 #, elixir-autogen, elixir-format
 msgid "The user is actively using the account, engaging with posts and other users."
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:633
+#: lib/animina_web/components/profile/profile_components.ex:638
 #, elixir-autogen, elixir-format
 msgid "The user is temporarily inactive but retains their account and data for future use."
 msgstr ""
@@ -1624,12 +1622,12 @@ msgstr ""
 msgid "This email was sent by the ANIMINA system. Please do not reply to it."
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:601
+#: lib/animina_web/components/profile/profile_components.ex:606
 #, elixir-autogen, elixir-format
 msgid "Change To This State"
 msgstr ""
 
-#: lib/animina_web/components/profile/profile_components.ex:654
+#: lib/animina_web/components/profile/profile_components.ex:659
 #, elixir-autogen, elixir-format
 msgid "Currently active"
 msgstr ""
@@ -1674,17 +1672,7 @@ msgstr ""
 msgid "Photo removed successfully !"
 msgstr ""
 
-#: lib/animina_web/live/profile_visibility.ex:136
+#: lib/animina_web/components/profile/profile_components.ex:577
 #, elixir-autogen, elixir-format
-msgid "You need to have a photo for your about me story to change your profile visibility."
-msgstr ""
-
-#: lib/animina_web/live/profile_visibility.ex:113
-#, elixir-autogen, elixir-format
-msgid "You need to have a profile photo and a photo for your about me story\n      to change your profile visibility."
-msgstr ""
-
-#: lib/animina_web/live/profile_visibility.ex:125
-#, elixir-autogen, elixir-format
-msgid "You need to have a profile photo to change your profile visibility."
+msgid "Are you sure you want to change from %{value} to %{state}?"
 msgstr ""

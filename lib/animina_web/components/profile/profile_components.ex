@@ -573,7 +573,12 @@ defmodule AniminaWeb.ProfileComponents do
       }
       data-confirm={
         if @state != @value || @state != @similar_value do
-          "Are you sure you want to change from #{@value} to #{@state}?"
+          with_locale(@language, fn ->
+            gettext("Are you sure you want to change from %{value} to %{state}?",
+              value: @value,
+              state: @state
+            )
+          end)
         end
       }
       phx-value-state={@state}

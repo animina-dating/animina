@@ -104,69 +104,51 @@ defmodule AniminaWeb.ProfileVisibilityLive do
     User.normalize(user)
   end
 
-  defp maybe_change_user_state("normalize", socket, nil, false) do
-    {:noreply,
-     socket
-     |> put_flash(
-       :error,
-       with_locale(socket.assigns.language, fn ->
-         gettext("You need to have a profile photo and a photo for your about me story
-      to change your profile visibility.")
-       end)
-     )}
-  end
-
-  defp maybe_change_user_state("normalize", socket, nil, true) do
-    {:noreply,
-     socket
-     |> put_flash(
-       :error,
-       with_locale(socket.assigns.language, fn ->
-         gettext("You need to have a profile photo to change your profile visibility.")
-       end)
-     )}
-  end
-
-  defp maybe_change_user_state("normalize", socket, _profile_photo, false) do
-    {:noreply,
-     socket
-     |> put_flash(
-       :error,
-       with_locale(socket.assigns.language, fn ->
-         gettext(
-           "You need to have a photo for your about me story to change your profile visibility."
-         )
-       end)
-     )}
-  end
-
-  defp maybe_change_user_state("normalize", socket, _profile_photo, true) do
-    case change_user_state("normalize", socket.assigns.current_user) do
-      {:ok, user} ->
+  defp maybe_change_user_state("normalize", socket, profile_photo, about_me_photo) do
+    cond do
+      is_nil(profile_photo) and not about_me_photo ->
         {:noreply,
          socket
-         |> assign(current_user: user)
-         |> put_flash(
-           :info,
+         |> show_error(
            with_locale(socket.assigns.language, fn ->
-             gettext("Profile visibility changed successfully.")
+             "You need to have a profile photo and a photo for your about me story to change your profile visibility."
            end)
          )}
 
-      {:error, _} ->
+      is_nil(profile_photo) and about_me_photo ->
         {:noreply,
          socket
-         |> put_flash(
-           :error,
+         |> show_error(
            with_locale(socket.assigns.language, fn ->
-             gettext("Profile visibility change failed.")
+             "You need to have a profile photo to change your profile visibility."
            end)
          )}
+
+      not about_me_photo ->
+        {:noreply,
+         socket
+         |> show_error(
+           with_locale(socket.assigns.language, fn ->
+             "You need to have a photo for your about me story to change your profile visibility."
+           end)
+         )}
+
+      true ->
+        handle_state_change("normalize", socket)
     end
   end
 
-  defp maybe_change_user_state("hibernate", socket, _profile_photo, _) do
-    case change_user_state("hibernate", socket.assigns.current_user) do
+  defp maybe_change_user_state("hibernate", socket, _profile_photo, _about_me_photo) do
+    handle_state_change("hibernate", socket)
+  end
+
+  defp show_error(socket, message) do
+    socket
+    |> put_flash(:error, message)
+  end
+
+  defp handle_state_change(action, socket) do
+    case change_user_state(action, socket.assigns.current_user) do
       {:ok, user} ->
         {:noreply,
          socket
