@@ -40,6 +40,7 @@ defmodule AniminaWeb.Router do
     ash_authentication_live_session :authentication_required_for_email_validation,
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_validation} do
       live "/my/email-validation", EmailValidationLive, :index
+      live "/my/profile/delete_account", DeleteAccountLive, :index
     end
 
     ash_authentication_live_session :authentication_required_for_too_successful,
@@ -66,7 +67,6 @@ defmodule AniminaWeb.Router do
       live "/my/flags/red", FlagsLive, :red
       live "/my/about-me", StoryLive, :about_me
       live "/my/profile/visibility", ProfileVisibilityLive, :index
-      live "/my/profile/delete_account", DeleteAccountLive, :index
     end
 
     ash_authentication_live_session :authentication_required_and_about_me_story,

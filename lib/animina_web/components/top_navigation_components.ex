@@ -264,9 +264,15 @@ defmodule AniminaWeb.TopNavigationCompontents do
               <% end) %>
             </.link>
           <% else %>
-            <.link class="px-2 w-[150px] text-center" navigate="/auth/user/sign-out">
+            <.link class="px-2 w-[180px]  text-start" navigate="/auth/user/sign-out">
               <%= with_locale(@language, fn -> %>
                 <%= gettext("Sign Out") %>
+              <% end) %>
+            </.link>
+
+            <.link class="px-2 w-[180px]  text-start" navigate="/my/profile/delete_account">
+              <%= with_locale(@language, fn -> %>
+                <%= gettext("Delete Account") %>
               <% end) %>
             </.link>
           <% end %>
