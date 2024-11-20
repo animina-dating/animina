@@ -131,8 +131,8 @@ msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
 msgid "Back to Sign In"
 msgstr "Zurück zur Anmeldung"
 
-#: lib/animina_web/components/top_navigation_components.ex:1041
-#: lib/animina_web/components/top_navigation_components.ex:1057
+#: lib/animina_web/components/top_navigation_components.ex:1047
+#: lib/animina_web/components/top_navigation_components.ex:1063
 #: lib/animina_web/live/bookmarks_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Bookmarks"
@@ -160,7 +160,7 @@ msgid "Change Profile Visibility"
 msgstr "Profil-Sichtbarkeit ändern"
 
 #: lib/animina_web/components/top_navigation_components.ex:252
-#: lib/animina_web/components/top_navigation_components.ex:452
+#: lib/animina_web/components/top_navigation_components.ex:458
 #, elixir-autogen, elixir-format
 msgid "Change Visibility"
 msgstr "Sichtbarkeit ändern"
@@ -170,7 +170,7 @@ msgstr "Sichtbarkeit ändern"
 msgid "Characters: "
 msgstr "Zeichen: "
 
-#: lib/animina_web/components/top_navigation_components.ex:904
+#: lib/animina_web/components/top_navigation_components.ex:910
 #, elixir-autogen, elixir-format
 msgid "Chat"
 msgstr "Chat"
@@ -224,8 +224,8 @@ msgstr "Kopieren"
 msgid "Copy "
 msgstr "Kopieren"
 
-#: lib/animina_web/components/top_navigation_components.ex:325
-#: lib/animina_web/components/top_navigation_components.ex:375
+#: lib/animina_web/components/top_navigation_components.ex:331
+#: lib/animina_web/components/top_navigation_components.ex:381
 #, elixir-autogen, elixir-format
 msgid "Could Interest You"
 msgstr "Könnte Sie interessieren"
@@ -307,6 +307,7 @@ msgstr "Dating-Coach"
 
 #: lib/animina_web/components/profile/profile_components.ex:538
 #: lib/animina_web/components/profile/profile_components.ex:555
+#: lib/animina_web/components/top_navigation_components.ex:275
 #: lib/animina_web/live/delete_account_live.ex:155
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
@@ -508,8 +509,8 @@ msgstr "Hallo"
 msgid "Hibernate"
 msgstr "Ruhezustand"
 
-#: lib/animina_web/components/top_navigation_components.ex:834
-#: lib/animina_web/components/top_navigation_components.ex:864
+#: lib/animina_web/components/top_navigation_components.ex:840
+#: lib/animina_web/components/top_navigation_components.ex:870
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr "Startseite"
@@ -579,7 +580,7 @@ msgstr "Gefällt mir"
 
 #: lib/animina_web/components/top_navigation_components.ex:104
 #: lib/animina_web/components/top_navigation_components.ex:115
-#: lib/animina_web/components/top_navigation_components.ex:283
+#: lib/animina_web/components/top_navigation_components.ex:289
 #: lib/animina_web/live/root_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "Login"
@@ -770,8 +771,8 @@ msgstr "Foto"
 msgid "Please wait a second. We are working on it."
 msgstr "Bitte warten Sie einen Moment. Wir arbeiten daran."
 
-#: lib/animina_web/components/top_navigation_components.ex:644
-#: lib/animina_web/components/top_navigation_components.ex:648
+#: lib/animina_web/components/top_navigation_components.ex:650
+#: lib/animina_web/components/top_navigation_components.ex:654
 #, elixir-autogen, elixir-format
 msgid "Points"
 msgstr "Punkte"
@@ -801,8 +802,8 @@ msgstr "Fortfahren"
 msgid "Proceed without selecting a flag"
 msgstr "Fortfahren, ohne ein Flag auszuwählen"
 
-#: lib/animina_web/components/top_navigation_components.ex:1107
-#: lib/animina_web/components/top_navigation_components.ex:1130
+#: lib/animina_web/components/top_navigation_components.ex:1113
+#: lib/animina_web/components/top_navigation_components.ex:1136
 #: lib/animina_web/components/waitlist_components.ex:32
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile"
@@ -845,7 +846,7 @@ msgstr "Beitrag lesen"
 msgid "Received"
 msgstr "Erhalten"
 
-#: lib/animina_web/components/top_navigation_components.ex:278
+#: lib/animina_web/components/top_navigation_components.ex:284
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Registrieren"
@@ -868,7 +869,7 @@ msgstr "Abgelehnt"
 msgid "Report Account"
 msgstr "Konto melden"
 
-#: lib/animina_web/components/top_navigation_components.ex:671
+#: lib/animina_web/components/top_navigation_components.ex:677
 #, elixir-autogen, elixir-format
 msgid "Reports"
 msgstr "Berichte"
@@ -1210,7 +1211,7 @@ msgstr "Besucht"
 msgid "Visited Profiles"
 msgstr "Besuchte Profile"
 
-#: lib/animina_web/components/top_navigation_components.ex:696
+#: lib/animina_web/components/top_navigation_components.ex:702
 #: lib/animina_web/live/waitlist_live.ex:31
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
@@ -1525,8 +1526,8 @@ msgstr " Versuche übrig!"
 msgid "Account Confirmed Successfully"
 msgstr "Konto erfolgreich bestätigt"
 
-#: lib/animina_web/components/top_navigation_components.ex:976
-#: lib/animina_web/components/top_navigation_components.ex:998
+#: lib/animina_web/components/top_navigation_components.ex:982
+#: lib/animina_web/components/top_navigation_components.ex:1004
 #: lib/animina_web/live/my_chats_live.ex:15
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Chats"
@@ -1637,17 +1638,17 @@ msgstr "Derzeit aktiv"
 msgid "Please use this PIN to verify your new ANIMINA account."
 msgstr "Bitte verwenden Sie diesen PIN, um Ihr neues ANIMINA-Konto zu verifizieren."
 
-#: lib/animina_web/components/top_navigation_components.ex:442
+#: lib/animina_web/components/top_navigation_components.ex:448
 #, elixir-autogen, elixir-format
 msgid "This account is hibernated. Other users can't see it or send messages to you."
 msgstr "Dieses Konto ist im Winterschlaf. Andere Benutzer können es nicht sehen oder Ihnen Nachrichten senden."
 
-#: lib/animina_web/components/top_navigation_components.ex:447
+#: lib/animina_web/components/top_navigation_components.ex:453
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Visit the"
 msgstr "Besucht"
 
-#: lib/animina_web/components/top_navigation_components.ex:456
+#: lib/animina_web/components/top_navigation_components.ex:462
 #, elixir-autogen, elixir-format
 msgid "page to activate it again."
 msgstr "Seite, um es wieder zu aktivieren."
@@ -1656,7 +1657,6 @@ msgstr "Seite, um es wieder zu aktivieren."
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to delete this photo ?"
 msgstr "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?"
-
 
 #: lib/animina_web/live/story_live.ex:1039
 #, elixir-autogen, elixir-format
