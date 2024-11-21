@@ -4,6 +4,7 @@ defmodule AniminaWeb.ProfileVisibilityLive do
   """
 
   use AniminaWeb, :live_view
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Points
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
@@ -74,16 +75,12 @@ defmodule AniminaWeb.ProfileVisibilityLive do
 
   @impl true
   def handle_event("change_user_state", %{"state" => _state, "action" => action}, socket) do
-    case change_user_state(action, socket.assigns.current_user) do
-      {:ok, user} ->
-        {:noreply,
-         socket
-         |> assign(current_user: user)
-         |> put_flash(:info, gettext("Profile visibility changed successfully."))}
-
-      {:error, _} ->
-        {:noreply, socket |> put_flash(:error, gettext("Profile visibility change failed."))}
-    end
+    maybe_change_user_state(
+      action,
+      socket,
+      socket.assigns.current_user.profile_photo,
+      Photo.user_has_an_about_me_story_with_image?(socket.assigns.current_user)
+    )
   end
 
   @impl true
@@ -105,6 +102,74 @@ defmodule AniminaWeb.ProfileVisibilityLive do
 
   def change_user_state(_, user) do
     User.normalize(user)
+  end
+
+  defp maybe_change_user_state("normalize", socket, profile_photo, about_me_photo) do
+    cond do
+      is_nil(profile_photo) and not about_me_photo ->
+        {:noreply,
+         socket
+         |> show_error(
+           with_locale(socket.assigns.language, fn ->
+             "You need to have a profile photo and a photo for your about me story to change your profile visibility."
+           end)
+         )}
+
+      is_nil(profile_photo) and about_me_photo ->
+        {:noreply,
+         socket
+         |> show_error(
+           with_locale(socket.assigns.language, fn ->
+             "You need to have a profile photo to change your profile visibility."
+           end)
+         )}
+
+      not about_me_photo ->
+        {:noreply,
+         socket
+         |> show_error(
+           with_locale(socket.assigns.language, fn ->
+             "You need to have a photo for your about me story to change your profile visibility."
+           end)
+         )}
+
+      true ->
+        handle_state_change("normalize", socket)
+    end
+  end
+
+  defp maybe_change_user_state("hibernate", socket, _profile_photo, _about_me_photo) do
+    handle_state_change("hibernate", socket)
+  end
+
+  defp show_error(socket, message) do
+    socket
+    |> put_flash(:error, message)
+  end
+
+  defp handle_state_change(action, socket) do
+    case change_user_state(action, socket.assigns.current_user) do
+      {:ok, user} ->
+        {:noreply,
+         socket
+         |> assign(current_user: user)
+         |> put_flash(
+           :info,
+           with_locale(socket.assigns.language, fn ->
+             gettext("Profile visibility changed successfully.")
+           end)
+         )}
+
+      {:error, _} ->
+        {:noreply,
+         socket
+         |> put_flash(
+           :error,
+           with_locale(socket.assigns.language, fn ->
+             gettext("Profile visibility change failed.")
+           end)
+         )}
+    end
   end
 
   defp user_states_to_be_auto_logged_out do

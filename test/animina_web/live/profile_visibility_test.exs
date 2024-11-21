@@ -219,11 +219,26 @@ defmodule AniminaWeb.ProfileVisibilityTest do
   end
 
   defp create_about_me_story(user_id, headline_id) do
-    Story.create(%{
+    {:ok, story} =
+      Story.create(%{
+        user_id: user_id,
+        headline_id: headline_id,
+        content: "This is a story about me",
+        position: 1
+      })
+
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
       user_id: user_id,
-      headline_id: headline_id,
-      content: "This is a story about me",
-      position: 1
+      story_id: story.id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
     })
   end
 
