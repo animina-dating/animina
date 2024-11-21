@@ -1,8 +1,11 @@
 defmodule Animina.Accounts.UserTest do
   use Animina.DataCase, async: true
+  alias Animina.Accounts.Photo
   alias Animina.Accounts.Role
   alias Animina.Accounts.User
   alias Animina.Accounts.UserRole
+  alias Animina.Narratives.Headline
+  alias Animina.Narratives.Story
 
   @create_user_params %{
     email: "bob@example.com",
@@ -310,6 +313,16 @@ defmodule Animina.Accounts.UserTest do
       assert {:ok, user} =
                User.create(@create_user_params)
 
+      create_user_about_me_story(
+        user,
+        get_about_me_headline(),
+        "I am a software engineer"
+      )
+
+      create_profile_picture(user.id)
+
+      user = User.by_id!(user.id)
+
       assert user.state == :normal
 
       {:ok, user} = User.hibernate(user)
@@ -319,6 +332,21 @@ defmodule Animina.Accounts.UserTest do
       {:ok, user} = User.reactivate(user)
 
       assert user.state == :normal
+    end
+
+    test "reactivate/1 will fail if the user does not have an about me story with an image or a profile photo" do
+      assert {:ok, user} =
+               User.create(@create_user_params)
+
+      assert user.state == :normal
+
+      {:ok, user} = User.hibernate(user)
+
+      assert user.state == :hibernate
+
+      # Reactivating a user without an about me story with an image or a profile photo should fail
+
+      {:error, _} = User.reactivate(user)
     end
 
     test "normalize/1 returns a user with the state :normal from any state" do
@@ -401,20 +429,57 @@ defmodule Animina.Accounts.UserTest do
   end
 
   defp create_first_user do
-    User.create(%{
-      email: "bob@example.com",
-      username: "bob",
-      name: "Bob",
-      hashed_password: "zzzzzzzzzzz",
-      birthday: "1950-01-01",
-      height: 180,
-      zip_code: "56068",
-      gender: "male",
-      mobile_phone: "0151-12345678",
-      language: "de",
-      legal_terms_accepted: true,
-      country: "Germany"
+    {:ok, user} =
+      User.create(%{
+        email: "bob@example.com",
+        username: "bob",
+        name: "Bob",
+        hashed_password: "zzzzzzzzzzz",
+        birthday: "1950-01-01",
+        height: 180,
+        zip_code: "56068",
+        gender: "male",
+        mobile_phone: "0151-12345678",
+        language: "de",
+        legal_terms_accepted: true,
+        country: "Germany"
+      })
+
+    create_user_about_me_story(
+      user,
+      get_about_me_headline(),
+      "I am a software engineer"
+    )
+
+    create_profile_picture(user.id)
+
+    {:ok, user}
+  end
+
+  defp create_user_about_me_story(user, headline, story_content) do
+    {:ok, story} =
+      Story.create(%{
+        user_id: user.id,
+        headline_id: headline.id,
+        content: story_content,
+        position: 1
+      })
+
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user.id,
+      story_id: story.id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
     })
+
+    story
   end
 
   def user_admin?(user) do
@@ -427,5 +492,36 @@ defmodule Animina.Accounts.UserTest do
         |> Enum.map(fn x -> x.name end)
         |> Enum.any?(fn x -> x == :admin end)
     end
+  end
+
+  defp get_about_me_headline do
+    case Headline.by_subject("About me") do
+      {:ok, headline} ->
+        headline
+
+      _ ->
+        {:ok, headline} =
+          Headline.create(%{
+            subject: "About me",
+            position: 90
+          })
+
+        headline
+    end
+  end
+
+  defp create_profile_picture(user_id) do
+    file_path = Temp.path!(basedir: "priv/static/uploads", suffix: ".jpg")
+
+    file_path_without_uploads = String.replace(file_path, "uploads/", "")
+
+    Photo.create(%{
+      user_id: user_id,
+      filename: file_path_without_uploads,
+      original_filename: file_path_without_uploads,
+      size: 100,
+      ext: "jpg",
+      mime: "image/jpeg"
+    })
   end
 end
