@@ -549,9 +549,7 @@ defmodule AniminaWeb.RootLive do
                   unless(get_field_errors(f[:legal_terms_accepted], :legal_terms_accepted) == [],
                     do: "ring-red-600 focus:ring-red-600",
                     else: "ring-gray-300 focus:ring-indigo-600"
-                  ),
-              value: f[:legal_terms_accepted].value,
-              "phx-debounce": "200"
+                  )
             ) %>
           </div>
           <div class="text-sm leading-6">
