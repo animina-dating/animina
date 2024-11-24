@@ -1,5 +1,6 @@
 defmodule Animina.GenServers.ProfileViewCredits do
   use GenServer
+  alias Animina.Accounts.User
   alias Phoenix.PubSub
 
   @moduledoc """
@@ -50,22 +51,14 @@ defmodule Animina.GenServers.ProfileViewCredits do
     end
   end
 
-  def get_updated_credit_for_current_user(current_user, credits) do
-    case Enum.find(credits, fn credit ->
-           credit["user_id"] == current_user.id
-         end) do
-      nil -> current_user.credit_points
-      credit -> credit["points"]
-    end
+  def get_updated_credit_for_current_user(current_user, _credits) do
+    {:ok, user} = User.by_id(current_user.id)
+    user.credit_points
   end
 
-  def get_updated_credit_for_user_profile(user_profile, credits) do
-    case Enum.find(credits, fn credit ->
-           credit["user_id"] == user_profile.id
-         end) do
-      nil -> user_profile.credit_points
-      credit -> credit["points"]
-    end
+  def get_updated_credit_for_user_profile(user_profile, _credits) do
+    {:ok, user} = User.by_id(user_profile.id)
+    user.credit_points
   end
 
   @impl true
