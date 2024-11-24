@@ -498,7 +498,7 @@ defmodule AniminaWeb.ProfileComponents do
 
   def user_state_cards(assigns) do
     ~H"""
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col border-gray-500 border-[1px] rounded-md gap-0">
       <%= for state <- user_states_to_display_to_profile(@language) do %>
         <.user_state_card
           state={@current_user.state}
@@ -528,37 +528,33 @@ defmodule AniminaWeb.ProfileComponents do
     <div
       phx-click="redirect_to_delete_account_page"
       id="redirect_to_delete_account_page"
-      class="flex hover:bg-red-100 group cursor-pointer hover:text-red-500 transition-all ease-in-out duration-500 flex-col gap-1 "
+      class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 transition-all ease-in-out duration-500 flex-col gap-1 "
     >
-      <div class="flex items-center justify-between gap-x-6">
+      <div class="flex p-2 items-center justify-between gap-x-6">
         <div class="min-w-0">
-          <div class="flex items-start gap-x-3">
-            <p class="text-xl text-red-600  font-semibold leading-6 ">
-              <%= with_locale(@language, fn -> %>
-                <%= gettext("Delete Account") %>
-              <% end) %>
-            </p>
+          <div class="flex gap-2 group items-start">
+            <.inactive_mark value="delete" />
+            <div class="flex flex-col gap-1">
+              <div class="flex items-start gap-x-3">
+                <p class="text-xl  dark:text-white group-hover:text-blue-600  font-semibold leading-6">
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext("Delete Account") %>
+                  <% end) %>
+                </p>
+              </div>
+              <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+                <p class="text-gray-500 ">
+                  <%= with_locale(@language, fn -> %>
+                    <%= gettext(
+                      "Permanently delete your account and all data , this action is irreversible."
+                    ) %>
+                  <% end) %>
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-            <p class="group-hover:text-red-600 text-red-500">
-              <%= with_locale(@language, fn -> %>
-                <%= gettext(
-                  "Permanently delete your account and all data , this action is irreversible."
-                ) %>
-              <% end) %>
-            </p>
-          </div>
-        </div>
-        <div class="flex flex-none items-center gap-x-4">
-          <p class="hidden rounded-md w-[200px] text-center bg-red-500 text-white px-2.5 py-1.5 text-sm font-semibold shadow-sm ring-1 ring-inset ring-red-500 hover:bg-red-600 sm:block">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Delete Account") %>
-            <% end) %>
-          </p>
         </div>
       </div>
-
-      <p class="h-[1px] w-[100%] bg-red-500" />
     </div>
     """
   end
@@ -584,32 +580,29 @@ defmodule AniminaWeb.ProfileComponents do
       phx-value-state={@state}
       phx-value-action={@action}
       id={"user-state-#{@value}"}
-      class="flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 transition-all ease-in-out duration-500 flex-col gap-1 "
+      class={"flex hover:bg-blue-100 group cursor-pointer hover:text-blue-600 transition-all ease-in-out duration-500 flex-col gap-1 #{if  @value == :normal, do: "rounded-t-md", else: ""} #{if @state == @value, do: "bg-blue-100", else: ""}"}
     >
-      <div class="flex items-center justify-between gap-x-6">
+      <div class="flex p-2 items-center justify-between gap-x-6">
         <div class="min-w-0">
-          <div class="flex items-start gap-x-3">
-            <p class="text-xl dark:text-white group-hover:text-blue-600  font-semibold leading-6 ">
-              <%= @name %>
-            </p>
+          <div class="flex gap-2 group items-start">
             <.active_or_inactive_mark state={@state} value={@value} language={@language} />
+            <div class="flex flex-col gap-1">
+              <div class="flex items-start gap-x-3">
+                <p class={"text-xl  group-hover:text-blue-600  font-semibold leading-6 #{if @state == @value, do: "text-blue-600", else: "dark:text-white"}"}>
+                  <%= @name %>
+                </p>
+              </div>
+              <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+                <p>
+                  <%= @description %>
+                </p>
+              </div>
+            </div>
           </div>
-          <div class="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-            <p>
-              <%= @description %>
-            </p>
-          </div>
-        </div>
-        <div :if={@state != @value} class="flex flex-none items-center gap-x-4">
-          <p class="hidden w-[200px] text-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block">
-            <%= with_locale(@language, fn -> %>
-              <%= gettext("Change To This State") %>
-            <% end) %>
-          </p>
         </div>
       </div>
 
-      <p class="h-[1px] w-[100%] bg-gray-500 dark:bg-gray-100" />
+      <p class={"h-[1px] w-[100%]   #{if @state == @value, do: "bg-blue-600", else: "bg-gray-500 dark:bg-gray-100"}"} />
     </div>
     """
   end
@@ -647,6 +640,8 @@ defmodule AniminaWeb.ProfileComponents do
     ~H"""
     <%= if @state == @value do %>
       <.active_mark language={@language} value={@value} />
+    <% else %>
+      <.inactive_mark language={@language} value={@value} />
     <% end %>
     """
   end
@@ -654,11 +649,17 @@ defmodule AniminaWeb.ProfileComponents do
   defp active_mark(assigns) do
     ~H"""
     <div id={"active-mark-#{@value}"}>
-      <p class="mt-0.5 whitespace-nowrap rounded-md bg-green-50 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("Currently active") %>
-        <% end) %>
-      </p>
+      <div class="w-[15px] h-[15px] p-2 bg-blue-700 flex justify-center items-center  rounded-full border-[1px] ">
+      </div>
+    </div>
+    """
+  end
+
+  defp inactive_mark(assigns) do
+    ~H"""
+    <div id={"inactive-mark-#{@value}"}>
+      <div class="w-[15px] h-[15px] p-2 flex group-hover:bg-blue-700 justify-center items-center rounded-full border-[1px] ">
+      </div>
     </div>
     """
   end
