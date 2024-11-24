@@ -450,7 +450,7 @@ defmodule Animina.Accounts.Photo do
     end
   end
 
-  defp user_has_an_about_me_story_with_image?(user) do
+  def user_has_an_about_me_story_with_image?(user) do
     case get_stories_for_a_user(user) do
       [] ->
         false

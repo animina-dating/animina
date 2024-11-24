@@ -571,7 +571,16 @@ defmodule AniminaWeb.ProfileComponents do
           "change_user_state"
         end
       }
-      data-confirm={"Are you sure you want to change from #{@value} to #{@state}?"}
+      data-confirm={
+        if @state != @value || @state != @similar_value do
+          with_locale(@language, fn ->
+            gettext("Are you sure you want to change from %{value} to %{state}?",
+              value: @value,
+              state: @state
+            )
+          end)
+        end
+      }
       phx-value-state={@state}
       phx-value-action={@action}
       id={"user-state-#{@value}"}

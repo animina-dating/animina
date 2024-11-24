@@ -63,8 +63,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
             "The Alchemist by Paulo Coelho – This book taught me the importance of pursuing one’s personal legend and the power of dreams and persistence."
         },
         %{
-          unsplash_photo_id: "photo-1598897516650-e4dc73d8e417",
-          unsplash_about_me_photo_id: "photo-1582169505937-d7885ebf3bc1",
+          unsplash_photo_id: "photo-1526080652727-5b77f74eacd2",
+          unsplash_about_me_photo_id: "photo-1535713875002-d1d0cf377fde",
           gender: "female",
           about_me:
             "Music is my life! I play the guitar and love attending live concerts. I also enjoy baking and often experiment with new dessert recipes. There's something magical about creating music and sharing it with others, and I hope to someday perform in front of a large audience. Baking is my therapy, and I find peace in the process of mixing ingredients and creating delicious treats for my loved ones.",
@@ -77,8 +77,8 @@ if Enum.member?([:dev, :test], Mix.env()) do
             "Just Kids by Patti Smith – This memoir deepened my appreciation for the intersection of art, music, and life, and it inspired me to pursue my creative passions with dedication."
         },
         %{
-          unsplash_photo_id: "photo-1536896407451-6e3dd976edd1",
-          unsplash_about_me_photo_id: "photo-1540479859555-17af45c37b3e",
+          unsplash_photo_id: "photo-1531123897727-8f129e1688ce",
+          unsplash_about_me_photo_id: "photo-1524253482453-3fed8d2fe12b",
           gender: "female",
           about_me:
             "I'm an avid runner and have completed several marathons. I love the thrill of pushing my limits. In my downtime, I enjoy binge-watching mystery series and gardening. Running has taught me the importance of perseverance and discipline, and it keeps me motivated to achieve my goals. Gardening is my way of connecting with nature and finding tranquility amidst the hustle and bustle of life.",

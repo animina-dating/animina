@@ -392,6 +392,10 @@ defmodule Animina.Accounts.User do
     policy action_type(:read) do
       authorize_if Animina.Checks.ReadProfileCheck
     end
+
+    policy action_type(:update) do
+      authorize_if Animina.Checks.UpdateUserStateCheck
+    end
   end
 
   pub_sub do
@@ -474,6 +478,7 @@ defmodule Animina.Accounts.User do
     validate {Validations.Country, attribute: :country}
 
     validate {Validations.RegistrationCompletedAt, attribute: :registration_completed_at}
+    validate {Animina.Validations.ReactivateUser, attribute: :state}, on: :update
   end
 
   attributes do
