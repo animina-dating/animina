@@ -30,19 +30,24 @@ defmodule Animina.Accounts.FastUser do
     define :by_id_email_or_username
     define :credit_points_for_a_user
     define :list
-    define :public_users_who_created_an_account_in_the_last_60_days
+    define :public_users_who_created_an_account_in_the_last_number_of_days
   end
 
   actions do
     defaults []
 
-    action :public_users_who_created_an_account_in_the_last_60_days, :map do
+    action :public_users_who_created_an_account_in_the_last_number_of_days, :map do
       argument :limit, :integer, default: 10
       argument :page, :integer, default: 1, constraints: [min: 1]
       argument :gender, :string, allow_nil?: false
 
       run fn input, _ ->
-        date = DateTime.add(DateTime.utc_now(), -60, :day)
+        date =
+          DateTime.add(
+            DateTime.utc_now(),
+            -Application.get_env(:animina, :number_of_days_to_filter_registered_users),
+            :day
+          )
 
         # we dont need to filter by id, username or email. So we pass true as filter
         # but pass extra filters in the options keyword list

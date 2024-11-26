@@ -66,6 +66,9 @@ config :animina, AniminaWeb.Endpoint,
 # Enable dev routes for dashboard and mailbox
 config :animina, dev_routes: true
 
+# configures the number of days behind we check when showing users on the sidebar for potential partners
+config :animina, :number_of_days_to_filter_registered_users, 60
+
 # Configures the llama version
 config :animina, :llm_version, "llama3.1:8b"
 

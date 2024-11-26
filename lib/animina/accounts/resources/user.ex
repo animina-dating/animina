@@ -120,8 +120,8 @@ defmodule Animina.Accounts.User do
     define :by_username_as_an_actor, args: [:username]
     define :custom_sign_in, get?: true
     define :request_password_reset_with_password
-    define :female_public_users_who_created_an_account_in_the_last_60_days
-    define :male_public_users_who_created_an_account_in_the_last_60_days
+    define :female_public_users_who_created_an_account_in_the_last_number_of_days
+    define :male_public_users_who_created_an_account_in_the_last_number_of_days
     define :users_in_waitlist
     define :investigate
     define :give_user_in_waitlist_access
@@ -243,9 +243,14 @@ defmodule Animina.Accounts.User do
       filter expr(username == ^arg(:username))
     end
 
-    read :female_public_users_who_created_an_account_in_the_last_60_days do
+    read :female_public_users_who_created_an_account_in_the_last_number_of_days do
       prepare fn query, _context ->
-        date = DateTime.add(DateTime.utc_now(), -60, :day)
+        date =
+          DateTime.add(
+            DateTime.utc_now(),
+            -Application.get_env(:animina, :number_of_days_to_filter_registered_users),
+            :day
+          )
 
         Ash.Query.filter(
           query,
@@ -260,9 +265,14 @@ defmodule Animina.Accounts.User do
       pagination offset?: true, keyset?: true, required?: false
     end
 
-    read :male_public_users_who_created_an_account_in_the_last_60_days do
+    read :male_public_users_who_created_an_account_in_the_last_number_of_days do
       prepare fn query, _context ->
-        date = DateTime.add(DateTime.utc_now(), -60, :day)
+        date =
+          DateTime.add(
+            DateTime.utc_now(),
+            -Application.get_env(:animina, :number_of_days_to_filter_registered_users),
+            :day
+          )
 
         Ash.Query.filter(
           query,

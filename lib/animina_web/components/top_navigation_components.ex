@@ -1155,7 +1155,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_female_users do
-    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+    case FastUser.public_users_who_created_an_account_in_the_last_number_of_days(%{
            limit: 3,
            gender: "female"
          }) do
@@ -1168,7 +1168,7 @@ defmodule AniminaWeb.TopNavigationCompontents do
   end
 
   defp three_random_public_male_users do
-    case FastUser.public_users_who_created_an_account_in_the_last_60_days(%{
+    case FastUser.public_users_who_created_an_account_in_the_last_number_of_days(%{
            limit: 3,
            gender: "male"
          }) do
