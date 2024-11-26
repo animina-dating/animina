@@ -1,6 +1,6 @@
 defmodule Animina.GenServers.ProfileViewCredits do
   use GenServer
-  alias Animina.Accounts.User
+  alias Animina.Accounts.FastUser
   alias Phoenix.PubSub
 
   @moduledoc """
@@ -52,13 +52,13 @@ defmodule Animina.GenServers.ProfileViewCredits do
   end
 
   def get_updated_credit_for_current_user(current_user, _credits) do
-    {:ok, user} = User.by_id(current_user.id)
-    user.credit_points
+    {:ok, credits} = FastUser.credit_points_for_a_user(%{id: current_user.id})
+    credits
   end
 
   def get_updated_credit_for_user_profile(user_profile, _credits) do
-    {:ok, user} = User.by_id(user_profile.id)
-    user.credit_points
+    {:ok, credits} = FastUser.credit_points_for_a_user(%{id: user_profile.id})
+    credits
   end
 
   @impl true
