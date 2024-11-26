@@ -163,6 +163,23 @@ before diving into a JavaScript driven feature. Use Phoenix tools when possible.
 We are doing a mobile first approach and use [Tailwind CSS](https://tailwindui.com). Please don't
 forget a dark mode version when implimenting a new feature.
 
+## Deployment
+
+### Install Kamal
+
+Follow these installation [steps](https://kamal-deploy.org/docs/installation/) to install kamal to your target platform.
+
+### Configure environment variables
+
+Create a .env file in the root of the project and add the following
+
+```
+KAMAL_REGISTRY_PASSWORD=<github-token>
+SECRET_KEY_BASE=<secret-key-base>
+DATABASE_URL=[dogenerated]
+PHX_HOST=[yourdomain]
+```
+
 ## Submiting Code
 
 Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
