@@ -1,7 +1,6 @@
 defmodule Animina.GenServers.ProfileViewCredits do
   use GenServer
   alias Animina.Accounts.FastUser
-  alias Animina.Accounts.User
   alias Phoenix.PubSub
 
   @moduledoc """
