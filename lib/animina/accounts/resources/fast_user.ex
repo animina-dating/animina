@@ -28,6 +28,7 @@ defmodule Animina.Accounts.FastUser do
   code_interface do
     domain Animina.Accounts
     define :by_id_email_or_username
+    define :credit_points_for_a_user
     define :list
     define :public_users_who_created_an_account_in_the_last_60_days
   end
@@ -193,6 +194,47 @@ defmodule Animina.Accounts.FastUser do
         end
       end
     end
+
+    action :credit_points_for_a_user, :map do
+      argument :id, :string, public?: true
+      argument :username, :string, public?: true
+      argument :email, :string, public?: true
+
+      run fn input, _ ->
+        # build where filter
+        filter_by_id =
+          if input.arguments[:id] != nil do
+            dynamic([u], u.id == ^input.arguments.id)
+          else
+            true
+          end
+
+        filter_by_username =
+          if input.arguments[:username] != nil do
+            dynamic([u], u.username == ^input.arguments.username)
+          else
+            true
+          end
+
+        filter_by_email =
+          if input.arguments[:email] != nil do
+            dynamic([u], u.email == ^input.arguments.email)
+          else
+            true
+          end
+
+        query = build_query_for_credit_points(filter_by_id, filter_by_username, filter_by_email)
+
+        result =
+          Repo.one(query)
+
+        if is_nil(result) do
+          {:error, :user_not_found}
+        else
+          {:ok, result.credit_points}
+        end
+      end
+    end
   end
 
   attributes do
@@ -324,6 +366,46 @@ defmodule Animina.Accounts.FastUser do
               op.photo_id
             ),
           credit_points: coalesce(sum(cr.points), 0) |> type(:integer)
+      }
+  end
+
+  defp build_query_for_credit_points(
+         filter_by_id,
+         filter_by_username,
+         filter_by_email,
+         opts \\ []
+       ) do
+    query = user_query()
+    credit_points_query = credit_points_query()
+
+    filter_by_private_profile =
+      Keyword.get(opts, :filter_by_private_profile, true)
+
+    filter_by_gender =
+      Keyword.get(opts, :filter_by_gender, true)
+
+    filter_by_state =
+      Keyword.get(opts, :filter_by_state, true)
+
+    filter_by_created_at =
+      Keyword.get(opts, :filter_by_created_at, true)
+
+    filter_by_registration_completed_at =
+      Keyword.get(opts, :filter_by_registration_completed_at, true)
+
+    from u in query,
+      where: ^filter_by_username,
+      where: ^filter_by_id,
+      where: ^filter_by_email,
+      where: ^filter_by_private_profile,
+      where: ^filter_by_state,
+      where: ^filter_by_gender,
+      where: ^filter_by_created_at,
+      where: ^filter_by_registration_completed_at,
+      left_join: cr in subquery(credit_points_query),
+      on: u.id == cr.user_id,
+      select: %{
+        credit_points: coalesce(sum(cr.points), 0) |> type(:integer)
       }
   end
 
