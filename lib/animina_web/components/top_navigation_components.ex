@@ -557,22 +557,24 @@ defmodule AniminaWeb.TopNavigationCompontents do
 
   defp error_or_nsfw_profile_image(assigns) do
     ~H"""
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="w-6 h-6 stroke-current shrink-0"
-      width="25"
-      height="24"
-      viewBox="0 0 25 24"
-      fill="none"
-    >
-      <path
-        d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
-        stroke="stroke-current"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-      />
-    </svg>
+    <div class="w-[48px] flex justify-center items-center h-[48px] rounded-full ">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-6 h-6 stroke-current shrink-0"
+        width="25"
+        height="24"
+        viewBox="0 0 25 24"
+        fill="none"
+      >
+        <path
+          d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+          stroke="stroke-current"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
     """
   end
 
@@ -745,26 +747,28 @@ defmodule AniminaWeb.TopNavigationCompontents do
     <div>
       <%= if @current_user && @current_user.profile_photo  do %>
         <img
-          class="object-cover w-12 h-12 rounded-full"
+          class="object-cover w-[48px] h-[48px] rounded-full"
           src={Photo.get_optimized_photo_to_use(@current_user.profile_photo, :normal)}
         />
       <% else %>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-6 h-6 stroke-current shrink-0"
-          width="25"
-          height="24"
-          viewBox="0 0 25 24"
-          fill="none"
-        >
-          <path
-            d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
-            stroke="stroke-current"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <div class="w-[48px] flex justify-center items-center h-[48px] rounded-full ">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-6 h-6 stroke-current shrink-0"
+            width="25"
+            height="24"
+            viewBox="0 0 25 24"
+            fill="none"
+          >
+            <path
+              d="M20.125 21V19C20.125 17.9391 19.7036 16.9217 18.9534 16.1716C18.2033 15.4214 17.1859 15 16.125 15H8.125C7.06413 15 6.04672 15.4214 5.29657 16.1716C4.54643 16.9217 4.125 17.9391 4.125 19V21M16.125 7C16.125 9.20914 14.3341 11 12.125 11C9.91586 11 8.125 9.20914 8.125 7C8.125 4.79086 9.91586 3 12.125 3C14.3341 3 16.125 4.79086 16.125 7Z"
+              stroke="stroke-current"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
       <% end %>
     </div>
     """
