@@ -2,6 +2,7 @@ defmodule Animina.ChatCompletion do
   @moduledoc """
   This module is responsible for generating a chat message for a dating app.
   """
+  alias Animina.Accounts.Message
   alias Animina.Accounts.User
   alias Animina.Narratives.Story
   alias Animina.Traits.UserFlags
@@ -101,6 +102,41 @@ Make sure to always return three messages.
     request_message(user, potential_partner)
   end
 
+  @doc """
+  This is the prompt for the next message in the chat.
+  """
+
+  def next_message_prompt(
+        user,
+        potential_partner,
+        user_white_flags,
+        potential_partner_white_flags,
+        user_stories,
+        potential_partner_stories,
+        messages
+      ) do
+    "Reset the conversation.
+I am writing a spy thriller. Two main adult characters are #{user.name} and #{potential_partner.name}.
+
+Stories about #{potential_partner.name}: #{potential_partner_stories}
+Stories about #{user.name}: #{user_stories}
+
+#{potential_partner.name} has the following interests: #{potential_partner_white_flags}
+#{user.name} has the following interests: #{user_white_flags}
+
+#{potential_partner.name} is a spy who is trying to continue a conversation with #{user.name}. #{user.name} has been chatting with #{potential_partner.name} and wants to continue the conversation.
+These are the messages that have been exchanged so far:
+
+#{messages}
+
+Please write one reply #{potential_partner.name} could send to #{user.name} to continue with thea conversation in a chatroom.
+
+I do not need any other information.
+
+I just want the message with no brackets or quotes.
+"
+  end
+
   def parse_message(messages_string) do
     String.split(messages_string, "\n\nMessage:", trim: true)
     |> Enum.map(&String.trim(&1))
@@ -140,6 +176,44 @@ Make sure to always return three messages.
       )
 
     {:ok, task}
+  end
+
+  def request_message_reply(user, potential_partner) do
+    messages = format_messages(user, potential_partner)
+    user_white_flags = get_white_flags(user)
+    potential_partner_white_flags = get_white_flags(potential_partner)
+
+    user_stories = get_stories(user)
+    potential_partner_stories = get_stories(potential_partner)
+
+    prompt =
+      next_message_prompt(
+        user,
+        potential_partner,
+        user_white_flags,
+        potential_partner_white_flags,
+        user_stories,
+        potential_partner_stories,
+        messages
+      )
+
+    client = Ollama.init()
+
+    Ollama.completion(client,
+      model: Application.get_env(:animina, :llm_version),
+      prompt: prompt
+    )
+  end
+
+  defp format_messages(user, potential_partner) do
+    {:ok, messages_between_sender_and_receiver} =
+      Message.messages_for_sender_and_receiver(user.id, potential_partner.id, actor: user)
+
+    messages_between_sender_and_receiver.results
+    |> Enum.reverse()
+    |> Enum.map_join("\n\n", fn message ->
+      "#{message.sender.name}: #{message.content}"
+    end)
   end
 
   def request_stories(headline, content, reason, previous) do

@@ -186,6 +186,10 @@ defmodule AniminaWeb.ChatLive do
   def handle_event("submit", %{"message" => params}, socket) do
     case Message.create(params, actor: socket.assigns.sender) do
       {:ok, message} ->
+        spawn(fn ->
+          create_reply_with_ai(socket.assigns.sender, socket.assigns.receiver)
+        end)
+
         {:ok, messages_between_sender_and_receiver} =
           Message.messages_for_sender_and_receiver(message.sender_id, message.receiver_id,
             actor: socket.assigns.sender
@@ -538,6 +542,32 @@ defmodule AniminaWeb.ChatLive do
       points: points,
       subject: "Chat Help Completion"
     })
+  end
+
+  defp create_reply_with_ai(user, potential_partner) do
+    if Application.get_env(:animina, :autoreply_messages_with_ai) do
+      {:ok, response} =
+        ChatCompletion.request_message_reply(
+          user,
+          potential_partner
+        )
+
+      reply =
+        response["response"]
+        |> String.replace(~r/['"]/, "")
+
+      {:ok, message} =
+        Message.create(
+          %{
+            receiver_id: user.id,
+            sender_id: potential_partner.id,
+            content: reply
+          },
+          actor: potential_partner
+        )
+
+      PubSub.broadcast(Animina.PubSub, "messages", {:new_message, message})
+    end
   end
 
   @impl true
