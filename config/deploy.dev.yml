@@ -31,7 +31,6 @@ registry:
 builder:
   local: false
   arch: amd64
-  driver: default
   remote: <%= ENV["REMOTE_BUILDER_SSH_URL"] %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
