@@ -31,8 +31,8 @@ registry:
 builder:
   cache:
     type: registry
-  arch:
-    - arm64
+  remote:
+    arch: amd64
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
