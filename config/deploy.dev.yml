@@ -33,7 +33,8 @@ builder:
     type: registry
   arch:
     - amd64
-    - arm64
+    # - arm64
+  remote: <%= ENV["REMOTE_BUILDER_SSH_URL"] %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
 env:
