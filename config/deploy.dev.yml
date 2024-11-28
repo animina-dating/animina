@@ -4,7 +4,7 @@ service: animina
 <% require "dotenv"; Dotenv.load(".env") %>
 
 # Name of the container image.
-image: animina/animina
+image: <%= ENV["DEV_CONTAINER_IMAGE"] %>
 
 # Deploy to these servers.
 servers:
@@ -19,10 +19,10 @@ servers:
 registry:
   server: ghcr.io
   username:
-    - <%= ENV["KAMAL_REGISTRY_USERNAME"] %>
+    - KAMAL_REGISTRY_USERNAME
   # Always use an access token rather than real password (pulled from .kamal/secrets).
   password:
-    - <%= ENV["KAMAL_REGISTRY_PASSWORD"] %>
+    - KAMAL_REGISTRY_PASSWORD
 
 # Configure builder setup.
 # builder:
