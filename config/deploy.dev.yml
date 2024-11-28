@@ -1,6 +1,8 @@
 # Name of your application. Used to uniquely configure containers.
 service: animina
 
+<% require "dotenv"; Dotenv.load(".env") %>
+
 # Name of the container image.
 image: animina/animina
 
@@ -8,11 +10,10 @@ image: animina/animina
 servers:
   web:
     hosts:
-      - SERVER_IP
+      - <%= ENV["DEV_SERVER_IP"] %>
     options:
       publish: PORT:4000
     proxy: false
-  # - SERVER_IP
 
 # Credentials for your image host.
 registry:
@@ -40,10 +41,10 @@ env:
     PORT: 4000
     MIX_ENV: prod
   secret:
-    - DATABASE_URL
-    - SECRET_KEY_BASE
-    - PHX_HOST
-    - DISABLE_ML_FEATURES
+    - <%= ENV["DEV_DATABASE_URL"] %>
+    - <%= ENV["DEV_SECRET_KEY_BASE"] %>
+    - <%= ENV["DEV_PHX_HOST"] %>
+    - <%= ENV["DISABLE_ML_FEATURES"] %>
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
 #
@@ -52,9 +53,8 @@ env:
 
 # Use a different ssh user than root
 #
-# ssh:
-#   user: app
-
+ssh:
+  user: root
 # Use a persistent storage volume.
 #
 # volumes:
