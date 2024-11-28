@@ -12,17 +12,17 @@ servers:
     hosts:
       - <%= ENV["DEV_SERVER_IP"] %>
     options:
-      publish: PORT:4000
+      publish: <%= ENV["DEV_PORT"] %>:4000
     proxy: false
 
 # Credentials for your image host.
 registry:
   server: ghcr.io
   username:
-    - KAMAL_REGISTRY_USERNAME
+    - <%= ENV["KAMAL_REGISTRY_USERNAME"] %>
   # Always use an access token rather than real password (pulled from .kamal/secrets).
   password:
-    - KAMAL_REGISTRY_PASSWORD
+    - <%= ENV["KAMAL_REGISTRY_PASSWORD"] %>
 
 # Configure builder setup.
 # builder:
