@@ -27,7 +27,7 @@ registry:
 # Configure builder setup.
 builder:
   # local: false
-  arch: arm64
+  arch: amd64
   # remote: <%= ENV["REMOTE_BUILDER_SSH_URL"] %>
 
 # Inject ENV variables into containers (secrets come from .kamal/secrets).
@@ -36,10 +36,10 @@ env:
     PORT: 4000
     MIX_ENV: prod
   secret:
-    - <%= ENV["DEV_DATABASE_URL"] %>
-    - <%= ENV["DEV_SECRET_KEY_BASE"] %>
-    - <%= ENV["DEV_PHX_HOST"] %>
-    - <%= ENV["DISABLE_ML_FEATURES"] %>
+    - DATABASE_URL
+    - SECRET_KEY_BASE
+    - PHX_HOST
+    - DISABLE_ML_FEATURES
 
 ssh:
   user: root

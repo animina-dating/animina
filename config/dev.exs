@@ -92,3 +92,5 @@ config :swoosh, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
 # Debug ash pubsub
 config :ash, :pub_sub, debug?: true
+
+config :animina, :environment, :dev
