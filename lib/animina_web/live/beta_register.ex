@@ -21,6 +21,7 @@ defmodule AniminaWeb.BetaRegisterLive do
     {:ok, socket}
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <div>
