@@ -100,6 +100,7 @@ defmodule AniminaWeb do
       import AniminaWeb.PostsComponents
       import AniminaWeb.ReportComponents
       import AniminaWeb.WaitlistComponents
+      import AniminaWeb.BetaRegistrationComponents
       import Gettext, only: [with_locale: 2]
 
       # https://elixirforum.com/t/form-for-not-working-in-phoenix-1-7/52013
