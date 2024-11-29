@@ -35,8 +35,8 @@ env:
   clear:
     PORT: 4000
     MIX_ENV: prod
+    DATABASE_URL: <%= ENV["DEV_DATABASE_URL"] %>
   secret:
-    - DATABASE_URL
     - SECRET_KEY_BASE
     - PHX_HOST
     - DISABLE_ML_FEATURES

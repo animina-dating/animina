@@ -423,7 +423,8 @@ defmodule Animina.Accounts.User do
              add_role(changeset, :user)
              insert_user_into_waitlist_if_needed(record)
              # First user in dev becomes admin by default.
-             if Application.get_env(:animina, :environment) == :dev && Enum.count(Accounts.User.read!()) == 1 do
+             if Application.get_env(:animina, :environment) == :dev &&
+                  Enum.count(Accounts.User.read!()) == 1 do
                add_role(changeset, :admin)
              end
 
