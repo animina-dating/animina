@@ -56,11 +56,8 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
           <.zip_code_select f={f} language={@language} />
-          <.height_select f={f} language={@language} />
           <.birthday_select f={f} language={@language} />
-          <.occupation_select f={f} language={@language} />
-          <.username_select f={f} language={@language} />
-          <.name_select f={f} language={@language} />
+          <.height_select f={f} language={@language} />
         </div>
 
         <div class="w-[100%] flex justify-start">
