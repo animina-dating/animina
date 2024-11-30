@@ -55,9 +55,9 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         </h2>
 
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
-          <.zip_code_select f={f} language={@language} />
-          <.birthday_select f={f} language={@language} />
           <.height_select f={f} language={@language} />
+          <.birthday_select f={f} language={@language} />
+          <.zip_code_select f={f} language={@language} />
         </div>
 
         <h2 class="text-2xl mt-3 font-semibold dark:text-white">
