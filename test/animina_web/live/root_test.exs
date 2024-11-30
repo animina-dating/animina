@@ -500,8 +500,8 @@ defmodule AniminaWeb.RootTest do
       },
       %{
         email: "stefan@example.com",
-        username: "Stefan",
-        name: "Stefan",
+        username: "Stefanoo",
+        name: "Stefanoo",
         mobile_phone: "0151-12345674"
       }
     ]
