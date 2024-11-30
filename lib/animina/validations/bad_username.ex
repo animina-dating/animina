@@ -19,17 +19,50 @@ defmodule Animina.Validations.BadUsername do
     username =
       Ash.Changeset.get_attribute(changeset, opts[:attribute])
 
-    bad_usernames = ["my", "current_user", "profile", "beta"]
+    bad_usernames = [
+      "my",
+      "current_user",
+      "profile",
+      "beta",
+      "test",
+      "new",
+      "alpha",
+      "next",
+      "Stefan",
+      "Stephan",
+      "Aurelius",
+      "Juna",
+      "Miri",
+      "Miriam",
+      "aw",
+      "jw",
+      "sw"
+    ]
 
-    if username &&
-         (Ash.CiString.value(username) in bad_usernames or has_at?(Ash.CiString.value(username))) do
-      {:error, field: :username, message: "This is a bad username"}
-    else
-      :ok
+    case more_than_2_chars?(username) do
+      false ->
+        {:error, field: :username, message: "Username must be at least 2 characters long"}
+
+      true ->
+        if username &&
+             (Ash.CiString.value(username) in bad_usernames or
+                has_at?(Ash.CiString.value(username))) do
+          {:error, field: :username, message: "This is a bad username"}
+        else
+          :ok
+        end
     end
   end
 
   def has_at?(string) do
     String.contains?(string, "@")
+  end
+
+  def more_than_2_chars?(nil) do
+    false
+  end
+
+  def more_than_2_chars?(string) do
+    string && String.length(Ash.CiString.value(string)) > 2
   end
 end
