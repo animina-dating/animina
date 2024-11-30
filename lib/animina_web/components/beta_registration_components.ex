@@ -60,6 +60,19 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <.height_select f={f} language={@language} />
         </div>
 
+        <h2 class="text-2xl mt-3 font-semibold dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Future Partner Information") %>
+          <% end) %>
+        </h2>
+        <div class="w-[100%] md:grid grid-cols-2 gap-8">
+          <.minimum_partner_age f={f} language={@language} />
+          <.maximum_partner_age f={f} language={@language} />
+          <.minimum_partner_height f={f} language={@language} />
+          <.maximum_partner_height f={f} language={@language} />
+          <.search_range f={f} language={@language} />
+        </div>
+
         <div class="w-[100%] flex justify-start">
           <%= submit("Proceed",
             class:
@@ -248,6 +261,187 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         <.error :for={msg <- get_field_errors(@f[:birthday], :birthday)}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Date of birth") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp search_range(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="form_search_range"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Search range") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:search_range].name} class="mt-2">
+        <%= select(
+          @f,
+          :search_range,
+          [
+            {"2 km", 2},
+            {"5 km", 5},
+            {"10 km", 10},
+            {"20 km", 20},
+            {"30 km", 30},
+            {"50 km", 50},
+            {"75 km", 75},
+            {"100 km", 100},
+            {"150 km", 150},
+            {"200 km", 200},
+            {"300 km", 300}
+          ],
+          prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+          class:
+            "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+              unless(get_field_errors(@f[:search_range], :search_range) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:search_range], :search_range)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Search range") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp minimum_partner_height(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="form_minimum_partner_age"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Minimum age") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:minimum_partner_age].name} class="mt-2">
+        <%= select(@f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
+          prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+          value: @f[:minimum_partner_age].value,
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+              unless(get_field_errors(@f[:minimum_partner_age], :minimum_partner_age) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:minimum_partner_age], :minimum_partner_age)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Minimum age") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp maximum_partner_height(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="form_maximum_partner_height"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Maximum height") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:maximum_partner_height].name} class="mt-2">
+        <%= select(
+          @f,
+          :maximum_partner_height,
+          [{with_locale(@language, fn -> gettext("doesn't matter") end), nil}] ++
+            Enum.map(140..210, &{"#{&1} cm", &1}),
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+              unless(
+                get_field_errors(@f[:maximum_partner_height], :maximum_partner_height) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:maximum_partner_height], :maximum_partner_height)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Maximum height") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp minimum_partner_age(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="form_minimum_partner_age"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Minimum age") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:minimum_partner_age].name} class="mt-2">
+        <%= select(@f, :minimum_partner_age, Enum.map(18..110, &{&1, &1}),
+          prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+          value: @f[:minimum_partner_age].value,
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+              unless(get_field_errors(@f[:minimum_partner_age], :minimum_partner_age) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:minimum_partner_age], :minimum_partner_age)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Minimum age") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp maximum_partner_age(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="form_maximum_partner_age"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Maximum age") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:maximum_partner_age].name} class="mt-2">
+        <%= select(@f, :maximum_partner_age, Enum.map(18..110, &{&1, &1}),
+          prompt: with_locale(@language, fn -> gettext("doesn't matter") end),
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset focus:ring-2 focus:ring-inset phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:text-sm sm:leading-6 " <>
+              unless(get_field_errors(@f[:maximum_partner_age], :maximum_partner_age) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:maximum_partner_age], :maximum_partner_age)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Maximum age") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
