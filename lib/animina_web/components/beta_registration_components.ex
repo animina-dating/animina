@@ -323,7 +323,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Minimum height") %>
+          <%= gettext("Minimum %{height}", height: "height") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:minimum_partner_height].name} class="mt-2">
@@ -360,7 +360,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Maximum height") %>
+          <%= gettext("Maximum %{height}", height: "height") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:maximum_partner_height].name} class="mt-2">
@@ -396,7 +396,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Minimum age") %>
+          <%= gettext("Minimum %{age}", age: "age") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:minimum_partner_age].name} class="mt-2">
@@ -429,7 +429,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Maximum age") %>
+          <%= gettext("Maximum %{age}", age: "age") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:maximum_partner_age].name} class="mt-2">

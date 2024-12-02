@@ -60,10 +60,10 @@ defmodule AniminaWeb.PotentialPartner do
     User
     |> Ash.Query.for_read(:read)
     |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
-    |> beta_registration_partner_gender_query(user)
-    |> beta_registration_partner_height_query(user)
-    |> beta_registration_partner_age_query(user)
-    |> beta_registration_partner_geo_query(user)
+    |> registration_partner_gender_query(user)
+    |> registration_partner_height_query(user)
+    |> registration_partner_age_query(user)
+    |> registration_partner_geo_query(user)
     |> partner_completed_registration_query(user)
     |> partner_not_under_investigation_query(user)
     |> partner_not_banned_query(user)
@@ -168,7 +168,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.Query.filter(gender: [eq: user.partner_gender])
   end
 
-  defp beta_registration_partner_gender_query(query, user) do
+  defp registration_partner_gender_query(query, user) do
     if user["gender"] == "" do
       query
     else
@@ -177,7 +177,7 @@ defmodule AniminaWeb.PotentialPartner do
     end
   end
 
-  defp beta_registration_partner_height_query(query, user) do
+  defp registration_partner_height_query(query, user) do
     max_height = conditional_maximum_height(user["height"], user["maximum_partner_height"])
     min_height = conditional_minimum_height(user["height"], user["minimum_partner_height"])
 
@@ -186,7 +186,7 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.Query.filter(height >= ^min_height)
   end
 
-  defp beta_registration_partner_age_query(query, user) do
+  defp registration_partner_age_query(query, user) do
     if user["birthday"] == "" do
       query
     else
@@ -211,7 +211,7 @@ defmodule AniminaWeb.PotentialPartner do
     end
   end
 
-  defp beta_registration_partner_geo_query(query, user) do
+  defp registration_partner_geo_query(query, user) do
     if user["zip_code"] == "" do
       query
     else
@@ -229,7 +229,7 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   defp conditional_maximum_age(age, "") do
-    age + Application.get_env(:animina, :default_potential_partner_age_difference)
+    age + Application.get_env(:animina, :default_partner_age_offset)
   end
 
   defp conditional_maximum_age(_, max_age) do
@@ -241,7 +241,7 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   defp conditional_minimum_age(age, "") do
-    age + Application.get_env(:animina, :default_potential_partner_age_difference)
+    age + Application.get_env(:animina, :default_partner_age_offset)
   end
 
   defp conditional_minimum_age(_, min_age) do
@@ -256,7 +256,7 @@ defmodule AniminaWeb.PotentialPartner do
   defp conditional_maximum_height(height, "") do
     # We add a 10cm buffer to the user's height if the user does not specify a maximum height
     String.to_integer(height) +
-      Application.get_env(:animina, :default_potential_partner_height_difference)
+      Application.get_env(:animina, :default_partner_height_offset)
   end
 
   defp conditional_maximum_height(_height, maximum_partner_height) do
@@ -271,7 +271,7 @@ defmodule AniminaWeb.PotentialPartner do
   defp conditional_minimum_height(height, "") do
     # We remove a 10cm buffer to the user's height if the user does not specify a minimum height
     String.to_integer(height) -
-      Application.get_env(:animina, :default_potential_partner_height_difference)
+      Application.get_env(:animina, :default_partner_height_offset)
   end
 
   defp conditional_minimum_height(_, minimum_partner_height) do
@@ -314,7 +314,7 @@ defmodule AniminaWeb.PotentialPartner do
   def get_nearby_cities(zip_code, search_range) do
     search_range =
       if search_range == "" do
-        Application.get_env(:animina, :default_potential_partner_search_range)
+        Application.get_env(:animina, :default_potential_partner_search_range_in_km)
       else
         String.to_integer(search_range)
       end
