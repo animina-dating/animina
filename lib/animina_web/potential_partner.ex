@@ -5,7 +5,7 @@ defmodule AniminaWeb.PotentialPartner do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
-  # alias Animina.GeoData.City
+  alias Animina.GeoData.City
   # alias Animina.Traits.UserFlags
 
   require Ash.Query
@@ -49,6 +49,27 @@ defmodule AniminaWeb.PotentialPartner do
     |> partner_not_hibernate_query(user)
     |> partner_not_incognito_query(user)
     |> Ash.Query.limit(limit)
+    |> Ash.read!()
+  end
+
+  @doc """
+  We use this to fetch potential partners for the user during registration.
+  """
+
+  def potential_partners_on_registration(user) do
+    User
+    |> Ash.Query.for_read(:read)
+    |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+    |> beta_registration_partner_gender_query(user)
+    |> beta_registration_partner_height_query(user)
+    |> beta_registration_partner_age_query(user)
+    |> beta_registration_partner_geo_query(user)
+    |> partner_completed_registration_query(user)
+    |> partner_not_under_investigation_query(user)
+    |> partner_not_banned_query(user)
+    |> partner_not_archived_query(user)
+    |> partner_not_hibernate_query(user)
+    |> partner_not_incognito_query(user)
     |> Ash.read!()
   end
 
@@ -147,6 +168,116 @@ defmodule AniminaWeb.PotentialPartner do
     |> Ash.Query.filter(gender: [eq: user.partner_gender])
   end
 
+  defp beta_registration_partner_gender_query(query, user) do
+    if user["gender"] == "" do
+      query
+    else
+      query
+      |> Ash.Query.filter(gender: [eq: user["gender"]])
+    end
+  end
+
+  defp beta_registration_partner_height_query(query, user) do
+    max_height = conditional_maximum_height(user["height"], user["maximum_partner_height"])
+    min_height = conditional_minimum_height(user["height"], user["minimum_partner_height"])
+
+    query
+    |> Ash.Query.filter(height <= ^max_height)
+    |> Ash.Query.filter(height >= ^min_height)
+  end
+
+  defp beta_registration_partner_age_query(query, user) do
+    if user["birthday"] == "" do
+      query
+    else
+      age = calculate_age(convert_to_date(user["birthday"]))
+
+      max_age = conditional_maximum_age(age, user["maximum_partner_age"])
+      min_age = conditional_minimum_age(age, user["minimum_partner_age"])
+
+      query
+      |> Ash.Query.filter(
+        fragment(
+          "date_part('year', age(current_date, ?))",
+          birthday
+        ) >= ^min_age
+      )
+      |> Ash.Query.filter(
+        fragment(
+          "date_part('year', age(current_date, ?))",
+          birthday
+        ) <= ^max_age
+      )
+    end
+  end
+
+  defp beta_registration_partner_geo_query(query, user) do
+    if user["zip_code"] == "" do
+      query
+    else
+      nearby_zip_codes =
+        get_nearby_cities(user["zip_code"], user["search_range"])
+        |> Enum.map(fn city -> city.zip_code end)
+
+      query
+      |> Ash.Query.filter(zip_code: [in: nearby_zip_codes])
+    end
+  end
+
+  defp conditional_maximum_age("", "") do
+    Application.get_env(:animina, :default_potential_partner_maximum_age)
+  end
+
+  defp conditional_maximum_age(age, "") do
+    age + Application.get_env(:animina, :default_potential_partner_age_difference)
+  end
+
+  defp conditional_maximum_age(_, max_age) do
+    String.to_integer(max_age)
+  end
+
+  defp conditional_minimum_age("", "") do
+    Application.get_env(:animina, :default_potential_partner_minimum_age)
+  end
+
+  defp conditional_minimum_age(age, "") do
+    age + Application.get_env(:animina, :default_potential_partner_age_difference)
+  end
+
+  defp conditional_minimum_age(_, min_age) do
+    String.to_integer(min_age)
+  end
+
+  defp conditional_maximum_height("", "") do
+    #  We set the minimum height to 0m if the user does not specify a minimum height
+    Application.get_env(:animina, :default_potential_partner_maximum_height)
+  end
+
+  defp conditional_maximum_height(height, "") do
+    # We add a 10cm buffer to the user's height if the user does not specify a maximum height
+    String.to_integer(height) +
+      Application.get_env(:animina, :default_potential_partner_height_difference)
+  end
+
+  defp conditional_maximum_height(_height, maximum_partner_height) do
+    String.to_integer(maximum_partner_height)
+  end
+
+  defp conditional_minimum_height("", "") do
+    # We set the minimum height to 0cm if the user does not specify a minimum height
+    Application.get_env(:animina, :default_potential_partner_minimum_height)
+  end
+
+  defp conditional_minimum_height(height, "") do
+    # We remove a 10cm buffer to the user's height if the user does not specify a minimum height
+    String.to_integer(height) -
+      Application.get_env(:animina, :default_potential_partner_height_difference)
+  end
+
+  defp conditional_minimum_height(_, minimum_partner_height) do
+    String.to_integer(minimum_partner_height)
+  end
+
   # defp partner_geo_query(query, user) do
   #   nearby_zip_codes =
   #     get_nearby_cities(user.zip_code, user.search_range)
@@ -180,23 +311,35 @@ defmodule AniminaWeb.PotentialPartner do
 
   # We use the haversine formula to get locations
   # near the current city in the search range radius
-  # defp get_nearby_cities(zip_code, search_range) do
-  #   current_city = City.by_zip_code!(zip_code)
-  #
-  # City
-  # |> Ash.Query.filter(
-  #   fragment(
-  #     "acos(sin(radians(?)) * sin(radians(lat)) +
-  #     cos(radians(?)) * cos(radians(lat)) *
-  #     cos(radians(?) - radians(lon))) * 6731 <= ?",
-  #     ^current_city.lat,
-  #     ^current_city.lat,
-  #     ^current_city.lon,
-  #     ^search_range
-  #   )
-  # )
-  # |> Ash.read!()
-  # end
+  def get_nearby_cities(zip_code, search_range) do
+    search_range =
+      if search_range == "" do
+        Application.get_env(:animina, :default_potential_partner_search_range)
+      else
+        String.to_integer(search_range)
+      end
+
+    case City.by_zip_code(zip_code) do
+      {:ok, current_city} ->
+        City
+        |> Ash.Query.filter(
+          fragment(
+            "acos(sin(radians(?)) * sin(radians(lat)) +
+          cos(radians(?)) * cos(radians(lat)) *
+          cos(radians(?) - radians(lon))) * 6731 <= ?",
+            ^current_city.lat,
+            ^current_city.lat,
+            ^current_city.lon,
+            ^search_range
+          )
+        )
+        |> Ash.read!()
+
+      _ ->
+        # If the city is not found, we return an empty list
+        []
+    end
+  end
 
   # defp get_user_flags(user_id, color) do
   #   UserFlags
@@ -212,5 +355,17 @@ defmodule AniminaWeb.PotentialPartner do
       _ ->
         []
     end
+  end
+
+  def convert_to_date(date_string) do
+    {:ok, date} = Date.from_iso8601(date_string)
+    date
+  end
+
+  def calculate_age(birthdate) do
+    today = Date.utc_today()
+    days = Date.diff(today, birthdate)
+    years = days / 365.25
+    floor(years)
   end
 end
