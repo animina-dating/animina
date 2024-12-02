@@ -36,7 +36,8 @@ defmodule Animina.Validations.BadUsername do
       "Miriam",
       "aw",
       "jw",
-      "sw"
+      "sw",
+      "up"
     ]
 
     case more_than_2_chars?(username) do
