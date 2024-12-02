@@ -26,33 +26,27 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         ]}
       />
 
-      <h2 class="text-2xl mt-3 font-semibold dark:text-white">
+      <p class="mt-3 text-base font-semibold dark:text-white">
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Current Potential Partners:") %> <%= @number_of_potential_partners %>
+          <%= gettext("Potential Matches Counter:") %> <%= @number_of_potential_partners %>
         <% end) %>
-      </h2>
+      </p>
 
       <.form
         :let={f}
         id="beta_user_registration_form"
         for={@form}
-        class="space-y-6 mt-6 group "
+        class="mt-6 space-y-6 group"
         phx-change="validate_and_filter_potential_partners"
         phx-submit="submit"
       >
-        <h2 class="text-2xl mt-3 font-semibold dark:text-white">
+        <h2 class="mt-3 text-2xl font-semibold dark:text-white">
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Future Partner Information") %>
+            <%= gettext("Find your match") %>
           <% end) %>
         </h2>
 
         <.gender_select f={f} language={@language} />
-
-        <h2 class="text-2xl mt-3 font-semibold dark:text-white">
-          <%= with_locale(@language, fn -> %>
-            <%= gettext("Information about you") %>
-          <% end) %>
-        </h2>
 
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
           <.height_select f={f} language={@language} />
@@ -60,9 +54,9 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <.zip_code_select f={f} language={@language} />
         </div>
 
-        <h2 class="text-2xl mt-3 font-semibold dark:text-white">
+        <h2 class="mt-3 text-2xl font-semibold dark:text-white">
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Future Partner Information") %>
+            <%= gettext("Narrow Down Your Search") %>
           <% end) %>
         </h2>
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
@@ -101,7 +95,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Gender") %>
+          <%= gettext("You are searching for a") %>
         <% end) %>
       </label>
       <div class="mt-2" phx-no-format>
@@ -157,13 +151,13 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
   defp zip_code_select(assigns) do
     ~H"""
-    <div class="flex flex-col items-start ">
+    <div class="flex flex-col items-start">
       <label
         for="user_zip_code"
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Zip code") %>
+          <%= gettext("Your Zip Code") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:zip_code].name} class="w-[100%] mt-2">
@@ -200,7 +194,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Height") %>
+          <%= gettext("Your Height") %>
         <% end) %>
         <span class="text-gray-400 dark:text-gray-100">
           <%= with_locale(@language, fn -> %>
@@ -240,7 +234,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Date of birth dd/mm/yyyy") %>
+          <%= gettext("Your Birthday (dd/mm/yyyy)") %>
         <% end) %>
       </label>
 
@@ -323,7 +317,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Minimum %{height}", height: "height") %>
+          <%= gettext("Minimum Partner Height") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:minimum_partner_height].name} class="mt-2">
@@ -344,7 +338,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.error :for={msg <- get_field_errors(@f[:minimum_partner_height], :minimum_partner_height)}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Minimum height") <> " " <> msg %>
+            <%= gettext("Minimum Partner Height") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
@@ -360,7 +354,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Maximum %{height}", height: "height") %>
+          <%= gettext("Maximum Partner Height") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:maximum_partner_height].name} class="mt-2">
@@ -380,7 +374,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.error :for={msg <- get_field_errors(@f[:maximum_partner_height], :maximum_partner_height)}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Maximum height") <> " " <> msg %>
+            <%= gettext("Maximum Partner Height") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
@@ -396,7 +390,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Minimum %{age}", age: "age") %>
+          <%= gettext("Minimum Partner Age") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:minimum_partner_age].name} class="mt-2">
@@ -413,7 +407,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.error :for={msg <- get_field_errors(@f[:minimum_partner_age], :minimum_partner_age)}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Minimum age") <> " " <> msg %>
+            <%= gettext("Minimum Partner Age") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
@@ -429,7 +423,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
         <%= with_locale(@language, fn -> %>
-          <%= gettext("Maximum %{age}", age: "age") %>
+          <%= gettext("Maximum Partner Age") %>
         <% end) %>
       </label>
       <div phx-feedback-for={@f[:maximum_partner_age].name} class="mt-2">
@@ -445,7 +439,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.error :for={msg <- get_field_errors(@f[:maximum_partner_age], :maximum_partner_age)}>
           <%= with_locale(@language, fn -> %>
-            <%= gettext("Maximum age") <> " " <> msg %>
+            <%= gettext("Maximum Partner Age") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
