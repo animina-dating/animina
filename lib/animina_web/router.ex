@@ -25,6 +25,7 @@ defmodule AniminaWeb.Router do
     ash_authentication_live_session :user_optional,
       on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
       live "/", RootLive, :register
+      live "/beta", BetaRegisterLive, :index
     end
 
     ash_authentication_live_session :user_not_required,
