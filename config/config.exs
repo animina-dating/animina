@@ -31,6 +31,27 @@ config :animina, :ai_message_help_price, 20
 # Configures whether to have ai automatically respond to messages
 config :animina, :autoreply_messages_with_ai, false
 
+# Configures default maximum age for potential partners
+config :animina, :default_potential_partner_maximum_age, 100
+
+# Configures default minimum age for potential partners
+config :animina, :default_potential_partner_minimum_age, 18
+
+# confugures the difference in age if no maximum or minimum age is set
+config :animina, :default_partner_age_offset, 10
+
+# Configures the maximum height for potential partners
+config :animina, :default_potential_partner_maximum_height, 225
+
+# Configures the minimum height for potential partners
+config :animina, :default_potential_partner_minimum_height, 0
+
+# Configures the maximum height difference for potential partners
+config :animina, :default_partner_height_offset, 10
+
+# Configures the default search range for potential partners in km
+config :animina, :default_potential_partner_search_range_in_km, 10_000
+
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
