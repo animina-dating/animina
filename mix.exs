@@ -11,7 +11,8 @@ defmodule Animina.MixProject do
       releases: [
         animina: [
           applications: [
-            animina: :permanent
+            animina: :permanent,
+            animina_web: :permanent
           ]
         ]
       ],

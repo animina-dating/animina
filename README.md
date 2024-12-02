@@ -171,14 +171,73 @@ Follow these installation [steps](https://kamal-deploy.org/docs/installation/) t
 
 ### Configure environment variables
 
-Create a .env file in the root of the project and add the following
+Create a .env file in the root of the project and then copy the contents of .env.examnple to it.
+
+To configure the database edit the following env variables
+```
+POSTGRES_HOST=localhost
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=""
+POSTGRES_PORT=5432
+```
+
+Kamal requires a registry where it can upload and cache the docker containers. This project uses github registry. 
+To configure the registry, create a github [token](https://github.com/settings/tokens/new) and grant it the `write:packages` access rights.
+Copy the token and paste it in your .env file under the `KAMAL_REGISTRY_PASSWORD` key.
+```
+KAMAL_REGISTRY_USERNAME=<github-username>
+KAMAL_REGISTRY_PASSWORD=<github-token>
+```
+
+The rest of the environment variables are similar but prefixed with the target deployment. To cnfigure for prod deployments, edit the variables with
+`PROD_` prefix, for dev `DEV_` prefix.
 
 ```
-KAMAL_REGISTRY_PASSWORD=<github-token>
-SECRET_KEY_BASE=<secret-key-base>
-DATABASE_URL=[dogenerated]
-PHX_HOST=[yourdomain]
+*_SERVER_IP=<the-server-ip-where-the-app-will-be-deployed>
+*_SECRET_KEY_BASE=<required-by-phoenix> //Use `mix phx.gen.secret 80` to generate this
+*_DATABASE_URL=<the-database-connection-string>
+*_PHX_HOST=<the-host-url-of-your-app>
+*_PORT=<the-host-port-your-app-will-bind-to>
+*_FILE_VOLUME_PATH=<the-path-on-the-host-files-will-be-persisted-to>
+*_CONTAINER_IMAGE=<the-name-of-the-container-in-the-registry> //Should start with your github username, followed by the container name
 ```
+
+For example, here's a config for a prod environment
+```
+PROD_SERVER_IP=127.0.0.1
+PROD_SECRET_KEY_BASE=9GGCyEor8pAYi1CncIsZx9opAwhD7+7/zMbrs9NN05/oEH3PXU0AfQ7ESodoXsHg00S07ATBkGKcFbFJ
+PROD_DATABASE_URL=ecto://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/animina
+PROD_PHX_HOST=animina.de
+PROD_PORT=4310
+PROD_FILE_VOLUME_PATH=/etc/animina/prod/
+PROD_CONTAINER_IMAGE="animina/animina-prod"
+```
+
+### Initialize kamal
+Run the following command to setup kamal both on your local instance and the remote host. You will be prompted to enter the password
+of the remote host. This command will check if Docker is installed and, if not, it will attempt to install it on your host server.
+
+```
+kamal server bootstrap
+```
+
+### Deploy the application
+To deploy the application, run `kamal deploy`. You will need to set the destinations flag `-d` followed by the destination name.
+For example to deploy to prod, run
+```
+kamal deploy -d prod
+```
+To deploy to dev, run
+```
+kamal deploy -d dev
+```
+
+The above command logins into the docker registry, builds the docker images locally, pushes the build artifacts to the registry and finally deploys the docker images to your host. Read more about `kamal deploy` [here](https://kamal-deploy.org/docs/commands/deploy/)
+
+To redeploy running `kamal deploy` will result in an error as our container is already running and bound to a port on the host. This is due to how kamal 2 works as seen in this github issue [here](https://github.com/basecamp/kamal/issues/1133).
+
+To get around this, first run `kamal app stop` and then run `kamal deploy`. Be sure to specify the destinations using the `-d` flag.
+
 
 ## Submiting Code
 
