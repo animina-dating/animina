@@ -41,3 +41,5 @@ config :animina, :number_of_days_to_filter_registered_users, 60
 config :phoenix, :plug_init_mode, :runtime
 
 config :animina, Oban, testing: :manual
+
+config :animina, :environment, :test

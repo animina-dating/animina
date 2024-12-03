@@ -11,6 +11,7 @@ defmodule AniminaWeb.Router do
     plug :put_secure_browser_headers
     plug :load_from_session
     plug AniminaWeb.Plugs.Locale
+    plug AniminaWeb.Plugs.HealthCheck
   end
 
   pipeline :api do

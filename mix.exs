@@ -8,6 +8,14 @@ defmodule Animina.MixProject do
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      releases: [
+        animina: [
+          applications: [
+            animina: :permanent,
+            animina_web: :permanent
+          ]
+        ]
+      ],
       aliases: aliases(),
       deps: deps()
     ]

@@ -20,7 +20,7 @@ defmodule Animina.Repo.Migrations.SeedBadPassword do
 
     # In :dev, :test and CI only use the first 10 passwords to speed up the workflow.
     stream =
-      if Enum.member?([:dev, :test], Mix.env()) or System.get_env("CI") do
+      if Enum.member?([:dev, :test], Application.get_env(:animina, :environment)) or System.get_env("CI") do
         File.stream!(file_path)
         |> Stream.take(10)
       else

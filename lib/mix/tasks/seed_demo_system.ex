@@ -1,4 +1,4 @@
-if Enum.member?([:dev, :test], Mix.env()) do
+if Enum.member?([:dev, :test], Application.get_env(:animina, :environment)) do
   defmodule Mix.Tasks.SeedDemoSystem do
     @moduledoc """
     Seed a couple of demo account to a system for demo and development purposes.

@@ -37,5 +37,7 @@ config :animina, :llm_version, "llama3.1:8b"
 
 config :animina, :number_of_days_to_filter_registered_users, 600
 
+config :animina, :environment, :prod
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
