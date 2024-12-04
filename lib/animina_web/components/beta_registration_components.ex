@@ -246,7 +246,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
                 do: "ring-red-600 focus:ring-red-600",
                 else: "ring-gray-300 focus:ring-indigo-600"
               ),
-          placeholder: "20.12.1970",
+          placeholder: eighteen_years_before_now(),
           value: @f[:birthday].value,
           autocomplete: gettext("bday"),
           "phx-debounce": "blur"
@@ -445,5 +445,14 @@ defmodule AniminaWeb.BetaRegistrationComponents do
       </div>
     </div>
     """
+  end
+
+  def eighteen_years_before_now do
+    date =
+      Date.utc_today()
+      |> Timex.shift(years: -18)
+
+    Integer.to_string(date.day) <>
+      "." <> Integer.to_string(date.month) <> "." <> Integer.to_string(date.year)
   end
 end
