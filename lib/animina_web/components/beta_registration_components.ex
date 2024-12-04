@@ -249,7 +249,6 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           placeholder: "20.12.1970",
           value: @f[:birthday].value,
           autocomplete: gettext("bday"),
-
           "phx-debounce": "blur"
         ) %>
 
