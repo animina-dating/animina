@@ -43,3 +43,5 @@ config :phoenix, :plug_init_mode, :runtime
 config :animina, Oban, testing: :manual
 
 config :animina, :environment, :test
+
+config :animina, :uploads_directory, "priv/static/uploads"

@@ -6,6 +6,7 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
   alias Animina.Traits.UserFlags
+  alias Animina.PathHelper
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -94,7 +95,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
       filename = entry.uuid <> "." <> ext(entry)
 
       dest =
-        Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+        PathHelper.uploads_path()
+        |> Path.join(Path.basename(filename))
 
       File.cp!(path, dest)
 
