@@ -5,8 +5,8 @@ defmodule AniminaWeb.ProfilePhotoLive do
   alias Animina.Accounts.Photo
   alias Animina.Accounts.User
   alias Animina.GenServers.ProfileViewCredits
-  alias Animina.Traits.UserFlags
   alias Animina.PathHelper
+  alias Animina.Traits.UserFlags
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
