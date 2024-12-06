@@ -26,6 +26,11 @@ defmodule Animina.BirthdayValidator do
       iex> BirthdayValidator.validate_birthday("15.08.2010")
       {:error, "Birthday must be more than 18 years ago."}
   """
+
+  def validate_birthday("") do
+    {:error, "Birthday cannot be empty."}
+  end
+
   def validate_birthday(birthday) do
     with {:ok, date_parts} <- parse_birthday(birthday),
          {:ok, date} <- validate_date(date_parts),

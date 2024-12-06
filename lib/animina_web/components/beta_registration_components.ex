@@ -39,6 +39,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         class="mt-6 space-y-6 group"
         phx-change="validate_and_filter_potential_partners"
         phx-submit="submit"
+        phx-debounce="500"
       >
         <h2 class="mt-3 text-2xl font-semibold dark:text-white">
           <%= with_locale(@language, fn -> %>
@@ -50,7 +51,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
           <.height_select f={f} language={@language} />
-          <.birthday_select f={f} language={@language} />
+          <.birthday_select f={f} language={@language} birthday_error={@birthday_error} />
           <.zip_code_select f={f} language={@language} />
         </div>
 
@@ -242,7 +243,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         <%= text_input(@f, :birthday,
           class:
             "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
-              unless(get_field_errors(@f[:birthday], :birthday) == [],
+              unless(@birthday_error == nil,
                 do: "ring-red-600 focus:ring-red-600",
                 else: "ring-gray-300 focus:ring-indigo-600"
               ),
@@ -252,10 +253,8 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           "phx-debounce": "blur"
         ) %>
 
-        <.error :for={msg <- get_field_errors(@f[:birthday], :birthday)}>
-          <%= with_locale(@language, fn -> %>
-            <%= gettext("Date of birth") <> " " <> msg %>
-          <% end) %>
+        <.error :if={@birthday_error != nil}>
+          <%= @birthday_error %>
         </.error>
       </div>
     </div>

@@ -5,6 +5,7 @@ defmodule AniminaWeb.PotentialPartner do
 
   alias Animina.Accounts
   alias Animina.Accounts.User
+  alias Animina.BirthdayValidator
   alias Animina.GeoData.City
   # alias Animina.Traits.UserFlags
 
@@ -187,27 +188,29 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   defp registration_partner_age_query(query, user) do
-    if user["birthday"] == "" do
-      query
-    else
-      age = calculate_age(convert_to_date(user["birthday"]))
+    case convert_to_date(user["birthday"]) do
+      {:ok, date} ->
+        age = calculate_age(date)
 
-      max_age = conditional_maximum_age(age, user["maximum_partner_age"])
-      min_age = conditional_minimum_age(age, user["minimum_partner_age"])
+        max_age = conditional_maximum_age(age, user["maximum_partner_age"])
+        min_age = conditional_minimum_age(age, user["minimum_partner_age"])
 
-      query
-      |> Ash.Query.filter(
-        fragment(
-          "date_part('year', age(current_date, ?))",
-          birthday
-        ) >= ^min_age
-      )
-      |> Ash.Query.filter(
-        fragment(
-          "date_part('year', age(current_date, ?))",
-          birthday
-        ) <= ^max_age
-      )
+        query
+        |> Ash.Query.filter(
+          fragment(
+            "date_part('year', age(current_date, ?))",
+            birthday
+          ) >= ^min_age
+        )
+        |> Ash.Query.filter(
+          fragment(
+            "date_part('year', age(current_date, ?))",
+            birthday
+          ) <= ^max_age
+        )
+
+      _ ->
+        query
     end
   end
 
@@ -358,8 +361,7 @@ defmodule AniminaWeb.PotentialPartner do
   end
 
   def convert_to_date(date_string) do
-    {:ok, date} = Date.from_iso8601(date_string)
-    date
+    BirthdayValidator.validate_birthday(date_string)
   end
 
   def calculate_age(birthdate) do
