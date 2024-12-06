@@ -94,3 +94,5 @@ config :swoosh, Animina.Mailer, adapter: Swoosh.Adapters.Local
 config :ash, :pub_sub, debug?: true
 
 config :animina, :environment, :dev
+
+config :animina, :uploads_directory, "priv/static/uploads"

@@ -9,6 +9,7 @@ defmodule Animina.Accounts.Photo do
   alias Animina.ImageTagging
   alias Animina.Narratives
   alias Animina.Narratives.Story
+  alias Animina.PathHelper
 
   alias Animina.Traits.Flag
 
@@ -288,7 +289,8 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp delete_photo_from_filesystem(photo) do
-    file_path = "priv/static/uploads/#{photo.filename}"
+    uploads_path = PathHelper.uploads_path()
+    file_path = uploads_path <> "/#{photo.filename}"
 
     if File.exists?(file_path) do
       case File.rm(file_path) do
@@ -306,8 +308,10 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp delete_optimized_photos(photo) do
+    uploads_path = PathHelper.uploads_path()
+
     for type <- [:thumbnail, :normal, :big] do
-      optimized_photo_path = "priv/static/uploads/optimized/#{type}/#{photo.filename}"
+      optimized_photo_path = uploads_path <> "/optimized/#{type}/#{photo.filename}"
 
       if File.exists?(optimized_photo_path) do
         case File.rm(optimized_photo_path) do
@@ -329,7 +333,9 @@ defmodule Animina.Accounts.Photo do
   end
 
   def create_photo_flags(record) do
-    if File.exists?("priv/static/uploads/" <> record.filename) do
+    uploads_path = PathHelper.uploads_path()
+
+    if File.exists?(uploads_path <> "/#{record.filename}") do
       {flags, description} =
         ImageTagging.auto_tag_image("#{record.filename}")
 
@@ -490,8 +496,10 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp create_optimized_folder_if_not_exists do
+    uploads_path = PathHelper.uploads_path()
+
     for type <- ["thumbnail", "normal", "big"] do
-      case File.mkdir_p("priv/static/uploads/optimized/#{type}") do
+      case File.mkdir_p(uploads_path <> "/optimized/#{type}") do
         :ok ->
           :ok
 
@@ -513,10 +521,12 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp copy_image(file_name, type) do
-    if File.exists?("priv/static/uploads/" <> file_name) do
+    uploads_path = PathHelper.uploads_path()
+
+    if File.exists?(uploads_path <> "/#{file_name}") do
       case File.cp!(
-             "priv/static/uploads/" <> file_name,
-             "priv/static/uploads/optimized/#{type}/#{file_name}"
+             uploads_path <> "/#{file_name}",
+             uploads_path <> "/optimized/#{type}/#{file_name}"
            ) do
         :ok ->
           "/uploads/optimized/#{type}/#{file_name}"
@@ -532,6 +542,8 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp resize_image(record) do
+    uploads_path = PathHelper.uploads_path()
+
     for type <- [
           %{
             width: 100,
@@ -548,7 +560,7 @@ defmodule Animina.Accounts.Photo do
             type: :big
           }
         ] do
-      if File.exists?("priv/static/uploads/" <> record.filename) do
+      if File.exists?(uploads_path <> "/#{record.filename}") do
         OptimizedPhoto.create(%{
           image_url: resize_image(record.filename, type.width, type.type),
           type: type.type,
@@ -567,11 +579,13 @@ defmodule Animina.Accounts.Photo do
   end
 
   defp resize_image(image_path, width, type) do
+    uploads_path = PathHelper.uploads_path()
+
     image =
-      Mogrify.open("priv/static/uploads/" <> image_path)
+      Mogrify.open(uploads_path <> "/#{image_path}")
       |> Mogrify.resize("#{width}")
       |> Mogrify.format("webp")
-      |> Mogrify.save(path: "priv/static/uploads/optimized/#{type}/#{image_path}")
+      |> Mogrify.save(path: uploads_path <> "/optimized/#{type}/#{image_path}")
 
     image.path
   end

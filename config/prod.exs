@@ -39,5 +39,7 @@ config :animina, :number_of_days_to_filter_registered_users, 600
 
 config :animina, :environment, :prod
 
+config :animina, :uploads_directory, "/uploads"
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

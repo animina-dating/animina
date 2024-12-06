@@ -2,6 +2,7 @@ defmodule Animina.Actions.ProcessPhoto do
   @moduledoc """
   This is the Process Photo action module
   """
+  alias Animina.PathHelper
   use Ash.Resource.ManualUpdate
 
   require Logger
@@ -79,9 +80,6 @@ defmodule Animina.Actions.ProcessPhoto do
   end
 
   defp get_upload_dir(filename) do
-    Path.join(
-      Application.app_dir(:animina, "priv/static/uploads"),
-      Path.basename(filename)
-    )
+    PathHelper.uploads_path() |> Path.join(Path.basename(filename))
   end
 end

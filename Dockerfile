@@ -38,6 +38,9 @@ RUN mix local.hex --force && \
 # set build ENV
 ENV MIX_ENV="prod"
 
+# allow builds on apple silicon macs
+ENV ERL_AFLAGS="+JMsingle true"
+
 # install mix dependencies
 COPY mix.exs mix.lock ./
 RUN mix deps.get --only $MIX_ENV

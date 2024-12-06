@@ -9,6 +9,7 @@ defmodule AniminaWeb.StoryLive do
   alias Animina.Narratives
   alias Animina.Narratives.Headline
   alias Animina.Narratives.Story
+  alias Animina.PathHelper
   alias AshPhoenix.Form
   alias Phoenix.PubSub
 
@@ -403,7 +404,8 @@ defmodule AniminaWeb.StoryLive do
         filename = entry.uuid <> "." <> ext(entry)
 
         dest =
-          Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+          PathHelper.uploads_path()
+          |> Path.join(Path.basename(filename))
 
         File.cp!(path, dest)
 

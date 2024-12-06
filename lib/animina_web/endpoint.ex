@@ -23,7 +23,10 @@ defmodule AniminaWeb.Endpoint do
     gzip: false,
     only: AniminaWeb.static_paths()
 
-  plug Plug.Static, at: "/uploads", from: "priv/static/uploads", gzip: false
+  plug Plug.Static,
+    at: "/uploads",
+    from: Application.compile_env(:animina, :uploads_directory),
+    gzip: false
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

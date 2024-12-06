@@ -11,8 +11,10 @@ if Enum.member?([:dev, :test], Application.get_env(:animina, :environment)) do
     alias Animina.Accounts.UserRole
     alias Animina.Narratives.Headline
     alias Animina.Narratives.Story
+    alias Animina.PathHelper
     alias Animina.Traits.Flag
     alias Animina.Traits.UserFlags
+
     alias Faker.Phone
 
     require Ash.Query
@@ -770,7 +772,8 @@ if Enum.member?([:dev, :test], Application.get_env(:animina, :environment)) do
         HTTPoison.get!(url, [], timeout: 50_000, recv_timeout: 50_000)
 
       dest =
-        Path.join(Application.app_dir(:animina, "priv/static/uploads"), Path.basename(filename))
+        PathHelper.uploads_path()
+        |> Path.join(Path.basename(filename))
 
       File.write!(dest, body)
       %{size: size} = File.stat!(dest)

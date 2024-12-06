@@ -2,15 +2,20 @@ defmodule Animina.ImageTagging do
   @moduledoc """
   This module is responsible for tagging images using the Llava model.
   """
+  alias Animina.PathHelper
   alias Animina.Traits.Flag
 
   def auto_tag_image(image) do
-    new_image = "priv/static/uploads/#{image}"
+    uploads_path = PathHelper.uploads_path()
+    new_image = uploads_path <> "/#{image}"
 
-    tmp_image_path = "/tmp/test-photo.jpg"
-    File.cp!(new_image, tmp_image_path)
+    # Create a temporary file with the same extension as the original image
+    extname = Path.extname(image)
+    {:ok, temp_file} = Briefly.create(extname: extname)
 
-    {:ok, binary} = File.read(tmp_image_path)
+    File.cp!(new_image, temp_file)
+
+    {:ok, binary} = File.read(temp_file)
 
     photo = Base.encode64(binary)
 
@@ -49,6 +54,9 @@ defmodule Animina.ImageTagging do
       )
 
     {flag, description} = parse_response(response["message"]["content"])
+
+    # Ensure the temporary file is deleted
+    File.rm(temp_file)
 
     {flag, description}
   end
