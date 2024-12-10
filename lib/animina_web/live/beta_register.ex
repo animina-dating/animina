@@ -1,6 +1,7 @@
 defmodule AniminaWeb.BetaRegisterLive do
   use AniminaWeb, :live_view
   alias Animina.Accounts.User
+  alias Animina.BirthdayValidator
   alias AniminaWeb.PotentialPartner
   alias AshPhoenix.Form
 
@@ -13,6 +14,7 @@ defmodule AniminaWeb.BetaRegisterLive do
       socket
       |> assign(language: language)
       |> assign(current_user: nil)
+      |> assign(birthday_error: nil)
       |> assign(active_tab: "register")
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
@@ -30,9 +32,19 @@ defmodule AniminaWeb.BetaRegisterLive do
   def handle_event("validate_and_filter_potential_partners", %{"user" => user}, socket) do
     potential_partners = PotentialPartner.potential_partners_on_registration(user)
 
-    {:noreply,
-     socket
-     |> assign(:number_of_potential_partners, Enum.count(potential_partners))}
+    case BirthdayValidator.validate_birthday(user["birthday"]) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> assign(:birthday_error, nil)
+         |> assign(:number_of_potential_partners, Enum.count(potential_partners))}
+
+      {:error, reason} ->
+        {:noreply,
+         socket
+         |> assign(:birthday_error, reason)
+         |> assign(:number_of_potential_partners, Enum.count(potential_partners))}
+    end
   end
 
   defp default_user_params do
@@ -56,6 +68,7 @@ defmodule AniminaWeb.BetaRegisterLive do
       <.initial_form
         number_of_potential_partners={@number_of_potential_partners}
         language={@language}
+        birthday_error={@birthday_error}
         form={@form}
         errors={@errors}
       />
