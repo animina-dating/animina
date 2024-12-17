@@ -31,6 +31,8 @@ defmodule AniminaWeb.BetaRegisterLive do
     {:ok, socket}
   end
 
+  @impl true
+
   def handle_params(%{"step" => "select_white_flags"}, _url, socket) do
     {:noreply,
      socket
