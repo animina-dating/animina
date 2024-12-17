@@ -84,6 +84,73 @@ defmodule AniminaWeb.BetaRegistrationComponents do
     """
   end
 
+  def flags_for_selection(assigns) do
+    ~H"""
+    <div class="relative px-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
+
+        <div>
+          <button
+            phx-click="add_flags"
+            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+          >
+            <%= with_locale(@language, fn -> %>
+              <%= gettext("Proceed ") %>
+            <% end) %>
+          </button>
+        </div>
+      </div>
+
+      <p class="dark:text-white"><%= @info_text %></p>
+
+      <div :for={category <- @categories}>
+        <div class="py-4 space-y-2">
+          <h3 class="font-semibold text-gray-800 dark:text-white truncate">
+            <%= with_locale(@language, fn -> %>
+              <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(category.name)) %>
+            <% end) %>
+          </h3>
+
+          <ol class="flex flex-wrap gap-2 w-full">
+            <li :for={flag <- category.flags}>
+              <div
+                phx-value-flag={flag.name}
+                phx-value-flagid={flag.id}
+                aria-label="button"
+                class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{default_button_colors(@color)} "
+
+            }
+              >
+                <span :if={flag.emoji} class="pr-1.5"><%= flag.emoji %></span>
+
+                <%= with_locale(@language, fn -> %>
+                  <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
+                <% end) %>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <button class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Save flags") %>
+        <% end) %>
+      </button>
+    </div>
+    """
+  end
+
+  defp default_button_colors(:green),
+    do: "hover:bg-green-50 bg-green-100 focus-visible:outline-green-100 text-green-600"
+
+  defp default_button_colors(:red),
+    do: "hover:bg-red-50 bg-red-100 focus-visible:outline-red-100 text-red-600"
+
+  defp default_button_colors(_),
+    do: "hover:bg-indigo-50 bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600"
+
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
   end
