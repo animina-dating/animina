@@ -118,7 +118,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
                 phx-value-flag={flag.name}
                 phx-value-flagid={flag.id}
                 aria-label="button"
-                class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{get_default_button_colors(@color)} "
+                class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{default_button_colors(@color)} "
 
             }
               >
@@ -142,18 +142,14 @@ defmodule AniminaWeb.BetaRegistrationComponents do
     """
   end
 
-  defp get_default_button_colors(color) do
-    cond do
-      color == :green ->
-        "hover:bg-green-50 bg-green-100 focus-visible:outline-green-100 text-green-600"
+  defp default_button_colors(:green),
+    do: "hover:bg-green-50 bg-green-100 focus-visible:outline-green-100 text-green-600"
 
-      color == :red ->
-        "hover:bg-red-50 bg-red-100 focus-visible:outline-red-100 text-red-600"
+  defp default_button_colors(:red),
+    do: "hover:bg-red-50 bg-red-100 focus-visible:outline-red-100 text-red-600"
 
-      true ->
-        "hover:bg-indigo-50 bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600"
-    end
-  end
+  defp default_button_colors(_),
+    do: "hover:bg-indigo-50 bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600"
 
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
