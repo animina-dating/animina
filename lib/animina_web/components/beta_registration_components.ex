@@ -117,8 +117,23 @@ defmodule AniminaWeb.BetaRegistrationComponents do
               <div
                 phx-value-flag={flag.name}
                 phx-value-flagid={flag.id}
+                phx-click={
+                  if flag.id in flags_to_check_against(
+                       @color,
+                       @user_green_flags,
+                       @user_red_flags,
+                       @user_white_flags
+                     ),
+                     do: "remove_flag",
+                     else: "select_flag"
+                }
+                phx-value-color={@color}
                 aria-label="button"
-                class={"rounded-full flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  #{default_button_colors(@color)} "
+                class={"rounded-full cursor-pointer flex gap-2 items-center  px-3 py-1.5 text-sm font-semibold leading-6  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
+                #{if flag.id in flags_to_check_against(@color, @user_green_flags, @user_red_flags, @user_white_flags),
+                  do: "#{selected_button_colors(@color)}",
+                  else: "#{default_button_colors(@color)}"
+                }"
 
             }
               >
@@ -127,6 +142,31 @@ defmodule AniminaWeb.BetaRegistrationComponents do
                 <%= with_locale(@language, fn -> %>
                   <%= Gettext.gettext(AniminaWeb.Gettext, Ash.CiString.value(flag.name)) %>
                 <% end) %>
+
+                <span
+                  :if={
+                    Enum.member?(
+                      flags_to_check_against(
+                        @color,
+                        @user_green_flags,
+                        @user_red_flags,
+                        @user_white_flags
+                      ),
+                      flag.id
+                    )
+                  }
+                  class={"inline-flex items-center justify-center w-4 h-4 ms-2 text-xs font-semibold rounded-full " <> get_position_colors(@color)}
+                >
+                  <%= get_flag_index(
+                    flags_to_check_against(
+                      @color,
+                      @user_green_flags,
+                      @user_red_flags,
+                      @user_white_flags
+                    ),
+                    flag.id
+                  ) + 1 %>
+                </span>
               </div>
             </li>
           </ol>
@@ -151,8 +191,40 @@ defmodule AniminaWeb.BetaRegistrationComponents do
   defp default_button_colors(_),
     do: "hover:bg-indigo-50 bg-indigo-100 focus-visible:outline-indigo-100 text-indigo-600"
 
+  defp selected_button_colors(:green),
+    do: "hover:bg-green-500  bg-green-600 focus-visible:outline-green-600 text-white shadow-sm"
+
+  defp selected_button_colors(:red),
+    do: "hover:bg-rose-500  bg-rose-600 focus-visible:outline-rose-600 text-white shadow-sm"
+
+  defp selected_button_colors(_),
+    do: "hover:bg-indigo-500  bg-indigo-600 focus-visible:outline-indigo-600 text-white shadow-sm"
+
+  defp get_position_colors(:green), do: "text-green-600 bg-green-200"
+  defp get_position_colors(:red), do: "text-rose-600 bg-rose-200"
+  defp get_position_colors(_), do: "text-indigo-600 bg-indigo-200"
+
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
+  end
+
+  defp get_flag_index(flags, flag_id) do
+    case Enum.find_index(flags, fn id -> id == flag_id end) do
+      nil -> length(flags) + 1
+      index -> index
+    end
+  end
+
+  defp flags_to_check_against(:green, user_green_flags, _user_red_flags, _user_white_flags) do
+    user_green_flags
+  end
+
+  defp flags_to_check_against(:red, _user_green_flags, user_red_flags, _user_white_flags) do
+    user_red_flags
+  end
+
+  defp flags_to_check_against(:white, _user_green_flags, _user_red_flags, user_white_flags) do
+    user_white_flags
   end
 
   defp gender_select(assigns) do
