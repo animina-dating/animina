@@ -21,6 +21,9 @@ defmodule AniminaWeb.BetaRegisterLive do
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
       |> assign(:step, "filter_potential_partners")
+      |> assign(:user_white_flags, [])
+      |> assign(:user_green_flags, [])
+      |> assign(:user_red_flags, [])
       |> assign(:number_of_potential_partners, Enum.count(potential_partners))
       |> assign(:errors, [])
       |> assign(
@@ -114,6 +117,34 @@ defmodule AniminaWeb.BetaRegisterLive do
     end
   end
 
+  def handle_event("select_flag", %{"color" => color, "flagid" => flagid}, socket) do
+    socket = update_flags_array(:add, color, flagid, socket)
+    {:noreply, socket}
+  end
+
+  def handle_event("remove_flag", %{"color" => color, "flagid" => flagid}, socket) do
+    socket = update_flags_array(:remove, color, flagid, socket)
+    {:noreply, socket}
+  end
+
+  defp update_flags_array(:add, color, flagid, socket) do
+    assign_key = get_assign_key(color)
+
+    socket
+    |> assign(assign_key, socket.assigns[assign_key] ++ [flagid])
+  end
+
+  defp update_flags_array(:remove, color, flagid, socket) do
+    assign_key = get_assign_key(color)
+
+    socket
+    |> assign(assign_key, List.delete(socket.assigns[assign_key], flagid))
+  end
+
+  defp get_assign_key("white"), do: :user_white_flags
+  defp get_assign_key("red"), do: :user_red_flags
+  defp get_assign_key("green"), do: :user_green_flags
+
   defp default_user_params do
     %{
       "height" => "",
@@ -151,6 +182,9 @@ defmodule AniminaWeb.BetaRegisterLive do
         :if={@step == "select_flags"}
         color={@color}
         categories={@categories}
+        user_white_flags={@user_white_flags}
+        user_green_flags={@user_green_flags}
+        user_red_flags={@user_red_flags}
         title={@title}
         info_text={@info_text}
         language={@language}
