@@ -220,7 +220,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
   defp get_position_colors(:red), do: "text-rose-600 bg-rose-200"
   defp get_position_colors(_), do: "text-indigo-600 bg-indigo-200"
 
-  defp opposite_color_flags_selected(:green, u_ser_green_flags, user_red_flags, _user_white_flags) do
+  defp opposite_color_flags_selected(:green, _user_green_flags, user_red_flags, _user_white_flags) do
     user_red_flags
   end
 
