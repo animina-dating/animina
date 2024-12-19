@@ -36,6 +36,12 @@ defmodule AniminaWeb.BetaRegisterLive do
 
   @impl true
 
+  def handle_params(%{"step" => "user_details"}, _url, socket) do
+    {:noreply,
+     socket
+     |> assign(:step, "user_details")}
+  end
+
   def handle_params(%{"step" => step}, _url, socket) do
     {color, page_title_str, title_str, info_text_str} =
       step_info(step, socket.assigns.language, @max_flags)
@@ -142,7 +148,7 @@ defmodule AniminaWeb.BetaRegisterLive do
       "red" ->
         {:noreply,
          socket
-         |> push_patch(to: "/beta?step=select_red_flags")}
+         |> push_patch(to: "/beta?step=user_details")}
     end
   end
 
@@ -162,6 +168,11 @@ defmodule AniminaWeb.BetaRegisterLive do
         {:noreply,
          socket
          |> push_patch(to: "/beta?step=select_green_flags")}
+
+      "user_details" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_red_flags")}
     end
   end
 
@@ -212,6 +223,13 @@ defmodule AniminaWeb.BetaRegisterLive do
         number_of_potential_partners={@number_of_potential_partners}
         language={@language}
         birthday_error={@birthday_error}
+        form={@form}
+        errors={@errors}
+      />
+
+      <.user_details_form
+        :if={@step == "user_details"}
+        language={@language}
         form={@form}
         errors={@errors}
       />
