@@ -84,6 +84,66 @@ defmodule AniminaWeb.BetaRegistrationComponents do
     """
   end
 
+  def user_details_form(assigns) do
+    ~H"""
+    <.form
+      :let={f}
+      id="beta_user_registration_form"
+      for={@form}
+      class="mt-6 space-y-6 group"
+      phx-change="validate_and_filter_potential_partners"
+      phx-submit="submit"
+      phx-debounce="500"
+    >
+      <.notification_box
+        message={
+          with_locale(@language, fn ->
+            gettext(
+              "Our competitors charge monthly, even if you don’t find a match. We only charge €20 after you find yours. And it's free for beta testers! 🎉"
+            )
+          end)
+        }
+        avatars_urls={[
+          "/images/unsplash/men/prince-akachi-4Yv84VgQkRM-unsplash.jpg",
+          "/images/unsplash/women/stefan-stefancik-QXevDflbl8A-unsplash.jpg"
+        ]}
+      />
+
+      <.previous_step color="user_details" language={@language} />
+
+      <p class="mt-3 text-base font-semibold dark:text-white">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Your Information") %>
+        <% end) %>
+      </p>
+      <div class="w-[100%] md:grid grid-cols-2 gap-8">
+        <.username_input f={f} language={@language} />
+
+        <.name_input f={f} language={@language} />
+
+        <.email_input f={f} language={@language} />
+
+        <.password_input f={f} language={@language} />
+
+        <.mobile_number_input f={f} language={@language} />
+      </div>
+      <div class="w-[100%] md:grid grid-cols-2 gap-8">
+        <.preapproved_communication_only f={f} language={@language} />
+
+        <.profile_private_input f={f} language={@language} />
+      </div>
+      <.legal_terms_accepted f={f} language={@language} />
+
+      <div class="w-[100%] flex justify-start">
+        <%= submit("Proceed",
+          class:
+            "flex  justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+        ) %>
+      </div>
+    </.form>
+    """
+  end
+
   def flags_for_selection(assigns) do
     ~H"""
     <div class="relative px-5 space-y-4">
@@ -609,6 +669,258 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <% end) %>
         </.error>
       </div>
+    </div>
+    """
+  end
+
+  defp username_input(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="user_username"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Username") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:username].name} class="mt-2">
+        <%= text_input(
+          @f,
+          :username,
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:username], :username) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              ),
+          placeholder: with_locale(@language, fn -> gettext("Pusteblume1977") end),
+          value: @f[:username].value,
+          type: :text,
+          required: true,
+          autocomplete: :username,
+          "phx-debounce": "200"
+        ) %>
+        <.error :for={msg <- get_field_errors(@f[:username], :username)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Username") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp name_input(assigns) do
+    ~H"""
+    <div>
+      <label for="user_name" class="block text-sm font-medium leading-6 text-gray-900 dark:text-white">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Name") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:name].name} class="mt-2">
+        <%= text_input(@f, :name,
+          class:
+            "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:name], :name) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              ),
+          placeholder: with_locale(@language, fn -> gettext("Alice") end),
+          value: @f[:name].value,
+          type: :text,
+          required: true,
+          autocomplete: "given-name"
+        ) %>
+        <.error :for={msg <- get_field_errors(@f[:name], :name)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Name") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp email_input(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="user_email"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("E-mail address") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:email].name} class="mt-2">
+        <%= text_input(@f, :email,
+          class:
+            "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700  dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:email], :email) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              ),
+          placeholder: with_locale(@language, fn -> gettext("alice@example.net") end),
+          value: @f[:email].value,
+          required: true,
+          autocomplete: :email,
+          "phx-debounce": "200"
+        ) %>
+        <.error :for={msg <- get_field_errors(@f[:email], :email)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("E-mail address") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp password_input(assigns) do
+    ~H"""
+    <div>
+      <div class="flex items-center justify-between">
+        <label
+          for="user_password"
+          class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+        >
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Password") %>
+          <% end) %>
+        </label>
+      </div>
+      <div phx-feedback-for={@f[:password].name} class="mt-2">
+        <%= password_input(@f, :password,
+          class:
+            "block w-full rounded-md border-0 py-1.5 dark:bg-gray-700 dark:text-white text-gray-900 shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:password], :password) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              ),
+          placeholder: with_locale(@language, fn -> gettext("Password") end),
+          value: @f[:password].value,
+          autocomplete: with_locale(@language, fn -> gettext("new password") end),
+          "phx-debounce": "blur"
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:password], :password)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Password") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp mobile_number_input(assigns) do
+    ~H"""
+    <div class="flex flex-col items-start gap-2">
+      <label
+        for="user_mobile_phone"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Mobile phone number") %>
+        <% end) %>
+        <span class="text-gray-400 dark:text-gray-100">
+          <%= with_locale(@language, fn -> %>
+            (<%= gettext("to receive a verification code") %>)
+          <% end) %>
+        </span>
+      </label>
+      <div phx-feedback-for={@f[:mobile_phone].name} class="w-[100%] mt-2">
+        <%= text_input(@f, :mobile_phone,
+          class:
+            "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:mobile_phone], :mobile_phone) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              ),
+          placeholder: "0151-12345678",
+          inputmode: "numeric",
+          value: @f[:mobile_phone].value,
+          "phx-debounce": "blur"
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:mobile_phone], :mobile_phone)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Mobile phone number") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp legal_terms_accepted(assigns) do
+    ~H"""
+    <div class="relative flex gap-x-3">
+      <div phx-feedback-for={@f[:legal_terms_accepted].name} class="flex items-center h-6">
+        <%= checkbox(@f, :legal_terms_accepted,
+          class:
+            "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:legal_terms_accepted], :legal_terms_accepted) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+      </div>
+      <div class="text-sm leading-6">
+        <label for="comments" class="font-medium text-gray-900 dark:text-white">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("I accept the legal terms of animina.") %>
+          <% end) %>
+        </label>
+        <p class="text-gray-500 dark:text-gray-100">
+          <%= with_locale(@language, fn -> %>
+            <%= gettext(
+              "Warning: We will sell your data to the Devil and Santa Claus. Seriously, if you don't trust us, a dating platform is not a good place to share your personal information."
+            ) %>
+          <% end) %>
+        </p>
+        <.error :for={msg <- get_field_errors(@f[:legal_terms_accepted], :legal_terms_accepted)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("I accept the legal terms of animina") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp preapproved_communication_only(assigns) do
+    ~H"""
+    <div class="flex items-center gap-2 mb-4">
+      <%= checkbox(@f, :preapproved_communication_only,
+        id: "preapproved_communication_only",
+        class:
+          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 "
+      ) %>
+      <p class="text-gray-500 dark:text-gray-100">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Only users who I liked can initiate a chat.") %>
+        <% end) %>
+      </p>
+    </div>
+    """
+  end
+
+  defp profile_private_input(assigns) do
+    ~H"""
+    <div class="flex items-center gap-2 mb-4">
+      <%= checkbox(@f, :is_private,
+        id: "is_private",
+        class:
+          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 "
+      ) %>
+      <p class="text-gray-500 dark:text-gray-100">
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("My profile is only visible for animina users.") %>
+        <% end) %>
+      </p>
     </div>
     """
   end
