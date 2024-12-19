@@ -87,12 +87,15 @@ defmodule AniminaWeb.BetaRegistrationComponents do
   def flags_for_selection(assigns) do
     ~H"""
     <div class="relative px-5 space-y-4">
+      <.previous_step color={@color} language={@language} />
+
       <div class="flex items-center justify-between">
         <h2 class="font-bold dark:text-white md:text-xl"><%= @title %></h2>
 
         <div>
           <button
-            phx-click="add_flags"
+            phx-click="move_to_next_step"
+            phx-value-color={@color}
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
           >
             <%= with_locale(@language, fn -> %>
@@ -113,7 +116,20 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           </h3>
 
           <ol class="flex flex-wrap gap-2 w-full">
-            <li :for={flag <- category.flags}>
+            <li
+              :for={flag <- category.flags}
+              :if={
+                Enum.member?(
+                  opposite_color_flags_selected(
+                    @color,
+                    @user_green_flags,
+                    @user_red_flags,
+                    @user_white_flags
+                  ),
+                  flag.id
+                ) == false
+              }
+            >
               <div
                 phx-value-flag={flag.name}
                 phx-value-flagid={flag.id}
@@ -203,6 +219,18 @@ defmodule AniminaWeb.BetaRegistrationComponents do
   defp get_position_colors(:green), do: "text-green-600 bg-green-200"
   defp get_position_colors(:red), do: "text-rose-600 bg-rose-200"
   defp get_position_colors(_), do: "text-indigo-600 bg-indigo-200"
+
+  defp opposite_color_flags_selected(:green, u_ser_green_flags, user_red_flags, _user_white_flags) do
+    user_red_flags
+  end
+
+  defp opposite_color_flags_selected(:red, user_green_flags, _user_red_flags, _user_white_flags) do
+    user_green_flags
+  end
+
+  defp opposite_color_flags_selected(:white, _, _, _) do
+    []
+  end
 
   defp get_field_errors(field, _name) do
     Enum.map(field.errors, &translate_error(&1))
@@ -581,6 +609,22 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <% end) %>
         </.error>
       </div>
+    </div>
+    """
+  end
+
+  defp previous_step(assigns) do
+    ~H"""
+    <div class="flex items-start">
+      <button
+        phx-click="move_to_previous_step"
+        phx-value-color={@color}
+        class="flex  justify-center    text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Back") %>
+        <% end) %>
+      </button>
     </div>
     """
   end
