@@ -127,6 +127,44 @@ defmodule AniminaWeb.BetaRegisterLive do
     {:noreply, socket}
   end
 
+  def handle_event("move_to_next_step", %{"color" => color}, socket) do
+    case color do
+      "white" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_green_flags")}
+
+      "green" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_red_flags")}
+
+      "red" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_red_flags")}
+    end
+  end
+
+  def handle_event("move_to_previous_step", %{"color" => color}, socket) do
+    case color do
+      "white" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta")}
+
+      "green" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_white_flags")}
+
+      "red" ->
+        {:noreply,
+         socket
+         |> push_patch(to: "/beta?step=select_green_flags")}
+    end
+  end
+
   defp update_flags_array(:add, color, flagid, socket) do
     assign_key = get_assign_key(color)
 
