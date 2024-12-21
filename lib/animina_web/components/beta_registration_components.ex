@@ -26,11 +26,18 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         ]}
       />
 
-      <p class="mt-3 text-base font-semibold dark:text-white">
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("Potential Matches Counter:") %> <%= @number_of_potential_partners %>
-        <% end) %>
-      </p>
+      <div class="mt-3 text-base flex gap-2 items-center font-semibold dark:text-white">
+        <p>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Potential Matches Counter:") %>
+          <% end) %>
+        </p>
+        <%= if @searching_potential_partners do %>
+          <.loading_dots />
+        <% else %>
+          <%= @number_of_potential_partners %>
+        <% end %>
+      </div>
 
       <.form
         :let={f}
@@ -38,7 +45,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         for={@form}
         class="mt-6 space-y-6 group"
         phx-change="validate_and_filter_potential_partners"
-        phx-submit="submit"
+        phx-submit="proceed_to_flag_selection"
         phx-debounce="500"
       >
         <h2 class="mt-3 text-2xl font-semibold dark:text-white">
@@ -72,11 +79,11 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <%= submit("Proceed",
             class:
               "flex  justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
-                unless(@form.valid? == false,
+                unless(@birthday_error != nil,
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @form.valid? == false
+            disabled: @birthday_error != nil
           ) %>
         </div>
       </.form>
@@ -91,7 +98,10 @@ defmodule AniminaWeb.BetaRegistrationComponents do
       id="beta_user_registration_form"
       for={@form}
       class="mt-6 space-y-6 group"
-      phx-change="validate_and_filter_potential_partners"
+      phx-change="validate_final_user_details"
+      phx-trigger-action={@trigger_action}
+      action={@action}
+      method="POST"
       phx-submit="submit"
       phx-debounce="500"
     >
@@ -125,6 +135,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.password_input f={f} language={@language} />
 
+        <.country_input f={f} language={@language} />
         <.mobile_number_input f={f} language={@language} />
       </div>
       <div class="w-[100%] md:grid grid-cols-2 gap-8">
@@ -132,12 +143,35 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.profile_private_input f={f} language={@language} />
       </div>
+      <div class="hidden">
+        <%= number_input(f, :height, value: @initial_user_details["height"]) %>
+        <%=text_input(f, :gender, value: "male") %>
+        <%= date_input(f, :birthday, value: @birthday_selected) %>
+        <%= number_input(f, :zip_code, value: @initial_user_details["zip_code"]) %>
+
+        <%= number_input(f, :search_range, value: @initial_user_details["search_range"]) %>
+        <%= number_input(f, :minimum_partner_age, value: @initial_user_details["minimum_partner_age"]) %>
+        <%= number_input(f, :maximum_partner_age, value: @initial_user_details["maximum_partner_age"]) %>
+        <%= number_input(f, :minimum_partner_height,
+          value: @initial_user_details["minimum_partner_height"]
+        ) %>
+        <%= number_input(f, :maximum_partner_height,
+          value: @initial_user_details["maximum_partner_height"]
+        ) %>
+        <%= text_input(f, :partner_gender , value: @initial_user_details["gender"]) %>
+        <%= text_input(f, :language, type: :hidden, value: @language) %>
+      </div>
       <.legal_terms_accepted f={f} language={@language} />
 
       <div class="w-[100%] flex justify-start">
         <%= submit("Proceed",
           class:
-            "flex  justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+            "flex  justify-center rounded-md bg-indigo-600 dark:bg-indigo-500 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 " <>
+              unless(@form.valid? == false,
+                do: "",
+                else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
+              ),
+          disabled: @form.valid? == false
         ) %>
       </div>
     </.form>
@@ -400,6 +434,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           placeholder: "11011",
           value: @f[:zip_code].value,
           inputmode: "numeric",
+          required: true,
           autocomplete: gettext("postal code"),
           "phx-debounce": "blur"
         ) %>
@@ -407,6 +442,40 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         <.error :for={msg <- get_field_errors(@f[:zip_code], :zip_code)}>
           <%= with_locale(@language, fn -> %>
             <%= gettext("Zip code") <> " " <> msg %>
+          <% end) %>
+        </.error>
+      </div>
+    </div>
+    """
+  end
+
+  defp country_input(assigns) do
+    ~H"""
+    <div>
+      <label
+        for="user_country"
+        class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
+      >
+        <%= with_locale(@language, fn -> %>
+          <%= gettext("Country") %>
+        <% end) %>
+      </label>
+      <div phx-feedback-for={@f[:country].name} class="mt-2">
+        <%= select(
+          @f,
+          :country,
+          [{with_locale(@language, fn -> gettext("Germany") end), "Germany"}],
+          class:
+            "block w-full select-styling-root rounded-md border-0 py-1.5 text-gray-900 dark:bg-gray-700 dark:text-white dark:[color-scheme:dark] shadow-sm ring-1 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 " <>
+              unless(get_field_errors(@f[:country], :country) == [],
+                do: "ring-red-600 focus:ring-red-600",
+                else: "ring-gray-300 focus:ring-indigo-600"
+              )
+        ) %>
+
+        <.error :for={msg <- get_field_errors(@f[:country], :country)}>
+          <%= with_locale(@language, fn -> %>
+            <%= gettext("Country") <> " " <> msg %>
           <% end) %>
         </.error>
       </div>
@@ -440,6 +509,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
               ),
           placeholder: "160",
           inputmode: "numeric",
+          required: true,
           value: @f[:height].value,
           "phx-debounce": "blur"
         ) %>
@@ -476,6 +546,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
               ),
           placeholder: eighteen_years_before_now(),
           value: @f[:birthday].value,
+          required: true,
           autocomplete: gettext("bday"),
           "phx-debounce": "blur"
         ) %>
@@ -817,7 +888,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
   defp mobile_number_input(assigns) do
     ~H"""
-    <div class="flex flex-col items-start gap-2">
+    <div>
       <label
         for="user_mobile_phone"
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
@@ -897,7 +968,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
       <%= checkbox(@f, :preapproved_communication_only,
         id: "preapproved_communication_only",
         class:
-          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 "
+          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm   sm:leading-6 "
       ) %>
       <p class="text-gray-500 dark:text-gray-100">
         <%= with_locale(@language, fn -> %>
@@ -914,7 +985,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
       <%= checkbox(@f, :is_private,
         id: "is_private",
         class:
-          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  phx-no-feedback:ring-gray-300 phx-no-feedback:focus:ring-indigo-600 sm:leading-6 "
+          "h-4 w-4 rounded border-gray-300 text-indigo-600  focus:ring-indigo-600 focus:ring-2 focus:ring-inset sm:text-sm  sm:leading-6 "
       ) %>
       <p class="text-gray-500 dark:text-gray-100">
         <%= with_locale(@language, fn -> %>
@@ -937,6 +1008,16 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <%= gettext("Back") %>
         <% end) %>
       </button>
+    </div>
+    """
+  end
+
+  defp loading_dots(assigns) do
+    ~H"""
+    <div class="flex space-x-2 animate-pulse">
+      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
+      <div class="w-2 h-2 bg-gray-500 rounded-full"></div>
     </div>
     """
   end

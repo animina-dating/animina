@@ -27,6 +27,9 @@ defmodule AniminaWeb.AuthController do
 
     get_actions_to_perform(conn.query_params, user)
 
+
+    IO.inspect conn
+
     conn =
       conn
       |> delete_session(:return_to)
@@ -125,6 +128,8 @@ defmodule AniminaWeb.AuthController do
         {:password, :register},
         reason
       ) do
+    IO.inspect(reason)
+
     conn
     |> assign(:errors, reason)
     |> put_flash(

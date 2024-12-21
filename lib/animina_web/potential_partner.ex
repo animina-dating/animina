@@ -4,6 +4,7 @@ defmodule AniminaWeb.PotentialPartner do
   """
 
   alias Animina.Accounts
+  alias Phoenix.PubSub
   alias Animina.Accounts.User
   alias Animina.BirthdayValidator
   alias Animina.GeoData.City
@@ -58,20 +59,27 @@ defmodule AniminaWeb.PotentialPartner do
   """
 
   def potential_partners_on_registration(user) do
-    User
-    |> Ash.Query.for_read(:read)
-    |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
-    |> registration_partner_gender_query(user)
-    |> registration_partner_height_query(user)
-    |> registration_partner_age_query(user)
-    |> registration_partner_geo_query(user)
-    |> partner_completed_registration_query(user)
-    |> partner_not_under_investigation_query(user)
-    |> partner_not_banned_query(user)
-    |> partner_not_archived_query(user)
-    |> partner_not_hibernate_query(user)
-    |> partner_not_incognito_query(user)
-    |> Ash.read!()
+    users =
+      User
+      |> Ash.Query.for_read(:read)
+      |> Ash.Query.sort(Ash.Sort.expr_sort(fragment("RANDOM()")))
+      |> registration_partner_gender_query(user)
+      |> registration_partner_height_query(user)
+      |> registration_partner_age_query(user)
+      |> registration_partner_geo_query(user)
+      |> partner_completed_registration_query(user)
+      |> partner_not_under_investigation_query(user)
+      |> partner_not_banned_query(user)
+      |> partner_not_archived_query(user)
+      |> partner_not_hibernate_query(user)
+      |> partner_not_incognito_query(user)
+      |> Ash.read!()
+
+    PubSub.broadcast(
+      Animina.PubSub,
+      "potential_partners_on_registration",
+      {:potential_partners, users}
+    )
   end
 
   defp partner_completed_registration_query(query, _user) do
