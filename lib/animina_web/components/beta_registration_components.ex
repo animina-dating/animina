@@ -196,6 +196,8 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <button
             phx-click="move_to_next_step"
             phx-value-color={@color}
+            phx-hook="ScrollToTop"
+            id="move_to_next_step"
             class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
           >
             <%= with_locale(@language, fn -> %>
@@ -1009,6 +1011,8 @@ defmodule AniminaWeb.BetaRegistrationComponents do
       <button
         phx-click="move_to_previous_step"
         phx-value-color={@color}
+        phx-hook="ScrollToTop"
+        id="move_to_previous_step"
         class="flex  justify-center    text-sm font-semibold text-white shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
       >
         <%= with_locale(@language, fn -> %>
