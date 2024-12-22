@@ -68,7 +68,6 @@ defmodule Animina.Accounts.User do
           :search_range
         ])
 
-      
         resettable do
           sender Animina.SendPasswordResetEmail
         end

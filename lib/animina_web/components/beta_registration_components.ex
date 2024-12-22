@@ -54,7 +54,16 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <% end) %>
         </h2>
 
-        <.gender_select f={f} language={@language} />
+        <.gender_select
+          f={f}
+          language={@language}
+          default_gender={@default_gender}
+          title={
+            with_locale(@language, fn ->
+              gettext("You are searching for a")
+            end)
+          }
+        />
 
         <div class="w-[100%] md:grid grid-cols-2 gap-8">
           <.height_select f={f} language={@language} />
@@ -83,7 +92,9 @@ defmodule AniminaWeb.BetaRegistrationComponents do
                   do: "",
                   else: "opacity-40 cursor-not-allowed hover:bg-blue-500 active:bg-blue-500"
                 ),
-            disabled: @birthday_error != nil
+            disabled: @birthday_error != nil,
+            phx_hook: "ScrollToTop",
+            id: "proceed_to_flag_selection"
           ) %>
         </div>
       </.form>
@@ -126,6 +137,17 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <%= gettext("Your Information") %>
         <% end) %>
       </p>
+      <.gender_select
+        f={f}
+        language={@language}
+        default_gender={@default_gender}
+        title={
+          with_locale(@language, fn ->
+            gettext("You are")
+          end)
+        }
+      />
+
       <div class="w-[100%] md:grid grid-cols-2 gap-8">
         <.username_input f={f} language={@language} />
 
@@ -143,25 +165,9 @@ defmodule AniminaWeb.BetaRegistrationComponents do
 
         <.profile_private_input f={f} language={@language} />
       </div>
-      <div class="hidden">
-        <%= number_input(f, :height, value: @initial_user_details["height"]) %>
-        <%=text_input(f, :gender, value: "male") %>
-        <%= date_input(f, :birthday, value: @birthday_selected) %>
-        <%= number_input(f, :zip_code, value: @initial_user_details["zip_code"]) %>
 
-        <%= number_input(f, :search_range, value: @initial_user_details["search_range"]) %>
-        <%= number_input(f, :minimum_partner_age, value: @initial_user_details["minimum_partner_age"]) %>
-        <%= number_input(f, :maximum_partner_age, value: @initial_user_details["maximum_partner_age"]) %>
-        <%= number_input(f, :minimum_partner_height,
-          value: @initial_user_details["minimum_partner_height"]
-        ) %>
-        <%= number_input(f, :maximum_partner_height,
-          value: @initial_user_details["maximum_partner_height"]
-        ) %>
-        <%= text_input(f, :partner_gender , value: @initial_user_details["gender"]) %>
-        <%= text_input(f, :language, type: :hidden, value: @language) %>
-      </div>
       <.legal_terms_accepted f={f} language={@language} />
+      <%= text_input(f, :language, type: :hidden, value: @language) %>
 
       <div class="w-[100%] flex justify-start">
         <%= submit("Proceed",
@@ -356,9 +362,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
         for="user_gender"
         class="block text-sm font-medium leading-6 text-gray-900 dark:text-white"
       >
-        <%= with_locale(@language, fn -> %>
-          <%= gettext("You are searching for a") %>
-        <% end) %>
+        <%= @title %>
       </label>
       <div class="mt-2" phx-no-format>
           <%
@@ -369,7 +373,7 @@ defmodule AniminaWeb.BetaRegistrationComponents do
             <%= radio_button(@f, :gender, item_code,
               id: "gender_" <> item_code,
               class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
-              checked: true
+              checked: @default_gender == "male"
             ) %>
             <%= label(@f, :gender, item_title,
               for: "gender_" <> item_code,
@@ -384,7 +388,8 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <div class="flex items-center mb-4">
             <%= radio_button(@f, :gender, item_code,
               id: "gender_" <> item_code,
-              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+              checked: @default_gender == "female"
             ) %>
             <%= label(@f, :gender, item_title,
               for: "gender_" <> item_code,
@@ -395,11 +400,13 @@ defmodule AniminaWeb.BetaRegistrationComponents do
           <%
             item_code = "diverse"
             item_title = with_locale(@language, fn -> gettext("Diverse") end)
+
           %>
           <div class="flex items-center mb-4">
             <%= radio_button(@f, :gender, item_code,
               id: "gender_" <> item_code,
-              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              class: "h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500",
+               checked: @default_gender == "diverse"
             ) %>
             <%= label(@f, :gender, item_title,
               for: "gender_" <> item_code,

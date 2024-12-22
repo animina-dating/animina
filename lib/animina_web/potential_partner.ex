@@ -4,10 +4,10 @@ defmodule AniminaWeb.PotentialPartner do
   """
 
   alias Animina.Accounts
-  alias Phoenix.PubSub
   alias Animina.Accounts.User
   alias Animina.BirthdayValidator
   alias Animina.GeoData.City
+  alias Phoenix.PubSub
   # alias Animina.Traits.UserFlags
 
   require Ash.Query

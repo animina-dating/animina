@@ -6,6 +6,7 @@ defmodule AniminaWeb.AuthController do
   alias Animina.Accounts.Token
   alias Animina.Accounts.User
   alias Animina.Narratives.Story
+  alias AshAuthentication.Jwt
   alias AshAuthentication.TokenResource
 
   def success(conn, activity, user, _token) do
@@ -26,9 +27,6 @@ defmodule AniminaWeb.AuthController do
       end
 
     get_actions_to_perform(conn.query_params, user)
-
-
-    IO.inspect conn
 
     conn =
       conn
@@ -128,8 +126,6 @@ defmodule AniminaWeb.AuthController do
         {:password, :register},
         reason
       ) do
-    IO.inspect(reason)
-
     conn
     |> assign(:errors, reason)
     |> put_flash(
@@ -175,6 +171,26 @@ defmodule AniminaWeb.AuthController do
           message
         )
         |> redirect(to: "/sign-in")
+    end
+  end
+
+  def register_user(conn, params) do
+    case User.by_email(params["user"]["email"]) do
+      {:ok, user} ->
+        {:ok, token, _claims} =
+          Jwt.token_for_user(user, %{"purpose" => "sign_in"})
+
+        Ash.Resource.put_metadata(user, :token, token)
+
+        conn
+        |> delete_session(:return_to)
+        |> store_in_session(user)
+        |> assign(:current_user, user)
+        |> redirect(to: "/my/email-validation")
+
+      _ ->
+        conn
+        |> redirect(to: "/beta")
     end
   end
 

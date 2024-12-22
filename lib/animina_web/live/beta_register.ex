@@ -3,6 +3,7 @@ defmodule AniminaWeb.BetaRegisterLive do
   alias Animina.Accounts.User
   alias Animina.BirthdayValidator
   alias Animina.Traits
+  alias Animina.Traits.UserFlags
   alias AniminaWeb.PotentialPartner
   alias AshPhoenix.Form
   alias Phoenix.PubSub
@@ -22,13 +23,14 @@ defmodule AniminaWeb.BetaRegisterLive do
       socket
       |> assign(language: language)
       |> assign(current_user: nil)
-      |> assign(:action, get_link("/auth/user/password/register/", params))
+      |> assign(:action, get_link("/auth/user/register_user", params))
       |> assign(birthday_error: nil)
       |> assign(active_tab: "register")
       |> assign(trigger_action: false)
       |> assign(current_user_credit_points: 0)
       |> assign(:step, "filter_potential_partners")
       |> assign(trigger_action: false)
+      |> assign(:default_gender, "male")
       |> assign(:birthday_selected, nil)
       |> assign(:user_white_flags, [])
       |> assign(:user_green_flags, [])
@@ -53,17 +55,15 @@ defmodule AniminaWeb.BetaRegisterLive do
   @impl true
 
   def handle_params(%{"step" => "user_details"}, _url, socket) do
-    IO.inspect(socket.assigns.initial_user_details)
-
     if socket.assigns.initial_user_details == default_user_params() do
       {:noreply,
        socket
        |> push_patch(to: "/beta")}
     else
-      IO.inspect extract_birthday(socket.assigns.initial_user_details)
       {:noreply,
        socket
        |> assign(:birthday_selected, extract_birthday(socket.assigns.initial_user_details))
+       |> assign(:default_gender, default_gender(socket.assigns.initial_user_details["gender"]))
        |> assign(:step, "user_details")}
     end
   end
@@ -170,17 +170,11 @@ defmodule AniminaWeb.BetaRegisterLive do
       BirthdayValidator.validate_birthday(socket.assigns.initial_user_details["birthday"])
 
     initial_user_details = Map.put(socket.assigns.initial_user_details, "birthday", birthday)
-    test_details = %{
-      "user_mike" => [
-        "my_test_flag_1",
-      ]
-    }
+
     user = Map.merge(initial_user_details, user)
-    user = Map.merge(user, test_details)
 
     form = Form.validate(socket.assigns.final_form, user, errors: true)
 
-    IO.inspect form
     {:noreply,
      socket
      |> assign(:final_form, form)
@@ -198,18 +192,55 @@ defmodule AniminaWeb.BetaRegisterLive do
     {:ok, birthday} =
       BirthdayValidator.validate_birthday(socket.assigns.initial_user_details["birthday"])
 
-    initial_user_details = Map.put(socket.assigns.initial_user_details, "birthday", birthday)
-    user = Map.merge(initial_user_details, user)
+    initial_user_details =
+      Map.put(socket.assigns.initial_user_details, "birthday", birthday)
+      |> Map.put("hashed_password", Bcrypt.hash_pwd_salt(user["password"]))
+
+    user =
+      Map.merge(initial_user_details, user)
+      |> Map.put("gender", user["gender"])
 
     form = Form.validate(socket.assigns.final_form, user)
 
+    case form.valid? do
+      true ->
+        # create a user in this case
+        user =
+          user
+          |> Map.delete("password")
+          |> Map.put("partner_gender", socket.assigns.initial_user_details["gender"])
 
-    IO.inspect form
+        {:ok, user} = User.create(user)
 
-    {:noreply,
-     socket
-     |> assign(:final_form, form)
-     |> assign(:trigger_action, true)}
+        # create flags next
+
+        create_flags(user, socket.assigns.user_white_flags, :white)
+        create_flags(user, socket.assigns.user_green_flags, :green)
+        create_flags(user, socket.assigns.user_red_flags, :red)
+
+        {:noreply,
+         socket
+         |> assign(:final_form, form)
+         |> assign(:trigger_action, true)}
+
+      _ ->
+        {:noreply,
+         socket
+         |> assign(:final_form, form)}
+    end
+  end
+
+  defp create_flags(user, flags, color) do
+    Enum.with_index(flags)
+    |> Enum.each(fn {flag_id, index} ->
+      %{
+        "user_id" => user.id,
+        "flag_id" => flag_id,
+        "color" => color,
+        "position" => index + 1
+      }
+      |> UserFlags.create()
+    end)
   end
 
   defp get_link(route, params) do
@@ -298,6 +329,18 @@ defmodule AniminaWeb.BetaRegisterLive do
   defp get_assign_key("red"), do: :user_red_flags
   defp get_assign_key("green"), do: :user_green_flags
 
+  defp default_gender("male") do
+    "female"
+  end
+
+  defp default_gender("female") do
+    "male"
+  end
+
+  defp default_gender("diverse") do
+    "diverse"
+  end
+
   defp default_user_params do
     %{
       "height" => "",
@@ -329,6 +372,7 @@ defmodule AniminaWeb.BetaRegisterLive do
         birthday_error={@birthday_error}
         form={@initial_form}
         errors={@errors}
+        default_gender={@default_gender}
         searching_potential_partners={@searching_potential_partners}
       />
 
@@ -337,6 +381,7 @@ defmodule AniminaWeb.BetaRegisterLive do
         language={@language}
         form={@final_form}
         errors={@errors}
+        default_gender={@default_gender}
         trigger_action={@trigger_action}
         initial_user_details={@initial_user_details}
         birthday_selected={@birthday_selected}
