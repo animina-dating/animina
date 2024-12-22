@@ -52,8 +52,17 @@ defmodule AniminaWeb.BetaRegisterLive do
     {:ok, socket}
   end
 
-  @impl true
+  defp extract_birthday(%{"birthday" => birthday}) do
+    case BirthdayValidator.validate_birthday(birthday) do
+      {:ok, birthday} ->
+        birthday
 
+      {:error, _} ->
+        nil
+    end
+  end
+
+  @impl true
   def handle_params(%{"step" => "user_details"}, _url, socket) do
     if socket.assigns.initial_user_details == default_user_params() do
       {:noreply,
@@ -65,16 +74,6 @@ defmodule AniminaWeb.BetaRegisterLive do
        |> assign(:birthday_selected, extract_birthday(socket.assigns.initial_user_details))
        |> assign(:default_gender, default_gender(socket.assigns.initial_user_details["gender"]))
        |> assign(:step, "user_details")}
-    end
-  end
-
-  defp extract_birthday(%{"birthday" => birthday}) do
-    case BirthdayValidator.validate_birthday(birthday) do
-      {:ok, birthday} ->
-        birthday
-
-      {:error, _} ->
-        nil
     end
   end
 
@@ -230,34 +229,6 @@ defmodule AniminaWeb.BetaRegisterLive do
     end
   end
 
-  defp create_flags(user, flags, color) do
-    Enum.with_index(flags)
-    |> Enum.each(fn {flag_id, index} ->
-      %{
-        "user_id" => user.id,
-        "flag_id" => flag_id,
-        "color" => color,
-        "position" => index + 1
-      }
-      |> UserFlags.create()
-    end)
-  end
-
-  defp get_link(route, params) do
-    if params == %{} do
-      route
-    else
-      "#{route}?#{URI.encode_query(params)}"
-    end
-  end
-
-  def handle_info({:potential_partners, users}, socket) do
-    {:noreply,
-     socket
-     |> assign(:searching_potential_partners, false)
-     |> assign(:number_of_potential_partners, Enum.count(users))}
-  end
-
   def handle_event("select_flag", %{"color" => color, "flagid" => flagid}, socket) do
     socket = update_flags_array(:add, color, flagid, socket)
     {:noreply, socket}
@@ -309,6 +280,36 @@ defmodule AniminaWeb.BetaRegisterLive do
          socket
          |> push_patch(to: "/beta?step=select_red_flags")}
     end
+  end
+
+  defp create_flags(user, flags, color) do
+    Enum.with_index(flags)
+    |> Enum.each(fn {flag_id, index} ->
+      %{
+        "user_id" => user.id,
+        "flag_id" => flag_id,
+        "color" => color,
+        "position" => index + 1
+      }
+      |> UserFlags.create()
+    end)
+  end
+
+  defp get_link(route, params) do
+    if params == %{} do
+      route
+    else
+      "#{route}?#{URI.encode_query(params)}"
+    end
+  end
+
+  @impl true
+
+  def handle_info({:potential_partners, users}, socket) do
+    {:noreply,
+     socket
+     |> assign(:searching_potential_partners, false)
+     |> assign(:number_of_potential_partners, Enum.count(users))}
   end
 
   defp update_flags_array(:add, color, flagid, socket) do
