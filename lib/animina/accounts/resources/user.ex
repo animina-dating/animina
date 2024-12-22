@@ -57,7 +57,15 @@ defmodule Animina.Accounts.User do
           :language,
           :legal_terms_accepted,
           :occupation,
-          :country
+          :country,
+          :is_private,
+          :preapproved_communication_only,
+          :minimum_partner_height,
+          :maximum_partner_height,
+          :minimum_partner_age,
+          :maximum_partner_age,
+          :partner_gender,
+          :search_range
         ])
 
         resettable do

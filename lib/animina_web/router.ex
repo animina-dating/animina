@@ -99,6 +99,7 @@ defmodule AniminaWeb.Router do
     end
 
     post "/auth/user/sign_in/", AuthController, :sign_in
+    post "/auth/user/register_user/", AuthController, :register_user
     post "/auth/user/request_password", AuthController, :request_password
 
     sign_out_route AuthController, "/auth/user/sign-out"

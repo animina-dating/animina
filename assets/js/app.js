@@ -43,6 +43,18 @@ Hooks.ScrollToBottom = {
   },
 };
 
+Hooks.ScrollToTop = {
+  mounted() {
+    this.el.addEventListener("click", (e) => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "smooth", // Makes the scroll action smooth
+      });
+    });
+  },
+};
+
 let liveSocket = new LiveSocket("/live", Socket, {
   dom: {
     onBeforeElUpdated(from, to) {
