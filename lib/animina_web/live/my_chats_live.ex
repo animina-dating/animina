@@ -45,8 +45,12 @@ defmodule AniminaWeb.MyChatsLive do
   end
 
   def handle_info({:new_message, message}, socket) do
+    unread_messages = socket.assigns.unread_messages ++ [message]
+
     {:noreply,
      socket
+     |> assign(unread_messages: unread_messages)
+     |> assign(number_of_unread_messages: Enum.count(unread_messages))
      |> assign(:conversations, Message.get_conversations(socket.assigns.current_user.id))}
   end
 
