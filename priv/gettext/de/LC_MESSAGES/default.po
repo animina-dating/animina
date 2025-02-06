@@ -1638,6 +1638,12 @@ msgstr "Derzeit aktiv"
 msgid "Please use this PIN to verify your new ANIMINA account."
 msgstr "Bitte verwenden Sie diesen PIN, um Ihr neues ANIMINA-Konto zu verifizieren."
 
+
+#: /lib/animina_web/live/my_chats_live.ex:86
+#, elixir-autogen, elixir-format
+msgid "My Chats"
+msgstr "Meine Chats"
+
 #: lib/animina_web/components/top_navigation_components.ex:448
 #, elixir-autogen, elixir-format
 msgid "This account is hibernated. Other users can't see it or send messages to you."

@@ -36,6 +36,7 @@ defmodule Animina.Accounts.Message do
     define :messages_sent_to_a_user_by_sender, args: [:sender_id, :receiver_id]
 
     define :messages_sent_by_user, args: [:sender_id]
+    define :conversation_with_user, args: [:user_id]
   end
 
   actions do
@@ -64,6 +65,15 @@ defmodule Animina.Accounts.Message do
       prepare build(load: [:sender, :receiver])
 
       filter expr(id == ^arg(:id))
+    end
+
+    read :conversation_with_user do
+      argument :user_id, :uuid, allow_nil?: false
+
+      filter expr(sender_id == ^arg(:user_id) or receiver_id == ^arg(:user_id))
+
+      prepare build(sort: [created_at: :desc])
+      prepare build(load: [:sender, :receiver])
     end
 
     read :messages_for_sender_and_receiver do
@@ -192,5 +202,19 @@ defmodule Animina.Accounts.Message do
       attribute_writable? true
       allow_nil? false
     end
+  end
+
+  def get_conversations(user_id) do
+    messages =
+      conversation_with_user!(user_id)
+
+    messages
+    |> Enum.group_by(fn msg -> if msg.sender_id == user_id, do: msg.receiver, else: msg.sender end)
+    |> Enum.map(fn {user, msgs} ->
+      # Get the first message, not the entire list
+      first_message = List.first(msgs)
+      {user, first_message, first_message.created_at}
+    end)
+    |> Enum.sort_by(fn {_, _, last_message_at} -> last_message_at end, {:desc, DateTime})
   end
 end
