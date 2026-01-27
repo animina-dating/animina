@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-exec docker-compose exec -ti web mix "$@"
-

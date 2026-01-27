@@ -2,19 +2,10 @@ defmodule AniminaWeb.ErrorHTMLTest do
   use AniminaWeb.ConnCase, async: true
 
   # Bring render_to_string/4 for testing custom views
-  import Phoenix.Template
+  import Phoenix.Template, only: [render_to_string: 4]
 
   test "renders 404.html" do
-    rendered_content = render(AniminaWeb.ErrorHTML, "404", "html", [])
-
-    html =
-      rendered_content.static
-      |> Enum.join("")
-
-    assert String.contains?(
-             html,
-             "This profile either doesn't exist or you don't have enough points to access it."
-           )
+    assert render_to_string(AniminaWeb.ErrorHTML, "404", "html", []) == "Not Found"
   end
 
   test "renders 500.html" do

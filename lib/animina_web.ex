@@ -17,11 +17,11 @@ defmodule AniminaWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicons favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
 
   def router do
     quote do
-      use Phoenix.Router, helpers: true
+      use Phoenix.Router, helpers: false
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
@@ -38,12 +38,11 @@ defmodule AniminaWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: AniminaWeb.Layouts]
+      use Phoenix.Controller, formats: [:html, :json]
+
+      use Gettext, backend: AniminaWeb.Gettext
 
       import Plug.Conn
-      import AniminaWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -51,10 +50,7 @@ defmodule AniminaWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {AniminaWeb.Layouts, :app}
-
-      import Gettext, only: [with_locale: 2]
+      use Phoenix.LiveView
 
       unquote(html_helpers())
     end
@@ -83,30 +79,17 @@ defmodule AniminaWeb do
 
   defp html_helpers do
     quote do
+      # Translation
+      use Gettext, backend: AniminaWeb.Gettext
+
       # HTML escaping functionality
       import Phoenix.HTML
-      import Phoenix.HTML.Form
-      use PhoenixHTMLHelpers
-      # Core UI components and translation
+      # Core UI components
       import AniminaWeb.CoreComponents
-      import AniminaWeb.AniminaComponents
-      import AniminaWeb.ProfileComponents
-      import AniminaWeb.ChatComponents
-      import AniminaWeb.StoriesComponents
-      import AniminaWeb.BookmarksComponents
-      import AniminaWeb.DashboardComponents
-      import AniminaWeb.TopNavigationCompontents
-      import AniminaWeb.Gettext
-      import AniminaWeb.PostsComponents
-      import AniminaWeb.ReportComponents
-      import AniminaWeb.WaitlistComponents
-      import AniminaWeb.BetaRegistrationComponents
-      import Gettext, only: [with_locale: 2]
 
-      # https://elixirforum.com/t/form-for-not-working-in-phoenix-1-7/52013
-
-      # Shortcut for generating JS commands
+      # Common modules used in templates
       alias Phoenix.LiveView.JS
+      alias AniminaWeb.Layouts
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
@@ -123,7 +106,7 @@ defmodule AniminaWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

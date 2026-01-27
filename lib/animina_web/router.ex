@@ -1,6 +1,5 @@
 defmodule AniminaWeb.Router do
   use AniminaWeb, :router
-  use AshAuthentication.Phoenix.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -9,102 +8,16 @@ defmodule AniminaWeb.Router do
     plug :put_root_layout, html: {AniminaWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :load_from_session
-    plug AniminaWeb.Plugs.Locale
-    plug AniminaWeb.Plugs.HealthCheck
   end
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug :load_from_bearer
   end
 
   scope "/", AniminaWeb do
     pipe_through :browser
 
-    ash_authentication_live_session :user_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_home_optional} do
-      live "/", RootLive, :register
-      live "/beta", BetaRegisterLive, :index
-    end
-
-    ash_authentication_live_session :user_not_required,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_not_required} do
-      live "/language-switch", LanguageSwitchLive, :index
-    end
-
-    ash_authentication_live_session :authentication_optional,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_no_user} do
-      live "/sign-in", RootLive, :sign_in
-      live "/reset-password", RequestPasswordLive, :index
-    end
-
-    ash_authentication_live_session :authentication_required_for_email_validation,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_validation} do
-      live "/my/email-validation", EmailValidationLive, :index
-      live "/my/profile/delete_account", DeleteAccountLive, :index
-    end
-
-    ash_authentication_live_session :authentication_required_for_too_successful,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_for_too_successful} do
-      live "/my/too-successful", TooSuccessFulLive, :index
-    end
-
-    ash_authentication_live_session :live_authentication_required,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_admin_required} do
-      live "/admin/waitlist", WaitlistLive, :index
-      live "/admin/reports/all", AllReportsLive, :index
-      live "/admin/reports/pending", PendingReportsLive, :index
-      live "/admin/reports/:id", ShowReportLive, :index
-      live "/admin/reports/pending/:id/review", ReviewReportLive, :index
-    end
-
-    ash_authentication_live_session :authentication_required,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required} do
-      live "/my/potential-partner", PotentialPartnerLive, :index
-      live "/my/profile-photo", ProfilePhotoLive, :index
-      live "/my/profile/edit", UpdateProfileLive, :index
-      live "/my/flags/white", FlagsLive, :white
-      live "/my/flags/green", FlagsLive, :green
-      live "/my/flags/red", FlagsLive, :red
-      live "/my/about-me", StoryLive, :about_me
-      live "/my/profile/visibility", ProfileVisibilityLive, :index
-    end
-
-    ash_authentication_live_session :authentication_required_and_about_me_story,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_required_with_about_me_story} do
-      live "/my/stories/new", StoryLive, :new
-      live "/my/stories/:id/edit", StoryLive, :edit
-      live "/my/posts/new", PostLive, :new
-      live "/my/posts/:id/edit", PostLive, :edit
-      live "/my/bookmarks", BookmarksLive, :bookmarks
-      live "/my/bookmarks/:filter_type", BookmarksLive, :bookmarks
-      live "/my/messages/:profile", ChatLive, :index
-      live "/my/messages", MessagesLive, :index
-      live "/my/chats", MyChatsLive, :index
-      live "/my", DashboardLive, :index
-      live "/my/dashboard", DashboardLive, :index
-      live "/:current_user/messages/:profile", ChatLive, :index
-      live "/:username/report", ProfileLive, :report
-      live "/v2/:username/report", FastProfileLive, :report
-    end
-
-    ash_authentication_live_session :user_optional_home,
-      on_mount: {AniminaWeb.LiveUserAuth, :live_user_optional} do
-      live "/:username", ProfileLive
-      live "/my/profile", ProfileLive
-      live "/:username/:year/:month/:day/:slug", PostViewLive
-      live "/v2/:username", FastProfileLive
-      live "/v2/my/profile", FastProfileLive
-    end
-
-    post "/auth/user/sign_in/", AuthController, :sign_in
-    post "/auth/user/request_password", AuthController, :request_password
-
-    sign_out_route AuthController, "/auth/user/sign-out"
-    auth_routes_for Animina.Accounts.User, to: AuthController
-
-    reset_route []
+    get "/", PageController, :home
   end
 
   # Other scopes may use custom stacks.

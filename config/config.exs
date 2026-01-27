@@ -7,67 +7,22 @@
 # General application configuration
 import Config
 
-if System.get_env("DISABLE_ML_FEATURES") == true do
-  # Configures nx default backend
-  config :nx, default_backend: EXLA.Backend
-end
-
-# Configures the environment
-
-config :animina, env: Mix.env()
-
-# configures the maximum number of users allowed to the system within the hour before joining the waiting list
-
-config :animina, :max_users_per_hour, 100
-
-config :animina, :length_of_confirmation_pin, 6
-
-# Configures the number of stories required for complete registration
-config :animina, :number_of_stories_required_for_complete_registration, 1
-
-# Configures the minimum number of points required to view the 'AI Help' Chat Message in the chat
-config :animina, :ai_message_help_price, 20
-
-# Configures whether to have ai automatically respond to messages
-config :animina, :autoreply_messages_with_ai, false
-
-# Configures default maximum age for potential partners
-config :animina, :default_potential_partner_maximum_age, 100
-
-# Configures default minimum age for potential partners
-config :animina, :default_potential_partner_minimum_age, 18
-
-# confugures the difference in age if no maximum or minimum age is set
-config :animina, :default_partner_age_offset, 10
-
-# Configures the maximum height for potential partners
-config :animina, :default_potential_partner_maximum_height, 225
-
-# Configures the minimum height for potential partners
-config :animina, :default_potential_partner_minimum_height, 0
-
-# Configures the maximum height difference for potential partners
-config :animina, :default_partner_height_offset, 10
-
-# Configures the default search range for potential partners in km
-config :animina, :default_potential_partner_search_range_in_km, 10_000
-
 config :animina,
   ecto_repos: [Animina.Repo],
   generators: [timestamp_type: :utc_datetime]
 
-# Configures the endpoint
+# Configure the endpoint
 config :animina, AniminaWeb.Endpoint,
   url: [host: "localhost"],
-  adapter: Phoenix.Endpoint.Cowboy2Adapter,
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: AniminaWeb.ErrorHTML, json: AniminaWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Animina.PubSub,
-  live_view: [signing_salt: "firBsg4T"]
+  live_view: [signing_salt: "j4+hmLOO"]
 
-# Configures the mailer
+# Configure the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
 # locally. You can see the emails in your browser, at "/dev/mailbox".
@@ -76,70 +31,34 @@ config :animina, AniminaWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
-config :animina,
-  ash_domains: [Animina.Accounts, Animina.Traits, Animina.GeoData, Animina.Narratives]
-
-config :ash, :custom_types, ash_phone_number: Animina.AshPhoneNumber
-
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.17.11",
-  default: [
+  version: "0.25.4",
+  animina: [
     args:
-      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
     cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+    env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
   ]
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.1",
-  default: [
+  version: "4.1.12",
+  animina: [
     args: ~w(
-      --config=tailwind.config.js
-      --input=css/app.css
-      --output=../priv/static/assets/app.css
+      --input=assets/css/app.css
+      --output=priv/static/assets/css/app.css
     ),
-    cd: Path.expand("../assets", __DIR__)
+    cd: Path.expand("..", __DIR__)
   ]
 
-# Configures Elixir's Logger
-config :logger, :console,
+# Configure Elixir's Logger
+config :logger, :default_formatter,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
-
-# I18n
-config :animina, AniminaWeb.Gettext, default_locale: "en", locales: ~w(en de)
-
-config :animina, AniminaWeb.FlagsLive, max_selected: 20
-
-config :spark,
-  formatter: [
-    remove_parens?: true,
-    "Ash.Resource": [
-      section_order: [
-        :postgres,
-        :resource,
-        :code_interface,
-        :actions,
-        :policies,
-        :pub_sub,
-        :preparations,
-        :changes,
-        :validations,
-        :multitenancy,
-        :attributes,
-        :relationships,
-        :calculations,
-        :aggregates,
-        :identities
-      ]
-    ],
-    "Ash.Domain": [section_order: [:resources, :policies, :authorization, :domain, :execution]]
-  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

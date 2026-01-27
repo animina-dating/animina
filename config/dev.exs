@@ -2,10 +2,10 @@ import Config
 
 # Configure your database
 config :animina, Animina.Repo,
-  username: System.get_env("DATABASE_USER") || "postgres",
-  password: System.get_env("DATABASE_PASSWORD") || "postgres",
-  hostname: System.get_env("DATABASE_HOST") || "localhost",
-  database: System.get_env("DATABASE_NAME") || "animina_dev",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  database: "animina_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -19,15 +19,14 @@ config :animina, Animina.Repo,
 config :animina, AniminaWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  # http: [ip: { 127, 0, 0, 1 }, port: 4000],
-  http: [ip: {0, 0, 0, 0}, port: 4000],
+  http: [ip: {127, 0, 0, 1}],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "Td/YNL/ymv2WQs0FiCGUnCmwF/3t443kNrfKE1/aCeRNpmqwfXuwYxmtO7b7zAid",
+  secret_key_base: "TVZhhwnN9mH0I8qZ2KItVVBTr9iJTIx3lhd3NW8kxxKJWS0LI8WPo1SVEsBnmpOP",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:animina, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:animina, ~w(--watch)]}
   ]
 
 # ## SSL Support
@@ -53,27 +52,26 @@ config :animina, AniminaWeb.Endpoint,
 # configured to run both http and https servers on
 # different ports.
 
-# Watch static and templates for browser reloading.
+# Reload browser tabs when matching files change.
 config :animina, AniminaWeb.Endpoint,
   live_reload: [
+    web_console_logger: true,
     patterns: [
-      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
-      ~r"lib/animina_web/(controllers|live|components)/.*(ex|heex)$"
+      # Static assets, except user uploads
+      ~r"priv/static/(?!uploads/).*\.(js|css|png|jpeg|jpg|gif|svg)$"E,
+      # Gettext translations
+      ~r"priv/gettext/.*\.po$"E,
+      # Router, Controllers, LiveViews and LiveComponents
+      ~r"lib/animina_web/router\.ex$"E,
+      ~r"lib/animina_web/(controllers|live|components)/.*\.(ex|heex)$"E
     ]
   ]
 
 # Enable dev routes for dashboard and mailbox
 config :animina, dev_routes: true
 
-# configures the number of days behind we check when showing users on the sidebar for potential partners
-config :animina, :number_of_days_to_filter_registered_users, 60
-
-# Configures the llama version
-config :animina, :llm_version, "llama3.1:8b"
-
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :default_formatter, format: "[$level] $message\n"
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -82,17 +80,13 @@ config :phoenix, :stacktrace_depth, 20
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
 
-# Include HEEx debug annotations as HTML comments in rendered markup
-config :phoenix_live_view, :debug_heex_annotations, true
+config :phoenix_live_view,
+  # Include debug annotations and locations in rendered markup.
+  # Changing this configuration will require mix clean and a full recompile.
+  debug_heex_annotations: true,
+  debug_attributes: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
-
-config :swoosh, Animina.Mailer, adapter: Swoosh.Adapters.Local
-
-# Debug ash pubsub
-config :ash, :pub_sub, debug?: true
-
-config :animina, :environment, :dev
-
-config :animina, :uploads_directory, "priv/static/uploads"

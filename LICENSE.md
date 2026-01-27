@@ -6,7 +6,7 @@ FSL-1.1-MIT
 
 ## Notice
 
-Copyright 2024 Stefan Wintermeyer
+Copyright 2026 Stefan Wintermeyer
 
 ## Terms and Conditions
 

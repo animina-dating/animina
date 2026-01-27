@@ -1,58 +1,36 @@
 <!DOCTYPE html>
-<html lang="de-DE" class="[scrollbar-gutter:stable]">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title prefix="">
-      <%= assigns[:page_title] || "" %>
+    <.live_title default="Animina" suffix=" · Phoenix Framework">
+      {assigns[:page_title]}
     </.live_title>
-    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
-    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
-    <!-- Standard Favicon -->
-    <link rel="icon" type="image/png" sizes="16x16" href={~p"/favicons/favicon-16x16.png"} />
-    <link rel="icon" type="image/png" sizes="32x32" href={~p"/favicons/favicon-32x32.png"} />
-    <link rel="icon" type="image/png" sizes="96x96" href={~p"/favicons/favicon-96x96.png"} />
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" sizes="57x57" href={~p"/favicons/apple-icon-57x57.png"} />
-    <link rel="apple-touch-icon" sizes="60x60" href={~p"/favicons/apple-icon-60x60.png"} />
-    <link rel="apple-touch-icon" sizes="72x72" href={~p"/favicons/apple-icon-72x72.png"} />
-    <link rel="apple-touch-icon" sizes="76x76" href={~p"/favicons/apple-icon-76x76.png"} />
-    <link rel="apple-touch-icon" sizes="114x114" href={~p"/favicons/apple-icon-114x114.png"} />
-    <link rel="apple-touch-icon" sizes="120x120" href={~p"/favicons/apple-icon-120x120.png"} />
-    <link rel="apple-touch-icon" sizes="144x144" href={~p"/favicons/apple-icon-144x144.png"} />
-    <link rel="apple-touch-icon" sizes="152x152" href={~p"/favicons/apple-icon-152x152.png"} />
-    <link rel="apple-touch-icon" sizes="180x180" href={~p"/favicons/apple-icon-180x180.png"} />
-    <link rel="apple-touch-icon-precomposed" href={~p"/favicons/apple-icon-precomposed.png"} />
-    <!-- Android Icons -->
-    <link rel="icon" type="image/png" sizes="36x36" href={~p"/favicons/android-icon-36x36.png"} />
-    <link rel="icon" type="image/png" sizes="48x48" href={~p"/favicons/android-icon-48x48.png"} />
-    <link rel="icon" type="image/png" sizes="72x72" href={~p"/favicons/android-icon-72x72.png"} />
-    <link rel="icon" type="image/png" sizes="96x96" href={~p"/favicons/android-icon-96x96.png"} />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="144x144"
-      href={~p"/favicons/android-icon-144x144.png"}
-    />
-    <link
-      rel="icon"
-      type="image/png"
-      sizes="192x192"
-      href={~p"/favicons/android-icon-192x192.png"}
-    />
-    <!-- Microsoft Tiles -->
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content={~p"/favicons/ms-icon-144x144.png"} />
-    <meta name="msapplication-square70x70logo" content={~p"/favicons/ms-icon-70x70.png"} />
-    <meta name="msapplication-square150x150logo" content={~p"/favicons/ms-icon-150x150.png"} />
-    <meta name="msapplication-square310x310logo" content={~p"/favicons/ms-icon-310x310.png"} />
-    <meta name="msapplication-config" content={~p"/favicons/browserconfig.xml"} />
-    <!-- Manifest for PWA -->
-    <link rel="manifest" href={~p"/favicons/manifest.json"} />
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+        
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
   </head>
-  <body class="antialiased bg-white dark:bg-gray-900">
-    <%= @inner_content %>
+  <body>
+    {@inner_content}
   </body>
 </html>
