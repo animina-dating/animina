@@ -348,7 +348,7 @@ Features:
 - Height: 80-225 cm
 - Minimum partner age: >= 18
 - Password: minimum 10 characters
-- Phone number: international format validation
+- Phone number: validated and converted to E164 format using ex_phone_number library; stored in E164 format only
 
 ### 14.2 Uniqueness Constraints
 - Email (case-insensitive)
