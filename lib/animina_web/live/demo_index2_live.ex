@@ -59,29 +59,43 @@ defmodule AniminaWeb.DemoIndex2Live do
         <section class="relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
 
-          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-20">
             <div class="text-center max-w-5xl mx-auto">
               <!-- Hero Images -->
-              <div class="flex justify-center gap-4 mb-10">
+              <div class="flex justify-center items-end gap-3 sm:gap-4 mb-10">
                 <div class="relative">
                   <img
-                    src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=200&h=260&fit=crop&crop=face"
-                    alt="Lächelnder Mann"
-                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-3 hover:rotate-0 transition-transform duration-300"
+                    src="/images/faces/freundlicher-mann-hero.jpg"
+                    alt="Freundlicher Mann"
+                    class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg -rotate-6 hover:rotate-0 transition-transform duration-300"
+                  />
+                </div>
+                <div class="relative">
+                  <img
+                    src="/images/hero-streichholz.jpeg"
+                    alt="Mann mit Streichholz"
+                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-2 hover:rotate-0 transition-transform duration-300"
                   />
                   <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
                     <.icon name="hero-heart-solid" class="size-4 text-white" />
                   </div>
                 </div>
-                <div class="relative mt-6">
+                <div class="relative mt-4">
                   <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=260&fit=crop&crop=face"
-                    alt="Fröhliche Frau"
-                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-3 hover:rotate-0 transition-transform duration-300"
+                    src="/images/faces/froehliche-junge-frau.jpg"
+                    alt="Fröhliche junge Frau"
+                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-2 hover:rotate-0 transition-transform duration-300"
                   />
                   <div class="absolute -bottom-2 -left-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
                     <.icon name="hero-sparkles-solid" class="size-4 text-white" />
                   </div>
+                </div>
+                <div class="relative">
+                  <img
+                    src="/images/faces/strahlende-frau-hero.jpg"
+                    alt="Strahlende Frau"
+                    class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg rotate-6 hover:rotate-0 transition-transform duration-300"
+                  />
                 </div>
               </div>
 
@@ -143,37 +157,37 @@ defmodule AniminaWeb.DemoIndex2Live do
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
               <%!-- Row 1: European portraits --%>
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop&crop=face"
+                image_url="/images/faces/geschaeftsmann.jpg"
                 alt="Geschäftsmann lächelnd"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1573496799652-408c2ac9fe98?w=300&h=300&fit=crop&crop=face"
+                image_url="/images/faces/laechelnde-frau.jpg"
                 alt="Lächelnde Frau"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face"
+                image_url="/images/faces/junger-mann.jpg"
                 alt="Junger Mann"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&h=300&fit=crop&crop=face"
-                alt="Fröhliche junge Frau"
+                image_url="/images/faces/freundliche-frau.jpg"
+                alt="Freundliche Frau"
               />
               <%!-- Row 2: More diverse portraits --%>
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
-                alt="Freundlicher Mann"
+                image_url="/images/faces/laechelnder-mann.jpg"
+                alt="Lächelnder Mann"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face"
+                image_url="/images/faces/frau-mit-laecheln.jpg"
                 alt="Frau mit Lächeln"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
-                alt="Älterer Herr"
+                image_url="/images/faces/frau-mit-kopftuch.jpg"
+                alt="Frau mit Kopftuch"
               />
               <.happy_face
-                image_url="https://images.unsplash.com/photo-1589156280159-27698a70f29e?w=300&h=300&fit=crop&crop=face"
-                alt="Strahlende Frau"
+                image_url="/images/faces/junge-frau.jpg"
+                alt="Junge Frau"
               />
             </div>
           </div>
@@ -196,21 +210,9 @@ defmodule AniminaWeb.DemoIndex2Live do
               />
 
               <.differentiator_card
-                icon="hero-code-bracket"
-                title="Open Source"
-                description="Unser gesamter Code ist öffentlich einsehbar. Jeder kann unseren Algorithmus prüfen. Keine Geheimnisse, keine Manipulationen – alles transparent und fair."
-              />
-
-              <.differentiator_card
-                icon="hero-heart"
-                title="Für alle da"
-                description="Wir kümmern uns um jeden. Egal wer du bist – bei ANIMINA bist du willkommen. Keine Diskriminierung durch Algorithmen, die nur bestimmte Menschen bevorzugen."
-              />
-
-              <.differentiator_card
                 icon="hero-hand-raised"
-                title="Maximal 5 Anfragen pro Tag"
-                description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns kann jeder nur 5 Anfragen pro Tag senden – wie im echten Leben. Das macht Dating fairer für alle."
+                title="Nicht beliebig viele Anfragen"
+                description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns ist die Anzahl der Anfragen pro Tag begrenzt. Im echten Leben kann man auch nicht mit 10 potentiellen Partnern gleichzeitig sprechen. Das macht Dating fairer für alle."
               />
 
               <.differentiator_card
@@ -228,7 +230,7 @@ defmodule AniminaWeb.DemoIndex2Live do
               <.differentiator_card
                 icon="hero-shield-check"
                 title="Echte Menschen"
-                description="Verifizierte Profile und aktive Moderation sorgen für eine sichere Community. Fake-Profile und Bots haben bei uns keine Chance."
+                description="Verifizierte Profile und aktive Moderation sorgen für eine sichere Community. Fake-Profile und Bots haben bei uns kaum eine Chance."
               />
 
               <.differentiator_card
