@@ -8,9 +8,9 @@ A comprehensive feature specification for rebuilding the ANIMINA dating platform
 
 ### 1.1 Registration
 - **Simple registration form** collecting required and optional fields
-- Required fields: email, password, username (downcased unique, 2-15 chars, alphanumeric with dots/hyphens), name, birthday (legal age validation), gender, zip code, country, mobile phone, legal terms acceptance
-- Optional fields: height (40-250cm), occupation, language preference
-- Email confirmation via magic link within 30 minutes (before account deletion)
+- Required fields: email, password, username (downcased unique, 2-15 chars, alphanumeric with dots/hyphens), first_name, last_name, birthday (legal age validation), gender, height (80-225cm), zip code, country (preselected as Germany), mobile phone, legal terms acceptance, preferred partner gender, minimum/maximum partner age offset (stored as years relative to user's age; auto-adjusts over time; calculated min must be >= 18), minimum/maximum partner height, geographic search radius (in km)
+- Optional fields: occupation, language preference
+- Email confirmation via 6-digit PIN within 30 minutes (before account deletion)
 
 ### 1.2 Authentication
 - Email/password login (can sign in with username OR email)
@@ -44,7 +44,7 @@ State transitions are controlled with specific rules (e.g., only admins can ban/
 ## 2. USER PROFILE
 
 ### 2.1 Basic Profile Information
-- Name, username, email (hidden from public)
+- First name, last name, username, email (hidden from public)
 - Birthday (with calculated age display)
 - Gender
 - Height
@@ -54,10 +54,6 @@ State transitions are controlled with specific rules (e.g., only admins can ban/
 - Language preference
 
 ### 2.2 Partner Preferences
-- Preferred partner gender
-- Minimum/maximum partner age (min 18)
-- Minimum/maximum partner height
-- Geographic search radius (in km)
 - Communication preference: "preapproved only" (only users you've liked can message you)
 
 ### 2.3 Visibility Settings
@@ -347,10 +343,11 @@ Features:
 
 ### 14.1 Input Validation
 - Username: 2-15 chars, alphanumeric + dots/hyphens
-- Name: 1-50 chars
-- Height: 40-250 cm
+- First name: 1-50 chars
+- Last name: 1-50 chars
+- Height: 80-225 cm
 - Minimum partner age: >= 18
-- Password: validated against common password blacklist
+- Password: minimum 10 characters
 - Phone number: international format validation
 
 ### 14.2 Uniqueness Constraints
