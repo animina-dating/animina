@@ -10,7 +10,6 @@
 - Bookmarks created/updated
 - Profile visits
 - User flag changes
-- Story updates
 
 ## 5.2 Email Notifications
 - PIN code for email confirmation

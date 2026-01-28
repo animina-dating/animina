@@ -1,17 +1,17 @@
-# 8. Personality Traits System (Flags)
+# 7. Personality Traits System (Flags)
 
 **Status:** Not Started
 
 ---
 
-## 8.1 Flag Types (Three Colors)
+## 7.1 Flag Types (Three Colors)
 | Color | Purpose | Description |
 |-------|---------|-------------|
 | **White** | About Me | Traits that describe the user |
 | **Green** | Attracted To | Traits user wants in a partner |
 | **Red** | Deal Breakers | Traits user does NOT want in a partner |
 
-## 8.2 Flag Categories
+## 7.2 Flag Categories
 Flags are organized into semantic categories:
 - Character (honesty, courage, resilience, etc.)
 - Lifestyle
@@ -21,13 +21,12 @@ Flags are organized into semantic categories:
 
 See [Appendix B: Flags](appendix-b-flags.md) for the complete list of 217 flags organized by category.
 
-## 8.3 Flag Selection Rules
+## 7.3 Flag Selection Rules
 - Configurable maximum number of flags per color
 - Position/order indicates importance (first = most important)
 - Same flag cannot have multiple colors for the same user
-- Some flags are "photo-flaggable" (can be applied to photos)
 
-## 8.4 Flag Matching
+## 7.4 Flag Matching
 - System identifies intersecting flags between users
 - Shows which white flags (about me) overlap
 - Shows which of user A's green flags match user B's white flags

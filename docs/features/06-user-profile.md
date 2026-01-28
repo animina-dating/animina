@@ -20,9 +20,3 @@
 
 ## 6.3 Visibility Settings
 - Incognito mode hides profile completely
-
-## 6.4 Profile Completion Requirements
-- Must have profile photo
-- Must have "About me" story with at least one photo
-- Registration marked complete only when requirements met
-- Incomplete profiles are not visible to other users

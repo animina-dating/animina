@@ -37,6 +37,3 @@
 - Add internal memos
 - View report history
 
-## 4.7 Content Management
-- Manage headlines (activate/deactivate)
-- Photo moderation (approve/reject)

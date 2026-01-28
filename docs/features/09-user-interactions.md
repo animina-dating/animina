@@ -1,10 +1,10 @@
-# 10. User Interactions
+# 9. User Interactions
 
 **Status:** Not Started
 
 ---
 
-## 10.1 Reactions
+## 9.1 Reactions
 Three reaction types:
 | Type | Effect |
 |------|--------|
@@ -16,7 +16,7 @@ Three reaction types:
 - Reactions can be reversed (unlike, unblock, unhide)
 - Removing a like deletes associated bookmark
 
-## 10.2 Bookmarks
+## 9.2 Bookmarks
 Two bookmark reasons:
 - **Liked**: Auto-created when liking a profile
 - **Visited**: Created when viewing a profile
@@ -26,12 +26,12 @@ Features:
 - Sort by: most frequently visited, longest total duration, most recent
 - Used for "who visited my profile" features
 
-## 10.3 Visit Tracking
+## 9.3 Visit Tracking
 - Records every profile visit with duration (milliseconds)
 - Aggregates total visits and total time per profile
 - Enables engagement analytics
 
-## 10.4 Messaging
+## 9.4 Messaging
 - Direct messages between users (max 1,024 characters)
 - Read/unread status with timestamp
 - Conversation history retrieval

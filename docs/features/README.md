@@ -7,7 +7,6 @@ A comprehensive feature specification for the ANIMINA dating platform. This docu
 ANIMINA is a dating platform with:
 - **Simple registration** with waitlist and post-registration profile completion
 - **Three-color personality trait system** for compatibility matching
-- **Story-based profiles** with headlines and photos
 - **Geographic matching** within configurable radius
 - **Comprehensive moderation** with reports and user state management
 - **Visibility controls** including incognito mode
@@ -26,18 +25,16 @@ The platform emphasizes profile completeness and thoughtful matching through the
 | 04 | [Admin Features](04-admin-features.md) | Not Started | Waitlist MVP |
 | 05 | [Notifications](05-notifications.md) | Not Started | Waitlist MVP |
 | 06 | [User Profile](06-user-profile.md) | Not Started | Profile Building |
-| 07 | [Profile Content (Stories & Photos)](07-stories-photos.md) | Not Started | Profile Building |
-| 08 | [Personality Traits System (Flags)](08-traits-flags.md) | Not Started | Profile Building |
-| 09 | [Matching & Discovery](09-matching-discovery.md) | Not Started | Core Dating |
-| 10 | [User Interactions](10-user-interactions.md) | Not Started | Core Dating |
-| 11 | [Reporting & Moderation](11-moderation.md) | Not Started | Safety & Polish |
-| 12 | [Account Management](12-account-management.md) | Not Started | Safety & Polish |
+| 07 | [Personality Traits System (Flags)](07-traits-flags.md) | Not Started | Profile Building |
+| 08 | [Matching & Discovery](08-matching-discovery.md) | Not Started | Core Dating |
+| 09 | [User Interactions](09-user-interactions.md) | Not Started | Core Dating |
+| 10 | [Reporting & Moderation](10-moderation.md) | Not Started | Safety & Polish |
+| 11 | [Account Management](11-account-management.md) | Not Started | Safety & Polish |
 
 ## Appendices
 
 | Appendix | Description |
 |----------|-------------|
-| [Appendix A: Headlines](appendix-a-headlines.md) | All 46 story headline prompts |
 | [Appendix B: Flags](appendix-b-flags.md) | All 217 personality flags by category |
 
 ## Implementation Phases
@@ -50,18 +47,17 @@ Essential for launching with a waitlist:
 4. **Admin Features** - Managing the waitlist and user states
 5. **Notifications** - Email for PIN confirmation and waitlist alerts
 
-### Phase 2 - Profile Building (06-08)
+### Phase 2 - Profile Building (06-07)
 After users are let off the waitlist:
 6. **User Profile** - Basic profile data completion
-7. **Stories & Photos** - Profile content (photos required for completion)
-8. **Personality Traits** - Three-color flag system
+7. **Personality Traits** - Three-color flag system
 
-### Phase 3 - Core Dating Features (09-10)
+### Phase 3 - Core Dating Features (08-09)
 Complete profile required:
-9. **Matching & Discovery** - Finding compatible partners
-10. **User Interactions** - Likes, messages, bookmarks
+8. **Matching & Discovery** - Finding compatible partners
+9. **User Interactions** - Likes, messages, bookmarks
 
-### Phase 4 - Safety & Polish (11-12)
+### Phase 4 - Safety & Polish (10-11)
 Post-launch refinement:
-11. **Reporting & Moderation** - Full moderation system
-12. **Account Management** - User self-service (hibernate, delete)
+10. **Reporting & Moderation** - Full moderation system
+11. **Account Management** - User self-service (hibernate, delete)
