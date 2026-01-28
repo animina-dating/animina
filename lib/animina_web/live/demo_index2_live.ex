@@ -24,7 +24,7 @@ defmodule AniminaWeb.DemoIndex2Live do
       <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
         <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between">
-            <a href="/demo/index2" class="flex items-center gap-2 group">
+            <a href="/" class="flex items-center gap-2 group">
               <span class="text-2xl font-light tracking-tight text-primary transition-colors group-hover:text-primary/80">
                 ANIMINA
               </span>

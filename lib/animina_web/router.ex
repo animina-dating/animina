@@ -17,9 +17,8 @@ defmodule AniminaWeb.Router do
   scope "/", AniminaWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", DemoIndex2Live
     live "/demo", DemoLive
-    live "/demo/index2", DemoIndex2Live
     live "/demo/mission_statement", DemoMissionStatementLive
   end
 
