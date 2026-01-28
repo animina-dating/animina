@@ -10,6 +10,8 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
 
+For detailed feature specifications, see [docs/features/](docs/features/).
+
 > [!NOTE]
 > Project founder Stefan Wintermeyer gave a (German) talk about the first
 > ANIMINA Beta at [FrOSCon](https://froscon.org).

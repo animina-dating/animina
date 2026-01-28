@@ -1,10 +1,10 @@
-# 4. Profile Content (Stories & Photos)
+# 7. Profile Content (Stories & Photos)
 
 **Status:** Not Started
 
 ---
 
-## 4.1 Headlines System
+## 7.1 Headlines System
 46 predefined story prompts organized as:
 - **Personal narratives**: "The story behind my smile", "A challenge I've overcome", etc.
 - **Temporal**: Monday through Sunday
@@ -16,20 +16,20 @@ Headlines can be activated/deactivated by admins.
 
 See [Appendix A: Headlines](appendix-a-headlines.md) for the complete list of 46 headlines.
 
-## 4.2 Stories
+## 7.2 Stories
 - Text content associated with a headline (max 1,024 characters)
 - Position ordering within profile
 - Can have associated photos
 - One "About me" story required per user
 - Minimum number of stories required for registration completion
 
-## 4.3 Posts (Blog-Style)
+## 7.3 Posts (Blog-Style)
 - Title + content (max 8,192 characters)
 - Auto-generated URL slug
 - Date-based filtering/querying
 - Separate from profile stories (more blog-like)
 
-## 4.4 Photos
+## 7.4 Photos
 - Multiple photos per user
 - Profile photo (standalone) vs story photos
 - Required metadata: filename, mime type, dimensions, file size

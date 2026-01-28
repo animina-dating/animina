@@ -1,10 +1,10 @@
-# 9. Notifications
+# 5. Notifications
 
 **Status:** Not Started
 
 ---
 
-## 9.1 Real-Time Notifications (In-App)
+## 5.1 Real-Time Notifications (In-App)
 - New messages received
 - Reactions (likes/blocks) created/removed
 - Bookmarks created/updated
@@ -12,7 +12,7 @@
 - User flag changes
 - Story updates
 
-## 9.2 Email Notifications
+## 5.2 Email Notifications
 - PIN code for email confirmation
 - Password reset link
 - Report submitted (to admin)

@@ -1,4 +1,4 @@
-# 11. Registration & Profile Completion Flow
+# 3. Registration & Profile Completion Flow
 
 **Status:** Not Started
 
