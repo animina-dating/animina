@@ -27,6 +27,10 @@ defmodule AniminaWeb.Endpoint do
     only: AniminaWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
+  if Code.ensure_loaded?(Tidewave) do
+    plug Tidewave
+  end
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
