@@ -59,6 +59,17 @@ defmodule AniminaWeb.UserLive.Registration do
                     required
                     phx-blur="normalize_phone"
                   />
+                  <div>
+                    <.input
+                      field={@form[:birthday]}
+                      type="date"
+                      label="Geburtstag (mind. 18 Jahre)"
+                      required
+                    />
+                    <p :if={@age} class="text-xs text-base-content/50 mt-1 ml-1">
+                      {@age} Jahre alt
+                    </p>
+                  </div>
                 </div>
               </fieldset>
             </div>
@@ -80,15 +91,17 @@ defmodule AniminaWeb.UserLive.Registration do
                     options={@country_options}
                     required
                   />
-                  <.input
-                    field={@form[:zip_code]}
-                    type="text"
-                    label="Postleitzahl (5 Ziffern)"
-                    required
-                  />
-                  <p :if={@city_name} class="text-sm text-base-content/70 -mt-2">
-                    {@city_name}
-                  </p>
+                  <div>
+                    <.input
+                      field={@form[:zip_code]}
+                      type="text"
+                      label="Postleitzahl (5 Ziffern)"
+                      required
+                    />
+                    <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
+                      {@city_name}
+                    </p>
+                  </div>
                 </div>
               </fieldset>
             </div>
@@ -107,12 +120,6 @@ defmodule AniminaWeb.UserLive.Registration do
                     field={@form[:display_name]}
                     type="text"
                     label="Anzeigename (2-50 Zeichen)"
-                    required
-                  />
-                  <.input
-                    field={@form[:birthday]}
-                    type="date"
-                    label="Geburtstag (mind. 18 Jahre)"
                     required
                   />
                   <.input
@@ -297,6 +304,7 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(unlocked_section: unlocked_section)
       |> assign(last_params: initial_attrs)
       |> assign(city_name: nil)
+      |> assign(age: compute_age(to_string(min_birthday)))
       |> assign_form(changeset)
 
     {:ok, socket, temporary_assigns: [form: nil]}
@@ -354,6 +362,7 @@ defmodule AniminaWeb.UserLive.Registration do
     {user_params, socket} = maybe_auto_fill_preferences(user_params, socket)
     unlocked_section = compute_unlocked_section(user_params)
     city_name = lookup_city_name(user_params["zip_code"])
+    age = compute_age(user_params["birthday"])
 
     changeset =
       Accounts.change_user_registration(%User{}, user_params)
@@ -364,6 +373,7 @@ defmodule AniminaWeb.UserLive.Registration do
      |> assign(unlocked_section: unlocked_section)
      |> assign(last_params: user_params)
      |> assign(city_name: city_name)
+     |> assign(age: age)
      |> assign_form(changeset)}
   end
 
@@ -442,9 +452,9 @@ defmodule AniminaWeb.UserLive.Registration do
 
   defp compute_unlocked_section(params) do
     cond do
-      not filled?(params, ~w(email password mobile_phone)) -> 1
+      not filled?(params, ~w(email password mobile_phone birthday)) -> 1
       not filled?(params, ~w(country_id zip_code)) -> 2
-      not filled?(params, ~w(display_name birthday gender height)) -> 3
+      not filled?(params, ~w(display_name gender height)) -> 3
       true -> 5
     end
   end
@@ -457,6 +467,26 @@ defmodule AniminaWeb.UserLive.Registration do
       val != nil and to_string(val) != ""
     end)
   end
+
+  defp compute_age(birthday) when is_binary(birthday) do
+    case Date.from_iso8601(birthday) do
+      {:ok, date} ->
+        today = Date.utc_today()
+        age = today.year - date.year
+
+        age =
+          if {today.month, today.day} < {date.month, date.day},
+            do: age - 1,
+            else: age
+
+        if age >= 0, do: age, else: nil
+
+      _ ->
+        nil
+    end
+  end
+
+  defp compute_age(_), do: nil
 
   defp lookup_city_name(zip_code) when is_binary(zip_code) and byte_size(zip_code) == 5 do
     case GeoData.get_city_by_zip_code(zip_code) do
