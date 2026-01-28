@@ -71,6 +71,11 @@ This step is optional, but very useful for development and demo systems.
 
 Open http://localhost:4000 in your browser. You can create a new profile and visit the demo accounts. And you can log into the demo accounts. The default password of the demo accounts is printed at the end of the list of demo accounts after running `mix seed_demo_system`.
 
+### Demo Pages
+
+- http://localhost:4000/demo - UX playground showcasing design components
+- http://localhost:4000/demo/index2 - German landing page highlighting ANIMINA's differentiators
+
 ## User
 
 The `User` resource is the center of the system. In the very beginning of the registration process we also use `BasicUser`.

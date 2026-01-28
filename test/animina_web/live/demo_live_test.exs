@@ -8,7 +8,7 @@ defmodule AniminaWeb.DemoLiveTest do
       {:ok, view, html} = live(conn, ~p"/demo")
 
       # Check navbar elements
-      assert html =~ "animina"
+      assert html =~ "ANIMINA"
       assert has_element?(view, "header nav")
 
       # Check hero section
