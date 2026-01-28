@@ -18,6 +18,7 @@ defmodule AniminaWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/demo", DemoLive
   end
 
   # Other scopes may use custom stacks.

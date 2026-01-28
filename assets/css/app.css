@@ -17,76 +17,103 @@
   themes: false;
 }
 
-/* daisyUI theme plugin. You can update this file by fetching the latest version with:
-  curl -sLO https://github.com/saadeghi/daisyui/releases/latest/download/daisyui-theme.js
-  We ship with two themes, a light one inspired on Phoenix colors and a dark one inspired
-  on Elixir colors. Build your own at: https://daisyui.com/theme-generator/ */
-@plugin "../vendor/daisyui-theme" {
-  name: "dark";
-  default: false;
-  prefersdark: true;
-  color-scheme: "dark";
-  --color-base-100: oklch(30.33% 0.016 252.42);
-  --color-base-200: oklch(25.26% 0.014 253.1);
-  --color-base-300: oklch(20.15% 0.012 254.09);
-  --color-base-content: oklch(97.807% 0.029 256.847);
-  --color-primary: oklch(58% 0.233 277.117);
-  --color-primary-content: oklch(96% 0.018 272.314);
-  --color-secondary: oklch(58% 0.233 277.117);
-  --color-secondary-content: oklch(96% 0.018 272.314);
-  --color-accent: oklch(60% 0.25 292.717);
-  --color-accent-content: oklch(96% 0.016 293.756);
-  --color-neutral: oklch(37% 0.044 257.287);
-  --color-neutral-content: oklch(98% 0.003 247.858);
-  --color-info: oklch(58% 0.158 241.966);
-  --color-info-content: oklch(97% 0.013 236.62);
-  --color-success: oklch(60% 0.118 184.704);
-  --color-success-content: oklch(98% 0.014 180.72);
-  --color-warning: oklch(66% 0.179 58.318);
-  --color-warning-content: oklch(98% 0.022 95.277);
-  --color-error: oklch(58% 0.253 17.585);
-  --color-error-content: oklch(96% 0.015 12.422);
-  --radius-selector: 0.25rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.21875rem;
-  --size-field: 0.21875rem;
-  --border: 1.5px;
-  --depth: 1;
-  --noise: 0;
-}
+/* Animina "Coastal Morning" Theme
+   Design philosophy: Clean, fresh, modern yet approachable
+   Like a refreshing beach morning walk - trustworthy, calm, and open
+   See DESIGN.md for full design system documentation */
 
 @plugin "../vendor/daisyui-theme" {
   name: "light";
   default: true;
   prefersdark: false;
   color-scheme: "light";
-  --color-base-100: oklch(98% 0 0);
-  --color-base-200: oklch(96% 0.001 286.375);
-  --color-base-300: oklch(92% 0.004 286.32);
-  --color-base-content: oklch(21% 0.006 285.885);
-  --color-primary: oklch(70% 0.213 47.604);
-  --color-primary-content: oklch(98% 0.016 73.684);
-  --color-secondary: oklch(55% 0.027 264.364);
-  --color-secondary-content: oklch(98% 0.002 247.839);
-  --color-accent: oklch(0% 0 0);
-  --color-accent-content: oklch(100% 0 0);
-  --color-neutral: oklch(44% 0.017 285.786);
-  --color-neutral-content: oklch(98% 0 0);
-  --color-info: oklch(62% 0.214 259.815);
-  --color-info-content: oklch(97% 0.014 254.604);
-  --color-success: oklch(70% 0.14 182.503);
-  --color-success-content: oklch(98% 0.014 180.72);
-  --color-warning: oklch(66% 0.179 58.318);
-  --color-warning-content: oklch(98% 0.022 95.277);
-  --color-error: oklch(58% 0.253 17.585);
-  --color-error-content: oklch(96% 0.015 12.422);
-  --radius-selector: 0.25rem;
-  --radius-field: 0.25rem;
-  --radius-box: 0.5rem;
-  --size-selector: 0.21875rem;
-  --size-field: 0.21875rem;
-  --border: 1.5px;
+  /* Background: Soft warm white - clean, airy */
+  --color-base-100: #F9FAFB;
+  /* Surface: Pure white for cards */
+  --color-base-200: #FFFFFF;
+  /* Borders/dividers */
+  --color-base-300: #E5E7EB;
+  /* Text: Deep slate - strong but not harsh */
+  --color-base-content: #1F2937;
+  /* Primary: Slate blue - calm, modern, trustworthy */
+  --color-primary: #4A6670;
+  --color-primary-content: #FFFFFF;
+  /* Secondary: Warm sand - earthy, friendly */
+  --color-secondary: #C9A98C;
+  --color-secondary-content: #1F2937;
+  /* Accent: Soft seafoam - fresh, light */
+  --color-accent: #A8C5BE;
+  --color-accent-content: #1F2937;
+  /* Neutral: Muted gray */
+  --color-neutral: #6B7280;
+  --color-neutral-content: #FFFFFF;
+  /* Info: Slate blue (same as primary) */
+  --color-info: #4A6670;
+  --color-info-content: #FFFFFF;
+  /* Success: Muted teal */
+  --color-success: #5A9B8A;
+  --color-success-content: #FFFFFF;
+  /* Warning: Warm amber */
+  --color-warning: #D4915A;
+  --color-warning-content: #1F2937;
+  /* Error: Soft red */
+  --color-error: #DC6B6B;
+  --color-error-content: #FFFFFF;
+  /* Border radius */
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "../vendor/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  /* Background: Deep blue-gray - calm evening */
+  --color-base-100: #1A2023;
+  /* Surface: Slightly lighter for cards */
+  --color-base-200: #242A2E;
+  /* Borders/dividers */
+  --color-base-300: #374151;
+  /* Text: Warm off-white */
+  --color-base-content: #F3F4F6;
+  /* Primary: Lighter slate blue - glows softly */
+  --color-primary: #6B8A96;
+  --color-primary-content: #FFFFFF;
+  /* Secondary: Lighter sand */
+  --color-secondary: #D4B89D;
+  --color-secondary-content: #1A2023;
+  /* Accent: Lighter seafoam */
+  --color-accent: #B8D4CD;
+  --color-accent-content: #1A2023;
+  /* Neutral: Muted gray */
+  --color-neutral: #9CA3AF;
+  --color-neutral-content: #1A2023;
+  /* Info: Lighter slate */
+  --color-info: #6B8A96;
+  --color-info-content: #FFFFFF;
+  /* Success: Lighter teal */
+  --color-success: #6BB5A2;
+  --color-success-content: #1A2023;
+  /* Warning: Lighter amber */
+  --color-warning: #E0A370;
+  --color-warning-content: #1A2023;
+  /* Error: Soft coral */
+  --color-error: #E88585;
+  --color-error-content: #1A2023;
+  /* Border radius */
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
   --depth: 1;
   --noise: 0;
 }
@@ -102,4 +129,54 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
-/* This file is for your main application CSS */
+/* ============================================
+   Animina Custom Styles
+   See DESIGN.md for design system documentation
+   ============================================ */
+
+/* Subtle animations for dropdowns and modals */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation utility classes */
+.animate-in {
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: forwards;
+}
+
+.fade-in {
+  animation-name: fadeIn;
+}
+
+.slide-in-from-top-2 {
+  animation-name: slideInFromTop;
+}
+
+/* Line clamp for truncating text */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
