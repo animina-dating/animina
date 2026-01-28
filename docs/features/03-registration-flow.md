@@ -11,4 +11,3 @@
 3. **Waitlist** - User is placed on the waitlist; admin grants access
 4. **Profile Completion** (post-registration):
    - Set up flags (white/green/red)
-   - Configure partner preferences

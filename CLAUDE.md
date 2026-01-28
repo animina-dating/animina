@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ANIMINA is a Phoenix/Elixir dating platform using Ecto and PostgreSQL for data management. It uses Phoenix LiveView and Tailwind CSS with a mobile-first approach.
+ANIMINA is a Phoenix/Elixir online dating platform.
 
 ## Architecture
 
