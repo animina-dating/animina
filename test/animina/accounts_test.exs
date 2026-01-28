@@ -111,6 +111,18 @@ defmodule Animina.AccountsTest do
       assert "is invalid" in errors_on(changeset).gender
     end
 
+    test "accepts multiple preferred partner genders" do
+      attrs = valid_user_attributes(preferred_partner_gender: ["male", "female"])
+      {:ok, user} = Accounts.register_user(attrs)
+      assert user.preferred_partner_gender == ["male", "female"]
+    end
+
+    test "validates preferred partner gender values" do
+      attrs = valid_user_attributes(preferred_partner_gender: ["invalid"])
+      {:error, changeset} = Accounts.register_user(attrs)
+      assert "contains invalid gender" in errors_on(changeset).preferred_partner_gender
+    end
+
     test "validates terms must be accepted" do
       attrs = valid_user_attributes(terms_accepted: false)
       {:error, changeset} = Accounts.register_user(attrs)

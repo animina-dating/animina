@@ -18,7 +18,7 @@ defmodule Animina.Repo.Migrations.CreateUsersAuthTables do
       add :country_id, references(:countries, type: :binary_id, on_delete: :nothing), null: false
 
       # Partner preferences (auto-filled, editable)
-      add :preferred_partner_gender, :string
+      add :preferred_partner_gender, {:array, :string}, default: []
       add :partner_minimum_age_offset, :integer, default: 6
       add :partner_maximum_age_offset, :integer, default: 2
       add :partner_height_min, :integer, default: 80

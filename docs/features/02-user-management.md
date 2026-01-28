@@ -24,7 +24,7 @@
 
 These fields are pre-populated via LiveView when the user enters the fields above. After than field is filled out and only once (if the values change we keep the initially calculated values). They remain editable:
 
-- **preferred partner gender** - defaults to opposite gender (male→female, female→male, diverse→diverse)
+- **preferred partner gender(s)** - multi-select checkboxes (male, female, diverse); defaults to opposite gender (male→female, female→male, diverse→diverse)
 - **partner minimum age offset** - years younger than user's age to search (calculated min >= 18)
   - Male users: defaults to 6 years younger
   - Female users: defaults to 2 years younger

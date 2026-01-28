@@ -162,17 +162,31 @@ defmodule AniminaWeb.UserLive.Registration do
                   </span>
                 </legend>
                 <div class="space-y-4">
-                  <.input
-                    field={@form[:preferred_partner_gender]}
-                    type="select"
-                    label="Bevorzugtes Geschlecht"
-                    prompt="Bitte wählen"
-                    options={[
-                      {"Männlich", "male"},
-                      {"Weiblich", "female"},
-                      {"Divers", "diverse"}
-                    ]}
-                  />
+                  <div class="fieldset mb-2">
+                    <span class="label mb-1">Bevorzugtes Geschlecht</span>
+                    <input type="hidden" name="user[preferred_partner_gender][]" value="" />
+                    <div class="flex gap-4">
+                      <label
+                        :for={
+                          {label, value} <- [
+                            {"Männlich", "male"},
+                            {"Weiblich", "female"},
+                            {"Divers", "diverse"}
+                          ]
+                        }
+                        class="label cursor-pointer gap-2"
+                      >
+                        <input
+                          type="checkbox"
+                          name="user[preferred_partner_gender][]"
+                          value={value}
+                          checked={value in (@form[:preferred_partner_gender].value || [])}
+                          class="checkbox checkbox-sm"
+                        />
+                        {label}
+                      </label>
+                    </div>
+                  </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <.input
                       field={@form[:partner_minimum_age_offset]}
@@ -265,10 +279,11 @@ defmodule AniminaWeb.UserLive.Registration do
           "country_id" => germany.id,
           "birthday" => min_birthday,
           "gender" => "male",
-          "height" => 170
+          "height" => 170,
+          "preferred_partner_gender" => ["female"]
         }
       else
-        %{"birthday" => min_birthday, "gender" => "male", "height" => 170}
+        %{"birthday" => min_birthday, "gender" => "male", "height" => 170, "preferred_partner_gender" => ["female"]}
       end
 
     changeset = Accounts.change_user_registration(%User{}, initial_attrs)
@@ -362,7 +377,7 @@ defmodule AniminaWeb.UserLive.Registration do
       if gender in ["male", "female", "diverse"] and height do
         params =
           params
-          |> maybe_set("preferred_partner_gender", compute_preferred_gender(gender))
+          |> maybe_set_list("preferred_partner_gender", compute_preferred_gender(gender))
           |> maybe_set("partner_minimum_age_offset", compute_min_age_offset(gender))
           |> maybe_set("partner_maximum_age_offset", compute_max_age_offset(gender))
           |> maybe_set("partner_height_min", compute_height_min(gender, height))
@@ -383,6 +398,16 @@ defmodule AniminaWeb.UserLive.Registration do
     end
   end
 
+  defp maybe_set_list(params, key, value) do
+    current = params[key]
+
+    if is_nil(current) or current == "" or current == [""] or current == [] do
+      Map.put(params, key, value)
+    else
+      params
+    end
+  end
+
   defp parse_int(nil), do: nil
   defp parse_int(""), do: nil
 
@@ -395,9 +420,9 @@ defmodule AniminaWeb.UserLive.Registration do
 
   defp parse_int(val) when is_integer(val), do: val
 
-  defp compute_preferred_gender("male"), do: "female"
-  defp compute_preferred_gender("female"), do: "male"
-  defp compute_preferred_gender("diverse"), do: "diverse"
+  defp compute_preferred_gender("male"), do: ["female"]
+  defp compute_preferred_gender("female"), do: ["male"]
+  defp compute_preferred_gender("diverse"), do: ["diverse"]
 
   defp compute_min_age_offset("male"), do: 6
   defp compute_min_age_offset("female"), do: 2

@@ -24,7 +24,7 @@ defmodule Animina.Accounts.User do
     belongs_to :country, Animina.GeoData.Country
 
     # Partner preferences
-    field :preferred_partner_gender, :string
+    field :preferred_partner_gender, {:array, :string}, default: []
     field :partner_minimum_age_offset, :integer, default: 6
     field :partner_maximum_age_offset, :integer, default: 2
     field :partner_height_min, :integer, default: 80
@@ -99,7 +99,7 @@ defmodule Animina.Accounts.User do
     |> validate_format(:zip_code, ~r/^\d{5}$/, message: "must be 5 digits")
     |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/, message: "must be in E.164 format (e.g. +491234567890)")
     |> validate_birthday()
-    |> validate_inclusion(:preferred_partner_gender, @valid_genders)
+    |> validate_preferred_partner_genders()
     |> validate_number(:partner_height_min, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
     |> validate_number(:partner_height_max, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
     |> validate_number(:search_radius, greater_than_or_equal_to: 1)
@@ -119,6 +119,23 @@ defmodule Animina.Accounts.User do
           add_error(changeset, :birthday, "you must be at least 18 years old")
         else
           changeset
+        end
+    end
+  end
+
+  defp validate_preferred_partner_genders(changeset) do
+    case get_field(changeset, :preferred_partner_gender) do
+      nil ->
+        changeset
+
+      genders ->
+        filtered = Enum.filter(genders, &(&1 != ""))
+        changeset = put_change(changeset, :preferred_partner_gender, filtered)
+
+        if Enum.all?(filtered, &(&1 in @valid_genders)) do
+          changeset
+        else
+          add_error(changeset, :preferred_partner_gender, "contains invalid gender")
         end
     end
   end
