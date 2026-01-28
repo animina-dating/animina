@@ -47,13 +47,13 @@ defmodule AniminaWeb.DemoIndex2Live do
           </div>
         </nav>
       </header>
-
-      <!-- Flash Messages -->
+      
+    <!-- Flash Messages -->
       <div class="fixed top-16 left-0 right-0 z-40">
         <Layouts.flash_group flash={@flash} />
       </div>
-
-      <!-- Main Content -->
+      
+    <!-- Main Content -->
       <main class="flex-1 pt-16">
         <!-- Hero Section -->
         <section class="relative overflow-hidden">
@@ -62,15 +62,22 @@ defmodule AniminaWeb.DemoIndex2Live do
           <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
             <div class="text-center max-w-4xl mx-auto">
               <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-base-content leading-tight">
-                Dating, das
-                <span class="text-primary font-normal">fair</span>
-                und
-                <span class="text-primary font-normal">transparent</span>
-                ist
+                Unsere Mission
               </h1>
               <p class="mt-6 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                Keine versteckten Kosten, keine geheimen Algorithmen, keine Premium-Fallen.
-                Echte Menschen, echte Verbindungen – für alle. Respekt ist bei uns Grundlage: Jeder Nutzer definiert seine eigenen Grenzen – wer diese wiederholt überschreitet, wird gesperrt. Und jeder kann unangemessenes Verhalten melden. Dating soll Spaß machen, aber nicht süchtig – im echten Leben lernt man ja auch nicht jeden Tag 50 neue Menschen kennen.
+                100% kostenlos und werbefinanziert – keine geheimen Algorithmen, keine Premium-Fallen. Bei ANIMINA stehen echte Menschen und echte Verbindungen im Mittelpunkt – mit unterschiedlichen Lebensphasen, Bedürfnissen und Vorlieben.
+              </p>
+              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
+                Menschen verändern sich: mal sucht man eine feste Partnerschaft, mal ein gutes Gespräch, einen Kaffee oder eine Affäre.
+              </p>
+              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
+                Deshalb machen wir Erwartungen sichtbar. Mit unserem Redflag/Greenflag-System zeigst du, wer du bist, was du suchst und wo deine Grenzen liegen.
+              </p>
+              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
+                Respekt ist unsere Grundlage. Unerwünschte Kontakte (z.B. Arbeitskollegen oder Ex-Partner) lassen sich proaktiv per Handynummer-Blacklist blockieren. Wer Grenzen in der Kommunikation missachtet oder wiederholt überschreitet, wird konsequent ausgeschlossen.
+              </p>
+              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-12">
+                Dating soll Freude machen, nicht süchtig: Qualität statt endloser Reizüberflutung – denn auch im echten Leben lernt man nicht jeden Tag hunderte neue potentielle Partner kennen.
               </p>
               <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
                 <a
@@ -83,17 +90,14 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-
-        <!-- Happy Singles Section -->
+        
+    <!-- Happy Singles Section -->
         <section class="py-16 sm:py-20 bg-base-200/50">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
               <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Glückliche Singles aus ganz Deutschland
-              </h2>
-              <p class="mt-3 text-lg text-base-content/70">
                 Menschen, die echte Verbindungen suchen
-              </p>
+              </h2>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
@@ -134,8 +138,8 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-
-        <!-- Key Differentiators Section -->
+        
+    <!-- Key Differentiators Section -->
         <section class="py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12 sm:mb-16">
@@ -165,7 +169,7 @@ defmodule AniminaWeb.DemoIndex2Live do
 
               <.differentiator_card
                 icon="hero-hand-raised"
-                title="Maximal 5 Kontakte pro Tag"
+                title="Maximal 5 Anfragen pro Tag"
                 description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns kann jeder nur 5 Anfragen pro Tag senden – wie im echten Leben. Das macht Dating fairer für alle."
               />
 
@@ -195,8 +199,8 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-
-        <!-- Open Source Highlight Section -->
+        
+    <!-- Open Source Highlight Section -->
         <section class="py-16 sm:py-24 bg-primary/5">
           <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <div class="text-center">
@@ -233,8 +237,8 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-
-        <!-- Flag System Explanation -->
+        
+    <!-- Flag System Explanation -->
         <section class="py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-12">
@@ -273,8 +277,8 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-
-        <!-- Final CTA Section -->
+        
+    <!-- Final CTA Section -->
         <section class="py-16 sm:py-24 bg-base-200/50">
           <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
@@ -297,15 +301,18 @@ defmodule AniminaWeb.DemoIndex2Live do
           </div>
         </section>
       </main>
-
-      <!-- Footer -->
+      
+    <!-- Footer -->
       <footer class="border-t border-base-300 bg-base-200/50">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
               <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
             </div>
-            <nav aria-label="Footer" class="flex flex-wrap justify-center gap-6 text-base text-base-content/70">
+            <nav
+              aria-label="Footer"
+              class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
+            >
               <a href="#" class="hover:text-primary transition-colors">Über uns</a>
               <a href="#" class="hover:text-primary transition-colors">Datenschutz</a>
               <a href="#" class="hover:text-primary transition-colors">AGB</a>
