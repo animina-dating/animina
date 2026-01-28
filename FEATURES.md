@@ -7,16 +7,13 @@ A comprehensive feature specification for rebuilding the ANIMINA dating platform
 ## 1. USER MANAGEMENT & AUTHENTICATION
 
 ### 1.1 Registration
-- **Multi-step onboarding flow** with progress tracking
-- Required fields: email, username (2-15 chars, alphanumeric with dots/hyphens), name, birthday (legal age validation), gender, zip code, country, mobile phone
+- **Simple registration form** collecting required and optional fields
+- Required fields: email, password, username (downcased unique, 2-15 chars, alphanumeric with dots/hyphens), name, birthday (legal age validation), gender, zip code, country, mobile phone, legal terms acceptance
 - Optional fields: height (40-250cm), occupation, language preference
-- Legal terms acceptance required
-- Email confirmation via 6-digit PIN (3 attempts before account deletion)
-- Registration completion requires: profile photo + "About me" story with photo
+- Email confirmation via magic link within 30 minutes (before account deletion)
 
 ### 1.2 Authentication
 - Email/password login (can sign in with username OR email)
-- Password strength validation against common password blacklist
 - Persistent session tokens
 - Password reset via email link
 
@@ -27,7 +24,6 @@ A comprehensive feature specification for rebuilding the ANIMINA dating platform
 | `validated` | Admin-verified account |
 | `under_investigation` | Flagged for review, hidden from public |
 | `banned` | Permanently restricted |
-| `incognito` | User-chosen hidden mode, can't receive messages |
 | `hibernate` | Temporary self-deactivation |
 | `archived` | User-deleted account |
 
@@ -38,7 +34,7 @@ State transitions are controlled with specific rules (e.g., only admins can ban/
 - **Admin role**: Platform management, can view all profiles, manage reports, control waitlist
 
 ### 1.5 Waitlist System
-- Triggers when registration rate exceeds hourly threshold
+- All new registrations are placed on the waitlist by default
 - Waitlisted users see a "too successful" page
 - Admins manually grant access to waitlisted users
 - Email notifications for both admins and users
@@ -260,11 +256,13 @@ Features:
 
 ## 8. GEOGRAPHIC FEATURES
 
-### 9.1 City Database
-- Zip code lookup
-- Latitude/longitude coordinates
-- County and state/region information
-- Fast indexed lookups
+### 9.1 City Database [DONE]
+- [DONE] Zip code lookup
+- [DONE] Latitude/longitude coordinates
+- [DONE] County and state/region information
+- [DONE] Fast indexed lookups
+- [DONE] Country resource (ISO 3166-1 alpha-2 codes)
+- [DONE] 8,934 German cities seeded from OpenDataSoft dataset
 
 ### 9.2 Distance Calculation
 - Haversine formula for calculating distance between coordinates
@@ -317,21 +315,12 @@ Features:
 
 ---
 
-## 11. REGISTRATION ONBOARDING FLOW
+## 11. REGISTRATION & PROFILE COMPLETION FLOW
 
-Step-by-step registration:
-
-1. **Filter Potential Partners** - Set initial preferences, see potential match count
-2. **Select White Flags** - Choose traits about yourself (most important first)
-3. **Select Green Flags** - Choose traits you want in a partner
-4. **Select Red Flags** - Choose deal-breaker traits
-5. **User Details** - Complete remaining profile fields
-6. **Email Validation** - Confirm email via PIN
-7. **Preferences Setup** - Set partner age/height/gender/distance preferences
-8. **Profile Photo** - Upload required profile photo
-9. **About Me Story** - Create required "About me" story with photo
-
-Progress tracked so users can resume interrupted registration.
+1. **Registration** - Fill out the registration form (required + optional fields)
+2. **Email Validation** - Confirm email via 6-digit PIN
+3. **Waitlist** - User is placed on the waitlist; admin grants access
+4. **Profile Completion** (post-registration) - Upload profile photo, create "About me" story with photo, set up flags (white/green/red), configure partner preferences
 
 ---
 
@@ -390,7 +379,7 @@ Progress tracked so users can resume interrupted registration.
 ## Summary
 
 ANIMINA is a dating platform with:
-- **Multi-step onboarding** with progress tracking
+- **Simple registration** with waitlist and post-registration profile completion
 - **Three-color personality trait system** for compatibility matching
 - **Story-based profiles** with headlines and photos
 - **Geographic matching** within configurable radius
