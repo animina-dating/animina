@@ -35,40 +35,92 @@ defmodule AniminaWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex flex-column px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
+    <div class="min-h-screen flex flex-col bg-base-100">
+      <!-- Navigation -->
+      <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
+        <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between">
+            <a href="/" class="flex items-center gap-2 group">
+              <span class="text-2xl font-light tracking-tight text-primary transition-colors group-hover:text-primary/80">
+                ANIMINA
+              </span>
             </a>
-          </li>
-        </ul>
-      </div>
-    </header>
 
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
+            <div class="flex items-center gap-4">
+              <%= if @current_scope do %>
+                <span class="text-base text-base-content/70">
+                  {@current_scope.user.email}
+                </span>
+                <a
+                  href="/users/settings"
+                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
+                >
+                  Einstellungen
+                </a>
+                <.link
+                  href="/users/log-out"
+                  method="delete"
+                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
+                >
+                  Abmelden
+                </.link>
+              <% else %>
+                <a
+                  href="/users/log-in"
+                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
+                >
+                  Anmelden
+                </a>
+                <a
+                  href="/users/register"
+                  class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Registrieren
+                </a>
+              <% end %>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <!-- Flash Messages -->
+      <div class="fixed top-16 left-0 right-0 z-40">
+        <.flash_group flash={@flash} />
+      </div>
+      <!-- Main Content -->
+      <main class="flex-1 pt-16">
         {render_slot(@inner_block)}
-      </div>
-    </main>
-
-    <.flash_group flash={@flash} />
+      </main>
+      <!-- Footer -->
+      <footer class="border-t border-base-300 bg-base-200/50">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+              <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
+            </div>
+            <nav
+              aria-label="Footer"
+              class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
+            >
+              <a href="#" class="hover:text-primary transition-colors">Über uns</a>
+              <a href="#" class="hover:text-primary transition-colors">Datenschutz</a>
+              <a href="#" class="hover:text-primary transition-colors">AGB</a>
+              <a href="#" class="hover:text-primary transition-colors">Impressum</a>
+              <a
+                href="https://github.com/animina-dating/animina"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-primary transition-colors"
+              >
+                GitHub
+              </a>
+            </nav>
+            <p class="text-base text-base-content/70">
+              &copy; {DateTime.utc_now().year} ANIMINA. Open Source mit ❤️
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
     """
   end
 

@@ -252,6 +252,28 @@ defmodule AniminaWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "radio"} = assigns) do
+    ~H"""
+    <div class="fieldset mb-2">
+      <span :if={@label} class="label mb-1">{@label}</span>
+      <div class="flex gap-4">
+        <label :for={{label, value} <- @options} class="label cursor-pointer gap-2">
+          <input
+            type="radio"
+            name={@name}
+            value={value}
+            checked={to_string(@value) == to_string(value)}
+            class={@class || "radio"}
+            {@rest}
+          />
+          {label}
+        </label>
+      </div>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div class="fieldset mb-2">

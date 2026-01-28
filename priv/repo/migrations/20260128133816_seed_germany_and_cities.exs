@@ -8,7 +8,7 @@ defmodule Animina.Repo.Migrations.SeedGermanyAndCities do
 
     execute """
     INSERT INTO countries (id, name, code, inserted_at, updated_at)
-    VALUES ('#{country_id}', 'Germany', 'DE', '#{now}', '#{now}')
+    VALUES ('#{country_id}', 'Deutschland', 'DE', '#{now}', '#{now}')
     """
 
     # Deduplicate by zip_code (keep last occurrence) then insert in batches

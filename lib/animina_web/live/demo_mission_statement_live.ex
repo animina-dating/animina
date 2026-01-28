@@ -12,178 +12,111 @@ defmodule AniminaWeb.DemoMissionStatementLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex flex-col bg-base-100">
-      <!-- Navigation -->
-      <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
-        <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-16 items-center justify-between">
-            <a href="/demo/index2" class="flex items-center gap-2 group">
-              <span class="text-2xl font-light tracking-tight text-primary transition-colors group-hover:text-primary/80">
-                ANIMINA
-              </span>
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <!-- Hero Section with Mission Statement -->
+      <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
+
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+          <div class="text-center max-w-4xl mx-auto">
+            <a
+              href="/"
+              class="inline-flex items-center gap-2 text-base text-primary hover:text-primary/80 mb-8 transition-colors"
+            >
+              <.icon name="hero-arrow-left" class="size-5" />
+              Zurück zur Startseite
             </a>
 
-            <div class="flex items-center gap-4">
-              <a
-                href="/sign-in"
-                class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
-              >
-                Anmelden
-              </a>
-              <a
-                href="/register"
-                class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Registrieren
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
-
-      <!-- Flash Messages -->
-      <div class="fixed top-16 left-0 right-0 z-40">
-        <Layouts.flash_group flash={@flash} />
-      </div>
-
-      <!-- Main Content -->
-      <main class="flex-1 pt-16">
-        <!-- Hero Section with Mission Statement -->
-        <section class="relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
-
-          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-            <div class="text-center max-w-4xl mx-auto">
-              <a
-                href="/demo/index2"
-                class="inline-flex items-center gap-2 text-base text-primary hover:text-primary/80 mb-8 transition-colors"
-              >
-                <.icon name="hero-arrow-left" class="size-5" />
-                Zurück zur Startseite
-              </a>
-
-              <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-base-content leading-tight">
-                Dating, das
-                <span class="text-primary font-normal">fair</span>
-                und
-                <span class="text-primary font-normal">transparent</span>
-                ist
-              </h1>
-              <p class="mt-8 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-3xl mx-auto">
-                Keine versteckten Kosten, keine geheimen Algorithmen, keine Premium-Fallen.
-                Echte Menschen, echte Verbindungen – für alle.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Mission Details -->
-        <section class="py-16 sm:py-24 bg-base-200/50">
-          <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="prose prose-lg max-w-none">
-              <.mission_block
-                title="Respekt als Grundlage"
-                icon="hero-shield-check"
-              >
-                Jeder Nutzer definiert seine eigenen Grenzen – wer diese wiederholt überschreitet, wird gesperrt.
-                Und jeder kann unangemessenes Verhalten melden. Bei uns steht der respektvolle Umgang miteinander
-                an erster Stelle.
-              </.mission_block>
-
-              <.mission_block
-                title="Spaß ohne Suchtfaktor"
-                icon="hero-face-smile"
-              >
-                Dating soll Spaß machen, aber nicht süchtig – im echten Leben lernt man ja auch nicht jeden Tag
-                50 neue Menschen kennen. Deshalb verzichten wir bewusst auf manipulative Designs wie endloses
-                Swipen oder Push-Benachrichtigungen, die dich ständig zurückholen wollen.
-              </.mission_block>
-
-              <.mission_block
-                title="Für alle da"
-                icon="hero-heart"
-              >
-                Wir kümmern uns um jeden. Egal wer du bist – bei ANIMINA bist du willkommen.
-                Keine Diskriminierung durch Algorithmen, die nur bestimmte Menschen bevorzugen.
-                Unser Code ist Open Source – jeder kann nachprüfen, dass wir alle gleich behandeln.
-              </.mission_block>
-
-              <.mission_block
-                title="Fairness durch Limitierung"
-                icon="hero-hand-raised"
-              >
-                Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen,
-                weniger gefragte bekommen kaum welche. Bei uns kann jeder nur 5 Anfragen pro Tag senden –
-                wie im echten Leben. Das macht Dating fairer für alle.
-              </.mission_block>
-
-              <.mission_block
-                title="Persönlichkeit statt Oberflächlichkeit"
-                icon="hero-puzzle-piece"
-              >
-                Unser einzigartiges Drei-Farben-System hilft dir, Menschen zu finden, die wirklich zu dir passen.
-                Weiße Flaggen zeigen, wer du bist. Grüne, was du suchst. Rote, was nicht geht.
-                Profile mit Tiefgang statt oberflächlichem Swipen.
-              </.mission_block>
-            </div>
-          </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Bereit für echtes Dating?
-            </h2>
-            <p class="mt-4 text-lg text-base-content/70">
-              Keine Tricks, keine versteckten Kosten. Einfach Menschen kennenlernen, die zu dir passen.
-            </p>
-            <div class="mt-8">
-              <a
-                href="/register"
-                class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-              >
-                Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
-              </a>
-            </div>
-            <p class="mt-4 text-base text-base-content/70">
-              Kostenlos. Für immer. Für alle.
-            </p>
-          </div>
-        </section>
-      </main>
-
-      <!-- Footer -->
-      <footer class="border-t border-base-300 bg-base-200/50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
-            </div>
-            <nav
-              aria-label="Footer"
-              class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
-            >
-              <a href="#" class="hover:text-primary transition-colors">Über uns</a>
-              <a href="#" class="hover:text-primary transition-colors">Datenschutz</a>
-              <a href="#" class="hover:text-primary transition-colors">AGB</a>
-              <a href="#" class="hover:text-primary transition-colors">Impressum</a>
-              <a
-                href="https://github.com/animina-dating/animina"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-primary transition-colors"
-              >
-                GitHub
-              </a>
-            </nav>
-            <p class="text-base text-base-content/70">
-              &copy; {DateTime.utc_now().year} ANIMINA. Open Source mit ❤️
+            <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-base-content leading-tight">
+              Dating, das
+              <span class="text-primary font-normal">fair</span>
+              und
+              <span class="text-primary font-normal">transparent</span>
+              ist
+            </h1>
+            <p class="mt-8 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-3xl mx-auto">
+              Keine versteckten Kosten, keine geheimen Algorithmen, keine Premium-Fallen.
+              Echte Menschen, echte Verbindungen – für alle.
             </p>
           </div>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      <!-- Mission Details -->
+      <section class="py-16 sm:py-24 bg-base-200/50">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div class="prose prose-lg max-w-none">
+            <.mission_block
+              title="Respekt als Grundlage"
+              icon="hero-shield-check"
+            >
+              Jeder Nutzer definiert seine eigenen Grenzen – wer diese wiederholt überschreitet, wird gesperrt.
+              Und jeder kann unangemessenes Verhalten melden. Bei uns steht der respektvolle Umgang miteinander
+              an erster Stelle.
+            </.mission_block>
+
+            <.mission_block
+              title="Spaß ohne Suchtfaktor"
+              icon="hero-face-smile"
+            >
+              Dating soll Spaß machen, aber nicht süchtig – im echten Leben lernt man ja auch nicht jeden Tag
+              50 neue Menschen kennen. Deshalb verzichten wir bewusst auf manipulative Designs wie endloses
+              Swipen oder Push-Benachrichtigungen, die dich ständig zurückholen wollen.
+            </.mission_block>
+
+            <.mission_block
+              title="Für alle da"
+              icon="hero-heart"
+            >
+              Wir kümmern uns um jeden. Egal wer du bist – bei ANIMINA bist du willkommen.
+              Keine Diskriminierung durch Algorithmen, die nur bestimmte Menschen bevorzugen.
+              Unser Code ist Open Source – jeder kann nachprüfen, dass wir alle gleich behandeln.
+            </.mission_block>
+
+            <.mission_block
+              title="Fairness durch Limitierung"
+              icon="hero-hand-raised"
+            >
+              Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen,
+              weniger gefragte bekommen kaum welche. Bei uns kann jeder nur 5 Anfragen pro Tag senden –
+              wie im echten Leben. Das macht Dating fairer für alle.
+            </.mission_block>
+
+            <.mission_block
+              title="Persönlichkeit statt Oberflächlichkeit"
+              icon="hero-puzzle-piece"
+            >
+              Unser einzigartiges Drei-Farben-System hilft dir, Menschen zu finden, die wirklich zu dir passen.
+              Weiße Flaggen zeigen, wer du bist. Grüne, was du suchst. Rote, was nicht geht.
+              Profile mit Tiefgang statt oberflächlichem Swipen.
+            </.mission_block>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Section -->
+      <section class="py-16 sm:py-24">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+            Bereit für echtes Dating?
+          </h2>
+          <p class="mt-4 text-lg text-base-content/70">
+            Keine Tricks, keine versteckten Kosten. Einfach Menschen kennenlernen, die zu dir passen.
+          </p>
+          <div class="mt-8">
+            <a
+              href="/users/register"
+              class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+            >
+              Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
+            </a>
+          </div>
+          <p class="mt-4 text-base text-base-content/70">
+            Kostenlos. Für immer. Für alle.
+          </p>
+        </div>
+      </section>
+    </Layouts.app>
     """
   end
 

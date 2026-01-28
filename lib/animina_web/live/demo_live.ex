@@ -37,107 +37,8 @@ defmodule AniminaWeb.DemoLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex flex-col bg-base-100">
-      <!-- Fixed Navigation -->
-      <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
-        <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-16 items-center justify-between">
-            <!-- Logo -->
-            <a href="/demo" class="flex items-center gap-2 group">
-              <span class="text-2xl font-light tracking-tight text-primary transition-colors group-hover:text-primary/80">
-                ANIMINA
-              </span>
-            </a>
-            
-    <!-- Right side actions -->
-            <div class="flex items-center gap-2 sm:gap-4">
-              <!-- Messages/Bell -->
-              <button
-                type="button"
-                class="relative p-2 rounded-full hover:bg-base-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                aria-label="Messages"
-              >
-                <.icon name="hero-bell" class="size-6 text-base-content/70" />
-                <span
-                  :if={@message_count > 0}
-                  class="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[20px] h-5 px-1.5 text-sm font-medium text-white bg-primary rounded-full"
-                >
-                  {@message_count}
-                </span>
-              </button>
-              
-    <!-- Bookmarks with dropdown -->
-              <div class="relative" phx-click-away={@bookmark_open && "close_bookmarks"}>
-                <button
-                  type="button"
-                  phx-click="toggle_bookmarks"
-                  class="relative p-2 rounded-full hover:bg-base-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                  aria-label="Bookmarks"
-                  aria-expanded={@bookmark_open}
-                >
-                  <.icon name="hero-bookmark" class="size-6 text-base-content/70" />
-                </button>
-
-                <!-- Bookmark Dropdown -->
-                <div
-                  :if={@bookmark_open}
-                  class="absolute right-0 mt-2 w-72 bg-base-200 rounded-xl shadow-lg border border-base-300 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
-                >
-                  <div class="p-3 border-b border-base-300">
-                    <h3 class="text-base font-medium text-base-content">Saved Profiles</h3>
-                  </div>
-                  <ul class="max-h-64 overflow-y-auto">
-                    <li :for={bookmark <- @bookmarks}>
-                      <a
-                        href="#"
-                        class="flex items-center gap-3 px-3 py-3 hover:bg-base-300 transition-colors"
-                      >
-                        <div class="w-10 h-10 rounded-full bg-accent/30 flex items-center justify-center">
-                          <.icon name="hero-user" class="size-5 text-primary" />
-                        </div>
-                        <div class="flex-1 min-w-0">
-                          <p class="text-base font-medium text-base-content truncate">
-                            {bookmark.name}, {bookmark.age}
-                          </p>
-                          <p class="text-sm text-base-content/60 truncate">{bookmark.location}</p>
-                        </div>
-                      </a>
-                    </li>
-                  </ul>
-                  <div class="p-3 border-t border-base-300">
-                    <a
-                      href="#"
-                      class="block text-center text-base text-primary hover:text-primary/80 font-medium transition-colors"
-                    >
-                      View all saved
-                    </a>
-                  </div>
-                </div>
-              </div>
-              
-    <!-- Profile Avatar -->
-              <button
-                type="button"
-                class="flex items-center gap-2 p-1 rounded-full hover:bg-base-300 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                aria-label="Your profile"
-              >
-                <div class="w-9 h-9 rounded-full bg-secondary/40 border-2 border-secondary flex items-center justify-center">
-                  <.icon name="hero-user" class="size-5 text-base-content/70" />
-                </div>
-              </button>
-            </div>
-          </div>
-        </nav>
-      </header>
-      
-    <!-- Flash Messages Area (below navbar) -->
-      <div class="fixed top-16 left-0 right-0 z-40">
-        <Layouts.flash_group flash={@flash} />
-      </div>
-      
-    <!-- Main Content -->
-      <main class="flex-1 pt-16">
-        <!-- Hero Section -->
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <!-- Hero Section -->
         <section class="relative overflow-hidden">
           <!-- Subtle gradient background -->
           <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
@@ -290,28 +191,7 @@ defmodule AniminaWeb.DemoLive do
             </div>
           </div>
         </section>
-      </main>
-      
-    <!-- Footer -->
-      <footer class="border-t border-base-300 bg-base-200/50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
-            </div>
-            <nav class="flex flex-wrap justify-center gap-6 text-base text-base-content/60">
-              <a href="#" class="hover:text-primary transition-colors">About</a>
-              <a href="#" class="hover:text-primary transition-colors">Privacy</a>
-              <a href="#" class="hover:text-primary transition-colors">Terms</a>
-              <a href="#" class="hover:text-primary transition-colors">Contact</a>
-            </nav>
-            <p class="text-base text-base-content/50">
-              &copy; {DateTime.utc_now().year} Animina. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layouts.app>
     """
   end
 

@@ -19,6 +19,14 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 > - [video recording](https://media.ccc.de/v/froscon2024-3060-parship_tinder_animina_und_co)
 > - [slides](https://speakerdeck.com/wintermeyer/disassembling-online-dating-froscon-2024)
 
+## Features
+
+- **User Authentication**: Email/password registration and login with magic link support
+- **User Profiles**: Display name, birthday, gender, height, location, and partner preferences
+- **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
+- **German UI**: Registration and login forms in German ("Coastal Morning" design)
+- **Geo Data**: Germany with 8000+ cities seeded
+
 ## ANIMINA Installation Guide for Developers
 
 What we assume:
@@ -32,6 +40,13 @@ What we assume:
 - Git clone the project with `git clone git@github.com:animina-dating/animina.git`
 - `cd animina` into the local project clone
 
-## Submiting Code
+### Setup
 
-Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+```bash
+mix deps.get
+mix ecto.setup
+mix phx.server
+```
+
+Visit `http://localhost:4000` to see the landing page. Register at `/users/register`.
+

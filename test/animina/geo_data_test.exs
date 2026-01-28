@@ -59,10 +59,10 @@ defmodule Animina.GeoDataTest do
       assert length(GeoData.list_countries()) == initial_count + 2
     end
 
-    test "seeded Germany country exists" do
+    test "seeded Deutschland country exists" do
       country = GeoData.get_country_by_code("DE")
       assert country != nil
-      assert country.name == "Germany"
+      assert country.name == "Deutschland"
     end
   end
 

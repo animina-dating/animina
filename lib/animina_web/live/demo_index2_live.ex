@@ -19,43 +19,8 @@ defmodule AniminaWeb.DemoIndex2Live do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="min-h-screen flex flex-col bg-base-100">
-      <!-- Navigation -->
-      <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
-        <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div class="flex h-16 items-center justify-between">
-            <a href="/" class="flex items-center gap-2 group">
-              <span class="text-2xl font-light tracking-tight text-primary transition-colors group-hover:text-primary/80">
-                ANIMINA
-              </span>
-            </a>
-
-            <div class="flex items-center gap-4">
-              <a
-                href="/sign-in"
-                class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
-              >
-                Anmelden
-              </a>
-              <a
-                href="/register"
-                class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Registrieren
-              </a>
-            </div>
-          </div>
-        </nav>
-      </header>
-      
-    <!-- Flash Messages -->
-      <div class="fixed top-16 left-0 right-0 z-40">
-        <Layouts.flash_group flash={@flash} />
-      </div>
-      
-    <!-- Main Content -->
-      <main class="flex-1 pt-16">
-        <!-- Hero Section -->
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <!-- Hero Section -->
         <section class="relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
 
@@ -135,7 +100,7 @@ defmodule AniminaWeb.DemoIndex2Live do
 
               <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <a
-                  href="/register"
+                  href="/users/register"
                   class="inline-flex items-center justify-center px-8 py-3.5 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
                 >
                   Jetzt registrieren – kostenlos
@@ -331,7 +296,7 @@ defmodule AniminaWeb.DemoIndex2Live do
             </p>
             <div class="mt-8">
               <a
-                href="/register"
+                href="/users/register"
                 class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
                 Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
@@ -342,39 +307,7 @@ defmodule AniminaWeb.DemoIndex2Live do
             </p>
           </div>
         </section>
-      </main>
-      
-    <!-- Footer -->
-      <footer class="border-t border-base-300 bg-base-200/50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-              <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
-            </div>
-            <nav
-              aria-label="Footer"
-              class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
-            >
-              <a href="#" class="hover:text-primary transition-colors">Über uns</a>
-              <a href="#" class="hover:text-primary transition-colors">Datenschutz</a>
-              <a href="#" class="hover:text-primary transition-colors">AGB</a>
-              <a href="#" class="hover:text-primary transition-colors">Impressum</a>
-              <a
-                href="https://github.com/animina-dating/animina"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-primary transition-colors"
-              >
-                GitHub
-              </a>
-            </nav>
-            <p class="text-base text-base-content/70">
-              &copy; {DateTime.utc_now().year} ANIMINA. Open Source mit ❤️
-            </p>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </Layouts.app>
     """
   end
 
