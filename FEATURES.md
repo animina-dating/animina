@@ -13,7 +13,6 @@ A comprehensive feature specification for rebuilding the ANIMINA dating platform
 - Legal terms acceptance required
 - Email confirmation via 6-digit PIN (3 attempts before account deletion)
 - Registration completion requires: profile photo + "About me" story with photo
-- Registration bonus: 100 credits awarded on completion
 
 ### 1.2 Authentication
 - Email/password login (can sign in with username OR email)
@@ -65,9 +64,7 @@ State transitions are controlled with specific rules (e.g., only admins can ban/
 - Geographic search radius (in km)
 - Communication preference: "preapproved only" (only users you've liked can message you)
 
-### 2.3 Privacy Settings
-- Public/private profile toggle
-- Private profiles require credits to view (see Credits section)
+### 2.3 Visibility Settings
 - Incognito mode hides profile completely
 
 ### 2.4 Profile Completion Requirements
@@ -235,40 +232,7 @@ Features:
 
 ---
 
-## 7. CREDITS SYSTEM (GAMIFICATION & MONETIZATION)
-
-### 7.1 Earning Credits
-| Action | Points |
-|--------|--------|
-| Registration completion | 100 |
-| Daily login | 100 |
-| 10-day streak milestone | +150 (250 total) |
-| 20-day streak milestone | +150 (250 total) |
-| (Every 10-day milestone) | +150 |
-
-### 7.2 Spending Credits
-| Action | Cost |
-|--------|------|
-| View private profile (first time, they haven't liked you) | 20 |
-| View private profile (first time, they have liked you) | 10 |
-| View private profile (subsequent views) | 10 |
-
-### 7.3 Streak System
-- Tracks consecutive days of platform usage
-- Increments by 1 each consecutive day
-- Resets to 1 if user misses a day
-- Milestone bonuses at 10, 20, 30... day marks
-- Streak counter visible on profile
-
-### 7.4 Credit Tracking
-- All transactions logged with subject/reason
-- User's total credit balance aggregated
-- Credits can have a "donor" (user who gave credits)
-- Real-time balance updates via notifications
-
----
-
-## 8. REPORTING & MODERATION
+## 7. REPORTING & MODERATION
 
 ### 8.1 User Reports
 - Users can report other users with description (max 1,024 characters)
@@ -294,7 +258,7 @@ Features:
 
 ---
 
-## 9. GEOGRAPHIC FEATURES
+## 8. GEOGRAPHIC FEATURES
 
 ### 9.1 City Database
 - Zip code lookup
@@ -314,14 +278,13 @@ Features:
 
 ---
 
-## 10. NOTIFICATIONS
+## 9. NOTIFICATIONS
 
 ### 10.1 Real-Time Notifications (In-App)
 - New messages received
 - Reactions (likes/blocks) created/removed
 - Bookmarks created/updated
 - Profile visits
-- Credit balance changes
 - User flag changes
 - Story updates
 
@@ -334,7 +297,7 @@ Features:
 
 ---
 
-## 11. ADMIN FEATURES
+## 10. ADMIN FEATURES
 
 ### 11.1 User Management
 - View all profiles regardless of privacy/state
@@ -354,7 +317,7 @@ Features:
 
 ---
 
-## 12. REGISTRATION ONBOARDING FLOW
+## 11. REGISTRATION ONBOARDING FLOW
 
 Step-by-step registration:
 
@@ -372,28 +335,26 @@ Progress tracked so users can resume interrupted registration.
 
 ---
 
-## 13. ACCOUNT MANAGEMENT
+## 12. ACCOUNT MANAGEMENT
 
 ### 13.1 Profile Editing
 - Update all profile fields
 - Change password
 - Update partner preferences
-- Toggle profile privacy
-
-### 13.2 Profile Visibility Controls
+### 12.2 Profile Visibility Controls
 - Activate/deactivate profile
 - Enter incognito mode
 - Hibernate account
 - Archive (delete) account
 
-### 13.3 Account Deletion
+### 12.3 Account Deletion
 - Safety countdown (10 seconds) before deletion enabled
 - Requires PIN confirmation
 - Irreversible action
 
 ---
 
-## 14. SECURITY FEATURES
+## 13. SECURITY FEATURES
 
 ### 14.1 Input Validation
 - Username: 2-15 chars, alphanumeric + dots/hyphens
@@ -416,7 +377,7 @@ Progress tracked so users can resume interrupted registration.
 
 ---
 
-## 15. MOBILE-FIRST DESIGN REQUIREMENTS
+## 14. MOBILE-FIRST DESIGN REQUIREMENTS
 
 - Responsive design prioritizing mobile experience
 - Dark mode support
@@ -433,13 +394,12 @@ ANIMINA is a dating platform with:
 - **Three-color personality trait system** for compatibility matching
 - **Story-based profiles** with headlines and photos
 - **Geographic matching** within configurable radius
-- **Credits-based gamification** with streaks and daily bonuses
 - **Comprehensive moderation** with reports and user state management
-- **Privacy controls** including private profiles and incognito mode
+- **Visibility controls** including incognito mode
 - **Real-time notifications** for all interactions
 - **Rate-limited messaging** with communication gating options
 
-The platform emphasizes profile completeness, daily engagement through the streak system, and thoughtful matching through the personality flag system.
+The platform emphasizes profile completeness and thoughtful matching through the personality flag system.
 
 ---
 
