@@ -25,7 +25,7 @@ What we assume:
 
 - macOS or Linux as an OS
 - Installed [PostgreSQL](https://www.postgresql.org) database.
-- Basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org). Have a look at https://elixir-phoenix-ash.com if you are new to it.
+- Basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org).
 
 > [!IMPORTANT]
 > If you wish to disable ML features (e.g., because of slow hardware), add `DISABLE_ML_FEATURES=true` before `mix` and `iex` commands.
@@ -56,8 +56,8 @@ We use [asdf](https://asdf-vm.com) to handle the Elixir and Erlang version. You 
 
 ### Database Setup
 
-- `mix ash_postgres.create` to create the database
-- `mix ash_postgres.migrate` to run migrations
+- `mix ecto.create` to create the database
+- `mix ecto.migrate` to run migrations
 
 ### Seed the Database
 
