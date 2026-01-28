@@ -129,6 +129,14 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
+/* German hyphenation for better text flow */
+body {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphenate-character: "-";
+}
+
 /* ============================================
    Animina Custom Styles
    See DESIGN.md for design system documentation

@@ -20,6 +20,7 @@ defmodule AniminaWeb.Router do
     get "/", PageController, :home
     live "/demo", DemoLive
     live "/demo/index2", DemoIndex2Live
+    live "/demo/mission_statement", DemoMissionStatementLive
   end
 
   # Other scopes may use custom stacks.

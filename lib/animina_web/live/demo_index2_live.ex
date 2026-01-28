@@ -60,26 +60,66 @@ defmodule AniminaWeb.DemoIndex2Live do
           <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
 
           <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-            <div class="text-center max-w-4xl mx-auto">
-              <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-base-content leading-tight">
-                Unsere Mission
-              </h1>
-              <p class="mt-6 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                100% kostenlos und werbefinanziert – keine geheimen Algorithmen, keine Premium-Fallen. Bei ANIMINA stehen echte Menschen und echte Verbindungen im Mittelpunkt – mit unterschiedlichen Lebensphasen, Bedürfnissen und Vorlieben.
-              </p>
-              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                Menschen verändern sich: mal sucht man eine feste Partnerschaft, mal ein gutes Gespräch, einen Kaffee oder eine Affäre.
-              </p>
-              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                Deshalb machen wir Erwartungen sichtbar. Mit unserem Redflag/Greenflag-System zeigst du, wer du bist, was du suchst und wo deine Grenzen liegen.
-              </p>
-              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                Respekt ist unsere Grundlage. Unerwünschte Kontakte (z.B. Arbeitskollegen oder Ex-Partner) lassen sich proaktiv per Handynummer-Blacklist blockieren. Wer Grenzen in der Kommunikation missachtet oder wiederholt überschreitet, wird konsequent ausgeschlossen.
-              </p>
-              <p class="mt-4 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-12">
-                Dating soll Freude machen, nicht süchtig: Qualität statt endloser Reizüberflutung – denn auch im echten Leben lernt man nicht jeden Tag hunderte neue potentielle Partner kennen.
-              </p>
-              <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+            <div class="text-center max-w-5xl mx-auto">
+              <!-- Hero Images -->
+              <div class="flex justify-center gap-4 mb-10">
+                <div class="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?w=200&h=260&fit=crop&crop=face"
+                    alt="Lächelnder Mann"
+                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-3 hover:rotate-0 transition-transform duration-300"
+                  />
+                  <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
+                    <.icon name="hero-heart-solid" class="size-4 text-white" />
+                  </div>
+                </div>
+                <div class="relative mt-6">
+                  <img
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=260&fit=crop&crop=face"
+                    alt="Fröhliche Frau"
+                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-3 hover:rotate-0 transition-transform duration-300"
+                  />
+                  <div class="absolute -bottom-2 -left-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
+                    <.icon name="hero-sparkles-solid" class="size-4 text-white" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                <.mission_card
+                  icon="hero-currency-euro"
+                  title="100% Kostenlos"
+                  description="Werbefinanziert – keine Premium-Fallen, keine geheimen Algorithmen."
+                />
+                <.mission_card
+                  icon="hero-arrows-right-left"
+                  title="Ohne Schubladen"
+                  description="Partnerschaft, Affaire oder ein gutes Gespräch – wir urteilen nicht."
+                />
+                <.mission_card
+                  icon="hero-flag"
+                  title="Flaggen-System"
+                  description="Zeig wer du bist, definiere was du suchst und wo deine Grenzen liegen."
+                />
+                <.mission_card
+                  icon="hero-shield-check"
+                  title="Respekt zuerst"
+                  description="Blacklist für unerwünschte Kontakte. Grenzüberschreiter werden ausgeschlossen."
+                />
+                <.mission_card
+                  icon="hero-face-smile"
+                  title="Freude statt Sucht"
+                  description="Dating soll Freude machen, nicht süchtig – Qualität statt Reizüberflutung."
+                />
+                <.mission_card_link
+                  icon="hero-document-text"
+                  title="Unser Mission Statement"
+                  description="Erfahre mehr über unsere Vision und Werte."
+                  href="/demo/mission_statement"
+                />
+              </div>
+
+              <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
                 <a
                   href="/register"
                   class="inline-flex items-center justify-center px-8 py-3.5 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
@@ -333,6 +373,56 @@ defmodule AniminaWeb.DemoIndex2Live do
         </div>
       </footer>
     </div>
+    """
+  end
+
+  # Mission card component for hero section
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :description, :string, required: true
+
+  defp mission_card(assigns) do
+    ~H"""
+    <div class="flex flex-col items-center text-center p-5 rounded-2xl bg-base-200/60 hover:bg-base-200 transition-colors">
+      <div class="hidden sm:inline-flex items-center justify-center w-12 h-12 rounded-xl bg-accent/30 mb-4">
+        <.icon name={@icon} class="size-6 text-primary" />
+      </div>
+      <h3 class="text-lg font-medium text-base-content mb-2">
+        {@title}
+      </h3>
+      <p class="text-sm text-base-content/70 leading-relaxed">
+        {@description}
+      </p>
+    </div>
+    """
+  end
+
+  # Mission card with link component for hero section
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :description, :string, required: true
+  attr :href, :string, required: true
+
+  defp mission_card_link(assigns) do
+    ~H"""
+    <a
+      href={@href}
+      class="flex flex-col items-center text-center p-5 rounded-2xl bg-primary/10 hover:bg-primary/20 transition-colors group"
+    >
+      <div class="hidden sm:inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 mb-4">
+        <.icon name={@icon} class="size-6 text-primary" />
+      </div>
+      <h3 class="text-lg font-medium text-primary mb-2 group-hover:underline">
+        {@title}
+      </h3>
+      <p class="text-sm text-base-content/70 leading-relaxed">
+        {@description}
+      </p>
+      <.icon
+        name="hero-arrow-right"
+        class="size-5 text-primary mt-3 group-hover:translate-x-1 transition-transform"
+      />
+    </a>
     """
   end
 
