@@ -193,6 +193,46 @@ defmodule AniminaWeb.DemoIndex2Live do
           </div>
         </section>
         
+    <!-- Flag System Explanation -->
+        <section class="py-16 sm:py-24">
+          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+                Finde Menschen, die zu dir passen
+              </h2>
+              <p class="mt-3 text-lg text-base-content/70 max-w-2xl mx-auto">
+                Unser Drei-Farben-System macht Matching persönlich und ehrlich
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <.flag_card
+                color="white"
+                title="Weiße Flaggen"
+                subtitle="Das bin ich"
+                description="Beschreibe dich selbst: Deine Eigenschaften, Hobbys, Werte und Lebensstil. Von Humor über Kreativität bis hin zu deinen Lieblingsküchen."
+                examples={["☀️ Optimismus", "🍳 Kochen", "🎸 Rock-Musik", "🐶 Hundeliebhaber"]}
+              />
+
+              <.flag_card
+                color="green"
+                title="Grüne Flaggen"
+                subtitle="Das suche ich"
+                description="Was wünschst du dir bei einem Partner? Welche Eigenschaften findest du attraktiv? Die Reihenfolge zeigt, was dir am wichtigsten ist."
+                examples={["🤝 Ehrlichkeit", "😄 Humor", "👨‍👩‍👧‍👦 Familienorientiert", "🌍 Reiselust"]}
+              />
+
+              <.flag_card
+                color="red"
+                title="Rote Flaggen"
+                subtitle="Das geht nicht"
+                description="Jeder hat Deal-Breaker. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschungen auf beiden Seiten."
+                examples={["🚬 Rauchen", "🍻 Übermäßiger Alkohol", "📵 Nie offline"]}
+              />
+            </div>
+          </div>
+        </section>
+
     <!-- Key Differentiators Section -->
         <section class="py-16 sm:py-24">
           <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -241,7 +281,7 @@ defmodule AniminaWeb.DemoIndex2Live do
             </div>
           </div>
         </section>
-        
+
     <!-- Open Source Highlight Section -->
         <section class="py-16 sm:py-24 bg-primary/5">
           <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -276,46 +316,6 @@ defmodule AniminaWeb.DemoIndex2Live do
                 </svg>
                 Code auf GitHub ansehen
               </a>
-            </div>
-          </div>
-        </section>
-        
-    <!-- Flag System Explanation -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Finde Menschen, die zu dir passen
-              </h2>
-              <p class="mt-3 text-lg text-base-content/70 max-w-2xl mx-auto">
-                Unser Drei-Farben-System macht Matching persönlich und ehrlich
-              </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <.flag_card
-                color="white"
-                title="Weiße Flaggen"
-                subtitle="Das bin ich"
-                description="Beschreibe dich selbst: Deine Eigenschaften, Hobbys, Werte und Lebensstil. Von Humor über Kreativität bis hin zu deinen Lieblingsküchen."
-                examples={["☀️ Optimismus", "🍳 Kochen", "🎸 Rock-Musik", "🐶 Hundeliebhaber"]}
-              />
-
-              <.flag_card
-                color="green"
-                title="Grüne Flaggen"
-                subtitle="Das suche ich"
-                description="Was wünschst du dir bei einem Partner? Welche Eigenschaften findest du attraktiv? Die Reihenfolge zeigt, was dir am wichtigsten ist."
-                examples={["🤝 Ehrlichkeit", "😄 Humor", "👨‍👩‍👧‍👦 Familienorientiert", "🌍 Reiselust"]}
-              />
-
-              <.flag_card
-                color="red"
-                title="Rote Flaggen"
-                subtitle="Das geht nicht"
-                description="Jeder hat Deal-Breaker. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschungen auf beiden Seiten."
-                examples={["🚬 Rauchen", "🍻 Übermäßiger Alkohol", "📵 Nie offline"]}
-              />
             </div>
           </div>
         </section>
