@@ -88,15 +88,30 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       refute html =~ "Zurück"
     end
 
-    test "blocks advancement when required step 1 fields are empty", %{conn: conn} do
+    test "Weiter button is disabled when required step 1 fields are empty", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      # Button should be disabled on initial load (no fields filled)
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Weiter/s
+    end
+
+    test "Weiter button becomes enabled when step 1 fields are valid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Try to advance with empty fields
-      html = lv |> element("button[phx-click=next_step]") |> render_click()
+      html =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "email" => "test@example.com",
+            "password" => "password1234",
+            "mobile_phone" => "+4915112345678",
+            "birthday" => "1990-01-01"
+          }
+        )
 
-      # Should still be on step 1
-      assert html =~ "E-Mail-Adresse"
-      assert html =~ "Weiter"
+      # Button should now be enabled
+      refute html =~ ~r/<button[^>]*disabled[^>]*phx-click="next_step"/s
     end
 
     test "advances to step 2 when step 1 fields are valid", %{conn: conn} do
@@ -572,37 +587,32 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Add second location with same zip code
       lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
 
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "locations" => %{
-            "1" => %{"country_id" => germany_id(), "zip_code" => "10115"},
-            "2" => %{"country_id" => germany_id(), "zip_code" => "10115"}
+      html =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "locations" => %{
+              "1" => %{"country_id" => germany_id(), "zip_code" => "10115"},
+              "2" => %{"country_id" => germany_id(), "zip_code" => "10115"}
+            }
           }
-        }
-      )
+        )
 
-      # Try to advance - should be blocked
-      html = lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Should still be on step 3 with error message
-      assert html =~ "Postleitzahl"
+      # Should show error message and Weiter button should be disabled
       assert html =~ "Dieser Wohnsitz wurde bereits angegeben"
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Weiter/s
     end
 
-    test "blocks step 3 advancement without valid zip code", %{conn: conn} do
+    test "Weiter button is disabled on step 3 without valid zip code", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       fill_step_1(lv)
-      fill_step_2(lv)
+      html = fill_step_2(lv)
 
-      # Try to advance without filling zip code
-      html = lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Should still be on step 3
+      # Weiter should be disabled because zip code is empty
       assert html =~ "Postleitzahl"
-      assert html =~ "Weiteren Wohnsitz hinzufügen"
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Weiter/s
     end
   end
 

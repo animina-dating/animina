@@ -76,7 +76,8 @@ defmodule AniminaWeb.UserLive.Registration do
                 :if={@current_step < 4}
                 type="button"
                 phx-click="next_step"
-                class="btn btn-primary"
+                disabled={not @step_ready}
+                class={["btn btn-primary", if(not @step_ready, do: "btn-disabled")]}
               >
                 Weiter
               </button>
@@ -426,6 +427,7 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(last_params: initial_attrs)
       |> assign(locations: [initial_location])
       |> assign(next_location_id: 2)
+      |> assign(step_ready: false)
       |> assign(age: compute_age(to_string(min_birthday)))
       |> assign_form(changeset)
 
@@ -452,7 +454,8 @@ defmodule AniminaWeb.UserLive.Registration do
        |> assign(step_direction: :forward)
        |> assign(last_params: params)
        |> assign(age: age)
-       |> assign_form(changeset)}
+       |> assign_form(changeset)
+       |> recalc_step_ready()}
     else
       changeset =
         Accounts.change_user_registration(%User{}, params)
@@ -463,7 +466,8 @@ defmodule AniminaWeb.UserLive.Registration do
       {:noreply,
        socket
        |> assign(locations: locations)
-       |> assign_form(changeset)}
+       |> assign_form(changeset)
+       |> recalc_step_ready()}
     end
   end
 
@@ -479,7 +483,8 @@ defmodule AniminaWeb.UserLive.Registration do
      socket
      |> assign(current_step: prev)
      |> assign(step_direction: :backward)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> recalc_step_ready()}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
@@ -531,7 +536,8 @@ defmodule AniminaWeb.UserLive.Registration do
         {:noreply,
          socket
          |> assign(last_params: params)
-         |> assign_form(changeset)}
+         |> assign_form(changeset)
+         |> recalc_step_ready()}
 
       _ ->
         {:noreply, socket}
@@ -559,7 +565,8 @@ defmodule AniminaWeb.UserLive.Registration do
       {:noreply,
        socket
        |> assign(locations: locations ++ [new_location])
-       |> assign(next_location_id: socket.assigns.next_location_id + 1)}
+       |> assign(next_location_id: socket.assigns.next_location_id + 1)
+       |> recalc_step_ready()}
     else
       {:noreply, socket}
     end
@@ -570,7 +577,12 @@ defmodule AniminaWeb.UserLive.Registration do
     locations = socket.assigns.locations
 
     if length(locations) > 1 do
-      {:noreply, assign(socket, locations: Enum.reject(locations, &(&1.id == id)))}
+      updated = Enum.reject(locations, &(&1.id == id))
+
+      {:noreply,
+       socket
+       |> assign(locations: mark_duplicate_locations(updated))
+       |> recalc_step_ready()}
     else
       {:noreply, socket}
     end
@@ -592,7 +604,8 @@ defmodule AniminaWeb.UserLive.Registration do
      |> assign(last_params: merged_params)
      |> assign(locations: locations)
      |> assign(age: age)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> recalc_step_ready()}
   end
 
   defp update_locations_from_params(locations, user_params) do
@@ -784,6 +797,35 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp lookup_city_name(_), do: nil
+
+  defp recalc_step_ready(socket) do
+    assign(socket, step_ready: compute_step_ready(socket))
+  end
+
+  defp compute_step_ready(socket) do
+    step = socket.assigns.current_step
+    params = socket.assigns.last_params
+    locations = socket.assigns.locations
+
+    case step do
+      3 ->
+        locations_valid?(locations)
+
+      _ ->
+        required = @step_required_fields[step]
+
+        if required == [] do
+          true
+        else
+          changeset = Accounts.change_user_registration(%User{}, params)
+          step_atoms = Enum.map(required, &String.to_atom/1)
+          error_keys = changeset.errors |> Keyword.keys() |> MapSet.new()
+          step_set = MapSet.new(step_atoms)
+
+          filled?(params, required) and MapSet.disjoint?(error_keys, step_set)
+        end
+    end
+  end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     form = to_form(changeset, as: "user")
