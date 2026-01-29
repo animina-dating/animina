@@ -22,7 +22,7 @@ set -euo pipefail
 
 # --- Configuration -----------------------------------------------------------
 APP_NAME="animina"
-DEPLOY_DIR="${DEPLOY_DIR:-/var/www/animina.de"
+DEPLOY_DIR="${DEPLOY_DIR:-/var/www/animina.de}"
 CURRENT_LINK="${DEPLOY_DIR}/current"
 SHARED_DIR="${DEPLOY_DIR}/shared"
 BACKUP_DIR="${SHARED_DIR}/backups"
