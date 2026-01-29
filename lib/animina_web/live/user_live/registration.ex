@@ -16,7 +16,7 @@ defmodule AniminaWeb.UserLive.Registration do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} display_name={navbar_display_name(@current_step, @last_params)}>
       <div class="mx-auto max-w-2xl px-4 py-8">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
@@ -337,6 +337,15 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp step_title(step), do: @step_titles[step]
+
+  defp navbar_display_name(step, params) when step >= 3 do
+    case params["display_name"] do
+      name when is_binary(name) and name != "" -> name
+      _ -> nil
+    end
+  end
+
+  defp navbar_display_name(_step, _params), do: nil
 
   @impl true
   def mount(_params, _session, %{assigns: %{current_scope: %{user: user}}} = socket)

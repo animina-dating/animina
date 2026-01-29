@@ -159,6 +159,41 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "test@example.com"
     end
 
+    test "shows display_name in navbar after completing step 2", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Fill step 1 and advance
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Fill step 2 with display_name and advance
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      html = lv |> element("button", "Weiter") |> render_click()
+
+      # Navbar should show the display_name and initial in the avatar
+      assert html =~ "TestUser"
+      assert html =~ ~r/text-secondary-content">\s*T\s*<\/span>/
+    end
+
     test "advances through all 4 steps", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 

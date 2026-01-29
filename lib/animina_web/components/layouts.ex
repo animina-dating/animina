@@ -31,6 +31,10 @@ defmodule AniminaWeb.Layouts do
     default: nil,
     doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
 
+  attr :display_name, :string,
+    default: nil,
+    doc: "optional display name to show in navbar (e.g. during registration)"
+
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -87,12 +91,27 @@ defmodule AniminaWeb.Layouts do
                 <button
                   type="button"
                   disabled
-                  class="flex items-center gap-2 p-1 rounded-full opacity-30 cursor-not-allowed"
+                  class={[
+                    "flex items-center gap-2 p-1 rounded-full",
+                    if(@display_name, do: "opacity-100", else: "opacity-30 cursor-not-allowed")
+                  ]}
                   aria-label="Your profile"
                 >
-                  <div class="w-9 h-9 rounded-full bg-secondary/40 border-2 border-secondary flex items-center justify-center">
-                    <.icon name="hero-user" class="size-5 text-base-content/70" />
+                  <div class={[
+                    "w-9 h-9 rounded-full border-2 flex items-center justify-center",
+                    if(@display_name, do: "bg-secondary border-secondary", else: "bg-secondary/40 border-secondary")
+                  ]}>
+                    <%= if @display_name do %>
+                      <span class="text-sm font-semibold text-secondary-content">
+                        {String.first(@display_name)}
+                      </span>
+                    <% else %>
+                      <.icon name="hero-user" class="size-5 text-base-content/70" />
+                    <% end %>
                   </div>
+                  <span :if={@display_name} class="text-sm font-medium text-base-content hidden sm:inline">
+                    {@display_name}
+                  </span>
                 </button>
               <% end %>
             </div>
