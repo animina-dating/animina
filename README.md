@@ -43,9 +43,17 @@ What we assume:
 - Git clone the project with `git clone git@github.com:animina-dating/animina.git`
 - `cd animina` into the local project clone
 
+### Prerequisites
+
+- Erlang/OTP 28.3
+- Elixir 1.19 (compiled with OTP 28)
+
+Use [mise](https://mise.jdx.dev) for version management. The `.tool-versions` file pins the correct versions.
+
 ### Setup
 
 ```bash
+mise install
 mix deps.get
 mix ecto.setup
 mix phx.server
