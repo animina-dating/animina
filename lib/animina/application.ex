@@ -7,6 +7,9 @@ defmodule Animina.Application do
 
   @impl true
   def start(_type, _args) do
+    # Reapply any pending hot code upgrade from a previous deploy
+    Animina.HotDeploy.startup_reapply_current()
+
     children =
       [
         AniminaWeb.Telemetry,
@@ -15,7 +18,7 @@ defmodule Animina.Application do
         {Phoenix.PubSub, name: Animina.PubSub},
         # Start to serve requests, typically the last entry
         AniminaWeb.Endpoint
-      ] ++ maybe_start_cleaner()
+      ] ++ maybe_start_cleaner() ++ maybe_start_hot_deploy()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -26,6 +29,16 @@ defmodule Animina.Application do
   defp maybe_start_cleaner do
     if Application.get_env(:animina, :start_unconfirmed_user_cleaner, true) do
       [Animina.Accounts.UnconfirmedUserCleaner]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_hot_deploy do
+    config = Application.get_env(:animina, Animina.HotDeploy, [])
+
+    if config[:enabled] do
+      [Animina.HotDeploy]
     else
       []
     end

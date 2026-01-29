@@ -13,7 +13,7 @@ config :animina, AniminaWeb.Endpoint, cache_static_manifest: "priv/static/cache_
 config :animina, AniminaWeb.Endpoint,
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   exclude: [
-    # paths: ["/health"],
+    paths: ["/health"],
     hosts: ["localhost", "127.0.0.1"]
   ]
 

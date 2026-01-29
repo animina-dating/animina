@@ -35,3 +35,11 @@ animina-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Environment files (never commit these)
+.env
+.env.*
+!.env.example
+
+# Release tarballs
+*.tar.gz
+

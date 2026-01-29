@@ -68,6 +68,12 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
+  # Hot Deploy Configuration
+  config :animina, Animina.HotDeploy,
+    enabled: System.get_env("HOT_DEPLOY_ENABLED", "true") == "true",
+    upgrades_dir: System.get_env("HOT_DEPLOY_DIR", "/var/www/animina/shared/hot-upgrades"),
+    check_interval: String.to_integer(System.get_env("HOT_DEPLOY_INTERVAL", "10000"))
+
   # ## SSL Support
   #
   # To get SSL working, you will need to add the `https` key

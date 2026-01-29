@@ -53,3 +53,7 @@ mix phx.server
 
 Visit `http://localhost:4000` to see the landing page. Register at `/users/register`.
 
+### Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for production deployment to Debian Linux with hot code upgrades, automated CI/CD via GitHub Actions, and automatic rollback.
+

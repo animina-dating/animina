@@ -28,6 +28,13 @@ defmodule AniminaWeb.Router do
     end
   end
 
+  # Health check endpoint (excluded from force_ssl in prod.exs)
+  scope "/", AniminaWeb do
+    pipe_through :api
+
+    get "/health", HealthController, :index
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", AniminaWeb do
   #   pipe_through :api

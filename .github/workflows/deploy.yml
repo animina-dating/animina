@@ -1,0 +1,112 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  MIX_ENV: test
+  ELIXIR_VERSION: "1.19"
+  OTP_VERSION: "28.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test & Verify
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: animina_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-mix-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
+
+      - name: Install dependencies
+        run: mix deps.get
+
+      - name: Compile with warnings as errors
+        run: mix compile --warnings-as-errors
+
+      - name: Check formatting
+        run: mix format --check-formatted
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+
+      - name: Audit dependencies
+        run: mix deps.audit
+        continue-on-error: true
+
+      - name: Audit Hex packages
+        run: mix hex.audit
+        continue-on-error: true
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost/animina_test
+        run: mix test
+
+  deploy:
+    needs: test
+    runs-on: self-hosted
+    name: Build & Deploy
+    if: github.ref == 'refs/heads/main'
+
+    env:
+      MIX_ENV: prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: mix deps.get --only prod
+
+      - name: Compile application
+        run: mix compile
+
+      - name: Build assets
+        run: mix assets.deploy
+
+      - name: Build release
+        run: mix release --overwrite
+
+      - name: Create release tarball
+        run: |
+          cd _build/prod/rel/animina
+          tar -czf ../../../../_build/prod/animina-$(date +%Y%m%d%H%M%S).tar.gz .
+          cd -
+
+      - name: Deploy release
+        run: ./scripts/deploy.sh
+
+      - name: Verify deployment
+        run: |
+          curl -sf http://localhost:${PORT:-4000}/health || exit 1
+          echo "Deployment verified successfully"
