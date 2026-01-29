@@ -51,8 +51,18 @@ defmodule Animina.HotDeploy do
         lib_dir = Path.join(upgrades_dir, "lib")
 
         if File.dir?(lib_dir) do
-          Logger.info("[HotDeploy] Reapplying current hot upgrade from #{lib_dir}")
-          load_beam_files(lib_dir)
+          try do
+            Logger.info("[HotDeploy] Reapplying current hot upgrade from #{lib_dir}")
+            load_beam_files(lib_dir, purge: false)
+          rescue
+            e ->
+              Logger.error("[HotDeploy] Startup reapply failed: #{Exception.message(e)}")
+          catch
+            kind, reason ->
+              Logger.error(
+                "[HotDeploy] Startup reapply failed: #{inspect(kind)} #{inspect(reason)}"
+              )
+          end
         end
       end
     end
@@ -97,7 +107,7 @@ defmodule Animina.HotDeploy do
       lib_dir = Path.join(state.upgrades_dir, "lib")
 
       if File.dir?(lib_dir) do
-        {loaded, errors} = load_beam_files(lib_dir)
+        {loaded, errors} = load_beam_files(lib_dir, purge: true)
         Logger.info("[HotDeploy] Loaded #{loaded} modules, #{errors} errors")
       end
 
@@ -115,7 +125,9 @@ defmodule Animina.HotDeploy do
     Process.send_after(self(), :check_for_upgrade, interval)
   end
 
-  defp load_beam_files(lib_dir) do
+  defp load_beam_files(lib_dir, opts) do
+    purge? = Keyword.get(opts, :purge, true)
+
     beam_files =
       lib_dir
       |> Path.join("**/*.beam")
@@ -132,7 +144,7 @@ defmodule Animina.HotDeploy do
 
         case :code.load_binary(module_name, ~c"#{beam_path}", binary) do
           {:module, ^module_name} ->
-            :code.purge(module_name)
+            if purge?, do: :code.purge(module_name)
             :ok
 
           {:error, reason} ->

@@ -187,6 +187,12 @@ main() {
   if needs_cold_deploy; then
     log "Using COLD deploy strategy"
 
+    # Clear hot-upgrade files so the fresh release doesn't reapply stale code on boot
+    if [ -d "$HOT_UPGRADES_DIR" ]; then
+      log "Clearing hot-upgrades directory for cold deploy"
+      rm -rf "${HOT_UPGRADES_DIR:?}/"*
+    fi
+
     # Pre-deployment backup
     pre_deploy_backup
 
