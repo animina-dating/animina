@@ -35,9 +35,16 @@ defmodule AniminaWeb.UserAuth do
   def log_in_user(conn, user, params \\ %{}) do
     user_return_to = get_session(conn, :user_return_to)
 
+    redirect_to =
+      cond do
+        user_return_to -> user_return_to
+        user.state == "waitlisted" -> ~p"/users/waitlist"
+        true -> signed_in_path(conn)
+      end
+
     conn
     |> create_or_extend_session(user, params)
-    |> redirect(to: user_return_to || signed_in_path(conn))
+    |> redirect(to: redirect_to)
   end
 
   @doc """

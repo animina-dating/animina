@@ -366,52 +366,6 @@ defmodule Animina.Accounts do
     Repo.one(query)
   end
 
-  @doc """
-  Gets the user with the given magic link token.
-  """
-  def get_user_by_magic_link_token(token) do
-    with {:ok, query} <- UserToken.verify_magic_link_token_query(token),
-         {user, _token} <- Repo.one(query) do
-      user
-    else
-      _ -> nil
-    end
-  end
-
-  @doc """
-  Logs the user in by magic link.
-
-  There are two cases to consider:
-
-  1. The user has already confirmed their email. They are logged in
-     and the magic link is expired.
-
-  2. The user has not confirmed their email (with or without password).
-     In this case, the user gets confirmed, logged in, and all tokens -
-     including session ones - are expired.
-
-  Note: This app registers users with passwords, so unconfirmed users
-  with passwords is the normal flow (not a security pitfall here since
-  the magic link itself proves email ownership).
-  """
-  def login_user_by_magic_link(token) do
-    {:ok, query} = UserToken.verify_magic_link_token_query(token)
-
-    case Repo.one(query) do
-      {%User{confirmed_at: nil} = user, _token} ->
-        user
-        |> User.confirm_changeset()
-        |> update_user_and_delete_all_tokens()
-
-      {user, token} ->
-        Repo.delete!(token)
-        {:ok, {user, []}}
-
-      nil ->
-        {:error, :not_found}
-    end
-  end
-
   @doc ~S"""
   Delivers the update email instructions to the given user.
 
@@ -430,21 +384,68 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Delivers the magic link login instructions to the given user.
-  """
-  def deliver_login_instructions(%User{} = user, magic_link_url_fun)
-      when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
-    Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
-  end
-
-  @doc """
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
     Repo.delete_all(from(UserToken, where: [token: ^token, context: "session"]))
     :ok
+  end
+
+  ## Password reset
+
+  @doc ~S"""
+  Delivers the password reset instructions to the given user.
+
+  ## Examples
+
+      iex> deliver_user_password_reset_instructions(user, &url(~p"/users/reset-password/#{&1}"))
+      {:ok, %{to: ..., body: ...}}
+
+  """
+  def deliver_user_password_reset_instructions(%User{} = user, reset_password_url_fun)
+      when is_function(reset_password_url_fun, 1) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
+    Repo.insert!(user_token)
+    UserNotifier.deliver_password_reset_instructions(user, reset_password_url_fun.(encoded_token))
+  end
+
+  @doc """
+  Gets the user by password reset token.
+
+  ## Examples
+
+      iex> get_user_by_password_reset_token("validtoken")
+      %User{}
+
+      iex> get_user_by_password_reset_token("invalidtoken")
+      nil
+
+  """
+  def get_user_by_password_reset_token(token) do
+    with {:ok, query} <- UserToken.verify_password_reset_token_query(token),
+         %User{} = user <- Repo.one(query) do
+      user
+    else
+      _ -> nil
+    end
+  end
+
+  @doc """
+  Resets the user password.
+
+  ## Examples
+
+      iex> reset_user_password(user, %{password: "new long password"})
+      {:ok, %User{}}
+
+  """
+  def reset_user_password(user, attrs) do
+    Repo.transact(fn ->
+      with {:ok, user} <- user |> User.password_changeset(attrs) |> Repo.update() do
+        Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
+        {:ok, user}
+      end
+    end)
   end
 
   ## Confirmation PIN

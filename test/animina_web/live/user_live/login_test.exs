@@ -10,36 +10,28 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       assert html =~ "Anmelden"
       assert html =~ "Jetzt registrieren"
-      assert html =~ "Login-Link per E-Mail senden"
+      refute html =~ "Login-Link per E-Mail senden"
+    end
+
+    test "shows forgot password link for non-logged-in users", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+
+      assert html =~ "Passwort vergessen?"
+      assert html =~ ~s(href="/users/forgot-password")
     end
   end
 
-  describe "user login - magic link" do
-    test "sends magic link email when user exists", %{conn: conn} do
-      user = user_fixture()
-
+  describe "forgot password link navigation" do
+    test "navigates to forgot password page", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
-      {:ok, _lv, html} =
-        form(lv, "#login_form_magic", user: %{email: user.email})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+      {:ok, _forgot_live, forgot_html} =
+        lv
+        |> element("a", "Passwort vergessen?")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/users/forgot-password")
 
-      assert html =~ "E-Mail-Adresse in unserem System"
-
-      assert Animina.Repo.get_by!(Animina.Accounts.UserToken, user_id: user.id).context ==
-               "login"
-    end
-
-    test "does not disclose if user is registered", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/log-in")
-
-      {:ok, _lv, html} =
-        form(lv, "#login_form_magic", user: %{email: "idonotexist@example.com"})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
-
-      assert html =~ "E-Mail-Adresse in unserem System"
+      assert forgot_html =~ "Passwort vergessen"
     end
   end
 
@@ -56,7 +48,7 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       conn = submit_form(form, conn)
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/users/waitlist"
     end
 
     test "redirects to login page with a flash error if credentials are invalid", %{
@@ -100,10 +92,9 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       assert html =~ "erneut authentifizieren"
       refute html =~ "Jetzt registrieren"
-      assert html =~ "Login-Link per E-Mail senden"
 
       assert html =~
-               ~s(<input type="email" name="user[email]" id="login_form_magic_email" value="#{user.email}")
+               ~s(<input type="email" name="user[email]" id="login_form_password_email" value="#{user.email}")
     end
   end
 end

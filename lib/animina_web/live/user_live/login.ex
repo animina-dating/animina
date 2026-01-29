@@ -1,8 +1,6 @@
 defmodule AniminaWeb.UserLive.Login do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -25,17 +23,6 @@ defmodule AniminaWeb.UserLive.Login do
             <p :if={@current_scope} class="mt-2 text-base text-base-content/70">
               Bitte erneut authentifizieren, um sensible Aktionen durchzuführen.
             </p>
-          </div>
-
-          <div :if={local_mail_adapter?()} class="alert alert-info mb-6">
-            <.icon name="hero-information-circle" class="size-6 shrink-0" />
-            <div>
-              <p>Lokaler Mail-Adapter aktiv.</p>
-              <p>
-                E-Mails unter <.link href="/dev/mailbox" class="underline">/dev/mailbox</.link>
-                einsehen.
-              </p>
-            </div>
           </div>
 
           <.form
@@ -64,35 +51,18 @@ defmodule AniminaWeb.UserLive.Login do
               required
             />
             <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
-              Anmelden und eingeloggt bleiben
-            </.button>
-            <.button class="btn btn-primary btn-soft w-full">
-              Nur dieses Mal anmelden
+              Anmelden
             </.button>
           </.form>
 
-          <div class="divider my-6">oder</div>
-
-          <.form
-            :let={f}
-            for={@form}
-            id="login_form_magic"
-            action={~p"/users/log-in"}
-            phx-submit="submit_magic"
-            class="space-y-4"
-          >
-            <.input
-              readonly={!!@current_scope}
-              field={f[:email]}
-              type="email"
-              label="E-Mail-Adresse"
-              autocomplete="email"
-              required
-            />
-            <.button class="btn btn-primary btn-soft w-full">
-              Login-Link per E-Mail senden
-            </.button>
-          </.form>
+          <div :if={!@current_scope} class="mt-4 text-center">
+            <.link
+              navigate={~p"/users/forgot-password"}
+              class="text-sm text-base-content/70 hover:text-primary hover:underline"
+            >
+              Passwort vergessen?
+            </.link>
+          </div>
         </div>
       </div>
     </Layouts.app>
@@ -113,26 +83,5 @@ defmodule AniminaWeb.UserLive.Login do
   @impl true
   def handle_event("submit_password", _params, socket) do
     {:noreply, assign(socket, :trigger_submit, true)}
-  end
-
-  def handle_event("submit_magic", %{"user" => %{"email" => email}}, socket) do
-    if user = Accounts.get_user_by_email(email) do
-      Accounts.deliver_login_instructions(
-        user,
-        &url(~p"/users/log-in/#{&1}")
-      )
-    end
-
-    info =
-      "Falls deine E-Mail-Adresse in unserem System ist, erhältst du in Kürze einen Login-Link."
-
-    {:noreply,
-     socket
-     |> put_flash(:info, info)
-     |> push_navigate(to: ~p"/users/log-in")}
-  end
-
-  defp local_mail_adapter? do
-    Application.get_env(:animina, Animina.Mailer)[:adapter] == Swoosh.Adapters.Local
   end
 end

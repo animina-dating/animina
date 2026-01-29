@@ -9,7 +9,11 @@ defmodule AniminaWeb.UserLive.Waitlist do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app
+      flash={@flash}
+      current_scope={@current_scope}
+      display_name={@current_scope.user.display_name}
+    >
       <div class="mx-auto max-w-2xl px-4 py-8">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <h1 class="text-2xl sm:text-3xl font-light text-base-content mb-6 text-center">
@@ -31,7 +35,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
               <li>Es gibt noch zu wenige Nutzer in {@city_names}</li>
               <li>Es gibt für {@city_names} in den letzten 7 Tagen zu viele Neuanmeldungen</li>
               <li>
-                Es gibt insgesamt zu viele neue Anmeldungen und wir müssen erst unsere in Deutschland gehostete Server-Hardware aufrüsten
+                Es gibt insgesamt zu viele Neuanmeldungen und wir müssen erst unsere in Deutschland gehostete Server-Hardware aufrüsten
               </li>
               <li>
                 Wir arbeiten an neuen Features und brauchen dafür etwas Luft zum Atmen

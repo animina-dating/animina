@@ -2,7 +2,6 @@ defmodule Animina.Accounts.UserNotifier do
   import Swoosh.Email
 
   alias Animina.Mailer
-  alias Animina.Accounts.User
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
@@ -39,44 +38,23 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
-  Deliver instructions to log in with a magic link.
+  Deliver password reset instructions to the user's email.
   """
-  def deliver_login_instructions(user, url) do
-    case user do
-      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
-      _ -> deliver_magic_link_instructions(user, url)
-    end
-  end
-
-  defp deliver_magic_link_instructions(user, url) do
-    deliver(user.email, "Log in instructions", """
+  def deliver_password_reset_instructions(user, url) do
+    deliver(user.email, "Passwort zurücksetzen – ANIMINA", """
 
     ==============================
 
-    Hi #{user.email},
+    Hallo #{user.email},
 
-    You can log into your account by visiting the URL below:
+    du kannst dein Passwort zurücksetzen, indem du den folgenden Link besuchst:
 
     #{url}
 
-    If you didn't request this email, please ignore this.
+    Dieser Link ist 1 Stunde gültig.
 
-    ==============================
-    """)
-  end
-
-  defp deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
-
-    ==============================
-
-    Hi #{user.email},
-
-    You can confirm your account by visiting the URL below:
-
-    #{url}
-
-    If you didn't create an account with us, please ignore this.
+    Falls du kein neues Passwort angefordert hast,
+    ignoriere bitte diese E-Mail.
 
     ==============================
     """)

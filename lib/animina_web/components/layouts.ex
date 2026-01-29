@@ -51,7 +51,7 @@ defmodule AniminaWeb.Layouts do
             </a>
 
             <div class="flex items-center gap-4">
-              <%= if @current_scope do %>
+              <%= if @current_scope && !@display_name do %>
                 <span class="text-base text-base-content/70">
                   {@current_scope.user.email}
                 </span>
@@ -68,57 +68,67 @@ defmodule AniminaWeb.Layouts do
                 >
                   Abmelden
                 </.link>
-              <% else %>
-                <!-- Messages/Bell -->
-                <button
-                  type="button"
-                  disabled
-                  class="relative p-2 rounded-full opacity-30 cursor-not-allowed"
-                  aria-label="Messages"
-                >
-                  <.icon name="hero-bell" class="size-6 text-base-content/70" />
-                </button>
-                <!-- Bookmarks -->
-                <button
-                  type="button"
-                  disabled
-                  class="relative p-2 rounded-full opacity-30 cursor-not-allowed"
-                  aria-label="Bookmarks"
-                >
-                  <.icon name="hero-bookmark" class="size-6 text-base-content/70" />
-                </button>
-                <!-- Profile Avatar -->
-                <button
-                  type="button"
-                  disabled
-                  class={[
-                    "flex items-center gap-2 p-1 rounded-full",
-                    if(@display_name, do: "opacity-100", else: "opacity-30 cursor-not-allowed")
-                  ]}
-                  aria-label="Your profile"
-                >
-                  <div class={[
-                    "w-9 h-9 rounded-full border-2 flex items-center justify-center",
-                    if(@display_name,
-                      do: "bg-secondary border-secondary",
-                      else: "bg-secondary/40 border-secondary"
-                    )
-                  ]}>
-                    <%= if @display_name do %>
+              <% end %>
+              <%= if @display_name do %>
+                <!-- Profile Avatar with Dropdown (during registration wizard) -->
+                <div class="relative">
+                  <button
+                    type="button"
+                    id="profile-menu-button"
+                    class="flex items-center gap-2 p-1 rounded-full opacity-100"
+                    aria-label="Your profile"
+                    aria-haspopup="true"
+                    phx-click={
+                      JS.toggle(
+                        to: "#profile-dropdown",
+                        in: {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"},
+                        out: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
+                  >
+                    <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-secondary border-secondary">
                       <span class="text-sm font-semibold text-secondary-content">
                         {String.first(@display_name)}
                       </span>
-                    <% else %>
-                      <.icon name="hero-user" class="size-5 text-base-content/70" />
-                    <% end %>
-                  </div>
-                  <span
-                    :if={@display_name}
-                    class="text-sm font-medium text-base-content hidden sm:inline"
+                    </div>
+                    <span class="text-sm font-medium text-base-content hidden sm:inline">
+                      {@display_name}
+                    </span>
+                  </button>
+                  <!-- Dropdown Menu -->
+                  <div
+                    id="profile-dropdown"
+                    class="hidden absolute right-0 mt-2 w-48 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
+                    phx-click-away={
+                      JS.hide(
+                        to: "#profile-dropdown",
+                        transition: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
                   >
-                    {@display_name}
-                  </span>
-                </button>
+                    <.link
+                      href="/users/log-out"
+                      method="delete"
+                      class="block w-full text-left px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      Abmelden
+                    </.link>
+                  </div>
+                </div>
+              <% end %>
+              <%= if !@current_scope && !@display_name do %>
+                <a
+                  href="/users/log-in"
+                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
+                >
+                  Anmelden
+                </a>
+                <a
+                  href="/users/register"
+                  class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Registrieren
+                </a>
               <% end %>
             </div>
           </div>
