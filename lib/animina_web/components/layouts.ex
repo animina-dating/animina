@@ -65,18 +65,35 @@ defmodule AniminaWeb.Layouts do
                   Abmelden
                 </.link>
               <% else %>
-                <a
-                  href="/users/log-in"
-                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
+                <!-- Messages/Bell -->
+                <button
+                  type="button"
+                  disabled
+                  class="relative p-2 rounded-full opacity-30 cursor-not-allowed"
+                  aria-label="Messages"
                 >
-                  Anmelden
-                </a>
-                <a
-                  href="/users/register"
-                  class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                  <.icon name="hero-bell" class="size-6 text-base-content/70" />
+                </button>
+                <!-- Bookmarks -->
+                <button
+                  type="button"
+                  disabled
+                  class="relative p-2 rounded-full opacity-30 cursor-not-allowed"
+                  aria-label="Bookmarks"
                 >
-                  Registrieren
-                </a>
+                  <.icon name="hero-bookmark" class="size-6 text-base-content/70" />
+                </button>
+                <!-- Profile Avatar -->
+                <button
+                  type="button"
+                  disabled
+                  class="flex items-center gap-2 p-1 rounded-full opacity-30 cursor-not-allowed"
+                  aria-label="Your profile"
+                >
+                  <div class="w-9 h-9 rounded-full bg-secondary/40 border-2 border-secondary flex items-center justify-center">
+                    <.icon name="hero-user" class="size-5 text-base-content/70" />
+                  </div>
+                </button>
               <% end %>
             </div>
           </div>
