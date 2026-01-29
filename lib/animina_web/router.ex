@@ -25,6 +25,7 @@ defmodule AniminaWeb.Router do
       live "/", DemoIndex2Live
       live "/demo", DemoLive
       live "/demo/mission_statement", DemoMissionStatementLive
+      live "/debug", DebugLive
     end
   end
 

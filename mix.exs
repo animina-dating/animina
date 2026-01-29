@@ -68,7 +68,8 @@ defmodule Animina.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:ex_phone_number, "~> 0.4"},
       {:bandit, "~> 1.5"},
-      {:tidewave, "~> 0.5", only: :dev}
+      {:tidewave, "~> 0.5", only: :dev},
+      {:tz, "~> 0.28"}
     ]
   end
 

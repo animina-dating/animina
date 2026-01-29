@@ -168,7 +168,7 @@ defmodule AniminaWeb.Layouts do
               </a>
             </nav>
             <p class="text-base text-base-content/70">
-              &copy; {DateTime.utc_now().year} ANIMINA. Open Source mit ❤️
+              &copy; {DateTime.utc_now().year} ANIMINA v{Animina.version()}. Open Source mit ❤️
             </p>
           </div>
         </div>
