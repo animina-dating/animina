@@ -58,6 +58,7 @@ defmodule AniminaWeb.UserLive.Registration do
                 locations={@locations}
                 age={@age}
                 last_params={@last_params}
+                max_birthday={@max_birthday}
               />
             </div>
 
@@ -156,6 +157,7 @@ defmodule AniminaWeb.UserLive.Registration do
   attr :locations, :list, default: []
   attr :age, :integer, default: nil
   attr :last_params, :map, default: %{}
+  attr :max_birthday, :string, default: nil
 
   defp step_fields(%{step: 1} = assigns) do
     ~H"""
@@ -186,6 +188,7 @@ defmodule AniminaWeb.UserLive.Registration do
           field={@form[:birthday]}
           type="date"
           label="Geburtstag (mind. 18 Jahre)"
+          max={@max_birthday}
           required
         />
         <p :if={@age} class="text-xs text-base-content/50 mt-1 ml-1">
@@ -429,6 +432,7 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(next_location_id: 2)
       |> assign(step_ready: false)
       |> assign(age: compute_age(to_string(min_birthday)))
+      |> assign(max_birthday: to_string(min_birthday))
       |> assign_form(changeset)
 
     {:ok, socket, temporary_assigns: [form: nil]}

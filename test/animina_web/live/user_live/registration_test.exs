@@ -616,6 +616,15 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
   end
 
+  describe "birthday max constraint" do
+    test "birthday input has max attribute set to 18 years before today", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      max_date = Date.utc_today() |> Date.shift(year: -18) |> to_string()
+      assert html =~ ~s(max="#{max_date}")
+    end
+  end
+
   describe "registration navigation" do
     test "redirects to login page when the login link is clicked", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
