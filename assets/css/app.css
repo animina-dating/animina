@@ -188,3 +188,34 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Wizard step transition animations */
+@keyframes wizardStepForward {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes wizardStepBackward {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.wizard-step-forward {
+  animation: wizardStepForward 250ms ease-out;
+}
+
+.wizard-step-backward {
+  animation: wizardStepBackward 250ms ease-out;
+}

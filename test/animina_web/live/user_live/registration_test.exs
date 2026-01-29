@@ -5,11 +5,19 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
   import Animina.AccountsFixtures
 
   describe "Registration page" do
-    test "renders registration page", %{conn: conn} do
+    test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
       assert html =~ "Konto erstellen"
       assert html =~ "Jetzt anmelden"
+      # Step 1 fields visible
+      assert html =~ "E-Mail-Adresse"
+      assert html =~ "Passwort"
+      assert html =~ "Handynummer"
+      assert html =~ "Geburtstag"
+      # Step 1 should show "Weiter" button, not "Konto erstellen" submit
+      assert html =~ "Weiter"
+      refute html =~ ~r/<button[^>]*type="submit"[^>]*>.*Konto erstellen/s
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -22,7 +30,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert {:ok, _conn} = result
     end
 
-    test "renders errors for invalid data", %{conn: conn} do
+    test "renders errors for invalid data on step 1", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       result =
@@ -30,32 +38,287 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> element("#registration_form")
         |> render_change(user: %{"email" => "with spaces"})
 
-      assert result =~ "Konto erstellen"
       assert result =~ "must have the @ sign and no spaces"
     end
   end
 
-  describe "register user" do
-    test "creates account but does not log in", %{conn: conn} do
+  describe "wizard navigation" do
+    test "renders step indicator with 4 steps", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      assert html =~ "Zugang"
+      assert html =~ "Profil"
+      assert html =~ "Wohnort"
+      assert html =~ "Partner"
+    end
+
+    test "step 1 only shows Weiter button, no Zurück", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      assert html =~ "Weiter"
+      refute html =~ "Zurück"
+    end
+
+    test "blocks advancement when required step 1 fields are empty", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Try to advance with empty fields
+      html = lv |> element("button", "Weiter") |> render_click()
+
+      # Should still be on step 1
+      assert html =~ "E-Mail-Adresse"
+      assert html =~ "Weiter"
+    end
+
+    test "advances to step 2 when step 1 fields are valid", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Fill step 1 fields
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      # Click next
+      html = lv |> element("button", "Weiter") |> render_click()
+
+      # Should now show step 2 fields
+      assert html =~ "Anzeigename"
+      assert html =~ "Geschlecht"
+      # Should have both Zurück and Weiter
+      assert html =~ "Zurück"
+      assert html =~ "Weiter"
+    end
+
+    test "back button works without validation", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Fill step 1 and advance
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Now go back
+      html = lv |> element("button", "Zurück") |> render_click()
+
+      # Should be back on step 1
+      assert html =~ "E-Mail-Adresse"
+      refute html =~ "Zurück"
+    end
+
+    test "data persists across steps", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Fill step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Fill step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "female",
+          "height" => "165"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Go back to step 1
+      lv |> element("button", "Zurück") |> render_click()
+      html = lv |> element("button", "Zurück") |> render_click()
+
+      # Step 1 data should still be there
+      assert html =~ "test@example.com"
+    end
+
+    test "advances through all 4 steps", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 3
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      html = lv |> element("button", "Weiter") |> render_click()
+
+      # Step 4 should show partner preferences AND legal checkbox
+      assert html =~ "Bevorzugtes Geschlecht"
+      assert html =~ "Suchradius"
+      assert html =~ "Allgemeinen Geschäftsbedingungen"
+      # Step 4 should show "Konto erstellen" instead of "Weiter"
+      assert html =~ "Konto erstellen"
+    end
+
+    test "auto-fills partner preferences when advancing to step 4", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 3
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      html = lv |> element("button", "Weiter") |> render_click()
+
+      # Partner preferences should be auto-filled
+      # Age for 1990-01-01 is 36 -> min 31, max 41
+      assert html =~ ~s(value="31")
+      assert html =~ ~s(value="41")
+    end
+  end
+
+  describe "register user via wizard" do
+    test "full wizard flow creates account", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       email = unique_user_email()
 
-      form =
-        form(lv, "#registration_form",
-          user:
-            valid_user_attributes(email: email)
-            |> Map.delete(:terms_accepted)
-            |> Map.put(:terms_accepted, "true")
-            |> stringify_keys()
-        )
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 3
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 4 - accept terms and submit
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "terms_accepted" => "true"
+        }
+      )
 
       {:ok, _lv, html} =
-        render_submit(form)
+        lv
+        |> form("#registration_form")
+        |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert html =~
-               ~r/E-Mail wurde an .* gesendet/
+      assert html =~ ~r/E-Mail wurde an .* gesendet/
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
@@ -63,160 +326,106 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
       user = user_fixture(%{email: "test@email.com"})
 
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => user.email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 3
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 4 - accept terms and submit
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "terms_accepted" => "true"
+        }
+      )
+
       result =
         lv
-        |> form("#registration_form",
-          user:
-            valid_user_attributes(email: user.email)
-            |> Map.delete(:terms_accepted)
-            |> Map.put(:terms_accepted, "true")
-            |> stringify_keys()
-        )
+        |> form("#registration_form")
         |> render_submit()
 
       assert result =~ "has already been taken"
     end
   end
 
-  describe "progressive section unlocking" do
-    test "sections 2-5 are locked initially", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
-
-      # Section 1 (Zugangsdaten) should be unlocked
-      refute html =~ ~r/id="section-1"[^>]*section-locked/
-      # Sections 2-5 should be locked
-      assert html =~ ~r/id="section-2"[^>]*section-locked/
-      assert html =~ ~r/id="section-3"[^>]*section-locked/
-      assert html =~ ~r/id="section-4"[^>]*section-locked/
-      assert html =~ ~r/id="section-5"[^>]*section-locked/
-    end
-
-    test "filling section 1 unlocks section 2", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
-      html =
-        lv
-        |> element("#registration_form")
-        |> render_change(
-          user: %{
-            "email" => "test@example.com",
-            "password" => "password1234",
-            "mobile_phone" => "+4915112345678"
-          }
-        )
-
-      refute html =~ ~r/id="section-2"[^>]*section-locked/
-      assert html =~ ~r/id="section-3"[^>]*section-locked/
-    end
-
-    test "filling sections 1-2 unlocks section 3", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
-      html =
-        lv
-        |> element("#registration_form")
-        |> render_change(
-          user: %{
-            "email" => "test@example.com",
-            "password" => "password1234",
-            "mobile_phone" => "+4915112345678",
-            "display_name" => "TestUser",
-            "gender" => "male",
-            "height" => "180"
-          }
-        )
-
-      refute html =~ ~r/id="section-2"[^>]*section-locked/
-      refute html =~ ~r/id="section-3"[^>]*section-locked/
-      assert html =~ ~r/id="section-4"[^>]*section-locked/
-    end
-
-    test "filling sections 1-3 unlocks sections 4 and 5", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
-      html =
-        lv
-        |> element("#registration_form")
-        |> render_change(
-          user: %{
-            "email" => "test@example.com",
-            "password" => "password1234",
-            "mobile_phone" => "+4915112345678",
-            "country_id" => germany_id(),
-            "zip_code" => "10115",
-            "display_name" => "TestUser",
-            "birthday" => "1990-01-01",
-            "gender" => "male",
-            "height" => "180"
-          }
-        )
-
-      refute html =~ ~r/id="section-3"[^>]*section-locked/
-      refute html =~ ~r/id="section-4"[^>]*section-locked/
-      refute html =~ ~r/id="section-5"[^>]*section-locked/
-    end
-
-    test "submit button is disabled until section 5 is unlocked", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
-
-      # Submit button should be disabled initially
-      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Konto erstellen/s
-    end
-  end
-
   describe "partner age fields" do
-    test "shows age fields instead of offset fields", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
+    test "shows age fields in step 4", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Should show actual age labels, not offset labels
+      # Navigate to step 4
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      html = lv |> element("button", "Weiter") |> render_click()
+
       assert html =~ "Mindestalter Partner"
       assert html =~ "Höchstalter Partner"
-      refute html =~ "Max. Jahre jünger"
-      refute html =~ "Max. Jahre älter"
-    end
-
-    test "pre-fills partner age fields when section 2 is completed", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
-      # First, fill only section 1 — auto-fill should NOT trigger yet
-      html_section1 =
-        lv
-        |> element("#registration_form")
-        |> render_change(
-          user: %{
-            "email" => "test@example.com",
-            "password" => "password1234",
-            "mobile_phone" => "+4915112345678",
-            "birthday" => "1990-01-01"
-          }
-        )
-
-      refute html_section1 =~ ~s(value="31")
-      refute html_section1 =~ ~s(value="41")
-
-      # Now complete section 2 (Profil) — auto-fill should trigger
-      # Gender/height/birthday are already pre-filled at mount
-      html =
-        lv
-        |> element("#registration_form")
-        |> render_change(
-          user: %{
-            "email" => "test@example.com",
-            "password" => "password1234",
-            "mobile_phone" => "+4915112345678",
-            "birthday" => "1990-01-01",
-            "display_name" => "TestUser",
-            "gender" => "male",
-            "height" => "180"
-          }
-        )
-
-      # The age for birthday 1990-01-01 is 36 (as of 2026-01-29)
-      # Defaults: age ± 5 -> partner_minimum_age = 31, partner_maximum_age = 41
-      assert html =~ ~s(name="user[partner_minimum_age]")
-      assert html =~ ~s(name="user[partner_maximum_age]")
-      assert html =~ ~s(value="31")
-      assert html =~ ~s(value="41")
     end
 
     test "converts partner ages to offsets when saving", %{conn: conn} do
@@ -224,28 +433,65 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
       email = unique_user_email()
 
-      # User born 1990-01-01 is 36, setting partner age range 25-45
-      attrs =
-        valid_user_attributes(email: email)
-        |> Map.delete(:terms_accepted)
-        |> Map.put(:terms_accepted, "true")
-        |> Map.put(:partner_minimum_age, 25)
-        |> Map.put(:partner_maximum_age, 45)
-        |> Map.delete(:partner_minimum_age_offset)
-        |> Map.delete(:partner_maximum_age_offset)
-        |> stringify_keys()
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
 
-      form = form(lv, "#registration_form", user: attrs)
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 3
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "country_id" => germany_id(),
+          "zip_code" => "10115"
+        }
+      )
+
+      lv |> element("button", "Weiter") |> render_click()
+
+      # Step 4 - override auto-filled values
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "partner_minimum_age" => "25",
+          "partner_maximum_age" => "45",
+          "terms_accepted" => "true"
+        }
+      )
 
       {:ok, _lv, html} =
-        render_submit(form)
+        lv
+        |> form("#registration_form")
+        |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
       assert html =~ ~r/E-Mail wurde an .* gesendet/
 
       # Verify the offsets were correctly computed
-      # User age = 36, min_age = 25 -> offset = 36 - 25 = 11
-      # User age = 36, max_age = 45 -> offset = 45 - 36 = 9
       user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)
       assert user.partner_minimum_age_offset == 11
       assert user.partner_maximum_age_offset == 9
@@ -264,9 +510,5 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
       assert login_html =~ "Anmelden"
     end
-  end
-
-  defp stringify_keys(map) do
-    Map.new(map, fn {k, v} -> {to_string(k), v} end)
   end
 end

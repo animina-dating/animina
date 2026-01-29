@@ -5,6 +5,14 @@ defmodule AniminaWeb.UserLive.Registration do
   alias Animina.Accounts.User
   alias Animina.GeoData
 
+  @step_titles %{1 => "Zugang", 2 => "Profil", 3 => "Wohnort", 4 => "Partner"}
+  @step_required_fields %{
+    1 => ~w(email password mobile_phone birthday),
+    2 => ~w(display_name gender height),
+    3 => ~w(country_id zip_code),
+    4 => []
+  }
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -23,248 +31,312 @@ defmodule AniminaWeb.UserLive.Registration do
             </p>
           </div>
 
+          <.step_indicator current_step={@current_step} />
+
           <.form
             for={@form}
             id="registration_form"
             phx-submit="save"
             phx-change="validate"
-            class="space-y-8"
+            class="space-y-6"
           >
-            <%!-- Section 1: Zugangsdaten --%>
-            <div id="section-1">
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  1. Zugangsdaten
-                </legend>
-                <div class="space-y-4">
-                  <.input
-                    field={@form[:email]}
-                    type="email"
-                    label="E-Mail-Adresse"
-                    autocomplete="username"
-                    required
-                    phx-mounted={JS.focus()}
-                  />
-                  <.input
-                    field={@form[:password]}
-                    type="password"
-                    label="Passwort (mind. 12 Zeichen)"
-                    autocomplete="new-password"
-                    required
-                  />
-                  <.input
-                    field={@form[:mobile_phone]}
-                    type="tel"
-                    label="Handynummer (z.B. +491514567890)"
-                    required
-                    phx-blur="normalize_phone"
-                  />
-                  <div>
-                    <.input
-                      field={@form[:birthday]}
-                      type="date"
-                      label="Geburtstag (mind. 18 Jahre)"
-                      required
-                    />
-                    <p :if={@age} class="text-xs text-base-content/50 mt-1 ml-1">
-                      {@age} Jahre alt
-                    </p>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-
-            <%!-- Section 2: Profil --%>
-            <div id="section-2" class={if(@unlocked_section < 2, do: "section-locked opacity-40 pointer-events-none select-none")}>
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  2. Profil
-                  <span :if={@unlocked_section < 2} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Zugangsdaten ausfüllen)
-                  </span>
-                </legend>
-                <div class="space-y-4">
-                  <.input
-                    field={@form[:display_name]}
-                    type="text"
-                    label="Anzeigename (2-50 Zeichen)"
-                    required
-                  />
-                  <.input
-                    field={@form[:gender]}
-                    type="radio"
-                    label="Geschlecht"
-                    options={[
-                      {"Männlich", "male"},
-                      {"Weiblich", "female"},
-                      {"Divers", "diverse"}
-                    ]}
-                    required
-                  />
-                  <.input
-                    field={@form[:height]}
-                    type="number"
-                    label="Größe in cm (80-225)"
-                    min="80"
-                    max="225"
-                    required
-                  />
-                </div>
-
-                <div class="space-y-4">
-                  <.input
-                    field={@form[:occupation]}
-                    type="text"
-                    label="Beruf"
-                  />
-                  <.input
-                    field={@form[:language]}
-                    type="select"
-                    label="Sprache"
-                    options={[{"Deutsch", "de"}, {"English", "en"}]}
-                  />
-                </div>
-              </fieldset>
-            </div>
-
-            <%!-- Section 3: Wohnort --%>
-            <div id="section-3" class={if(@unlocked_section < 3, do: "section-locked opacity-40 pointer-events-none select-none")}>
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  3. Wohnort
-                  <span :if={@unlocked_section < 3} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Profil ausfüllen)
-                  </span>
-                </legend>
-                <div class="space-y-4">
-                  <.input
-                    field={@form[:country_id]}
-                    type="select"
-                    label="Land"
-                    options={@country_options}
-                    required
-                  />
-                  <div>
-                    <.input
-                      field={@form[:zip_code]}
-                      type="text"
-                      label="Postleitzahl (5 Ziffern)"
-                      required
-                    />
-                    <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
-                      {@city_name}
-                    </p>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-
-            <%!-- Section 4: Partnerwünsche --%>
-            <div id="section-4" class={if(@unlocked_section < 4, do: "section-locked opacity-40 pointer-events-none select-none")}>
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  4. Partnerwünsche
-                  <span :if={@unlocked_section < 4} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Wohnort ausfüllen)
-                  </span>
-                </legend>
-                <div class="space-y-4">
-                  <div class="fieldset mb-2">
-                    <span class="label mb-1">Bevorzugtes Geschlecht</span>
-                    <input type="hidden" name="user[preferred_partner_gender][]" value="" />
-                    <div class="flex gap-4">
-                      <label
-                        :for={
-                          {label, value} <- [
-                            {"Männlich", "male"},
-                            {"Weiblich", "female"},
-                            {"Divers", "diverse"}
-                          ]
-                        }
-                        class="label cursor-pointer gap-2"
-                      >
-                        <input
-                          type="checkbox"
-                          name="user[preferred_partner_gender][]"
-                          value={value}
-                          checked={value in (@form[:preferred_partner_gender].value || [])}
-                          class="checkbox checkbox-sm"
-                        />
-                        {label}
-                      </label>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <.input
-                      field={@form[:partner_minimum_age]}
-                      type="number"
-                      label="Mindestalter Partner"
-                      min="18"
-                    />
-                    <.input
-                      field={@form[:partner_maximum_age]}
-                      type="number"
-                      label="Höchstalter Partner"
-                      min="18"
-                    />
-                  </div>
-                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <.input
-                      field={@form[:partner_height_min]}
-                      type="number"
-                      label="Mindestgröße (cm)"
-                      min="80"
-                      max="225"
-                    />
-                    <.input
-                      field={@form[:partner_height_max]}
-                      type="number"
-                      label="Maximalgröße (cm)"
-                      min="80"
-                      max="225"
-                    />
-                  </div>
-                  <.input
-                    field={@form[:search_radius]}
-                    type="number"
-                    label="Suchradius (km)"
-                    min="1"
-                  />
-                </div>
-              </fieldset>
-            </div>
-
-            <%!-- Section 5: AGB --%>
-            <div id="section-5" class={if(@unlocked_section < 5, do: "section-locked opacity-40 pointer-events-none select-none")}>
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  5. Rechtliches
-                  <span :if={@unlocked_section < 5} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Wohnort ausfüllen)
-                  </span>
-                </legend>
-                <.input
-                  field={@form[:terms_accepted]}
-                  type="checkbox"
-                  label="Ich akzeptiere die Allgemeinen Geschäftsbedingungen und die Datenschutzerklärung."
-                  required
-                />
-              </fieldset>
-            </div>
-
-            <.button
-              phx-disable-with="Konto wird erstellt..."
-              class="btn btn-primary w-full"
-              disabled={@unlocked_section < 5}
+            <div
+              id={"wizard-step-#{@current_step}"}
+              class={if(@step_direction == :forward, do: "wizard-step-forward", else: "wizard-step-backward")}
+              role="group"
+              aria-labelledby={"step-title-#{@current_step}"}
+              aria-live="polite"
+              phx-mounted={JS.focus_first()}
             >
-              Konto erstellen
-            </.button>
+              <h2 id={"step-title-#{@current_step}"} class="text-xl font-medium text-base-content mb-4">
+                {@current_step}. {step_title(@current_step)}
+              </h2>
+              <.step_fields
+                step={@current_step}
+                form={@form}
+                country_options={@country_options}
+                city_name={@city_name}
+                age={@age}
+                last_params={@last_params}
+              />
+            </div>
+
+            <div class="border-t border-base-300 pt-4 flex justify-between">
+              <button
+                :if={@current_step > 1}
+                type="button"
+                phx-click="prev_step"
+                class="btn btn-ghost"
+              >
+                Zurück
+              </button>
+              <div :if={@current_step == 1} />
+
+              <button
+                :if={@current_step < 4}
+                type="button"
+                phx-click="next_step"
+                class="btn btn-primary"
+              >
+                Weiter
+              </button>
+              <.button
+                :if={@current_step == 4}
+                phx-disable-with="Konto wird erstellt..."
+                class="btn btn-primary"
+              >
+                Konto erstellen
+              </.button>
+            </div>
           </.form>
         </div>
       </div>
     </Layouts.app>
     """
   end
+
+  attr :current_step, :integer, required: true
+
+  defp step_indicator(assigns) do
+    ~H"""
+    <div class="flex items-center justify-center mb-8">
+      <div :for={step <- 1..4} class="flex items-center">
+        <div class="flex flex-col items-center">
+          <div class={[
+            "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border-2 transition-colors",
+            cond do
+              step < @current_step -> "bg-primary border-primary text-primary-content"
+              step == @current_step -> "border-primary text-primary bg-transparent"
+              true -> "border-base-300 text-base-content/40 bg-transparent"
+            end
+          ]}>
+            <svg
+              :if={step < @current_step}
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            <span :if={step >= @current_step}>{step}</span>
+          </div>
+          <span class={[
+            "text-xs mt-1 hidden sm:block",
+            cond do
+              step < @current_step -> "text-primary"
+              step == @current_step -> "text-primary font-medium"
+              true -> "text-base-content/40"
+            end
+          ]}>
+            {step_title(step)}
+          </span>
+        </div>
+        <div
+          :if={step < 4}
+          class={[
+            "w-8 sm:w-12 h-0.5 mx-1 sm:mx-2",
+            if(step < @current_step, do: "bg-primary", else: "bg-base-300")
+          ]}
+        />
+      </div>
+    </div>
+    """
+  end
+
+  attr :step, :integer, required: true
+  attr :form, :any, required: true
+  attr :country_options, :list, default: []
+  attr :city_name, :string, default: nil
+  attr :age, :integer, default: nil
+  attr :last_params, :map, default: %{}
+
+  defp step_fields(%{step: 1} = assigns) do
+    ~H"""
+    <div class="space-y-4">
+      <.input
+        field={@form[:email]}
+        type="email"
+        label="E-Mail-Adresse"
+        autocomplete="username"
+        required
+      />
+      <.input
+        field={@form[:password]}
+        type="password"
+        label="Passwort (mind. 12 Zeichen)"
+        autocomplete="new-password"
+        required
+      />
+      <.input
+        field={@form[:mobile_phone]}
+        type="tel"
+        label="Handynummer (z.B. +491514567890)"
+        required
+        phx-blur="normalize_phone"
+      />
+      <div>
+        <.input
+          field={@form[:birthday]}
+          type="date"
+          label="Geburtstag (mind. 18 Jahre)"
+          required
+        />
+        <p :if={@age} class="text-xs text-base-content/50 mt-1 ml-1">
+          {@age} Jahre alt
+        </p>
+      </div>
+    </div>
+    """
+  end
+
+  defp step_fields(%{step: 2} = assigns) do
+    ~H"""
+    <div class="space-y-4">
+      <.input
+        field={@form[:display_name]}
+        type="text"
+        label="Anzeigename (2-50 Zeichen)"
+        required
+      />
+      <.input
+        field={@form[:gender]}
+        type="radio"
+        label="Geschlecht"
+        options={[
+          {"Männlich", "male"},
+          {"Weiblich", "female"},
+          {"Divers", "diverse"}
+        ]}
+        required
+      />
+      <.input
+        field={@form[:height]}
+        type="number"
+        label="Größe in cm (80-225)"
+        min="80"
+        max="225"
+        required
+      />
+      <.input
+        field={@form[:occupation]}
+        type="text"
+        label="Beruf"
+      />
+      <.input
+        field={@form[:language]}
+        type="select"
+        label="Sprache"
+        options={[{"Deutsch", "de"}, {"English", "en"}]}
+      />
+    </div>
+    """
+  end
+
+  defp step_fields(%{step: 3} = assigns) do
+    ~H"""
+    <div class="space-y-4">
+      <.input
+        field={@form[:country_id]}
+        type="select"
+        label="Land"
+        options={@country_options}
+        required
+      />
+      <div>
+        <.input
+          field={@form[:zip_code]}
+          type="text"
+          label="Postleitzahl (5 Ziffern)"
+          required
+        />
+        <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
+          {@city_name}
+        </p>
+      </div>
+    </div>
+    """
+  end
+
+  defp step_fields(%{step: 4} = assigns) do
+    ~H"""
+    <div class="space-y-4">
+      <div class="fieldset mb-2">
+        <span class="label mb-1">Bevorzugtes Geschlecht</span>
+        <input type="hidden" name="user[preferred_partner_gender][]" value="" />
+        <div class="flex gap-4">
+          <label
+            :for={
+              {label, value} <- [
+                {"Männlich", "male"},
+                {"Weiblich", "female"},
+                {"Divers", "diverse"}
+              ]
+            }
+            class="label cursor-pointer gap-2"
+          >
+            <input
+              type="checkbox"
+              name="user[preferred_partner_gender][]"
+              value={value}
+              checked={value in (@form[:preferred_partner_gender].value || [])}
+              class="checkbox checkbox-sm"
+            />
+            {label}
+          </label>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <.input
+          field={@form[:partner_minimum_age]}
+          type="number"
+          label="Mindestalter Partner"
+          min="18"
+        />
+        <.input
+          field={@form[:partner_maximum_age]}
+          type="number"
+          label="Höchstalter Partner"
+          min="18"
+        />
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <.input
+          field={@form[:partner_height_min]}
+          type="number"
+          label="Mindestgröße (cm)"
+          min="80"
+          max="225"
+        />
+        <.input
+          field={@form[:partner_height_max]}
+          type="number"
+          label="Maximalgröße (cm)"
+          min="80"
+          max="225"
+        />
+      </div>
+      <.input
+        field={@form[:search_radius]}
+        type="number"
+        label="Suchradius (km)"
+        min="1"
+      />
+      <.input
+        field={@form[:terms_accepted]}
+        type="checkbox"
+        label="Ich akzeptiere die Allgemeinen Geschäftsbedingungen und die Datenschutzerklärung."
+        required
+      />
+    </div>
+    """
+  end
+
+  defp step_title(step), do: @step_titles[step]
 
   @impl true
   def mount(_params, _session, %{assigns: %{current_scope: %{user: user}}} = socket)
@@ -295,13 +367,12 @@ defmodule AniminaWeb.UserLive.Registration do
 
     changeset = Accounts.change_user_registration(%User{}, initial_attrs)
 
-    unlocked_section = compute_unlocked_section(initial_attrs)
-
     socket =
       socket
       |> assign(country_options: country_options)
       |> assign(preferences_auto_filled: false)
-      |> assign(unlocked_section: unlocked_section)
+      |> assign(current_step: 1)
+      |> assign(step_direction: :forward)
       |> assign(last_params: initial_attrs)
       |> assign(city_name: nil)
       |> assign(age: compute_age(to_string(min_birthday)))
@@ -311,8 +382,56 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   @impl true
+  def handle_event("next_step", _params, socket) do
+    current = socket.assigns.current_step
+    params = socket.assigns.last_params
+
+    if step_valid?(current, params) do
+      next = current + 1
+      {params, socket} = maybe_auto_fill_preferences(params, socket, next)
+      city_name = lookup_city_name(params["zip_code"])
+      age = compute_age(params["birthday"])
+
+      changeset =
+        Accounts.change_user_registration(%User{}, params)
+        |> Map.put(:action, :validate)
+
+      {:noreply,
+       socket
+       |> assign(current_step: next)
+       |> assign(step_direction: :forward)
+       |> assign(last_params: params)
+       |> assign(city_name: city_name)
+       |> assign(age: age)
+       |> assign_form(changeset)}
+    else
+      changeset =
+        Accounts.change_user_registration(%User{}, params)
+        |> Map.put(:action, :validate)
+
+      {:noreply, assign_form(socket, changeset)}
+    end
+  end
+
+  def handle_event("prev_step", _params, socket) do
+    prev = max(1, socket.assigns.current_step - 1)
+    params = socket.assigns.last_params
+
+    changeset =
+      Accounts.change_user_registration(%User{}, params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> assign(current_step: prev)
+     |> assign(step_direction: :backward)
+     |> assign_form(changeset)}
+  end
+
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.register_user(user_params) do
+    merged_params = Map.merge(socket.assigns.last_params, user_params)
+
+    case Accounts.register_user(merged_params) do
       {:ok, user} ->
         {:ok, _} =
           Accounts.deliver_login_instructions(
@@ -329,9 +448,12 @@ defmodule AniminaWeb.UserLive.Registration do
          |> push_navigate(to: ~p"/users/log-in")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
+        error_step = step_with_first_error(changeset)
+
         {:noreply,
          socket
-         |> assign(unlocked_section: compute_unlocked_section(user_params))
+         |> assign(current_step: error_step)
+         |> assign(step_direction: :backward)
          |> assign_form(changeset)}
     end
   end
@@ -341,7 +463,6 @@ defmodule AniminaWeb.UserLive.Registration do
       {:ok, parsed} ->
         formatted = ExPhoneNumber.format(parsed, :e164)
         params = Map.put(socket.assigns.last_params, "mobile_phone", formatted)
-        unlocked_section = compute_unlocked_section(params)
 
         changeset =
           Accounts.change_user_registration(%User{}, params)
@@ -350,7 +471,6 @@ defmodule AniminaWeb.UserLive.Registration do
         {:noreply,
          socket
          |> assign(last_params: params)
-         |> assign(unlocked_section: unlocked_section)
          |> assign_form(changeset)}
 
       _ ->
@@ -359,34 +479,51 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    unlocked_section = compute_unlocked_section(user_params)
-    {user_params, socket} = maybe_auto_fill_preferences(user_params, socket, unlocked_section)
-    city_name = lookup_city_name(user_params["zip_code"])
-    age = compute_age(user_params["birthday"])
+    merged_params = Map.merge(socket.assigns.last_params, user_params)
+    city_name = lookup_city_name(merged_params["zip_code"])
+    age = compute_age(merged_params["birthday"])
 
     changeset =
-      Accounts.change_user_registration(%User{}, user_params)
+      Accounts.change_user_registration(%User{}, merged_params)
       |> Map.put(:action, :validate)
 
     {:noreply,
      socket
-     |> assign(unlocked_section: unlocked_section)
-     |> assign(last_params: user_params)
+     |> assign(last_params: merged_params)
      |> assign(city_name: city_name)
      |> assign(age: age)
      |> assign_form(changeset)}
   end
 
-  defp maybe_auto_fill_preferences(params, socket, unlocked_section) do
-    if socket.assigns.preferences_auto_filled or unlocked_section < 3 do
+  @step_fields %{
+    1 => ~w(email password mobile_phone birthday)a,
+    2 => ~w(display_name gender height occupation language)a,
+    3 => ~w(country_id zip_code)a,
+    4 => ~w(preferred_partner_gender partner_minimum_age partner_maximum_age partner_height_min partner_height_max search_radius terms_accepted)a
+  }
+
+  defp step_with_first_error(changeset) do
+    error_fields = changeset.errors |> Keyword.keys() |> MapSet.new()
+
+    Enum.find(1..4, 4, fn step ->
+      step_fields = @step_fields[step] |> MapSet.new()
+      not MapSet.disjoint?(error_fields, step_fields)
+    end)
+  end
+
+  defp step_valid?(step, params) do
+    required = @step_required_fields[step]
+    filled?(params, required)
+  end
+
+  defp maybe_auto_fill_preferences(params, socket, next_step) do
+    if socket.assigns.preferences_auto_filled or next_step != 4 do
       {params, socket}
     else
       gender = params["gender"]
       height = parse_int(params["height"])
       age = compute_age(params["birthday"])
 
-      # gender/height/age should always be available (pre-filled at mount),
-      # but guard just in case
       if gender in ["male", "female", "diverse"] and is_integer(height) and is_integer(age) do
         params =
           params
@@ -437,7 +574,6 @@ defmodule AniminaWeb.UserLive.Registration do
   defp compute_preferred_gender("female"), do: ["male"]
   defp compute_preferred_gender("diverse"), do: ["diverse"]
 
-
   defp compute_height_min("male", _height), do: 80
   defp compute_height_min("female", height), do: max(80, height - 5)
   defp compute_height_min("diverse", height), do: max(80, height - 15)
@@ -445,15 +581,6 @@ defmodule AniminaWeb.UserLive.Registration do
   defp compute_height_max("male", height), do: min(225, height + 5)
   defp compute_height_max("female", _height), do: 225
   defp compute_height_max("diverse", _height), do: 225
-
-  defp compute_unlocked_section(params) do
-    cond do
-      not filled?(params, ~w(email password mobile_phone birthday)) -> 1
-      not filled?(params, ~w(display_name gender height)) -> 2
-      not filled?(params, ~w(country_id zip_code)) -> 3
-      true -> 5
-    end
-  end
 
   defp filled?(params, keys) do
     Enum.all?(keys, fn key ->

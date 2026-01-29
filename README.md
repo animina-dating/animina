@@ -24,7 +24,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 - **User Authentication**: Email/password registration and login with magic link support
 - **User Profiles**: Display name, birthday, gender, height, location, and partner preferences
 - **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
-- **Progressive Registration**: 5-section form that unlocks sections as you fill them out
+- **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
 - **German UI**: Registration and login forms in German ("Coastal Morning" design)
 - **Geo Data**: Germany with 8000+ cities seeded
 
