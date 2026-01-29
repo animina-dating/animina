@@ -17,8 +17,8 @@ config :animina, AniminaWeb.Endpoint,
     hosts: ["localhost", "127.0.0.1"]
   ]
 
-# Configure Swoosh API Client
-config :swoosh, api_client: Swoosh.ApiClient.Req
+# Sendmail adapter doesn't need an HTTP API client
+config :swoosh, api_client: false
 
 # Disable Swoosh Local Memory Storage
 config :swoosh, local: false

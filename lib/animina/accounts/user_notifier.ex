@@ -8,7 +8,7 @@ defmodule Animina.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Animina", "contact@example.com"})
+      |> from({"Animina", "noreply@animina.de"})
       |> subject(subject)
       |> text_body(body)
 
