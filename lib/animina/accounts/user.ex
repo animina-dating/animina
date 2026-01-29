@@ -136,6 +136,7 @@ defmodule Animina.Accounts.User do
     |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/,
       message: "must be in E.164 format (e.g. +491234567890)"
     )
+    |> validate_mobile_phone_type()
     |> validate_birthday()
     |> validate_preferred_partner_genders()
     |> validate_number(:partner_height_min,
@@ -148,6 +149,33 @@ defmodule Animina.Accounts.User do
     )
     |> validate_number(:search_radius, greater_than_or_equal_to: 1)
     |> unique_constraint(:mobile_phone)
+  end
+
+  defp validate_mobile_phone_type(changeset) do
+    case get_field(changeset, :mobile_phone) do
+      nil ->
+        changeset
+
+      phone ->
+        case ExPhoneNumber.parse(phone, "DE") do
+          {:ok, parsed} ->
+            case ExPhoneNumber.get_number_type(parsed) do
+              type when type in [:mobile, :fixed_line_or_mobile] ->
+                changeset
+
+              _ ->
+                add_error(
+                  changeset,
+                  :mobile_phone,
+                  "muss eine Handynummer sein (keine Festnetznummer)"
+                )
+            end
+
+          _ ->
+            # format validation already catches invalid numbers
+            changeset
+        end
+    end
   end
 
   defp validate_birthday(changeset) do

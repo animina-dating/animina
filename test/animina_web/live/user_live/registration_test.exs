@@ -84,6 +84,44 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
   end
 
+  describe "mobile phone validation" do
+    test "rejects a landline number", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      result =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "email" => "test@example.com",
+            "password" => "password1234",
+            "mobile_phone" => "+4930123456",
+            "birthday" => "1990-01-01"
+          }
+        )
+
+      assert result =~ "muss eine Handynummer sein (keine Festnetznummer)"
+    end
+
+    test "accepts a mobile number", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      result =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "email" => "test@example.com",
+            "password" => "password1234",
+            "mobile_phone" => "+4915112345678",
+            "birthday" => "1990-01-01"
+          }
+        )
+
+      refute result =~ "muss eine Handynummer sein (keine Festnetznummer)"
+    end
+  end
+
   describe "wizard navigation" do
     test "renders step indicator with 4 steps", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
