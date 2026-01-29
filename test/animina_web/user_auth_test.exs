@@ -74,7 +74,10 @@ defmodule AniminaWeb.UserAuthTest do
       assert max_age == @remember_me_cookie_max_age
     end
 
-    test "redirects to waitlist when waitlisted user is already logged in", %{conn: conn, user: user} do
+    test "redirects to waitlist when waitlisted user is already logged in", %{
+      conn: conn,
+      user: user
+    } do
       conn =
         conn
         |> assign(:current_scope, Scope.for_user(user))

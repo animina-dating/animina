@@ -102,7 +102,8 @@ defmodule AniminaWeb.Layouts do
                     phx-click-away={
                       JS.hide(
                         to: "#profile-dropdown",
-                        transition: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                        transition:
+                          {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
                       )
                     }
                   >

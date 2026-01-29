@@ -659,6 +659,7 @@ defmodule AniminaWeb.UserLive.Registration do
       socket.assigns.last_params
       |> Map.reject(fn {k, _} -> is_binary(k) and String.starts_with?(k, "_unused_") end)
       |> Map.merge(user_params)
+
     age = compute_age(merged_params["birthday"])
 
     # Update location input from form params

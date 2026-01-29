@@ -119,16 +119,27 @@ defmodule Animina.Accounts.User do
 
   defp validate_referral_code_input(changeset) do
     case get_change(changeset, :referral_code_input) do
-      nil -> changeset
-      "" -> changeset
+      nil ->
+        changeset
+
+      "" ->
+        changeset
+
       code when is_binary(code) ->
         trimmed = String.trim(code) |> String.upcase()
+
         if Regex.match?(~r/^[A-Z0-9]{6}$/, trimmed) do
           put_change(changeset, :referral_code_input, trimmed)
         else
-          add_error(changeset, :referral_code_input, "muss aus 6 Zeichen bestehen (Buchstaben und Ziffern)")
+          add_error(
+            changeset,
+            :referral_code_input,
+            "muss aus 6 Zeichen bestehen (Buchstaben und Ziffern)"
+          )
         end
-      _ -> changeset
+
+      _ ->
+        changeset
     end
   end
 
