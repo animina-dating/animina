@@ -108,5 +108,5 @@ jobs:
 
       - name: Verify deployment
         run: |
-          curl -sf http://localhost:${PORT:-4000}/health || exit 1
+          curl -sf http://localhost:${PORT:-4045}/health || exit 1
           echo "Deployment verified successfully"

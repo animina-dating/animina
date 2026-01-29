@@ -35,7 +35,7 @@ MAX_RELEASES=5
 MAX_BACKUPS=10
 HEALTH_CHECK_RETRIES=6
 HEALTH_CHECK_INTERVAL=5
-APP_PORT="${PORT:-4000}"
+APP_PORT="${PORT:-4045}"
 
 # --- Helper functions --------------------------------------------------------
 log() { echo "==> $1"; }
