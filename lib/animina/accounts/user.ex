@@ -18,10 +18,9 @@ defmodule Animina.Accounts.User do
     field :birthday, :date
     field :gender, :string
     field :height, :integer
-    field :zip_code, :string
     field :mobile_phone, :string
 
-    belongs_to :country, Animina.GeoData.Country
+    has_many :locations, Animina.Accounts.UserLocation, preload_order: [asc: :position]
 
     # Partner preferences
     field :preferred_partner_gender, {:array, :string}, default: []
@@ -50,9 +49,7 @@ defmodule Animina.Accounts.User do
     :birthday,
     :gender,
     :height,
-    :zip_code,
     :mobile_phone,
-    :country_id,
     :preferred_partner_gender,
     :partner_minimum_age_offset,
     :partner_maximum_age_offset,
@@ -131,14 +128,11 @@ defmodule Animina.Accounts.User do
       :birthday,
       :gender,
       :height,
-      :zip_code,
-      :mobile_phone,
-      :country_id
+      :mobile_phone
     ])
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:gender, @valid_genders)
     |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
-    |> validate_format(:zip_code, ~r/^\d{5}$/, message: "must be 5 digits")
     |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/, message: "must be in E.164 format (e.g. +491234567890)")
     |> validate_birthday()
     |> validate_preferred_partner_genders()

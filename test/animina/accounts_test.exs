@@ -58,9 +58,7 @@ defmodule Animina.AccountsTest do
       assert %{birthday: ["can't be blank"]} = errors
       assert %{gender: ["can't be blank"]} = errors
       assert %{height: ["can't be blank"]} = errors
-      assert %{zip_code: ["can't be blank"]} = errors
       assert %{mobile_phone: ["can't be blank"]} = errors
-      assert %{country_id: ["can't be blank"]} = errors
     end
 
     test "validates email when given" do

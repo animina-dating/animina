@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.Registration do
   @step_required_fields %{
     1 => ~w(email password mobile_phone birthday),
     2 => ~w(display_name gender height),
-    3 => ~w(country_id zip_code),
+    3 => :locations,
     4 => []
   }
 
@@ -31,7 +31,7 @@ defmodule AniminaWeb.UserLive.Registration do
             </p>
           </div>
 
-          <.step_indicator current_step={@current_step} />
+          <.step_indicator current_step={@current_step} location_count={length(@locations)} />
 
           <.form
             for={@form}
@@ -49,13 +49,13 @@ defmodule AniminaWeb.UserLive.Registration do
               phx-mounted={JS.focus_first()}
             >
               <h2 id={"step-title-#{@current_step}"} class="text-xl font-medium text-base-content mb-4">
-                {@current_step}. {step_title(@current_step)}
+                {@current_step}. {step_title(@current_step, length(@locations))}
               </h2>
               <.step_fields
                 step={@current_step}
                 form={@form}
                 country_options={@country_options}
-                city_name={@city_name}
+                locations={@locations}
                 age={@age}
                 last_params={@last_params}
               />
@@ -96,6 +96,7 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   attr :current_step, :integer, required: true
+  attr :location_count, :integer, default: 1
 
   defp step_indicator(assigns) do
     ~H"""
@@ -133,7 +134,7 @@ defmodule AniminaWeb.UserLive.Registration do
               true -> "text-base-content/40"
             end
           ]}>
-            {step_title(step)}
+            {step_title(step, @location_count)}
           </span>
         </div>
         <div
@@ -151,7 +152,7 @@ defmodule AniminaWeb.UserLive.Registration do
   attr :step, :integer, required: true
   attr :form, :any, required: true
   attr :country_options, :list, default: []
-  attr :city_name, :string, default: nil
+  attr :locations, :list, default: []
   attr :age, :integer, default: nil
   attr :last_params, :map, default: %{}
 
@@ -240,24 +241,60 @@ defmodule AniminaWeb.UserLive.Registration do
   defp step_fields(%{step: 3} = assigns) do
     ~H"""
     <div class="space-y-4">
-      <.input
-        field={@form[:country_id]}
-        type="select"
-        label="Land"
-        options={@country_options}
-        required
-      />
-      <div>
-        <.input
-          field={@form[:zip_code]}
-          type="text"
-          label="Postleitzahl (5 Ziffern)"
-          required
-        />
-        <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
-          {@city_name}
-        </p>
+      <div :for={loc <- @locations} class="border border-base-300 rounded-lg p-4 relative" id={"location-#{loc.id}"}>
+        <button
+          :if={length(@locations) > 1}
+          type="button"
+          phx-click="remove_location"
+          phx-value-id={loc.id}
+          class="absolute top-2 right-2 btn btn-ghost btn-xs btn-circle"
+          aria-label="Wohnsitz entfernen"
+        >
+          &times;
+        </button>
+
+        <div class="space-y-3">
+          <div class="fieldset">
+            <label class="label" for={"location_#{loc.id}_country_id"}>Land</label>
+            <select
+              id={"location_#{loc.id}_country_id"}
+              name={"user[locations][#{loc.id}][country_id]"}
+              class="select select-bordered w-full"
+            >
+              <option :for={{label, value} <- @country_options} value={value} selected={value == loc.country_id}>
+                {label}
+              </option>
+            </select>
+          </div>
+          <div>
+            <div class="fieldset">
+              <label class="label" for={"location_#{loc.id}_zip_code"}>Postleitzahl (5 Ziffern)</label>
+              <input
+                type="text"
+                id={"location_#{loc.id}_zip_code"}
+                name={"user[locations][#{loc.id}][zip_code]"}
+                value={loc.zip_code}
+                class="input input-bordered w-full"
+              />
+            </div>
+            <p :if={loc.city_name && !loc.error} class="text-xs text-base-content/50 mt-1 ml-1">
+              {loc.city_name}
+            </p>
+            <p :if={loc.error} class="text-xs text-error mt-1 ml-1">
+              {loc.error}
+            </p>
+          </div>
+        </div>
       </div>
+
+      <button
+        :if={length(@locations) < 4}
+        type="button"
+        phx-click="add_location"
+        class="btn btn-outline btn-sm w-full"
+      >
+        Weiteren Wohnsitz hinzufügen
+      </button>
     </div>
     """
   end
@@ -336,7 +373,8 @@ defmodule AniminaWeb.UserLive.Registration do
     """
   end
 
-  defp step_title(step), do: @step_titles[step]
+  defp step_title(3, count) when count > 1, do: "Wohnorte"
+  defp step_title(step, _count), do: @step_titles[step]
 
   defp navbar_display_name(step, params) when step >= 3 do
     case params["display_name"] do
@@ -361,18 +399,21 @@ defmodule AniminaWeb.UserLive.Registration do
 
     min_birthday = Date.utc_today() |> Date.shift(year: -18)
 
+    initial_location = %{
+      id: 1,
+      country_id: if(germany, do: germany.id, else: nil),
+      zip_code: "",
+      city_name: nil,
+      error: nil
+    }
+
     initial_attrs =
-      if germany do
-        %{
-          "country_id" => germany.id,
-          "birthday" => min_birthday,
-          "gender" => "male",
-          "height" => 170,
-          "preferred_partner_gender" => ["female"]
-        }
-      else
-        %{"birthday" => min_birthday, "gender" => "male", "height" => 170, "preferred_partner_gender" => ["female"]}
-      end
+      %{
+        "birthday" => min_birthday,
+        "gender" => "male",
+        "height" => 170,
+        "preferred_partner_gender" => ["female"]
+      }
 
     changeset = Accounts.change_user_registration(%User{}, initial_attrs)
 
@@ -383,7 +424,8 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(current_step: 1)
       |> assign(step_direction: :forward)
       |> assign(last_params: initial_attrs)
-      |> assign(city_name: nil)
+      |> assign(locations: [initial_location])
+      |> assign(next_location_id: 2)
       |> assign(age: compute_age(to_string(min_birthday)))
       |> assign_form(changeset)
 
@@ -395,10 +437,9 @@ defmodule AniminaWeb.UserLive.Registration do
     current = socket.assigns.current_step
     params = socket.assigns.last_params
 
-    if step_valid?(current, params) do
+    if step_valid?(current, params, socket.assigns.locations) do
       next = current + 1
       {params, socket} = maybe_auto_fill_preferences(params, socket, next)
-      city_name = lookup_city_name(params["zip_code"])
       age = compute_age(params["birthday"])
 
       changeset =
@@ -410,7 +451,6 @@ defmodule AniminaWeb.UserLive.Registration do
        |> assign(current_step: next)
        |> assign(step_direction: :forward)
        |> assign(last_params: params)
-       |> assign(city_name: city_name)
        |> assign(age: age)
        |> assign_form(changeset)}
     else
@@ -418,7 +458,12 @@ defmodule AniminaWeb.UserLive.Registration do
         Accounts.change_user_registration(%User{}, params)
         |> Map.put(:action, :validate)
 
-      {:noreply, assign_form(socket, changeset)}
+      locations = mark_duplicate_locations(socket.assigns.locations)
+
+      {:noreply,
+       socket
+       |> assign(locations: locations)
+       |> assign_form(changeset)}
     end
   end
 
@@ -440,7 +485,13 @@ defmodule AniminaWeb.UserLive.Registration do
   def handle_event("save", %{"user" => user_params}, socket) do
     merged_params = Map.merge(socket.assigns.last_params, user_params)
 
-    case Accounts.register_user(merged_params) do
+    locations_for_save =
+      socket.assigns.locations
+      |> Enum.map(fn loc -> %{"country_id" => loc.country_id, "zip_code" => loc.zip_code} end)
+
+    save_params = Map.put(merged_params, "locations", locations_for_save)
+
+    case Accounts.register_user(save_params) do
       {:ok, user} ->
         {:ok, _} =
           Accounts.deliver_login_instructions(
@@ -487,10 +538,50 @@ defmodule AniminaWeb.UserLive.Registration do
     end
   end
 
+  def handle_event("add_location", _params, socket) do
+    locations = socket.assigns.locations
+
+    if length(locations) < 4 do
+      default_country_id =
+        case socket.assigns.country_options do
+          [{_label, id} | _] -> id
+          _ -> nil
+        end
+
+      new_location = %{
+        id: socket.assigns.next_location_id,
+        country_id: default_country_id,
+        zip_code: "",
+        city_name: nil,
+        error: nil
+      }
+
+      {:noreply,
+       socket
+       |> assign(locations: locations ++ [new_location])
+       |> assign(next_location_id: socket.assigns.next_location_id + 1)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("remove_location", %{"id" => id_str}, socket) do
+    id = String.to_integer(id_str)
+    locations = socket.assigns.locations
+
+    if length(locations) > 1 do
+      {:noreply, assign(socket, locations: Enum.reject(locations, &(&1.id == id)))}
+    else
+      {:noreply, socket}
+    end
+  end
+
   def handle_event("validate", %{"user" => user_params}, socket) do
     merged_params = Map.merge(socket.assigns.last_params, user_params)
-    city_name = lookup_city_name(merged_params["zip_code"])
     age = compute_age(merged_params["birthday"])
+
+    # Update locations from form params
+    locations = update_locations_from_params(socket.assigns.locations, user_params)
 
     changeset =
       Accounts.change_user_registration(%User{}, merged_params)
@@ -499,15 +590,55 @@ defmodule AniminaWeb.UserLive.Registration do
     {:noreply,
      socket
      |> assign(last_params: merged_params)
-     |> assign(city_name: city_name)
+     |> assign(locations: locations)
      |> assign(age: age)
      |> assign_form(changeset)}
+  end
+
+  defp update_locations_from_params(locations, user_params) do
+    location_params = user_params["locations"] || %{}
+
+    updated =
+      Enum.map(locations, fn loc ->
+        case Map.get(location_params, to_string(loc.id)) do
+          nil ->
+            loc
+
+          params ->
+            zip_code = params["zip_code"] || loc.zip_code
+            country_id = params["country_id"] || loc.country_id
+            city_name = lookup_city_name(zip_code)
+
+            %{loc | zip_code: zip_code, country_id: country_id, city_name: city_name, error: nil}
+        end
+      end)
+
+    mark_duplicate_locations(updated)
+  end
+
+  defp mark_duplicate_locations(locations) do
+    seen = MapSet.new()
+
+    {marked, _seen} =
+      Enum.map_reduce(locations, seen, fn loc, acc ->
+        key = {loc.country_id, loc.zip_code}
+        has_zip = loc.zip_code != nil and loc.zip_code != ""
+
+        if has_zip and MapSet.member?(acc, key) do
+          {%{loc | error: "Dieser Wohnsitz wurde bereits angegeben"}, acc}
+        else
+          acc = if has_zip, do: MapSet.put(acc, key), else: acc
+          {%{loc | error: nil}, acc}
+        end
+      end)
+
+    marked
   end
 
   @step_fields %{
     1 => ~w(email password mobile_phone birthday)a,
     2 => ~w(display_name gender height occupation language)a,
-    3 => ~w(country_id zip_code)a,
+    3 => [],
     4 => ~w(preferred_partner_gender partner_minimum_age partner_maximum_age partner_height_min partner_height_max search_radius terms_accepted)a
   }
 
@@ -520,9 +651,34 @@ defmodule AniminaWeb.UserLive.Registration do
     end)
   end
 
-  defp step_valid?(step, params) do
+  defp step_valid?(3, _params, locations) do
+    locations_valid?(locations)
+  end
+
+  defp step_valid?(step, params, _locations) do
     required = @step_required_fields[step]
     filled?(params, required)
+  end
+
+  defp locations_valid?(locations) do
+    length(locations) >= 1 and
+      Enum.all?(locations, fn loc ->
+        loc.country_id != nil and
+          loc.country_id != "" and
+          loc.zip_code != nil and
+          Regex.match?(~r/^\d{5}$/, loc.zip_code || "") and
+          loc.error == nil
+      end) and
+      no_duplicate_locations?(locations)
+  end
+
+  defp no_duplicate_locations?(locations) do
+    keys =
+      locations
+      |> Enum.filter(&(&1.zip_code != nil and &1.zip_code != ""))
+      |> Enum.map(&{&1.country_id, &1.zip_code})
+
+    length(keys) == length(Enum.uniq(keys))
   end
 
   defp maybe_auto_fill_preferences(params, socket, next_step) do

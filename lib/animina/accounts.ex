@@ -6,7 +6,7 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   alias Animina.Repo
 
-  alias Animina.Accounts.{User, UserToken, UserNotifier}
+  alias Animina.Accounts.{User, UserLocation, UserToken, UserNotifier}
 
   ## Database getters
 
@@ -75,9 +75,51 @@ defmodule Animina.Accounts do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.registration_changeset(attrs)
-    |> Repo.insert()
+    locations_attrs = extract_locations(attrs)
+
+    Repo.transact(fn ->
+      with {:ok, user} <-
+             %User{}
+             |> User.registration_changeset(attrs)
+             |> Repo.insert(),
+           :ok <- insert_locations(user, locations_attrs) do
+        {:ok, user}
+      end
+    end)
+  end
+
+  defp extract_locations(attrs) do
+    locations =
+      Map.get(attrs, :locations) || Map.get(attrs, "locations") || []
+
+    locations
+    |> Enum.with_index(1)
+    |> Enum.map(fn {loc, idx} ->
+      %{
+        country_id: loc[:country_id] || loc["country_id"],
+        zip_code: loc[:zip_code] || loc["zip_code"],
+        position: idx
+      }
+    end)
+  end
+
+  defp insert_locations(_user, []) do
+    :ok
+  end
+
+  defp insert_locations(user, locations) do
+    results =
+      Enum.reduce_while(locations, :ok, fn loc_attrs, :ok ->
+        changeset =
+          UserLocation.changeset(%UserLocation{}, Map.put(loc_attrs, :user_id, user.id))
+
+        case Repo.insert(changeset) do
+          {:ok, _location} -> {:cont, :ok}
+          {:error, changeset} -> {:halt, {:error, changeset}}
+        end
+      end)
+
+    results
   end
 
   @doc """

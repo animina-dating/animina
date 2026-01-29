@@ -26,11 +26,10 @@ defmodule Animina.AccountsFixtures do
       birthday: ~D[1990-01-01],
       gender: "male",
       height: 180,
-      zip_code: "10115",
       mobile_phone: unique_mobile_phone(),
-      country_id: germany_id(),
       preferred_partner_gender: ["female"],
-      terms_accepted: true
+      terms_accepted: true,
+      locations: [%{country_id: germany_id(), zip_code: "10115"}]
     })
   end
 

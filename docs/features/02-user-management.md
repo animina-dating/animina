@@ -16,8 +16,10 @@
 - birthday (legal age validation: 18+)
 - gender (male, female, diverse)
 - height (80-225cm)
-- country (preselected as Germany)
-- zip code
+- 1-4 Wohnsitze (residences), each consisting of:
+  - country (preselected as Germany)
+  - zip code (5 digits, with automatic city name lookup)
+  - At least 1 Wohnsitz is required, up to 4 allowed
 - mobile phone number (E.164 format)
 
 ### Auto-Filled Fields (editable)

@@ -4,6 +4,35 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
+  defp fill_step_1(lv) do
+    lv
+    |> element("#registration_form")
+    |> render_change(
+      user: %{
+        "email" => "test@example.com",
+        "password" => "password1234",
+        "mobile_phone" => "+4915112345678",
+        "birthday" => "1990-01-01"
+      }
+    )
+
+    lv |> element("button[phx-click=next_step]") |> render_click()
+  end
+
+  defp fill_step_2(lv) do
+    lv
+    |> element("#registration_form")
+    |> render_change(
+      user: %{
+        "display_name" => "TestUser",
+        "gender" => "male",
+        "height" => "180"
+      }
+    )
+
+    lv |> element("button[phx-click=next_step]") |> render_click()
+  end
+
   describe "Registration page" do
     test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
@@ -63,7 +92,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       # Try to advance with empty fields
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Should still be on step 1
       assert html =~ "E-Mail-Adresse"
@@ -86,7 +115,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       )
 
       # Click next
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Should now show step 2 fields
       assert html =~ "Anzeigename"
@@ -111,7 +140,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Now go back
       html = lv |> element("button", "Zurück") |> render_click()
@@ -136,7 +165,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Fill step 2
       lv
@@ -149,7 +178,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Go back to step 1
       lv |> element("button", "Zurück") |> render_click()
@@ -174,7 +203,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Fill step 2 with display_name and advance
       lv
@@ -187,7 +216,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Navbar should show the display_name and initial in the avatar
       assert html =~ "TestUser"
@@ -197,44 +226,19 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "advances through all 4 steps", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Step 1
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Step 3 - fill location
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button", "Weiter") |> render_click()
-
-      # Step 3
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
-        }
-      )
-
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 4 should show partner preferences AND legal checkbox
       assert html =~ "Bevorzugtes Geschlecht"
@@ -247,44 +251,19 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "auto-fills partner preferences when advancing to step 4", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
-        }
-      )
-
-      lv |> element("button", "Weiter") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button", "Weiter") |> render_click()
+      fill_step_1(lv)
+      fill_step_2(lv)
 
       # Step 3
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Partner preferences should be auto-filled
       # Age for 1990-01-01 is 36 -> min 31, max 41
@@ -311,7 +290,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 2
       lv
@@ -324,19 +303,18 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 3
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 4 - accept terms and submit
       lv
@@ -373,7 +351,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 2
       lv
@@ -386,19 +364,18 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 3
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 4 - accept terms and submit
       lv
@@ -422,42 +399,19 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "shows age fields in step 4", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Navigate to step 4
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Step 3
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
-
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button", "Weiter") |> render_click()
-
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
-        }
-      )
-
-      html = lv |> element("button", "Weiter") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       assert html =~ "Mindestalter Partner"
       assert html =~ "Höchstalter Partner"
@@ -480,7 +434,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 2
       lv
@@ -493,19 +447,18 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 3
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "country_id" => germany_id(),
-          "zip_code" => "10115"
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
         }
       )
 
-      lv |> element("button", "Weiter") |> render_click()
+      lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Step 4 - override auto-filled values
       lv
@@ -530,6 +483,126 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)
       assert user.partner_minimum_age_offset == 11
       assert user.partner_maximum_age_offset == 9
+    end
+  end
+
+  describe "multiple locations" do
+    test "step 3 shows one location by default", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      html = fill_step_2(lv)
+
+      # Should show one location card and the add button
+      assert html =~ "Postleitzahl"
+      assert html =~ "Weiteren Wohnsitz hinzufügen"
+      # Should NOT show delete button when only 1 location
+      refute html =~ "Wohnsitz entfernen"
+    end
+
+    test "can add a second location", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Add a second location
+      html = lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+
+      # Should now show two location cards and delete buttons
+      assert html =~ "location-1"
+      assert html =~ "location-2"
+      assert html =~ "Wohnsitz entfernen"
+      # Title should switch to plural
+      assert html =~ "Wohnorte"
+    end
+
+    test "can remove a location", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Add a second location
+      lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+
+      # Remove the second location
+      html = lv |> element("button[phx-value-id=\"2\"]") |> render_click()
+
+      # Should be back to one location, no delete button
+      assert html =~ "location-1"
+      refute html =~ "location-2"
+      refute html =~ "Wohnsitz entfernen"
+      # Title should switch back to singular
+      assert html =~ "3. Wohnort"
+    end
+
+    test "cannot add more than 4 locations", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Add 3 more locations (total 4)
+      lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+      lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+      html = lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+
+      # Should have 4 locations and no add button
+      assert html =~ "location-1"
+      assert html =~ "location-4"
+      refute html =~ "Weiteren Wohnsitz hinzufügen"
+    end
+
+    test "blocks advancement when two locations have the same zip code", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Fill first location
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "locations" => %{"1" => %{"country_id" => germany_id(), "zip_code" => "10115"}}
+        }
+      )
+
+      # Add second location with same zip code
+      lv |> element("button", "Weiteren Wohnsitz hinzufügen") |> render_click()
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "locations" => %{
+            "1" => %{"country_id" => germany_id(), "zip_code" => "10115"},
+            "2" => %{"country_id" => germany_id(), "zip_code" => "10115"}
+          }
+        }
+      )
+
+      # Try to advance - should be blocked
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Should still be on step 3 with error message
+      assert html =~ "Postleitzahl"
+      assert html =~ "Dieser Wohnsitz wurde bereits angegeben"
+    end
+
+    test "blocks step 3 advancement without valid zip code", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Try to advance without filling zip code
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Should still be on step 3
+      assert html =~ "Postleitzahl"
+      assert html =~ "Weiteren Wohnsitz hinzufügen"
     end
   end
 
