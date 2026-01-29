@@ -21,7 +21,8 @@ set -euo pipefail
 # =============================================================================
 
 # --- Configuration -----------------------------------------------------------
-APP_NAME="animina2"
+RELEASE_NAME="animina"
+SERVICE_NAME="animina2"
 DEPLOY_DIR="${DEPLOY_DIR:-/var/www/animina.de}"
 CURRENT_LINK="${DEPLOY_DIR}/current"
 SHARED_DIR="${DEPLOY_DIR}/shared"
@@ -29,7 +30,7 @@ BACKUP_DIR="${SHARED_DIR}/backups"
 HOT_UPGRADES_DIR="${SHARED_DIR}/hot-upgrades"
 RELEASES_DIR="${DEPLOY_DIR}/releases"
 RELEASE_DIR="${RELEASES_DIR}/$(date +%Y%m%d%H%M%S)"
-TARBALL=$(ls _build/prod/${APP_NAME}-*.tar.gz 2>/dev/null | head -n1)
+TARBALL=$(ls _build/prod/${RELEASE_NAME}-*.tar.gz 2>/dev/null | head -n1)
 MAX_RELEASES=5
 MAX_BACKUPS=10
 HEALTH_CHECK_RETRIES=6
@@ -98,13 +99,13 @@ needs_cold_deploy() {
   fi
 
   # Check if there are pending migrations
-  if [ -d "$RELEASE_DIR/lib/${APP_NAME}-"*/priv/repo/migrations ] 2>/dev/null; then
+  if [ -d "$RELEASE_DIR/lib/${RELEASE_NAME}-"*/priv/repo/migrations ] 2>/dev/null; then
     local current_migrations=""
     if [ -L "$CURRENT_LINK" ] && [ -d "$CURRENT_LINK" ]; then
-      current_migrations=$(ls "$CURRENT_LINK/lib/${APP_NAME}-"*/priv/repo/migrations/ 2>/dev/null | sort)
+      current_migrations=$(ls "$CURRENT_LINK/lib/${RELEASE_NAME}-"*/priv/repo/migrations/ 2>/dev/null | sort)
     fi
     local new_migrations
-    new_migrations=$(ls "$RELEASE_DIR/lib/${APP_NAME}-"*/priv/repo/migrations/ 2>/dev/null | sort)
+    new_migrations=$(ls "$RELEASE_DIR/lib/${RELEASE_NAME}-"*/priv/repo/migrations/ 2>/dev/null | sort)
     if [ "$current_migrations" != "$new_migrations" ]; then
       log "New migrations detected - cold deploy required"
       return 0
@@ -117,7 +118,7 @@ needs_cold_deploy() {
   fi
 
   # Check if the application is running
-  if ! systemctl is-active --quiet "$APP_NAME" 2>/dev/null; then
+  if ! systemctl is-active --quiet "$SERVICE_NAME" 2>/dev/null; then
     log "Application is not running - cold deploy required"
     return 0
   fi
@@ -153,7 +154,7 @@ pre_deploy_backup() {
 
 # --- Main deployment ---------------------------------------------------------
 main() {
-  log "Starting deployment of ${APP_NAME}"
+  log "Starting deployment of ${RELEASE_NAME} (service: ${SERVICE_NAME})"
   log "Release directory: $RELEASE_DIR"
 
   # Verify tarball exists
@@ -204,11 +205,11 @@ main() {
 
     # Restart application
     log "Restarting application..."
-    if ! sudo systemctl restart "$APP_NAME" 2>&1; then
+    if ! sudo systemctl restart "$SERVICE_NAME" 2>&1; then
       err "Failed to restart application"
       if [ -n "$previous_release" ] && [ -d "$previous_release" ]; then
         rollback_symlink
-        sudo systemctl restart "$APP_NAME" 2>&1 || true
+        sudo systemctl restart "$SERVICE_NAME" 2>&1 || true
       fi
       cleanup_failed_release
       exit 1
@@ -240,7 +241,7 @@ main() {
     err "Deployment failed health check!"
     if [ -n "$previous_release" ] && [ -d "$previous_release" ]; then
       ln -sfn "$previous_release" "$CURRENT_LINK"
-      sudo systemctl restart "$APP_NAME" 2>&1 || true
+      sudo systemctl restart "$SERVICE_NAME" 2>&1 || true
       log "Rolled back to previous release"
     fi
     cleanup_failed_release
