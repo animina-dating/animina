@@ -22,7 +22,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 ## Features
 
 - **User Authentication**: Email/password registration and login with magic link support
-- **User Profiles**: Display name, birthday, gender, height, 1-4 Wohnsitze (residences), and partner preferences
+- **User Profiles**: Display name, birthday (18+ enforced via date picker), gender, height, 1-4 Wohnsitze (residences), and partner preferences
 - **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
 - **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
 - **German UI**: Registration and login forms in German ("Coastal Morning" design)
