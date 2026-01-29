@@ -209,6 +209,14 @@ defmodule AniminaWeb.UserLive.Registration do
           {@age} Jahre alt
         </p>
       </div>
+      <.input
+        field={@form[:referral_code_input]}
+        type="text"
+        label="Empfehlungscode (optional)"
+        placeholder="z.B. A7X3K9"
+        autocomplete="off"
+        maxlength="6"
+      />
     </div>
     """
   end
@@ -692,7 +700,7 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   @step_fields %{
-    1 => ~w(email password mobile_phone birthday)a,
+    1 => ~w(email password mobile_phone birthday referral_code_input)a,
     2 => ~w(display_name gender height occupation language)a,
     3 => [],
     4 =>

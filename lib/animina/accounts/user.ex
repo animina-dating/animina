@@ -41,10 +41,16 @@ defmodule Animina.Accounts.User do
     field :language, :string, default: "de"
     field :state, :string, default: "waitlisted"
 
+    # Referral fields
+    field :referral_code, :string
+    field :waitlist_priority, :integer, default: 0
+    belongs_to :referred_by, __MODULE__, foreign_key: :referred_by_id
+
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
     field :partner_minimum_age, :integer, virtual: true
     field :partner_maximum_age, :integer, virtual: true
+    field :referral_code_input, :string, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -65,8 +71,12 @@ defmodule Animina.Accounts.User do
     :search_radius,
     :occupation,
     :language,
-    :terms_accepted
+    :terms_accepted,
+    :referral_code_input
   ]
+
+  @referral_code_chars ~c"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  @referral_code_length 6
 
   @doc """
   A user changeset for registration.
@@ -87,6 +97,39 @@ defmodule Animina.Accounts.User do
     |> validate_password(opts)
     |> validate_profile_fields()
     |> validate_terms_accepted()
+    |> maybe_generate_referral_code()
+    |> validate_referral_code_input()
+  end
+
+  @doc """
+  Generates a random 6-character alphanumeric referral code.
+  """
+  def generate_referral_code do
+    Enum.map(1..@referral_code_length, fn _ -> Enum.random(@referral_code_chars) end)
+    |> List.to_string()
+  end
+
+  defp maybe_generate_referral_code(changeset) do
+    if get_field(changeset, :referral_code) do
+      changeset
+    else
+      put_change(changeset, :referral_code, generate_referral_code())
+    end
+  end
+
+  defp validate_referral_code_input(changeset) do
+    case get_change(changeset, :referral_code_input) do
+      nil -> changeset
+      "" -> changeset
+      code when is_binary(code) ->
+        trimmed = String.trim(code) |> String.upcase()
+        if Regex.match?(~r/^[A-Z0-9]{6}$/, trimmed) do
+          put_change(changeset, :referral_code_input, trimmed)
+        else
+          add_error(changeset, :referral_code_input, "muss aus 6 Zeichen bestehen (Buchstaben und Ziffern)")
+        end
+      _ -> changeset
+    end
   end
 
   defp compute_age_offsets(changeset) do
@@ -151,6 +194,7 @@ defmodule Animina.Accounts.User do
     )
     |> validate_number(:search_radius, greater_than_or_equal_to: 1)
     |> unique_constraint(:mobile_phone)
+    |> unique_constraint(:referral_code)
   end
 
   defp validate_and_normalize_mobile_phone(changeset) do

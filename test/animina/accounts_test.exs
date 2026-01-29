@@ -544,6 +544,122 @@ defmodule Animina.AccountsTest do
     end
   end
 
+  describe "referral system" do
+    test "user gets a referral_code upon registration" do
+      user = unconfirmed_user_fixture()
+      assert user.referral_code != nil
+      assert String.length(user.referral_code) == 6
+      assert Regex.match?(~r/^[A-Z0-9]{6}$/, user.referral_code)
+    end
+
+    test "get_user_by_referral_code/1 returns user or nil" do
+      user = unconfirmed_user_fixture()
+      assert %User{id: id} = Accounts.get_user_by_referral_code(user.referral_code)
+      assert id == user.id
+
+      # Case insensitive
+      assert %User{} = Accounts.get_user_by_referral_code(String.downcase(user.referral_code))
+
+      assert is_nil(Accounts.get_user_by_referral_code("ZZZZZZ"))
+      assert is_nil(Accounts.get_user_by_referral_code(nil))
+      assert is_nil(Accounts.get_user_by_referral_code(""))
+    end
+
+    test "registration with valid referral code sets referred_by_id" do
+      referrer = unconfirmed_user_fixture()
+
+      {:ok, referred} =
+        valid_user_attributes(referral_code_input: referrer.referral_code)
+        |> Accounts.register_user()
+
+      assert referred.referred_by_id == referrer.id
+    end
+
+    test "registration with invalid referral code returns changeset error" do
+      {:error, changeset} =
+        valid_user_attributes(referral_code_input: "ZZZZZZ")
+        |> Accounts.register_user()
+
+      assert "Empfehlungscode nicht gefunden" in errors_on(changeset).referral_code_input
+    end
+
+    test "registration with empty referral code succeeds without referrer" do
+      {:ok, user} =
+        valid_user_attributes(referral_code_input: "")
+        |> Accounts.register_user()
+
+      assert is_nil(user.referred_by_id)
+    end
+
+    test "PIN confirmation increments waitlist_priority for both users" do
+      referrer = unconfirmed_user_fixture()
+
+      {:ok, referred} =
+        valid_user_attributes(referral_code_input: referrer.referral_code)
+        |> Accounts.register_user()
+
+      {:ok, pin} = Accounts.send_confirmation_pin(referred)
+      referred = Repo.get!(User, referred.id)
+
+      {:ok, _confirmed} = Accounts.verify_confirmation_pin(referred, pin)
+
+      updated_referrer = Repo.get!(User, referrer.id)
+      updated_referred = Repo.get!(User, referred.id)
+
+      assert updated_referrer.waitlist_priority == 1
+      assert updated_referred.waitlist_priority == 1
+    end
+
+    test "auto-activates user after 5 successful referrals" do
+      referrer = unconfirmed_user_fixture()
+
+      # Confirm the referrer first so they have confirmed_at set
+      {:ok, pin} = Accounts.send_confirmation_pin(referrer)
+      referrer = Repo.get!(User, referrer.id)
+      {:ok, referrer} = Accounts.verify_confirmation_pin(referrer, pin)
+      assert referrer.state == "waitlisted"
+
+      for _i <- 1..5 do
+        {:ok, referred} =
+          valid_user_attributes(referral_code_input: referrer.referral_code)
+          |> Accounts.register_user()
+
+        {:ok, ref_pin} = Accounts.send_confirmation_pin(referred)
+        referred = Repo.get!(User, referred.id)
+        {:ok, _confirmed} = Accounts.verify_confirmation_pin(referred, ref_pin)
+      end
+
+      updated_referrer = Repo.get!(User, referrer.id)
+      assert updated_referrer.state == "normal"
+      assert updated_referrer.waitlist_priority == 5
+    end
+
+    test "count_confirmed_referrals/1 returns correct count" do
+      referrer = unconfirmed_user_fixture()
+
+      assert Accounts.count_confirmed_referrals(referrer) == 0
+
+      # Create an unconfirmed referred user
+      {:ok, _referred} =
+        valid_user_attributes(referral_code_input: referrer.referral_code)
+        |> Accounts.register_user()
+
+      # Unconfirmed user should not count
+      assert Accounts.count_confirmed_referrals(referrer) == 0
+
+      # Create and confirm a referred user
+      {:ok, referred2} =
+        valid_user_attributes(referral_code_input: referrer.referral_code)
+        |> Accounts.register_user()
+
+      {:ok, pin} = Accounts.send_confirmation_pin(referred2)
+      referred2 = Repo.get!(User, referred2.id)
+      {:ok, _confirmed} = Accounts.verify_confirmation_pin(referred2, pin)
+
+      assert Accounts.count_confirmed_referrals(referrer) == 1
+    end
+  end
+
   describe "inspect/2 for the User module" do
     test "does not include password" do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""

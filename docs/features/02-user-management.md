@@ -74,7 +74,7 @@ These fields are pre-populated via LiveView when the user enters the fields abov
 
 - All new registrations placed on waitlist automatically
 - Waitlisted users see "we either have too few or too many users for your town in our waitinglist" landing page after login
-- Users remain on waitlist until manually granted access
+- Users remain on waitlist until manually granted access or auto-activated via the referral system (see 2.5)
 
 ---
 
@@ -86,3 +86,15 @@ These fields are pre-populated via LiveView when the user enters the fields abov
 | `normal` | Active, fully visible |
 | `hibernate` | Temporary self-deactivation |
 | `archived` | User-deleted account |
+
+---
+
+## 2.5 Referral System
+
+- Every user receives a unique 6-character alphanumeric referral code (e.g., `A7X3K9`) upon registration
+- New users can optionally enter a referral code during Step 1 of registration
+- The `referred_by_id` is stored at registration time; referral credit is processed after PIN verification (prevents gaming via unconfirmed throwaway accounts)
+- Each confirmed referral increases `waitlist_priority` for both the referrer and the referred user
+- After 5 successful referrals, a user is automatically activated (state changes from `waitlisted` to `normal`)
+- No limit on number of referrals per user
+- Referral code is displayed prominently on the waitlist page with a copy button and progress indicator (X/5 Empfehlungen)

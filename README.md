@@ -27,6 +27,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 - **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
 - **German UI**: Registration and login forms in German ("Coastal Morning" design)
 - **Waitlist**: New users are placed on a waitlist after registration
+- **Referral System**: Each user gets a unique 6-character code; 5 confirmed referrals auto-activate the account
 - **Geo Data**: Germany with 8000+ cities seeded
 
 ## ANIMINA Installation Guide for Developers

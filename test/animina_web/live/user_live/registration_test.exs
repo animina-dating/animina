@@ -57,6 +57,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Passwort"
       assert html =~ "Handynummer"
       assert html =~ "Geburtstag"
+      # Step 1 should show optional referral code field
+      assert html =~ "Empfehlungscode"
       # Step 1 should show "Weiter" button, not "Konto erstellen" submit
       assert html =~ "Weiter"
       refute html =~ ~r/<button[^>]*type="submit"[^>]*>.*Konto erstellen/s
@@ -674,6 +676,86 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> follow_redirect(conn, ~p"/users/log-in")
 
       assert login_html =~ "Anmelden"
+    end
+  end
+
+  describe "referral code in registration" do
+    test "step 1 shows optional referral code field", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      assert html =~ "Empfehlungscode (optional)"
+      assert html =~ "A7X3K9"
+    end
+
+    test "registration with valid referral code succeeds", %{conn: conn} do
+      referrer = user_fixture()
+
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      email = unique_user_email()
+
+      # Step 1 with referral code
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01",
+          "referral_code_input" => referrer.referral_code
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+      fill_step_2(lv)
+      fill_step_3(lv)
+
+      lv
+      |> element("#registration_form")
+      |> render_change(user: %{"terms_accepted" => "true"})
+
+      lv
+      |> form("#registration_form")
+      |> render_submit()
+
+      {path, _flash} = assert_redirect(lv)
+      assert path =~ "/users/confirm/"
+
+      user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)
+      assert user.referred_by_id == referrer.id
+    end
+
+    test "registration with invalid referral code shows error", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # Step 1 with invalid referral code
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => unique_user_email(),
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01",
+          "referral_code_input" => "ZZZZZZ"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+      fill_step_2(lv)
+      fill_step_3(lv)
+
+      lv
+      |> element("#registration_form")
+      |> render_change(user: %{"terms_accepted" => "true"})
+
+      result =
+        lv
+        |> form("#registration_form")
+        |> render_submit()
+
+      assert result =~ "Empfehlungscode nicht gefunden"
     end
   end
 end
