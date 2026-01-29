@@ -33,6 +33,7 @@ defmodule AniminaWeb.DebugLive do
       load_averages: load_averages(),
       process_count: :erlang.system_info(:process_count),
       scheduler_count: :erlang.system_info(:schedulers_online),
+      cpu_info: cpu_info(),
       deployed_at: format_deployed_at(),
       uptime: format_uptime()
     )
@@ -135,9 +136,46 @@ defmodule AniminaWeb.DebugLive do
     end
   end
 
+  defp cpu_info do
+    case :os.type() do
+      {:unix, :linux} -> cpu_info_linux()
+      {:unix, :darwin} -> cpu_info_darwin()
+      _ -> :not_available
+    end
+  end
+
+  defp cpu_info_linux do
+    case File.read("/proc/cpuinfo") do
+      {:ok, content} ->
+        model =
+          case Regex.run(~r/^model name\s*:\s*(.+)$/m, content) do
+            [_, name] -> String.trim(name)
+            _ -> "Unknown"
+          end
+
+        count =
+          Regex.scan(~r/^processor\s*:/m, content)
+          |> length()
+
+        %{model: model, count: count}
+
+      {:error, _} ->
+        :not_available
+    end
+  end
+
+  defp cpu_info_darwin do
+    with {model, 0} <- System.cmd("sysctl", ["-n", "machdep.cpu.brand_string"], stderr_to_stdout: true),
+         {count_str, 0} <- System.cmd("sysctl", ["-n", "hw.ncpu"], stderr_to_stdout: true) do
+      %{model: String.trim(model), count: String.trim(count_str) |> String.to_integer()}
+    else
+      _ -> :not_available
+    end
+  end
+
   defp format_deployed_at do
     Animina.deployed_at()
-    |> DateTime.shift_zone!("Europe/Berlin")
+    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
     |> Calendar.strftime("%d.%m.%Y %H:%M:%S %Z")
   end
 
@@ -226,10 +264,17 @@ defmodule AniminaWeb.DebugLive do
             <% end %>
           </.section>
 
-          <%!-- BEAM Info --%>
-          <.section title="BEAM Info">
-            <.row label="Process Count" value={@process_count} />
+          <%!-- BEAM / CPU Info --%>
+          <.section title="BEAM / CPU Info">
+            <%= if @cpu_info != :not_available do %>
+              <.row label="CPU Model" value={@cpu_info.model} />
+              <.row label="CPU Cores" value={@cpu_info.count} />
+            <% else %>
+              <.row label="CPU Model" value="N/A" />
+              <.row label="CPU Cores" value="N/A" />
+            <% end %>
             <.row label="Schedulers" value={@scheduler_count} />
+            <.row label="Process Count" value={@process_count} />
           </.section>
 
           <%!-- Deployment --%>

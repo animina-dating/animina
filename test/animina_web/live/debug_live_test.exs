@@ -30,10 +30,12 @@ defmodule AniminaWeb.DebugLiveTest do
       # System Load section
       assert html =~ "System Load"
 
-      # BEAM Info section
-      assert html =~ "BEAM Info"
+      # BEAM / CPU Info section
+      assert html =~ "BEAM / CPU Info"
       assert html =~ "Process Count"
       assert html =~ "Schedulers"
+      assert html =~ "CPU Model"
+      assert html =~ "CPU Cores"
 
       # Deployment section
       assert html =~ "Deployment"
