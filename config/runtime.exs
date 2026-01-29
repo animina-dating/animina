@@ -71,7 +71,7 @@ if config_env() == :prod do
   # Hot Deploy Configuration
   config :animina, Animina.HotDeploy,
     enabled: System.get_env("HOT_DEPLOY_ENABLED", "true") == "true",
-    upgrades_dir: System.get_env("HOT_DEPLOY_DIR", "/var/www/animina/shared/hot-upgrades"),
+    upgrades_dir: System.get_env("HOT_DEPLOY_DIR", "/var/www/animina.de/shared/hot-upgrades"),
     check_interval: String.to_integer(System.get_env("HOT_DEPLOY_INTERVAL", "10000"))
 
   # ## SSL Support

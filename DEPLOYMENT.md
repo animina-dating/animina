@@ -194,7 +194,7 @@ DB_PASSWORD_ENCODED=$(printf '%s' "$DB_PASSWORD" | python3 -c "import sys; from 
 # Create the .env file with the database password
 cat > /var/www/<app_name>/shared/.env << EOF
 # Database Configuration
-DATABASE_URL=postgresql://<deploy_user>:${DB_PASSWORD_ENCODED}@localhost/<app_name>_prod
+DATABASE_URL=postgresql://<deploy_user>:${DB_PASSWORD_ENCODED}@localhost/animina2_prod
 POOL_SIZE=10
 EOF
 
@@ -231,12 +231,12 @@ sudo -u postgres psql
 -- Replace <deploy_user> and <app_name> with your actual values
 
 CREATE USER <deploy_user> WITH PASSWORD 'PASTE_PASSWORD_HERE';
-CREATE DATABASE <app_name>_prod OWNER <deploy_user>;
+CREATE DATABASE animina2_prod OWNER <deploy_user>;
 
 -- Verify the database was created
-\l <app_name>_prod
+\l animina2_prod
 
--- You should see <app_name>_prod in the list with owner <deploy_user>
+-- You should see animina2_prod in the list with owner <deploy_user>
 
 -- Exit PostgreSQL
 \q
@@ -936,7 +936,7 @@ Add these lines at the bottom (replace placeholders):
 
 ```cron
 # Daily database backup at 2 AM
-0 2 * * * pg_dump -U <deploy_user> <app_name>_prod | gzip > /var/www/<app_name>/shared/backups/<app_name>_$(date +\%Y\%m\%d).sql.gz
+0 2 * * * pg_dump -U <deploy_user> animina2_prod | gzip > /var/www/<app_name>/shared/backups/<app_name>_$(date +\%Y\%m\%d).sql.gz
 
 # Clean backups older than 30 days at 3 AM
 0 3 * * * find /var/www/<app_name>/shared/backups -name "<app_name>_*.sql.gz" -mtime +30 -delete
@@ -1265,7 +1265,7 @@ cd /var/www/<app_name>/repo
 sudo ls -lh /var/www/<app_name>/shared/backups/
 
 # Restore a backup (replace DATE with actual date)
-sudo -u <deploy_user> gunzip -c /var/www/<app_name>/shared/backups/<app_name>_DATE.sql.gz | sudo -u <deploy_user> psql <app_name>_prod
+sudo -u <deploy_user> gunzip -c /var/www/<app_name>/shared/backups/<app_name>_DATE.sql.gz | sudo -u <deploy_user> psql animina2_prod
 ```
 
 ---
@@ -1297,7 +1297,7 @@ exit
 
 ```bash
 # Test PostgreSQL connection
-sudo -u <deploy_user> psql -U <deploy_user> -d <app_name>_prod -h localhost
+sudo -u <deploy_user> psql -U <deploy_user> -d animina2_prod -h localhost
 
 # Check PostgreSQL is running
 sudo systemctl status postgresql
