@@ -133,11 +133,19 @@ defmodule Animina.Accounts.User do
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:gender, @valid_genders)
     |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
-    |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/, message: "must be in E.164 format (e.g. +491234567890)")
+    |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/,
+      message: "must be in E.164 format (e.g. +491234567890)"
+    )
     |> validate_birthday()
     |> validate_preferred_partner_genders()
-    |> validate_number(:partner_height_min, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
-    |> validate_number(:partner_height_max, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
+    |> validate_number(:partner_height_min,
+      greater_than_or_equal_to: 80,
+      less_than_or_equal_to: 225
+    )
+    |> validate_number(:partner_height_max,
+      greater_than_or_equal_to: 80,
+      less_than_or_equal_to: 225
+    )
     |> validate_number(:search_radius, greater_than_or_equal_to: 1)
     |> unique_constraint(:mobile_phone)
   end

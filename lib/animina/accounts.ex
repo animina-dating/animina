@@ -132,7 +132,11 @@ defmodule Animina.Accounts do
 
   """
   def change_user_registration(user, attrs \\ %{}, opts \\ []) do
-    User.registration_changeset(user, attrs, [hash_password: false, validate_unique: false] ++ opts)
+    User.registration_changeset(
+      user,
+      attrs,
+      [hash_password: false, validate_unique: false] ++ opts
+    )
   end
 
   ## Settings

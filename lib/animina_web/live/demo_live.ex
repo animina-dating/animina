@@ -39,158 +39,158 @@ defmodule AniminaWeb.DemoLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <!-- Hero Section -->
-        <section class="relative overflow-hidden">
-          <!-- Subtle gradient background -->
-          <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
+      <section class="relative overflow-hidden">
+        <!-- Subtle gradient background -->
+        <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
 
-          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
-            <div class="text-center max-w-3xl mx-auto">
-              <h1 class="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-base-content leading-tight">
-                Find meaningful <span class="block text-primary font-normal">connections</span>
-              </h1>
-              <p class="mt-6 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-                Animina brings together people who value authenticity.
-                No games, no pretense—just genuine conversations
-                and real connections.
-              </p>
-              <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="#"
-                  class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  Get started
-                </a>
-                <a
-                  href="#"
-                  class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors duration-200"
-                >
-                  Learn more
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-        
-    <!-- Featured Profiles Section -->
-        <section class="py-16 sm:py-24 bg-base-200/50">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                People you might like
-              </h2>
-              <p class="mt-3 text-lg text-base-content/60">
-                Authentic profiles from your area
-              </p>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              <!-- Profile Card 1 -->
-              <.profile_card
-                image_url="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
-                name="Julia"
-                age={29}
-                location="Berlin"
-                bio="Coffee enthusiast, amateur chef, and weekend hiker. Looking for someone to explore the city with."
-                photographer="Christopher Campbell"
-              />
-              
-    <!-- Profile Card 2 -->
-              <.profile_card
-                image_url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face"
-                name="Thomas"
-                age={34}
-                location="Munich"
-                bio="Architect by day, jazz lover by night. I believe the best conversations happen over good food."
-                photographer="Joseph Gonzalez"
-              />
-              
-    <!-- Profile Card 3 -->
-              <.profile_card
-                image_url="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=500&fit=crop&crop=face"
-                name="Sofia"
-                age={27}
-                location="Hamburg"
-                bio="Bookworm, yoga practitioner, and documentary enthusiast. Seeking genuine connection over casual chat."
-                photographer="Aiony Haust"
-              />
-            </div>
-          </div>
-        </section>
-        
-    <!-- Features Section -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 sm:mb-16">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Why Animina?
-              </h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-              <.feature_card
-                icon="hero-shield-check"
-                title="Verified profiles"
-                description="Every profile is verified to ensure you're connecting with real people who share your values."
-              />
-
-              <.feature_card
-                icon="hero-chat-bubble-left-right"
-                title="Meaningful conversations"
-                description="Our matching focuses on compatibility and shared interests, not just appearances."
-              />
-
-              <.feature_card
-                icon="hero-heart"
-                title="Real connections"
-                description="Animina is designed for those seeking genuine relationships, not endless swiping."
-              />
-            </div>
-          </div>
-        </section>
-        
-    <!-- Testimonial Section -->
-        <section class="py-16 sm:py-24 bg-primary/5">
-          <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-            <blockquote>
-              <p class="text-xl sm:text-2xl font-light text-base-content leading-relaxed italic">
-                "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
-              </p>
-              <footer class="mt-8">
-                <div class="flex items-center justify-center gap-4">
-                  <img
-                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face"
-                    alt="Portrait of Anna. Photo by Brooke Cagle on Unsplash"
-                    class="w-14 h-14 rounded-full object-cover border-2 border-secondary/50"
-                  />
-                  <div class="text-left">
-                    <p class="text-base font-medium text-base-content">Anna & David</p>
-                    <p class="text-base text-base-content/60">Together since 2023</p>
-                  </div>
-                </div>
-              </footer>
-            </blockquote>
-          </div>
-        </section>
-        
-    <!-- CTA Section -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Ready to find your person?
-            </h2>
-            <p class="mt-4 text-lg text-base-content/70">
-              Join thousands of people who chose authenticity over algorithms.
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
+          <div class="text-center max-w-3xl mx-auto">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-base-content leading-tight">
+              Find meaningful <span class="block text-primary font-normal">connections</span>
+            </h1>
+            <p class="mt-6 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
+              Animina brings together people who value authenticity.
+              No games, no pretense—just genuine conversations
+              and real connections.
             </p>
-            <div class="mt-8">
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="#"
-                class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
-                Create your profile <.icon name="hero-arrow-right" class="ml-2 size-5" />
+                Get started
+              </a>
+              <a
+                href="#"
+                class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors duration-200"
+              >
+                Learn more
               </a>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+      
+    <!-- Featured Profiles Section -->
+      <section class="py-16 sm:py-24 bg-base-200/50">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+              People you might like
+            </h2>
+            <p class="mt-3 text-lg text-base-content/60">
+              Authentic profiles from your area
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <!-- Profile Card 1 -->
+            <.profile_card
+              image_url="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&crop=face"
+              name="Julia"
+              age={29}
+              location="Berlin"
+              bio="Coffee enthusiast, amateur chef, and weekend hiker. Looking for someone to explore the city with."
+              photographer="Christopher Campbell"
+            />
+            
+    <!-- Profile Card 2 -->
+            <.profile_card
+              image_url="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face"
+              name="Thomas"
+              age={34}
+              location="Munich"
+              bio="Architect by day, jazz lover by night. I believe the best conversations happen over good food."
+              photographer="Joseph Gonzalez"
+            />
+            
+    <!-- Profile Card 3 -->
+            <.profile_card
+              image_url="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=500&fit=crop&crop=face"
+              name="Sofia"
+              age={27}
+              location="Hamburg"
+              bio="Bookworm, yoga practitioner, and documentary enthusiast. Seeking genuine connection over casual chat."
+              photographer="Aiony Haust"
+            />
+          </div>
+        </div>
+      </section>
+      
+    <!-- Features Section -->
+      <section class="py-16 sm:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+              Why Animina?
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <.feature_card
+              icon="hero-shield-check"
+              title="Verified profiles"
+              description="Every profile is verified to ensure you're connecting with real people who share your values."
+            />
+
+            <.feature_card
+              icon="hero-chat-bubble-left-right"
+              title="Meaningful conversations"
+              description="Our matching focuses on compatibility and shared interests, not just appearances."
+            />
+
+            <.feature_card
+              icon="hero-heart"
+              title="Real connections"
+              description="Animina is designed for those seeking genuine relationships, not endless swiping."
+            />
+          </div>
+        </div>
+      </section>
+      
+    <!-- Testimonial Section -->
+      <section class="py-16 sm:py-24 bg-primary/5">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
+          <blockquote>
+            <p class="text-xl sm:text-2xl font-light text-base-content leading-relaxed italic">
+              "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
+            </p>
+            <footer class="mt-8">
+              <div class="flex items-center justify-center gap-4">
+                <img
+                  src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&crop=face"
+                  alt="Portrait of Anna. Photo by Brooke Cagle on Unsplash"
+                  class="w-14 h-14 rounded-full object-cover border-2 border-secondary/50"
+                />
+                <div class="text-left">
+                  <p class="text-base font-medium text-base-content">Anna & David</p>
+                  <p class="text-base text-base-content/60">Together since 2023</p>
+                </div>
+              </div>
+            </footer>
+          </blockquote>
+        </div>
+      </section>
+      
+    <!-- CTA Section -->
+      <section class="py-16 sm:py-24">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+            Ready to find your person?
+          </h2>
+          <p class="mt-4 text-lg text-base-content/70">
+            Join thousands of people who chose authenticity over algorithms.
+          </p>
+          <div class="mt-8">
+            <a
+              href="#"
+              class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+            >
+              Create your profile <.icon name="hero-arrow-right" class="ml-2 size-5" />
+            </a>
+          </div>
+        </div>
+      </section>
     </Layouts.app>
     """
   end

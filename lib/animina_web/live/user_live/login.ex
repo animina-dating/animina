@@ -32,7 +32,8 @@ defmodule AniminaWeb.UserLive.Login do
             <div>
               <p>Lokaler Mail-Adapter aktiv.</p>
               <p>
-                E-Mails unter <.link href="/dev/mailbox" class="underline">/dev/mailbox</.link> einsehen.
+                E-Mails unter <.link href="/dev/mailbox" class="underline">/dev/mailbox</.link>
+                einsehen.
               </p>
             </div>
           </div>

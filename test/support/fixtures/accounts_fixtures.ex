@@ -10,7 +10,10 @@ defmodule Animina.AccountsFixtures do
   alias Animina.Accounts.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
-  def unique_mobile_phone, do: "+4917#{:rand.uniform(99_999_999) |> Integer.to_string() |> String.pad_leading(8, "0")}"
+
+  def unique_mobile_phone,
+    do: "+4917#{:rand.uniform(99_999_999) |> Integer.to_string() |> String.pad_leading(8, "0")}"
+
   def valid_user_password, do: "hello world!"
 
   def germany_id do

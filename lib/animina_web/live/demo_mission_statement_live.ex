@@ -23,15 +23,12 @@ defmodule AniminaWeb.DemoMissionStatementLive do
               href="/"
               class="inline-flex items-center gap-2 text-base text-primary hover:text-primary/80 mb-8 transition-colors"
             >
-              <.icon name="hero-arrow-left" class="size-5" />
-              Zurück zur Startseite
+              <.icon name="hero-arrow-left" class="size-5" /> Zurück zur Startseite
             </a>
 
             <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight text-base-content leading-tight">
-              Dating, das
-              <span class="text-primary font-normal">fair</span>
-              und
-              <span class="text-primary font-normal">transparent</span>
+              Dating, das <span class="text-primary font-normal">fair</span>
+              und <span class="text-primary font-normal">transparent</span>
               ist
             </h1>
             <p class="mt-8 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-3xl mx-auto">
@@ -41,8 +38,8 @@ defmodule AniminaWeb.DemoMissionStatementLive do
           </div>
         </div>
       </section>
-
-      <!-- Mission Details -->
+      
+    <!-- Mission Details -->
       <section class="py-16 sm:py-24 bg-base-200/50">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div class="prose prose-lg max-w-none">
@@ -93,8 +90,8 @@ defmodule AniminaWeb.DemoMissionStatementLive do
           </div>
         </div>
       </section>
-
-      <!-- CTA Section -->
+      
+    <!-- CTA Section -->
       <section class="py-16 sm:py-24">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-2xl sm:text-3xl font-light text-base-content">

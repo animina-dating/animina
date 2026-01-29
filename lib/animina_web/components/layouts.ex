@@ -99,7 +99,10 @@ defmodule AniminaWeb.Layouts do
                 >
                   <div class={[
                     "w-9 h-9 rounded-full border-2 flex items-center justify-center",
-                    if(@display_name, do: "bg-secondary border-secondary", else: "bg-secondary/40 border-secondary")
+                    if(@display_name,
+                      do: "bg-secondary border-secondary",
+                      else: "bg-secondary/40 border-secondary"
+                    )
                   ]}>
                     <%= if @display_name do %>
                       <span class="text-sm font-semibold text-secondary-content">
@@ -109,7 +112,10 @@ defmodule AniminaWeb.Layouts do
                       <.icon name="hero-user" class="size-5 text-base-content/70" />
                     <% end %>
                   </div>
-                  <span :if={@display_name} class="text-sm font-medium text-base-content hidden sm:inline">
+                  <span
+                    :if={@display_name}
+                    class="text-sm font-medium text-base-content hidden sm:inline"
+                  >
                     {@display_name}
                   </span>
                 </button>

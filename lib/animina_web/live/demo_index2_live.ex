@@ -21,292 +21,292 @@ defmodule AniminaWeb.DemoIndex2Live do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <!-- Hero Section -->
-        <section class="relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
+      <section class="relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />
 
-          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-20">
-            <div class="text-center max-w-5xl mx-auto">
-              <!-- Hero Images -->
-              <div class="flex justify-center items-end gap-3 sm:gap-4 mb-10">
-                <div class="relative">
-                  <img
-                    src="/images/faces/freundlicher-mann-hero.jpg"
-                    alt="Freundlicher Mann"
-                    class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg -rotate-6 hover:rotate-0 transition-transform duration-300"
-                  />
-                </div>
-                <div class="relative">
-                  <img
-                    src="/images/hero-streichholz.jpeg"
-                    alt="Mann mit Streichholz"
-                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-2 hover:rotate-0 transition-transform duration-300"
-                  />
-                  <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
-                    <.icon name="hero-heart-solid" class="size-4 text-white" />
-                  </div>
-                </div>
-                <div class="relative mt-4">
-                  <img
-                    src="/images/faces/froehliche-junge-frau.jpg"
-                    alt="Fröhliche junge Frau"
-                    class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-2 hover:rotate-0 transition-transform duration-300"
-                  />
-                  <div class="absolute -bottom-2 -left-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
-                    <.icon name="hero-sparkles-solid" class="size-4 text-white" />
-                  </div>
-                </div>
-                <div class="relative">
-                  <img
-                    src="/images/faces/strahlende-frau-hero.jpg"
-                    alt="Strahlende Frau"
-                    class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg rotate-6 hover:rotate-0 transition-transform duration-300"
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-                <.mission_card
-                  icon="hero-currency-euro"
-                  title="100% Kostenlos"
-                  description="Werbefinanziert – keine Premium-Fallen, keine geheimen Algorithmen."
-                />
-                <.mission_card
-                  icon="hero-arrows-right-left"
-                  title="Ohne Schubladen"
-                  description="Partnerschaft, Affaire oder ein gutes Gespräch – wir urteilen nicht."
-                />
-                <.mission_card
-                  icon="hero-flag"
-                  title="Flaggen-System"
-                  description="Zeig wer du bist, definiere was du suchst und wo deine Grenzen liegen."
-                />
-                <.mission_card
-                  icon="hero-shield-check"
-                  title="Respekt zuerst"
-                  description="Blacklist für unerwünschte Kontakte. Grenzüberschreiter werden ausgeschlossen."
-                />
-                <.mission_card
-                  icon="hero-face-smile"
-                  title="Freude statt Sucht"
-                  description="Dating soll Freude machen, nicht süchtig – Qualität statt Reizüberflutung."
-                />
-                <.mission_card_link
-                  icon="hero-document-text"
-                  title="Unser Mission Statement"
-                  description="Erfahre mehr über unsere Vision und Werte."
-                  href="/demo/mission_statement"
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-16 lg:py-20">
+          <div class="text-center max-w-5xl mx-auto">
+            <!-- Hero Images -->
+            <div class="flex justify-center items-end gap-3 sm:gap-4 mb-10">
+              <div class="relative">
+                <img
+                  src="/images/faces/freundlicher-mann-hero.jpg"
+                  alt="Freundlicher Mann"
+                  class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg -rotate-6 hover:rotate-0 transition-transform duration-300"
                 />
               </div>
-
-              <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="/users/register"
-                  class="inline-flex items-center justify-center px-8 py-3.5 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-                >
-                  Jetzt registrieren – kostenlos
-                </a>
+              <div class="relative">
+                <img
+                  src="/images/hero-streichholz.jpeg"
+                  alt="Mann mit Streichholz"
+                  class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-2 hover:rotate-0 transition-transform duration-300"
+                />
+                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
+                  <.icon name="hero-heart-solid" class="size-4 text-white" />
+                </div>
+              </div>
+              <div class="relative mt-4">
+                <img
+                  src="/images/faces/froehliche-junge-frau.jpg"
+                  alt="Fröhliche junge Frau"
+                  class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-2 hover:rotate-0 transition-transform duration-300"
+                />
+                <div class="absolute -bottom-2 -left-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
+                  <.icon name="hero-sparkles-solid" class="size-4 text-white" />
+                </div>
+              </div>
+              <div class="relative">
+                <img
+                  src="/images/faces/strahlende-frau-hero.jpg"
+                  alt="Strahlende Frau"
+                  class="w-20 sm:w-28 h-24 sm:h-36 object-cover rounded-2xl shadow-lg rotate-6 hover:rotate-0 transition-transform duration-300"
+                />
               </div>
             </div>
-          </div>
-        </section>
-        
-    <!-- Happy Singles Section -->
-        <section class="py-16 sm:py-20 bg-base-200/50">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Menschen, die echte Verbindungen suchen
-              </h2>
-            </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
-              <%!-- Row 1: European portraits --%>
-              <.happy_face
-                image_url="/images/faces/geschaeftsmann.jpg"
-                alt="Geschäftsmann lächelnd"
-              />
-              <.happy_face
-                image_url="/images/faces/laechelnde-frau.jpg"
-                alt="Lächelnde Frau"
-              />
-              <.happy_face
-                image_url="/images/faces/junger-mann.jpg"
-                alt="Junger Mann"
-              />
-              <.happy_face
-                image_url="/images/faces/freundliche-frau.jpg"
-                alt="Freundliche Frau"
-              />
-              <%!-- Row 2: More diverse portraits --%>
-              <.happy_face
-                image_url="/images/faces/laechelnder-mann.jpg"
-                alt="Lächelnder Mann"
-              />
-              <.happy_face
-                image_url="/images/faces/frau-mit-laecheln.jpg"
-                alt="Frau mit Lächeln"
-              />
-              <.happy_face
-                image_url="/images/faces/frau-mit-kopftuch.jpg"
-                alt="Frau mit Kopftuch"
-              />
-              <.happy_face
-                image_url="/images/faces/junge-frau.jpg"
-                alt="Junge Frau"
-              />
-            </div>
-          </div>
-        </section>
-        
-    <!-- Flag System Explanation -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Finde Menschen, die zu dir passen
-              </h2>
-              <p class="mt-3 text-lg text-base-content/70 max-w-2xl mx-auto">
-                Unser Drei-Farben-System macht Matching persönlich und ehrlich
-              </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <.flag_card
-                color="white"
-                title="Weiße Flaggen"
-                subtitle="Das bin ich"
-                description="Beschreibe dich selbst: Deine Eigenschaften, Hobbys, Werte und Lebensstil. Von Humor über Kreativität bis hin zu deinen Lieblingsküchen."
-                examples={["☀️ Optimismus", "🍳 Kochen", "🎸 Rock-Musik", "🐶 Hundeliebhaber"]}
-              />
-
-              <.flag_card
-                color="green"
-                title="Grüne Flaggen"
-                subtitle="Das suche ich"
-                description="Was wünschst du dir bei einem Partner? Welche Eigenschaften findest du attraktiv? Die Reihenfolge zeigt, was dir am wichtigsten ist."
-                examples={["🤝 Ehrlichkeit", "😄 Humor", "👨‍👩‍👧‍👦 Familienorientiert", "🌍 Reiselust"]}
-              />
-
-              <.flag_card
-                color="red"
-                title="Rote Flaggen"
-                subtitle="Das geht nicht"
-                description="Jeder hat Deal-Breaker. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschungen auf beiden Seiten."
-                examples={["🚬 Rauchen", "🍻 Übermäßiger Alkohol", "📵 Nie offline"]}
-              />
-            </div>
-          </div>
-        </section>
-
-    <!-- Key Differentiators Section -->
-        <section class="py-16 sm:py-24">
-          <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-12 sm:mb-16">
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-                Was ANIMINA anders macht
-              </h2>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-              <.differentiator_card
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+              <.mission_card
                 icon="hero-currency-euro"
                 title="100% Kostenlos"
-                description="Alle Funktionen sind für jeden kostenlos. Keine Premium-Abos, keine versteckten Kosten, keine Pay-to-Win-Mechanismen. Wir finanzieren uns durch Werbung."
+                description="Werbefinanziert – keine Premium-Fallen, keine geheimen Algorithmen."
               />
-
-              <.differentiator_card
-                icon="hero-hand-raised"
-                title="Nicht beliebig viele Anfragen"
-                description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns ist die Anzahl der Anfragen pro Tag begrenzt. Im echten Leben kann man auch nicht mit 10 potentiellen Partnern gleichzeitig sprechen. Das macht Dating fairer für alle."
+              <.mission_card
+                icon="hero-arrows-right-left"
+                title="Ohne Schubladen"
+                description="Partnerschaft, Affaire oder ein gutes Gespräch – wir urteilen nicht."
               />
-
-              <.differentiator_card
-                icon="hero-puzzle-piece"
-                title="Persönlichkeit zählt"
-                description="Unser einzigartiges Drei-Farben-System: Weiße Flaggen zeigen, wer du bist. Grüne, was du suchst. Rote, was nicht geht. So findest du Menschen, die wirklich zu dir passen."
+              <.mission_card
+                icon="hero-flag"
+                title="Flaggen-System"
+                description="Zeig wer du bist, definiere was du suchst und wo deine Grenzen liegen."
               />
-
-              <.differentiator_card
-                icon="hero-document-text"
-                title="Geschichten statt Swipes"
-                description="Profile mit Tiefgang: Präsentiere dich so, wie du willst – nur mit Fotos, nur mit Texten oder mit beidem. Lerne Menschen wirklich kennen, bevor du sie kontaktierst – statt nur Bilder nach links oder rechts zu wischen."
-              />
-
-              <.differentiator_card
+              <.mission_card
                 icon="hero-shield-check"
-                title="Echte Menschen"
-                description="Verifizierte Profile und aktive Moderation sorgen für eine sichere Community. Fake-Profile und Bots haben bei uns kaum eine Chance."
+                title="Respekt zuerst"
+                description="Blacklist für unerwünschte Kontakte. Grenzüberschreiter werden ausgeschlossen."
               />
-
-              <.differentiator_card
+              <.mission_card
                 icon="hero-face-smile"
-                title="Spaß ohne Suchtfaktor"
-                description="Dating soll Spaß machen – aber nicht abhängig. Wir verzichten bewusst auf manipulative Designs wie endloses Swipen oder Push-Benachrichtigungen, die dich ständig zurückholen wollen."
+                title="Freude statt Sucht"
+                description="Dating soll Freude machen, nicht süchtig – Qualität statt Reizüberflutung."
+              />
+              <.mission_card_link
+                icon="hero-document-text"
+                title="Unser Mission Statement"
+                description="Erfahre mehr über unsere Vision und Werte."
+                href="/demo/mission_statement"
               />
             </div>
-          </div>
-        </section>
 
-    <!-- Open Source Highlight Section -->
-        <section class="py-16 sm:py-24 bg-primary/5">
-          <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-              <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent/30 mb-6">
-                <.icon name="hero-code-bracket-square" class="size-8 text-primary" />
-              </div>
-              <h2 class="text-2xl sm:text-3xl font-light text-base-content mb-4">
-                Transparenz durch Open Source
-              </h2>
-              <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
-                Bei anderen Dating-Plattformen weißt du nie, warum dir bestimmte Menschen gezeigt werden.
-                Bevorzugt der Algorithmus zahlende Kunden? Werden Profile versteckt, um dich zum Upgrade zu zwingen?
-              </p>
-              <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
-                <span class="font-medium text-base-content">Bei ANIMINA ist alles anders.</span>
-                Unser Code ist vollständig öffentlich auf GitHub verfügbar. Jeder kann nachprüfen,
-                wie unser Matching funktioniert. Der Algorithmus behandelt alle gleich – ohne Ausnahme.
-              </p>
-              <a
-                href="https://github.com/animina-dating/animina"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
-              >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path
-                    fill-rule="evenodd"
-                    d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                Code auf GitHub ansehen
-              </a>
-            </div>
-          </div>
-        </section>
-        
-    <!-- Final CTA Section -->
-        <section class="py-16 sm:py-24 bg-base-200/50">
-          <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Bereit für echtes Dating?
-            </h2>
-            <p class="mt-4 text-lg text-base-content/70">
-              Keine Tricks, keine versteckten Kosten. Einfach Menschen kennenlernen, die zu dir passen.
-            </p>
-            <div class="mt-8">
+            <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/users/register"
-                class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+                class="inline-flex items-center justify-center px-8 py-3.5 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
-                Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
+                Jetzt registrieren – kostenlos
               </a>
             </div>
-            <p class="mt-4 text-base text-base-content/70">
-              Kostenlos. Für immer. Für alle.
+          </div>
+        </div>
+      </section>
+      
+    <!-- Happy Singles Section -->
+      <section class="py-16 sm:py-20 bg-base-200/50">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+              Menschen, die echte Verbindungen suchen
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+            <%!-- Row 1: European portraits --%>
+            <.happy_face
+              image_url="/images/faces/geschaeftsmann.jpg"
+              alt="Geschäftsmann lächelnd"
+            />
+            <.happy_face
+              image_url="/images/faces/laechelnde-frau.jpg"
+              alt="Lächelnde Frau"
+            />
+            <.happy_face
+              image_url="/images/faces/junger-mann.jpg"
+              alt="Junger Mann"
+            />
+            <.happy_face
+              image_url="/images/faces/freundliche-frau.jpg"
+              alt="Freundliche Frau"
+            />
+            <%!-- Row 2: More diverse portraits --%>
+            <.happy_face
+              image_url="/images/faces/laechelnder-mann.jpg"
+              alt="Lächelnder Mann"
+            />
+            <.happy_face
+              image_url="/images/faces/frau-mit-laecheln.jpg"
+              alt="Frau mit Lächeln"
+            />
+            <.happy_face
+              image_url="/images/faces/frau-mit-kopftuch.jpg"
+              alt="Frau mit Kopftuch"
+            />
+            <.happy_face
+              image_url="/images/faces/junge-frau.jpg"
+              alt="Junge Frau"
+            />
+          </div>
+        </div>
+      </section>
+      
+    <!-- Flag System Explanation -->
+      <section class="py-16 sm:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+              Finde Menschen, die zu dir passen
+            </h2>
+            <p class="mt-3 text-lg text-base-content/70 max-w-2xl mx-auto">
+              Unser Drei-Farben-System macht Matching persönlich und ehrlich
             </p>
           </div>
-        </section>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <.flag_card
+              color="white"
+              title="Weiße Flaggen"
+              subtitle="Das bin ich"
+              description="Beschreibe dich selbst: Deine Eigenschaften, Hobbys, Werte und Lebensstil. Von Humor über Kreativität bis hin zu deinen Lieblingsküchen."
+              examples={["☀️ Optimismus", "🍳 Kochen", "🎸 Rock-Musik", "🐶 Hundeliebhaber"]}
+            />
+
+            <.flag_card
+              color="green"
+              title="Grüne Flaggen"
+              subtitle="Das suche ich"
+              description="Was wünschst du dir bei einem Partner? Welche Eigenschaften findest du attraktiv? Die Reihenfolge zeigt, was dir am wichtigsten ist."
+              examples={["🤝 Ehrlichkeit", "😄 Humor", "👨‍👩‍👧‍👦 Familienorientiert", "🌍 Reiselust"]}
+            />
+
+            <.flag_card
+              color="red"
+              title="Rote Flaggen"
+              subtitle="Das geht nicht"
+              description="Jeder hat Deal-Breaker. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschungen auf beiden Seiten."
+              examples={["🚬 Rauchen", "🍻 Übermäßiger Alkohol", "📵 Nie offline"]}
+            />
+          </div>
+        </div>
+      </section>
+      
+    <!-- Key Differentiators Section -->
+      <section class="py-16 sm:py-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+              Was ANIMINA anders macht
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+            <.differentiator_card
+              icon="hero-currency-euro"
+              title="100% Kostenlos"
+              description="Alle Funktionen sind für jeden kostenlos. Keine Premium-Abos, keine versteckten Kosten, keine Pay-to-Win-Mechanismen. Wir finanzieren uns durch Werbung."
+            />
+
+            <.differentiator_card
+              icon="hero-hand-raised"
+              title="Nicht beliebig viele Anfragen"
+              description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns ist die Anzahl der Anfragen pro Tag begrenzt. Im echten Leben kann man auch nicht mit 10 potentiellen Partnern gleichzeitig sprechen. Das macht Dating fairer für alle."
+            />
+
+            <.differentiator_card
+              icon="hero-puzzle-piece"
+              title="Persönlichkeit zählt"
+              description="Unser einzigartiges Drei-Farben-System: Weiße Flaggen zeigen, wer du bist. Grüne, was du suchst. Rote, was nicht geht. So findest du Menschen, die wirklich zu dir passen."
+            />
+
+            <.differentiator_card
+              icon="hero-document-text"
+              title="Geschichten statt Swipes"
+              description="Profile mit Tiefgang: Präsentiere dich so, wie du willst – nur mit Fotos, nur mit Texten oder mit beidem. Lerne Menschen wirklich kennen, bevor du sie kontaktierst – statt nur Bilder nach links oder rechts zu wischen."
+            />
+
+            <.differentiator_card
+              icon="hero-shield-check"
+              title="Echte Menschen"
+              description="Verifizierte Profile und aktive Moderation sorgen für eine sichere Community. Fake-Profile und Bots haben bei uns kaum eine Chance."
+            />
+
+            <.differentiator_card
+              icon="hero-face-smile"
+              title="Spaß ohne Suchtfaktor"
+              description="Dating soll Spaß machen – aber nicht abhängig. Wir verzichten bewusst auf manipulative Designs wie endloses Swipen oder Push-Benachrichtigungen, die dich ständig zurückholen wollen."
+            />
+          </div>
+        </div>
+      </section>
+      
+    <!-- Open Source Highlight Section -->
+      <section class="py-16 sm:py-24 bg-primary/5">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <div class="text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-accent/30 mb-6">
+              <.icon name="hero-code-bracket-square" class="size-8 text-primary" />
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-light text-base-content mb-4">
+              Transparenz durch Open Source
+            </h2>
+            <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
+              Bei anderen Dating-Plattformen weißt du nie, warum dir bestimmte Menschen gezeigt werden.
+              Bevorzugt der Algorithmus zahlende Kunden? Werden Profile versteckt, um dich zum Upgrade zu zwingen?
+            </p>
+            <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
+              <span class="font-medium text-base-content">Bei ANIMINA ist alles anders.</span>
+              Unser Code ist vollständig öffentlich auf GitHub verfügbar. Jeder kann nachprüfen,
+              wie unser Matching funktioniert. Der Algorithmus behandelt alle gleich – ohne Ausnahme.
+            </p>
+            <a
+              href="https://github.com/animina-dating/animina"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  fill-rule="evenodd"
+                  d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              Code auf GitHub ansehen
+            </a>
+          </div>
+        </div>
+      </section>
+      
+    <!-- Final CTA Section -->
+      <section class="py-16 sm:py-24 bg-base-200/50">
+        <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-2xl sm:text-3xl font-light text-base-content">
+            Bereit für echtes Dating?
+          </h2>
+          <p class="mt-4 text-lg text-base-content/70">
+            Keine Tricks, keine versteckten Kosten. Einfach Menschen kennenlernen, die zu dir passen.
+          </p>
+          <div class="mt-8">
+            <a
+              href="/users/register"
+              class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
+            >
+              Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
+            </a>
+          </div>
+          <p class="mt-4 text-base text-base-content/70">
+            Kostenlos. Für immer. Für alle.
+          </p>
+        </div>
+      </section>
     </Layouts.app>
     """
   end
