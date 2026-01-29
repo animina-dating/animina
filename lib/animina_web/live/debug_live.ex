@@ -165,7 +165,8 @@ defmodule AniminaWeb.DebugLive do
   end
 
   defp cpu_info_darwin do
-    with {model, 0} <- System.cmd("sysctl", ["-n", "machdep.cpu.brand_string"], stderr_to_stdout: true),
+    with {model, 0} <-
+           System.cmd("sysctl", ["-n", "machdep.cpu.brand_string"], stderr_to_stdout: true),
          {count_str, 0} <- System.cmd("sysctl", ["-n", "hw.ncpu"], stderr_to_stdout: true) do
       %{model: String.trim(model), count: String.trim(count_str) |> String.to_integer()}
     else
