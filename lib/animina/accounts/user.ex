@@ -37,8 +37,10 @@ defmodule Animina.Accounts.User do
     field :language, :string, default: "de"
     field :state, :string, default: "waitlisted"
 
-    # Virtual field for form checkbox
+    # Virtual fields
     field :terms_accepted, :boolean, virtual: true
+    field :partner_minimum_age, :integer, virtual: true
+    field :partner_maximum_age, :integer, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -54,6 +56,8 @@ defmodule Animina.Accounts.User do
     :preferred_partner_gender,
     :partner_minimum_age_offset,
     :partner_maximum_age_offset,
+    :partner_minimum_age,
+    :partner_maximum_age,
     :partner_height_min,
     :partner_height_max,
     :search_radius,
@@ -76,10 +80,48 @@ defmodule Animina.Accounts.User do
   def registration_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :password | @registration_fields])
+    |> compute_age_offsets()
     |> validate_email(opts)
     |> validate_password(opts)
     |> validate_profile_fields()
     |> validate_terms_accepted()
+  end
+
+  defp compute_age_offsets(changeset) do
+    birthday = get_field(changeset, :birthday)
+    min_age = get_change(changeset, :partner_minimum_age)
+    max_age = get_change(changeset, :partner_maximum_age)
+
+    if birthday && (min_age || max_age) do
+      user_age = compute_user_age(birthday)
+
+      changeset
+      |> maybe_put_min_offset(user_age, min_age)
+      |> maybe_put_max_offset(user_age, max_age)
+    else
+      changeset
+    end
+  end
+
+  defp maybe_put_min_offset(changeset, user_age, min_age) when is_integer(min_age) do
+    put_change(changeset, :partner_minimum_age_offset, max(0, user_age - min_age))
+  end
+
+  defp maybe_put_min_offset(changeset, _user_age, _min_age), do: changeset
+
+  defp maybe_put_max_offset(changeset, user_age, max_age) when is_integer(max_age) do
+    put_change(changeset, :partner_maximum_age_offset, max(0, max_age - user_age))
+  end
+
+  defp maybe_put_max_offset(changeset, _user_age, _max_age), do: changeset
+
+  defp compute_user_age(birthday) do
+    today = Date.utc_today()
+    age = today.year - birthday.year
+
+    if {today.month, today.day} < {birthday.month, birthday.day},
+      do: age - 1,
+      else: age
   end
 
   defp validate_profile_fields(changeset) do

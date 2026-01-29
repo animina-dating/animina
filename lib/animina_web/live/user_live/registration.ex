@@ -196,16 +196,16 @@ defmodule AniminaWeb.UserLive.Registration do
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <.input
-                      field={@form[:partner_minimum_age_offset]}
+                      field={@form[:partner_minimum_age]}
                       type="number"
-                      label="Max. Jahre jünger"
-                      min="0"
+                      label="Mindestalter Partner"
+                      min="18"
                     />
                     <.input
-                      field={@form[:partner_maximum_age_offset]}
+                      field={@form[:partner_maximum_age]}
                       type="number"
-                      label="Max. Jahre älter"
-                      min="0"
+                      label="Höchstalter Partner"
+                      min="18"
                     />
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -341,6 +341,7 @@ defmodule AniminaWeb.UserLive.Registration do
       {:ok, parsed} ->
         formatted = ExPhoneNumber.format(parsed, :e164)
         params = Map.put(socket.assigns.last_params, "mobile_phone", formatted)
+        unlocked_section = compute_unlocked_section(params)
 
         changeset =
           Accounts.change_user_registration(%User{}, params)
@@ -349,7 +350,7 @@ defmodule AniminaWeb.UserLive.Registration do
         {:noreply,
          socket
          |> assign(last_params: params)
-         |> assign(unlocked_section: compute_unlocked_section(params))
+         |> assign(unlocked_section: unlocked_section)
          |> assign_form(changeset)}
 
       _ ->
@@ -358,7 +359,6 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    user_params = normalize_mobile_phone(user_params)
     {user_params, socket} = maybe_auto_fill_preferences(user_params, socket)
     unlocked_section = compute_unlocked_section(user_params)
     city_name = lookup_city_name(user_params["zip_code"])
@@ -383,13 +383,14 @@ defmodule AniminaWeb.UserLive.Registration do
     else
       gender = params["gender"]
       height = parse_int(params["height"])
+      age = compute_age(params["birthday"])
 
-      if gender in ["male", "female", "diverse"] and height do
+      if gender in ["male", "female", "diverse"] and is_integer(height) and is_integer(age) do
         params =
           params
           |> maybe_set_list("preferred_partner_gender", compute_preferred_gender(gender))
-          |> maybe_set("partner_minimum_age_offset", compute_min_age_offset(gender))
-          |> maybe_set("partner_maximum_age_offset", compute_max_age_offset(gender))
+          |> maybe_set("partner_minimum_age", max(18, age - 5))
+          |> maybe_set("partner_maximum_age", age + 5)
           |> maybe_set("partner_height_min", compute_height_min(gender, height))
           |> maybe_set("partner_height_max", compute_height_max(gender, height))
 
@@ -434,13 +435,6 @@ defmodule AniminaWeb.UserLive.Registration do
   defp compute_preferred_gender("female"), do: ["male"]
   defp compute_preferred_gender("diverse"), do: ["diverse"]
 
-  defp compute_min_age_offset("male"), do: 6
-  defp compute_min_age_offset("female"), do: 2
-  defp compute_min_age_offset("diverse"), do: 6
-
-  defp compute_max_age_offset("male"), do: 2
-  defp compute_max_age_offset("female"), do: 6
-  defp compute_max_age_offset("diverse"), do: 6
 
   defp compute_height_min("male", _height), do: 80
   defp compute_height_min("female", height), do: max(80, height - 5)
@@ -496,18 +490,6 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp lookup_city_name(_), do: nil
-
-  defp normalize_mobile_phone(%{"mobile_phone" => phone} = params) when is_binary(phone) do
-    case ExPhoneNumber.parse(phone, "DE") do
-      {:ok, parsed} ->
-        Map.put(params, "mobile_phone", ExPhoneNumber.format(parsed, :e164))
-
-      _ ->
-        params
-    end
-  end
-
-  defp normalize_mobile_phone(params), do: params
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     form = to_form(changeset, as: "user")

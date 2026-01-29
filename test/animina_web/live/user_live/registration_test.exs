@@ -163,6 +163,79 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
   end
 
+  describe "partner age fields" do
+    test "shows age fields instead of offset fields", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/register")
+
+      # Should show actual age labels, not offset labels
+      assert html =~ "Mindestalter Partner"
+      assert html =~ "Höchstalter Partner"
+      refute html =~ "Max. Jahre jünger"
+      refute html =~ "Max. Jahre älter"
+    end
+
+    test "pre-fills partner age fields based on user age", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      # A 36-year-old should get: min_age = 36-5 = 31, max_age = 36+5 = 41
+      html =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "email" => "test@example.com",
+            "password" => "password1234",
+            "mobile_phone" => "+4915112345678",
+            "country_id" => germany_id(),
+            "zip_code" => "10115",
+            "display_name" => "TestUser",
+            "birthday" => "1990-01-01",
+            "gender" => "male",
+            "height" => "180"
+          }
+        )
+
+      # The age for birthday 1990-01-01 is 36 (as of 2026-01-29)
+      # Defaults: age ± 5 -> partner_minimum_age = 31, partner_maximum_age = 41
+      assert html =~ ~s(name="user[partner_minimum_age]")
+      assert html =~ ~s(name="user[partner_maximum_age]")
+      assert html =~ ~s(value="31")
+      assert html =~ ~s(value="41")
+    end
+
+    test "converts partner ages to offsets when saving", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      email = unique_user_email()
+
+      # User born 1990-01-01 is 36, setting partner age range 25-45
+      attrs =
+        valid_user_attributes(email: email)
+        |> Map.delete(:terms_accepted)
+        |> Map.put(:terms_accepted, "true")
+        |> Map.put(:partner_minimum_age, 25)
+        |> Map.put(:partner_maximum_age, 45)
+        |> Map.delete(:partner_minimum_age_offset)
+        |> Map.delete(:partner_maximum_age_offset)
+        |> stringify_keys()
+
+      form = form(lv, "#registration_form", user: attrs)
+
+      {:ok, _lv, html} =
+        render_submit(form)
+        |> follow_redirect(conn, ~p"/users/log-in")
+
+      assert html =~ ~r/E-Mail wurde an .* gesendet/
+
+      # Verify the offsets were correctly computed
+      # User age = 36, min_age = 25 -> offset = 36 - 25 = 11
+      # User age = 36, max_age = 45 -> offset = 45 - 36 = 9
+      user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)
+      assert user.partner_minimum_age_offset == 11
+      assert user.partner_maximum_age_offset == 9
+    end
+  end
+
   describe "registration navigation" do
     test "redirects to login page when the login link is clicked", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
