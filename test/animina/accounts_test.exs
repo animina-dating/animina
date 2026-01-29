@@ -432,6 +432,118 @@ defmodule Animina.AccountsTest do
     end
   end
 
+  describe "get_user/1" do
+    test "returns user when found" do
+      user = user_fixture()
+      assert %User{id: id} = Accounts.get_user(user.id)
+      assert id == user.id
+    end
+
+    test "returns nil when not found" do
+      refute Accounts.get_user("11111111-1111-1111-1111-111111111111")
+    end
+  end
+
+  describe "generate_confirmation_pin/0" do
+    test "generates a 6-digit string" do
+      pin = Accounts.generate_confirmation_pin()
+      assert String.length(pin) == 6
+      assert Regex.match?(~r/^\d{6}$/, pin)
+    end
+  end
+
+  describe "send_confirmation_pin/1" do
+    test "stores hashed PIN and sends email" do
+      user = unconfirmed_user_fixture()
+      {:ok, pin} = Accounts.send_confirmation_pin(user)
+
+      assert String.length(pin) == 6
+      updated = Repo.get!(User, user.id)
+      assert updated.confirmation_pin_hash != nil
+      assert updated.confirmation_pin_attempts == 0
+      assert updated.confirmation_pin_sent_at != nil
+    end
+  end
+
+  describe "verify_confirmation_pin/2" do
+    setup do
+      user = unconfirmed_user_fixture()
+      {:ok, pin} = Accounts.send_confirmation_pin(user)
+      user = Repo.get!(User, user.id)
+      %{user: user, pin: pin}
+    end
+
+    test "confirms user with correct PIN", %{user: user, pin: pin} do
+      assert {:ok, confirmed_user} = Accounts.verify_confirmation_pin(user, pin)
+      assert confirmed_user.confirmed_at != nil
+      assert confirmed_user.confirmation_pin_hash == nil
+    end
+
+    test "returns error with wrong PIN", %{user: user} do
+      assert {:error, :wrong_pin} = Accounts.verify_confirmation_pin(user, "000000")
+      updated = Repo.get!(User, user.id)
+      assert updated.confirmation_pin_attempts == 1
+    end
+
+    test "deletes user after 3 failed attempts", %{user: user} do
+      assert {:error, :wrong_pin} = Accounts.verify_confirmation_pin(user, "000000")
+      user = Repo.get!(User, user.id)
+      assert {:error, :wrong_pin} = Accounts.verify_confirmation_pin(user, "000000")
+      user = Repo.get!(User, user.id)
+      assert {:error, :too_many_attempts} = Accounts.verify_confirmation_pin(user, "000000")
+      refute Repo.get(User, user.id)
+    end
+
+    test "returns error for nil user" do
+      assert {:error, :not_found} = Accounts.verify_confirmation_pin(nil, "123456")
+    end
+
+    test "returns expired when PIN is too old", %{user: user} do
+      # Set sent_at to 31 minutes ago
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -31, :minute)]
+      )
+
+      user = Repo.get!(User, user.id)
+      assert {:error, :expired} = Accounts.verify_confirmation_pin(user, "123456")
+      refute Repo.get(User, user.id)
+    end
+  end
+
+  describe "delete_expired_unconfirmed_users/0" do
+    test "deletes expired unconfirmed users" do
+      user = unconfirmed_user_fixture()
+      {:ok, _pin} = Accounts.send_confirmation_pin(user)
+
+      # Set sent_at to 31 minutes ago
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -31, :minute)]
+      )
+
+      {count, _} = Accounts.delete_expired_unconfirmed_users()
+      assert count >= 1
+      refute Repo.get(User, user.id)
+    end
+
+    test "does not delete confirmed users" do
+      user = user_fixture()
+      {count, _} = Accounts.delete_expired_unconfirmed_users()
+      assert count == 0
+      assert Repo.get(User, user.id)
+    end
+
+    test "does not delete users with recent PINs" do
+      user = unconfirmed_user_fixture()
+      {:ok, _pin} = Accounts.send_confirmation_pin(user)
+
+      {count, _} = Accounts.delete_expired_unconfirmed_users()
+      assert count == 0
+      assert Repo.get(User, user.id)
+    end
+  end
+
   describe "inspect/2 for the User module" do
     test "does not include password" do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""

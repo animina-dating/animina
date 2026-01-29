@@ -7,21 +7,28 @@ defmodule Animina.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      AniminaWeb.Telemetry,
-      Animina.Repo,
-      {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Animina.PubSub},
-      # Start a worker by calling: Animina.Worker.start_link(arg)
-      # {Animina.Worker, arg},
-      # Start to serve requests, typically the last entry
-      AniminaWeb.Endpoint
-    ]
+    children =
+      [
+        AniminaWeb.Telemetry,
+        Animina.Repo,
+        {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Animina.PubSub},
+        # Start to serve requests, typically the last entry
+        AniminaWeb.Endpoint
+      ] ++ maybe_start_cleaner()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Animina.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp maybe_start_cleaner do
+    if Application.get_env(:animina, :start_unconfirmed_user_cleaner, true) do
+      [Animina.Accounts.UnconfirmedUserCleaner]
+    else
+      []
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration

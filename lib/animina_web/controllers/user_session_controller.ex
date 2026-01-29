@@ -59,6 +59,21 @@ defmodule AniminaWeb.UserSessionController do
     |> create(params, "Password updated successfully!")
   end
 
+  def create_from_pin(conn, %{"user" => %{"user_id" => user_id} = user_params}) do
+    case Accounts.get_user(user_id) do
+      %Accounts.User{confirmed_at: confirmed_at} = user when not is_nil(confirmed_at) ->
+        conn
+        |> put_flash(:info, "E-Mail-Adresse erfolgreich bestätigt.")
+        |> put_session(:user_return_to, ~p"/users/waitlist")
+        |> UserAuth.log_in_user(user, user_params)
+
+      _ ->
+        conn
+        |> put_flash(:error, "Bestätigung fehlgeschlagen. Bitte registriere dich erneut.")
+        |> redirect(to: ~p"/users/register")
+    end
+  end
+
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")

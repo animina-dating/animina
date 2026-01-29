@@ -59,6 +59,7 @@ defmodule AniminaWeb.Router do
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+      live "/users/waitlist", UserLive.Waitlist
     end
 
     post "/users/update-password", UserSessionController, :update_password
@@ -72,9 +73,11 @@ defmodule AniminaWeb.Router do
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
+      live "/users/confirm/:token", UserLive.PinConfirmation
     end
 
     post "/users/log-in", UserSessionController, :create
+    post "/users/log-in/pin-confirmed", UserSessionController, :create_from_pin
     delete "/users/log-out", UserSessionController, :delete
   end
 end

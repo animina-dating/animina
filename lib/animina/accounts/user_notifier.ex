@@ -81,4 +81,32 @@ defmodule Animina.Accounts.UserNotifier do
     ==============================
     """)
   end
+
+  @doc """
+  Deliver a 6-digit confirmation PIN to the user's email.
+  """
+  def deliver_confirmation_pin(user, pin) do
+    deliver(user.email, "Dein Bestätigungscode für ANIMINA", """
+
+    ==============================
+
+    Hallo #{user.email},
+
+    Dein Bestätigungscode lautet:
+
+        #{pin}
+
+    Bitte gib diesen Code innerhalb von 30 Minuten ein,
+    um deine E-Mail-Adresse zu bestätigen.
+
+    Du hast maximal 3 Versuche. Nach 3 falschen Eingaben
+    oder nach Ablauf der 30 Minuten wird dein Konto
+    gelöscht und du musst dich erneut registrieren.
+
+    Falls du kein Konto bei ANIMINA erstellt hast,
+    ignoriere bitte diese E-Mail.
+
+    ==============================
+    """)
+  end
 end

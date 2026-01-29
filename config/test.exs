@@ -29,6 +29,9 @@ config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Test
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
+# Disable the unconfirmed user cleaner GenServer in tests
+config :animina, start_unconfirmed_user_cleaner: false
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

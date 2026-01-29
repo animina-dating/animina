@@ -126,7 +126,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "renders step indicator with 4 steps", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Zugang"
+      assert html =~ "Account"
       assert html =~ "Profil"
       assert html =~ "Wohnort"
       assert html =~ "Partner"
@@ -367,13 +367,13 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      {:ok, _lv, html} =
-        lv
-        |> form("#registration_form")
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+      lv
+      |> form("#registration_form")
+      |> render_submit()
 
-      assert html =~ ~r/E-Mail wurde an .* gesendet/
+      # Should redirect to PIN confirmation page
+      {path, _flash} = assert_redirect(lv)
+      assert path =~ "/users/confirm/"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
@@ -489,13 +489,13 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      {:ok, _lv, html} =
-        lv
-        |> form("#registration_form")
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+      lv
+      |> form("#registration_form")
+      |> render_submit()
 
-      assert html =~ ~r/E-Mail wurde an .* gesendet/
+      # Should redirect to PIN confirmation page
+      {path, _flash} = assert_redirect(lv)
+      assert path =~ "/users/confirm/"
 
       # Verify the offsets were correctly computed
       user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)

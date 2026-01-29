@@ -1,6 +1,6 @@
 # 2. User Management & Authentication
 
-**Status:** Not Started
+**Status:** In Progress
 
 ---
 
@@ -52,7 +52,12 @@ These fields are pre-populated via LiveView when the user enters the fields abov
 
 ### Validation & Confirmation
 
-- Email confirmation via 6-digit PIN within 30 minutes (unconfirmed accounts auto-deleted)
+- **Email confirmation via 6-digit PIN** (implemented):
+  - After registration, a 6-digit PIN is emailed to the user
+  - User enters PIN on `/users/confirm/:token` page
+  - Maximum 3 attempts allowed; after 3 failures the account is deleted
+  - PIN expires after 30 minutes; expired accounts are auto-deleted by a background GenServer (`UnconfirmedUserCleaner`, runs every 60 seconds)
+  - On successful PIN entry, user is confirmed, logged in, and redirected to the waitlist page
 - **Uniqueness constraints**: email (case-insensitive), mobile phone number
 
 ---

@@ -60,6 +60,11 @@ defmodule Animina.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  @doc """
+  Gets a single user. Returns `nil` if the user does not exist.
+  """
+  def get_user(id), do: Repo.get(User, id)
+
   ## User registration
 
   @doc """
@@ -326,6 +331,104 @@ defmodule Animina.Accounts do
   def delete_user_session_token(token) do
     Repo.delete_all(from(UserToken, where: [token: ^token, context: "session"]))
     :ok
+  end
+
+  ## Confirmation PIN
+
+  @pin_max_attempts 3
+  @pin_validity_minutes 30
+
+  @doc """
+  Generates a random 6-digit confirmation PIN.
+  """
+  def generate_confirmation_pin do
+    :rand.uniform(999_999) |> Integer.to_string() |> String.pad_leading(6, "0")
+  end
+
+  @doc """
+  Generates a PIN, stores its hash on the user, and sends it via email.
+  Returns `{:ok, pin}` on success.
+  """
+  def send_confirmation_pin(%User{} = user) do
+    pin = generate_confirmation_pin()
+
+    case user
+         |> User.confirmation_pin_changeset(pin)
+         |> Repo.update() do
+      {:ok, updated_user} ->
+        UserNotifier.deliver_confirmation_pin(updated_user, pin)
+        {:ok, pin}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
+  Verifies a confirmation PIN for the given user.
+
+  Returns:
+    - `{:ok, user}` on correct PIN (user is confirmed, PIN fields cleared)
+    - `{:error, :wrong_pin}` on incorrect PIN (attempts incremented)
+    - `{:error, :too_many_attempts}` when max attempts exceeded (user deleted)
+    - `{:error, :expired}` when PIN has expired (user deleted)
+    - `{:error, :not_found}` when user is nil
+  """
+  def verify_confirmation_pin(nil, _pin), do: {:error, :not_found}
+
+  def verify_confirmation_pin(%User{} = user, pin) do
+    cond do
+      pin_expired?(user) ->
+        Repo.delete(user)
+        {:error, :expired}
+
+      user.confirmation_pin_attempts >= @pin_max_attempts ->
+        Repo.delete(user)
+        {:error, :too_many_attempts}
+
+      User.verify_confirmation_pin(user, pin) ->
+        user
+        |> Ecto.Changeset.change()
+        |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
+        |> Ecto.Changeset.put_change(:confirmation_pin_hash, nil)
+        |> Ecto.Changeset.put_change(:confirmation_pin_attempts, 0)
+        |> Ecto.Changeset.put_change(:confirmation_pin_sent_at, nil)
+        |> Repo.update()
+
+      true ->
+        user
+        |> User.increment_pin_attempts_changeset()
+        |> Repo.update!()
+
+        new_attempts = user.confirmation_pin_attempts + 1
+
+        if new_attempts >= @pin_max_attempts do
+          Repo.delete(Repo.get!(User, user.id))
+          {:error, :too_many_attempts}
+        else
+          {:error, :wrong_pin}
+        end
+    end
+  end
+
+  defp pin_expired?(%User{confirmation_pin_sent_at: nil}), do: true
+
+  defp pin_expired?(%User{confirmation_pin_sent_at: sent_at}) do
+    DateTime.diff(DateTime.utc_now(), sent_at, :minute) >= @pin_validity_minutes
+  end
+
+  @doc """
+  Deletes all unconfirmed users whose confirmation PIN has expired.
+  """
+  def delete_expired_unconfirmed_users do
+    cutoff = DateTime.utc_now() |> DateTime.add(-@pin_validity_minutes, :minute)
+
+    from(u in User,
+      where: is_nil(u.confirmed_at),
+      where: not is_nil(u.confirmation_pin_sent_at),
+      where: u.confirmation_pin_sent_at < ^cutoff
+    )
+    |> Repo.delete_all()
   end
 
   ## Token helper

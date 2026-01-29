@@ -30,6 +30,11 @@ defmodule Animina.Accounts.User do
     field :partner_height_max, :integer, default: 225
     field :search_radius, :integer, default: 60
 
+    # Confirmation PIN fields
+    field :confirmation_pin_hash, :string
+    field :confirmation_pin_attempts, :integer, default: 0
+    field :confirmation_pin_sent_at, :utc_datetime
+
     # Additional fields
     field :terms_accepted_at, :utc_datetime
     field :occupation, :string
@@ -133,10 +138,7 @@ defmodule Animina.Accounts.User do
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:gender, @valid_genders)
     |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
-    |> validate_format(:mobile_phone, ~r/^\+[1-9]\d{6,14}$/,
-      message: "must be in E.164 format (e.g. +491234567890)"
-    )
-    |> validate_mobile_phone_type()
+    |> validate_and_normalize_mobile_phone()
     |> validate_birthday()
     |> validate_preferred_partner_genders()
     |> validate_number(:partner_height_min,
@@ -151,7 +153,7 @@ defmodule Animina.Accounts.User do
     |> unique_constraint(:mobile_phone)
   end
 
-  defp validate_mobile_phone_type(changeset) do
+  defp validate_and_normalize_mobile_phone(changeset) do
     case get_field(changeset, :mobile_phone) do
       nil ->
         changeset
@@ -161,7 +163,7 @@ defmodule Animina.Accounts.User do
           {:ok, parsed} ->
             case ExPhoneNumber.get_number_type(parsed) do
               type when type in [:mobile, :fixed_line_or_mobile] ->
-                changeset
+                put_change(changeset, :mobile_phone, ExPhoneNumber.format(parsed, :e164))
 
               _ ->
                 add_error(
@@ -172,8 +174,7 @@ defmodule Animina.Accounts.User do
             end
 
           _ ->
-            # format validation already catches invalid numbers
-            changeset
+            add_error(changeset, :mobile_phone, "ist keine gültige Telefonnummer")
         end
     end
   end
@@ -330,4 +331,55 @@ defmodule Animina.Accounts.User do
     Bcrypt.no_user_verify()
     false
   end
+
+  @doc """
+  A changeset for storing a hashed confirmation PIN.
+  """
+  def confirmation_pin_changeset(user, pin) when is_binary(pin) do
+    salt = :crypto.strong_rand_bytes(16) |> Base.encode16(case: :lower)
+    hash = :crypto.hash(:sha256, salt <> pin) |> Base.encode16(case: :lower)
+
+    user
+    |> change(
+      confirmation_pin_hash: salt <> ":" <> hash,
+      confirmation_pin_attempts: 0,
+      confirmation_pin_sent_at: DateTime.utc_now(:second)
+    )
+  end
+
+  @doc """
+  Increments the PIN attempt counter.
+  """
+  def increment_pin_attempts_changeset(user) do
+    change(user, confirmation_pin_attempts: user.confirmation_pin_attempts + 1)
+  end
+
+  @doc """
+  Clears the confirmation PIN fields after successful verification.
+  """
+  def clear_confirmation_pin_changeset(user) do
+    change(user,
+      confirmation_pin_hash: nil,
+      confirmation_pin_attempts: 0,
+      confirmation_pin_sent_at: nil
+    )
+  end
+
+  @doc """
+  Verifies whether the given PIN matches the stored hash.
+  Returns `true` if the PIN is correct, `false` otherwise.
+  """
+  def verify_confirmation_pin(%__MODULE__{confirmation_pin_hash: salted_hash}, pin)
+      when is_binary(salted_hash) and is_binary(pin) do
+    case String.split(salted_hash, ":", parts: 2) do
+      [salt, hash] ->
+        candidate = :crypto.hash(:sha256, salt <> pin) |> Base.encode16(case: :lower)
+        Plug.Crypto.secure_compare(hash, candidate)
+
+      _ ->
+        false
+    end
+  end
+
+  def verify_confirmation_pin(_, _), do: false
 end

@@ -5,7 +5,7 @@ defmodule AniminaWeb.UserLive.Registration do
   alias Animina.Accounts.User
   alias Animina.GeoData
 
-  @step_titles %{1 => "Zugang", 2 => "Profil", 3 => "Wohnort", 4 => "Partner"}
+  @step_titles %{1 => "Account", 2 => "Profil", 3 => "Wohnort", 4 => "Partner"}
   @step_required_fields %{
     1 => ~w(email password mobile_phone birthday),
     2 => ~w(display_name gender height),
@@ -220,6 +220,7 @@ defmodule AniminaWeb.UserLive.Registration do
         field={@form[:display_name]}
         type="text"
         label="Anzeigename (2-50 Zeichen)"
+        autocomplete="off"
         required
       />
       <.input
@@ -543,19 +544,16 @@ defmodule AniminaWeb.UserLive.Registration do
 
     case Accounts.register_user(save_params) do
       {:ok, user} ->
-        {:ok, _} =
-          Accounts.deliver_login_instructions(
-            user,
-            &url(~p"/users/log-in/#{&1}")
-          )
+        {:ok, _pin} = Accounts.send_confirmation_pin(user)
+        token = Phoenix.Token.sign(AniminaWeb.Endpoint, "pin_confirmation", user.id)
 
         {:noreply,
          socket
          |> put_flash(
            :info,
-           "Eine E-Mail wurde an #{user.email} gesendet. Bitte bestätige dein Konto."
+           "Ein Bestätigungscode wurde an #{user.email} gesendet."
          )
-         |> push_navigate(to: ~p"/users/log-in")}
+         |> push_navigate(to: ~p"/users/confirm/#{token}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         error_step = step_with_first_error(changeset)
