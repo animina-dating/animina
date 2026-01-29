@@ -74,45 +74,13 @@ defmodule AniminaWeb.UserLive.Registration do
               </fieldset>
             </div>
 
-            <%!-- Section 2: Wohnort --%>
+            <%!-- Section 2: Profil --%>
             <div id="section-2" class={if(@unlocked_section < 2, do: "section-locked opacity-40 pointer-events-none select-none")}>
               <fieldset>
                 <legend class="text-xl font-medium text-base-content mb-4">
-                  2. Wohnort
+                  2. Profil
                   <span :if={@unlocked_section < 2} class="text-sm font-normal text-base-content/50 ml-2">
                     (bitte zuerst Zugangsdaten ausfüllen)
-                  </span>
-                </legend>
-                <div class="space-y-4">
-                  <.input
-                    field={@form[:country_id]}
-                    type="select"
-                    label="Land"
-                    options={@country_options}
-                    required
-                  />
-                  <div>
-                    <.input
-                      field={@form[:zip_code]}
-                      type="text"
-                      label="Postleitzahl (5 Ziffern)"
-                      required
-                    />
-                    <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
-                      {@city_name}
-                    </p>
-                  </div>
-                </div>
-              </fieldset>
-            </div>
-
-            <%!-- Section 3: Profil --%>
-            <div id="section-3" class={if(@unlocked_section < 3, do: "section-locked opacity-40 pointer-events-none select-none")}>
-              <fieldset>
-                <legend class="text-xl font-medium text-base-content mb-4">
-                  3. Profil
-                  <span :if={@unlocked_section < 3} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Wohnort ausfüllen)
                   </span>
                 </legend>
                 <div class="space-y-4">
@@ -159,13 +127,45 @@ defmodule AniminaWeb.UserLive.Registration do
               </fieldset>
             </div>
 
+            <%!-- Section 3: Wohnort --%>
+            <div id="section-3" class={if(@unlocked_section < 3, do: "section-locked opacity-40 pointer-events-none select-none")}>
+              <fieldset>
+                <legend class="text-xl font-medium text-base-content mb-4">
+                  3. Wohnort
+                  <span :if={@unlocked_section < 3} class="text-sm font-normal text-base-content/50 ml-2">
+                    (bitte zuerst Profil ausfüllen)
+                  </span>
+                </legend>
+                <div class="space-y-4">
+                  <.input
+                    field={@form[:country_id]}
+                    type="select"
+                    label="Land"
+                    options={@country_options}
+                    required
+                  />
+                  <div>
+                    <.input
+                      field={@form[:zip_code]}
+                      type="text"
+                      label="Postleitzahl (5 Ziffern)"
+                      required
+                    />
+                    <p :if={@city_name} class="text-xs text-base-content/50 mt-1 ml-1">
+                      {@city_name}
+                    </p>
+                  </div>
+                </div>
+              </fieldset>
+            </div>
+
             <%!-- Section 4: Partnerwünsche --%>
             <div id="section-4" class={if(@unlocked_section < 4, do: "section-locked opacity-40 pointer-events-none select-none")}>
               <fieldset>
                 <legend class="text-xl font-medium text-base-content mb-4">
                   4. Partnerwünsche
                   <span :if={@unlocked_section < 4} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Profil ausfüllen)
+                    (bitte zuerst Wohnort ausfüllen)
                   </span>
                 </legend>
                 <div class="space-y-4">
@@ -240,7 +240,7 @@ defmodule AniminaWeb.UserLive.Registration do
                 <legend class="text-xl font-medium text-base-content mb-4">
                   5. Rechtliches
                   <span :if={@unlocked_section < 5} class="text-sm font-normal text-base-content/50 ml-2">
-                    (bitte zuerst Profil ausfüllen)
+                    (bitte zuerst Wohnort ausfüllen)
                   </span>
                 </legend>
                 <.input
@@ -359,8 +359,8 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    {user_params, socket} = maybe_auto_fill_preferences(user_params, socket)
     unlocked_section = compute_unlocked_section(user_params)
+    {user_params, socket} = maybe_auto_fill_preferences(user_params, socket, unlocked_section)
     city_name = lookup_city_name(user_params["zip_code"])
     age = compute_age(user_params["birthday"])
 
@@ -377,14 +377,16 @@ defmodule AniminaWeb.UserLive.Registration do
      |> assign_form(changeset)}
   end
 
-  defp maybe_auto_fill_preferences(params, socket) do
-    if socket.assigns.preferences_auto_filled do
+  defp maybe_auto_fill_preferences(params, socket, unlocked_section) do
+    if socket.assigns.preferences_auto_filled or unlocked_section < 3 do
       {params, socket}
     else
       gender = params["gender"]
       height = parse_int(params["height"])
       age = compute_age(params["birthday"])
 
+      # gender/height/age should always be available (pre-filled at mount),
+      # but guard just in case
       if gender in ["male", "female", "diverse"] and is_integer(height) and is_integer(age) do
         params =
           params
@@ -447,8 +449,8 @@ defmodule AniminaWeb.UserLive.Registration do
   defp compute_unlocked_section(params) do
     cond do
       not filled?(params, ~w(email password mobile_phone birthday)) -> 1
-      not filled?(params, ~w(country_id zip_code)) -> 2
-      not filled?(params, ~w(display_name gender height)) -> 3
+      not filled?(params, ~w(display_name gender height)) -> 2
+      not filled?(params, ~w(country_id zip_code)) -> 3
       true -> 5
     end
   end

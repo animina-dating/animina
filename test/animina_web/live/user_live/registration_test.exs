@@ -120,8 +120,9 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
             "email" => "test@example.com",
             "password" => "password1234",
             "mobile_phone" => "+4915112345678",
-            "country_id" => germany_id(),
-            "zip_code" => "10115"
+            "display_name" => "TestUser",
+            "gender" => "male",
+            "height" => "180"
           }
         )
 
@@ -174,10 +175,27 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       refute html =~ "Max. Jahre älter"
     end
 
-    test "pre-fills partner age fields based on user age", %{conn: conn} do
+    test "pre-fills partner age fields when section 2 is completed", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # A 36-year-old should get: min_age = 36-5 = 31, max_age = 36+5 = 41
+      # First, fill only section 1 — auto-fill should NOT trigger yet
+      html_section1 =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "email" => "test@example.com",
+            "password" => "password1234",
+            "mobile_phone" => "+4915112345678",
+            "birthday" => "1990-01-01"
+          }
+        )
+
+      refute html_section1 =~ ~s(value="31")
+      refute html_section1 =~ ~s(value="41")
+
+      # Now complete section 2 (Profil) — auto-fill should trigger
+      # Gender/height/birthday are already pre-filled at mount
       html =
         lv
         |> element("#registration_form")
@@ -186,10 +204,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
             "email" => "test@example.com",
             "password" => "password1234",
             "mobile_phone" => "+4915112345678",
-            "country_id" => germany_id(),
-            "zip_code" => "10115",
-            "display_name" => "TestUser",
             "birthday" => "1990-01-01",
+            "display_name" => "TestUser",
             "gender" => "male",
             "height" => "180"
           }
