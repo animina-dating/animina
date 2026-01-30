@@ -32,6 +32,9 @@ config :swoosh, :api_client, false
 # Disable the unconfirmed user cleaner GenServer in tests
 config :animina, start_unconfirmed_user_cleaner: false
 
+# Disable the Quantum scheduler in tests
+config :animina, start_scheduler: false
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

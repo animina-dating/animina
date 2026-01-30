@@ -585,6 +585,41 @@ defmodule Animina.AccountsTest do
     end
   end
 
+  describe "count_confirmed_users_last_24h/0" do
+    test "returns 0 when no users exist" do
+      assert Accounts.count_confirmed_users_last_24h() == 0
+    end
+
+    test "counts confirmed users created within the last 24 hours" do
+      _user = user_fixture()
+      assert Accounts.count_confirmed_users_last_24h() == 1
+    end
+
+    test "does not count unconfirmed users" do
+      _user = unconfirmed_user_fixture()
+      assert Accounts.count_confirmed_users_last_24h() == 0
+    end
+
+    test "does not count users older than 24 hours" do
+      user = user_fixture()
+
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [inserted_at: DateTime.add(DateTime.utc_now(), -25, :hour)]
+      )
+
+      assert Accounts.count_confirmed_users_last_24h() == 0
+    end
+
+    test "counts multiple confirmed recent users" do
+      _user1 = user_fixture()
+      _user2 = user_fixture()
+      _unconfirmed = unconfirmed_user_fixture()
+
+      assert Accounts.count_confirmed_users_last_24h() == 2
+    end
+  end
+
   describe "deliver_user_password_reset_instructions/2" do
     setup do
       %{user: user_fixture()}

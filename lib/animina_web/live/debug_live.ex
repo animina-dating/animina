@@ -213,25 +213,29 @@ defmodule AniminaWeb.DebugLive do
       <div class="max-w-4xl mx-auto py-8 px-4">
         <h1 class="text-2xl font-bold mb-8">System Debug</h1>
 
-        <div class="grid gap-6">
-          <%!-- Versions --%>
-          <.section title="Versions">
-            <.row label="Elixir" value={@elixir_version} />
-            <.row label="Erlang/OTP" value={@otp_version} />
-            <.row label="Animina" value={@app_version} />
+        <div class="grid grid-cols-2 gap-6">
+          <%!-- Deployment --%>
+          <.section title="Deployment">
+            <.row label="Deployed At" value={@deployed_at} />
+            <.row label="Uptime" value={@uptime} />
           </.section>
 
-          <%!-- Database --%>
-          <.section title="Database">
-            <.row label="PostgreSQL">
-              <span class={[
-                "inline-flex items-center gap-1 font-medium",
-                @db_status == :ok && "text-green-600",
-                @db_status == :error && "text-red-600"
-              ]}>
-                {if @db_status == :ok, do: "● Connected", else: "● Unreachable"}
-              </span>
-            </.row>
+          <%!-- Versions --%>
+          <.section title="Versions">
+            <.row label="ANIMINA" value={@app_version} />
+            <.row label="Elixir" value={@elixir_version} />
+            <.row label="Erlang/OTP" value={@otp_version} />
+          </.section>
+
+          <%!-- System Load --%>
+          <.section title="System Load">
+            <%= if @load_averages == :not_available do %>
+              <.row label="Status" value="N/A" />
+            <% else %>
+              <.row label="1 min" value={elem(@load_averages, 0)} />
+              <.row label="5 min" value={elem(@load_averages, 1)} />
+              <.row label="15 min" value={elem(@load_averages, 2)} />
+            <% end %>
           </.section>
 
           <%!-- BEAM Memory --%>
@@ -254,15 +258,17 @@ defmodule AniminaWeb.DebugLive do
             <% end %>
           </.section>
 
-          <%!-- System Load --%>
-          <.section title="System Load">
-            <%= if @load_averages == :not_available do %>
-              <.row label="Status" value="N/A" />
-            <% else %>
-              <.row label="1 min" value={elem(@load_averages, 0)} />
-              <.row label="5 min" value={elem(@load_averages, 1)} />
-              <.row label="15 min" value={elem(@load_averages, 2)} />
-            <% end %>
+          <%!-- Database --%>
+          <.section title="Database">
+            <.row label="PostgreSQL">
+              <span class={[
+                "inline-flex items-center gap-1 font-medium",
+                @db_status == :ok && "text-green-600",
+                @db_status == :error && "text-red-600"
+              ]}>
+                {if @db_status == :ok, do: "● Connected", else: "● Unreachable"}
+              </span>
+            </.row>
           </.section>
 
           <%!-- BEAM / CPU Info --%>
@@ -276,12 +282,6 @@ defmodule AniminaWeb.DebugLive do
             <% end %>
             <.row label="Schedulers" value={@scheduler_count} />
             <.row label="Process Count" value={@process_count} />
-          </.section>
-
-          <%!-- Deployment --%>
-          <.section title="Deployment">
-            <.row label="Deployed At" value={@deployed_at} />
-            <.row label="Uptime" value={@uptime} />
           </.section>
         </div>
       </div>

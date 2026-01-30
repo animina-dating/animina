@@ -134,6 +134,21 @@ defmodule Animina.Accounts do
     end
   end
 
+  @doc """
+  Counts the number of users who registered and confirmed (PIN verified)
+  within the last 24 hours.
+  """
+  def count_confirmed_users_last_24h do
+    cutoff = DateTime.utc_now() |> DateTime.add(-24, :hour)
+
+    from(u in User,
+      where: not is_nil(u.confirmed_at),
+      where: u.inserted_at >= ^cutoff,
+      select: count()
+    )
+    |> Repo.one()
+  end
+
   ## User registration
 
   @doc """

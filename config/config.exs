@@ -78,6 +78,13 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# Quantum cron scheduler
+config :animina, Animina.Scheduler,
+  timezone: "Europe/Berlin",
+  jobs: [
+    {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}}
+  ]
+
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase
 

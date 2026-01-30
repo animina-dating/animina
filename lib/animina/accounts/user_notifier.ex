@@ -94,6 +94,30 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
+  Deliver a daily report of newly registered and confirmed users.
+  `count` is the number of new users, `recipient` is a `{name, email}` tuple.
+  """
+  def deliver_daily_new_users_report(count, {_name, email}) do
+    user_word = if count == 1, do: "Nutzer hat", else: "Nutzer haben"
+
+    deliver(
+      email,
+      "ANIMINA: #{count} neue #{if count == 1, do: "Nutzer", else: "Nutzer"} in den letzten 24 Stunden",
+      """
+
+      ==============================
+
+      Hallo,
+
+      in den letzten 24 Stunden #{user_word} sich #{count} neue
+      #{if count == 1, do: "Nutzer", else: "Nutzer"} bei ANIMINA registriert und per PIN bestätigt.
+
+      ==============================
+      """
+    )
+  end
+
+  @doc """
   Deliver a warning email when someone tries to register with an email
   that already belongs to an existing account.
   """

@@ -14,7 +14,7 @@ defmodule AniminaWeb.DebugLiveTest do
       assert html =~ "Versions"
       assert html =~ "Elixir"
       assert html =~ "Erlang/OTP"
-      assert html =~ "Animina"
+      assert html =~ "ANIMINA"
 
       # Database section
       assert html =~ "Database"

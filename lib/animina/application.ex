@@ -18,7 +18,7 @@ defmodule Animina.Application do
         {Phoenix.PubSub, name: Animina.PubSub},
         # Start to serve requests, typically the last entry
         AniminaWeb.Endpoint
-      ] ++ maybe_start_cleaner() ++ maybe_start_hot_deploy()
+      ] ++ maybe_start_cleaner() ++ maybe_start_scheduler() ++ maybe_start_hot_deploy()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -29,6 +29,14 @@ defmodule Animina.Application do
   defp maybe_start_cleaner do
     if Application.get_env(:animina, :start_unconfirmed_user_cleaner, true) do
       [Animina.Accounts.UnconfirmedUserCleaner]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_scheduler do
+    if Application.get_env(:animina, :start_scheduler, true) do
+      [Animina.Scheduler]
     else
       []
     end

@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Check if Claude made any code changes (Edit, Write, or Bash commands that modified files) during this conversation. If code changes were made, respond with 'decision: block' and instruct Claude to run 'mix precommit' and fix any issues. If no code changes were made (only read/search/conversation), respond with 'decision: allow'."
+            "prompt": "Check if Claude made any code changes (Edit, Write, or Bash commands that modified files) during this conversation. If code changes were made, respond with 'decision: block' and instruct Claude to run 'mix precommit', fix any errors it finds, and then run 'mix precommit' again until it passes cleanly. If no code changes were made (only read/search/conversation), respond with 'decision: allow'."
           }
         ]
       }
