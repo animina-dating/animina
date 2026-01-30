@@ -5,10 +5,13 @@ defmodule Animina.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
+    %{name: sender_name, address: sender_address} =
+      Application.fetch_env!(:animina, :email_sender) |> Map.new()
+
     email =
       new()
       |> to(recipient)
-      |> from({"Animina", "noreply@animina.de"})
+      |> from({sender_name, sender_address})
       |> subject(subject)
       |> text_body(body)
 
