@@ -41,7 +41,7 @@ defmodule AniminaWeb.Layouts do
     ~H"""
     <div class="min-h-screen flex flex-col bg-base-100">
       <!-- Navigation -->
-      <header class="fixed top-0 left-0 right-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
+      <header class="fixed top-0 inset-x-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
         <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="flex h-16 items-center justify-between">
             <a href="/" class="flex items-center gap-2 group">
@@ -51,6 +51,25 @@ defmodule AniminaWeb.Layouts do
             </a>
 
             <div class="flex items-center gap-4">
+              <form action="/locale" method="post" class="flex items-center">
+                <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                <select
+                  name="locale"
+                  onchange="this.form.submit()"
+                  class="select select-ghost select-sm bg-transparent text-sm"
+                  aria-label={gettext("Language")}
+                >
+                  <% current_locale = Gettext.get_locale(AniminaWeb.Gettext) %>
+                  <option value="de" selected={current_locale == "de"}>DE</option>
+                  <option value="en" selected={current_locale == "en"}>EN</option>
+                  <option value="tr" selected={current_locale == "tr"}>TR</option>
+                  <option value="ru" selected={current_locale == "ru"}>RU</option>
+                  <option value="ar" selected={current_locale == "ar"}>AR</option>
+                  <option value="pl" selected={current_locale == "pl"}>PL</option>
+                  <option value="fr" selected={current_locale == "fr"}>FR</option>
+                  <option value="es" selected={current_locale == "es"}>ES</option>
+                </select>
+              </form>
               <%= if @current_scope && !@display_name do %>
                 <span class="text-base text-base-content/70">
                   {@current_scope.user.email}
@@ -59,14 +78,14 @@ defmodule AniminaWeb.Layouts do
                   href="/users/settings"
                   class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
                 >
-                  Einstellungen
+                  {gettext("Settings")}
                 </a>
                 <.link
                   href="/users/log-out"
                   method="delete"
                   class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
                 >
-                  Abmelden
+                  {gettext("Log out")}
                 </.link>
               <% end %>
               <%= if @display_name do %>
@@ -76,7 +95,7 @@ defmodule AniminaWeb.Layouts do
                     type="button"
                     id="profile-menu-button"
                     class="flex items-center gap-2 p-1 rounded-full opacity-100"
-                    aria-label="Your profile"
+                    aria-label={gettext("Your profile")}
                     aria-haspopup="true"
                     phx-click={
                       JS.toggle(
@@ -98,7 +117,7 @@ defmodule AniminaWeb.Layouts do
                   <!-- Dropdown Menu -->
                   <div
                     id="profile-dropdown"
-                    class="hidden absolute right-0 mt-2 w-48 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
+                    class="hidden absolute end-0 mt-2 w-48 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
                     phx-click-away={
                       JS.hide(
                         to: "#profile-dropdown",
@@ -110,9 +129,9 @@ defmodule AniminaWeb.Layouts do
                     <.link
                       href="/users/log-out"
                       method="delete"
-                      class="block w-full text-left px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      class="block w-full text-start px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
-                      Abmelden
+                      {gettext("Log out")}
                     </.link>
                   </div>
                 </div>
@@ -122,13 +141,13 @@ defmodule AniminaWeb.Layouts do
                   href="/users/log-in"
                   class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
                 >
-                  Anmelden
+                  {gettext("Log in")}
                 </a>
                 <a
                   href="/users/register"
                   class="inline-flex items-center justify-center px-5 py-2 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Registrieren
+                  {gettext("Register")}
                 </a>
               <% end %>
             </div>
@@ -136,7 +155,7 @@ defmodule AniminaWeb.Layouts do
         </nav>
       </header>
       <!-- Flash Messages -->
-      <div class="fixed top-16 left-0 right-0 z-40 pointer-events-none">
+      <div class="fixed top-16 inset-x-0 z-40 pointer-events-none">
         <.flash_group flash={@flash} />
       </div>
       <!-- Main Content -->
@@ -154,10 +173,10 @@ defmodule AniminaWeb.Layouts do
               aria-label="Footer"
               class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
             >
-              <a href="#" class="hover:text-primary transition-colors">Über uns</a>
-              <a href="#" class="hover:text-primary transition-colors">Datenschutz</a>
-              <a href="#" class="hover:text-primary transition-colors">AGB</a>
-              <a href="#" class="hover:text-primary transition-colors">Impressum</a>
+              <a href="#" class="hover:text-primary transition-colors">{gettext("About us")}</a>
+              <a href="#" class="hover:text-primary transition-colors">{gettext("Privacy")}</a>
+              <a href="#" class="hover:text-primary transition-colors">{gettext("Terms")}</a>
+              <a href="#" class="hover:text-primary transition-colors">{gettext("Imprint")}</a>
               <a
                 href="https://github.com/animina-dating/animina"
                 target="_blank"
@@ -202,7 +221,7 @@ defmodule AniminaWeb.Layouts do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
+        <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
       </.flash>
 
       <.flash
@@ -214,7 +233,7 @@ defmodule AniminaWeb.Layouts do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="hero-arrow-path" class="ml-1 size-3 motion-safe:animate-spin" />
+        <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
       </.flash>
     </div>
     """
@@ -228,7 +247,7 @@ defmodule AniminaWeb.Layouts do
   def theme_toggle(assigns) do
     ~H"""
     <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
-      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-1/3 [[data-theme=dark]_&]:left-2/3 transition-[left]" />
+      <div class="absolute w-1/3 h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 start-0 [[data-theme=light]_&]:start-1/3 [[data-theme=dark]_&]:start-2/3 transition-[inset-inline-start]" />
 
       <button
         class="flex p-2 cursor-pointer w-1/3"

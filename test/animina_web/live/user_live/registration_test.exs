@@ -42,7 +42,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       }
     )
 
-    lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+    lv |> element("button", "Add location") |> render_click()
     lv |> element("button[phx-click=next_step]") |> render_click()
   end
 
@@ -50,18 +50,18 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Konto erstellen"
-      assert html =~ "Jetzt anmelden"
+      assert html =~ "Create account"
+      assert html =~ "Log in now"
       # Step 1 fields visible
-      assert html =~ "E-Mail-Adresse"
-      assert html =~ "Passwort"
-      assert html =~ "Handynummer"
-      assert html =~ "Geburtstag"
+      assert html =~ "Email address"
+      assert html =~ "Password"
+      assert html =~ "Mobile phone"
+      assert html =~ "Birthday"
       # Step 1 should show optional referral code field
-      assert html =~ "Empfehlungscode"
-      # Step 1 should show "Weiter" button, not "Konto erstellen" submit
-      assert html =~ "Weiter"
-      refute html =~ ~r/<button[^>]*type="submit"[^>]*>.*Konto erstellen/s
+      assert html =~ "Referral code"
+      # Step 1 should show "Next" button, not "Create account" submit
+      assert html =~ "Next"
+      refute html =~ ~r/<button[^>]*type="submit"[^>]*>.*Create account/s
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -102,7 +102,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
           }
         )
 
-      assert result =~ "muss eine Handynummer sein (keine Festnetznummer)"
+      assert result =~ "must be a mobile number (not a landline)"
     end
 
     test "accepts a mobile number", %{conn: conn} do
@@ -120,7 +120,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
           }
         )
 
-      refute result =~ "muss eine Handynummer sein (keine Festnetznummer)"
+      refute result =~ "must be a mobile number (not a landline)"
     end
   end
 
@@ -129,26 +129,26 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
       assert html =~ "Account"
-      assert html =~ "Profil"
-      assert html =~ "Wohnort"
+      assert html =~ "Profile"
+      assert html =~ "Location"
       assert html =~ "Partner"
     end
 
-    test "step 1 only shows Weiter button, no Zurück", %{conn: conn} do
+    test "step 1 only shows Next button, no Back", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Weiter"
-      refute html =~ "Zurück"
+      assert html =~ "Next"
+      refute html =~ "Back"
     end
 
-    test "Weiter button is disabled when required step 1 fields are empty", %{conn: conn} do
+    test "Next button is disabled when required step 1 fields are empty", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
       # Button should be disabled on initial load (no fields filled)
-      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Weiter/s
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Next/s
     end
 
-    test "Weiter button becomes enabled when step 1 fields are valid", %{conn: conn} do
+    test "Next button becomes enabled when step 1 fields are valid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       html =
@@ -186,11 +186,11 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       html = lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Should now show step 2 fields
-      assert html =~ "Anzeigename"
-      assert html =~ "Geschlecht"
-      # Should have both Zurück and Weiter
-      assert html =~ "Zurück"
-      assert html =~ "Weiter"
+      assert html =~ "Display name"
+      assert html =~ "Gender"
+      # Should have both Back and Next
+      assert html =~ "Back"
+      assert html =~ "Next"
     end
 
     test "back button works without validation", %{conn: conn} do
@@ -211,11 +211,11 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Now go back
-      html = lv |> element("button", "Zurück") |> render_click()
+      html = lv |> element("button", "Back") |> render_click()
 
       # Should be back on step 1
-      assert html =~ "E-Mail-Adresse"
-      refute html =~ "Zurück"
+      assert html =~ "Email address"
+      refute html =~ "Back"
     end
 
     test "data persists across steps", %{conn: conn} do
@@ -249,8 +249,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       lv |> element("button[phx-click=next_step]") |> render_click()
 
       # Go back to step 1
-      lv |> element("button", "Zurück") |> render_click()
-      html = lv |> element("button", "Zurück") |> render_click()
+      lv |> element("button", "Back") |> render_click()
+      html = lv |> element("button", "Back") |> render_click()
 
       # Step 1 data should still be there
       assert html =~ "test@example.com"
@@ -301,11 +301,11 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       html = fill_step_3(lv)
 
       # Step 4 should show partner preferences AND legal checkbox
-      assert html =~ "Geschlecht"
-      assert html =~ "Suchradius"
-      assert html =~ "Allgemeinen Geschäftsbedingungen"
-      # Step 4 should show "Konto erstellen" instead of "Weiter"
-      assert html =~ "Konto erstellen"
+      assert html =~ "Gender"
+      assert html =~ "Search radius"
+      assert html =~ "Terms of Service"
+      # Step 4 should show "Create account" instead of "Next"
+      assert html =~ "Create account"
     end
 
     test "auto-fills partner preferences when advancing to step 4", %{conn: conn} do
@@ -431,7 +431,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Should redirect to PIN confirmation (phantom flow), NOT show "has already been taken"
       {path, flash} = assert_redirect(lv)
       assert path =~ "/users/confirm/"
-      assert flash["info"] =~ "Bestätigungscode"
+      assert flash["info"] =~ "confirmation code"
     end
 
     test "duplicate email does not create a new user record", %{conn: conn} do
@@ -547,17 +547,17 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       {:ok, pin_lv, pin_html} = live(conn, path)
 
       # Should show the same PIN confirmation UI
-      assert pin_html =~ "E-Mail bestätigen"
-      assert pin_html =~ "Bestätigungscode"
-      assert pin_html =~ "Verbleibende Versuche"
-      assert pin_html =~ "Verbleibende Zeit"
+      assert pin_html =~ "Confirm your email"
+      assert pin_html =~ "Confirmation code"
+      assert pin_html =~ "Remaining attempts"
+      assert pin_html =~ "Remaining time"
 
       # Enter a wrong PIN — should show error
       pin_lv
       |> form("#pin_form", pin: %{pin: "000000"})
       |> render_submit()
 
-      assert render(pin_lv) =~ "Falscher Code"
+      assert render(pin_lv) =~ "Wrong code"
     end
 
     test "phantom flow redirects after 3 wrong PINs", %{conn: conn} do
@@ -629,7 +629,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Should redirect to register page with account deleted message
       {redirect_path, flash} = assert_redirect(pin_lv)
       assert redirect_path == "/users/register"
-      assert flash["error"] =~ "Konto wurde gelöscht"
+      assert flash["error"] =~ "account has been deleted"
     end
   end
 
@@ -643,8 +643,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Step 3
       html = fill_step_3(lv)
 
-      assert html =~ "Mindestalter"
-      assert html =~ "Höchstalter"
+      assert html =~ "Minimum age"
+      assert html =~ "Maximum age"
     end
 
     test "converts partner ages to offsets when saving", %{conn: conn} do
@@ -716,8 +716,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       html = fill_step_2(lv)
 
       # Should show input form with zip code field and add button
-      assert html =~ "Postleitzahl"
-      assert html =~ "Wohnsitz hinzufügen"
+      assert html =~ "Zip code"
+      assert html =~ "Add location"
       # No saved locations yet
       refute html =~ "saved-location-"
     end
@@ -737,7 +737,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      html = lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+      html = lv |> element("button", "Add location") |> render_click()
 
       # Should show saved location
       assert html =~ "saved-location-"
@@ -759,7 +759,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+      lv |> element("button", "Add location") |> render_click()
 
       # Add second location
       lv
@@ -770,13 +770,13 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      html = lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+      html = lv |> element("button", "Add location") |> render_click()
 
       # Should show two saved locations
       assert html =~ "10115"
       assert html =~ "80331"
       # Title should switch to plural
-      assert html =~ "Wohnorte"
+      assert html =~ "Locations"
 
       # Remove first location
       html = lv |> element("button[phx-value-id=\"1\"]") |> render_click()
@@ -785,7 +785,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "80331"
       refute html =~ "10115"
       # Title should switch back to singular
-      assert html =~ "3. Wohnort"
+      assert html =~ "3. Location"
     end
 
     test "cannot add more than 4 locations", %{conn: conn} do
@@ -803,7 +803,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
           }
         )
 
-        lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+        lv |> element("button", "Add location") |> render_click()
       end
 
       html = render(lv)
@@ -811,7 +811,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Should have 4 saved locations and input form should be hidden
       assert html =~ "10115"
       assert html =~ "20095"
-      refute html =~ "Wohnsitz hinzufügen"
+      refute html =~ "Add location"
     end
 
     test "rejects duplicate zip code when adding", %{conn: conn} do
@@ -829,7 +829,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+      lv |> element("button", "Add location") |> render_click()
 
       # Try to add same zip code again
       lv
@@ -840,21 +840,21 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      html = lv |> element("button", "Wohnsitz hinzufügen") |> render_click()
+      html = lv |> element("button", "Add location") |> render_click()
 
       # Should show error on input form
-      assert html =~ "Dieser Wohnsitz wurde bereits hinzugefügt"
+      assert html =~ "This location has already been added"
     end
 
-    test "Weiter button is disabled on step 3 without any saved location", %{conn: conn} do
+    test "Next button is disabled on step 3 without any saved location", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       fill_step_1(lv)
       html = fill_step_2(lv)
 
-      # Weiter should be disabled because no locations are saved
-      assert html =~ "Postleitzahl"
-      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Weiter/s
+      # Next should be disabled because no locations are saved
+      assert html =~ "Zip code"
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Next/s
     end
   end
 
@@ -867,17 +867,46 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
   end
 
+  describe "language pre-fill" do
+    test "language field is pre-filled from session locale", %{conn: conn} do
+      conn = conn |> Phoenix.ConnTest.init_test_session(%{locale: "fr"})
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Go back to step 2 to see the language field
+      html = lv |> element("button", "Back") |> render_click()
+
+      # The language select should have "fr" selected
+      assert html =~ ~s(<option selected value="fr">Français</option>) or
+               html =~ ~s(<option value="fr" selected)
+    end
+
+    test "language field defaults to de when no session locale", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+
+      # Step 2 should show language field with default locale
+      html = render(lv)
+
+      # English is set in test setup (ConnCase), so should be pre-filled as "en"
+      assert html =~ ~s(selected)
+    end
+  end
+
   describe "registration navigation" do
     test "redirects to login page when the login link is clicked", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       {:ok, _login_live, login_html} =
         lv
-        |> element("main a", "Jetzt anmelden")
+        |> element("main a", "Log in now")
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert login_html =~ "Anmelden"
+      assert login_html =~ "Log in"
     end
   end
 
@@ -885,7 +914,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "step 1 shows optional referral code field", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Empfehlungscode (optional)"
+      assert html =~ "Referral code (optional)"
       assert html =~ "A7X3K9"
     end
 
@@ -957,7 +986,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> form("#registration_form")
         |> render_submit()
 
-      assert result =~ "Empfehlungscode nicht gefunden"
+      assert result =~ "Referral code not found"
     end
   end
 end

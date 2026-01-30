@@ -13,9 +13,9 @@ defmodule AniminaWeb.PageControllerTest do
       {:ok, _view, html} = live(conn, ~p"/")
 
       assert html =~ ~s(href="/users/log-in")
-      assert html =~ "Anmelden"
+      assert html =~ "Log in"
       assert html =~ ~s(href="/users/register")
-      assert html =~ "Registrieren"
+      assert html =~ "Register"
     end
   end
 end

@@ -14,10 +14,10 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-6">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              E-Mail bestätigen
+              {gettext("Confirm your email")}
             </h1>
             <p class="mt-2 text-base text-base-content/70" style="hyphens: none;">
-              Wir haben einen 6-stelligen Code an <strong>{@email}</strong> gesendet.
+              {gettext("We sent a 6-digit code to")} <strong>{@email}</strong>.
             </p>
           </div>
 
@@ -31,7 +31,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
               <.input
                 field={@form[:pin]}
                 type="text"
-                label="Bestätigungscode"
+                label={gettext("Confirmation code")}
                 inputmode="numeric"
                 pattern="[0-9]{6}"
                 maxlength="6"
@@ -44,24 +44,26 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
 
             <div class="text-sm text-base-content/60 space-y-1">
               <p>
-                Verbleibende Versuche: <strong>{@remaining_attempts}</strong> von {@max_attempts}
+                {gettext("Remaining attempts:")}
+                <strong>{@remaining_attempts}</strong> {gettext("of")} {@max_attempts}
               </p>
               <p>
-                Verbleibende Zeit: <strong>{@remaining_minutes}</strong> Minuten
+                {gettext("Remaining time:")}
+                <strong>{@remaining_minutes}</strong> {gettext("minutes")}
               </p>
             </div>
 
             <.button
-              phx-disable-with="Wird überprüft..."
+              phx-disable-with={gettext("Verifying...")}
               class="btn btn-primary w-full"
             >
-              Bestätigen
+              {gettext("Confirm")}
             </.button>
           </.form>
 
           <p :if={@dev_routes} class="mt-4 text-center text-sm text-base-content/50">
             <a href="/dev/mailbox" target="_blank" class="underline hover:text-primary">
-              Dev Mailbox öffnen
+              {gettext("Open dev mailbox")}
             </a>
           </p>
         </div>
@@ -128,14 +130,14 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
         else
           {:ok,
            socket
-           |> put_flash(:error, "Dieser Bestätigungslink ist ungültig oder abgelaufen.")
+           |> put_flash(:error, gettext("This confirmation link is invalid or expired."))
            |> push_navigate(to: ~p"/users/register")}
         end
 
       {:error, _reason} ->
         {:ok,
          socket
-         |> put_flash(:error, "Dieser Bestätigungslink ist ungültig oder abgelaufen.")
+         |> put_flash(:error, gettext("This confirmation link is invalid or expired."))
          |> push_navigate(to: ~p"/users/register")}
     end
   end
@@ -153,14 +155,21 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
        socket
        |> put_flash(
          :error,
-         "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
+         gettext("Your account has been deleted. Please register again.")
        )
        |> push_navigate(to: ~p"/users/register")}
     else
       {:noreply,
        socket
        |> assign(remaining_attempts: remaining)
-       |> put_flash(:error, "Falscher Code. Noch #{remaining} Versuch(e) übrig.")
+       |> put_flash(
+         :error,
+         ngettext(
+           "Wrong code. %{count} attempt remaining.",
+           "Wrong code. %{count} attempts remaining.",
+           remaining
+         )
+       )
        |> assign_form()}
     end
   end
@@ -178,7 +187,14 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
         {:noreply,
          socket
          |> assign(remaining_attempts: remaining)
-         |> put_flash(:error, "Falscher Code. Noch #{remaining} Versuch(e) übrig.")
+         |> put_flash(
+           :error,
+           ngettext(
+             "Wrong code. %{count} attempt remaining.",
+             "Wrong code. %{count} attempts remaining.",
+             remaining
+           )
+         )
          |> assign_form()}
 
       {:error, reason} when reason in [:too_many_attempts, :expired, :not_found] ->
@@ -186,7 +202,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
          socket
          |> put_flash(
            :error,
-           "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
+           gettext("Your account has been deleted. Please register again.")
          )
          |> push_navigate(to: ~p"/users/register")}
     end

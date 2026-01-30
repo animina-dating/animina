@@ -3,6 +3,7 @@ defmodule AniminaWeb.UserAuth do
 
   import Plug.Conn
   import Phoenix.Controller
+  use Gettext, backend: AniminaWeb.Gettext
 
   alias Animina.Accounts
   alias Animina.Accounts.Scope
@@ -137,22 +138,14 @@ defmodule AniminaWeb.UserAuth do
   # you must explicitly fetch the session data before clearing
   # and then immediately set it after clearing, for example:
   #
-  #     defp renew_session(conn, _user) do
-  #       delete_csrf_token()
-  #       preferred_locale = get_session(conn, :preferred_locale)
-  #
-  #       conn
-  #       |> configure_session(renew: true)
-  #       |> clear_session()
-  #       |> put_session(:preferred_locale, preferred_locale)
-  #     end
-  #
   defp renew_session(conn, _user) do
     delete_csrf_token()
+    locale = get_session(conn, :locale)
 
     conn
     |> configure_session(renew: true)
     |> clear_session()
+    |> put_session(:locale, locale)
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),
@@ -230,7 +223,7 @@ defmodule AniminaWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.put_flash(:error, gettext("You must log in to access this page."))
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
 
       {:halt, socket}
@@ -245,7 +238,10 @@ defmodule AniminaWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must re-authenticate to access this page.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          gettext("You must re-authenticate to access this page.")
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
 
       {:halt, socket}
@@ -253,14 +249,32 @@ defmodule AniminaWeb.UserAuth do
   end
 
   defp mount_current_scope(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_scope, fn ->
-      {user, _} =
-        if user_token = session["user_token"] do
-          Accounts.get_user_by_session_token(user_token)
-        end || {nil, nil}
+    socket =
+      Phoenix.Component.assign_new(socket, :current_scope, fn ->
+        {user, _} =
+          if user_token = session["user_token"] do
+            Accounts.get_user_by_session_token(user_token)
+          end || {nil, nil}
 
-      Scope.for_user(user)
-    end)
+        Scope.for_user(user)
+      end)
+
+    # Set locale for LiveView from user preference or session
+    default_locale =
+      Application.get_env(:animina, AniminaWeb.Gettext, []) |> Keyword.get(:default_locale, "de")
+
+    locale =
+      if socket.assigns.current_scope && socket.assigns.current_scope.user do
+        socket.assigns.current_scope.user.language
+      end || session["locale"] || default_locale
+
+    locale =
+      if locale in AniminaWeb.Plugs.SetLocale.supported_locales(),
+        do: locale,
+        else: default_locale
+
+    Gettext.put_locale(AniminaWeb.Gettext, locale)
+    Phoenix.Component.assign(socket, :locale, locale)
   end
 
   @doc "Returns the path to redirect to after log in."
@@ -279,7 +293,7 @@ defmodule AniminaWeb.UserAuth do
       conn
     else
       conn
-      |> put_flash(:error, "You must log in to access this page.")
+      |> put_flash(:error, gettext("You must log in to access this page."))
       |> maybe_store_return_to()
       |> redirect(to: ~p"/users/log-in")
       |> halt()

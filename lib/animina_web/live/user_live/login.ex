@@ -9,19 +9,19 @@ defmodule AniminaWeb.UserLive.Login do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              Anmelden
+              {gettext("Log in")}
             </h1>
             <p :if={!@current_scope} class="mt-2 text-base text-base-content/70">
-              Noch kein Konto?
+              {gettext("Don't have an account?")}
               <.link
                 navigate={~p"/users/register"}
                 class="font-semibold text-primary hover:underline"
               >
-                Jetzt registrieren
+                {gettext("Register now")}
               </.link>
             </p>
             <p :if={@current_scope} class="mt-2 text-base text-base-content/70">
-              Bitte erneut authentifizieren, um sensible Aktionen durchzuführen.
+              {gettext("Please re-authenticate to perform sensitive actions.")}
             </p>
           </div>
 
@@ -38,7 +38,7 @@ defmodule AniminaWeb.UserLive.Login do
               readonly={!!@current_scope}
               field={f[:email]}
               type="email"
-              label="E-Mail-Adresse"
+              label={gettext("Email address")}
               autocomplete="email"
               required
               phx-mounted={JS.focus()}
@@ -46,12 +46,12 @@ defmodule AniminaWeb.UserLive.Login do
             <.input
               field={@form[:password]}
               type="password"
-              label="Passwort"
+              label={gettext("Password")}
               autocomplete="current-password"
               required
             />
             <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
-              Anmelden
+              {gettext("Log in")}
             </.button>
           </.form>
 
@@ -60,7 +60,7 @@ defmodule AniminaWeb.UserLive.Login do
               navigate={~p"/users/forgot-password"}
               class="text-sm text-base-content/70 hover:text-primary hover:underline"
             >
-              Passwort vergessen?
+              {gettext("Forgot your password?")}
             </.link>
           </div>
         </div>

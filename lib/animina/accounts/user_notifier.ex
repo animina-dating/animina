@@ -1,5 +1,6 @@
 defmodule Animina.Accounts.UserNotifier do
   import Swoosh.Email
+  use Gettext, backend: AniminaWeb.Gettext
 
   alias Animina.Mailer
 
@@ -22,75 +23,79 @@ defmodule Animina.Accounts.UserNotifier do
     end
   end
 
+  defp user_locale(%{language: lang}) when is_binary(lang), do: lang
+  defp user_locale(_), do: "de"
+
   @doc """
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+    Gettext.with_locale(AniminaWeb.Gettext, user_locale(user), fn ->
+      deliver(user.email, dgettext("emails", "Update email instructions – ANIMINA"), """
 
-    ==============================
+      ==============================
 
-    Hi #{user.email},
+      #{dgettext("emails", "Hi %{email},", email: user.email)}
 
-    You can change your email by visiting the URL below:
+      #{dgettext("emails", "You can change your email by visiting the URL below:")}
 
-    #{url}
+      #{url}
 
-    If you didn't request this change, please ignore this.
+      #{dgettext("emails", "If you didn't request this change, please ignore this.")}
 
-    ==============================
-    """)
+      ==============================
+      """)
+    end)
   end
 
   @doc """
   Deliver password reset instructions to the user's email.
   """
   def deliver_password_reset_instructions(user, url) do
-    deliver(user.email, "Passwort zurücksetzen – ANIMINA", """
+    Gettext.with_locale(AniminaWeb.Gettext, user_locale(user), fn ->
+      deliver(user.email, dgettext("emails", "Reset password – ANIMINA"), """
 
-    ==============================
+      ==============================
 
-    Hallo #{user.email},
+      #{dgettext("emails", "Hi %{email},", email: user.email)}
 
-    du kannst dein Passwort zurücksetzen, indem du den folgenden Link besuchst:
+      #{dgettext("emails", "You can reset your password by visiting the following link:")}
 
-    #{url}
+      #{url}
 
-    Dieser Link ist 1 Stunde gültig.
+      #{dgettext("emails", "This link is valid for 1 hour.")}
 
-    Falls du kein neues Passwort angefordert hast,
-    ignoriere bitte diese E-Mail.
+      #{dgettext("emails", "If you did not request a new password, please ignore this email.")}
 
-    ==============================
-    """)
+      ==============================
+      """)
+    end)
   end
 
   @doc """
   Deliver a 6-digit confirmation PIN to the user's email.
   """
   def deliver_confirmation_pin(user, pin) do
-    deliver(user.email, "Dein Bestätigungscode für ANIMINA", """
+    Gettext.with_locale(AniminaWeb.Gettext, user_locale(user), fn ->
+      deliver(user.email, dgettext("emails", "Your confirmation code for ANIMINA"), """
 
-    ==============================
+      ==============================
 
-    Hallo #{user.email},
+      #{dgettext("emails", "Hi %{email},", email: user.email)}
 
-    Dein Bestätigungscode lautet:
+      #{dgettext("emails", "Your confirmation code is:")}
 
-        #{pin}
+          #{pin}
 
-    Bitte gib diesen Code innerhalb von 30 Minuten ein,
-    um deine E-Mail-Adresse zu bestätigen.
+      #{dgettext("emails", "Please enter this code within 30 minutes to confirm your email address.")}
 
-    Du hast maximal 3 Versuche. Nach 3 falschen Eingaben
-    oder nach Ablauf der 30 Minuten wird dein Konto
-    gelöscht und du musst dich erneut registrieren.
+      #{dgettext("emails", "You have a maximum of 3 attempts. After 3 wrong entries or after 30 minutes, your account will be deleted and you will need to register again.")}
 
-    Falls du kein Konto bei ANIMINA erstellt hast,
-    ignoriere bitte diese E-Mail.
+      #{dgettext("emails", "If you did not create an account at ANIMINA, please ignore this email.")}
 
-    ==============================
-    """)
+      ==============================
+      """)
+    end)
   end
 
   @doc """
@@ -98,23 +103,39 @@ defmodule Animina.Accounts.UserNotifier do
   `count` is the number of new users, `recipient` is a `{name, email}` tuple.
   """
   def deliver_daily_new_users_report(count, {_name, email}) do
-    user_word = if count == 1, do: "Nutzer hat", else: "Nutzer haben"
+    # Admin report is always in German
+    Gettext.with_locale(AniminaWeb.Gettext, "de", fn ->
+      subject =
+        dngettext(
+          "emails",
+          "ANIMINA: %{count} new user in the last 24 hours",
+          "ANIMINA: %{count} new users in the last 24 hours",
+          count
+        )
 
-    deliver(
-      email,
-      "ANIMINA: #{count} neue #{if count == 1, do: "Nutzer", else: "Nutzer"} in den letzten 24 Stunden",
-      """
+      body =
+        dngettext(
+          "emails",
+          "%{count} new user registered and confirmed via PIN at ANIMINA in the last 24 hours.",
+          "%{count} new users registered and confirmed via PIN at ANIMINA in the last 24 hours.",
+          count
+        )
 
-      ==============================
+      deliver(
+        email,
+        subject,
+        """
 
-      Hallo,
+        ==============================
 
-      in den letzten 24 Stunden #{user_word} sich #{count} neue
-      #{if count == 1, do: "Nutzer", else: "Nutzer"} bei ANIMINA registriert und per PIN bestätigt.
+        #{dgettext("emails", "Hello,")}
 
-      ==============================
-      """
-    )
+        #{body}
+
+        ==============================
+        """
+      )
+    end)
   end
 
   @doc """
@@ -122,22 +143,18 @@ defmodule Animina.Accounts.UserNotifier do
   that already belongs to an existing account.
   """
   def deliver_duplicate_registration_warning(email) when is_binary(email) do
-    deliver(email, "Sicherheitshinweis – ANIMINA", """
+    # We don't know the user's language, so use default
+    deliver(email, dgettext("emails", "Security notice – ANIMINA"), """
 
     ==============================
 
-    Hallo,
+    #{dgettext("emails", "Hello,")}
 
-    jemand hat versucht, ein neues ANIMINA-Konto mit deiner
-    E-Mail-Adresse (#{email}) zu erstellen.
+    #{dgettext("emails", "Someone tried to create a new ANIMINA account with your email address (%{email}).", email: email)}
 
-    Falls du das nicht warst, empfehlen wir dir, dein Passwort
-    zu ändern, um dein Konto zu schützen.
+    #{dgettext("emails", "If this was not you, we recommend changing your password to protect your account.")}
 
-    Falls du dich gerade selbst registrieren wolltest:
-    Du hast bereits ein Konto. Bitte melde dich mit deinem
-    bestehenden Passwort an oder nutze die Passwort-vergessen-
-    Funktion.
+    #{dgettext("emails", "If you were trying to register yourself: You already have an account. Please log in with your existing password or use the forgot password feature.")}
 
     ==============================
     """)

@@ -13,7 +13,7 @@ defmodule AniminaWeb.DemoLive do
   def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
-       page_title: "Welcome",
+       page_title: gettext("Welcome"),
        message_count: 3,
        bookmark_open: false,
        bookmarks: [
@@ -46,25 +46,26 @@ defmodule AniminaWeb.DemoLive do
         <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
           <div class="text-center max-w-3xl mx-auto">
             <h1 class="text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-base-content leading-tight">
-              Find meaningful <span class="block text-primary font-normal">connections</span>
+              {gettext("Find meaningful")}
+              <span class="block text-primary font-normal">{gettext("connections")}</span>
             </h1>
             <p class="mt-6 text-lg sm:text-xl text-base-content/70 leading-relaxed max-w-2xl mx-auto">
-              Animina brings together people who value authenticity.
-              No games, no pretense—just genuine conversations
-              and real connections.
+              {gettext(
+                "Animina brings together people who value authenticity. No games, no pretense—just genuine conversations and real connections."
+              )}
             </p>
             <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="#"
                 class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
-                Get started
+                {gettext("Get started")}
               </a>
               <a
                 href="#"
                 class="inline-flex items-center justify-center px-8 py-3 text-lg font-medium text-primary bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors duration-200"
               >
-                Learn more
+                {gettext("Learn more")}
               </a>
             </div>
           </div>
@@ -76,10 +77,10 @@ defmodule AniminaWeb.DemoLive do
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              People you might like
+              {gettext("People you might like")}
             </h2>
             <p class="mt-3 text-lg text-base-content/60">
-              Authentic profiles from your area
+              {gettext("Authentic profiles from your area")}
             </p>
           </div>
 
@@ -122,27 +123,39 @@ defmodule AniminaWeb.DemoLive do
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 sm:mb-16">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Why Animina?
+              {gettext("Why Animina?")}
             </h2>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             <.feature_card
               icon="hero-shield-check"
-              title="Verified profiles"
-              description="Every profile is verified to ensure you're connecting with real people who share your values."
+              title={gettext("Verified profiles")}
+              description={
+                gettext(
+                  "Every profile is verified to ensure you're connecting with real people who share your values."
+                )
+              }
             />
 
             <.feature_card
               icon="hero-chat-bubble-left-right"
-              title="Meaningful conversations"
-              description="Our matching focuses on compatibility and shared interests, not just appearances."
+              title={gettext("Meaningful conversations")}
+              description={
+                gettext(
+                  "Our matching focuses on compatibility and shared interests, not just appearances."
+                )
+              }
             />
 
             <.feature_card
               icon="hero-heart"
-              title="Real connections"
-              description="Animina is designed for those seeking genuine relationships, not endless swiping."
+              title={gettext("Real connections")}
+              description={
+                gettext(
+                  "Animina is designed for those seeking genuine relationships, not endless swiping."
+                )
+              }
             />
           </div>
         </div>
@@ -153,7 +166,9 @@ defmodule AniminaWeb.DemoLive do
         <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <blockquote>
             <p class="text-xl sm:text-2xl font-light text-base-content leading-relaxed italic">
-              "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
+              {gettext(
+                "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
+              )}
             </p>
             <footer class="mt-8">
               <div class="flex items-center justify-center gap-4">
@@ -162,9 +177,9 @@ defmodule AniminaWeb.DemoLive do
                   alt="Portrait of Anna. Photo by Brooke Cagle on Unsplash"
                   class="w-14 h-14 rounded-full object-cover border-2 border-secondary/50"
                 />
-                <div class="text-left">
+                <div class="text-start">
                   <p class="text-base font-medium text-base-content">Anna & David</p>
-                  <p class="text-base text-base-content/60">Together since 2023</p>
+                  <p class="text-base text-base-content/60">{gettext("Together since 2023")}</p>
                 </div>
               </div>
             </footer>
@@ -176,17 +191,18 @@ defmodule AniminaWeb.DemoLive do
       <section class="py-16 sm:py-24">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-            Ready to find your person?
+            {gettext("Ready to find your person?")}
           </h2>
           <p class="mt-4 text-lg text-base-content/70">
-            Join thousands of people who chose authenticity over algorithms.
+            {gettext("Join thousands of people who chose authenticity over algorithms.")}
           </p>
           <div class="mt-8">
             <a
               href="#"
               class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              Create your profile <.icon name="hero-arrow-right" class="ml-2 size-5" />
+              {gettext("Create your profile")}
+              <.icon name="hero-arrow-right" class="ms-2 size-5 rtl:rotate-180" />
             </a>
           </div>
         </div>
@@ -214,7 +230,7 @@ defmodule AniminaWeb.DemoLive do
           loading="lazy"
         />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <div class="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+        <div class="absolute bottom-0 inset-x-0 p-4 sm:p-5">
           <h3 class="text-xl font-medium text-white">
             {@name}, {@age}
           </h3>
@@ -233,12 +249,12 @@ defmodule AniminaWeb.DemoLive do
             type="button"
             class="flex-1 px-4 py-2.5 text-base font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Connect
+            {gettext("Connect")}
           </button>
           <button
             type="button"
             class="p-2.5 text-base-content/60 hover:text-primary border border-base-300 rounded-lg hover:border-primary/50 transition-colors"
-            aria-label="Save profile"
+            aria-label={gettext("Save profile")}
           >
             <.icon name="hero-bookmark" class="size-5" />
           </button>

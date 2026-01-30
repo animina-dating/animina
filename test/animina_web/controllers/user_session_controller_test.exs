@@ -4,7 +4,7 @@ defmodule AniminaWeb.UserSessionControllerTest do
   import Animina.AccountsFixtures
 
   setup do
-    %{user: user_fixture()}
+    %{user: user_fixture(language: "en")}
   end
 
   describe "POST /users/log-in - email and password" do

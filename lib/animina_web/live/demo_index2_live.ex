@@ -13,7 +13,7 @@ defmodule AniminaWeb.DemoIndex2Live do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Willkommen bei ANIMINA")}
+    {:ok, assign(socket, page_title: gettext("Welcome to ANIMINA"))}
   end
 
   @impl true
@@ -41,7 +41,7 @@ defmodule AniminaWeb.DemoIndex2Live do
                   alt="Mann mit Streichholz"
                   class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg -rotate-2 hover:rotate-0 transition-transform duration-300"
                 />
-                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
+                <div class="absolute -bottom-2 -end-2 w-8 h-8 bg-success rounded-full flex items-center justify-center shadow-md">
                   <.icon name="hero-heart-solid" class="size-4 text-white" />
                 </div>
               </div>
@@ -51,7 +51,7 @@ defmodule AniminaWeb.DemoIndex2Live do
                   alt="Fröhliche junge Frau"
                   class="w-28 sm:w-36 h-36 sm:h-44 object-cover rounded-2xl shadow-lg rotate-2 hover:rotate-0 transition-transform duration-300"
                 />
-                <div class="absolute -bottom-2 -left-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
+                <div class="absolute -bottom-2 -start-2 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-md">
                   <.icon name="hero-sparkles-solid" class="size-4 text-white" />
                 </div>
               </div>
@@ -67,33 +67,43 @@ defmodule AniminaWeb.DemoIndex2Live do
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               <.mission_card
                 icon="hero-currency-euro"
-                title="100% Kostenlos"
-                description="Werbefinanziert – keine Premium-Fallen, keine geheimen Algorithmen."
+                title={gettext("100% Free")}
+                description={gettext("Ad-supported – no premium traps, no secret algorithms.")}
               />
               <.mission_card
                 icon="hero-arrows-right-left"
-                title="Ohne Schubladen"
-                description="Partnerschaft, Affaire oder ein gutes Gespräch – wir urteilen nicht."
+                title={gettext("Without labels")}
+                description={gettext("Partnership, affair or a good conversation – we don't judge.")}
               />
               <.mission_card
                 icon="hero-flag"
-                title="Flaggen-System"
-                description="Zeig wer du bist, definiere was du suchst und wo deine Grenzen liegen."
+                title={gettext("Flag system")}
+                description={
+                  gettext(
+                    "Show who you are, define what you're looking for and where your boundaries are."
+                  )
+                }
               />
               <.mission_card
                 icon="hero-shield-check"
-                title="Respekt zuerst"
-                description="Blacklist für unerwünschte Kontakte. Grenzüberschreiter werden ausgeschlossen."
+                title={gettext("Respect first")}
+                description={
+                  gettext(
+                    "Blacklist for unwanted contacts. Those who cross boundaries will be excluded."
+                  )
+                }
               />
               <.mission_card
                 icon="hero-face-smile"
-                title="Freude statt Sucht"
-                description="Dating soll Freude machen, nicht süchtig – Qualität statt Reizüberflutung."
+                title={gettext("Joy instead of addiction")}
+                description={
+                  gettext("Dating should be joyful, not addictive – quality over sensory overload.")
+                }
               />
               <.mission_card_link
                 icon="hero-document-text"
-                title="Unser Mission Statement"
-                description="Erfahre mehr über unsere Vision und Werte."
+                title={gettext("Our Mission Statement")}
+                description={gettext("Learn more about our vision and values.")}
                 href="/demo/mission_statement"
               />
             </div>
@@ -103,7 +113,7 @@ defmodule AniminaWeb.DemoIndex2Live do
                 href="/users/register"
                 class="inline-flex items-center justify-center px-8 py-3.5 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
-                Jetzt registrieren – kostenlos
+                {gettext("Register now – free")}
               </a>
             </div>
           </div>
@@ -115,7 +125,7 @@ defmodule AniminaWeb.DemoIndex2Live do
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Menschen, die echte Verbindungen suchen
+              {gettext("People looking for real connections")}
             </h2>
           </div>
 
@@ -163,35 +173,47 @@ defmodule AniminaWeb.DemoIndex2Live do
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Finde Menschen, die zu dir passen
+              {gettext("Find people who match you")}
             </h2>
             <p class="mt-3 text-lg text-base-content/70 max-w-2xl mx-auto">
-              Unser Drei-Farben-System macht Matching persönlich und ehrlich
+              {gettext("Our three-color system makes matching personal and honest")}
             </p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <.flag_card
               color="white"
-              title="Weiße Flaggen"
-              subtitle="Das bin ich"
-              description="Beschreibe dich selbst: Deine Eigenschaften, Hobbys, Werte und Lebensstil. Von Humor über Kreativität bis hin zu deinen Lieblingsküchen."
+              title={gettext("White Flags")}
+              subtitle={gettext("This is me")}
+              description={
+                gettext(
+                  "Describe yourself: Your traits, hobbies, values and lifestyle. From humor to creativity to your favorite cuisines."
+                )
+              }
               examples={["☀️ Optimismus", "🍳 Kochen", "🎸 Rock-Musik", "🐶 Hundeliebhaber"]}
             />
 
             <.flag_card
               color="green"
-              title="Grüne Flaggen"
-              subtitle="Das suche ich"
-              description="Was wünschst du dir bei einem Partner? Welche Eigenschaften findest du attraktiv? Die Reihenfolge zeigt, was dir am wichtigsten ist."
+              title={gettext("Green Flags")}
+              subtitle={gettext("This is what I'm looking for")}
+              description={
+                gettext(
+                  "What do you want in a partner? Which traits do you find attractive? The order shows what matters most to you."
+                )
+              }
               examples={["🤝 Ehrlichkeit", "😄 Humor", "👨‍👩‍👧‍👦 Familienorientiert", "🌍 Reiselust"]}
             />
 
             <.flag_card
               color="red"
-              title="Rote Flaggen"
-              subtitle="Das geht nicht"
-              description="Jeder hat Deal-Breaker. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschungen auf beiden Seiten."
+              title={gettext("Red Flags")}
+              subtitle={gettext("That's a no-go")}
+              description={
+                gettext(
+                  "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
+                )
+              }
               examples={["🚬 Rauchen", "🍻 Übermäßiger Alkohol", "📵 Nie offline"]}
             />
           </div>
@@ -203,45 +225,69 @@ defmodule AniminaWeb.DemoIndex2Live do
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 sm:mb-16">
             <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-              Was ANIMINA anders macht
+              {gettext("What makes ANIMINA different")}
             </h2>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             <.differentiator_card
               icon="hero-currency-euro"
-              title="100% Kostenlos"
-              description="Alle Funktionen sind für jeden kostenlos. Keine Premium-Abos, keine versteckten Kosten, keine Pay-to-Win-Mechanismen. Wir finanzieren uns durch Werbung."
+              title={gettext("100% Free")}
+              description={
+                gettext(
+                  "All features are free for everyone. No premium subscriptions, no hidden costs, no pay-to-win mechanics. We are financed through advertising."
+                )
+              }
             />
 
             <.differentiator_card
               icon="hero-hand-raised"
-              title="Nicht beliebig viele Anfragen"
-              description="Auf klassischen Plattformen haben es beide schwer: Attraktive Menschen ertrinken in Anfragen, weniger gefragte bekommen kaum welche. Bei uns ist die Anzahl der Anfragen pro Tag begrenzt. Im echten Leben kann man auch nicht mit 10 potentiellen Partnern gleichzeitig sprechen. Das macht Dating fairer für alle."
+              title={gettext("Not unlimited requests")}
+              description={
+                gettext(
+                  "On traditional platforms both sides struggle: Attractive people drown in requests, less popular ones barely get any. With us, the number of requests per day is limited. In real life, you can't talk to 10 potential partners at the same time either. This makes dating fairer for everyone."
+                )
+              }
             />
 
             <.differentiator_card
               icon="hero-puzzle-piece"
-              title="Persönlichkeit zählt"
-              description="Unser einzigartiges Drei-Farben-System: Weiße Flaggen zeigen, wer du bist. Grüne, was du suchst. Rote, was nicht geht. So findest du Menschen, die wirklich zu dir passen."
+              title={gettext("Personality counts")}
+              description={
+                gettext(
+                  "Our unique three-color system: White flags show who you are. Green ones what you're looking for. Red ones what's a no-go. This helps you find people who truly match you."
+                )
+              }
             />
 
             <.differentiator_card
               icon="hero-document-text"
-              title="Geschichten statt Swipes"
-              description="Profile mit Tiefgang: Präsentiere dich so, wie du willst – nur mit Fotos, nur mit Texten oder mit beidem. Lerne Menschen wirklich kennen, bevor du sie kontaktierst – statt nur Bilder nach links oder rechts zu wischen."
+              title={gettext("Stories instead of swipes")}
+              description={
+                gettext(
+                  "Profiles with depth: Present yourself however you want – with photos only, text only, or both. Get to know people before contacting them – instead of just swiping pictures left or right."
+                )
+              }
             />
 
             <.differentiator_card
               icon="hero-shield-check"
-              title="Echte Menschen"
-              description="Verifizierte Profile und aktive Moderation sorgen für eine sichere Community. Fake-Profile und Bots haben bei uns kaum eine Chance."
+              title={gettext("Real people")}
+              description={
+                gettext(
+                  "Verified profiles and active moderation ensure a safe community. Fake profiles and bots barely stand a chance with us."
+                )
+              }
             />
 
             <.differentiator_card
               icon="hero-face-smile"
-              title="Spaß ohne Suchtfaktor"
-              description="Dating soll Spaß machen – aber nicht abhängig. Wir verzichten bewusst auf manipulative Designs wie endloses Swipen oder Push-Benachrichtigungen, die dich ständig zurückholen wollen."
+              title={gettext("Fun without addiction")}
+              description={
+                gettext(
+                  "Dating should be fun – but not addictive. We deliberately avoid manipulative designs like endless swiping or push notifications that keep pulling you back."
+                )
+              }
             />
           </div>
         </div>
@@ -255,16 +301,20 @@ defmodule AniminaWeb.DemoIndex2Live do
               <.icon name="hero-code-bracket-square" class="size-8 text-primary" />
             </div>
             <h2 class="text-2xl sm:text-3xl font-light text-base-content mb-4">
-              Transparenz durch Open Source
+              {gettext("Transparency through Open Source")}
             </h2>
             <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
-              Bei anderen Dating-Plattformen weißt du nie, warum dir bestimmte Menschen gezeigt werden.
-              Bevorzugt der Algorithmus zahlende Kunden? Werden Profile versteckt, um dich zum Upgrade zu zwingen?
+              {gettext(
+                "With other dating platforms you never know why certain people are shown to you. Does the algorithm favor paying customers? Are profiles hidden to force you to upgrade?"
+              )}
             </p>
             <p class="text-lg text-base-content/70 leading-relaxed max-w-2xl mx-auto mb-8">
-              <span class="font-medium text-base-content">Bei ANIMINA ist alles anders.</span>
-              Unser Code ist vollständig öffentlich auf GitHub verfügbar. Jeder kann nachprüfen,
-              wie unser Matching funktioniert. Der Algorithmus behandelt alle gleich – ohne Ausnahme.
+              <span class="font-medium text-base-content">
+                {gettext("At ANIMINA everything is different.")}
+              </span>
+              {gettext(
+                "Our code is fully available on GitHub. Anyone can verify how our matching works. The algorithm treats everyone equally – no exceptions."
+              )}
             </p>
             <a
               href="https://github.com/animina-dating/animina"
@@ -279,7 +329,7 @@ defmodule AniminaWeb.DemoIndex2Live do
                   clip-rule="evenodd"
                 />
               </svg>
-              Code auf GitHub ansehen
+              {gettext("View code on GitHub")}
             </a>
           </div>
         </div>
@@ -289,21 +339,22 @@ defmodule AniminaWeb.DemoIndex2Live do
       <section class="py-16 sm:py-24 bg-base-200/50">
         <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 class="text-2xl sm:text-3xl font-light text-base-content">
-            Bereit für echtes Dating?
+            {gettext("Ready for real dating?")}
           </h2>
           <p class="mt-4 text-lg text-base-content/70">
-            Keine Tricks, keine versteckten Kosten. Einfach Menschen kennenlernen, die zu dir passen.
+            {gettext("No tricks, no hidden costs. Simply meet people who match you.")}
           </p>
           <div class="mt-8">
             <a
               href="/users/register"
               class="inline-flex items-center justify-center px-10 py-4 text-lg font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
-              Jetzt registrieren <.icon name="hero-arrow-right" class="ml-2 size-5" />
+              {gettext("Register now")}
+              <.icon name="hero-arrow-right" class="ms-2 size-5 rtl:rotate-180" />
             </a>
           </div>
           <p class="mt-4 text-base text-base-content/70">
-            Kostenlos. Für immer. Für alle.
+            {gettext("Free. Forever. For everyone.")}
           </p>
         </div>
       </section>
@@ -355,7 +406,7 @@ defmodule AniminaWeb.DemoIndex2Live do
       </p>
       <.icon
         name="hero-arrow-right"
-        class="size-5 text-primary mt-3 group-hover:translate-x-1 transition-transform"
+        class="size-5 text-primary mt-3 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform"
       />
     </a>
     """

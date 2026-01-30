@@ -1,8 +1,10 @@
 defmodule Animina.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: AniminaWeb.Gettext
 
   @valid_genders ~w(male female diverse)
+  @valid_languages ~w(de en tr ru ar pl fr es)
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -134,7 +136,7 @@ defmodule Animina.Accounts.User do
           add_error(
             changeset,
             :referral_code_input,
-            "muss aus 6 Zeichen bestehen (Buchstaben und Ziffern)"
+            dgettext("errors", "must be 6 characters (letters and digits)")
           )
         end
 
@@ -191,6 +193,7 @@ defmodule Animina.Accounts.User do
     ])
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:gender, @valid_genders)
+    |> validate_inclusion(:language, @valid_languages)
     |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
     |> validate_and_normalize_mobile_phone()
     |> validate_birthday()
@@ -224,12 +227,12 @@ defmodule Animina.Accounts.User do
                 add_error(
                   changeset,
                   :mobile_phone,
-                  "muss eine Handynummer sein (keine Festnetznummer)"
+                  dgettext("errors", "must be a mobile number (not a landline)")
                 )
             end
 
           _ ->
-            add_error(changeset, :mobile_phone, "ist keine gültige Telefonnummer")
+            add_error(changeset, :mobile_phone, dgettext("errors", "is not a valid phone number"))
         end
     end
   end

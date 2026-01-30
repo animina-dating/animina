@@ -1,0 +1,158 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+msgid "can't be blank"
+msgstr "لا يمكن أن يكون فارغاً"
+
+msgid "has already been taken"
+msgstr "مأخوذ بالفعل"
+
+msgid "is invalid"
+msgstr "غير صالح"
+
+msgid "must be accepted"
+msgstr "يجب قبوله"
+
+msgid "has invalid format"
+msgstr "له تنسيق غير صالح"
+
+msgid "has an invalid entry"
+msgstr "يحتوي على إدخال غير صالح"
+
+msgid "is reserved"
+msgstr "محجوز"
+
+msgid "does not match confirmation"
+msgstr "لا يتطابق مع التأكيد"
+
+msgid "is still associated with this entry"
+msgstr "لا يزال مرتبطاً بهذا الإدخال"
+
+msgid "are still associated with this entry"
+msgstr "لا تزال مرتبطة بهذا الإدخال"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "يجب أن يحتوي على %{count} عنصر"
+msgstr[1] "يجب أن يحتوي على %{count} عنصر"
+msgstr[2] "يجب أن يحتوي على %{count} عنصر"
+msgstr[3] "يجب أن يحتوي على %{count} عنصر"
+msgstr[4] "يجب أن يحتوي على %{count} عنصر"
+msgstr[5] "يجب أن يحتوي على %{count} عنصر"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "يجب أن يكون %{count} حرف"
+msgstr[1] "يجب أن يكون %{count} حرف"
+msgstr[2] "يجب أن يكون %{count} حرف"
+msgstr[3] "يجب أن يكون %{count} حرف"
+msgstr[4] "يجب أن يكون %{count} حرف"
+msgstr[5] "يجب أن يكون %{count} حرف"
+
+msgid "should be %{count} byte(s)"
+msgid_plural "should be %{count} byte(s)"
+msgstr[0] "يجب أن يكون %{count} بايت"
+msgstr[1] "يجب أن يكون %{count} بايت"
+msgstr[2] "يجب أن يكون %{count} بايت"
+msgstr[3] "يجب أن يكون %{count} بايت"
+msgstr[4] "يجب أن يكون %{count} بايت"
+msgstr[5] "يجب أن يكون %{count} بايت"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "يجب أن يحتوي على %{count} عنصر على الأقل"
+msgstr[1] "يجب أن يحتوي على %{count} عنصر على الأقل"
+msgstr[2] "يجب أن يحتوي على %{count} عنصر على الأقل"
+msgstr[3] "يجب أن يحتوي على %{count} عنصر على الأقل"
+msgstr[4] "يجب أن يحتوي على %{count} عنصر على الأقل"
+msgstr[5] "يجب أن يحتوي على %{count} عنصر على الأقل"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "يجب أن يكون %{count} حرف على الأقل"
+msgstr[1] "يجب أن يكون %{count} حرف على الأقل"
+msgstr[2] "يجب أن يكون %{count} حرف على الأقل"
+msgstr[3] "يجب أن يكون %{count} حرف على الأقل"
+msgstr[4] "يجب أن يكون %{count} حرف على الأقل"
+msgstr[5] "يجب أن يكون %{count} حرف على الأقل"
+
+msgid "should be at least %{count} byte(s)"
+msgid_plural "should be at least %{count} byte(s)"
+msgstr[0] "يجب أن يكون %{count} بايت على الأقل"
+msgstr[1] "يجب أن يكون %{count} بايت على الأقل"
+msgstr[2] "يجب أن يكون %{count} بايت على الأقل"
+msgstr[3] "يجب أن يكون %{count} بايت على الأقل"
+msgstr[4] "يجب أن يكون %{count} بايت على الأقل"
+msgstr[5] "يجب أن يكون %{count} بايت على الأقل"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+msgstr[1] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+msgstr[2] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+msgstr[3] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+msgstr[4] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+msgstr[5] "يجب أن يحتوي على %{count} عنصر على الأكثر"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "يجب أن يكون %{count} حرف على الأكثر"
+msgstr[1] "يجب أن يكون %{count} حرف على الأكثر"
+msgstr[2] "يجب أن يكون %{count} حرف على الأكثر"
+msgstr[3] "يجب أن يكون %{count} حرف على الأكثر"
+msgstr[4] "يجب أن يكون %{count} حرف على الأكثر"
+msgstr[5] "يجب أن يكون %{count} حرف على الأكثر"
+
+msgid "should be at most %{count} byte(s)"
+msgid_plural "should be at most %{count} byte(s)"
+msgstr[0] "يجب أن يكون %{count} بايت على الأكثر"
+msgstr[1] "يجب أن يكون %{count} بايت على الأكثر"
+msgstr[2] "يجب أن يكون %{count} بايت على الأكثر"
+msgstr[3] "يجب أن يكون %{count} بايت على الأكثر"
+msgstr[4] "يجب أن يكون %{count} بايت على الأكثر"
+msgstr[5] "يجب أن يكون %{count} بايت على الأكثر"
+
+msgid "must be less than %{number}"
+msgstr "يجب أن يكون أقل من %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "يجب أن يكون أكبر من %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "يجب أن يكون أقل من أو يساوي %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "يجب أن يساوي %{number}"
+
+#: lib/animina/accounts.ex:230
+#, elixir-autogen, elixir-format
+msgid "Referral code not found"
+msgstr "لم يتم العثور على رمز الإحالة"
+
+#: lib/animina/accounts/user.ex:235
+#, elixir-autogen, elixir-format
+msgid "is not a valid phone number"
+msgstr "ليس رقم هاتف صالح"
+
+#: lib/animina/accounts/user.ex:139
+#, elixir-autogen, elixir-format
+msgid "must be 6 characters (letters and digits)"
+msgstr "يجب أن يتكون من 6 أحرف (حروف وأرقام)"
+
+#: lib/animina/accounts/user.ex:230
+#, elixir-autogen, elixir-format
+msgid "must be a mobile number (not a landline)"
+msgstr "يجب أن يكون رقم هاتف محمول (ليس خط أرضي)"

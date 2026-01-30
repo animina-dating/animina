@@ -1,0 +1,131 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10||n%100>=20) ? 1 : 2);\n"
+
+msgid "can't be blank"
+msgstr "nie może być puste"
+
+msgid "has already been taken"
+msgstr "jest już zajęte"
+
+msgid "is invalid"
+msgstr "jest nieprawidłowe"
+
+msgid "must be accepted"
+msgstr "musi zostać zaakceptowane"
+
+msgid "has invalid format"
+msgstr "ma nieprawidłowy format"
+
+msgid "has an invalid entry"
+msgstr "zawiera nieprawidłowy wpis"
+
+msgid "is reserved"
+msgstr "jest zarezerwowane"
+
+msgid "does not match confirmation"
+msgstr "nie pasuje do potwierdzenia"
+
+msgid "is still associated with this entry"
+msgstr "jest nadal powiązane z tym wpisem"
+
+msgid "are still associated with this entry"
+msgstr "są nadal powiązane z tym wpisem"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "powinno zawierać %{count} element"
+msgstr[1] "powinno zawierać %{count} elementy"
+msgstr[2] "powinno zawierać %{count} elementów"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "powinno mieć %{count} znak"
+msgstr[1] "powinno mieć %{count} znaki"
+msgstr[2] "powinno mieć %{count} znaków"
+
+msgid "should be %{count} byte(s)"
+msgid_plural "should be %{count} byte(s)"
+msgstr[0] "powinno mieć %{count} bajt"
+msgstr[1] "powinno mieć %{count} bajty"
+msgstr[2] "powinno mieć %{count} bajtów"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "powinno zawierać co najmniej %{count} element"
+msgstr[1] "powinno zawierać co najmniej %{count} elementy"
+msgstr[2] "powinno zawierać co najmniej %{count} elementów"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "powinno mieć co najmniej %{count} znak"
+msgstr[1] "powinno mieć co najmniej %{count} znaki"
+msgstr[2] "powinno mieć co najmniej %{count} znaków"
+
+msgid "should be at least %{count} byte(s)"
+msgid_plural "should be at least %{count} byte(s)"
+msgstr[0] "powinno mieć co najmniej %{count} bajt"
+msgstr[1] "powinno mieć co najmniej %{count} bajty"
+msgstr[2] "powinno mieć co najmniej %{count} bajtów"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "powinno zawierać co najwyżej %{count} element"
+msgstr[1] "powinno zawierać co najwyżej %{count} elementy"
+msgstr[2] "powinno zawierać co najwyżej %{count} elementów"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "powinno mieć co najwyżej %{count} znak"
+msgstr[1] "powinno mieć co najwyżej %{count} znaki"
+msgstr[2] "powinno mieć co najwyżej %{count} znaków"
+
+msgid "should be at most %{count} byte(s)"
+msgid_plural "should be at most %{count} byte(s)"
+msgstr[0] "powinno mieć co najwyżej %{count} bajt"
+msgstr[1] "powinno mieć co najwyżej %{count} bajty"
+msgstr[2] "powinno mieć co najwyżej %{count} bajtów"
+
+msgid "must be less than %{number}"
+msgstr "musi być mniejsze niż %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "musi być większe niż %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "musi być mniejsze lub równe %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "musi być większe lub równe %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "musi być równe %{number}"
+
+#: lib/animina/accounts.ex:230
+#, elixir-autogen, elixir-format
+msgid "Referral code not found"
+msgstr "Nie znaleziono kodu polecenia"
+
+#: lib/animina/accounts/user.ex:235
+#, elixir-autogen, elixir-format
+msgid "is not a valid phone number"
+msgstr "nie jest prawidłowym numerem telefonu"
+
+#: lib/animina/accounts/user.ex:139
+#, elixir-autogen, elixir-format
+msgid "must be 6 characters (letters and digits)"
+msgstr "musi mieć 6 znaków (litery i cyfry)"
+
+#: lib/animina/accounts/user.ex:230
+#, elixir-autogen, elixir-format
+msgid "must be a mobile number (not a landline)"
+msgstr "musi być numerem komórkowym (nie stacjonarnym)"

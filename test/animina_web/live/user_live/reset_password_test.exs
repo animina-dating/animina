@@ -23,7 +23,7 @@ defmodule AniminaWeb.UserLive.ResetPasswordTest do
     test "renders reset password page with valid token", %{conn: conn, token: token} do
       {:ok, _lv, html} = live(conn, ~p"/users/reset-password/#{token}")
 
-      assert html =~ "Neues Passwort setzen"
+      assert html =~ "Set new password"
     end
 
     test "redirects to login with flash for invalid token", %{conn: conn} do
@@ -32,7 +32,7 @@ defmodule AniminaWeb.UserLive.ResetPasswordTest do
         |> live(~p"/users/reset-password/invalid-token")
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert conn.resp_body =~ "Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen"
+      assert conn.resp_body =~ "Password reset link is invalid or expired."
     end
 
     test "redirects to login with flash for expired token", %{conn: conn, token: token} do
@@ -43,7 +43,7 @@ defmodule AniminaWeb.UserLive.ResetPasswordTest do
         |> live(~p"/users/reset-password/#{token}")
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert conn.resp_body =~ "Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen"
+      assert conn.resp_body =~ "Password reset link is invalid or expired."
     end
   end
 

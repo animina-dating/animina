@@ -11,10 +11,10 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              Passwort vergessen
+              {gettext("Forgot your password")}
             </h1>
             <p class="mt-2 text-base text-base-content/70">
-              Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines Passworts.
+              {gettext("Enter your email address and we will send you a password reset link.")}
             </p>
           </div>
 
@@ -28,19 +28,21 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
             <.input
               field={f[:email]}
               type="email"
-              label="E-Mail-Adresse"
+              label={gettext("Email address")}
               autocomplete="email"
               required
               phx-mounted={JS.focus()}
             />
             <.button class="btn btn-primary w-full">
-              Link zum Zurücksetzen senden
+              {gettext("Send reset link")}
             </.button>
           </.form>
 
           <%= if @sent do %>
             <div class="mt-4 p-4 bg-info/10 rounded-lg text-sm text-base-content/70">
-              Falls ein Konto mit dieser E-Mail-Adresse existiert, erhältst du in Kürze eine E-Mail mit Anweisungen zum Zurücksetzen deines Passworts.
+              {gettext(
+                "If an account exists with this email, you will receive password reset instructions shortly."
+              )}
             </div>
           <% end %>
 
@@ -49,7 +51,7 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
               navigate={~p"/users/log-in"}
               class="text-sm font-semibold text-primary hover:underline"
             >
-              Zurück zur Anmeldung
+              {gettext("Back to login")}
             </.link>
           </div>
         </div>

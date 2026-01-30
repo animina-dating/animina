@@ -85,6 +85,11 @@ config :animina, Animina.Scheduler,
     {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}}
   ]
 
+# Gettext i18n configuration
+config :animina, AniminaWeb.Gettext,
+  default_locale: "de",
+  locales: ~w(de en tr ru ar pl fr es)
+
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase
 

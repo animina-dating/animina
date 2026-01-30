@@ -33,6 +33,8 @@ defmodule AniminaWeb.ConnCase do
 
   setup tags do
     Animina.DataCase.setup_sandbox(tags)
+    # Set English locale for tests so assertions match English msgid strings
+    Gettext.put_locale(AniminaWeb.Gettext, "en")
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 
@@ -67,7 +69,7 @@ defmodule AniminaWeb.ConnCase do
     maybe_set_token_authenticated_at(token, opts[:token_authenticated_at])
 
     conn
-    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Phoenix.ConnTest.init_test_session(%{locale: "en"})
     |> Plug.Conn.put_session(:user_token, token)
   end
 

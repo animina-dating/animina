@@ -8,8 +8,8 @@ defmodule AniminaWeb.UserLive.ForgotPasswordTest do
     test "renders the forgot password page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/forgot-password")
 
-      assert html =~ "Passwort vergessen"
-      assert html =~ "Zurück zur Anmeldung"
+      assert html =~ "Forgot your password"
+      assert html =~ "Back to login"
     end
 
     test "sends password reset email for existing user", %{conn: conn} do
@@ -21,7 +21,7 @@ defmodule AniminaWeb.UserLive.ForgotPasswordTest do
         |> form("#forgot_password_form", user: %{email: user.email})
         |> render_submit()
 
-      assert result =~ "Falls ein Konto mit dieser E-Mail-Adresse existiert"
+      assert result =~ "If an account exists with this email"
     end
 
     test "shows same message for non-existing email (no enumeration)", %{conn: conn} do
@@ -32,7 +32,7 @@ defmodule AniminaWeb.UserLive.ForgotPasswordTest do
         |> form("#forgot_password_form", user: %{email: "nobody@example.com"})
         |> render_submit()
 
-      assert result =~ "Falls ein Konto mit dieser E-Mail-Adresse existiert"
+      assert result =~ "If an account exists with this email"
     end
 
     test "has a back to login link", %{conn: conn} do
@@ -40,11 +40,11 @@ defmodule AniminaWeb.UserLive.ForgotPasswordTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element("a", "Zurück zur Anmeldung")
+        |> element("a", "Back to login")
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log-in")
 
-      assert login_html =~ "Anmelden"
+      assert login_html =~ "Log in"
     end
   end
 end

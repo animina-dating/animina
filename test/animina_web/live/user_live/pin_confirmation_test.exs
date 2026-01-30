@@ -20,10 +20,10 @@ defmodule AniminaWeb.UserLive.PinConfirmationTest do
     test "renders the PIN input form", %{conn: conn, token: token, user: user} do
       {:ok, _lv, html} = live(conn, ~p"/users/confirm/#{token}")
 
-      assert html =~ "E-Mail bestätigen"
+      assert html =~ "Confirm your email"
       assert html =~ user.email
-      assert html =~ "Bestätigungscode"
-      assert html =~ "Verbleibende Versuche"
+      assert html =~ "Confirmation code"
+      assert html =~ "Remaining attempts:"
       assert html =~ "3"
     end
 
@@ -33,7 +33,7 @@ defmodule AniminaWeb.UserLive.PinConfirmationTest do
         |> live(~p"/users/confirm/invalid-token")
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert html =~ "ungültig oder abgelaufen"
+      assert html =~ "This confirmation link is invalid or expired."
     end
 
     test "confirms user with correct PIN", %{conn: conn, token: token, pin: pin} do
@@ -55,8 +55,8 @@ defmodule AniminaWeb.UserLive.PinConfirmationTest do
         |> form("#pin_form", pin: %{"pin" => "000000"})
         |> render_submit()
 
-      assert html =~ "Falscher Code"
-      assert html =~ "2 Versuch(e)"
+      assert html =~ "Wrong code."
+      assert html =~ "2 attempts remaining"
     end
 
     test "redirects after 3 wrong attempts", %{conn: conn, token: token, user: user} do
@@ -72,7 +72,7 @@ defmodule AniminaWeb.UserLive.PinConfirmationTest do
       lv |> form("#pin_form", pin: %{"pin" => "000002"}) |> render_submit()
 
       flash = assert_redirect(lv, ~p"/users/register")
-      assert flash["error"] =~ "gelöscht"
+      assert flash["error"] =~ "Your account has been deleted. Please register again."
 
       # User should be deleted
       refute Repo.get(Animina.Accounts.User, user.id)

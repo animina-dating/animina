@@ -1,0 +1,127 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+#: lib/animina/accounts/user_notifier.ex:117
+#, elixir-autogen, elixir-format
+msgid "%{count} new user registered and confirmed via PIN at ANIMINA in the last 24 hours."
+msgid_plural "%{count} new users registered and confirmed via PIN at ANIMINA in the last 24 hours."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: lib/animina/accounts/user_notifier.ex:109
+#, elixir-autogen, elixir-format
+msgid "ANIMINA: %{count} new user in the last 24 hours"
+msgid_plural "ANIMINA: %{count} new users in the last 24 hours"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
+
+#: lib/animina/accounts/user_notifier.ex:131
+#: lib/animina/accounts/user_notifier.ex:151
+#, elixir-autogen, elixir-format
+msgid "Hello,"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:38
+#: lib/animina/accounts/user_notifier.ex:60
+#: lib/animina/accounts/user_notifier.ex:84
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:155
+#, elixir-autogen, elixir-format
+msgid "If this was not you, we recommend changing your password to protect your account."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:94
+#, elixir-autogen, elixir-format
+msgid "If you did not create an account at ANIMINA, please ignore this email."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:68
+#, elixir-autogen, elixir-format
+msgid "If you did not request a new password, please ignore this email."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:44
+#, elixir-autogen, elixir-format
+msgid "If you didn't request this change, please ignore this."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:157
+#, elixir-autogen, elixir-format
+msgid "If you were trying to register yourself: You already have an account. Please log in with your existing password or use the forgot password feature."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:90
+#, elixir-autogen, elixir-format
+msgid "Please enter this code within 30 minutes to confirm your email address."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:56
+#, elixir-autogen, elixir-format
+msgid "Reset password – ANIMINA"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:147
+#, elixir-autogen, elixir-format
+msgid "Security notice – ANIMINA"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:153
+#, elixir-autogen, elixir-format
+msgid "Someone tried to create a new ANIMINA account with your email address (%{email})."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:66
+#, elixir-autogen, elixir-format
+msgid "This link is valid for 1 hour."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:34
+#, elixir-autogen, elixir-format
+msgid "Update email instructions – ANIMINA"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:40
+#, elixir-autogen, elixir-format
+msgid "You can change your email by visiting the URL below:"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:62
+#, elixir-autogen, elixir-format
+msgid "You can reset your password by visiting the following link:"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:92
+#, elixir-autogen, elixir-format
+msgid "You have a maximum of 3 attempts. After 3 wrong entries or after 30 minutes, your account will be deleted and you will need to register again."
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:80
+#, elixir-autogen, elixir-format
+msgid "Your confirmation code for ANIMINA"
+msgstr ""
+
+#: lib/animina/accounts/user_notifier.ex:86
+#, elixir-autogen, elixir-format
+msgid "Your confirmation code is:"
+msgstr ""

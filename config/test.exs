@@ -35,6 +35,9 @@ config :animina, start_unconfirmed_user_cleaner: false
 # Disable the Quantum scheduler in tests
 config :animina, start_scheduler: false
 
+# Use English locale in tests so assertions match English msgid strings
+config :animina, AniminaWeb.Gettext, default_locale: "en"
+
 # Print only warnings and errors during test
 config :logger, level: :warning
 

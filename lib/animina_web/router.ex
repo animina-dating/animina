@@ -11,6 +11,7 @@ defmodule AniminaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug AniminaWeb.Plugs.SetLocale
   end
 
   pipeline :api do
@@ -19,6 +20,8 @@ defmodule AniminaWeb.Router do
 
   scope "/", AniminaWeb do
     pipe_through :browser
+
+    post "/locale", LocaleController, :update
 
     live_session :public,
       on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}] do

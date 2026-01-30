@@ -8,15 +8,15 @@ defmodule AniminaWeb.UserLive.LoginTest do
     test "renders login page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-      assert html =~ "Anmelden"
-      assert html =~ "Jetzt registrieren"
-      refute html =~ "Login-Link per E-Mail senden"
+      assert html =~ "Log in"
+      assert html =~ "Register now"
+      refute html =~ "Send login link via email"
     end
 
     test "shows forgot password link for non-logged-in users", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-      assert html =~ "Passwort vergessen?"
+      assert html =~ "Forgot your password?"
       assert html =~ ~s(href="/users/forgot-password")
     end
   end
@@ -27,17 +27,17 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       {:ok, _forgot_live, forgot_html} =
         lv
-        |> element("a", "Passwort vergessen?")
+        |> element("a", "Forgot your password?")
         |> render_click()
         |> follow_redirect(conn, ~p"/users/forgot-password")
 
-      assert forgot_html =~ "Passwort vergessen"
+      assert forgot_html =~ "Forgot your password"
     end
   end
 
   describe "user login - password" do
     test "redirects if user logs in with valid credentials", %{conn: conn} do
-      user = user_fixture() |> set_password()
+      user = user_fixture(language: "en") |> set_password()
 
       {:ok, lv, _html} = live(conn, ~p"/users/log-in")
 
@@ -73,25 +73,25 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element("main a", "Jetzt registrieren")
+        |> element("main a", "Register now")
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert login_html =~ "Konto erstellen"
+      assert login_html =~ "Create account"
     end
   end
 
   describe "re-authentication (sudo mode)" do
     setup %{conn: conn} do
-      user = user_fixture()
+      user = user_fixture(language: "en")
       %{user: user, conn: log_in_user(conn, user)}
     end
 
     test "shows login page with email filled in", %{conn: conn, user: user} do
       {:ok, _lv, html} = live(conn, ~p"/users/log-in")
 
-      assert html =~ "erneut authentifizieren"
-      refute html =~ "Jetzt registrieren"
+      assert html =~ "re-authenticate"
+      refute html =~ "Register now"
 
       assert html =~
                ~s(<input type="email" name="user[email]" id="login_form_password_email" value="#{user.email}")

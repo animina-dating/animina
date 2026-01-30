@@ -505,7 +505,7 @@ defmodule Animina.AccountsTest do
         valid_user_attributes(referral_code_input: "ZZZZZZ")
         |> Accounts.register_user()
 
-      assert "Empfehlungscode nicht gefunden" in errors_on(changeset).referral_code_input
+      assert "Referral code not found" in errors_on(changeset).referral_code_input
     end
 
     test "registration with empty referral code succeeds without referrer" do

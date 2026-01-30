@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "renders settings page", %{conn: conn} do
       {:ok, _lv, html} =
         conn
-        |> log_in_user(user_fixture())
+        |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings")
 
       assert html =~ "Change Email"
@@ -27,7 +27,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "redirects if user is not in sudo mode", %{conn: conn} do
       {:ok, conn} =
         conn
-        |> log_in_user(user_fixture(),
+        |> log_in_user(user_fixture(language: "en"),
           token_authenticated_at: DateTime.add(DateTime.utc_now(:second), -11, :minute)
         )
         |> live(~p"/users/settings")
@@ -39,7 +39,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
   describe "update email form" do
     setup %{conn: conn} do
-      user = user_fixture()
+      user = user_fixture(language: "en")
       %{conn: log_in_user(conn, user), user: user}
     end
 
@@ -91,7 +91,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
   describe "update password form" do
     setup %{conn: conn} do
-      user = user_fixture()
+      user = user_fixture(language: "en")
       %{conn: log_in_user(conn, user), user: user}
     end
 
@@ -162,7 +162,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
   describe "confirm email" do
     setup %{conn: conn} do
-      user = user_fixture()
+      user = user_fixture(language: "en")
       email = unique_user_email()
 
       token =

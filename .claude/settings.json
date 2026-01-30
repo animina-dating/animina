@@ -4,8 +4,9 @@
       {
         "hooks": [
           {
-            "type": "prompt",
-            "prompt": "Check if Claude made any code changes (Edit, Write, or Bash commands that modified files) during this conversation. If code changes were made, respond with exactly this JSON: {\"decision\":\"block\",\"reason\":\"Code changes were made. Run mix precommit, fix any errors, and re-run mix precommit until it passes cleanly.\"}. If no code changes were made (only read/search/conversation), respond with exactly this JSON: {\"decision\":\"allow\"}."
+            "type": "command",
+            "command": "/Users/stefan/GitHub/animina/.claude/stop_hook.sh",
+            "timeout": 120
           }
         ]
       }

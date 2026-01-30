@@ -25,7 +25,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 - **User Profiles**: Display name, birthday (18+ enforced via date picker), gender, height, 1-4 Wohnsitze (residences), and partner preferences
 - **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
 - **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
-- **German UI**: Registration and login forms in German ("Coastal Morning" design)
+- **Multi-language UI**: 8 languages (DE, EN, TR, RU, AR, PL, FR, ES) with RTL support for Arabic — see [TRANSLATING.md](TRANSLATING.md)
 - **Waitlist**: New users are placed on a waitlist after registration
 - **Referral System**: Each user gets a unique 6-character code; 5 confirmed referrals auto-activate the account
 - **Geo Data**: Germany with 8000+ cities seeded

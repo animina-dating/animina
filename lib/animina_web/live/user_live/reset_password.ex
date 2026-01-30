@@ -11,7 +11,7 @@ defmodule AniminaWeb.UserLive.ResetPassword do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              Neues Passwort setzen
+              {gettext("Set new password")}
             </h1>
           </div>
 
@@ -26,19 +26,19 @@ defmodule AniminaWeb.UserLive.ResetPassword do
             <.input
               field={f[:password]}
               type="password"
-              label="Neues Passwort"
+              label={gettext("New password")}
               autocomplete="new-password"
               required
             />
             <.input
               field={f[:password_confirmation]}
               type="password"
-              label="Neues Passwort bestätigen"
+              label={gettext("Confirm new password")}
               autocomplete="new-password"
               required
             />
             <.button class="btn btn-primary w-full">
-              Passwort zurücksetzen
+              {gettext("Reset password")}
             </.button>
           </.form>
 
@@ -47,7 +47,7 @@ defmodule AniminaWeb.UserLive.ResetPassword do
               navigate={~p"/users/log-in"}
               class="text-sm font-semibold text-primary hover:underline"
             >
-              Zurück zur Anmeldung
+              {gettext("Back to login")}
             </.link>
           </div>
         </div>
@@ -64,7 +64,7 @@ defmodule AniminaWeb.UserLive.ResetPassword do
          socket
          |> put_flash(
            :error,
-           "Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+           gettext("Password reset link is invalid or expired.")
          )
          |> redirect(to: ~p"/users/log-in")}
 
@@ -88,7 +88,7 @@ defmodule AniminaWeb.UserLive.ResetPassword do
       {:ok, _user} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Passwort wurde erfolgreich zurückgesetzt.")
+         |> put_flash(:info, gettext("Password has been reset successfully."))
          |> redirect(to: ~p"/users/log-in")}
 
       {:error, changeset} ->

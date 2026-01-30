@@ -17,49 +17,60 @@ defmodule AniminaWeb.UserLive.Waitlist do
       <div class="mx-auto max-w-2xl px-4 py-8">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <h1 class="text-2xl sm:text-3xl font-light text-base-content mb-6 text-center">
-            Warteliste
+            {gettext("Waitlist")}
           </h1>
 
           <div class="space-y-4 text-base text-base-content/70">
             <p>
-              Hallo {@current_scope.user.display_name},
+              {gettext("Hello")} {@current_scope.user.display_name},
             </p>
             <p>
-              vielen Dank für deine Registrierung bei ANIMINA!
+              {gettext("Thank you for registering with ANIMINA!")}
             </p>
             <p>
-              Du befindest dich auf unserer Warteliste.
-              Potentielle Gründe:
+              {gettext("You are on our waitlist. Possible reasons:")}
             </p>
-            <ul class="list-disc list-outside space-y-1 ml-8">
-              <li>Es gibt noch zu wenige Nutzer in {@city_names}</li>
-              <li>Es gibt für {@city_names} in den letzten 7 Tagen zu viele Neuanmeldungen</li>
+            <ul class="list-disc list-outside space-y-1 ms-8">
+              <li>{gettext("There are not enough users in %{cities} yet.", cities: @city_names)}</li>
               <li>
-                Es gibt insgesamt zu viele Neuanmeldungen und wir müssen erst unsere in Deutschland gehostete Server-Hardware aufrüsten
+                {gettext(
+                  "There have been too many new registrations in %{cities} in the last 7 days.",
+                  cities: @city_names
+                )}
               </li>
               <li>
-                Wir arbeiten an neuen Features und brauchen dafür etwas Luft zum Atmen
+                {gettext(
+                  "There are too many new registrations overall and we need to upgrade our server hardware hosted in Germany."
+                )}
+              </li>
+              <li>
+                {gettext("We are working on new features and need some breathing room.")}
               </li>
             </ul>
             <p>
-              Voraussichtliche Wartezeit: <strong>ca. 4 Wochen</strong>.
+              {gettext("Expected waiting time:")} <strong>{gettext("approximately 4 weeks")}</strong>.
             </p>
             <p>
-              Wir werden dir eine E-Mail senden, sobald dein Konto
-              freigeschaltet wurde. Du kannst Dich auch zwischenzeitlich immer mal wieder auf animina.de einloggen und nachschauen.
+              {gettext(
+                "We will send you an email once your account has been activated. You can also log in to animina.de from time to time to check."
+              )}
             </p>
           </div>
 
           <div class="mt-8 border-t border-base-300 pt-6">
             <h2 class="text-lg font-medium text-base-content mb-4 text-center">
-              Schneller freigeschaltet werden
+              {gettext("Get activated faster")}
             </h2>
             <p class="text-sm text-base-content/70 mb-4 text-center">
-              Empfehle ANIMINA weiter! Nach {@referral_threshold} bestätigten Empfehlungen wirst du automatisch freigeschaltet.
+              {ngettext(
+                "Refer ANIMINA! After %{count} confirmed referral you will be activated automatically.",
+                "Refer ANIMINA! After %{count} confirmed referrals you will be activated automatically.",
+                @referral_threshold
+              )}
             </p>
 
             <div class="bg-base-200 rounded-lg p-4 text-center">
-              <p class="text-xs text-base-content/50 mb-2">Dein Empfehlungscode</p>
+              <p class="text-xs text-base-content/50 mb-2">{gettext("Your referral code")}</p>
               <p
                 id="referral-code"
                 class="text-3xl font-mono font-bold tracking-widest text-primary select-all"
@@ -72,15 +83,20 @@ defmodule AniminaWeb.UserLive.Waitlist do
                 class="btn btn-primary btn-sm mt-2"
                 phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
               >
-                Code kopieren
+                {gettext("Copy code")}
               </button>
             </div>
 
             <div class="mt-4">
               <div class="flex justify-between text-sm text-base-content/70 mb-1">
-                <span>{@referral_count}/{@referral_threshold} Empfehlungen</span>
+                <span>
+                  {ngettext(
+                    "%{count}/%{threshold} referral",
+                    "%{count}/%{threshold} referrals",
+                    @referral_count, threshold: @referral_threshold)}
+                </span>
                 <span :if={@referral_count >= @referral_threshold} class="text-success font-medium">
-                  Freigeschaltet!
+                  {gettext("Activated!")}
                 </span>
               </div>
               <div class="w-full bg-base-300 rounded-full h-2.5">
@@ -95,7 +111,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
 
           <div class="mt-8 space-y-2 text-base text-base-content/70">
             <p>
-              Viele Grüße
+              {gettext("Best regards")}
             </p>
             <p>
               Stefan Wintermeyer <br />

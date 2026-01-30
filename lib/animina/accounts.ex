@@ -4,6 +4,8 @@ defmodule Animina.Accounts do
   """
 
   import Ecto.Query, warn: false
+  use Gettext, backend: AniminaWeb.Gettext
+
   alias Animina.Repo
 
   alias Animina.Accounts.{User, UserLocation, UserToken, UserNotifier}
@@ -225,7 +227,7 @@ defmodule Animina.Accounts do
         Ecto.Changeset.add_error(
           changeset,
           :referral_code_input,
-          "Empfehlungscode nicht gefunden"
+          dgettext("errors", "Referral code not found")
         )
 
       referrer ->

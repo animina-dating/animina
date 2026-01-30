@@ -5,7 +5,15 @@ defmodule AniminaWeb.UserLive.Registration do
   alias Animina.Accounts.User
   alias Animina.GeoData
 
-  @step_titles %{1 => "Account", 2 => "Profil", 3 => "Wohnort", 4 => "Partner"}
+  defp step_titles do
+    %{
+      1 => gettext("Account"),
+      2 => gettext("Profile"),
+      3 => gettext("Location"),
+      4 => gettext("Partner")
+    }
+  end
+
   @step_required_fields %{
     1 => ~w(email password mobile_phone birthday),
     2 => ~w(display_name gender height),
@@ -25,12 +33,12 @@ defmodule AniminaWeb.UserLive.Registration do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              Konto erstellen
+              {gettext("Create account")}
             </h1>
             <p class="mt-2 text-base text-base-content/70">
-              Bereits registriert?
+              {gettext("Already registered?")}
               <.link navigate={~p"/users/log-in"} class="font-semibold text-primary hover:underline">
-                Jetzt anmelden
+                {gettext("Log in now")}
               </.link>
             </p>
           </div>
@@ -82,7 +90,7 @@ defmodule AniminaWeb.UserLive.Registration do
                 phx-click="prev_step"
                 class="btn btn-ghost"
               >
-                Zurück
+                {gettext("Back")}
               </button>
               <div :if={@current_step == 1} />
 
@@ -93,14 +101,14 @@ defmodule AniminaWeb.UserLive.Registration do
                 disabled={not @step_ready}
                 class={["btn btn-primary", if(not @step_ready, do: "btn-disabled")]}
               >
-                Weiter
+                {gettext("Next")}
               </button>
               <.button
                 :if={@current_step == 4}
-                phx-disable-with="Konto wird erstellt..."
+                phx-disable-with={gettext("Creating account...")}
                 class="btn btn-primary"
               >
-                Konto erstellen
+                {gettext("Create account")}
               </.button>
             </div>
           </.form>
@@ -179,21 +187,21 @@ defmodule AniminaWeb.UserLive.Registration do
       <.input
         field={@form[:email]}
         type="email"
-        label="E-Mail-Adresse"
+        label={gettext("Email address")}
         autocomplete="username"
         required
       />
       <.input
         field={@form[:password]}
         type="password"
-        label="Passwort (mind. 12 Zeichen)"
+        label={gettext("Password (min. 12 characters)")}
         autocomplete="new-password"
         required
       />
       <.input
         field={@form[:mobile_phone]}
         type="tel"
-        label="Handynummer (z.B. +491514567890)"
+        label={gettext("Mobile phone (e.g. +491514567890)")}
         required
         phx-blur="normalize_phone"
       />
@@ -201,19 +209,19 @@ defmodule AniminaWeb.UserLive.Registration do
         <.input
           field={@form[:birthday]}
           type="date"
-          label="Geburtstag (mind. 18 Jahre)"
+          label={gettext("Birthday (min. 18 years)")}
           max={@max_birthday}
           required
         />
-        <p :if={@age} class="text-xs text-base-content/50 mt-1 ml-1">
-          {@age} Jahre alt
+        <p :if={@age} class="text-xs text-base-content/50 mt-1 ms-1">
+          {gettext("%{age} years old", age: @age)}
         </p>
       </div>
       <.input
         field={@form[:referral_code_input]}
         type="text"
-        label="Empfehlungscode (optional)"
-        placeholder="z.B. A7X3K9"
+        label={gettext("Referral code (optional)")}
+        placeholder={gettext("e.g. A7X3K9")}
         autocomplete="off"
         maxlength="6"
       />
@@ -227,25 +235,25 @@ defmodule AniminaWeb.UserLive.Registration do
       <.input
         field={@form[:display_name]}
         type="text"
-        label="Anzeigename (2-50 Zeichen)"
+        label={gettext("Display name (2-50 characters)")}
         autocomplete="off"
         required
       />
       <.input
         field={@form[:gender]}
         type="radio"
-        label="Geschlecht"
+        label={gettext("Gender")}
         options={[
-          {"Männlich", "male"},
-          {"Weiblich", "female"},
-          {"Divers", "diverse"}
+          {gettext("Male"), "male"},
+          {gettext("Female"), "female"},
+          {gettext("Diverse"), "diverse"}
         ]}
         required
       />
       <.input
         field={@form[:height]}
         type="number"
-        label="Größe in cm (80-225)"
+        label={gettext("Height in cm (80-225)")}
         min="80"
         max="225"
         required
@@ -253,13 +261,22 @@ defmodule AniminaWeb.UserLive.Registration do
       <.input
         field={@form[:occupation]}
         type="text"
-        label="Beruf"
+        label={gettext("Occupation")}
       />
       <.input
         field={@form[:language]}
         type="select"
-        label="Sprache"
-        options={[{"Deutsch", "de"}, {"English", "en"}]}
+        label={gettext("Language")}
+        options={[
+          {"Deutsch", "de"},
+          {"English", "en"},
+          {"Türkçe", "tr"},
+          {"Русский", "ru"},
+          {"العربية", "ar"},
+          {"Polski", "pl"},
+          {"Français", "fr"},
+          {"Español", "es"}
+        ]}
       />
     </div>
     """
@@ -285,7 +302,7 @@ defmodule AniminaWeb.UserLive.Registration do
             phx-click="remove_location"
             phx-value-id={loc.id}
             class="btn btn-ghost btn-xs btn-circle"
-            aria-label="Wohnsitz entfernen"
+            aria-label={gettext("Remove location")}
           >
             &times;
           </button>
@@ -295,7 +312,7 @@ defmodule AniminaWeb.UserLive.Registration do
       <%!-- Input form to add a new location --%>
       <div :if={length(@locations) < 4} class="border border-base-300 rounded-lg p-4 space-y-3">
         <div class="fieldset">
-          <label class="label" for="location_input_country_id">Land</label>
+          <label class="label" for="location_input_country_id">{gettext("Country")}</label>
           <select
             id="location_input_country_id"
             name="user[location_input][country_id]"
@@ -312,7 +329,9 @@ defmodule AniminaWeb.UserLive.Registration do
         </div>
         <div>
           <div class="fieldset">
-            <label class="label" for="location_input_zip_code">Postleitzahl (5 Ziffern)</label>
+            <label class="label" for="location_input_zip_code">
+              {gettext("Zip code (5 digits)")}
+            </label>
             <input
               type="text"
               id="location_input_zip_code"
@@ -323,11 +342,11 @@ defmodule AniminaWeb.UserLive.Registration do
           </div>
           <p
             :if={@location_input.city_name && !@location_input.error}
-            class="text-xs text-base-content/50 mt-1 ml-1"
+            class="text-xs text-base-content/50 mt-1 ms-1"
           >
             {@location_input.city_name}
           </p>
-          <p :if={@location_input.error} class="text-xs text-error mt-1 ml-1">
+          <p :if={@location_input.error} class="text-xs text-error mt-1 ms-1">
             {@location_input.error}
           </p>
         </div>
@@ -340,12 +359,12 @@ defmodule AniminaWeb.UserLive.Registration do
             if(not Regex.match?(~r/^\d{5}$/, @location_input.zip_code || ""), do: "btn-disabled")
           ]}
         >
-          {length(@locations) + 2}. Wohnsitz hinzufügen
+          {gettext("Add location %{number}", number: length(@locations) + 2)}
         </button>
       </div>
 
       <p :if={length(@locations) >= 4} class="text-sm text-base-content/50 text-center">
-        Maximal 4 Wohnsitze erreicht.
+        {gettext("Maximum of 4 locations reached.")}
       </p>
     </div>
     """
@@ -355,15 +374,15 @@ defmodule AniminaWeb.UserLive.Registration do
     ~H"""
     <div class="space-y-4">
       <div class="fieldset mb-2">
-        <span class="label mb-1">Geschlecht(er)</span>
+        <span class="label mb-1">{gettext("Gender(s)")}</span>
         <input type="hidden" name="user[preferred_partner_gender][]" value="" />
         <div class="flex gap-4">
           <label
             :for={
               {label, value} <- [
-                {"Männlich", "male"},
-                {"Weiblich", "female"},
-                {"Divers", "diverse"}
+                {gettext("Male"), "male"},
+                {gettext("Female"), "female"},
+                {gettext("Diverse"), "diverse"}
               ]
             }
             class="label cursor-pointer gap-2"
@@ -383,13 +402,13 @@ defmodule AniminaWeb.UserLive.Registration do
         <.input
           field={@form[:partner_minimum_age]}
           type="number"
-          label="Mindestalter"
+          label={gettext("Minimum age")}
           min="18"
         />
         <.input
           field={@form[:partner_maximum_age]}
           type="number"
-          label="Höchstalter"
+          label={gettext("Maximum age")}
           min="18"
         />
       </div>
@@ -397,14 +416,14 @@ defmodule AniminaWeb.UserLive.Registration do
         <.input
           field={@form[:partner_height_min]}
           type="number"
-          label="Mindest Körpergröße (cm)"
+          label={gettext("Minimum height (cm)")}
           min="80"
           max="225"
         />
         <.input
           field={@form[:partner_height_max]}
           type="number"
-          label="Maximale Körpergröße (cm)"
+          label={gettext("Maximum height (cm)")}
           min="80"
           max="225"
         />
@@ -412,21 +431,21 @@ defmodule AniminaWeb.UserLive.Registration do
       <.input
         field={@form[:search_radius]}
         type="number"
-        label="Suchradius (km)"
+        label={gettext("Search radius (km)")}
         min="1"
       />
       <.input
         field={@form[:terms_accepted]}
         type="checkbox"
-        label="Ich akzeptiere die Allgemeinen Geschäftsbedingungen und die Datenschutzerklärung."
+        label={gettext("I accept the Terms of Service and Privacy Policy.")}
         required
       />
     </div>
     """
   end
 
-  defp step_title(3, count) when count > 1, do: "Wohnorte"
-  defp step_title(step, _count), do: @step_titles[step]
+  defp step_title(3, count) when count > 1, do: gettext("Locations")
+  defp step_title(step, _count), do: step_titles()[step]
 
   defp navbar_display_name(step, params) when step >= 3 do
     case params["display_name"] do
@@ -465,6 +484,7 @@ defmodule AniminaWeb.UserLive.Registration do
         "birthday" => min_birthday,
         "gender" => "male",
         "height" => 170,
+        "language" => socket.assigns.locale,
         "preferred_partner_gender" => ["female"]
       }
 
@@ -559,7 +579,7 @@ defmodule AniminaWeb.UserLive.Registration do
          socket
          |> put_flash(
            :info,
-           "Ein Bestätigungscode wurde an #{user.email} gesendet."
+           gettext("A confirmation code has been sent to %{email}.", email: user.email)
          )
          |> push_navigate(to: ~p"/users/confirm/#{token}")}
 
@@ -580,7 +600,7 @@ defmodule AniminaWeb.UserLive.Registration do
            socket
            |> put_flash(
              :info,
-             "Ein Bestätigungscode wurde an #{email} gesendet."
+             gettext("A confirmation code has been sent to %{email}.", email: email)
            )
            |> push_navigate(to: ~p"/users/confirm/#{token}")}
         else
@@ -642,14 +662,18 @@ defmodule AniminaWeb.UserLive.Registration do
       not Regex.match?(~r/^\d{5}$/, input.zip_code || "") ->
         {:noreply,
          socket
-         |> assign(location_input: %{input | error: "Bitte eine gültige 5-stellige PLZ eingeben"})}
+         |> assign(
+           location_input: %{input | error: gettext("Please enter a valid 5-digit zip code")}
+         )}
 
       Enum.any?(locations, fn loc ->
         loc.country_id == input.country_id and loc.zip_code == input.zip_code
       end) ->
         {:noreply,
          socket
-         |> assign(location_input: %{input | error: "Dieser Wohnsitz wurde bereits hinzugefügt"})}
+         |> assign(
+           location_input: %{input | error: gettext("This location has already been added")}
+         )}
 
       true ->
         new_location = %{
