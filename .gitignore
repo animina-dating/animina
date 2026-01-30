@@ -43,3 +43,6 @@ npm-debug.log
 # Release tarballs
 *.tar.gz
 
+# Claude Code local settings (machine-specific permissions)
+.claude/settings.local.json
+
