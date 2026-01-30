@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 env:
   MIX_ENV: test
   ELIXIR_VERSION: "1.19"
