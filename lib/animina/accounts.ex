@@ -164,6 +164,33 @@ defmodule Animina.Accounts do
     end)
   end
 
+  @doc """
+  Returns `true` if the changeset contains an email uniqueness error,
+  covering both `unsafe_validate_unique` (validation: :unsafe_unique)
+  and `unique_constraint` (constraint: :unique).
+  """
+  def email_uniqueness_error?(%Ecto.Changeset{} = changeset) do
+    changeset.errors
+    |> Keyword.get_values(:email)
+    |> Enum.any?(fn {_msg, meta} ->
+      meta[:validation] == :unsafe_unique or meta[:constraint] == :unique
+    end)
+  end
+
+  @doc """
+  Returns `true` when the email uniqueness error is the **only** error
+  on the changeset (i.e. all other fields are valid).
+  """
+  def only_email_uniqueness_error?(%Ecto.Changeset{} = changeset) do
+    email_uniqueness_error?(changeset) and
+      changeset.errors
+      |> Enum.reject(fn {field, {_msg, meta}} ->
+        field == :email and
+          (meta[:validation] == :unsafe_unique or meta[:constraint] == :unique)
+      end)
+      |> Enum.empty?()
+  end
+
   defp extract_referral_code_input(attrs) do
     val = Map.get(attrs, :referral_code_input) || Map.get(attrs, "referral_code_input")
 

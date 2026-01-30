@@ -87,4 +87,30 @@ defmodule Animina.Accounts.UserNotifier do
     ==============================
     """)
   end
+
+  @doc """
+  Deliver a warning email when someone tries to register with an email
+  that already belongs to an existing account.
+  """
+  def deliver_duplicate_registration_warning(email) when is_binary(email) do
+    deliver(email, "Sicherheitshinweis – ANIMINA", """
+
+    ==============================
+
+    Hallo,
+
+    jemand hat versucht, ein neues ANIMINA-Konto mit deiner
+    E-Mail-Adresse (#{email}) zu erstellen.
+
+    Falls du das nicht warst, empfehlen wir dir, dein Passwort
+    zu ändern, um dein Konto zu schützen.
+
+    Falls du dich gerade selbst registrieren wolltest:
+    Du hast bereits ein Konto. Bitte melde dich mit deinem
+    bestehenden Passwort an oder nutze die Passwort-vergessen-
+    Funktion.
+
+    ==============================
+    """)
+  end
 end

@@ -378,7 +378,9 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert path =~ "/users/confirm/"
     end
 
-    test "renders errors for duplicated email", %{conn: conn} do
+    test "duplicate email does not reveal existence — redirects to PIN confirmation", %{
+      conn: conn
+    } do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       user = user_fixture(%{email: "test@email.com"})
@@ -422,12 +424,212 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      result =
-        lv
-        |> form("#registration_form")
-        |> render_submit()
+      lv
+      |> form("#registration_form")
+      |> render_submit()
 
-      assert result =~ "has already been taken"
+      # Should redirect to PIN confirmation (phantom flow), NOT show "has already been taken"
+      {path, flash} = assert_redirect(lv)
+      assert path =~ "/users/confirm/"
+      assert flash["info"] =~ "Bestätigungscode"
+    end
+
+    test "duplicate email does not create a new user record", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      existing_email = "no-dup-user@email.com"
+      user = user_fixture(%{email: existing_email})
+
+      # Count users before
+      user_count_before = Animina.Repo.aggregate(Animina.Accounts.User, :count, :id)
+
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => user.email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 3
+      fill_step_3(lv)
+
+      # Step 4 - accept terms and submit
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "terms_accepted" => "true"
+        }
+      )
+
+      lv
+      |> form("#registration_form")
+      |> render_submit()
+
+      assert_redirect(lv)
+
+      # No new user should have been created
+      user_count_after = Animina.Repo.aggregate(Animina.Accounts.User, :count, :id)
+      assert user_count_before == user_count_after
+    end
+
+    test "phantom PIN confirmation shows identical UI", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      user = user_fixture(%{email: "phantom-ui@email.com"})
+
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => user.email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 3
+      fill_step_3(lv)
+
+      # Step 4 - accept terms and submit
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "terms_accepted" => "true"
+        }
+      )
+
+      lv
+      |> form("#registration_form")
+      |> render_submit()
+
+      {path, _flash} = assert_redirect(lv)
+
+      # Follow redirect to PIN confirmation page
+      {:ok, pin_lv, pin_html} = live(conn, path)
+
+      # Should show the same PIN confirmation UI
+      assert pin_html =~ "E-Mail bestätigen"
+      assert pin_html =~ "Bestätigungscode"
+      assert pin_html =~ "Verbleibende Versuche"
+      assert pin_html =~ "Verbleibende Zeit"
+
+      # Enter a wrong PIN — should show error
+      pin_lv
+      |> form("#pin_form", pin: %{pin: "000000"})
+      |> render_submit()
+
+      assert render(pin_lv) =~ "Falscher Code"
+    end
+
+    test "phantom flow redirects after 3 wrong PINs", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      user = user_fixture(%{email: "phantom-fail@email.com"})
+
+      # Step 1
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "email" => user.email,
+          "password" => "password1234",
+          "mobile_phone" => unique_mobile_phone(),
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 2
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "display_name" => "TestUser",
+          "gender" => "male",
+          "height" => "180"
+        }
+      )
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 3
+      fill_step_3(lv)
+
+      # Step 4 - accept terms and submit
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "terms_accepted" => "true"
+        }
+      )
+
+      lv
+      |> form("#registration_form")
+      |> render_submit()
+
+      {path, _flash} = assert_redirect(lv)
+
+      # Follow redirect to PIN confirmation page
+      {:ok, pin_lv, _pin_html} = live(conn, path)
+
+      # Enter wrong PINs 3 times
+      pin_lv
+      |> form("#pin_form", pin: %{pin: "111111"})
+      |> render_submit()
+
+      pin_lv
+      |> form("#pin_form", pin: %{pin: "222222"})
+      |> render_submit()
+
+      pin_lv
+      |> form("#pin_form", pin: %{pin: "333333"})
+      |> render_submit()
+
+      # Should redirect to register page with account deleted message
+      {redirect_path, flash} = assert_redirect(pin_lv)
+      assert redirect_path == "/users/register"
+      assert flash["error"] =~ "Konto wurde gelöscht"
     end
   end
 

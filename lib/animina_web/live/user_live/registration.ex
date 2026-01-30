@@ -564,13 +564,49 @@ defmodule AniminaWeb.UserLive.Registration do
          |> push_navigate(to: ~p"/users/confirm/#{token}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        error_step = step_with_first_error(changeset)
+        if Accounts.only_email_uniqueness_error?(changeset) do
+          # Phantom flow: pretend registration succeeded to protect email privacy
+          email = Ecto.Changeset.get_field(changeset, :email)
+          Accounts.UserNotifier.deliver_duplicate_registration_warning(email)
 
-        {:noreply,
-         socket
-         |> assign(current_step: error_step)
-         |> assign(step_direction: :backward)
-         |> assign_form(changeset)}
+          token =
+            Phoenix.Token.sign(
+              AniminaWeb.Endpoint,
+              "pin_confirmation",
+              {:phantom, Ecto.UUID.generate(), email}
+            )
+
+          {:noreply,
+           socket
+           |> put_flash(
+             :info,
+             "Ein Bestätigungscode wurde an #{email} gesendet."
+           )
+           |> push_navigate(to: ~p"/users/confirm/#{token}")}
+        else
+          # Strip email uniqueness error if present alongside other errors
+          cleaned_changeset =
+            if Accounts.email_uniqueness_error?(changeset) do
+              %{
+                changeset
+                | errors:
+                    Enum.reject(changeset.errors, fn {field, {_msg, meta}} ->
+                      field == :email and
+                        (meta[:validation] == :unsafe_unique or meta[:constraint] == :unique)
+                    end)
+              }
+            else
+              changeset
+            end
+
+          error_step = step_with_first_error(cleaned_changeset)
+
+          {:noreply,
+           socket
+           |> assign(current_step: error_step)
+           |> assign(step_direction: :backward)
+           |> assign_form(cleaned_changeset)}
+        end
     end
   end
 

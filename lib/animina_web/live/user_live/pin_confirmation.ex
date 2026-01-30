@@ -88,6 +88,23 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   @impl true
   def mount(%{"token" => token}, _session, socket) do
     case Phoenix.Token.verify(AniminaWeb.Endpoint, "pin_confirmation", token, max_age: 1800) do
+      {:ok, {:phantom, _id, email}} ->
+        # Phantom flow: no real user behind this token.
+        # Show identical UI to prevent email enumeration.
+        {:ok,
+         socket
+         |> assign(
+           phantom: true,
+           email: email,
+           remaining_attempts: @max_attempts,
+           max_attempts: @max_attempts,
+           remaining_minutes: 30,
+           trigger_login: false,
+           dev_routes: @dev_routes,
+           login_form: to_form(%{"user_id" => "", "remember_me" => "true"}, as: "user")
+         )
+         |> assign_form()}
+
       {:ok, user_id} ->
         user = Accounts.get_user(user_id)
 
@@ -97,6 +114,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
           {:ok,
            socket
            |> assign(
+             phantom: false,
              user_id: user.id,
              email: user.email,
              remaining_attempts: @max_attempts - user.confirmation_pin_attempts,
@@ -123,6 +141,26 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   end
 
   @impl true
+  def handle_event("verify_pin", %{"pin" => %{"pin" => _pin}}, %{assigns: %{phantom: true}} = socket) do
+    remaining = socket.assigns.remaining_attempts - 1
+
+    if remaining <= 0 do
+      {:noreply,
+       socket
+       |> put_flash(
+         :error,
+         "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
+       )
+       |> push_navigate(to: ~p"/users/register")}
+    else
+      {:noreply,
+       socket
+       |> assign(remaining_attempts: remaining)
+       |> put_flash(:error, "Falscher Code. Noch #{remaining} Versuch(e) übrig.")
+       |> assign_form()}
+    end
+  end
+
   def handle_event("verify_pin", %{"pin" => %{"pin" => pin}}, socket) do
     user = Accounts.get_user(socket.assigns.user_id)
 
