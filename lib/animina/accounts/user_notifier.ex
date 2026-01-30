@@ -14,6 +14,8 @@ defmodule Animina.Accounts.UserNotifier do
       |> from({sender_name, sender_address})
       |> subject(subject)
       |> text_body(body)
+      |> header("Auto-Submitted", "auto-generated")
+      |> header("Precedence", "bulk")
 
     with {:ok, _metadata} <- Mailer.deliver(email) do
       {:ok, email}
