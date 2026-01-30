@@ -17,7 +17,9 @@ defmodule Animina.Accounts.UserNotifierTest do
 
     test "deliver_password_reset_instructions uses configured sender name and email" do
       user = user_fixture()
-      {:ok, email} = UserNotifier.deliver_password_reset_instructions(user, "https://example.com/reset")
+
+      {:ok, email} =
+        UserNotifier.deliver_password_reset_instructions(user, "https://example.com/reset")
 
       assert email.from == {"ANIMINA 👫❤️", "noreply@animina.de"}
       assert email.headers["Auto-Submitted"] == "auto-generated"
@@ -26,7 +28,9 @@ defmodule Animina.Accounts.UserNotifierTest do
 
     test "deliver_update_email_instructions uses configured sender name and email" do
       user = user_fixture()
-      {:ok, email} = UserNotifier.deliver_update_email_instructions(user, "https://example.com/update")
+
+      {:ok, email} =
+        UserNotifier.deliver_update_email_instructions(user, "https://example.com/update")
 
       assert email.from == {"ANIMINA 👫❤️", "noreply@animina.de"}
       assert email.headers["Auto-Submitted"] == "auto-generated"

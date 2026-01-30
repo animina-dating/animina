@@ -43,6 +43,7 @@ defmodule AniminaWeb.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :auto_dismiss, :boolean, default: false, doc: "auto-dismiss after 5 seconds"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -55,12 +56,13 @@ defmodule AniminaWeb.CoreComponents do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-hook={@auto_dismiss && "AutoDismissFlash"}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="flex justify-end px-4 sm:px-6 lg:px-8 pointer-events-none"
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
+        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap pointer-events-auto shadow-lg cursor-pointer",
         @kind == :info && "alert-info",
         @kind == :error && "alert-error"
       ]}>

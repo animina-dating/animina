@@ -25,11 +25,27 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/animina"
 import topbar from "../vendor/topbar"
 
+const AutoDismissFlash = {
+  mounted() {
+    this.timer = setTimeout(() => {
+      this.el.style.transition = "opacity 0.3s ease-out"
+      this.el.style.opacity = "0"
+      setTimeout(() => {
+        this.pushEvent("lv:clear-flash", {key: this.el.id.replace("flash-", "")})
+        this.el.remove()
+      }, 300)
+    }, 5000)
+  },
+  destroyed() {
+    clearTimeout(this.timer)
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, AutoDismissFlash},
 })
 
 // Show progress bar on live navigation and form submits

@@ -141,7 +141,11 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   end
 
   @impl true
-  def handle_event("verify_pin", %{"pin" => %{"pin" => _pin}}, %{assigns: %{phantom: true}} = socket) do
+  def handle_event(
+        "verify_pin",
+        %{"pin" => %{"pin" => _pin}},
+        %{assigns: %{phantom: true}} = socket
+      ) do
     remaining = socket.assigns.remaining_attempts - 1
 
     if remaining <= 0 do

@@ -136,7 +136,7 @@ defmodule AniminaWeb.Layouts do
         </nav>
       </header>
       <!-- Flash Messages -->
-      <div class="fixed top-16 left-0 right-0 z-40">
+      <div class="fixed top-16 left-0 right-0 z-40 pointer-events-none">
         <.flash_group flash={@flash} />
       </div>
       <!-- Main Content -->
@@ -190,8 +190,8 @@ defmodule AniminaWeb.Layouts do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <.flash kind={:info} flash={@flash} auto_dismiss={true} />
+      <.flash kind={:error} flash={@flash} auto_dismiss={true} />
 
       <.flash
         id="client-error"
