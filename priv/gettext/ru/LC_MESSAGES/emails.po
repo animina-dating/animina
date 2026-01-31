@@ -15,107 +15,107 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "%{count} new user registered and confirmed via PIN at ANIMINA in the last 24 hours."
 msgid_plural "%{count} new users registered and confirmed via PIN at ANIMINA in the last 24 hours."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%{count} новый пользователь зарегистрировался и подтвердил аккаунт через PIN на ANIMINA за последние 24 часа."
+msgstr[1] "%{count} новых пользователя зарегистрировались и подтвердили аккаунт через PIN на ANIMINA за последние 24 часа."
+msgstr[2] "%{count} новых пользователей зарегистрировались и подтвердили аккаунт через PIN на ANIMINA за последние 24 часа."
 
 #: lib/animina/accounts/user_notifier.ex:109
 #, elixir-autogen, elixir-format
 msgid "ANIMINA: %{count} new user in the last 24 hours"
 msgid_plural "ANIMINA: %{count} new users in the last 24 hours"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "ANIMINA: %{count} новый пользователь за последние 24 часа"
+msgstr[1] "ANIMINA: %{count} новых пользователя за последние 24 часа"
+msgstr[2] "ANIMINA: %{count} новых пользователей за последние 24 часа"
 
 #: lib/animina/accounts/user_notifier.ex:131
 #: lib/animina/accounts/user_notifier.ex:151
 #, elixir-autogen, elixir-format
 msgid "Hello,"
-msgstr ""
+msgstr "Здравствуйте,"
 
 #: lib/animina/accounts/user_notifier.ex:38
 #: lib/animina/accounts/user_notifier.ex:60
 #: lib/animina/accounts/user_notifier.ex:84
 #, elixir-autogen, elixir-format
 msgid "Hi %{email},"
-msgstr ""
+msgstr "Здравствуйте, %{email},"
 
 #: lib/animina/accounts/user_notifier.ex:155
 #, elixir-autogen, elixir-format
 msgid "If this was not you, we recommend changing your password to protect your account."
-msgstr ""
+msgstr "Если это были не вы, мы рекомендуем сменить пароль для защиты вашего аккаунта."
 
 #: lib/animina/accounts/user_notifier.ex:94
 #, elixir-autogen, elixir-format
 msgid "If you did not create an account at ANIMINA, please ignore this email."
-msgstr ""
+msgstr "Если вы не создавали аккаунт на ANIMINA, пожалуйста, проигнорируйте это письмо."
 
 #: lib/animina/accounts/user_notifier.ex:68
 #, elixir-autogen, elixir-format
 msgid "If you did not request a new password, please ignore this email."
-msgstr ""
+msgstr "Если вы не запрашивали новый пароль, пожалуйста, проигнорируйте это письмо."
 
 #: lib/animina/accounts/user_notifier.ex:44
 #, elixir-autogen, elixir-format
 msgid "If you didn't request this change, please ignore this."
-msgstr ""
+msgstr "Если вы не запрашивали это изменение, пожалуйста, проигнорируйте это сообщение."
 
 #: lib/animina/accounts/user_notifier.ex:157
 #, elixir-autogen, elixir-format
 msgid "If you were trying to register yourself: You already have an account. Please log in with your existing password or use the forgot password feature."
-msgstr ""
+msgstr "Если вы пытались зарегистрироваться: у вас уже есть аккаунт. Пожалуйста, войдите с существующим паролем или воспользуйтесь функцией восстановления пароля."
 
 #: lib/animina/accounts/user_notifier.ex:90
 #, elixir-autogen, elixir-format
 msgid "Please enter this code within 30 minutes to confirm your email address."
-msgstr ""
+msgstr "Пожалуйста, введите этот код в течение 30 минут для подтверждения вашего адреса электронной почты."
 
 #: lib/animina/accounts/user_notifier.ex:56
 #, elixir-autogen, elixir-format
 msgid "Reset password – ANIMINA"
-msgstr ""
+msgstr "Сброс пароля – ANIMINA"
 
 #: lib/animina/accounts/user_notifier.ex:147
 #, elixir-autogen, elixir-format
 msgid "Security notice – ANIMINA"
-msgstr ""
+msgstr "Уведомление о безопасности – ANIMINA"
 
 #: lib/animina/accounts/user_notifier.ex:153
 #, elixir-autogen, elixir-format
 msgid "Someone tried to create a new ANIMINA account with your email address (%{email})."
-msgstr ""
+msgstr "Кто-то попытался создать новый аккаунт ANIMINA с вашим адресом электронной почты (%{email})."
 
 #: lib/animina/accounts/user_notifier.ex:66
 #, elixir-autogen, elixir-format
 msgid "This link is valid for 1 hour."
-msgstr ""
+msgstr "Эта ссылка действительна в течение 1 часа."
 
 #: lib/animina/accounts/user_notifier.ex:34
 #, elixir-autogen, elixir-format
 msgid "Update email instructions – ANIMINA"
-msgstr ""
+msgstr "Инструкции по изменению электронной почты – ANIMINA"
 
 #: lib/animina/accounts/user_notifier.ex:40
 #, elixir-autogen, elixir-format
 msgid "You can change your email by visiting the URL below:"
-msgstr ""
+msgstr "Вы можете изменить свой адрес электронной почты, перейдя по ссылке ниже:"
 
 #: lib/animina/accounts/user_notifier.ex:62
 #, elixir-autogen, elixir-format
 msgid "You can reset your password by visiting the following link:"
-msgstr ""
+msgstr "Вы можете сбросить пароль, перейдя по следующей ссылке:"
 
 #: lib/animina/accounts/user_notifier.ex:92
 #, elixir-autogen, elixir-format
 msgid "You have a maximum of 3 attempts. After 3 wrong entries or after 30 minutes, your account will be deleted and you will need to register again."
-msgstr ""
+msgstr "У вас максимум 3 попытки. После 3 неправильных вводов или через 30 минут ваш аккаунт будет удалён, и вам нужно будет зарегистрироваться заново."
 
 #: lib/animina/accounts/user_notifier.ex:80
 #, elixir-autogen, elixir-format
 msgid "Your confirmation code for ANIMINA"
-msgstr ""
+msgstr "Ваш код подтверждения для ANIMINA"
 
 #: lib/animina/accounts/user_notifier.ex:86
 #, elixir-autogen, elixir-format
 msgid "Your confirmation code is:"
-msgstr ""
+msgstr "Ваш код подтверждения:"
