@@ -875,8 +875,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       fill_step_1(lv)
       fill_step_2(lv)
 
-      # Go back to step 2 to see the language field
-      html = lv |> element("button", "Back") |> render_click()
+      # Go back to step 2 to see the language field (button text is in French since locale is "fr")
+      html = lv |> element("button", "Retour") |> render_click()
 
       # The language select should have "fr" selected
       assert html =~ ~s(<option selected value="fr">Français</option>) or

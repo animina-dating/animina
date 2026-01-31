@@ -93,7 +93,9 @@ defmodule AniminaWeb.UserLive.Waitlist do
                   {ngettext(
                     "%{count}/%{threshold} referral",
                     "%{count}/%{threshold} referrals",
-                    @referral_count, threshold: @referral_threshold)}
+                    @referral_count,
+                    threshold: @referral_threshold
+                  )}
                 </span>
                 <span :if={@referral_count >= @referral_threshold} class="text-success font-medium">
                   {gettext("Activated!")}
