@@ -1,0 +1,10 @@
+<%= if @count == 1 do %>ANIMINA: <%= @count %> neuer Nutzer in den letzten 24 Stunden<% else %>ANIMINA: <%= @count %> neue Nutzer in den letzten 24 Stunden<% end %>
+---
+
+==============================
+
+Hallo,
+
+<%= if @count == 1 do %><%= @count %> neuer Nutzer hat sich in den letzten 24 Stunden bei ANIMINA registriert und per PIN bestätigt.<% else %><%= @count %> neue Nutzer haben sich in den letzten 24 Stunden bei ANIMINA registriert und per PIN bestätigt.<% end %>
+
+==============================

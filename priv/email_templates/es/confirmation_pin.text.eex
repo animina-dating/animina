@@ -1,0 +1,22 @@
+Tu código de confirmación para ANIMINA
+---
+
+==============================
+
+Hola <%= @email %>,
+
+Tu código de confirmación es:
+
+    <%= @pin %>
+
+Por favor introduce este código en un plazo de 30 minutos
+para confirmar tu dirección de correo electrónico.
+
+Tienes un máximo de 3 intentos. Después de 3 entradas
+incorrectas o después de 30 minutos, tu cuenta será
+eliminada y tendrás que registrarte de nuevo.
+
+Si no creaste una cuenta en ANIMINA, por favor ignora
+este correo electrónico.
+
+==============================

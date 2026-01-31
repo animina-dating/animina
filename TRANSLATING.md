@@ -1,6 +1,6 @@
 # Translating ANIMINA
 
-ANIMINA supports 8 languages using [Phoenix Gettext](https://hexdocs.pm/gettext/Gettext.html). Translations live in `.po` files under `priv/gettext/`.
+ANIMINA supports 9 languages. UI strings and validation errors use [Phoenix Gettext](https://hexdocs.pm/gettext/Gettext.html) (`.po` files). Email translations use per-language EEx template files.
 
 ## Supported Languages
 
@@ -8,49 +8,68 @@ ANIMINA supports 8 languages using [Phoenix Gettext](https://hexdocs.pm/gettext/
 |------|----------|--------|
 | de | Deutsch | Complete (default) |
 | en | English | Complete (msgid = English, empty msgstr falls through) |
-| tr | Türkçe | Needs translation |
-| ru | Русский | Needs translation |
-| ar | العربية | Needs translation |
-| pl | Polski | Needs translation |
-| fr | Français | Needs translation |
-| es | Español | Needs translation |
+| tr | Türkçe | Complete |
+| ru | Русский | Complete |
+| ar | العربية | Complete |
+| pl | Polski | Complete |
+| fr | Français | Complete |
+| es | Español | Complete |
+| uk | Українська | Complete |
 
 ## File Structure
+
+### Gettext (UI & Errors)
 
 ```
 priv/gettext/
 ├── default.pot          # Template: UI strings
-├── emails.pot           # Template: Email strings
 ├── errors.pot           # Template: Validation errors
 ├── de/LC_MESSAGES/
 │   ├── default.po       # German UI translations
-│   ├── emails.po        # German email translations
 │   └── errors.po        # German error translations
 ├── en/LC_MESSAGES/
 │   ├── default.po
-│   ├── emails.po
 │   └── errors.po
-├── tr/LC_MESSAGES/
-│   └── ...
-└── (ar, ru, pl, fr, es)/
+└── (tr, ru, ar, pl, fr, es, uk)/
     └── ...
 ```
 
-**Three domains:**
+**Two gettext domains:**
 - `default` — UI strings (buttons, labels, headings, page content)
-- `emails` — Email subject lines and body text
 - `errors` — Validation error messages
+
+### Email Templates
+
+Email translations use whole-file EEx templates (one file per language per email type):
+
+```
+priv/email_templates/
+├── de/
+│   ├── confirmation_pin.text.eex
+│   ├── password_reset.text.eex
+│   ├── update_email.text.eex
+│   ├── duplicate_registration.text.eex
+│   └── daily_report.text.eex
+├── en/
+│   └── ... (same 5 files)
+└── (tr, ru, ar, pl, fr, es, uk)/
+    └── ... (same 5 files each)
+```
+
+Each template has the subject on line 1, a `---` separator, then the body. Variables use EEx syntax (`<%= @var %>`).
 
 ## How to Translate
 
-### 1. Fork and clone the repository
+### Gettext (UI & Errors)
+
+#### 1. Fork and clone the repository
 
 ```bash
 git clone git@github.com:YOUR_USERNAME/animina.git
 cd animina
 ```
 
-### 2. Edit the `.po` files for your language
+#### 2. Edit the `.po` files for your language
 
 Open the file for your language and domain, e.g. `priv/gettext/fr/LC_MESSAGES/default.po`.
 
@@ -69,7 +88,7 @@ msgid "Log in"
 msgstr "Se connecter"
 ```
 
-### 3. Rules
+#### 3. Rules
 
 - **Never change `msgid`** — these are the English source strings
 - **Preserve `%{variable}` placeholders exactly** — e.g. `%{email}`, `%{count}`, `%{cities}`
@@ -77,11 +96,37 @@ msgstr "Se connecter"
 - **Keep the same line structure** — one `msgstr` per entry
 - You can use any text editor, [Poedit](https://poedit.net/), or edit directly on GitHub
 
+### Email Templates
+
+#### 1. Edit the template files for your language
+
+Open the template in `priv/email_templates/<your-locale>/`, e.g. `priv/email_templates/fr/confirmation_pin.text.eex`.
+
+#### 2. Template format
+
+```
+Subject line here
+---
+
+==============================
+
+Body text here with <%= @variable %> placeholders.
+
+==============================
+```
+
+#### 3. Rules
+
+- **Keep the subject on line 1** and the `---` separator on line 2
+- **Preserve `<%= @variable %>` placeholders** — e.g. `<%= @email %>`, `<%= @pin %>`, `<%= @url %>`, `<%= @count %>`
+- You have full creative freedom over the body text — no need to match the structure of other languages
+- For plural forms, use EEx conditionals: `<%= if @count == 1, do: "singular", else: "plural" %>`
+
 ### 4. Submit a Pull Request
 
 Push your branch and open a PR. The CI will verify compilation.
 
-## Plural Forms
+## Plural Forms (Gettext)
 
 Different languages have different plural rules. The `.po` file header declares the rule:
 
@@ -94,6 +139,7 @@ Different languages have different plural rules. The `.po` file header declares 
 | Spanish (es) | 2 | `n != 1` |
 | **Russian (ru)** | **3** | complex: 1 form, 2-4 form, 5+ form |
 | **Polish (pl)** | **3** | complex: 1 form, 2-4 form, 5+ form |
+| **Ukrainian (uk)** | **3** | complex: same as Russian |
 | **Arabic (ar)** | **6** | complex: 0, 1, 2, 3-10, 11-99, 100+ |
 
 ### Plural entry example (2 forms — German, English, etc.)
@@ -115,21 +161,7 @@ msgstr[1] "Неверный код. Осталось %{count} попытки."
 msgstr[2] "Неверный код. Осталось %{count} попыток."
 ```
 
-For Russian and Polish, you must provide 3 `msgstr` entries. For Arabic, you need 6.
-
-### Updating the Plural-Forms header
-
-If your language needs a different plural rule, update the header in each `.po` file. For example, for Russian:
-
-```po
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-```
-
-For Arabic:
-
-```po
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
-```
+For Russian, Polish, and Ukrainian, you must provide 3 `msgstr` entries. For Arabic, you need 6.
 
 ## Testing Locally
 

@@ -1,0 +1,139 @@
+defmodule Animina.Accounts.EmailTemplatesTest do
+  use ExUnit.Case, async: true
+
+  alias Animina.Accounts.EmailTemplates
+
+  @assigns_for_type %{
+    confirmation_pin: [email: "test@example.com", pin: "123456"],
+    password_reset: [email: "test@example.com", url: "https://example.com/reset/TOKEN"],
+    update_email: [email: "test@example.com", url: "https://example.com/update/TOKEN"],
+    duplicate_registration: [email: "test@example.com"],
+    daily_report: [count: 3]
+  }
+
+  describe "render/3" do
+    for locale <- ~w(de en tr ru ar pl fr es uk),
+        type <-
+          ~w(confirmation_pin password_reset update_email duplicate_registration daily_report)a do
+      test "renders #{locale}/#{type} without errors" do
+        locale = unquote(locale)
+        type = unquote(type)
+        assigns = @assigns_for_type[type]
+
+        {subject, body} = EmailTemplates.render(locale, type, assigns)
+
+        assert is_binary(subject)
+        assert is_binary(body)
+        assert String.length(subject) > 0
+        assert String.length(body) > 0
+      end
+    end
+
+    test "German confirmation_pin contains correct subject and variables" do
+      {subject, body} =
+        EmailTemplates.render("de", :confirmation_pin, email: "user@test.de", pin: "654321")
+
+      assert subject == "Ihr Bestätigungscode für ANIMINA"
+      assert body =~ "user@test.de"
+      assert body =~ "654321"
+    end
+
+    test "English confirmation_pin contains correct subject and variables" do
+      {subject, body} =
+        EmailTemplates.render("en", :confirmation_pin, email: "user@test.com", pin: "111222")
+
+      assert subject == "Your confirmation code for ANIMINA"
+      assert body =~ "user@test.com"
+      assert body =~ "111222"
+    end
+
+    test "German password_reset contains URL" do
+      {subject, body} =
+        EmailTemplates.render("de", :password_reset,
+          email: "u@t.de",
+          url: "https://animina.de/reset/abc"
+        )
+
+      assert subject == "Passwort zurücksetzen – ANIMINA"
+      assert body =~ "https://animina.de/reset/abc"
+      assert body =~ "u@t.de"
+    end
+
+    test "English update_email contains URL" do
+      {subject, body} =
+        EmailTemplates.render("en", :update_email,
+          email: "u@t.com",
+          url: "https://animina.de/update/xyz"
+        )
+
+      assert subject == "Update email instructions – ANIMINA"
+      assert body =~ "https://animina.de/update/xyz"
+    end
+
+    test "German duplicate_registration contains email" do
+      {subject, body} = EmailTemplates.render("de", :duplicate_registration, email: "dup@test.de")
+
+      assert subject == "Sicherheitshinweis – ANIMINA"
+      assert body =~ "dup@test.de"
+    end
+
+    test "German daily_report uses singular for count 1" do
+      {subject, body} = EmailTemplates.render("de", :daily_report, count: 1)
+
+      assert subject =~ "1"
+      assert subject =~ "neuer Nutzer"
+      assert body =~ "Nutzer hat"
+    end
+
+    test "German daily_report uses plural for count > 1" do
+      {subject, body} = EmailTemplates.render("de", :daily_report, count: 5)
+
+      assert subject =~ "5"
+      assert subject =~ "neue Nutzer"
+      assert body =~ "Nutzer haben"
+    end
+
+    test "falls back to German for unsupported locale" do
+      {subject, _body} =
+        EmailTemplates.render("xx", :confirmation_pin, email: "a@b.com", pin: "000000")
+
+      assert subject == "Ihr Bestätigungscode für ANIMINA"
+    end
+
+    test "falls back to German for nil locale" do
+      {subject, _body} =
+        EmailTemplates.render(nil, :confirmation_pin, email: "a@b.com", pin: "000000")
+
+      assert subject == "Ihr Bestätigungscode für ANIMINA"
+    end
+
+    test "Turkish confirmation_pin has correct subject" do
+      {subject, body} =
+        EmailTemplates.render("tr", :confirmation_pin, email: "u@t.tr", pin: "999888")
+
+      assert subject == "ANIMINA için onay kodunuz"
+      assert body =~ "u@t.tr"
+      assert body =~ "999888"
+    end
+
+    test "French password_reset has correct subject" do
+      {subject, _body} =
+        EmailTemplates.render("fr", :password_reset, email: "u@t.fr", url: "https://example.com")
+
+      assert subject == "Réinitialisation du mot de passe – ANIMINA"
+    end
+
+    test "Spanish duplicate_registration has correct subject" do
+      {subject, _body} = EmailTemplates.render("es", :duplicate_registration, email: "u@t.es")
+
+      assert subject == "Aviso de seguridad – ANIMINA"
+    end
+
+    test "body contains separator lines" do
+      {_subject, body} =
+        EmailTemplates.render("en", :confirmation_pin, email: "a@b.com", pin: "123456")
+
+      assert body =~ "=============================="
+    end
+  end
+end

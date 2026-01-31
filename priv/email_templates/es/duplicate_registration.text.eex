@@ -1,0 +1,18 @@
+Aviso de seguridad – ANIMINA
+---
+
+==============================
+
+Hola,
+
+Alguien intentó crear una nueva cuenta de ANIMINA con tu
+dirección de correo electrónico (<%= @email %>).
+
+Si no fuiste tú, te recomendamos cambiar tu contraseña
+para proteger tu cuenta.
+
+Si estabas intentando registrarte: ya tienes una cuenta.
+Por favor inicia sesión con tu contraseña existente o
+utiliza la función de contraseña olvidada.
+
+==============================

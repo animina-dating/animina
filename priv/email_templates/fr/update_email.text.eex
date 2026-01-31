@@ -1,0 +1,16 @@
+Instructions de modification d'e-mail – ANIMINA
+---
+
+==============================
+
+Bonjour <%= @email %>,
+
+Vous pouvez modifier votre e-mail en visitant le lien
+ci-dessous :
+
+<%= @url %>
+
+Si vous n'avez pas demandé ce changement, veuillez
+ignorer ce message.
+
+==============================

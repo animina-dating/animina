@@ -1,0 +1,18 @@
+Avis de sécurité – ANIMINA
+---
+
+==============================
+
+Bonjour,
+
+Quelqu'un a essayé de créer un nouveau compte ANIMINA
+avec votre adresse e-mail (<%= @email %>).
+
+Si ce n'était pas vous, nous vous recommandons de
+changer votre mot de passe pour protéger votre compte.
+
+Si vous essayiez de vous inscrire : vous avez déjà un
+compte. Veuillez vous connecter avec votre mot de passe
+existant ou utiliser la fonction mot de passe oublié.
+
+==============================

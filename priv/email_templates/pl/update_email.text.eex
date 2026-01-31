@@ -1,0 +1,16 @@
+Instrukcje zmiany adresu e-mail – ANIMINA
+---
+
+==============================
+
+Witaj <%= @email %>,
+
+Możesz zmienić swój adres e-mail, odwiedzając poniższy
+link:
+
+<%= @url %>
+
+Jeśli nie prosiłeś/aś o tę zmianę, prosimy o
+zignorowanie tej wiadomości.
+
+==============================

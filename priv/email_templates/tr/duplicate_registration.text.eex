@@ -1,0 +1,18 @@
+Güvenlik bildirimi – ANIMINA
+---
+
+==============================
+
+Merhaba,
+
+Birisi e-posta adresinizle (<%= @email %>) yeni bir
+ANIMINA hesabı oluşturmaya çalıştı.
+
+Bu siz değilseniz, hesabınızı korumak için şifrenizi
+değiştirmenizi öneririz.
+
+Kendinizi kayıt etmeye çalışıyorsanız: Zaten bir
+hesabınız var. Lütfen mevcut şifrenizle giriş yapın
+veya şifremi unuttum özelliğini kullanın.
+
+==============================

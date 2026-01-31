@@ -1,0 +1,22 @@
+ANIMINA için onay kodunuz
+---
+
+==============================
+
+Merhaba <%= @email %>,
+
+Onay kodunuz:
+
+    <%= @pin %>
+
+E-posta adresinizi onaylamak için lütfen bu kodu
+30 dakika içinde girin.
+
+En fazla 3 deneme hakkınız var. 3 yanlış giriş veya
+30 dakika sonra hesabınız silinecek ve tekrar kayıt
+olmanız gerekecektir.
+
+ANIMINA'da bir hesap oluşturmadıysanız, lütfen bu
+e-postayı dikkate almayın.
+
+==============================

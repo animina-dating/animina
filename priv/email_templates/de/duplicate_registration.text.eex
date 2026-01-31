@@ -1,0 +1,19 @@
+Sicherheitshinweis – ANIMINA
+---
+
+==============================
+
+Hallo,
+
+Jemand hat versucht, ein neues ANIMINA-Konto mit Ihrer
+E-Mail-Adresse (<%= @email %>) zu erstellen.
+
+Falls Sie das nicht waren, empfehlen wir Ihnen, Ihr
+Passwort zu ändern, um Ihr Konto zu schützen.
+
+Falls Sie versucht haben, sich selbst zu registrieren:
+Sie haben bereits ein Konto. Bitte melden Sie sich mit
+Ihrem bestehenden Passwort an oder nutzen Sie die
+Passwort-vergessen-Funktion.
+
+==============================
