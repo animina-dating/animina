@@ -22,6 +22,12 @@ Every LiveView **must** wrap its content in `<Layouts.app flash={@flash} current
 
 LiveViews that need `@current_scope` must be inside a `live_session` with `on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}]` in the router.
 
+### Deploy Conventions
+
+- **Cold deploy**: Add `[cold-deploy]` to the commit message (e.g. `git commit -m "Add new worker [cold-deploy]"`). Also recognized: `[restart]`, `[supervision]`.
+- **Hot deploy** (default): Any commit without these tags triggers a hot code upgrade (zero downtime).
+- The deploy script (`scripts/deploy.sh`) detects these tags automatically.
+
 ### Database Conventions
 
 - All resources use UUIDs for primary keys, not auto-incrementing integers
