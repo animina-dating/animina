@@ -101,7 +101,7 @@ msgstr "%{number} değerinden büyük veya eşit olmalı"
 msgid "must be equal to %{number}"
 msgstr "%{number} değerine eşit olmalı"
 
-#: lib/animina/accounts.ex:230
+#: lib/animina/accounts.ex:218
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Davet kodu bulunamadı"

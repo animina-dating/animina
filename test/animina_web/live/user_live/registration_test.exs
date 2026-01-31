@@ -84,6 +84,12 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
   end
 
   describe "Registration page" do
+    test "has the correct HTML page title", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      assert page_title(lv) == "ANIMINA – Create Account"
+    end
+
     test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 

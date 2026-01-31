@@ -3,8 +3,9 @@ Sicherheitshinweis – ANIMINA
 
 Hallo<%= if @display_name do %> <%= @display_name %><% end %>,
 
-Jemand hat versucht, ein neues ANIMINA-Konto mit Ihrer
-E-Mail-Adresse (<%= @email %>) zu erstellen.
+Jemand hat am <%= @attempted_at %> versucht, ein neues
+ANIMINA-Konto mit Ihrer E-Mail-Adresse (<%= @email %>)
+zu erstellen.
 
 Falls Sie das nicht waren, empfehlen wir Ihnen, Ihr
 Passwort zu ändern, um Ihr Konto zu schützen.

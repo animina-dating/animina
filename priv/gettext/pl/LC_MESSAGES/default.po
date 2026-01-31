@@ -30,13 +30,13 @@ msgstr[2] "%{count}/%{threshold} poleceń"
 msgid "100% Free"
 msgstr "100% za darmo"
 
-#: lib/animina_web/live/user_live/registration.ex:583
-#: lib/animina_web/live/user_live/registration.ex:604
+#: lib/animina_web/live/user_live/registration.ex:584
+#: lib/animina_web/live/user_live/registration.ex:605
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Kod potwierdzenia został wysłany na %{email}."
 
-#: lib/animina_web/live/user_live/settings.ex:126
+#: lib/animina_web/live/user_live/settings.ex:123
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Link do potwierdzenia zmiany e-maila został wysłany na nowy adres."
@@ -86,12 +86,12 @@ msgstr "Wszystkie funkcje są bezpłatne dla każdego. Bez subskrypcji premium, 
 msgid "Already registered?"
 msgstr "Już zarejestrowany/a?"
 
-#: lib/animina_web/live/demo_live.ex:53
+#: lib/animina_web/live/demo_live.ex:33
 #, elixir-autogen, elixir-format
 msgid "Animina brings together people who value authenticity. No games, no pretense—just genuine conversations and real connections."
 msgstr "Animina łączy ludzi, którzy cenią autentyczność. Bez gier, bez udawania — tylko szczere rozmowy i prawdziwe więzi."
 
-#: lib/animina_web/live/demo_live.ex:155
+#: lib/animina_web/live/demo_live.ex:135
 #, elixir-autogen, elixir-format
 msgid "Animina is designed for those seeking genuine relationships, not endless swiping."
 msgstr "Animina jest zaprojektowana dla tych, którzy szukają prawdziwych relacji, a nie niekończącego się przesuwania."
@@ -107,7 +107,7 @@ msgstr "W ANIMINA wszystko jest inne."
 msgid "Attempting to reconnect"
 msgstr "Próba ponownego połączenia"
 
-#: lib/animina_web/live/demo_live.ex:83
+#: lib/animina_web/live/demo_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Authentic profiles from your area"
 msgstr "Autentyczne profile z Twojej okolicy"
@@ -179,7 +179,7 @@ msgstr "Kod potwierdzenia"
 msgid "Confirmation failed. Please register again."
 msgstr "Potwierdzenie nie powiodło się. Proszę zarejestruj się ponownie."
 
-#: lib/animina_web/live/demo_live.ex:252
+#: lib/animina_web/live/demo_live.ex:232
 #, elixir-autogen, elixir-format
 msgid "Connect"
 msgstr "Połącz się"
@@ -200,7 +200,7 @@ msgstr "Kraj"
 msgid "Create account"
 msgstr "Utwórz konto"
 
-#: lib/animina_web/live/demo_live.ex:204
+#: lib/animina_web/live/demo_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Create your profile"
 msgstr "Utwórz swój profil"
@@ -283,7 +283,7 @@ msgstr "E-mail został zmieniony pomyślnie."
 msgid "Enter your email address and we will send you a password reset link."
 msgstr "Wpisz swój adres e-mail, a wyślemy Ci link do resetowania hasła."
 
-#: lib/animina_web/live/demo_live.ex:135
+#: lib/animina_web/live/demo_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Every profile is verified to ensure you're connecting with real people who share your values."
 msgstr "Każdy profil jest weryfikowany, aby upewnić się, że łączysz się z prawdziwymi ludźmi, którzy podzielają Twoje wartości."
@@ -314,7 +314,7 @@ msgstr "Sprawiedliwość przez ograniczenie"
 msgid "Female"
 msgstr "Kobieta"
 
-#: lib/animina_web/live/demo_live.ex:49
+#: lib/animina_web/live/demo_live.ex:29
 #, elixir-autogen, elixir-format
 msgid "Find meaningful"
 msgstr "Znajdź wartościowe"
@@ -371,7 +371,7 @@ msgstr "Płeć/Płci"
 msgid "Get activated faster"
 msgstr "Aktywuj się szybciej"
 
-#: lib/animina_web/live/demo_live.ex:62
+#: lib/animina_web/live/demo_live.ex:42
 #, elixir-autogen, elixir-format
 msgid "Get started"
 msgstr "Rozpocznij"
@@ -396,7 +396,7 @@ msgstr "Witaj"
 msgid "I accept the Terms of Service and Privacy Policy."
 msgstr "Akceptuję Regulamin i Politykę Prywatności."
 
-#: lib/animina_web/live/demo_live.ex:169
+#: lib/animina_web/live/demo_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
 msgstr "Byłem/am zmęczony/a aplikacjami randkowymi, które wyglądały jak gra. Animina od początku wydawała się inna — bardziej przemyślana, bardziej autentyczna. Poznałem/am tu swojego partnera i teraz planujemy wspólną przyszłość."
@@ -416,7 +416,7 @@ msgstr "Impressum"
 msgid "Invalid email or password"
 msgstr "Nieprawidłowy e-mail lub hasło"
 
-#: lib/animina_web/live/demo_live.ex:197
+#: lib/animina_web/live/demo_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "Join thousands of people who chose authenticity over algorithms."
 msgstr "Dołącz do tysięcy osób, które wybrały autentyczność zamiast algorytmów."
@@ -432,7 +432,7 @@ msgstr "Radość zamiast uzależnienia"
 msgid "Language"
 msgstr "Język"
 
-#: lib/animina_web/live/demo_live.ex:68
+#: lib/animina_web/live/demo_live.ex:48
 #, elixir-autogen, elixir-format
 msgid "Learn more"
 msgstr "Dowiedz się więcej"
@@ -501,7 +501,7 @@ msgstr "Maksymalny wzrost (cm)"
 msgid "Maximum of 4 locations reached."
 msgstr "Osiągnięto maksymalnie 4 lokalizacje."
 
-#: lib/animina_web/live/demo_live.ex:143
+#: lib/animina_web/live/demo_live.ex:123
 #, elixir-autogen, elixir-format
 msgid "Meaningful conversations"
 msgstr "Wartościowe rozmowy"
@@ -583,7 +583,7 @@ msgstr "Nasza misja"
 msgid "Our code is fully available on GitHub. Anyone can verify how our matching works. The algorithm treats everyone equally – no exceptions."
 msgstr "Nasz kod jest w pełni dostępny na GitHub. Każdy może sprawdzić, jak działa nasze dopasowywanie. Algorytm traktuje wszystkich równo – bez wyjątków."
 
-#: lib/animina_web/live/demo_live.ex:145
+#: lib/animina_web/live/demo_live.ex:125
 #, elixir-autogen, elixir-format
 msgid "Our matching focuses on compatibility and shared interests, not just appearances."
 msgstr "Nasze dopasowywanie koncentruje się na kompatybilności i wspólnych zainteresowaniach, nie tylko na wyglądzie."
@@ -623,7 +623,7 @@ msgstr "Hasło"
 msgid "Password (min. 12 characters)"
 msgstr "Hasło (min. 12 znaków)"
 
-#: lib/animina_web/live/user_live/reset_password.ex:91
+#: lib/animina_web/live/user_live/reset_password.ex:92
 #, elixir-autogen, elixir-format
 msgid "Password has been reset successfully."
 msgstr "Hasło zostało zresetowane pomyślnie."
@@ -643,7 +643,7 @@ msgstr "Hasło zaktualizowane pomyślnie!"
 msgid "People looking for real connections"
 msgstr "Ludzie szukający prawdziwych więzi"
 
-#: lib/animina_web/live/demo_live.ex:80
+#: lib/animina_web/live/demo_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "People you might like"
 msgstr "Osoby, które mogą Ci się spodobać"
@@ -658,7 +658,7 @@ msgstr "Osobowość się liczy"
 msgid "Personality over superficiality"
 msgstr "Osobowość zamiast powierzchowności"
 
-#: lib/animina_web/live/user_live/registration.ex:667
+#: lib/animina_web/live/user_live/registration.ex:668
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Proszę wpisać prawidłowy 5-cyfrowy kod pocztowy"
@@ -689,12 +689,12 @@ msgstr "Profile z głębią: przedstaw się jak chcesz – tylko ze zdjęciami, 
 msgid "Ready for real dating?"
 msgstr "Gotowy/a na prawdziwe randki?"
 
-#: lib/animina_web/live/demo_live.ex:194
+#: lib/animina_web/live/demo_live.ex:174
 #, elixir-autogen, elixir-format
 msgid "Ready to find your person?"
 msgstr "Gotowy/a znaleźć swoją osobę?"
 
-#: lib/animina_web/live/demo_live.ex:153
+#: lib/animina_web/live/demo_live.ex:133
 #, elixir-autogen, elixir-format
 msgid "Real connections"
 msgstr "Prawdziwe więzi"
@@ -774,7 +774,7 @@ msgstr "Szacunek na pierwszym miejscu"
 msgid "Save Password"
 msgstr "Zapisz hasło"
 
-#: lib/animina_web/live/demo_live.ex:257
+#: lib/animina_web/live/demo_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Save profile"
 msgstr "Zapisz profil"
@@ -865,12 +865,12 @@ msgstr "To ja"
 msgid "This is what I'm looking for"
 msgstr "Tego szukam"
 
-#: lib/animina_web/live/user_live/registration.ex:676
+#: lib/animina_web/live/user_live/registration.ex:677
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Ta lokalizacja została już dodana"
 
-#: lib/animina_web/live/demo_live.ex:182
+#: lib/animina_web/live/demo_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "Together since 2023"
 msgstr "Razem od 2023"
@@ -880,7 +880,7 @@ msgstr "Razem od 2023"
 msgid "Transparency through Open Source"
 msgstr "Przejrzystość dzięki otwartemu źródłu"
 
-#: lib/animina_web/live/demo_live.ex:133
+#: lib/animina_web/live/demo_live.ex:113
 #, elixir-autogen, elixir-format
 msgid "Verified profiles"
 msgstr "Zweryfikowane profile"
@@ -930,7 +930,7 @@ msgstr "Wysłaliśmy 6-cyfrowy kod do"
 msgid "We will send you an email once your account has been activated. You can also log in to animina.de from time to time to check."
 msgstr "Wyślemy Ci e-mail, gdy Twoje konto zostanie aktywowane. Możesz też od czasu do czasu zalogować się na animina.de, aby sprawdzić."
 
-#: lib/animina_web/live/demo_live.ex:16
+#: lib/animina_web/live/demo_live.ex:14
 #, elixir-autogen, elixir-format
 msgid "Welcome"
 msgstr "Witamy"
@@ -960,7 +960,7 @@ msgstr "Co wyróżnia ANIMINA"
 msgid "White Flags"
 msgstr "Białe flagi"
 
-#: lib/animina_web/live/demo_live.ex:126
+#: lib/animina_web/live/demo_live.ex:106
 #, elixir-autogen, elixir-format
 msgid "Why Animina?"
 msgstr "Dlaczego Animina?"
@@ -990,7 +990,7 @@ msgid "You are on our waitlist. Possible reasons:"
 msgstr "Jesteś na naszej liście oczekujących. Możliwe przyczyny:"
 
 #: lib/animina_web/user_auth.ex:226
-#: lib/animina_web/user_auth.ex:296
+#: lib/animina_web/user_auth.ex:299
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Musisz się zalogować, aby uzyskać dostęp do tej strony."
@@ -1036,7 +1036,7 @@ msgstr "około 4 tygodnie"
 msgid "close"
 msgstr "zamknij"
 
-#: lib/animina_web/live/demo_live.ex:50
+#: lib/animina_web/live/demo_live.ex:30
 #, elixir-autogen, elixir-format
 msgid "connections"
 msgstr "więzi"
@@ -1065,3 +1065,8 @@ msgstr "z"
 #, elixir-autogen, elixir-format
 msgid "transparent"
 msgstr "przejrzyste"
+
+#: lib/animina_web/live/user_live/registration.ex:496
+#, elixir-autogen, elixir-format
+msgid "ANIMINA – Create Account"
+msgstr "ANIMINA – Utwórz konto"

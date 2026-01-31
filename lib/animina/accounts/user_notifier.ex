@@ -87,7 +87,8 @@ defmodule Animina.Accounts.UserNotifier do
     {subject, body} =
       EmailTemplates.render(user_locale(user), :duplicate_registration,
         email: email,
-        display_name: user_display_name(user)
+        display_name: user_display_name(user),
+        attempted_at: format_german_time()
       )
 
     deliver(email, subject, body)
@@ -95,4 +96,29 @@ defmodule Animina.Accounts.UserNotifier do
 
   defp user_display_name(%{display_name: name}) when is_binary(name), do: name
   defp user_display_name(_), do: nil
+
+  @german_months %{
+    1 => "Januar",
+    2 => "Februar",
+    3 => "März",
+    4 => "April",
+    5 => "Mai",
+    6 => "Juni",
+    7 => "Juli",
+    8 => "August",
+    9 => "September",
+    10 => "Oktober",
+    11 => "November",
+    12 => "Dezember"
+  }
+
+  defp format_german_time do
+    now =
+      DateTime.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    Calendar.strftime(now, "%d. %B %Y um %H:%M Uhr",
+      month_names: fn month -> @german_months[month] end
+    )
+  end
 end

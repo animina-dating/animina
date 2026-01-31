@@ -247,6 +247,14 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ "Hallo #{user.display_name},"
     end
 
+    test "includes German-formatted timestamp in body" do
+      user = user_fixture(%{language: "de"})
+      {:ok, email} = UserNotifier.deliver_duplicate_registration_warning(user.email)
+
+      assert email.text_body =~ "Uhr"
+      assert email.text_body =~ ~r/\d{1,2}\. \w+ \d{4} um \d{2}:\d{2} Uhr/
+    end
+
     test "includes footer in body" do
       {:ok, email} = UserNotifier.deliver_duplicate_registration_warning("test@example.com")
 

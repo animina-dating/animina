@@ -42,6 +42,6 @@ defmodule Animina.Accounts.EmailTemplates do
     dir = templates_dir()
     closing = EEx.eval_file(Path.join([dir, locale, "_closing.text.eex"]))
     intro = EEx.eval_file(Path.join([dir, locale, "_footer.text.eex"]))
-    "\n#{closing}\n-- \n#{intro}\n#{@company_signature}"
+    "\n#{closing}\n-- \n#{@company_signature}\n#{intro}"
   end
 end

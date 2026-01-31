@@ -493,6 +493,7 @@ defmodule AniminaWeb.UserLive.Registration do
 
     socket =
       socket
+      |> assign(page_title: gettext("ANIMINA – Create Account"))
       |> assign(country_options: country_options)
       |> assign(preferences_auto_filled: false)
       |> assign(current_step: 1)
