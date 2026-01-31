@@ -82,11 +82,17 @@ defmodule Animina.Accounts.UserNotifier do
   that already belongs to an existing account.
   """
   def deliver_duplicate_registration_warning(email) when is_binary(email) do
-    locale = email |> Animina.Accounts.get_user_by_email() |> user_locale()
+    user = Animina.Accounts.get_user_by_email(email)
 
     {subject, body} =
-      EmailTemplates.render(locale, :duplicate_registration, email: email)
+      EmailTemplates.render(user_locale(user), :duplicate_registration,
+        email: email,
+        display_name: user_display_name(user)
+      )
 
     deliver(email, subject, body)
   end
+
+  defp user_display_name(%{display_name: name}) when is_binary(name), do: name
+  defp user_display_name(_), do: nil
 end

@@ -1,10 +1,6 @@
 ANIMINA : <%= @count %> <%= if @count == 1, do: "nouvel utilisateur", else: "nouveaux utilisateurs" %> au cours des dernières 24 heures
 ---
 
-==============================
-
 Bonjour,
 
 <%= @count %> <%= if @count == 1, do: "nouvel utilisateur inscrit et confirmé par PIN sur ANIMINA au cours des dernières 24 heures.", else: "nouveaux utilisateurs inscrits et confirmés par PIN sur ANIMINA au cours des dernières 24 heures." %>
-
-==============================

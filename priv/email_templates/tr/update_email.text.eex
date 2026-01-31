@@ -1,8 +1,6 @@
 E-posta değiştirme talimatları – ANIMINA
 ---
 
-==============================
-
 Merhaba <%= @display_name %>,
 
 Aşağıdaki bağlantıyı ziyaret ederek e-postanızı
@@ -12,5 +10,3 @@ değiştirebilirsiniz:
 
 Bu değişikliği siz talep etmediyseniz, lütfen bunu
 dikkate almayın.
-
-==============================

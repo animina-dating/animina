@@ -1,8 +1,6 @@
 Votre code de confirmation pour ANIMINA
 ---
 
-==============================
-
 Bonjour <%= @display_name %>,
 
 Votre code de confirmation est :
@@ -18,5 +16,3 @@ sera supprimé et vous devrez vous réinscrire.
 
 Si vous n'avez pas créé de compte sur ANIMINA, veuillez
 ignorer cet e-mail.
-
-==============================

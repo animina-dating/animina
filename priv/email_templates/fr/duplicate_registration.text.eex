@@ -1,9 +1,7 @@
 Avis de sécurité – ANIMINA
 ---
 
-==============================
-
-Bonjour,
+Bonjour<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Quelqu'un a essayé de créer un nouveau compte ANIMINA
 avec votre adresse e-mail (<%= @email %>).
@@ -14,5 +12,3 @@ changer votre mot de passe pour protéger votre compte.
 Si vous essayiez de vous inscrire : vous avez déjà un
 compte. Veuillez vous connecter avec votre mot de passe
 existant ou utiliser la fonction mot de passe oublié.
-
-==============================

@@ -57,6 +57,14 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.subject =~ "ANIMINA:"
       assert email.subject =~ "Nutzer"
     end
+
+    test "includes footer in body" do
+      {:ok, email} =
+        UserNotifier.deliver_daily_new_users_report(3, {"Stefan", "stefan@example.com"})
+
+      assert email.text_body =~ "Wintermeyer Consulting"
+      assert email.text_body =~ "sw@wintermeyer-consulting.de"
+    end
   end
 
   describe "deliver_confirmation_pin/2" do
@@ -103,6 +111,14 @@ defmodule Animina.Accounts.UserNotifierTest do
 
       assert email.subject == "ANIMINA için onay kodunuz"
     end
+
+    test "includes footer in body" do
+      user = user_fixture()
+      {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
+
+      assert email.text_body =~ "Wintermeyer Consulting"
+      assert email.text_body =~ "sw@wintermeyer-consulting.de"
+    end
   end
 
   describe "deliver_password_reset_instructions/2" do
@@ -143,6 +159,16 @@ defmodule Animina.Accounts.UserNotifierTest do
 
       assert email.subject == "Réinitialisation du mot de passe – ANIMINA"
     end
+
+    test "includes footer in body" do
+      user = user_fixture()
+
+      {:ok, email} =
+        UserNotifier.deliver_password_reset_instructions(user, "https://example.com/reset")
+
+      assert email.text_body =~ "Wintermeyer Consulting"
+      assert email.text_body =~ "sw@wintermeyer-consulting.de"
+    end
   end
 
   describe "deliver_update_email_instructions/2" do
@@ -174,6 +200,16 @@ defmodule Animina.Accounts.UserNotifierTest do
 
       assert email.subject == "Instrucciones para cambiar el correo electrónico – ANIMINA"
     end
+
+    test "includes footer in body" do
+      user = user_fixture()
+
+      {:ok, email} =
+        UserNotifier.deliver_update_email_instructions(user, "https://example.com/update")
+
+      assert email.text_body =~ "Wintermeyer Consulting"
+      assert email.text_body =~ "sw@wintermeyer-consulting.de"
+    end
   end
 
   describe "deliver_duplicate_registration_warning/1" do
@@ -202,6 +238,20 @@ defmodule Animina.Accounts.UserNotifierTest do
       {:ok, email} = UserNotifier.deliver_duplicate_registration_warning(user.email)
 
       assert email.subject == "Security notice – ANIMINA"
+    end
+
+    test "includes user's display_name in greeting when user exists" do
+      user = user_fixture(%{language: "de"})
+      {:ok, email} = UserNotifier.deliver_duplicate_registration_warning(user.email)
+
+      assert email.text_body =~ "Hallo #{user.display_name},"
+    end
+
+    test "includes footer in body" do
+      {:ok, email} = UserNotifier.deliver_duplicate_registration_warning("test@example.com")
+
+      assert email.text_body =~ "Wintermeyer Consulting"
+      assert email.text_body =~ "sw@wintermeyer-consulting.de"
     end
   end
 end

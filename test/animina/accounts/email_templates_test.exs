@@ -15,7 +15,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       display_name: "Test User",
       url: "https://example.com/update/TOKEN"
     ],
-    duplicate_registration: [email: "test@example.com"],
+    duplicate_registration: [email: "test@example.com", display_name: "Test User"],
     daily_report: [count: 3]
   }
 
@@ -23,7 +23,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
     for locale <- ~w(de en tr ru ar pl fr es uk),
         type <-
           ~w(confirmation_pin password_reset update_email duplicate_registration daily_report)a do
-      test "renders #{locale}/#{type} without errors" do
+      test "renders #{locale}/#{type} without errors and includes footer" do
         locale = unquote(locale)
         type = unquote(type)
         assigns = @assigns_for_type[type]
@@ -34,6 +34,11 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         assert is_binary(body)
         assert String.length(subject) > 0
         assert String.length(body) > 0
+
+        # Every email must include the footer
+        assert body =~ "Wintermeyer Consulting"
+        assert body =~ "sw@wintermeyer-consulting.de"
+        assert body =~ "https://wintermeyer-consulting.de"
       end
     end
 
@@ -88,11 +93,16 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       assert body =~ "https://animina.de/update/xyz"
     end
 
-    test "German duplicate_registration contains email" do
-      {subject, body} = EmailTemplates.render("de", :duplicate_registration, email: "dup@test.de")
+    test "German duplicate_registration contains email and display_name" do
+      {subject, body} =
+        EmailTemplates.render("de", :duplicate_registration,
+          email: "dup@test.de",
+          display_name: "Stefan"
+        )
 
       assert subject == "Sicherheitshinweis – ANIMINA"
       assert body =~ "dup@test.de"
+      assert body =~ "Hallo Stefan,"
     end
 
     test "German daily_report uses singular for count 1" do
@@ -158,12 +168,16 @@ defmodule Animina.Accounts.EmailTemplatesTest do
     end
 
     test "Spanish duplicate_registration has correct subject" do
-      {subject, _body} = EmailTemplates.render("es", :duplicate_registration, email: "u@t.es")
+      {subject, _body} =
+        EmailTemplates.render("es", :duplicate_registration,
+          email: "u@t.es",
+          display_name: "María"
+        )
 
       assert subject == "Aviso de seguridad – ANIMINA"
     end
 
-    test "body contains separator lines" do
+    test "body does not contain separator lines" do
       {_subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
@@ -171,7 +185,76 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           pin: "123456"
         )
 
-      assert body =~ "=============================="
+      refute body =~ "=============================="
+    end
+
+    test "German email ends with closing greeting before footer" do
+      {_subject, body} =
+        EmailTemplates.render("de", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      assert body =~ "Viele Grüße\n  Ihr ANIMINA Team"
+    end
+
+    test "English email ends with closing greeting before footer" do
+      {_subject, body} =
+        EmailTemplates.render("en", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      assert body =~ "Best regards,\n  Your ANIMINA Team"
+    end
+
+    test "closing greeting appears before signature delimiter" do
+      {_subject, body} =
+        EmailTemplates.render("de", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      [before_sig, _after_sig] = String.split(body, "\n-- \n", parts: 2)
+      assert before_sig =~ "Viele Grüße"
+    end
+
+    test "German footer contains German text" do
+      {_subject, body} =
+        EmailTemplates.render("de", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      assert body =~ "ANIMINA ist ein kostenloser Dating-Service"
+      assert body =~ "Wintermeyer Consulting"
+    end
+
+    test "English footer contains English text" do
+      {_subject, body} =
+        EmailTemplates.render("en", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      assert body =~ "ANIMINA is a free dating service"
+      assert body =~ "Wintermeyer Consulting"
+    end
+
+    test "footer separator (-- ) appears in body" do
+      {_subject, body} =
+        EmailTemplates.render("en", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
+
+      assert body =~ "\n-- \n"
     end
   end
 end

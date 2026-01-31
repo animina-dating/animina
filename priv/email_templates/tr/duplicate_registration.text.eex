@@ -1,9 +1,7 @@
 Güvenlik bildirimi – ANIMINA
 ---
 
-==============================
-
-Merhaba,
+Merhaba<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Birisi e-posta adresinizle (<%= @email %>) yeni bir
 ANIMINA hesabı oluşturmaya çalıştı.
@@ -14,5 +12,3 @@ değiştirmenizi öneririz.
 Kendinizi kayıt etmeye çalışıyorsanız: Zaten bir
 hesabınız var. Lütfen mevcut şifrenizle giriş yapın
 veya şifremi unuttum özelliğini kullanın.
-
-==============================

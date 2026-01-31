@@ -1,8 +1,6 @@
 Instructions de modification d'e-mail – ANIMINA
 ---
 
-==============================
-
 Bonjour <%= @display_name %>,
 
 Vous pouvez modifier votre e-mail en visitant le lien
@@ -12,5 +10,3 @@ ci-dessous :
 
 Si vous n'avez pas demandé ce changement, veuillez
 ignorer ce message.
-
-==============================

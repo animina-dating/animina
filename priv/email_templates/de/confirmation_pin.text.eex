@@ -1,8 +1,6 @@
 Ihr Bestätigungscode für ANIMINA
 ---
 
-==============================
-
 Hallo <%= @display_name %>,
 
 Ihr Bestätigungscode lautet:
@@ -18,5 +16,3 @@ sich erneut registrieren.
 
 Falls Sie kein Konto bei ANIMINA erstellt haben,
 ignorieren Sie bitte diese E-Mail.
-
-==============================

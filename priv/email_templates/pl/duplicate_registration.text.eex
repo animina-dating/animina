@@ -1,9 +1,7 @@
 Powiadomienie o bezpieczeństwie – ANIMINA
 ---
 
-==============================
-
-Witaj,
+Witaj<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Ktoś próbował utworzyć nowe konto ANIMINA z Twoim
 adresem e-mail (<%= @email %>).
@@ -14,5 +12,3 @@ ochrony konta.
 Jeśli próbowałeś/aś się zarejestrować: masz już konto.
 Zaloguj się istniejącym hasłem lub skorzystaj z funkcji
 odzyskiwania hasła.
-
-==============================

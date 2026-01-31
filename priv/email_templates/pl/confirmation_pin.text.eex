@@ -1,8 +1,6 @@
 Twój kod potwierdzenia dla ANIMINA
 ---
 
-==============================
-
 Witaj <%= @display_name %>,
 
 Twój kod potwierdzenia to:
@@ -18,5 +16,3 @@ musiał/a zarejestrować się ponownie.
 
 Jeśli nie zakładałeś/aś konta na ANIMINA, prosimy o
 zignorowanie tego e-maila.
-
-==============================

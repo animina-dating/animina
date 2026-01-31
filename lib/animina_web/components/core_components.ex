@@ -62,7 +62,7 @@ defmodule AniminaWeb.CoreComponents do
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap pointer-events-auto shadow-lg cursor-pointer",
+        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap hyphens-none pointer-events-auto shadow-lg cursor-pointer",
         @kind == :info && "alert-info",
         @kind == :error && "alert-error"
       ]}>

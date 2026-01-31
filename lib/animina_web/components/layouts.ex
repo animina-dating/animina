@@ -72,7 +72,7 @@ defmodule AniminaWeb.Layouts do
                 </select>
               </form>
               <%= if @current_scope && !@display_name do %>
-                <span class="text-base text-base-content/70">
+                <span class="text-base text-base-content/70 hyphens-none truncate max-w-48">
                   {@current_scope.user.email}
                 </span>
                 <a

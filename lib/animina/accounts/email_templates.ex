@@ -7,6 +7,11 @@ defmodule Animina.Accounts.EmailTemplates do
 
   @supported_locales ~w(de en tr ru ar pl fr es uk)
 
+  @company_signature """
+  Wintermeyer Consulting - Johannes-Müller-Str. 10 - 56068 Koblenz - Germany
+  https://wintermeyer-consulting.de
+  """
+
   defp templates_dir do
     Application.app_dir(:animina, "priv/email_templates")
   end
@@ -30,6 +35,13 @@ defmodule Animina.Accounts.EmailTemplates do
     path = Path.join([templates_dir(), locale, "#{type}.text.eex"])
     rendered = EEx.eval_file(path, assigns: Map.new(assigns))
     [subject, body] = String.split(rendered, "\n---\n", parts: 2)
-    {String.trim(subject), body}
+    {String.trim(subject), body <> footer(locale)}
+  end
+
+  defp footer(locale) do
+    dir = templates_dir()
+    closing = EEx.eval_file(Path.join([dir, locale, "_closing.text.eex"]))
+    intro = EEx.eval_file(Path.join([dir, locale, "_footer.text.eex"]))
+    "\n#{closing}\n-- \n#{intro}\n#{@company_signature}"
   end
 end

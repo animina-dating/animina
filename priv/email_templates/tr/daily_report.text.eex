@@ -1,10 +1,6 @@
 ANIMINA: Son 24 saatte <%= @count %> yeni kullanıcı
 ---
 
-==============================
-
 Merhaba,
 
 Son 24 saatte ANIMINA'da PIN ile kayıt olup onaylanan <%= @count %> yeni kullanıcı.
-
-==============================

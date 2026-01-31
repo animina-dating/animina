@@ -16,7 +16,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
               {gettext("Confirm your email")}
             </h1>
-            <p class="mt-2 text-base text-base-content/70" style="hyphens: none;">
+            <p class="mt-2 text-base text-base-content/70 hyphens-none">
               {gettext("We sent a 6-digit code to")} <strong>{@email}</strong>.
             </p>
           </div>

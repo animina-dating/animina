@@ -1,9 +1,7 @@
 Aviso de seguridad – ANIMINA
 ---
 
-==============================
-
-Hola,
+Hola<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Alguien intentó crear una nueva cuenta de ANIMINA con tu
 dirección de correo electrónico (<%= @email %>).
@@ -14,5 +12,3 @@ para proteger tu cuenta.
 Si estabas intentando registrarte: ya tienes una cuenta.
 Por favor inicia sesión con tu contraseña existente o
 utiliza la función de contraseña olvidada.
-
-==============================

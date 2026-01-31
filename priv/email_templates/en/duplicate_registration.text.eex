@@ -1,9 +1,7 @@
 Security notice – ANIMINA
 ---
 
-==============================
-
-Hello,
+Hello<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Someone tried to create a new ANIMINA account with your
 email address (<%= @email %>).
@@ -14,5 +12,3 @@ to protect your account.
 If you were trying to register yourself: You already
 have an account. Please log in with your existing
 password or use the forgot password feature.
-
-==============================

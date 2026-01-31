@@ -1,8 +1,6 @@
 E-Mail-Änderungsanleitung – ANIMINA
 ---
 
-==============================
-
 Hallo <%= @display_name %>,
 
 Sie können Ihre E-Mail ändern, indem Sie die folgende
@@ -12,5 +10,3 @@ URL besuchen:
 
 Falls Sie diese Änderung nicht angefordert haben,
 ignorieren Sie bitte diese Nachricht.
-
-==============================

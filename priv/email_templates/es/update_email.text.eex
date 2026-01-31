@@ -1,8 +1,6 @@
 Instrucciones para cambiar el correo electrónico – ANIMINA
 ---
 
-==============================
-
 Hola <%= @display_name %>,
 
 Puedes cambiar tu correo electrónico visitando el
@@ -12,5 +10,3 @@ siguiente enlace:
 
 Si no solicitaste este cambio, por favor ignora este
 mensaje.
-
-==============================

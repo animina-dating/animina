@@ -1,8 +1,6 @@
 ANIMINA için onay kodunuz
 ---
 
-==============================
-
 Merhaba <%= @display_name %>,
 
 Onay kodunuz:
@@ -18,5 +16,3 @@ olmanız gerekecektir.
 
 ANIMINA'da bir hesap oluşturmadıysanız, lütfen bu
 e-postayı dikkate almayın.
-
-==============================
