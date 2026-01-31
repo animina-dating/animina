@@ -31,3 +31,17 @@ LiveViews that need `@current_scope` must be inside a `live_session` with `on_mo
 ### Database Conventions
 
 - All resources use UUIDs for primary keys, not auto-incrementing integers
+
+### Translation Conventions
+
+1. **All user-facing strings must use Gettext** — wrap UI text in `gettext("...")`, validation errors in `dgettext("errors", "...")`, and count-based text in `ngettext()`/`dngettext()`.
+
+2. **After adding or changing `gettext()` calls, run `mix gettext.extract --merge`** to update `.pot` templates and merge new entries into all `.po` files.
+
+3. **Provide translations for all 9 languages** (de, en, tr, ru, ar, pl, fr, es, uk) in the corresponding `.po` files under `priv/gettext/{locale}/LC_MESSAGES/`. Never leave `msgstr ""` empty — translate every new or changed string into all languages.
+
+4. **Plural forms** — languages have different plural counts: 2 forms for de/en/tr/fr/es, 3 forms for ru/pl/uk, 6 forms for ar. Provide the correct number of `msgstr[N]` entries for each language.
+
+5. **Email templates** — when adding or modifying an email template, update the template in all 9 locale directories under `priv/email_templates/{locale}/`. Preserve `<%= @variable %>` placeholders and the subject/`---`/body format.
+
+6. **Reference `TRANSLATING.md`** for full details on file structure, plural rules, and translation workflow.
