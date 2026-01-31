@@ -1087,5 +1087,5 @@ msgstr "تحديث ANIMINA"
 
 #: lib/animina_web/components/layouts.ex:248
 #, elixir-autogen, elixir-format
-msgid "We're deploying a new version. This will only take a moment..."
-msgstr "نقوم بنشر إصدار جديد. لن يستغرق هذا سوى لحظة..."
+msgid "A new software version is being installed on the server. This will only take a moment..."
+msgstr "يتم تثبيت إصدار جديد من البرنامج على الخادم. لن يستغرق هذا سوى لحظة..."

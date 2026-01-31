@@ -221,5 +221,6 @@ body {
 }
 
 /* During deployment: hide the default server error, show deployment notice */
-body.deploying #server-error { display: none !important; }
+body.deploying #server-error,
+body.deploying #client-error { display: none !important; }
 body:not(.deploying) #deployment-notice { display: none !important; }
