@@ -42,6 +42,7 @@ defmodule Animina.Accounts.User do
     field :occupation, :string
     field :language, :string, default: "de"
     field :state, :string, default: "waitlisted"
+    field :deleted_at, :utc_datetime
 
     # Referral fields
     field :referral_code, :string
@@ -207,7 +208,7 @@ defmodule Animina.Accounts.User do
       less_than_or_equal_to: 225
     )
     |> validate_number(:search_radius, greater_than_or_equal_to: 1)
-    |> unique_constraint(:mobile_phone)
+    |> unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
     |> unique_constraint(:referral_code)
   end
 
@@ -313,9 +314,39 @@ defmodule Animina.Accounts.User do
 
     if Keyword.get(opts, :validate_unique, true) do
       changeset
-      |> unsafe_validate_unique(:email, Animina.Repo)
-      |> unique_constraint(:email)
+      |> unsafe_validate_unique_active_email()
+      |> unique_constraint(:email, name: :users_email_active_index)
       |> validate_email_changed()
+    else
+      changeset
+    end
+  end
+
+  defp unsafe_validate_unique_active_email(changeset) do
+    email = get_field(changeset, :email)
+
+    if email do
+      import Ecto.Query
+
+      query =
+        from(u in __MODULE__,
+          where: u.email == ^email,
+          where: is_nil(u.deleted_at),
+          select: count()
+        )
+
+      # Exclude the current record if it's persisted (update case)
+      query =
+        case changeset.data.id do
+          nil -> query
+          id -> from(u in query, where: u.id != ^id)
+        end
+
+      if Animina.Repo.one(query) > 0 do
+        add_error(changeset, :email, "has already been taken", validation: :unsafe_unique)
+      else
+        changeset
+      end
     else
       changeset
     end
@@ -421,4 +452,51 @@ defmodule Animina.Accounts.User do
   end
 
   def verify_confirmation_pin(_, _), do: false
+
+  @doc """
+  A changeset for updating user profile fields.
+  """
+  def profile_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:display_name, :height, :occupation, :language])
+    |> validate_required([:display_name, :height])
+    |> validate_length(:display_name, min: 2, max: 50)
+    |> validate_inclusion(:language, @valid_languages)
+    |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)
+  end
+
+  @doc """
+  A changeset for updating partner preference fields.
+  """
+  def preferences_changeset(user, attrs) do
+    user
+    |> cast(attrs, [
+      :preferred_partner_gender,
+      :partner_minimum_age_offset,
+      :partner_maximum_age_offset,
+      :partner_minimum_age,
+      :partner_maximum_age,
+      :partner_height_min,
+      :partner_height_max,
+      :search_radius
+    ])
+    |> compute_age_offsets()
+    |> validate_preferred_partner_genders()
+    |> validate_number(:partner_height_min,
+      greater_than_or_equal_to: 80,
+      less_than_or_equal_to: 225
+    )
+    |> validate_number(:partner_height_max,
+      greater_than_or_equal_to: 80,
+      less_than_or_equal_to: 225
+    )
+    |> validate_number(:search_radius, greater_than_or_equal_to: 1)
+  end
+
+  @doc """
+  A changeset for soft-deleting a user.
+  """
+  def soft_delete_changeset(user) do
+    change(user, deleted_at: DateTime.utc_now(:second))
+  end
 end

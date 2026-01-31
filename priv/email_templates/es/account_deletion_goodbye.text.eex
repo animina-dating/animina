@@ -1,0 +1,16 @@
+Tu cuenta de ANIMINA ha sido programada para eliminación
+---
+
+Hola <%= @display_name %>,
+
+Tu cuenta de ANIMINA ha sido eliminada. ¡Lamentamos verte partir!
+
+Si cambias de opinión, puedes reactivar tu cuenta en cualquier momento
+iniciando sesión con tu correo electrónico y contraseña en:
+
+https://animina.de/users/log-in
+
+Tu cuenta y todos tus datos serán eliminados permanentemente el
+<%= @permanent_deletion_date %>.
+
+Después de esa fecha, la reactivación ya no será posible.

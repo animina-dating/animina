@@ -64,6 +64,34 @@ defmodule AniminaWeb.UserSessionControllerTest do
     end
   end
 
+  describe "POST /users/log-in - soft-deleted user" do
+    test "redirects to reactivation page with correct credentials", %{conn: conn, user: user} do
+      user = set_password(user)
+      {:ok, _} = Animina.Accounts.soft_delete_user(user)
+
+      conn =
+        post(conn, ~p"/users/log-in", %{
+          "user" => %{"email" => user.email, "password" => valid_user_password()}
+        })
+
+      assert redirected_to(conn) == ~p"/users/reactivate"
+      assert get_session(conn, :reactivation_token)
+    end
+
+    test "shows invalid credentials error with wrong password", %{conn: conn, user: user} do
+      user = set_password(user)
+      {:ok, _} = Animina.Accounts.soft_delete_user(user)
+
+      conn =
+        post(conn, ~p"/users/log-in", %{
+          "user" => %{"email" => user.email, "password" => "wrong_password!!"}
+        })
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert redirected_to(conn) == ~p"/users/log-in"
+    end
+  end
+
   describe "DELETE /users/log-out" do
     test "logs the user out", %{conn: conn, user: user} do
       conn = conn |> log_in_user(user) |> delete(~p"/users/log-out")

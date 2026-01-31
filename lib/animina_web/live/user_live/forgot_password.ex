@@ -3,6 +3,8 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
 
   alias Animina.Accounts
 
+  @dev_routes Application.compile_env(:animina, :dev_routes)
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -44,6 +46,12 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
                 "If an account exists with this email, you will receive password reset instructions shortly."
               )}
             </div>
+
+            <p :if={@dev_routes} class="mt-4 text-center text-sm text-base-content/50">
+              <a href="/dev/mailbox" target="_blank" class="underline hover:text-primary">
+                {gettext("Open dev mailbox")}
+              </a>
+            </p>
           <% end %>
 
           <div class="mt-6 text-center">
@@ -62,7 +70,12 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: to_form(%{"email" => ""}, as: "user"), sent: false)}
+    {:ok,
+     assign(socket,
+       form: to_form(%{"email" => ""}, as: "user"),
+       sent: false,
+       dev_routes: @dev_routes
+     )}
   end
 
   @impl true

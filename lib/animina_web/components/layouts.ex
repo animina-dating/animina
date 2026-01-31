@@ -72,22 +72,67 @@ defmodule AniminaWeb.Layouts do
                 </select>
               </form>
               <%= if @current_scope && !@display_name do %>
-                <span class="text-base text-base-content/70 hyphens-none truncate max-w-48">
-                  {@current_scope.user.email}
-                </span>
-                <a
-                  href="/users/settings"
-                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
-                >
-                  {gettext("Settings")}
-                </a>
-                <.link
-                  href="/users/log-out"
-                  method="delete"
-                  class="text-base font-medium text-base-content/70 hover:text-primary transition-colors"
-                >
-                  {gettext("Log out")}
-                </.link>
+                <div class="relative">
+                  <button
+                    type="button"
+                    id="user-menu-button"
+                    class="flex items-center gap-2 p-1 rounded-full"
+                    aria-label={gettext("Your profile")}
+                    aria-haspopup="true"
+                    phx-click={
+                      JS.toggle(
+                        to: "#user-dropdown",
+                        in: {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"},
+                        out: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
+                  >
+                    <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-primary border-primary">
+                      <span class="text-sm font-semibold text-primary-content">
+                        {String.first(@current_scope.user.display_name || @current_scope.user.email)}
+                      </span>
+                    </div>
+                    <span class="text-sm font-medium text-base-content hidden sm:inline truncate max-w-32">
+                      {@current_scope.user.display_name || @current_scope.user.email}
+                    </span>
+                  </button>
+
+                  <div
+                    id="user-dropdown"
+                    class="hidden absolute end-0 mt-2 w-56 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
+                    phx-click-away={
+                      JS.hide(
+                        to: "#user-dropdown",
+                        transition:
+                          {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
+                  >
+                    <div class="px-4 py-2 border-b border-base-300">
+                      <p class="text-sm font-medium text-base-content truncate">
+                        {@current_scope.user.display_name}
+                      </p>
+                      <p class="text-xs text-base-content/50 truncate">
+                        {@current_scope.user.email}
+                      </p>
+                    </div>
+                    <a
+                      href="/users/settings"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("Settings")}
+                    </a>
+                    <div class="border-t border-base-300">
+                      <.link
+                        href="/users/log-out"
+                        method="delete"
+                        class="block w-full text-start px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Log out")}
+                      </.link>
+                    </div>
+                  </div>
+                </div>
               <% end %>
               <%= if @display_name do %>
                 <!-- Profile Avatar with Dropdown (during registration wizard) -->

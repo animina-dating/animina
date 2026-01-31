@@ -1,0 +1,17 @@
+Dein ANIMINA-Konto wurde zur Löschung vorgemerkt
+---
+
+Hallo <%= @display_name %>,
+
+Dein ANIMINA-Konto wurde gelöscht. Es tut uns leid, dass du gehst!
+
+Wenn du es dir anders überlegst, kannst du dein Konto jederzeit
+reaktivieren, indem du dich einfach mit deiner E-Mail-Adresse
+und deinem Passwort anmeldest unter:
+
+https://animina.de/users/log-in
+
+Dein Konto und alle deine Daten werden am <%= @permanent_deletion_date %>
+endgültig gelöscht.
+
+Nach diesem Datum ist eine Reaktivierung nicht mehr möglich.

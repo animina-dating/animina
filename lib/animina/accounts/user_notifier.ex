@@ -78,6 +78,30 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
+  Deliver a goodbye email when a user soft-deletes their account.
+  Includes the permanent deletion date (deleted_at + 30 days).
+  """
+  def deliver_account_deletion_goodbye(%{email: email, deleted_at: deleted_at} = user) do
+    permanent_deletion_date =
+      deleted_at
+      |> DateTime.add(30, :day)
+      |> format_date_for_locale(user_locale(user))
+
+    {subject, body} =
+      EmailTemplates.render(user_locale(user), :account_deletion_goodbye,
+        email: email,
+        display_name: user.display_name,
+        permanent_deletion_date: permanent_deletion_date
+      )
+
+    deliver(email, subject, body)
+  end
+
+  defp format_date_for_locale(datetime, _locale) do
+    Calendar.strftime(datetime, "%d.%m.%Y")
+  end
+
+  @doc """
   Deliver a warning email when someone tries to register with an email
   that already belongs to an existing account.
   """

@@ -82,7 +82,8 @@ config :phoenix, :json_library, Jason
 config :animina, Animina.Scheduler,
   timezone: "Europe/Berlin",
   jobs: [
-    {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}}
+    {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}},
+    {"0 1 * * *", {Animina.Accounts, :purge_deleted_users, []}}
   ]
 
 # Gettext i18n configuration

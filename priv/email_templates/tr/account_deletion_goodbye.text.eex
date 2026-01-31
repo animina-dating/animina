@@ -1,0 +1,17 @@
+ANIMINA hesabınız silinmek üzere planlandı
+---
+
+Merhaba <%= @display_name %>,
+
+ANIMINA hesabınız silindi. Gittiğinizi görmek bizi üzüyor!
+
+Fikrinizi değiştirirseniz, hesabınızı istediğiniz zaman
+e-posta adresiniz ve şifrenizle giriş yaparak
+yeniden etkinleştirebilirsiniz:
+
+https://animina.de/users/log-in
+
+Hesabınız ve tüm verileriniz <%= @permanent_deletion_date %>
+tarihinde kalıcı olarak silinecektir.
+
+Bu tarihten sonra yeniden etkinleştirme mümkün olmayacaktır.

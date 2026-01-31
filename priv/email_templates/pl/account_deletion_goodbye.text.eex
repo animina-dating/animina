@@ -1,0 +1,16 @@
+Twoje konto ANIMINA zostało zaplanowane do usunięcia
+---
+
+Cześć <%= @display_name %>,
+
+Twoje konto ANIMINA zostało usunięte. Przykro nam, że odchodzisz!
+
+Jeśli zmienisz zdanie, możesz w każdej chwili reaktywować
+swoje konto, logując się za pomocą adresu e-mail i hasła na:
+
+https://animina.de/users/log-in
+
+Twoje konto i wszystkie dane zostaną trwale usunięte
+<%= @permanent_deletion_date %>.
+
+Po tej dacie reaktywacja nie będzie już możliwa.

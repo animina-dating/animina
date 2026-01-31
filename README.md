@@ -26,6 +26,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 - **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
 - **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
 - **Multi-language UI**: 9 languages (DE, EN, TR, RU, AR, PL, FR, ES, UK) with RTL support for Arabic — see [TRANSLATING.md](TRANSLATING.md)
+- **User Settings**: Settings hub with sub-pages for profile editing, partner preferences, locations management, account security (email/password), and account deletion with 30-day grace period and reactivation support
 - **Waitlist**: New users are placed on a waitlist after registration
 - **Referral System**: Each user gets a unique 6-character code; 5 confirmed referrals auto-activate the account
 - **Geo Data**: Germany with 8000+ cities seeded

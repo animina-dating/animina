@@ -698,6 +698,386 @@ defmodule Animina.AccountsTest do
     end
   end
 
+  describe "update_user_profile/2" do
+    test "updates profile fields", %{} do
+      user = user_fixture()
+
+      assert {:ok, updated} =
+               Accounts.update_user_profile(user, %{
+                 display_name: "New Name",
+                 height: 175,
+                 occupation: "Developer",
+                 language: "en"
+               })
+
+      assert updated.display_name == "New Name"
+      assert updated.height == 175
+      assert updated.occupation == "Developer"
+      assert updated.language == "en"
+    end
+
+    test "validates display_name length" do
+      user = user_fixture()
+      {:error, changeset} = Accounts.update_user_profile(user, %{display_name: "A"})
+      assert "should be at least 2 character(s)" in errors_on(changeset).display_name
+    end
+
+    test "validates height range" do
+      user = user_fixture()
+      {:error, changeset} = Accounts.update_user_profile(user, %{height: 50})
+      assert "must be greater than or equal to 80" in errors_on(changeset).height
+    end
+
+    test "validates language inclusion" do
+      user = user_fixture()
+      {:error, changeset} = Accounts.update_user_profile(user, %{language: "xx"})
+      assert "is invalid" in errors_on(changeset).language
+    end
+  end
+
+  describe "update_user_preferences/2" do
+    test "updates preference fields" do
+      user = user_fixture()
+
+      assert {:ok, updated} =
+               Accounts.update_user_preferences(user, %{
+                 search_radius: 100,
+                 partner_height_min: 160,
+                 partner_height_max: 200
+               })
+
+      assert updated.search_radius == 100
+      assert updated.partner_height_min == 160
+      assert updated.partner_height_max == 200
+    end
+
+    test "validates search_radius minimum" do
+      user = user_fixture()
+      {:error, changeset} = Accounts.update_user_preferences(user, %{search_radius: 0})
+      assert "must be greater than or equal to 1" in errors_on(changeset).search_radius
+    end
+
+    test "validates partner_height range" do
+      user = user_fixture()
+      {:error, changeset} = Accounts.update_user_preferences(user, %{partner_height_min: 50})
+      assert "must be greater than or equal to 80" in errors_on(changeset).partner_height_min
+    end
+
+    test "computes age offsets from virtual age fields" do
+      user = user_fixture()
+
+      {:ok, updated} =
+        Accounts.update_user_preferences(user, %{
+          partner_minimum_age: 25,
+          partner_maximum_age: 45
+        })
+
+      # User was born 1990-01-01, so age should be 36 (in 2026)
+      user_age = Date.utc_today().year - 1990
+
+      user_age =
+        if {Date.utc_today().month, Date.utc_today().day} < {1, 1},
+          do: user_age - 1,
+          else: user_age
+
+      assert updated.partner_minimum_age_offset == user_age - 25
+      assert updated.partner_maximum_age_offset == 45 - user_age
+    end
+  end
+
+  describe "user locations" do
+    test "list_user_locations/1 returns locations for a user" do
+      user = user_fixture()
+      locations = Accounts.list_user_locations(user)
+      assert length(locations) == 1
+      assert hd(locations).zip_code == "10115"
+    end
+
+    test "add_user_location/2 adds a location" do
+      user = user_fixture()
+
+      assert {:ok, location} =
+               Accounts.add_user_location(user, %{
+                 country_id: germany_id(),
+                 zip_code: "80331"
+               })
+
+      assert location.zip_code == "80331"
+      assert location.position == 2
+
+      locations = Accounts.list_user_locations(user)
+      assert length(locations) == 2
+    end
+
+    test "add_user_location/2 rejects more than 4 locations" do
+      user = user_fixture()
+
+      # Already has 1 location, add 3 more
+      for zip <- ["80331", "20095", "50667"] do
+        {:ok, _} = Accounts.add_user_location(user, %{country_id: germany_id(), zip_code: zip})
+      end
+
+      assert {:error, :max_locations_reached} =
+               Accounts.add_user_location(user, %{
+                 country_id: germany_id(),
+                 zip_code: "60311"
+               })
+    end
+
+    test "remove_user_location/2 removes a location when more than one exist" do
+      user = user_fixture()
+      {:ok, _} = Accounts.add_user_location(user, %{country_id: germany_id(), zip_code: "80331"})
+      assert length(Accounts.list_user_locations(user)) == 2
+      [location | _] = Accounts.list_user_locations(user)
+
+      assert {:ok, _} = Accounts.remove_user_location(user, location.id)
+      assert length(Accounts.list_user_locations(user)) == 1
+    end
+
+    test "remove_user_location/2 prevents removing the last location" do
+      user = user_fixture()
+      [location] = Accounts.list_user_locations(user)
+
+      assert {:error, :last_location} = Accounts.remove_user_location(user, location.id)
+      assert length(Accounts.list_user_locations(user)) == 1
+    end
+
+    test "remove_user_location/2 returns error for non-existent location" do
+      user = user_fixture()
+      {:ok, _} = Accounts.add_user_location(user, %{country_id: germany_id(), zip_code: "80331"})
+
+      assert {:error, :not_found} =
+               Accounts.remove_user_location(user, "11111111-1111-1111-1111-111111111111")
+    end
+  end
+
+  describe "soft_delete_user/1" do
+    test "sets deleted_at on the user" do
+      user = user_fixture()
+      assert {:ok, deleted_user} = Accounts.soft_delete_user(user)
+      assert deleted_user.deleted_at != nil
+    end
+
+    test "deletes all session tokens" do
+      user = user_fixture()
+      _token = Accounts.generate_user_session_token(user)
+      assert {:ok, _} = Accounts.soft_delete_user(user)
+      refute Repo.get_by(UserToken, user_id: user.id)
+    end
+  end
+
+  describe "user_deleted?/1" do
+    test "returns false for nil" do
+      refute Accounts.user_deleted?(nil)
+    end
+
+    test "returns false for user without deleted_at" do
+      user = user_fixture()
+      refute Accounts.user_deleted?(user)
+    end
+
+    test "returns true for user with deleted_at" do
+      user = user_fixture()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+      assert Accounts.user_deleted?(deleted_user)
+    end
+  end
+
+  describe "purge_deleted_users/0" do
+    test "deletes users with deleted_at older than 30 days" do
+      user = user_fixture()
+      {:ok, _} = Accounts.soft_delete_user(user)
+
+      # Set deleted_at to 31 days ago
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [deleted_at: DateTime.add(DateTime.utc_now(), -31, :day)]
+      )
+
+      {count, _} = Accounts.purge_deleted_users()
+      assert count >= 1
+      refute Repo.get(User, user.id)
+    end
+
+    test "does not delete users with recent deleted_at" do
+      user = user_fixture()
+      {:ok, _} = Accounts.soft_delete_user(user)
+
+      {count, _} = Accounts.purge_deleted_users()
+      assert count == 0
+      assert Repo.get(User, user.id)
+    end
+
+    test "does not delete active users" do
+      user = user_fixture()
+      {count, _} = Accounts.purge_deleted_users()
+      assert count == 0
+      assert Repo.get(User, user.id)
+    end
+  end
+
+  describe "get_user_by_email_and_password/2 with soft-deleted user" do
+    test "does not return soft-deleted user" do
+      user = user_fixture() |> set_password()
+      {:ok, _} = Accounts.soft_delete_user(user)
+      refute Accounts.get_user_by_email_and_password(user.email, valid_user_password())
+    end
+  end
+
+  describe "get_deleted_user_by_email_and_password/2" do
+    test "returns soft-deleted user with correct password within grace period" do
+      user = user_fixture() |> set_password()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+
+      found =
+        Accounts.get_deleted_user_by_email_and_password(deleted_user.email, valid_user_password())
+
+      assert found.id == user.id
+    end
+
+    test "returns nil with wrong password" do
+      user = user_fixture() |> set_password()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+
+      refute Accounts.get_deleted_user_by_email_and_password(deleted_user.email, "wrongpassword!")
+    end
+
+    test "returns nil when grace period expired" do
+      user = user_fixture() |> set_password()
+      {:ok, _} = Accounts.soft_delete_user(user)
+
+      # Set deleted_at to 31 days ago
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [deleted_at: DateTime.add(DateTime.utc_now(), -31, :day)]
+      )
+
+      refute Accounts.get_deleted_user_by_email_and_password(user.email, valid_user_password())
+    end
+
+    test "returns nil for active (non-deleted) user" do
+      user = user_fixture() |> set_password()
+      refute Accounts.get_deleted_user_by_email_and_password(user.email, valid_user_password())
+    end
+
+    test "picks most recently deleted user when multiple soft-deleted rows exist" do
+      user1 = user_fixture() |> set_password()
+      email = user1.email
+      {:ok, _} = Accounts.soft_delete_user(user1)
+
+      # Set deleted_at to 10 days ago for the first one
+      Repo.update_all(
+        from(u in User, where: u.id == ^user1.id),
+        set: [deleted_at: DateTime.add(DateTime.utc_now(), -10, :day)]
+      )
+
+      # Create a second user with the same email (partial index allows this)
+      user2 = user_fixture(email: email) |> set_password()
+      {:ok, deleted_user2} = Accounts.soft_delete_user(user2)
+
+      found = Accounts.get_deleted_user_by_email_and_password(email, valid_user_password())
+      assert found.id == deleted_user2.id
+    end
+  end
+
+  describe "reactivate_user/1" do
+    test "clears deleted_at on soft-deleted user" do
+      user = user_fixture()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+      assert deleted_user.deleted_at != nil
+
+      {:ok, reactivated} = Accounts.reactivate_user(deleted_user)
+      assert reactivated.deleted_at == nil
+    end
+
+    test "fails with unique constraint error when email is claimed by another active user" do
+      user1 = user_fixture()
+      email = user1.email
+      {:ok, deleted_user1} = Accounts.soft_delete_user(user1)
+
+      # Register a new user with the same email (partial index allows this)
+      _user2 = user_fixture(email: email)
+
+      # Reactivation should fail because email is taken by active user
+      assert {:error, changeset} = Accounts.reactivate_user(deleted_user1)
+      assert errors_on(changeset).email != nil
+    end
+  end
+
+  describe "hard_delete_user/1" do
+    test "permanently removes user record" do
+      user = user_fixture()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+
+      assert {:ok, _} = Accounts.hard_delete_user(deleted_user)
+      refute Repo.get(User, user.id)
+    end
+  end
+
+  describe "within_grace_period?/1" do
+    test "returns true when deleted_at is within 30 days" do
+      user = user_fixture()
+      {:ok, deleted_user} = Accounts.soft_delete_user(user)
+      assert Accounts.within_grace_period?(deleted_user)
+    end
+
+    test "returns false when deleted_at is older than 30 days" do
+      user = user_fixture()
+      {:ok, _} = Accounts.soft_delete_user(user)
+
+      Repo.update_all(
+        from(u in User, where: u.id == ^user.id),
+        set: [deleted_at: DateTime.add(DateTime.utc_now(), -31, :day)]
+      )
+
+      stale_user = Repo.get!(User, user.id)
+      refute Accounts.within_grace_period?(stale_user)
+    end
+
+    test "returns false for user without deleted_at" do
+      user = user_fixture()
+      refute Accounts.within_grace_period?(user)
+    end
+  end
+
+  describe "soft_delete_user/1 sends goodbye email" do
+    test "delivers account deletion goodbye email" do
+      user = user_fixture()
+      {:ok, _deleted_user} = Accounts.soft_delete_user(user)
+
+      assert_received {:email, %{text_body: body}}
+      assert body =~ "ANIMINA"
+      assert body =~ user.display_name
+    end
+  end
+
+  describe "registration with soft-deleted email" do
+    test "allows registration with an email that belongs to a soft-deleted user" do
+      user = user_fixture()
+      email = user.email
+      {:ok, _} = Accounts.soft_delete_user(user)
+
+      # Register a new user with the same email
+      {:ok, new_user} = Accounts.register_user(valid_user_attributes(email: email))
+      assert new_user.email == email
+      assert new_user.id != user.id
+    end
+  end
+
+  describe "get_user_by_email/1 with partial index" do
+    test "returns active user when both active and soft-deleted users share email" do
+      user1 = user_fixture()
+      email = user1.email
+      {:ok, _} = Accounts.soft_delete_user(user1)
+
+      # Register new active user with same email
+      user2 = user_fixture(email: email)
+
+      found = Accounts.get_user_by_email(email)
+      assert found.id == user2.id
+    end
+  end
+
   describe "inspect/2 for the User module" do
     test "does not include password" do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""

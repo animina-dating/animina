@@ -27,7 +27,12 @@ defmodule Animina.Accounts do
 
   """
   def get_user_by_email(email) when is_binary(email) do
-    Repo.get_by(User, email: email)
+    from(u in User,
+      where: u.email == ^email,
+      order_by: [asc_nulls_first: u.deleted_at],
+      limit: 1
+    )
+    |> Repo.one()
   end
 
   @doc """
@@ -44,7 +49,14 @@ defmodule Animina.Accounts do
   """
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
-    user = Repo.get_by(User, email: email)
+    user =
+      from(u in User,
+        where: u.email == ^email,
+        where: is_nil(u.deleted_at),
+        limit: 1
+      )
+      |> Repo.one()
+
     if User.valid_password?(user, password), do: user
   end
 
@@ -562,6 +574,188 @@ defmodule Animina.Accounts do
       where: is_nil(u.confirmed_at),
       where: not is_nil(u.confirmation_pin_sent_at),
       where: u.confirmation_pin_sent_at < ^cutoff
+    )
+    |> Repo.delete_all()
+  end
+
+  ## User profile & preferences
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing user profile fields.
+  """
+  def change_user_profile(user, attrs \\ %{}) do
+    User.profile_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user profile.
+  """
+  def update_user_profile(user, attrs) do
+    user
+    |> User.profile_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for changing user preferences.
+  """
+  def change_user_preferences(user, attrs \\ %{}) do
+    User.preferences_changeset(user, attrs)
+  end
+
+  @doc """
+  Updates the user preferences.
+  """
+  def update_user_preferences(user, attrs) do
+    user
+    |> User.preferences_changeset(attrs)
+    |> Repo.update()
+  end
+
+  ## User locations
+
+  @doc """
+  Lists all locations for a user, ordered by position.
+  """
+  def list_user_locations(%User{id: user_id}) do
+    from(l in UserLocation,
+      where: l.user_id == ^user_id,
+      order_by: [asc: l.position]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Adds a new location for a user.
+  Automatically assigns the next available position (max 4).
+  """
+  def add_user_location(%User{id: user_id}, attrs) do
+    current_count =
+      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
+      |> Repo.one()
+
+    if current_count >= 4 do
+      {:error, :max_locations_reached}
+    else
+      next_position =
+        (from(l in UserLocation,
+           where: l.user_id == ^user_id,
+           select: max(l.position)
+         )
+         |> Repo.one() || 0) + 1
+
+      %UserLocation{}
+      |> UserLocation.changeset(
+        attrs
+        |> Map.put(:user_id, user_id)
+        |> Map.put(:position, next_position)
+      )
+      |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Removes a user location by its ID.
+  """
+  def remove_user_location(%User{id: user_id}, location_id) do
+    current_count =
+      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
+      |> Repo.one()
+
+    if current_count <= 1 do
+      {:error, :last_location}
+    else
+      case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
+        nil -> {:error, :not_found}
+        location -> Repo.delete(location)
+      end
+    end
+  end
+
+  ## Soft delete
+
+  @doc """
+  Returns `true` if the user has been soft-deleted.
+  """
+  def user_deleted?(nil), do: false
+  def user_deleted?(%User{deleted_at: nil}), do: false
+  def user_deleted?(%User{deleted_at: _}), do: true
+
+  @doc """
+  Soft-deletes a user by setting `deleted_at`, deleting all session tokens,
+  and sending a goodbye email.
+  """
+  def soft_delete_user(%User{} = user) do
+    Repo.transact(fn ->
+      with {:ok, user} <- user |> User.soft_delete_changeset() |> Repo.update() do
+        Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
+        UserNotifier.deliver_account_deletion_goodbye(user)
+        {:ok, user}
+      end
+    end)
+  end
+
+  @grace_period_days 30
+
+  @doc """
+  Gets a soft-deleted user by email and password within the 30-day grace period.
+  Returns the most recently deleted user if multiple exist.
+  """
+  def get_deleted_user_by_email_and_password(email, password)
+      when is_binary(email) and is_binary(password) do
+    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
+
+    user =
+      from(u in User,
+        where: u.email == ^email,
+        where: not is_nil(u.deleted_at),
+        where: u.deleted_at > ^cutoff,
+        order_by: [desc: u.deleted_at],
+        limit: 1
+      )
+      |> Repo.one()
+
+    if User.valid_password?(user, password), do: user
+  end
+
+  @doc """
+  Reactivates a soft-deleted user by clearing `deleted_at`.
+  Returns `{:error, changeset}` if the email or phone is now claimed by another active user.
+  """
+  def reactivate_user(%User{} = user) do
+    user
+    |> Ecto.Changeset.change(deleted_at: nil)
+    |> Ecto.Changeset.unique_constraint(:email, name: :users_email_active_index)
+    |> Ecto.Changeset.unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
+    |> Repo.update()
+  end
+
+  @doc """
+  Permanently deletes a user record (hard delete).
+  """
+  def hard_delete_user(%User{} = user) do
+    Repo.delete(user)
+  end
+
+  @doc """
+  Returns `true` if the user's `deleted_at` is within the 30-day grace period.
+  """
+  def within_grace_period?(%User{deleted_at: nil}), do: false
+
+  def within_grace_period?(%User{deleted_at: deleted_at}) do
+    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
+    DateTime.after?(deleted_at, cutoff)
+  end
+
+  @doc """
+  Hard-deletes users whose `deleted_at` is older than 30 days.
+  """
+  def purge_deleted_users do
+    cutoff = DateTime.utc_now() |> DateTime.add(-30, :day)
+
+    from(u in User,
+      where: not is_nil(u.deleted_at),
+      where: u.deleted_at < ^cutoff
     )
     |> Repo.delete_all()
   end

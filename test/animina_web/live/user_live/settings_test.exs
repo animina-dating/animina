@@ -10,14 +10,34 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings")
+        |> live(~p"/users/settings/account")
 
       assert html =~ "Change Email"
       assert html =~ "Save Password"
     end
 
+    test "has page title", %{conn: conn} do
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/users/settings/account")
+
+      assert page_title(lv) == "Account Security"
+    end
+
+    test "has breadcrumbs", %{conn: conn} do
+      {:ok, lv, html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/users/settings/account")
+
+      assert html =~ "breadcrumbs"
+      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert html =~ "Account Security"
+    end
+
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings")
+      assert {:error, redirect} = live(conn, ~p"/users/settings/account")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -30,7 +50,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
         |> log_in_user(user_fixture(language: "en"),
           token_authenticated_at: DateTime.add(DateTime.utc_now(:second), -11, :minute)
         )
-        |> live(~p"/users/settings")
+        |> live(~p"/users/settings/account")
         |> follow_redirect(conn, ~p"/users/log-in")
 
       assert conn.resp_body =~ "You must re-authenticate to access this page."
@@ -46,7 +66,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "updates the user email", %{conn: conn, user: user} do
       new_email = unique_user_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       result =
         lv
@@ -60,7 +80,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       result =
         lv
@@ -75,7 +95,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       result =
         lv
@@ -98,7 +118,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "updates the user password", %{conn: conn, user: user} do
       new_password = valid_user_password()
 
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       form =
         form(lv, "#password_form", %{
@@ -113,7 +133,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
       new_password_conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(new_password_conn) == ~p"/users/settings"
+      assert redirected_to(new_password_conn) == ~p"/users/settings/account"
 
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
@@ -124,7 +144,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       result =
         lv
@@ -142,7 +162,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
 
       result =
         lv
@@ -177,7 +197,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/account"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
       refute Accounts.get_user_by_email(user.email)
@@ -186,7 +206,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       # use confirm token again
       {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/account"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
     end
@@ -194,7 +214,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "does not update email with invalid token", %{conn: conn, user: user} do
       {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/account"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
       assert Accounts.get_user_by_email(user.email)

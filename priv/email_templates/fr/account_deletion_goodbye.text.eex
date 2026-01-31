@@ -1,0 +1,16 @@
+Votre compte ANIMINA a été programmé pour suppression
+---
+
+Bonjour <%= @display_name %>,
+
+Votre compte ANIMINA a été supprimé. Nous sommes désolés de vous voir partir !
+
+Si vous changez d'avis, vous pouvez réactiver votre compte à tout moment
+en vous connectant simplement avec votre adresse e-mail et votre mot de passe sur :
+
+https://animina.de/users/log-in
+
+Votre compte et toutes vos données seront définitivement supprimés le
+<%= @permanent_deletion_date %>.
+
+Après cette date, la réactivation ne sera plus possible.

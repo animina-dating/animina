@@ -101,22 +101,22 @@ msgstr "doit être supérieur ou égal à %{number}"
 msgid "must be equal to %{number}"
 msgstr "doit être égal à %{number}"
 
-#: lib/animina/accounts.ex:218
+#: lib/animina/accounts.ex:230
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Code de parrainage non trouvé"
 
-#: lib/animina/accounts/user.ex:235
+#: lib/animina/accounts/user.ex:236
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "n'est pas un numéro de téléphone valide"
 
-#: lib/animina/accounts/user.ex:139
+#: lib/animina/accounts/user.ex:140
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "doit comporter 6 caractères (lettres et chiffres)"
 
-#: lib/animina/accounts/user.ex:230
+#: lib/animina/accounts/user.ex:231
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "doit être un numéro de portable (pas de fixe)"

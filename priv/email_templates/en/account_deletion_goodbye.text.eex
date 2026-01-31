@@ -1,0 +1,16 @@
+Your ANIMINA account has been scheduled for deletion
+---
+
+Hello <%= @display_name %>,
+
+Your ANIMINA account has been deleted. We're sorry to see you go!
+
+If you change your mind, you can reactivate your account at any time
+by simply logging in with your email and password at:
+
+https://animina.de/users/log-in
+
+Your account and all its data will be permanently deleted on
+<%= @permanent_deletion_date %>.
+
+After that date, reactivation will no longer be possible.
