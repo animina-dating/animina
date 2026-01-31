@@ -4,7 +4,7 @@ defmodule Animina.Accounts.User do
   use Gettext, backend: AniminaWeb.Gettext
 
   @valid_genders ~w(male female diverse)
-  @valid_languages ~w(de en tr ru ar pl fr es)
+  @valid_languages ~w(de en tr ru ar pl fr es uk)
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

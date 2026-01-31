@@ -1,0 +1,131 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: uk\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100 != 11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10||n%100>=20) ? 1 : 2);\n"
+
+msgid "can't be blank"
+msgstr "не може бути порожнім"
+
+msgid "has already been taken"
+msgstr "вже зайнято"
+
+msgid "is invalid"
+msgstr "недійсне"
+
+msgid "must be accepted"
+msgstr "повинно бути прийнято"
+
+msgid "has invalid format"
+msgstr "має невірний формат"
+
+msgid "has an invalid entry"
+msgstr "містить недопустимий запис"
+
+msgid "is reserved"
+msgstr "зарезервовано"
+
+msgid "does not match confirmation"
+msgstr "не збігається з підтвердженням"
+
+msgid "is still associated with this entry"
+msgstr "все ще пов'язано з цим записом"
+
+msgid "are still associated with this entry"
+msgstr "все ще пов'язані з цим записом"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "повинно містити %{count} елемент"
+msgstr[1] "повинно містити %{count} елементи"
+msgstr[2] "повинно містити %{count} елементів"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "повинно бути %{count} символ"
+msgstr[1] "повинно бути %{count} символи"
+msgstr[2] "повинно бути %{count} символів"
+
+msgid "should be %{count} byte(s)"
+msgid_plural "should be %{count} byte(s)"
+msgstr[0] "повинно бути %{count} байт"
+msgstr[1] "повинно бути %{count} байти"
+msgstr[2] "повинно бути %{count} байтів"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "повинно містити мінімум %{count} елемент"
+msgstr[1] "повинно містити мінімум %{count} елементи"
+msgstr[2] "повинно містити мінімум %{count} елементів"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "повинно бути мінімум %{count} символ"
+msgstr[1] "повинно бути мінімум %{count} символи"
+msgstr[2] "повинно бути мінімум %{count} символів"
+
+msgid "should be at least %{count} byte(s)"
+msgid_plural "should be at least %{count} byte(s)"
+msgstr[0] "повинно бути мінімум %{count} байт"
+msgstr[1] "повинно бути мінімум %{count} байти"
+msgstr[2] "повинно бути мінімум %{count} байтів"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "повинно містити максимум %{count} елемент"
+msgstr[1] "повинно містити максимум %{count} елементи"
+msgstr[2] "повинно містити максимум %{count} елементів"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "повинно бути максимум %{count} символ"
+msgstr[1] "повинно бути максимум %{count} символи"
+msgstr[2] "повинно бути максимум %{count} символів"
+
+msgid "should be at most %{count} byte(s)"
+msgid_plural "should be at most %{count} byte(s)"
+msgstr[0] "повинно бути максимум %{count} байт"
+msgstr[1] "повинно бути максимум %{count} байти"
+msgstr[2] "повинно бути максимум %{count} байтів"
+
+msgid "must be less than %{number}"
+msgstr "повинно бути менше %{number}"
+
+msgid "must be greater than %{number}"
+msgstr "повинно бути більше %{number}"
+
+msgid "must be less than or equal to %{number}"
+msgstr "повинно бути менше або дорівнювати %{number}"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "повинно бути більше або дорівнювати %{number}"
+
+msgid "must be equal to %{number}"
+msgstr "повинно дорівнювати %{number}"
+
+#: lib/animina/accounts.ex:230
+#, elixir-autogen, elixir-format
+msgid "Referral code not found"
+msgstr "Код запрошення не знайдено"
+
+#: lib/animina/accounts/user.ex:235
+#, elixir-autogen, elixir-format
+msgid "is not a valid phone number"
+msgstr "не є дійсним номером телефону"
+
+#: lib/animina/accounts/user.ex:139
+#, elixir-autogen, elixir-format
+msgid "must be 6 characters (letters and digits)"
+msgstr "повинно містити 6 символів (літери та цифри)"
+
+#: lib/animina/accounts/user.ex:230
+#, elixir-autogen, elixir-format
+msgid "must be a mobile number (not a landline)"
+msgstr "повинен бути мобільним номером (не стаціонарним)"

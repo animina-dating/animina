@@ -60,14 +60,15 @@ defmodule AniminaWeb.Layouts do
                   aria-label={gettext("Language")}
                 >
                   <% current_locale = Gettext.get_locale(AniminaWeb.Gettext) %>
-                  <option value="de" selected={current_locale == "de"}>DE</option>
-                  <option value="en" selected={current_locale == "en"}>EN</option>
-                  <option value="tr" selected={current_locale == "tr"}>TR</option>
-                  <option value="ru" selected={current_locale == "ru"}>RU</option>
-                  <option value="ar" selected={current_locale == "ar"}>AR</option>
-                  <option value="pl" selected={current_locale == "pl"}>PL</option>
-                  <option value="fr" selected={current_locale == "fr"}>FR</option>
-                  <option value="es" selected={current_locale == "es"}>ES</option>
+                  <option value="de" selected={current_locale == "de"}>🇩🇪 DE</option>
+                  <option value="en" selected={current_locale == "en"}>🇬🇧 EN</option>
+                  <option value="tr" selected={current_locale == "tr"}>🇹🇷 TR</option>
+                  <option value="ru" selected={current_locale == "ru"}>🇷🇺 RU</option>
+                  <option value="ar" selected={current_locale == "ar"}>🇸🇦 AR</option>
+                  <option value="pl" selected={current_locale == "pl"}>🇵🇱 PL</option>
+                  <option value="fr" selected={current_locale == "fr"}>🇫🇷 FR</option>
+                  <option value="es" selected={current_locale == "es"}>🇪🇸 ES</option>
+                  <option value="uk" selected={current_locale == "uk"}>🇺🇦 UK</option>
                 </select>
               </form>
               <%= if @current_scope && !@display_name do %>

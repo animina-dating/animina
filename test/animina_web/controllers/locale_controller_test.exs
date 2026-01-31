@@ -50,7 +50,7 @@ defmodule AniminaWeb.LocaleControllerTest do
     end
 
     test "accepts all supported locales", %{conn: _conn} do
-      for locale <- ~w(de en tr ru ar pl fr es) do
+      for locale <- ~w(de en tr ru ar pl fr es uk) do
         conn = post(build_conn(), ~p"/locale", %{"locale" => locale})
         assert redirected_to(conn) == "/"
         assert get_session(conn, :locale) == locale

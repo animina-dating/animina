@@ -275,7 +275,8 @@ defmodule AniminaWeb.UserLive.Registration do
           {"العربية", "ar"},
           {"Polski", "pl"},
           {"Français", "fr"},
-          {"Español", "es"}
+          {"Español", "es"},
+          {"Українська", "uk"}
         ]}
       />
     </div>

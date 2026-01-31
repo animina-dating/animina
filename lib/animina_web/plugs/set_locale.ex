@@ -10,7 +10,7 @@ defmodule AniminaWeb.Plugs.SetLocale do
   """
   import Plug.Conn
 
-  @supported_locales ~w(de en tr ru ar pl fr es)
+  @supported_locales ~w(de en tr ru ar pl fr es uk)
 
   def init(opts), do: opts
 

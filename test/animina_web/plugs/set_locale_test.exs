@@ -15,9 +15,9 @@ defmodule AniminaWeb.Plugs.SetLocaleTest do
   end
 
   describe "supported_locales/0" do
-    test "returns all 8 supported locales" do
+    test "returns all 9 supported locales" do
       locales = SetLocale.supported_locales()
-      assert length(locales) == 8
+      assert length(locales) == 9
       assert "de" in locales
       assert "en" in locales
       assert "ar" in locales

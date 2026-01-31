@@ -88,7 +88,7 @@ config :animina, Animina.Scheduler,
 # Gettext i18n configuration
 config :animina, AniminaWeb.Gettext,
   default_locale: "de",
-  locales: ~w(de en tr ru ar pl fr es)
+  locales: ~w(de en tr ru ar pl fr es uk)
 
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase
