@@ -1,6 +1,8 @@
 defmodule Animina.HotDeployTest do
   use ExUnit.Case, async: true
 
+  import ExUnit.CaptureLog
+
   alias Animina.HotDeploy
 
   describe "startup_reapply_current/0" do
@@ -41,7 +43,9 @@ defmodule Animina.HotDeployTest do
       )
 
       # Must not crash the caller — this is the critical invariant
-      assert HotDeploy.startup_reapply_current() == :ok
+      assert capture_log(fn ->
+               assert HotDeploy.startup_reapply_current() == :ok
+             end) =~ "Failed to load"
     after
       Application.delete_env(:animina, HotDeploy)
     end

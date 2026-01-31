@@ -3,8 +3,8 @@ Güvenlik bildirimi – ANIMINA
 
 Merhaba<%= if @display_name do %> <%= @display_name %><% end %>,
 
-Birisi e-posta adresinizle (<%= @email %>) yeni bir
-ANIMINA hesabı oluşturmaya çalıştı.
+Birisi <%= @attempted_at %> tarihinde e-posta adresinizle
+(<%= @email %>) yeni bir ANIMINA hesabı oluşturmaya çalıştı.
 
 Bu siz değilseniz, hesabınızı korumak için şifrenizi
 değiştirmenizi öneririz.

@@ -15,7 +15,11 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       display_name: "Test User",
       url: "https://example.com/update/TOKEN"
     ],
-    duplicate_registration: [email: "test@example.com", display_name: "Test User"],
+    duplicate_registration: [
+      email: "test@example.com",
+      display_name: "Test User",
+      attempted_at: "31. Januar 2026 um 14:00 Uhr"
+    ],
     daily_report: [count: 3]
   }
 
@@ -97,12 +101,14 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("de", :duplicate_registration,
           email: "dup@test.de",
-          display_name: "Stefan"
+          display_name: "Stefan",
+          attempted_at: "31. Januar 2026 um 14:00 Uhr"
         )
 
       assert subject == "Sicherheitshinweis – ANIMINA"
       assert body =~ "dup@test.de"
       assert body =~ "Hallo Stefan,"
+      assert body =~ "31. Januar 2026 um 14:00 Uhr"
     end
 
     test "German daily_report uses singular for count 1" do
@@ -171,7 +177,8 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, _body} =
         EmailTemplates.render("es", :duplicate_registration,
           email: "u@t.es",
-          display_name: "María"
+          display_name: "María",
+          attempted_at: "31. Januar 2026 um 14:00 Uhr"
         )
 
       assert subject == "Aviso de seguridad – ANIMINA"

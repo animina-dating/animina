@@ -3,8 +3,8 @@ Powiadomienie o bezpieczeństwie – ANIMINA
 
 Witaj<%= if @display_name do %> <%= @display_name %><% end %>,
 
-Ktoś próbował utworzyć nowe konto ANIMINA z Twoim
-adresem e-mail (<%= @email %>).
+Ktoś próbował <%= @attempted_at %> utworzyć nowe konto
+ANIMINA z Twoim adresem e-mail (<%= @email %>).
 
 Jeśli to nie byłeś/aś Ty, zalecamy zmianę hasła w celu
 ochrony konta.

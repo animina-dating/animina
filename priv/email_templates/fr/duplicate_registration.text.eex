@@ -3,8 +3,9 @@ Avis de sécurité – ANIMINA
 
 Bonjour<%= if @display_name do %> <%= @display_name %><% end %>,
 
-Quelqu'un a essayé de créer un nouveau compte ANIMINA
-avec votre adresse e-mail (<%= @email %>).
+Quelqu'un a essayé le <%= @attempted_at %> de créer un
+nouveau compte ANIMINA avec votre adresse e-mail
+(<%= @email %>).
 
 Si ce n'était pas vous, nous vous recommandons de
 changer votre mot de passe pour protéger votre compte.

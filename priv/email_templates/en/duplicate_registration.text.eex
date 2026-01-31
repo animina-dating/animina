@@ -3,8 +3,8 @@ Security notice – ANIMINA
 
 Hello<%= if @display_name do %> <%= @display_name %><% end %>,
 
-Someone tried to create a new ANIMINA account with your
-email address (<%= @email %>).
+Someone tried on <%= @attempted_at %> to create a new
+ANIMINA account with your email address (<%= @email %>).
 
 If this was not you, we recommend changing your password
 to protect your account.
