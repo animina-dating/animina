@@ -4,9 +4,17 @@ defmodule Animina.Accounts.EmailTemplatesTest do
   alias Animina.Accounts.EmailTemplates
 
   @assigns_for_type %{
-    confirmation_pin: [email: "test@example.com", pin: "123456"],
-    password_reset: [email: "test@example.com", url: "https://example.com/reset/TOKEN"],
-    update_email: [email: "test@example.com", url: "https://example.com/update/TOKEN"],
+    confirmation_pin: [email: "test@example.com", display_name: "Test User", pin: "123456"],
+    password_reset: [
+      email: "test@example.com",
+      display_name: "Test User",
+      url: "https://example.com/reset/TOKEN"
+    ],
+    update_email: [
+      email: "test@example.com",
+      display_name: "Test User",
+      url: "https://example.com/update/TOKEN"
+    ],
     duplicate_registration: [email: "test@example.com"],
     daily_report: [count: 3]
   }
@@ -31,19 +39,27 @@ defmodule Animina.Accounts.EmailTemplatesTest do
 
     test "German confirmation_pin contains correct subject and variables" do
       {subject, body} =
-        EmailTemplates.render("de", :confirmation_pin, email: "user@test.de", pin: "654321")
+        EmailTemplates.render("de", :confirmation_pin,
+          email: "user@test.de",
+          display_name: "Max",
+          pin: "654321"
+        )
 
       assert subject == "Ihr Bestätigungscode für ANIMINA"
-      assert body =~ "user@test.de"
+      assert body =~ "Max"
       assert body =~ "654321"
     end
 
     test "English confirmation_pin contains correct subject and variables" do
       {subject, body} =
-        EmailTemplates.render("en", :confirmation_pin, email: "user@test.com", pin: "111222")
+        EmailTemplates.render("en", :confirmation_pin,
+          email: "user@test.com",
+          display_name: "Jane",
+          pin: "111222"
+        )
 
       assert subject == "Your confirmation code for ANIMINA"
-      assert body =~ "user@test.com"
+      assert body =~ "Jane"
       assert body =~ "111222"
     end
 
@@ -51,18 +67,20 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("de", :password_reset,
           email: "u@t.de",
+          display_name: "Max",
           url: "https://animina.de/reset/abc"
         )
 
       assert subject == "Passwort zurücksetzen – ANIMINA"
       assert body =~ "https://animina.de/reset/abc"
-      assert body =~ "u@t.de"
+      assert body =~ "Max"
     end
 
     test "English update_email contains URL" do
       {subject, body} =
         EmailTemplates.render("en", :update_email,
           email: "u@t.com",
+          display_name: "Jane",
           url: "https://animina.de/update/xyz"
         )
 
@@ -95,30 +113,46 @@ defmodule Animina.Accounts.EmailTemplatesTest do
 
     test "falls back to German for unsupported locale" do
       {subject, _body} =
-        EmailTemplates.render("xx", :confirmation_pin, email: "a@b.com", pin: "000000")
+        EmailTemplates.render("xx", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "000000"
+        )
 
       assert subject == "Ihr Bestätigungscode für ANIMINA"
     end
 
     test "falls back to German for nil locale" do
       {subject, _body} =
-        EmailTemplates.render(nil, :confirmation_pin, email: "a@b.com", pin: "000000")
+        EmailTemplates.render(nil, :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "000000"
+        )
 
       assert subject == "Ihr Bestätigungscode für ANIMINA"
     end
 
     test "Turkish confirmation_pin has correct subject" do
       {subject, body} =
-        EmailTemplates.render("tr", :confirmation_pin, email: "u@t.tr", pin: "999888")
+        EmailTemplates.render("tr", :confirmation_pin,
+          email: "u@t.tr",
+          display_name: "Ahmet",
+          pin: "999888"
+        )
 
       assert subject == "ANIMINA için onay kodunuz"
-      assert body =~ "u@t.tr"
+      assert body =~ "Ahmet"
       assert body =~ "999888"
     end
 
     test "French password_reset has correct subject" do
       {subject, _body} =
-        EmailTemplates.render("fr", :password_reset, email: "u@t.fr", url: "https://example.com")
+        EmailTemplates.render("fr", :password_reset,
+          email: "u@t.fr",
+          display_name: "Marie",
+          url: "https://example.com"
+        )
 
       assert subject == "Réinitialisation du mot de passe – ANIMINA"
     end
@@ -131,7 +165,11 @@ defmodule Animina.Accounts.EmailTemplatesTest do
 
     test "body contains separator lines" do
       {_subject, body} =
-        EmailTemplates.render("en", :confirmation_pin, email: "a@b.com", pin: "123456")
+        EmailTemplates.render("en", :confirmation_pin,
+          email: "a@b.com",
+          display_name: "Test",
+          pin: "123456"
+        )
 
       assert body =~ "=============================="
     end

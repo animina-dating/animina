@@ -3,7 +3,7 @@ Tu código de confirmación para ANIMINA
 
 ==============================
 
-Hola <%= @email %>,
+Hola <%= @display_name %>,
 
 Tu código de confirmación es:
 

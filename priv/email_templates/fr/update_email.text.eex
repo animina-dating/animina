@@ -3,7 +3,7 @@ Instructions de modification d'e-mail – ANIMINA
 
 ==============================
 
-Bonjour <%= @email %>,
+Bonjour <%= @display_name %>,
 
 Vous pouvez modifier votre e-mail en visitant le lien
 ci-dessous :

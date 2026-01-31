@@ -3,7 +3,7 @@ Instrukcje zmiany adresu e-mail – ANIMINA
 
 ==============================
 
-Witaj <%= @email %>,
+Witaj <%= @display_name %>,
 
 Możesz zmienić swój adres e-mail, odwiedzając poniższy
 link:

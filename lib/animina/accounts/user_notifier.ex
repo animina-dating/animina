@@ -30,7 +30,11 @@ defmodule Animina.Accounts.UserNotifier do
   """
   def deliver_update_email_instructions(user, url) do
     {subject, body} =
-      EmailTemplates.render(user_locale(user), :update_email, email: user.email, url: url)
+      EmailTemplates.render(user_locale(user), :update_email,
+        email: user.email,
+        display_name: user.display_name,
+        url: url
+      )
 
     deliver(user.email, subject, body)
   end
@@ -40,7 +44,11 @@ defmodule Animina.Accounts.UserNotifier do
   """
   def deliver_password_reset_instructions(user, url) do
     {subject, body} =
-      EmailTemplates.render(user_locale(user), :password_reset, email: user.email, url: url)
+      EmailTemplates.render(user_locale(user), :password_reset,
+        email: user.email,
+        display_name: user.display_name,
+        url: url
+      )
 
     deliver(user.email, subject, body)
   end
@@ -50,7 +58,11 @@ defmodule Animina.Accounts.UserNotifier do
   """
   def deliver_confirmation_pin(user, pin) do
     {subject, body} =
-      EmailTemplates.render(user_locale(user), :confirmation_pin, email: user.email, pin: pin)
+      EmailTemplates.render(user_locale(user), :confirmation_pin,
+        email: user.email,
+        display_name: user.display_name,
+        pin: pin
+      )
 
     deliver(user.email, subject, body)
   end

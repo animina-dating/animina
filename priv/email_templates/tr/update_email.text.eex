@@ -3,7 +3,7 @@ E-posta değiştirme talimatları – ANIMINA
 
 ==============================
 
-Merhaba <%= @email %>,
+Merhaba <%= @display_name %>,
 
 Aşağıdaki bağlantıyı ziyaret ederek e-postanızı
 değiştirebilirsiniz:

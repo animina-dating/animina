@@ -3,7 +3,7 @@ Instrucciones para cambiar el correo electrónico – ANIMINA
 
 ==============================
 
-Hola <%= @email %>,
+Hola <%= @display_name %>,
 
 Puedes cambiar tu correo electrónico visitando el
 siguiente enlace:

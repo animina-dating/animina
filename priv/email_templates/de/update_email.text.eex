@@ -3,7 +3,7 @@ E-Mail-Änderungsanleitung – ANIMINA
 
 ==============================
 
-Hallo <%= @email %>,
+Hallo <%= @display_name %>,
 
 Sie können Ihre E-Mail ändern, indem Sie die folgende
 URL besuchen:

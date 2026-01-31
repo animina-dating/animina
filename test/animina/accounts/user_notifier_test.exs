@@ -76,11 +76,11 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ "654321"
     end
 
-    test "includes user email in the body" do
+    test "includes user display_name in the body" do
       user = user_fixture()
       {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
 
-      assert email.text_body =~ user.email
+      assert email.text_body =~ user.display_name
     end
 
     test "uses German subject by default (no language set)" do

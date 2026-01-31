@@ -3,7 +3,7 @@ ANIMINA için onay kodunuz
 
 ==============================
 
-Merhaba <%= @email %>,
+Merhaba <%= @display_name %>,
 
 Onay kodunuz:
 

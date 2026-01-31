@@ -3,7 +3,7 @@ Update email instructions – ANIMINA
 
 ==============================
 
-Hi <%= @email %>,
+Hi <%= @display_name %>,
 
 You can change your email by visiting the URL below:
 
