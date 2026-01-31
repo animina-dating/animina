@@ -987,7 +987,7 @@ msgid "You are on our waitlist. Possible reasons:"
 msgstr "Vous êtes sur notre liste d'attente. Raisons possibles :"
 
 #: lib/animina_web/user_auth.ex:226
-#: lib/animina_web/user_auth.ex:299
+#: lib/animina_web/user_auth.ex:318
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Vous devez vous connecter pour accéder à cette page."
@@ -1067,3 +1067,13 @@ msgstr "transparentes"
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Créer un compte"
+
+#: lib/animina_web/components/layouts.ex:243
+#, elixir-autogen, elixir-format
+msgid "Updating ANIMINA"
+msgstr "Mise à jour d'ANIMINA"
+
+#: lib/animina_web/components/layouts.ex:248
+#, elixir-autogen, elixir-format
+msgid "We're deploying a new version. This will only take a moment..."
+msgstr "Nous déployons une nouvelle version. Cela ne prendra qu'un instant..."

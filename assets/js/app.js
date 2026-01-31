@@ -59,6 +59,21 @@ window.addEventListener("phx:copy", (event) => {
   navigator.clipboard.writeText(text)
 })
 
+// Deployment notification: show friendly message during cold deploys
+window.addEventListener("phx:deployment-starting", (event) => {
+  document.body.classList.add("deploying")
+  const version = event.detail && event.detail.version
+  if (version) {
+    const titleEl = document.querySelector("#deployment-notice .font-semibold")
+    if (titleEl) titleEl.textContent = `Updating ANIMINA to v${version}`
+  }
+})
+
+// Clean up deploying state on reconnect
+window.addEventListener("phx:page-loading-stop", () => {
+  document.body.classList.remove("deploying")
+})
+
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 

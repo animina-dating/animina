@@ -209,6 +209,12 @@ main() {
     log "Updating current symlink"
     ln -sfn "$RELEASE_DIR" "$CURRENT_LINK"
 
+    # Notify connected users about the upcoming deployment
+    NEW_VERSION=$(basename "$TARBALL" | sed "s/${RELEASE_NAME}-//" | sed "s/\.tar\.gz//")
+    log "Notifying connected users about deployment to v${NEW_VERSION}..."
+    "$CURRENT_LINK/bin/animina" rpc "Animina.Deployment.notify_deploying(\"${NEW_VERSION}\")" 2>/dev/null || true
+    sleep 2
+
     # Restart application
     log "Restarting application..."
     if ! sudo systemctl restart "$SERVICE_NAME" 2>&1; then

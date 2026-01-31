@@ -236,6 +236,20 @@ defmodule AniminaWeb.Layouts do
         {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
       </.flash>
+
+      <.flash
+        id="deployment-notice"
+        kind={:info}
+        title={gettext("Updating ANIMINA")}
+        phx-disconnected={
+          show(".phx-server-error #deployment-notice") |> JS.remove_attribute("hidden")
+        }
+        phx-connected={hide("#deployment-notice") |> JS.set_attribute({"hidden", ""})}
+        hidden
+      >
+        {gettext("We're deploying a new version. This will only take a moment...")}
+        <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
+      </.flash>
     </div>
     """
   end

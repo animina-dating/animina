@@ -219,3 +219,7 @@ body {
 .wizard-step-backward {
   animation: wizardStepBackward 250ms ease-out;
 }
+
+/* During deployment: hide the default server error, show deployment notice */
+body.deploying #server-error { display: none !important; }
+body:not(.deploying) #deployment-notice { display: none !important; }

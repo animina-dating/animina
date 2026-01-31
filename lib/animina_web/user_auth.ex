@@ -277,7 +277,28 @@ defmodule AniminaWeb.UserAuth do
         else: default_locale
 
     Gettext.put_locale(AniminaWeb.Gettext, locale)
-    Phoenix.Component.assign(socket, :locale, locale)
+
+    socket
+    |> Phoenix.Component.assign(:locale, locale)
+    |> subscribe_to_deployment_notifications()
+  end
+
+  defp subscribe_to_deployment_notifications(socket) do
+    if Phoenix.LiveView.connected?(socket) && !socket.assigns[:deployment_subscribed] do
+      Phoenix.PubSub.subscribe(Animina.PubSub, Animina.Deployment.topic())
+
+      socket
+      |> Phoenix.Component.assign(:deployment_subscribed, true)
+      |> Phoenix.LiveView.attach_hook(:deployment_notice, :handle_info, fn
+        {:deploying, version}, sock ->
+          {:halt, Phoenix.LiveView.push_event(sock, "deployment-starting", %{version: version})}
+
+        _other, sock ->
+          {:cont, sock}
+      end)
+    else
+      socket
+    end
   end
 
   @doc "Returns the path to redirect to after log in."
