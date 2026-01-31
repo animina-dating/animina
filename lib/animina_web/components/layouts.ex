@@ -247,7 +247,9 @@ defmodule AniminaWeb.Layouts do
         phx-connected={hide("#deployment-notice") |> JS.set_attribute({"hidden", ""})}
         hidden
       >
-        {gettext("A new software version is being installed on the server. This will only take a moment...")}
+        {gettext(
+          "A new software version is being installed on the server. This will only take a moment..."
+        )}
         <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
       </.flash>
     </div>
