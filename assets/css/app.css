@@ -220,7 +220,5 @@ body {
   animation: wizardStepBackward 250ms ease-out;
 }
 
-/* During deployment: hide the default server error, show deployment notice */
-body.deploying #server-error,
-body.deploying #client-error { display: none !important; }
-body:not(.deploying) #deployment-notice { display: none !important; }
+/* During server disconnect: show friendly deployment notice instead of error */
+.phx-server-error #server-error { display: none !important; }
