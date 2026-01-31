@@ -85,6 +85,10 @@ defmodule Animina.Accounts do
   A confirmed referral is a user who has `referred_by_id` set and `confirmed_at` not nil.
   """
   def count_confirmed_referrals(%User{id: user_id}) do
+    count_confirmed_referrals_by_id(user_id)
+  end
+
+  defp count_confirmed_referrals_by_id(user_id) do
     from(u in User,
       where: u.referred_by_id == ^user_id,
       where: not is_nil(u.confirmed_at),
@@ -101,33 +105,20 @@ defmodule Animina.Accounts do
   def process_referral(%User{referred_by_id: nil}), do: :ok
 
   def process_referral(%User{referred_by_id: referrer_id} = user) do
-    # Increment waitlist_priority for the referred user
     from(u in User, where: u.id == ^user.id)
     |> Repo.update_all(inc: [waitlist_priority: 1])
 
-    # Increment waitlist_priority for the referrer
     from(u in User, where: u.id == ^referrer_id)
     |> Repo.update_all(inc: [waitlist_priority: 1])
 
-    # Check auto-activation for referrer
     maybe_auto_activate(referrer_id)
-
-    # Check auto-activation for referred user
     maybe_auto_activate(user.id)
 
     :ok
   end
 
   defp maybe_auto_activate(user_id) do
-    referral_count =
-      from(u in User,
-        where: u.referred_by_id == ^user_id,
-        where: not is_nil(u.confirmed_at),
-        select: count()
-      )
-      |> Repo.one()
-
-    if referral_count >= @referral_auto_activate_threshold do
+    if count_confirmed_referrals_by_id(user_id) >= @referral_auto_activate_threshold do
       from(u in User,
         where: u.id == ^user_id,
         where: u.state == "waitlisted"
@@ -200,19 +191,16 @@ defmodule Animina.Accounts do
   """
   def only_email_uniqueness_error?(%Ecto.Changeset{} = changeset) do
     email_uniqueness_error?(changeset) and
-      changeset.errors
-      |> Enum.reject(fn {field, {_msg, meta}} ->
+      Enum.all?(changeset.errors, fn {field, {_msg, meta}} ->
         field == :email and
           (meta[:validation] == :unsafe_unique or meta[:constraint] == :unique)
       end)
-      |> Enum.empty?()
   end
 
   defp extract_referral_code_input(attrs) do
     val = Map.get(attrs, :referral_code_input) || Map.get(attrs, "referral_code_input")
 
     case val do
-      nil -> nil
       v when is_binary(v) -> String.trim(v)
       _ -> nil
     end
@@ -252,10 +240,7 @@ defmodule Animina.Accounts do
   end
 
   defp extract_locations(attrs) do
-    locations =
-      Map.get(attrs, :locations) || Map.get(attrs, "locations") || []
-
-    locations
+    (Map.get(attrs, :locations) || Map.get(attrs, "locations") || [])
     |> Enum.with_index(1)
     |> Enum.map(fn {loc, idx} ->
       %{
@@ -266,23 +251,18 @@ defmodule Animina.Accounts do
     end)
   end
 
-  defp insert_locations(_user, []) do
-    :ok
-  end
+  defp insert_locations(_user, []), do: :ok
 
   defp insert_locations(user, locations) do
-    results =
-      Enum.reduce_while(locations, :ok, fn loc_attrs, :ok ->
-        changeset =
-          UserLocation.changeset(%UserLocation{}, Map.put(loc_attrs, :user_id, user.id))
+    Enum.reduce_while(locations, :ok, fn loc_attrs, :ok ->
+      changeset =
+        UserLocation.changeset(%UserLocation{}, Map.put(loc_attrs, :user_id, user.id))
 
-        case Repo.insert(changeset) do
-          {:ok, _location} -> {:cont, :ok}
-          {:error, changeset} -> {:halt, {:error, changeset}}
-        end
-      end)
-
-    results
+      case Repo.insert(changeset) do
+        {:ok, _location} -> {:cont, :ok}
+        {:error, changeset} -> {:halt, {:error, changeset}}
+      end
+    end)
   end
 
   @doc """
@@ -466,9 +446,8 @@ defmodule Animina.Accounts do
 
   """
   def get_user_by_password_reset_token(token) do
-    with {:ok, query} <- UserToken.verify_password_reset_token_query(token),
-         %User{} = user <- Repo.one(query) do
-      user
+    with {:ok, query} <- UserToken.verify_password_reset_token_query(token) do
+      Repo.one(query)
     else
       _ -> nil
     end
@@ -511,15 +490,9 @@ defmodule Animina.Accounts do
   def send_confirmation_pin(%User{} = user) do
     pin = generate_confirmation_pin()
 
-    case user
-         |> User.confirmation_pin_changeset(pin)
-         |> Repo.update() do
-      {:ok, updated_user} ->
-        UserNotifier.deliver_confirmation_pin(updated_user, pin)
-        {:ok, pin}
-
-      {:error, changeset} ->
-        {:error, changeset}
+    with {:ok, updated_user} <- user |> User.confirmation_pin_changeset(pin) |> Repo.update() do
+      UserNotifier.deliver_confirmation_pin(updated_user, pin)
+      {:ok, pin}
     end
   end
 
@@ -546,33 +519,26 @@ defmodule Animina.Accounts do
         {:error, :too_many_attempts}
 
       User.verify_confirmation_pin(user, pin) ->
-        result =
-          user
-          |> Ecto.Changeset.change()
-          |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
-          |> Ecto.Changeset.put_change(:confirmation_pin_hash, nil)
-          |> Ecto.Changeset.put_change(:confirmation_pin_attempts, 0)
-          |> Ecto.Changeset.put_change(:confirmation_pin_sent_at, nil)
-          |> Repo.update()
-
-        case result do
-          {:ok, confirmed_user} ->
-            process_referral(confirmed_user)
-            {:ok, confirmed_user}
-
-          error ->
-            error
+        with {:ok, confirmed_user} <-
+               user
+               |> Ecto.Changeset.change()
+               |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
+               |> Ecto.Changeset.put_change(:confirmation_pin_hash, nil)
+               |> Ecto.Changeset.put_change(:confirmation_pin_attempts, 0)
+               |> Ecto.Changeset.put_change(:confirmation_pin_sent_at, nil)
+               |> Repo.update() do
+          process_referral(confirmed_user)
+          {:ok, confirmed_user}
         end
 
       true ->
-        user
-        |> User.increment_pin_attempts_changeset()
-        |> Repo.update!()
+        updated_user =
+          user
+          |> User.increment_pin_attempts_changeset()
+          |> Repo.update!()
 
-        new_attempts = user.confirmation_pin_attempts + 1
-
-        if new_attempts >= @pin_max_attempts do
-          Repo.delete(Repo.get!(User, user.id))
+        if updated_user.confirmation_pin_attempts >= @pin_max_attempts do
+          Repo.delete(updated_user)
           {:error, :too_many_attempts}
         else
           {:error, :wrong_pin}

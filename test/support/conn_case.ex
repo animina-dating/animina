@@ -53,7 +53,7 @@ defmodule AniminaWeb.ConnCase do
     opts =
       context
       |> Map.take([:token_authenticated_at])
-      |> Enum.into([])
+      |> Keyword.new()
 
     %{conn: log_in_user(conn, user, opts), user: user, scope: scope}
   end

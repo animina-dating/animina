@@ -7,23 +7,15 @@ defmodule AniminaWeb.LocaleController do
     if locale in SetLocale.supported_locales() do
       Gettext.put_locale(AniminaWeb.Gettext, locale)
 
-      conn = put_session(conn, :locale, locale)
+      if conn.assigns[:current_scope] && conn.assigns.current_scope.user do
+        conn.assigns.current_scope.user
+        |> Ecto.Changeset.change(language: locale)
+        |> Animina.Repo.update()
+      end
 
-      # Update user's language preference in DB if logged in
-      conn =
-        if conn.assigns[:current_scope] && conn.assigns.current_scope.user do
-          user = conn.assigns.current_scope.user
-
-          user
-          |> Ecto.Changeset.change(language: locale)
-          |> Animina.Repo.update()
-
-          conn
-        else
-          conn
-        end
-
-      redirect_back(conn)
+      conn
+      |> put_session(:locale, locale)
+      |> redirect_back()
     else
       redirect_back(conn)
     end
@@ -34,17 +26,16 @@ defmodule AniminaWeb.LocaleController do
   end
 
   defp redirect_back(conn) do
-    redirect_to =
+    path =
       case get_req_header(conn, "referer") do
         [referer | _] ->
           uri = URI.parse(referer)
-          path = uri.path || "/"
-          if uri.query, do: "#{path}?#{uri.query}", else: path
+          if uri.query, do: "#{uri.path || "/"}?#{uri.query}", else: uri.path || "/"
 
         _ ->
           "/"
       end
 
-    redirect(conn, to: redirect_to)
+    redirect(conn, to: path)
   end
 end

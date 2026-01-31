@@ -46,9 +46,8 @@ defmodule Animina.AccountsFixtures do
   end
 
   def user_fixture(attrs \\ %{}) do
-    user = unconfirmed_user_fixture(attrs)
-
-    user
+    attrs
+    |> unconfirmed_user_fixture()
     |> Ecto.Changeset.change(confirmed_at: DateTime.utc_now(:second))
     |> Animina.Repo.update!()
   end

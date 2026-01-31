@@ -29,7 +29,7 @@ defmodule Animina.Accounts.EmailTemplates do
     locale = if locale in @supported_locales, do: locale, else: "de"
     path = Path.join([templates_dir(), locale, "#{type}.text.eex"])
     rendered = EEx.eval_file(path, assigns: Map.new(assigns))
-    [subject | rest] = String.split(rendered, "\n---\n", parts: 2)
-    {String.trim(subject), Enum.join(rest)}
+    [subject, body] = String.split(rendered, "\n---\n", parts: 2)
+    {String.trim(subject), body}
   end
 end

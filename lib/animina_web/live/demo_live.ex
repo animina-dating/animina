@@ -11,27 +11,7 @@ defmodule AniminaWeb.DemoLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     assign(socket,
-       page_title: gettext("Welcome"),
-       message_count: 3,
-       bookmark_open: false,
-       bookmarks: [
-         %{id: 1, name: "Sarah", age: 28, location: "Berlin"},
-         %{id: 2, name: "Marcus", age: 32, location: "Munich"},
-         %{id: 3, name: "Elena", age: 26, location: "Hamburg"}
-       ]
-     )}
-  end
-
-  @impl true
-  def handle_event("toggle_bookmarks", _params, socket) do
-    {:noreply, assign(socket, bookmark_open: !socket.assigns.bookmark_open)}
-  end
-
-  @impl true
-  def handle_event("close_bookmarks", _params, socket) do
-    {:noreply, assign(socket, bookmark_open: false)}
+    {:ok, assign(socket, page_title: gettext("Welcome"))}
   end
 
   @impl true

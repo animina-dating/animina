@@ -458,18 +458,11 @@ defmodule AniminaWeb.DemoIndex2Live do
   attr :examples, :list, required: true
 
   defp flag_card(assigns) do
-    border_color =
+    {border_color, bg_color} =
       case assigns.color do
-        "white" -> "border-base-300"
-        "green" -> "border-success/50"
-        "red" -> "border-error/50"
-      end
-
-    bg_color =
-      case assigns.color do
-        "white" -> "bg-base-200"
-        "green" -> "bg-success/10"
-        "red" -> "bg-error/10"
+        "white" -> {"border-base-300", "bg-base-200"}
+        "green" -> {"border-success/50", "bg-success/10"}
+        "red" -> {"border-error/50", "bg-error/10"}
       end
 
     assigns = assign(assigns, border_color: border_color, bg_color: bg_color)

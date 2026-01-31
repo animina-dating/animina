@@ -83,6 +83,7 @@ defmodule AniminaWeb.UserLive.ResetPassword do
     {:noreply, assign(socket, form: to_form(changeset, as: "user"))}
   end
 
+  @impl true
   def handle_event("reset_password", %{"user" => user_params}, socket) do
     case Accounts.reset_user_password(socket.assigns.user, user_params) do
       {:ok, _user} ->

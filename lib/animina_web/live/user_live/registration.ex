@@ -685,15 +685,13 @@ defmodule AniminaWeb.UserLive.Registration do
           error: nil
         }
 
-        default_country_id = input.country_id
-
         {:noreply,
          socket
          |> assign(locations: locations ++ [new_location])
          |> assign(next_location_id: socket.assigns.next_location_id + 1)
          |> assign(
            location_input: %{
-             country_id: default_country_id,
+             country_id: input.country_id,
              zip_code: "",
              city_name: nil,
              error: nil
@@ -779,7 +777,7 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp step_valid?(3, _params, locations) do
-    locations_valid?(locations)
+    locations != []
   end
 
   defp step_valid?(step, params, _locations) do
@@ -812,10 +810,6 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp maybe_auto_add_location_input(_step, socket), do: socket
-
-  defp locations_valid?(locations) do
-    length(locations) >= 1
-  end
 
   defp location_input_valid?(input, locations) do
     Regex.match?(~r/^\d{5}$/, input.zip_code || "") and
@@ -901,20 +895,13 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp compute_age(birthday) when is_binary(birthday) do
-    case Date.from_iso8601(birthday) do
-      {:ok, date} ->
-        today = Date.utc_today()
-        age = today.year - date.year
-
-        age =
-          if {today.month, today.day} < {date.month, date.day},
-            do: age - 1,
-            else: age
-
-        if age >= 0, do: age, else: nil
-
-      _ ->
-        nil
+    with {:ok, date} <- Date.from_iso8601(birthday) do
+      today = Date.utc_today()
+      age = today.year - date.year
+      age = if {today.month, today.day} < {date.month, date.day}, do: age - 1, else: age
+      if age >= 0, do: age, else: nil
+    else
+      _ -> nil
     end
   end
 
@@ -947,27 +934,21 @@ defmodule AniminaWeb.UserLive.Registration do
 
     case step do
       3 ->
-        locations_valid?(locations) or
+        locations != [] or
           location_input_valid?(socket.assigns.location_input, locations)
 
       _ ->
         required = @step_required_fields[step]
+        changeset = Accounts.change_user_registration(%User{}, params)
+        step_atoms = Enum.map(required, &String.to_atom/1)
+        error_keys = changeset.errors |> Keyword.keys() |> MapSet.new()
+        step_set = MapSet.new(step_atoms)
 
-        if required == [] do
-          true
-        else
-          changeset = Accounts.change_user_registration(%User{}, params)
-          step_atoms = Enum.map(required, &String.to_atom/1)
-          error_keys = changeset.errors |> Keyword.keys() |> MapSet.new()
-          step_set = MapSet.new(step_atoms)
-
-          filled?(params, required) and MapSet.disjoint?(error_keys, step_set)
-        end
+        filled?(params, required) and MapSet.disjoint?(error_keys, step_set)
     end
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    form = to_form(changeset, as: "user")
-    assign(socket, form: form)
+    assign(socket, form: to_form(changeset, as: "user"))
   end
 end

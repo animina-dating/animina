@@ -218,7 +218,7 @@ defmodule AniminaWeb.UserAuth do
   def on_mount(:require_authenticated, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
-    if socket.assigns.current_scope && socket.assigns.current_scope.user do
+    if match?(%{current_scope: %{user: %_{}}}, socket.assigns) do
       {:cont, socket}
     else
       socket =
@@ -259,18 +259,21 @@ defmodule AniminaWeb.UserAuth do
         Scope.for_user(user)
       end)
 
-    # Set locale for LiveView from user preference or session
     default_locale =
-      Application.get_env(:animina, AniminaWeb.Gettext, []) |> Keyword.get(:default_locale, "de")
+      Application.get_env(:animina, AniminaWeb.Gettext, [])
+      |> Keyword.get(:default_locale, "de")
+
+    user_language =
+      case socket.assigns.current_scope do
+        %{user: %{language: lang}} when is_binary(lang) -> lang
+        _ -> nil
+      end
+
+    candidate = user_language || session["locale"] || default_locale
 
     locale =
-      if socket.assigns.current_scope && socket.assigns.current_scope.user do
-        socket.assigns.current_scope.user.language
-      end || session["locale"] || default_locale
-
-    locale =
-      if locale in AniminaWeb.Plugs.SetLocale.supported_locales(),
-        do: locale,
+      if candidate in AniminaWeb.Plugs.SetLocale.supported_locales(),
+        do: candidate,
         else: default_locale
 
     Gettext.put_locale(AniminaWeb.Gettext, locale)
@@ -289,7 +292,7 @@ defmodule AniminaWeb.UserAuth do
   Plug for routes that require the user to be authenticated.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns.current_scope && conn.assigns.current_scope.user do
+    if match?(%{current_scope: %{user: %_{}}}, conn.assigns) do
       conn
     else
       conn

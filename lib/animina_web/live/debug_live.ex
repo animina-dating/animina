@@ -1,8 +1,6 @@
 defmodule AniminaWeb.DebugLive do
   use AniminaWeb, :live_view
 
-  alias AniminaWeb.Layouts
-
   @refresh_interval 5_000
 
   @impl true

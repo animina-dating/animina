@@ -107,7 +107,7 @@ defmodule Animina.Accounts.User do
   Generates a random 6-character alphanumeric referral code.
   """
   def generate_referral_code do
-    Enum.map(1..@referral_code_length, fn _ -> Enum.random(@referral_code_chars) end)
+    for(_ <- 1..@referral_code_length, do: Enum.random(@referral_code_chars))
     |> List.to_string()
   end
 
@@ -322,7 +322,7 @@ defmodule Animina.Accounts.User do
   end
 
   defp validate_email_changed(changeset) do
-    if get_field(changeset, :email) && get_change(changeset, :email) == nil do
+    if get_field(changeset, :email) && is_nil(get_change(changeset, :email)) do
       add_error(changeset, :email, "did not change")
     else
       changeset
@@ -367,14 +367,6 @@ defmodule Animina.Accounts.User do
   end
 
   @doc """
-  Confirms the account by setting `confirmed_at`.
-  """
-  def confirm_changeset(user) do
-    now = DateTime.utc_now(:second)
-    change(user, confirmed_at: now)
-  end
-
-  @doc """
   Verifies the password.
 
   If there is no user or the user doesn't have a password, we call
@@ -410,17 +402,6 @@ defmodule Animina.Accounts.User do
   """
   def increment_pin_attempts_changeset(user) do
     change(user, confirmation_pin_attempts: user.confirmation_pin_attempts + 1)
-  end
-
-  @doc """
-  Clears the confirmation PIN fields after successful verification.
-  """
-  def clear_confirmation_pin_changeset(user) do
-    change(user,
-      confirmation_pin_hash: nil,
-      confirmation_pin_attempts: 0,
-      confirmation_pin_sent_at: nil
-    )
   end
 
   @doc """

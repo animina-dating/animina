@@ -95,10 +95,7 @@ defmodule AniminaWeb.Plugs.SetLocaleTest do
     setup %{conn: conn} do
       user = user_fixture(%{language: "tr"})
       scope = Animina.Accounts.Scope.for_user(user)
-
-      conn =
-        conn
-        |> assign(:current_scope, scope)
+      conn = assign(conn, :current_scope, scope)
 
       %{conn: conn, user: user}
     end

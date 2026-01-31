@@ -98,9 +98,7 @@ defmodule AniminaWeb.UserLive.Settings do
   end
 
   @impl true
-  def handle_event("validate_email", params, socket) do
-    %{"user" => user_params} = params
-
+  def handle_event("validate_email", %{"user" => user_params}, socket) do
     email_form =
       socket.assigns.current_scope.user
       |> Accounts.change_user_email(user_params, validate_unique: false)
@@ -110,8 +108,7 @@ defmodule AniminaWeb.UserLive.Settings do
     {:noreply, assign(socket, email_form: email_form)}
   end
 
-  def handle_event("update_email", params, socket) do
-    %{"user" => user_params} = params
+  def handle_event("update_email", %{"user" => user_params}, socket) do
     user = socket.assigns.current_scope.user
     true = Accounts.sudo_mode?(user)
 
@@ -131,9 +128,7 @@ defmodule AniminaWeb.UserLive.Settings do
     end
   end
 
-  def handle_event("validate_password", params, socket) do
-    %{"user" => user_params} = params
-
+  def handle_event("validate_password", %{"user" => user_params}, socket) do
     password_form =
       socket.assigns.current_scope.user
       |> Accounts.change_user_password(user_params, hash_password: false)
@@ -143,8 +138,7 @@ defmodule AniminaWeb.UserLive.Settings do
     {:noreply, assign(socket, password_form: password_form)}
   end
 
-  def handle_event("update_password", params, socket) do
-    %{"user" => user_params} = params
+  def handle_event("update_password", %{"user" => user_params}, socket) do
     user = socket.assigns.current_scope.user
     true = Accounts.sudo_mode?(user)
 

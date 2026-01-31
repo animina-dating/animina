@@ -46,6 +46,43 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     lv |> element("button[phx-click=next_step]") |> render_click()
   end
 
+  defp fill_step_4_and_submit(lv) do
+    lv
+    |> element("#registration_form")
+    |> render_change(user: %{"terms_accepted" => "true"})
+
+    lv |> form("#registration_form") |> render_submit()
+  end
+
+  defp fill_all_steps(lv, attrs \\ %{}) do
+    email = Map.get(attrs, :email, unique_user_email())
+    mobile = Map.get(attrs, :mobile_phone, unique_mobile_phone())
+    referral = Map.get(attrs, :referral_code_input)
+
+    step_1_fields = %{
+      "email" => email,
+      "password" => "password1234",
+      "mobile_phone" => mobile,
+      "birthday" => "1990-01-01"
+    }
+
+    step_1_fields =
+      if referral,
+        do: Map.put(step_1_fields, "referral_code_input", referral),
+        else: step_1_fields
+
+    lv
+    |> element("#registration_form")
+    |> render_change(user: step_1_fields)
+
+    lv |> element("button[phx-click=next_step]") |> render_click()
+    fill_step_2(lv)
+    fill_step_3(lv)
+    fill_step_4_and_submit(lv)
+
+    email
+  end
+
   describe "Registration page" do
     test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
@@ -170,25 +207,10 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "advances to step 2 when step 1 fields are valid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Fill step 1 fields
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
-        }
-      )
+      html = fill_step_1(lv)
 
-      # Click next
-      html = lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Should now show step 2 fields
       assert html =~ "Display name"
       assert html =~ "Gender"
-      # Should have both Back and Next
       assert html =~ "Back"
       assert html =~ "Next"
     end
@@ -196,24 +218,10 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "back button works without validation", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Fill step 1 and advance
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
-        }
-      )
+      fill_step_1(lv)
 
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Now go back
       html = lv |> element("button", "Back") |> render_click()
 
-      # Should be back on step 1
       assert html =~ "Email address"
       refute html =~ "Back"
     end
@@ -221,72 +229,22 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "data persists across steps", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Fill step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Fill step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "female",
-          "height" => "165"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
+      fill_step_1(lv)
+      fill_step_2(lv)
 
       # Go back to step 1
       lv |> element("button", "Back") |> render_click()
       html = lv |> element("button", "Back") |> render_click()
 
-      # Step 1 data should still be there
       assert html =~ "test@example.com"
     end
 
     test "shows display_name in navbar after completing step 2", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Fill step 1 and advance
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => "test@example.com",
-          "password" => "password1234",
-          "mobile_phone" => "+4915112345678",
-          "birthday" => "1990-01-01"
-        }
-      )
+      fill_step_1(lv)
+      html = fill_step_2(lv)
 
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Fill step 2 with display_name and advance
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      html = lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Navbar should show the display_name and initial in the avatar
       assert html =~ "TestUser"
       assert html =~ ~r/text-secondary-content">\s*T\s*<\/span>/
     end
@@ -328,52 +286,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "full wizard flow creates account", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      email = unique_user_email()
+      fill_all_steps(lv)
 
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
-      fill_step_3(lv)
-
-      # Step 4 - accept terms and submit
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "terms_accepted" => "true"
-        }
-      )
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
-
-      # Should redirect to PIN confirmation page
       {path, _flash} = assert_redirect(lv)
       assert path =~ "/users/confirm/"
     end
@@ -381,178 +295,49 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "duplicate email does not reveal existence — redirects to PIN confirmation", %{
       conn: conn
     } do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
       user = user_fixture(%{email: "test@email.com"})
 
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => user.email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01"
-        }
-      )
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      lv |> element("button[phx-click=next_step]") |> render_click()
+      fill_all_steps(lv, %{email: user.email})
 
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
-      fill_step_3(lv)
-
-      # Step 4 - accept terms and submit
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "terms_accepted" => "true"
-        }
-      )
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
-
-      # Should redirect to PIN confirmation (phantom flow), NOT show "has already been taken"
       {path, flash} = assert_redirect(lv)
       assert path =~ "/users/confirm/"
       assert flash["info"] =~ "confirmation code"
     end
 
     test "duplicate email does not create a new user record", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
-
       existing_email = "no-dup-user@email.com"
-      user = user_fixture(%{email: existing_email})
+      _user = user_fixture(%{email: existing_email})
 
-      # Count users before
       user_count_before = Animina.Repo.aggregate(Animina.Accounts.User, :count, :id)
 
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => user.email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01"
-        }
-      )
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
-      fill_step_3(lv)
-
-      # Step 4 - accept terms and submit
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "terms_accepted" => "true"
-        }
-      )
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
+      fill_all_steps(lv, %{email: existing_email})
 
       assert_redirect(lv)
 
-      # No new user should have been created
       user_count_after = Animina.Repo.aggregate(Animina.Accounts.User, :count, :id)
       assert user_count_before == user_count_after
     end
 
     test "phantom PIN confirmation shows identical UI", %{conn: conn} do
+      _user = user_fixture(%{email: "phantom-ui@email.com"})
+
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      user = user_fixture(%{email: "phantom-ui@email.com"})
-
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => user.email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
-      fill_step_3(lv)
-
-      # Step 4 - accept terms and submit
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "terms_accepted" => "true"
-        }
-      )
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
+      fill_all_steps(lv, %{email: "phantom-ui@email.com"})
 
       {path, _flash} = assert_redirect(lv)
 
-      # Follow redirect to PIN confirmation page
       {:ok, pin_lv, pin_html} = live(conn, path)
 
-      # Should show the same PIN confirmation UI
       assert pin_html =~ "Confirm your email"
       assert pin_html =~ "Confirmation code"
       assert pin_html =~ "Remaining attempts"
       assert pin_html =~ "Remaining time"
 
-      # Enter a wrong PIN — should show error
       pin_lv
       |> form("#pin_form", pin: %{pin: "000000"})
       |> render_submit()
@@ -561,72 +346,20 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
 
     test "phantom flow redirects after 3 wrong PINs", %{conn: conn} do
+      _user = user_fixture(%{email: "phantom-fail@email.com"})
+
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      user = user_fixture(%{email: "phantom-fail@email.com"})
-
-      # Step 1
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => user.email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
-      fill_step_3(lv)
-
-      # Step 4 - accept terms and submit
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "terms_accepted" => "true"
-        }
-      )
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
+      fill_all_steps(lv, %{email: "phantom-fail@email.com"})
 
       {path, _flash} = assert_redirect(lv)
 
-      # Follow redirect to PIN confirmation page
       {:ok, pin_lv, _pin_html} = live(conn, path)
 
-      # Enter wrong PINs 3 times
-      pin_lv
-      |> form("#pin_form", pin: %{pin: "111111"})
-      |> render_submit()
+      for pin <- ["111111", "222222", "333333"] do
+        pin_lv |> form("#pin_form", pin: %{pin: pin}) |> render_submit()
+      end
 
-      pin_lv
-      |> form("#pin_form", pin: %{pin: "222222"})
-      |> render_submit()
-
-      pin_lv
-      |> form("#pin_form", pin: %{pin: "333333"})
-      |> render_submit()
-
-      # Should redirect to register page with account deleted message
       {redirect_path, flash} = assert_redirect(pin_lv)
       assert redirect_path == "/users/register"
       assert flash["error"] =~ "account has been deleted"
@@ -652,7 +385,6 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
       email = unique_user_email()
 
-      # Step 1
       lv
       |> element("#registration_form")
       |> render_change(
@@ -665,24 +397,9 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       )
 
       lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 2
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "display_name" => "TestUser",
-          "gender" => "male",
-          "height" => "180"
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-
-      # Step 3
+      fill_step_2(lv)
       fill_step_3(lv)
 
-      # Step 4 - override auto-filled values
       lv
       |> element("#registration_form")
       |> render_change(
@@ -693,15 +410,11 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         }
       )
 
-      lv
-      |> form("#registration_form")
-      |> render_submit()
+      lv |> form("#registration_form") |> render_submit()
 
-      # Should redirect to PIN confirmation page
       {path, _flash} = assert_redirect(lv)
       assert path =~ "/users/confirm/"
 
-      # Verify the offsets were correctly computed
       user = Animina.Repo.get_by!(Animina.Accounts.User, email: email)
       assert user.partner_minimum_age_offset == 11
       assert user.partner_maximum_age_offset == 9
@@ -869,7 +582,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
   describe "language pre-fill" do
     test "language field is pre-filled from session locale", %{conn: conn} do
-      conn = conn |> Phoenix.ConnTest.init_test_session(%{locale: "fr"})
+      conn = init_test_session(conn, %{locale: "fr"})
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       fill_step_1(lv)
@@ -923,32 +636,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
 
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      email = unique_user_email()
-
-      # Step 1 with referral code
-      lv
-      |> element("#registration_form")
-      |> render_change(
-        user: %{
-          "email" => email,
-          "password" => "password1234",
-          "mobile_phone" => unique_mobile_phone(),
-          "birthday" => "1990-01-01",
-          "referral_code_input" => referrer.referral_code
-        }
-      )
-
-      lv |> element("button[phx-click=next_step]") |> render_click()
-      fill_step_2(lv)
-      fill_step_3(lv)
-
-      lv
-      |> element("#registration_form")
-      |> render_change(user: %{"terms_accepted" => "true"})
-
-      lv
-      |> form("#registration_form")
-      |> render_submit()
+      email = fill_all_steps(lv, %{referral_code_input: referrer.referral_code})
 
       {path, _flash} = assert_redirect(lv)
       assert path =~ "/users/confirm/"
@@ -960,7 +648,6 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "registration with invalid referral code shows error", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      # Step 1 with invalid referral code
       lv
       |> element("#registration_form")
       |> render_change(
@@ -981,10 +668,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       |> element("#registration_form")
       |> render_change(user: %{"terms_accepted" => "true"})
 
-      result =
-        lv
-        |> form("#registration_form")
-        |> render_submit()
+      result = lv |> form("#registration_form") |> render_submit()
 
       assert result =~ "Referral code not found"
     end

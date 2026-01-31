@@ -77,7 +77,7 @@ defmodule AniminaWeb.Router do
   end
 
   scope "/", AniminaWeb do
-    pipe_through [:browser]
+    pipe_through :browser
 
     live_session :current_user,
       on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}] do

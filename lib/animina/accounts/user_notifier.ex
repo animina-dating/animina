@@ -6,13 +6,12 @@ defmodule Animina.Accounts.UserNotifier do
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do
-    %{name: sender_name, address: sender_address} =
-      Application.fetch_env!(:animina, :email_sender) |> Map.new()
+    config = Application.fetch_env!(:animina, :email_sender)
 
     email =
       new()
       |> to(recipient)
-      |> from({sender_name, sender_address})
+      |> from({config[:name], config[:address]})
       |> subject(subject)
       |> text_body(body)
       |> header("Auto-Submitted", "auto-generated")
@@ -71,11 +70,7 @@ defmodule Animina.Accounts.UserNotifier do
   that already belongs to an existing account.
   """
   def deliver_duplicate_registration_warning(email) when is_binary(email) do
-    locale =
-      case Animina.Accounts.get_user_by_email(email) do
-        %{language: lang} when is_binary(lang) -> lang
-        _ -> "de"
-      end
+    locale = email |> Animina.Accounts.get_user_by_email() |> user_locale()
 
     {subject, body} =
       EmailTemplates.render(locale, :duplicate_registration, email: email)
