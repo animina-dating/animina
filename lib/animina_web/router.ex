@@ -80,6 +80,12 @@ defmodule AniminaWeb.Router do
       live "/users/waitlist", UserLive.Waitlist
     end
 
+    live_session :require_admin,
+      on_mount: [{AniminaWeb.UserAuth, :require_admin}] do
+      live "/admin/roles", Admin.UserRolesLive
+    end
+
+    post "/role/switch", RoleController, :switch
     post "/users/update-password", UserSessionController, :update_password
   end
 

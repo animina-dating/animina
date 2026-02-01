@@ -81,8 +81,12 @@ defmodule AniminaWeb.UserAuth do
     with {token, conn} <- ensure_user_token(conn),
          {user, token_inserted_at} <- Accounts.get_user_by_session_token(token),
          false <- Accounts.user_deleted?(user) do
+      roles = Accounts.get_user_roles(user)
+      session_role = get_session(conn, :current_role)
+      scope = Scope.for_user(user, roles, session_role)
+
       conn
-      |> assign(:current_scope, Scope.for_user(user))
+      |> assign(:current_scope, scope)
       |> maybe_reissue_user_session_token(user, token_inserted_at)
     else
       true ->
@@ -154,11 +158,13 @@ defmodule AniminaWeb.UserAuth do
   defp renew_session(conn, _user) do
     delete_csrf_token()
     locale = get_session(conn, :locale)
+    current_role = get_session(conn, :current_role)
 
     conn
     |> configure_session(renew: true)
     |> clear_session()
     |> put_session(:locale, locale)
+    |> put_session(:current_role, current_role)
   end
 
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),
@@ -243,6 +249,42 @@ defmodule AniminaWeb.UserAuth do
     end
   end
 
+  def on_mount(:require_admin, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    if Scope.admin?(socket.assigns.current_scope) do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          gettext("You are not authorized to access this page.")
+        )
+        |> Phoenix.LiveView.redirect(to: ~p"/")
+
+      {:halt, socket}
+    end
+  end
+
+  def on_mount(:require_moderator, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    if Scope.moderator?(socket.assigns.current_scope) do
+      {:cont, socket}
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          gettext("You are not authorized to access this page.")
+        )
+        |> Phoenix.LiveView.redirect(to: ~p"/")
+
+      {:halt, socket}
+    end
+  end
+
   def on_mount(:require_sudo_mode, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
@@ -269,7 +311,13 @@ defmodule AniminaWeb.UserAuth do
             Accounts.get_user_by_session_token(user_token)
           end || {nil, nil}
 
-        Scope.for_user(user)
+        if user do
+          roles = Accounts.get_user_roles(user)
+          session_role = session["current_role"]
+          Scope.for_user(user, roles, session_role)
+        else
+          Scope.for_user(nil)
+        end
       end)
 
     default_locale =

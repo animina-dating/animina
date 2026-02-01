@@ -27,6 +27,7 @@ defmodule Animina.Accounts.User do
     field :mobile_phone, :string
 
     has_many :locations, Animina.Accounts.UserLocation, preload_order: [asc: :position]
+    has_many :user_roles, Animina.Accounts.UserRole
 
     # Partner preferences
     field :preferred_partner_gender, {:array, :string}, default: []

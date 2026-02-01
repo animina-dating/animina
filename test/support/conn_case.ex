@@ -72,9 +72,16 @@ defmodule AniminaWeb.ConnCase do
 
     maybe_set_token_authenticated_at(token, opts[:token_authenticated_at])
 
-    conn
-    |> Phoenix.ConnTest.init_test_session(%{locale: "en"})
-    |> Plug.Conn.put_session(:user_token, token)
+    conn =
+      conn
+      |> Phoenix.ConnTest.init_test_session(%{locale: "en"})
+      |> Plug.Conn.put_session(:user_token, token)
+
+    if role = opts[:current_role] do
+      Plug.Conn.put_session(conn, :current_role, role)
+    else
+      conn
+    end
   end
 
   defp maybe_set_token_authenticated_at(_token, nil), do: nil

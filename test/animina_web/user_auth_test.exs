@@ -369,6 +369,127 @@ defmodule AniminaWeb.UserAuthTest do
     end
   end
 
+  describe "fetch_current_scope_for_user/2 with roles" do
+    test "loads roles and validates current_role from session", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "admin"
+      assert "admin" in conn.assigns.current_scope.roles
+      assert "user" in conn.assigns.current_scope.roles
+    end
+
+    test "falls back to user role when session role was revoked", %{conn: conn} do
+      user = user_fixture()
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "user"
+      assert conn.assigns.current_scope.roles == ["user"]
+    end
+  end
+
+  describe "on_mount :require_admin" do
+    test "allows admin users", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, updated_socket} = UserAuth.on_mount(:require_admin, %{}, session, socket)
+      assert Scope.admin?(updated_socket.assigns.current_scope)
+    end
+
+    test "redirects non-admin users", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:halt, _updated_socket} = UserAuth.on_mount(:require_admin, %{}, session, socket)
+    end
+  end
+
+  describe "on_mount :require_moderator" do
+    test "allows moderator users", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "moderator")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "moderator")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, _updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+    end
+
+    test "allows admin users (admins have moderator powers)", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, _updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+    end
+
+    test "redirects regular users", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:halt, _updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+    end
+  end
+
   describe "disconnect_sessions/1" do
     test "broadcasts disconnect messages for each token" do
       tokens = [%{token: "token1"}, %{token: "token2"}]

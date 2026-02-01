@@ -30,6 +30,7 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 - **Waitlist**: New users are placed on a waitlist after registration
 - **Referral System**: Each user gets a unique 6-character code; 5 confirmed referrals auto-activate the account
 - **Geo Data**: Germany with 8000+ cities seeded
+- **Role Management**: Three-tier role system (user, moderator, admin). Admins manage roles at `/admin/roles`. Users with multiple roles can switch between them via the navigation menu.
 - **Debug Page**: `/debug` — live system diagnostics (versions, memory, DB status, load, deployment info) with 5-second auto-refresh
 
 ## ANIMINA Installation Guide for Developers

@@ -1083,4 +1083,117 @@ defmodule Animina.AccountsTest do
       refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
     end
   end
+
+  describe "get_user_roles/1" do
+    test "returns only user role for a user with no extra roles" do
+      user = user_fixture()
+      assert Accounts.get_user_roles(user) == ["user"]
+    end
+
+    test "returns user + assigned roles" do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      assert "user" in Accounts.get_user_roles(user)
+      assert "admin" in Accounts.get_user_roles(user)
+    end
+
+    test "returns all assigned roles" do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      {:ok, _} = Accounts.assign_role(user, "moderator")
+      roles = Accounts.get_user_roles(user)
+      assert "user" in roles
+      assert "admin" in roles
+      assert "moderator" in roles
+    end
+  end
+
+  describe "assign_role/2" do
+    test "assigns admin role to user" do
+      user = user_fixture()
+      assert {:ok, _} = Accounts.assign_role(user, "admin")
+      assert Accounts.has_role?(user, "admin")
+    end
+
+    test "assigns moderator role to user" do
+      user = user_fixture()
+      assert {:ok, _} = Accounts.assign_role(user, "moderator")
+      assert Accounts.has_role?(user, "moderator")
+    end
+
+    test "is idempotent - assigning same role twice succeeds" do
+      user = user_fixture()
+      assert {:ok, _} = Accounts.assign_role(user, "admin")
+      assert {:ok, _} = Accounts.assign_role(user, "admin")
+      assert Accounts.has_role?(user, "admin")
+    end
+  end
+
+  describe "remove_role/2" do
+    test "removes an assigned role" do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      assert {:ok, _} = Accounts.remove_role(user, "admin")
+      refute Accounts.has_role?(user, "admin")
+    end
+
+    test "returns error when removing the implicit user role" do
+      user = user_fixture()
+      assert {:error, :implicit_role} = Accounts.remove_role(user, "user")
+    end
+
+    test "returns error when role not found" do
+      user = user_fixture()
+      assert {:error, :not_found} = Accounts.remove_role(user, "admin")
+    end
+  end
+
+  describe "has_role?/2" do
+    test "always returns true for user role" do
+      user = user_fixture()
+      assert Accounts.has_role?(user, "user")
+    end
+
+    test "returns true for assigned role" do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      assert Accounts.has_role?(user, "admin")
+    end
+
+    test "returns false for unassigned role" do
+      user = user_fixture()
+      refute Accounts.has_role?(user, "admin")
+    end
+  end
+
+  describe "search_users/1" do
+    test "finds users by email" do
+      user = user_fixture()
+      results = Accounts.search_users(user.email)
+      assert length(results) >= 1
+      assert Enum.any?(results, &(&1.id == user.id))
+    end
+
+    test "finds users by display name" do
+      user = user_fixture()
+      results = Accounts.search_users(user.display_name)
+      assert length(results) >= 1
+      assert Enum.any?(results, &(&1.id == user.id))
+    end
+
+    test "returns empty list for empty query" do
+      assert Accounts.search_users("") == []
+    end
+
+    test "returns empty list for nil query" do
+      assert Accounts.search_users(nil) == []
+    end
+
+    test "does not find soft-deleted users" do
+      user = user_fixture()
+      {:ok, _} = Accounts.soft_delete_user(user)
+      results = Accounts.search_users(user.email)
+      refute Enum.any?(results, &(&1.id == user.id))
+    end
+  end
 end

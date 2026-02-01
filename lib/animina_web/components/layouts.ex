@@ -5,6 +5,8 @@ defmodule AniminaWeb.Layouts do
   """
   use AniminaWeb, :html
 
+  alias Animina.Accounts.Scope
+
   @languages [
     {"de", "DE", "🇩🇪", "Deutsch"},
     {"en", "EN", "🇬🇧", "English"},
@@ -53,7 +55,12 @@ defmodule AniminaWeb.Layouts do
     assigns = assign(assigns, :languages, @languages)
 
     ~H"""
-    <div class="min-h-screen flex flex-col bg-base-100">
+    <div class={[
+      "min-h-screen flex flex-col bg-base-100",
+      @current_scope && Scope.admin?(@current_scope) && "ring-4 ring-inset ring-red-500",
+      @current_scope && !Scope.admin?(@current_scope) && Scope.moderator?(@current_scope) &&
+        "ring-4 ring-inset ring-yellow-400"
+    ]}>
       <!-- Navigation -->
       <header class="fixed top-0 inset-x-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
         <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -156,6 +163,16 @@ defmodule AniminaWeb.Layouts do
                     <span class="text-sm font-medium text-base-content truncate max-w-32">
                       {@current_scope.user.display_name || @current_scope.user.email}
                     </span>
+                    <%= if Scope.admin?(@current_scope) do %>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                        {gettext("Admin")}
+                      </span>
+                    <% end %>
+                    <%= if !Scope.admin?(@current_scope) && Scope.moderator?(@current_scope) do %>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                        {gettext("Moderator")}
+                      </span>
+                    <% end %>
                   </button>
 
                   <div
@@ -189,6 +206,46 @@ defmodule AniminaWeb.Layouts do
                     >
                       {gettext("Language")}
                     </a>
+                    <%= if Scope.admin?(@current_scope) do %>
+                      <a
+                        href="/admin/roles"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Manage Roles")}
+                      </a>
+                    <% end %>
+                    <%= if Scope.has_multiple_roles?(@current_scope) do %>
+                      <div class="border-t border-base-300">
+                        <div class="px-4 py-2">
+                          <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">
+                            {gettext("Switch Role")}
+                          </p>
+                        </div>
+                        <%= for role <- @current_scope.roles do %>
+                          <form action="/role/switch" method="post">
+                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                            <input type="hidden" name="role" value={role} />
+                            <button
+                              type="submit"
+                              class={[
+                                "block w-full text-start px-4 py-2 text-sm transition-colors",
+                                if(role == @current_scope.current_role,
+                                  do: "bg-primary/10 text-primary font-medium",
+                                  else: "text-base-content/70 hover:bg-base-200 hover:text-primary"
+                                )
+                              ]}
+                            >
+                              {role_label(role)}
+                              <%= if role == @current_scope.current_role do %>
+                                <span class="text-xs text-base-content/50">
+                                  ({gettext("active")})
+                                </span>
+                              <% end %>
+                            </button>
+                          </form>
+                        <% end %>
+                      </div>
+                    <% end %>
                     <div class="border-t border-base-300">
                       <.link
                         href="/users/log-out"
@@ -360,6 +417,11 @@ defmodule AniminaWeb.Layouts do
     </div>
     """
   end
+
+  defp role_label("admin"), do: gettext("Admin")
+  defp role_label("moderator"), do: gettext("Moderator")
+  defp role_label("user"), do: gettext("User")
+  defp role_label(role), do: role
 
   @doc """
   Shows the flash group with standard titles and content.

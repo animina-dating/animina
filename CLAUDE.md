@@ -12,7 +12,7 @@ ANIMINA is a Phoenix/Elixir online dating platform.
 
 The application is organized into these contexts:
 
-- **Animina.Accounts** (`lib/animina/accounts/`) - Users, authentication, messages, bookmarks, reactions, credits, reports
+- **Animina.Accounts** (`lib/animina/accounts/`) - Users, authentication, messages, bookmarks, reactions, credits, reports, user roles
 - **Animina.Traits** (`lib/animina/traits/`) - Categories, flags, user_flags (personality traits system with white/green/red flags)
 - **Animina.GeoData** (`lib/animina/geo_data/`) - City data for location features
 
@@ -27,6 +27,10 @@ LiveViews that need `@current_scope` must be inside a `live_session` with `on_mo
 - **Cold deploy**: Add `[cold-deploy]` to the commit message (e.g. `git commit -m "Add new worker [cold-deploy]"`). Also recognized: `[restart]`, `[supervision]`.
 - **Hot deploy** (default): Any commit without these tags triggers a hot code upgrade (zero downtime).
 - The deploy script (`scripts/deploy.sh`) detects these tags automatically.
+
+### Role System
+
+Three roles exist: `user` (implicit, always present), `moderator`, and `admin`. Roles are stored in the `user_roles` table. Admin-only routes use `on_mount: [{AniminaWeb.UserAuth, :require_admin}]`; moderator routes use `:require_moderator`. The admin panel lives under `/admin/roles`. Role switching is handled by `RoleController.switch/2` and stored in the session as `current_role`.
 
 ### Database Conventions
 

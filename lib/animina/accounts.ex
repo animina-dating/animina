@@ -6,7 +6,7 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
-  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
+  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserRole, UserToken}
   alias Animina.Repo
 
   @referral_auto_activate_threshold 5
@@ -770,5 +770,72 @@ defmodule Animina.Accounts do
         {:ok, {user, tokens_to_expire}}
       end
     end)
+  end
+
+  ## User search
+
+  @doc """
+  Searches for active users by email or display name (case-insensitive, partial match).
+  Returns up to 20 results.
+  """
+  def search_users(query) when is_binary(query) and byte_size(query) > 0 do
+    pattern = "%#{query}%"
+
+    from(u in User,
+      where: is_nil(u.deleted_at),
+      where: ilike(u.email, ^pattern) or ilike(u.display_name, ^pattern),
+      order_by: [asc: u.email],
+      limit: 20
+    )
+    |> Repo.all()
+  end
+
+  def search_users(_), do: []
+
+  ## Roles
+
+  @doc """
+  Returns all roles for the given user, always including the implicit "user" role.
+  """
+  def get_user_roles(%User{id: user_id}) do
+    db_roles =
+      from(r in UserRole, where: r.user_id == ^user_id, select: r.role)
+      |> Repo.all()
+
+    ["user" | db_roles]
+  end
+
+  @doc """
+  Assigns a role to a user. Idempotent — does nothing if the role already exists.
+  Returns `{:ok, user_role}` or `{:error, changeset}`.
+  """
+  def assign_role(%User{id: user_id}, role) when role in ["moderator", "admin"] do
+    %UserRole{}
+    |> UserRole.changeset(%{user_id: user_id, role: role})
+    |> Repo.insert(on_conflict: :nothing)
+  end
+
+  @doc """
+  Removes a role from a user. The implicit "user" role cannot be removed.
+  Returns `{:ok, user_role}`, `{:error, :implicit_role}`, or `{:error, :not_found}`.
+  """
+  def remove_role(_user, "user"), do: {:error, :implicit_role}
+
+  def remove_role(%User{id: user_id}, role) do
+    case Repo.get_by(UserRole, user_id: user_id, role: role) do
+      nil -> {:error, :not_found}
+      user_role -> Repo.delete(user_role)
+    end
+  end
+
+  @doc """
+  Returns true if the user has the given role.
+  The "user" role is always true.
+  """
+  def has_role?(%User{}, "user"), do: true
+
+  def has_role?(%User{id: user_id}, role) do
+    from(r in UserRole, where: r.user_id == ^user_id and r.role == ^role)
+    |> Repo.exists?()
   end
 end

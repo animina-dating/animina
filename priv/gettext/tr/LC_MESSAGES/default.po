@@ -90,8 +90,8 @@ msgstr "Animina, sonsuz kaydırma değil, gerçek ilişkiler arayanlar için tas
 msgid "At ANIMINA everything is different."
 msgstr "ANIMINA'da her şey farklı."
 
-#: lib/animina_web/components/layouts.ex:388
-#: lib/animina_web/components/layouts.ex:400
+#: lib/animina_web/components/layouts.ex:450
+#: lib/animina_web/components/layouts.ex:462
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Yeniden bağlanmaya çalışılıyor"
@@ -359,7 +359,7 @@ msgstr "Oyun gibi hissettiren tanışma uygulamalarından bıkmıştım. Animina
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "Bu e-posta ile bir hesap varsa, kısa süre içinde şifre sıfırlama talimatlarını alacaksınız."
 
-#: lib/animina_web/components/layouts.ex:322
+#: lib/animina_web/components/layouts.ex:379
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "Künye"
@@ -379,9 +379,9 @@ msgstr "Algoritmaların yerine özgünlüğü seçen binlerce kişiye katılın.
 msgid "Joy instead of addiction"
 msgstr "Bağımlılık yerine keyif"
 
-#: lib/animina_web/components/layouts.ex:111
-#: lib/animina_web/components/layouts.ex:190
-#: lib/animina_web/components/layouts.ex:248
+#: lib/animina_web/components/layouts.ex:118
+#: lib/animina_web/components/layouts.ex:207
+#: lib/animina_web/components/layouts.ex:305
 #: lib/animina_web/live/user_live/edit_profile.ex:65
 #: lib/animina_web/live/user_live/language_settings.ex:28
 #: lib/animina_web/live/user_live/language_settings.ex:34
@@ -411,7 +411,7 @@ msgstr "Konum"
 msgid "Locations"
 msgstr "Konumlar"
 
-#: lib/animina_web/components/layouts.ex:286
+#: lib/animina_web/components/layouts.ex:343
 #: lib/animina_web/live/user_live/login.ex:12
 #: lib/animina_web/live/user_live/login.ex:54
 #, elixir-autogen, elixir-format
@@ -423,8 +423,8 @@ msgstr "Giriş yap"
 msgid "Log in now"
 msgstr "Şimdi giriş yapın"
 
-#: lib/animina_web/components/layouts.ex:198
-#: lib/animina_web/components/layouts.ex:276
+#: lib/animina_web/components/layouts.ex:255
+#: lib/animina_web/components/layouts.ex:333
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Çıkış yap"
@@ -598,7 +598,7 @@ msgstr "Lütfen geçerli 5 haneli bir posta kodu girin"
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Hassas işlemler için lütfen yeniden kimlik doğrulayın."
 
-#: lib/animina_web/components/layouts.ex:319
+#: lib/animina_web/components/layouts.ex:376
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Gizlilik"
@@ -650,7 +650,7 @@ msgstr[1] "ANIMINA'yı tavsiye edin! %{count} onaylı davetten sonra otomatik ol
 msgid "Referral code (optional)"
 msgstr "Davet kodu (isteğe bağlı)"
 
-#: lib/animina_web/components/layouts.ex:292
+#: lib/animina_web/components/layouts.ex:349
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Kayıt ol"
@@ -723,7 +723,7 @@ msgstr "Sıfırlama bağlantısı gönder"
 msgid "Set new password"
 msgstr "Yeni şifre belirle"
 
-#: lib/animina_web/components/layouts.ex:184
+#: lib/animina_web/components/layouts.ex:201
 #: lib/animina_web/live/user_live/delete_account.ex:15
 #: lib/animina_web/live/user_live/edit_locations.ex:15
 #: lib/animina_web/live/user_live/edit_preferences.ex:20
@@ -741,7 +741,7 @@ msgstr "Ayarlar"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Kim olduğunuzu gösterin, ne aradığınızı ve sınırlarınızın nerede olduğunu belirleyin."
 
-#: lib/animina_web/components/layouts.ex:395
+#: lib/animina_web/components/layouts.ex:457
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Bir şeyler ters gitti!"
@@ -837,7 +837,7 @@ msgstr "Bekleme listesi"
 msgid "We are working on new features and need some breathing room."
 msgstr "Yeni özellikler üzerinde çalışıyoruz ve biraz nefes almaya ihtiyacımız var."
 
-#: lib/animina_web/components/layouts.ex:383
+#: lib/animina_web/components/layouts.ex:445
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "İnternet bağlantısı bulunamadı"
@@ -911,13 +911,13 @@ msgstr[1] "Yanlış kod. %{count} deneme kaldı."
 msgid "You are on our waitlist. Possible reasons:"
 msgstr "Bekleme listemizdeksiniz. Olası nedenler:"
 
-#: lib/animina_web/user_auth.ex:239
-#: lib/animina_web/user_auth.ex:333
+#: lib/animina_web/user_auth.ex:245
+#: lib/animina_web/user_auth.ex:381
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Bu sayfaya erişmek için giriş yapmalısınız."
 
-#: lib/animina_web/user_auth.ex:256
+#: lib/animina_web/user_auth.ex:298
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Bu sayfaya erişmek için yeniden kimlik doğrulaması yapmalısınız."
@@ -928,8 +928,8 @@ msgstr "Bu sayfaya erişmek için yeniden kimlik doğrulaması yapmalısınız."
 msgid "Your account has been deleted. Please register again."
 msgstr "Hesabınız silindi. Lütfen tekrar kayıt olun."
 
-#: lib/animina_web/components/layouts.ex:141
-#: lib/animina_web/components/layouts.ex:211
+#: lib/animina_web/components/layouts.ex:148
+#: lib/animina_web/components/layouts.ex:268
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "Profiliniz"
@@ -979,12 +979,12 @@ msgstr "/"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Hesap Oluştur"
 
-#: lib/animina_web/components/layouts.ex:407
+#: lib/animina_web/components/layouts.ex:469
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "ANIMINA güncelleniyor"
 
-#: lib/animina_web/components/layouts.ex:414
+#: lib/animina_web/components/layouts.ex:476
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "Sunucuya yeni bir yazılım sürümü yükleniyor. Bu sadece bir an sürecek..."
@@ -1248,7 +1248,7 @@ msgstr "Hesabınız silinmek üzere planlandı. Ne yapmak istersiniz?"
 msgid "Your old account has been removed. You can now register a new account."
 msgstr "Eski hesabınız kaldırıldı. Artık yeni bir hesap oluşturabilirsiniz."
 
-#: lib/animina_web/components/layouts.ex:77
+#: lib/animina_web/components/layouts.ex:84
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr "Dili değiştir"
@@ -1278,3 +1278,88 @@ msgstr "Almanya'da kendi sunucumuzda"
 #, elixir-autogen, elixir-format
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Sunucularımız bulutta değil – Almanya'da kendi fiziksel donanımımızda çalışıyor."
+
+#: lib/animina_web/live/admin/user_roles_live.ex:133
+#, elixir-autogen, elixir-format
+msgid "Add Role"
+msgstr "Rol Ekle"
+
+#: lib/animina_web/components/layouts.ex:168
+#: lib/animina_web/components/layouts.ex:421
+#, elixir-autogen, elixir-format
+msgid "Admin"
+msgstr "Yönetici"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:149
+#, elixir-autogen, elixir-format
+msgid "All roles assigned."
+msgstr "Tüm roller atandı."
+
+#: lib/animina_web/live/admin/user_roles_live.ex:40
+#, elixir-autogen, elixir-format
+msgid "Could not add role."
+msgstr "Rol eklenemedi."
+
+#: lib/animina_web/live/admin/user_roles_live.ex:107
+#, elixir-autogen, elixir-format
+msgid "Current Roles"
+msgstr "Mevcut Roller"
+
+#: lib/animina_web/components/layouts.ex:214
+#: lib/animina_web/live/admin/user_roles_live.ex:11
+#: lib/animina_web/live/admin/user_roles_live.ex:65
+#, elixir-autogen, elixir-format
+msgid "Manage Roles"
+msgstr "Rolleri Yönet"
+
+#: lib/animina_web/components/layouts.ex:173
+#: lib/animina_web/components/layouts.ex:422
+#, elixir-autogen, elixir-format
+msgid "Moderator"
+msgstr "Moderatör"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:123
+#, elixir-autogen, elixir-format
+msgid "Remove role"
+msgstr "Rolü kaldır"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:56
+#, elixir-autogen, elixir-format
+msgid "Role not found."
+msgstr "Rol bulunamadı."
+
+#: lib/animina_web/live/admin/user_roles_live.ex:73
+#, elixir-autogen, elixir-format
+msgid "Search users by email or name..."
+msgstr "E-posta veya ada göre kullanıcı ara..."
+
+#: lib/animina_web/components/layouts.ex:221
+#, elixir-autogen, elixir-format
+msgid "Switch Role"
+msgstr "Rol Değiştir"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:53
+#, elixir-autogen, elixir-format
+msgid "The user role cannot be removed."
+msgstr "Kullanıcı rolü kaldırılamaz."
+
+#: lib/animina_web/components/layouts.ex:423
+#, elixir-autogen, elixir-format
+msgid "User"
+msgstr "Kullanıcı"
+
+#: lib/animina_web/user_auth.ex:262
+#: lib/animina_web/user_auth.ex:280
+#, elixir-autogen, elixir-format
+msgid "You are not authorized to access this page."
+msgstr "Bu sayfaya erişim yetkiniz yok."
+
+#: lib/animina_web/controllers/role_controller.ex:17
+#, elixir-autogen, elixir-format
+msgid "You do not have that role."
+msgstr "Bu role sahip değilsiniz."
+
+#: lib/animina_web/components/layouts.ex:241
+#, elixir-autogen, elixir-format
+msgid "active"
+msgstr "aktif"

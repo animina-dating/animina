@@ -58,7 +58,20 @@ defmodule Animina.AccountsFixtures do
   end
 
   def user_scope_fixture(user) do
-    Scope.for_user(user)
+    roles = Accounts.get_user_roles(user)
+    Scope.for_user(user, roles, "user")
+  end
+
+  def admin_fixture(attrs \\ %{}) do
+    user = user_fixture(attrs)
+    {:ok, _} = Accounts.assign_role(user, "admin")
+    user
+  end
+
+  def moderator_fixture(attrs \\ %{}) do
+    user = user_fixture(attrs)
+    {:ok, _} = Accounts.assign_role(user, "moderator")
+    user
   end
 
   def set_password(user) do
