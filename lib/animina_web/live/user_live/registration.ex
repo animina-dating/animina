@@ -447,10 +447,6 @@ defmodule AniminaWeb.UserLive.Registration do
         />
         <label for={@form[:terms_accepted].id} class="text-sm text-base-content/70">
           {gettext("I accept the")}
-          <a href="#" class="text-primary hover:underline" target="_blank">
-            {gettext("Terms of Service")}
-          </a>
-          {gettext("and the")}
           <a href="/datenschutz" class="text-primary hover:underline" target="_blank">{gettext("Privacy Policy")}</a>.
         </label>
       </div>

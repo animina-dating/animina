@@ -315,12 +315,12 @@ defmodule AniminaWeb.Layouts do
               aria-label="Footer"
               class="flex flex-wrap justify-center gap-6 text-base text-base-content/70"
             >
-              <a href="#" class="hover:text-primary transition-colors">{gettext("About us")}</a>
               <a href="/datenschutz" class="hover:text-primary transition-colors">
                 {gettext("Privacy")}
               </a>
-              <a href="#" class="hover:text-primary transition-colors">{gettext("Terms")}</a>
-              <a href="#" class="hover:text-primary transition-colors">{gettext("Imprint")}</a>
+              <a href="/impressum" class="hover:text-primary transition-colors">
+                {gettext("Imprint")}
+              </a>
               <a
                 href="https://github.com/animina-dating/animina"
                 target="_blank"

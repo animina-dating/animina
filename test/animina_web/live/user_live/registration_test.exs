@@ -267,7 +267,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       # Step 4 should show partner preferences AND legal checkbox
       assert html =~ "Gender"
       assert html =~ "Search radius"
-      assert html =~ "Terms of Service"
+      assert html =~ "Privacy Policy"
       # Step 4 should show "Create account" instead of "Next"
       assert html =~ "Create account"
     end

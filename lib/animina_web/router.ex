@@ -30,6 +30,7 @@ defmodule AniminaWeb.Router do
       live "/demo/mission_statement", DemoMissionStatementLive
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
+      live "/impressum", ImpressumLive
     end
   end
 

@@ -30,8 +30,8 @@ msgstr[2] "%{count}/%{threshold} запрошень"
 msgid "100% Free"
 msgstr "100% безкоштовно"
 
-#: lib/animina_web/live/user_live/registration.ex:595
-#: lib/animina_web/live/user_live/registration.ex:616
+#: lib/animina_web/live/user_live/registration.ex:593
+#: lib/animina_web/live/user_live/registration.ex:614
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Код підтвердження надіслано на %{email}."
@@ -40,11 +40,6 @@ msgstr "Код підтвердження надіслано на %{email}."
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Посилання для підтвердження зміни e-mail надіслано на нову адресу."
-
-#: lib/animina_web/components/layouts.ex:318
-#, elixir-autogen, elixir-format
-msgid "About us"
-msgstr "Про нас"
 
 #: lib/animina_web/live/user_live/registration.ex:10
 #, elixir-autogen, elixir-format
@@ -96,8 +91,8 @@ msgstr "Animina створена для тих, хто шукає справжн
 msgid "At ANIMINA everything is different."
 msgstr "В ANIMINA все по-іншому."
 
-#: lib/animina_web/components/layouts.ex:386
-#: lib/animina_web/components/layouts.ex:398
+#: lib/animina_web/components/layouts.ex:388
+#: lib/animina_web/components/layouts.ex:400
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Спроба перепідключення"
@@ -397,7 +392,7 @@ msgstr "Мені набридли додатки для знайомств, як
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "Якщо акаунт з цим e-mail існує, ви скоро отримаєте інструкції зі скидання пароля."
 
-#: lib/animina_web/components/layouts.ex:321
+#: lib/animina_web/components/layouts.ex:322
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "Імпресум"
@@ -448,7 +443,7 @@ msgstr "Місцезнаходження"
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:103
-#: lib/animina_web/live/user_live/registration.ex:459
+#: lib/animina_web/live/user_live/registration.ex:457
 #: lib/animina_web/live/user_live/settings_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Locations"
@@ -662,7 +657,7 @@ msgstr "Особистість має значення"
 msgid "Personality over superficiality"
 msgstr "Особистість важливіша за поверховість"
 
-#: lib/animina_web/live/user_live/registration.ex:667
+#: lib/animina_web/live/user_live/registration.ex:665
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Будь ласка, введіть дійсний 5-значний поштовий індекс"
@@ -823,7 +818,7 @@ msgstr "Налаштування"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Покажіть, хто ви, визначте, що ви шукаєте і де ваші межі."
 
-#: lib/animina_web/components/layouts.ex:393
+#: lib/animina_web/components/layouts.ex:395
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Щось пішло не так!"
@@ -832,11 +827,6 @@ msgstr "Щось пішло не так!"
 #, elixir-autogen, elixir-format
 msgid "Stories instead of swipes"
 msgstr "Історії замість свайпів"
-
-#: lib/animina_web/components/layouts.ex:320
-#, elixir-autogen, elixir-format
-msgid "Terms"
-msgstr "Умови"
 
 #: lib/animina_web/live/user_live/waitlist.ex:24
 #, elixir-autogen, elixir-format
@@ -879,7 +869,7 @@ msgstr "Це я"
 msgid "This is what I'm looking for"
 msgstr "Це те, що я шукаю"
 
-#: lib/animina_web/live/user_live/registration.ex:676
+#: lib/animina_web/live/user_live/registration.ex:674
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Це місце вже додано"
@@ -924,7 +914,7 @@ msgstr "Список очікування"
 msgid "We are working on new features and need some breathing room."
 msgstr "Ми працюємо над новими функціями і потребуємо трохи часу."
 
-#: lib/animina_web/components/layouts.ex:381
+#: lib/animina_web/components/layouts.ex:383
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Не вдається знайти підключення до інтернету"
@@ -1082,17 +1072,17 @@ msgstr "з"
 msgid "transparent"
 msgstr "прозорі"
 
-#: lib/animina_web/live/user_live/registration.ex:507
+#: lib/animina_web/live/user_live/registration.ex:505
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Створити акаунт"
 
-#: lib/animina_web/components/layouts.ex:405
+#: lib/animina_web/components/layouts.ex:407
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Оновлення ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:412
+#: lib/animina_web/components/layouts.ex:414
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "На сервер встановлюється нова версія програмного забезпечення. Це займе лише мить..."
@@ -1372,17 +1362,7 @@ msgstr "Оберіть бажану мову"
 msgid "I accept the"
 msgstr "Я приймаю"
 
-#: lib/animina_web/live/user_live/registration.ex:452
+#: lib/animina_web/live/user_live/registration.ex:450
 #, elixir-autogen, elixir-format
 msgid "Privacy Policy"
 msgstr "Політику конфіденційності"
-
-#: lib/animina_web/live/user_live/registration.ex:450
-#, elixir-autogen, elixir-format
-msgid "Terms of Service"
-msgstr "Умови використання"
-
-#: lib/animina_web/live/user_live/registration.ex:451
-#, elixir-autogen, elixir-format
-msgid "and the"
-msgstr "та"
