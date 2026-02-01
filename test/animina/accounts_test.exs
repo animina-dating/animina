@@ -1186,14 +1186,14 @@ defmodule Animina.AccountsTest do
     test "finds users by email" do
       user = user_fixture()
       results = Accounts.search_users(user.email)
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == user.id))
     end
 
     test "finds users by display name" do
       user = user_fixture()
       results = Accounts.search_users(user.display_name)
-      assert length(results) >= 1
+      assert results != []
       assert Enum.any?(results, &(&1.id == user.id))
     end
 
