@@ -100,11 +100,14 @@ defmodule AniminaWeb.DemoIndex2Live do
                   gettext("Dating should be joyful, not addictive – quality over sensory overload.")
                 }
               />
-              <.mission_card_link
-                icon="hero-document-text"
-                title={gettext("Our Mission Statement")}
-                description={gettext("Learn more about our vision and values.")}
-                href="/demo/mission_statement"
+              <.mission_card
+                icon="hero-server-stack"
+                title={gettext("Self-hosted in Germany")}
+                description={
+                  gettext(
+                    "Our servers are not in the cloud – they run on our own physical hardware in Germany."
+                  )
+                }
               />
             </div>
 
@@ -380,35 +383,6 @@ defmodule AniminaWeb.DemoIndex2Live do
         {@description}
       </p>
     </div>
-    """
-  end
-
-  # Mission card with link component for hero section
-  attr :icon, :string, required: true
-  attr :title, :string, required: true
-  attr :description, :string, required: true
-  attr :href, :string, required: true
-
-  defp mission_card_link(assigns) do
-    ~H"""
-    <a
-      href={@href}
-      class="flex flex-col items-center text-center p-5 rounded-2xl bg-primary/10 hover:bg-primary/20 transition-colors group"
-    >
-      <div class="hidden sm:inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20 mb-4">
-        <.icon name={@icon} class="size-6 text-primary" />
-      </div>
-      <h3 class="text-lg font-medium text-primary mb-2 group-hover:underline">
-        {@title}
-      </h3>
-      <p class="text-sm text-base-content/70 leading-relaxed">
-        {@description}
-      </p>
-      <.icon
-        name="hero-arrow-right"
-        class="size-5 text-primary mt-3 group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1 transition-transform"
-      />
-    </a>
     """
   end
 
