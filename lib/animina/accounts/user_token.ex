@@ -1,4 +1,8 @@
 defmodule Animina.Accounts.UserToken do
+  @moduledoc """
+  Schema and functions for managing user authentication tokens.
+  """
+
   use Ecto.Schema
   import Ecto.Query
   alias Animina.Accounts.UserToken

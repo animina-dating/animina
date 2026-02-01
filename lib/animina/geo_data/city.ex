@@ -1,4 +1,8 @@
 defmodule Animina.GeoData.City do
+  @moduledoc """
+  Schema for city reference data with geographic coordinates.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

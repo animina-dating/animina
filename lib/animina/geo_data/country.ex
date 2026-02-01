@@ -1,4 +1,8 @@
 defmodule Animina.GeoData.Country do
+  @moduledoc """
+  Schema for country reference data.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

@@ -71,7 +71,8 @@ defmodule Animina.MixProject do
       {:bandit, "~> 1.5"},
       {:tidewave, "~> 0.5", only: :dev},
       {:tz, "~> 0.28"},
-      {:quantum, "~> 3.0"}
+      {:quantum, "~> 3.0"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -94,7 +95,13 @@ defmodule Animina.MixProject do
         "esbuild animina --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "compile --warnings-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "credo --strict",
+        "test"
+      ]
     ]
   end
 end

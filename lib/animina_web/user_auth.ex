@@ -1,4 +1,8 @@
 defmodule AniminaWeb.UserAuth do
+  @moduledoc """
+  Handles user authentication, session management, and scope-based access control.
+  """
+
   use AniminaWeb, :verified_routes
 
   import Plug.Conn
@@ -7,6 +11,7 @@ defmodule AniminaWeb.UserAuth do
 
   alias Animina.Accounts
   alias Animina.Accounts.Scope
+  alias AniminaWeb.Plugs.SetLocale
 
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
@@ -280,7 +285,7 @@ defmodule AniminaWeb.UserAuth do
     candidate = user_language || session["locale"] || default_locale
 
     locale =
-      if candidate in AniminaWeb.Plugs.SetLocale.supported_locales(),
+      if candidate in SetLocale.supported_locales(),
         do: candidate,
         else: default_locale
 

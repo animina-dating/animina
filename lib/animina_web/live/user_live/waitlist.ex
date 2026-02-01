@@ -132,13 +132,12 @@ defmodule AniminaWeb.UserLive.Waitlist do
     city_names =
       user.locations
       |> Enum.sort_by(& &1.position)
-      |> Enum.map(fn loc ->
+      |> Enum.map_join(", ", fn loc ->
         case GeoData.get_city_by_zip_code(loc.zip_code) do
           %{name: name} -> name
           nil -> loc.zip_code
         end
       end)
-      |> Enum.join(", ")
 
     referral_count = Accounts.count_confirmed_referrals(user)
 

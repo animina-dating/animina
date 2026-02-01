@@ -2,7 +2,7 @@ defmodule Animina.GeoDataTest do
   use Animina.DataCase
 
   alias Animina.GeoData
-  alias Animina.GeoData.{Country, City}
+  alias Animina.GeoData.{City, Country}
 
   describe "countries" do
     test "create_country/1 creates a country with valid attrs" do

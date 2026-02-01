@@ -1,10 +1,10 @@
 defmodule AniminaWeb.UserAuthTest do
   use AniminaWeb.ConnCase, async: true
 
-  alias Phoenix.LiveView
   alias Animina.Accounts
   alias Animina.Accounts.Scope
   alias AniminaWeb.UserAuth
+  alias Phoenix.LiveView
 
   import Animina.AccountsFixtures
 

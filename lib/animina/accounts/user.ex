@@ -1,4 +1,8 @@
 defmodule Animina.Accounts.User do
+  @moduledoc """
+  Schema and changesets for user accounts, profiles, and preferences.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
   use Gettext, backend: AniminaWeb.Gettext
@@ -214,27 +218,28 @@ defmodule Animina.Accounts.User do
 
   defp validate_and_normalize_mobile_phone(changeset) do
     case get_field(changeset, :mobile_phone) do
-      nil ->
-        changeset
+      nil -> changeset
+      phone -> do_validate_mobile_phone(changeset, phone)
+    end
+  end
 
-      phone ->
-        case ExPhoneNumber.parse(phone, "DE") do
-          {:ok, parsed} ->
-            case ExPhoneNumber.get_number_type(parsed) do
-              type when type in [:mobile, :fixed_line_or_mobile] ->
-                put_change(changeset, :mobile_phone, ExPhoneNumber.format(parsed, :e164))
-
-              _ ->
-                add_error(
-                  changeset,
-                  :mobile_phone,
-                  dgettext("errors", "must be a mobile number (not a landline)")
-                )
-            end
+  defp do_validate_mobile_phone(changeset, phone) do
+    case ExPhoneNumber.parse(phone, "DE") do
+      {:ok, parsed} ->
+        case ExPhoneNumber.get_number_type(parsed) do
+          type when type in [:mobile, :fixed_line_or_mobile] ->
+            put_change(changeset, :mobile_phone, ExPhoneNumber.format(parsed, :e164))
 
           _ ->
-            add_error(changeset, :mobile_phone, dgettext("errors", "is not a valid phone number"))
+            add_error(
+              changeset,
+              :mobile_phone,
+              dgettext("errors", "must be a mobile number (not a landline)")
+            )
         end
+
+      _ ->
+        add_error(changeset, :mobile_phone, dgettext("errors", "is not a valid phone number"))
     end
   end
 

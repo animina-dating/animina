@@ -6,9 +6,8 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
+  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
   alias Animina.Repo
-
-  alias Animina.Accounts.{User, UserLocation, UserToken, UserNotifier}
 
   @referral_auto_activate_threshold 5
 
@@ -458,9 +457,8 @@ defmodule Animina.Accounts do
 
   """
   def get_user_by_password_reset_token(token) do
-    with {:ok, query} <- UserToken.verify_password_reset_token_query(token) do
-      Repo.one(query)
-    else
+    case UserToken.verify_password_reset_token_query(token) do
+      {:ok, query} -> Repo.one(query)
       _ -> nil
     end
   end

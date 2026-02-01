@@ -1,4 +1,8 @@
 defmodule Animina.Accounts.UserNotifier do
+  @moduledoc """
+  Delivers email notifications for user account events.
+  """
+
   import Swoosh.Email
 
   alias Animina.Accounts.EmailTemplates

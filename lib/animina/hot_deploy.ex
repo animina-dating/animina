@@ -43,31 +43,31 @@ defmodule Animina.HotDeploy do
   """
   def startup_reapply_current do
     config = Application.get_env(:animina, __MODULE__, [])
+    lib_dir = reapply_lib_dir(config)
 
-    if config[:enabled] do
-      upgrades_dir = config[:upgrades_dir]
-
-      if upgrades_dir && File.dir?(upgrades_dir) do
-        lib_dir = Path.join(upgrades_dir, "lib")
-
-        if File.dir?(lib_dir) do
-          try do
-            Logger.info("[HotDeploy] Reapplying current hot upgrade from #{lib_dir}")
-            load_beam_files(lib_dir, purge: false)
-          rescue
-            e ->
-              Logger.error("[HotDeploy] Startup reapply failed: #{Exception.message(e)}")
-          catch
-            kind, reason ->
-              Logger.error(
-                "[HotDeploy] Startup reapply failed: #{inspect(kind)} #{inspect(reason)}"
-              )
-          end
-        end
+    if lib_dir do
+      try do
+        Logger.info("[HotDeploy] Reapplying current hot upgrade from #{lib_dir}")
+        load_beam_files(lib_dir, purge: false)
+      rescue
+        e ->
+          Logger.error("[HotDeploy] Startup reapply failed: #{Exception.message(e)}")
+      catch
+        kind, reason ->
+          Logger.error("[HotDeploy] Startup reapply failed: #{inspect(kind)} #{inspect(reason)}")
       end
     end
 
     :ok
+  end
+
+  defp reapply_lib_dir(config) do
+    upgrades_dir = config[:upgrades_dir]
+
+    if config[:enabled] && upgrades_dir && File.dir?(upgrades_dir) do
+      lib_dir = Path.join(upgrades_dir, "lib")
+      if File.dir?(lib_dir), do: lib_dir
+    end
   end
 
   def start_link(opts \\ []) do
@@ -133,28 +133,29 @@ defmodule Animina.HotDeploy do
       |> Path.join("**/*.beam")
       |> Path.wildcard()
 
-    results =
-      Enum.map(beam_files, fn beam_path ->
-        module_name =
-          beam_path
-          |> Path.basename(".beam")
-          |> String.to_atom()
-
-        binary = File.read!(beam_path)
-
-        case :code.load_binary(module_name, ~c"#{beam_path}", binary) do
-          {:module, ^module_name} ->
-            if purge?, do: :code.purge(module_name)
-            :ok
-
-          {:error, reason} ->
-            Logger.warning("[HotDeploy] Failed to load #{module_name}: #{inspect(reason)}")
-            :error
-        end
-      end)
+    results = Enum.map(beam_files, &load_beam_file(&1, purge?))
 
     loaded = Enum.count(results, &(&1 == :ok))
     errors = Enum.count(results, &(&1 == :error))
     {loaded, errors}
+  end
+
+  defp load_beam_file(beam_path, purge?) do
+    module_name =
+      beam_path
+      |> Path.basename(".beam")
+      |> String.to_atom()
+
+    binary = File.read!(beam_path)
+
+    case :code.load_binary(module_name, ~c"#{beam_path}", binary) do
+      {:module, ^module_name} ->
+        if purge?, do: :code.purge(module_name)
+        :ok
+
+      {:error, reason} ->
+        Logger.warning("[HotDeploy] Failed to load #{module_name}: #{inspect(reason)}")
+        :error
+    end
   end
 end

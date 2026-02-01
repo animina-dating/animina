@@ -1,6 +1,7 @@
 defmodule AniminaWeb.Plugs.SetLocaleTest do
   use AniminaWeb.ConnCase, async: true
 
+  alias Animina.Accounts.Scope
   alias AniminaWeb.Plugs.SetLocale
 
   import Animina.AccountsFixtures
@@ -94,7 +95,7 @@ defmodule AniminaWeb.Plugs.SetLocaleTest do
   describe "call/2 — user preference" do
     setup %{conn: conn} do
       user = user_fixture(%{language: "tr"})
-      scope = Animina.Accounts.Scope.for_user(user)
+      scope = Scope.for_user(user)
       conn = assign(conn, :current_scope, scope)
 
       %{conn: conn, user: user}

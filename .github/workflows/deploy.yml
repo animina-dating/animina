@@ -64,6 +64,9 @@ jobs:
       - name: Check unused dependencies
         run: mix deps.unlock --check-unused
 
+      - name: Run Credo static analysis
+        run: mix credo --strict
+
       - name: Audit dependencies
         run: mix deps.audit
         continue-on-error: true

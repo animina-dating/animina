@@ -1,4 +1,8 @@
 defmodule Animina.Accounts.UserLocation do
+  @moduledoc """
+  Schema for user location preferences, supporting up to 4 locations per user.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

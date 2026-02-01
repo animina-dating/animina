@@ -1,6 +1,8 @@
 defmodule AniminaWeb.DebugLive do
   use AniminaWeb, :live_view
 
+  alias Ecto.Adapters.SQL
+
   @refresh_interval 5_000
 
   @impl true
@@ -38,7 +40,7 @@ defmodule AniminaWeb.DebugLive do
   end
 
   defp check_database do
-    case Ecto.Adapters.SQL.query(Animina.Repo, "SELECT 1") do
+    case SQL.query(Animina.Repo, "SELECT 1") do
       {:ok, _} -> :ok
       {:error, _} -> :error
     end

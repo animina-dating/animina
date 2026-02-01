@@ -1,8 +1,12 @@
 defmodule Animina.GeoData do
+  @moduledoc """
+  The GeoData context for managing countries and cities.
+  """
+
   import Ecto.Query
 
+  alias Animina.GeoData.{City, Country}
   alias Animina.Repo
-  alias Animina.GeoData.{Country, City}
 
   # Countries
 

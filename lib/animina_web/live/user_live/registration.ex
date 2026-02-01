@@ -607,19 +607,7 @@ defmodule AniminaWeb.UserLive.Registration do
            |> push_navigate(to: ~p"/users/confirm/#{token}")}
         else
           # Strip email uniqueness error if present alongside other errors
-          cleaned_changeset =
-            if Accounts.email_uniqueness_error?(changeset) do
-              %{
-                changeset
-                | errors:
-                    Enum.reject(changeset.errors, fn {field, {_msg, meta}} ->
-                      field == :email and
-                        (meta[:validation] == :unsafe_unique or meta[:constraint] == :unique)
-                    end)
-              }
-            else
-              changeset
-            end
+          cleaned_changeset = strip_email_uniqueness_error(changeset)
 
           error_step = step_with_first_error(cleaned_changeset)
 
@@ -896,13 +884,15 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   defp compute_age(birthday) when is_binary(birthday) do
-    with {:ok, date} <- Date.from_iso8601(birthday) do
-      today = Date.utc_today()
-      age = today.year - date.year
-      age = if {today.month, today.day} < {date.month, date.day}, do: age - 1, else: age
-      if age >= 0, do: age, else: nil
-    else
-      _ -> nil
+    case Date.from_iso8601(birthday) do
+      {:ok, date} ->
+        today = Date.utc_today()
+        age = today.year - date.year
+        age = if {today.month, today.day} < {date.month, date.day}, do: age - 1, else: age
+        if age >= 0, do: age, else: nil
+
+      _ ->
+        nil
     end
   end
 
@@ -951,5 +941,20 @@ defmodule AniminaWeb.UserLive.Registration do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, form: to_form(changeset, as: "user"))
+  end
+
+  defp strip_email_uniqueness_error(changeset) do
+    if Accounts.email_uniqueness_error?(changeset) do
+      %{
+        changeset
+        | errors:
+            Enum.reject(changeset.errors, fn {field, {_msg, meta}} ->
+              field == :email and
+                (meta[:validation] == :unsafe_unique or meta[:constraint] == :unique)
+            end)
+      }
+    else
+      changeset
+    end
   end
 end
