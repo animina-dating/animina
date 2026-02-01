@@ -42,6 +42,20 @@ defmodule AniminaWeb.PrivacyPolicyLive do
             <p class="text-base-content/80">
               Die verwendeten Begriffe sind nicht geschlechtsspezifisch.
             </p>
+
+            <div class="bg-primary/5 border border-primary/20 rounded-lg p-4">
+              <p class="text-base-content/90 leading-relaxed">
+                <strong>Ein ehrliches Wort vorab:</strong>
+                Eine Dating-Plattform funktioniert nur, wenn Menschen etwas von sich
+                preisgeben — z.B. Alter, Wohnort, Interessen, Fotos, was sie sich von einem
+                Partner wünschen. Das liegt in der Natur der Sache. Wir gehen mit diesen
+                Daten so verantwortungsvoll um, wie wir können: eigene Server in Deutschland,
+                keine Weitergabe an Dritte. Aber wenn du grundsätzlich ein ungutes Gefühl
+                dabei hast, persönliche Informationen auf einer Online-Plattform zu teilen,
+                dann ist eine Dating-App — egal welche — wahrscheinlich nicht das Richtige
+                für dich. Und das ist völlig in Ordnung.
+              </p>
+            </div>
           </section>
 
           <%!-- ===== INHALTSÜBERSICHT ===== --%>
