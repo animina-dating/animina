@@ -69,7 +69,7 @@ defmodule AniminaWeb.Layouts do
               <% {_code, current_abbr, current_flag, _name} =
                 Enum.find(@languages, fn {code, _, _, _} -> code == current_locale end) %>
               <%= if !@current_scope || @display_name do %>
-                <div class="relative">
+                <div class="hidden sm:block relative">
                   <button
                     type="button"
                     id="language-menu-button"
@@ -153,7 +153,7 @@ defmodule AniminaWeb.Layouts do
                         {String.first(@current_scope.user.display_name || @current_scope.user.email)}
                       </span>
                     </div>
-                    <span class="text-sm font-medium text-base-content hidden sm:inline truncate max-w-32">
+                    <span class="text-sm font-medium text-base-content truncate max-w-32">
                       {@current_scope.user.display_name || @current_scope.user.email}
                     </span>
                   </button>
