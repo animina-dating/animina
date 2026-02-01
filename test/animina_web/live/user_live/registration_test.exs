@@ -104,7 +104,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Referral code"
       # Step 1 should show "Next" button, not "Create account" submit
       assert html =~ "Next"
-      refute html =~ ~r/<button[^>]*type="submit"[^>]*>.*Create account/s
+      refute html =~ ~r/<button[^>]*type="submit"[^>]*>\s*Create account/s
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -598,8 +598,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       html = lv |> element("button", "Retour") |> render_click()
 
       # The language select should have "fr" selected
-      assert html =~ ~s(<option selected value="fr">Français</option>) or
-               html =~ ~s(<option value="fr" selected)
+      assert html =~ ~r/<option[^>]*selected[^>]*value="fr"[^>]*>Français<\/option>/
     end
 
     test "language field defaults to de when no session locale", %{conn: conn} do

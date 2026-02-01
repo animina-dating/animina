@@ -44,7 +44,7 @@ msgstr "تم إرسال رمز تأكيد إلى %{email}."
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "تم إرسال رابط لتأكيد تغيير بريدك الإلكتروني إلى العنوان الجديد."
 
-#: lib/animina_web/components/layouts.ex:222
+#: lib/animina_web/components/layouts.ex:318
 #, elixir-autogen, elixir-format
 msgid "About us"
 msgstr "من نحن"
@@ -99,8 +99,8 @@ msgstr "أنيمينا مصممة لمن يبحثون عن علاقات حقيق
 msgid "At ANIMINA everything is different."
 msgstr "في ANIMINA كل شيء مختلف."
 
-#: lib/animina_web/components/layouts.ex:269
-#: lib/animina_web/components/layouts.ex:281
+#: lib/animina_web/components/layouts.ex:386
+#: lib/animina_web/components/layouts.ex:398
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "محاولة إعادة الاتصال"
@@ -405,7 +405,7 @@ msgstr "كنت متعباً من تطبيقات التعارف التي تبدو
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، ستتلقى تعليمات إعادة تعيين كلمة المرور قريباً."
 
-#: lib/animina_web/components/layouts.ex:225
+#: lib/animina_web/components/layouts.ex:321
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "البصمة القانونية"
@@ -425,9 +425,15 @@ msgstr "انضم إلى آلاف الأشخاص الذين اختاروا الأ
 msgid "Joy instead of addiction"
 msgstr "الفرح بدلاً من الإدمان"
 
-#: lib/animina_web/components/layouts.ex:60
+#: lib/animina_web/components/layouts.ex:111
+#: lib/animina_web/components/layouts.ex:190
+#: lib/animina_web/components/layouts.ex:248
 #: lib/animina_web/live/user_live/edit_profile.ex:65
+#: lib/animina_web/live/user_live/language_settings.ex:28
+#: lib/animina_web/live/user_live/language_settings.ex:34
+#: lib/animina_web/live/user_live/language_settings.ex:72
 #: lib/animina_web/live/user_live/registration.ex:269
+#: lib/animina_web/live/user_live/settings_hub.ex:43
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "اللغة"
@@ -451,12 +457,12 @@ msgstr "الموقع"
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:103
 #: lib/animina_web/live/user_live/registration.ex:448
-#: lib/animina_web/live/user_live/settings_hub.ex:43
+#: lib/animina_web/live/user_live/settings_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Locations"
 msgstr "المواقع"
 
-#: lib/animina_web/components/layouts.ex:190
+#: lib/animina_web/components/layouts.ex:286
 #: lib/animina_web/live/user_live/login.ex:12
 #: lib/animina_web/live/user_live/login.ex:54
 #, elixir-autogen, elixir-format
@@ -468,8 +474,8 @@ msgstr "تسجيل الدخول"
 msgid "Log in now"
 msgstr "سجّل الدخول الآن"
 
-#: lib/animina_web/components/layouts.ex:131
-#: lib/animina_web/components/layouts.ex:180
+#: lib/animina_web/components/layouts.ex:198
+#: lib/animina_web/components/layouts.ex:276
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "تسجيل الخروج"
@@ -674,7 +680,7 @@ msgstr "يرجى إدخال رمز بريدي صالح مكون من 5 أرقا�
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "يرجى إعادة المصادقة لتنفيذ إجراءات حساسة."
 
-#: lib/animina_web/components/layouts.ex:223
+#: lib/animina_web/components/layouts.ex:319
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "الخصوصية"
@@ -731,7 +737,7 @@ msgstr[5] "أوصِ بـ ANIMINA! بعد %{count} إحالة مؤكدة سيتم
 msgid "Referral code (optional)"
 msgstr "رمز الإحالة (اختياري)"
 
-#: lib/animina_web/components/layouts.ex:196
+#: lib/animina_web/components/layouts.ex:292
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "التسجيل"
@@ -810,14 +816,15 @@ msgstr "إرسال رابط إعادة التعيين"
 msgid "Set new password"
 msgstr "تعيين كلمة مرور جديدة"
 
-#: lib/animina_web/components/layouts.ex:123
+#: lib/animina_web/components/layouts.ex:184
 #: lib/animina_web/live/user_live/delete_account.ex:15
 #: lib/animina_web/live/user_live/edit_locations.ex:15
 #: lib/animina_web/live/user_live/edit_preferences.ex:20
 #: lib/animina_web/live/user_live/edit_profile.ex:26
+#: lib/animina_web/live/user_live/language_settings.ex:26
 #: lib/animina_web/live/user_live/settings.ex:16
 #: lib/animina_web/live/user_live/settings_hub.ex:11
-#: lib/animina_web/live/user_live/settings_hub.ex:76
+#: lib/animina_web/live/user_live/settings_hub.ex:86
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "الإعدادات"
@@ -827,7 +834,7 @@ msgstr "الإعدادات"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "أظهر من أنت، حدد ما تبحث عنه وأين حدودك."
 
-#: lib/animina_web/components/layouts.ex:276
+#: lib/animina_web/components/layouts.ex:393
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "حدث خطأ ما!"
@@ -837,7 +844,7 @@ msgstr "حدث خطأ ما!"
 msgid "Stories instead of swipes"
 msgstr "قصص بدلاً من التمريرات"
 
-#: lib/animina_web/components/layouts.ex:224
+#: lib/animina_web/components/layouts.ex:320
 #, elixir-autogen, elixir-format
 msgid "Terms"
 msgstr "الشروط"
@@ -928,7 +935,7 @@ msgstr "قائمة الانتظار"
 msgid "We are working on new features and need some breathing room."
 msgstr "نحن نعمل على ميزات جديدة ونحتاج بعض الوقت."
 
-#: lib/animina_web/components/layouts.ex:264
+#: lib/animina_web/components/layouts.ex:381
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "لا يمكن العثور على اتصال بالإنترنت"
@@ -1028,8 +1035,8 @@ msgstr "يجب عليك إعادة المصادقة للوصول إلى هذه �
 msgid "Your account has been deleted. Please register again."
 msgstr "تم حذف حسابك. يرجى التسجيل مرة أخرى."
 
-#: lib/animina_web/components/layouts.ex:80
-#: lib/animina_web/components/layouts.ex:144
+#: lib/animina_web/components/layouts.ex:141
+#: lib/animina_web/components/layouts.ex:211
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "ملفك الشخصي"
@@ -1094,12 +1101,12 @@ msgstr "شفافة"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – إنشاء حساب"
 
-#: lib/animina_web/components/layouts.ex:288
+#: lib/animina_web/components/layouts.ex:405
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "تحديث ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:295
+#: lib/animina_web/components/layouts.ex:412
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "يتم تثبيت إصدار جديد من البرنامج على الخادم. لن يستغرق هذا سوى لحظة..."
@@ -1107,7 +1114,7 @@ msgstr "يتم تثبيت إصدار جديد من البرنامج على ال�
 #: lib/animina_web/live/user_live/settings.ex:18
 #: lib/animina_web/live/user_live/settings.ex:23
 #: lib/animina_web/live/user_live/settings.ex:104
-#: lib/animina_web/live/user_live/settings_hub.ex:53
+#: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "Account Security"
 msgstr "أمان الحساب"
@@ -1127,7 +1134,7 @@ msgstr "جارٍ الإضافة..."
 msgid "Change your display name, height, occupation, and language"
 msgstr "غيّر اسم العرض والطول والمهنة واللغة"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:55
+#: lib/animina_web/live/user_live/settings_hub.ex:65
 #, elixir-autogen, elixir-format
 msgid "Change your email address and password"
 msgstr "غيّر عنوان بريدك الإلكتروني وكلمة المرور"
@@ -1145,7 +1152,7 @@ msgstr "تعذّر إزالة الموقع."
 #: lib/animina_web/live/user_live/delete_account.ex:17
 #: lib/animina_web/live/user_live/delete_account.ex:23
 #: lib/animina_web/live/user_live/delete_account.ex:59
-#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:73
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "حذف الحساب"
@@ -1231,7 +1238,7 @@ msgstr "لم تتم إضافة مواقع بعد."
 msgid "Partner Preferences"
 msgstr "تفضيلات الشريك"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:65
+#: lib/animina_web/live/user_live/settings_hub.ex:75
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account and all associated data"
 msgstr "احذف حسابك وجميع البيانات المرتبطة نهائياً"
@@ -1307,7 +1314,7 @@ msgid "You must have at least one location."
 msgstr "يجب أن يكون لديك موقع واحد على الأقل."
 
 #: lib/animina_web/live/user_live/edit_locations.ex:24
-#: lib/animina_web/live/user_live/settings_hub.ex:45
+#: lib/animina_web/live/user_live/settings_hub.ex:55
 #, elixir-autogen, elixir-format
 msgid "Manage your locations"
 msgstr "إدارة مواقعك"
@@ -1318,7 +1325,7 @@ msgstr "إدارة مواقعك"
 msgid "Update your partner preferences"
 msgstr "حدّث تفضيلات الشريك"
 
-#: lib/animina_web/live/user_live/reactivate_account.ex:63
+#: lib/animina_web/live/user_live/reactivate_account.ex:65
 #, elixir-autogen, elixir-format
 msgid "Invalid or expired reactivation link. Please log in again."
 msgstr "رابط إعادة التفعيل غير صالح أو منتهي الصلاحية. يرجى تسجيل الدخول مرة أخرى."
@@ -1338,12 +1345,12 @@ msgstr "إعادة تفعيل حسابي"
 msgid "Start fresh with a new account"
 msgstr "البدء من جديد بحساب جديد"
 
-#: lib/animina_web/live/user_live/reactivate_account.ex:84
+#: lib/animina_web/live/user_live/reactivate_account.ex:87
 #, elixir-autogen, elixir-format
 msgid "This email address is now used by another account. Please register a new account."
 msgstr "عنوان البريد الإلكتروني هذا مستخدم الآن من قبل حساب آخر. يرجى تسجيل حساب جديد."
 
-#: lib/animina_web/live/user_live/reactivate_account.ex:76
+#: lib/animina_web/live/user_live/reactivate_account.ex:79
 #, elixir-autogen, elixir-format
 msgid "Your account has been reactivated. Please log in."
 msgstr "تم إعادة تفعيل حسابك. يرجى تسجيل الدخول."
@@ -1358,7 +1365,18 @@ msgstr "حسابك لا يزال ضمن فترة السماح البالغة 30 
 msgid "Your account was scheduled for deletion. What would you like to do?"
 msgstr "تم جدولة حسابك للحذف. ماذا تريد أن تفعل؟"
 
-#: lib/animina_web/live/user_live/reactivate_account.ex:101
+#: lib/animina_web/live/user_live/reactivate_account.ex:104
 #, elixir-autogen, elixir-format
 msgid "Your old account has been removed. You can now register a new account."
 msgstr "تم إزالة حسابك القديم. يمكنك الآن تسجيل حساب جديد."
+
+#: lib/animina_web/components/layouts.ex:77
+#, elixir-autogen, elixir-format
+msgid "Change language"
+msgstr "تغيير اللغة"
+
+#: lib/animina_web/live/user_live/language_settings.ex:35
+#: lib/animina_web/live/user_live/settings_hub.ex:45
+#, elixir-autogen, elixir-format
+msgid "Choose your preferred language"
+msgstr "اختر لغتك المفضلة"

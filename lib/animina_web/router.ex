@@ -73,6 +73,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/users/settings/profile", UserLive.EditProfile, :edit
       live "/users/settings/preferences", UserLive.EditPreferences, :edit
+      live "/users/settings/language", UserLive.LanguageSettings, :edit
       live "/users/settings/locations", UserLive.EditLocations, :edit
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/waitlist", UserLive.Waitlist

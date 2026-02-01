@@ -5,6 +5,18 @@ defmodule AniminaWeb.Layouts do
   """
   use AniminaWeb, :html
 
+  @languages [
+    {"de", "DE", "🇩🇪", "Deutsch"},
+    {"en", "EN", "🇬🇧", "English"},
+    {"tr", "TR", "🇹🇷", "Türkçe"},
+    {"ru", "RU", "🇷🇺", "Русский"},
+    {"ar", "AR", "🇸🇦", "العربية"},
+    {"pl", "PL", "🇵🇱", "Polski"},
+    {"fr", "FR", "🇫🇷", "Français"},
+    {"es", "ES", "🇪🇸", "Español"},
+    {"uk", "UK", "🇺🇦", "Українська"}
+  ]
+
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
@@ -38,6 +50,8 @@ defmodule AniminaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    assigns = assign(assigns, :languages, @languages)
+
     ~H"""
     <div class="min-h-screen flex flex-col bg-base-100">
       <!-- Navigation -->
@@ -51,26 +65,73 @@ defmodule AniminaWeb.Layouts do
             </a>
 
             <div class="flex items-center gap-4">
-              <form action="/locale" method="post" class="flex items-center">
-                <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
-                <select
-                  name="locale"
-                  onchange="this.form.submit()"
-                  class="select select-ghost select-sm bg-transparent text-sm"
-                  aria-label={gettext("Language")}
-                >
-                  <% current_locale = Gettext.get_locale(AniminaWeb.Gettext) %>
-                  <option value="de" selected={current_locale == "de"}>🇩🇪 DE</option>
-                  <option value="en" selected={current_locale == "en"}>🇬🇧 EN</option>
-                  <option value="tr" selected={current_locale == "tr"}>🇹🇷 TR</option>
-                  <option value="ru" selected={current_locale == "ru"}>🇷🇺 RU</option>
-                  <option value="ar" selected={current_locale == "ar"}>🇸🇦 AR</option>
-                  <option value="pl" selected={current_locale == "pl"}>🇵🇱 PL</option>
-                  <option value="fr" selected={current_locale == "fr"}>🇫🇷 FR</option>
-                  <option value="es" selected={current_locale == "es"}>🇪🇸 ES</option>
-                  <option value="uk" selected={current_locale == "uk"}>🇺🇦 UK</option>
-                </select>
-              </form>
+              <% current_locale = Gettext.get_locale(AniminaWeb.Gettext) %>
+              <% {_code, current_abbr, current_flag, _name} =
+                Enum.find(@languages, fn {code, _, _, _} -> code == current_locale end) %>
+              <%= if !@current_scope || @display_name do %>
+                <div class="relative">
+                  <button
+                    type="button"
+                    id="language-menu-button"
+                    class="flex items-center gap-1 p-2 rounded-lg hover:bg-base-300 transition-colors"
+                    aria-label={gettext("Change language")}
+                    aria-haspopup="true"
+                    phx-click={
+                      JS.toggle(
+                        to: "#language-dropdown",
+                        in: {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"},
+                        out: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                      |> JS.hide(
+                        to: "#profile-dropdown",
+                        transition:
+                          {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
+                  >
+                    <.icon name="hero-globe-alt" class="size-5 text-base-content/70" />
+                    <span class="hidden sm:inline text-sm font-medium text-base-content/70">
+                      {current_flag} {current_abbr}
+                    </span>
+                  </button>
+
+                  <div
+                    id="language-dropdown"
+                    class="hidden absolute end-0 mt-2 w-48 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
+                    phx-click-away={
+                      JS.hide(
+                        to: "#language-dropdown",
+                        transition:
+                          {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
+                    }
+                  >
+                    <div class="px-4 py-2 border-b border-base-300">
+                      <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">
+                        {gettext("Language")}
+                      </p>
+                    </div>
+                    <%= for {code, _abbr, flag, name} <- @languages do %>
+                      <form action="/locale" method="post">
+                        <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                        <input type="hidden" name="locale" value={code} />
+                        <button
+                          type="submit"
+                          class={[
+                            "block w-full text-start px-4 py-2 text-sm transition-colors",
+                            if(code == current_locale,
+                              do: "bg-primary/10 text-primary font-medium",
+                              else: "text-base-content/70 hover:bg-base-200 hover:text-primary"
+                            )
+                          ]}
+                        >
+                          {flag} {name}
+                        </button>
+                      </form>
+                    <% end %>
+                  </div>
+                </div>
+              <% end %>
               <%= if @current_scope && !@display_name do %>
                 <div class="relative">
                   <button
@@ -122,6 +183,12 @@ defmodule AniminaWeb.Layouts do
                     >
                       {gettext("Settings")}
                     </a>
+                    <a
+                      href="/users/settings/language"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("Language")}
+                    </a>
                     <div class="border-t border-base-300">
                       <.link
                         href="/users/log-out"
@@ -149,6 +216,11 @@ defmodule AniminaWeb.Layouts do
                         in: {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"},
                         out: {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
                       )
+                      |> JS.hide(
+                        to: "#language-dropdown",
+                        transition:
+                          {"ease-in duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                      )
                     }
                   >
                     <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-secondary border-secondary">
@@ -160,7 +232,6 @@ defmodule AniminaWeb.Layouts do
                       {@display_name}
                     </span>
                   </button>
-                  <!-- Dropdown Menu -->
                   <div
                     id="profile-dropdown"
                     class="hidden absolute end-0 mt-2 w-48 rounded-lg bg-base-100 shadow-lg ring-1 ring-base-300 py-1 z-50"
@@ -172,6 +243,31 @@ defmodule AniminaWeb.Layouts do
                       )
                     }
                   >
+                    <div class="border-b border-base-300 px-2 py-2">
+                      <p class="px-2 pb-1 text-xs font-semibold text-base-content/50 uppercase tracking-wider">
+                        {gettext("Language")}
+                      </p>
+                      <div class="grid grid-cols-3 gap-1">
+                        <%= for {code, _abbr, flag, _name} <- @languages do %>
+                          <form action="/locale" method="post">
+                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                            <input type="hidden" name="locale" value={code} />
+                            <button
+                              type="submit"
+                              class={[
+                                "flex items-center justify-center w-full px-2 py-1.5 rounded text-sm transition-colors",
+                                if(code == current_locale,
+                                  do: "bg-primary/10 text-primary font-medium",
+                                  else: "text-base-content/70 hover:bg-base-200"
+                                )
+                              ]}
+                            >
+                              {flag}
+                            </button>
+                          </form>
+                        <% end %>
+                      </div>
+                    </div>
                     <.link
                       href="/users/log-out"
                       method="delete"
@@ -211,7 +307,7 @@ defmodule AniminaWeb.Layouts do
       <!-- Footer -->
       <footer class="border-t border-base-300 bg-base-200/50">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-          <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex flex-col items-center gap-4">
             <div class="flex items-center gap-2">
               <span class="text-xl font-light tracking-tight text-primary">ANIMINA</span>
             </div>
@@ -232,6 +328,27 @@ defmodule AniminaWeb.Layouts do
                 GitHub
               </a>
             </nav>
+            <div class="flex flex-wrap justify-center gap-3 text-sm">
+              <%= for {code, abbr, flag, _name} <- @languages do %>
+                <form action="/locale" method="post" class="inline">
+                  <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                  <input type="hidden" name="locale" value={code} />
+                  <button
+                    type="submit"
+                    id={"footer-lang-#{code}"}
+                    class={[
+                      "transition-colors",
+                      if(code == current_locale,
+                        do: "text-primary font-medium",
+                        else: "text-base-content/70 hover:text-primary"
+                      )
+                    ]}
+                  >
+                    {flag} {abbr}
+                  </button>
+                </form>
+              <% end %>
+            </div>
             <p class="text-base text-base-content/70">
               &copy; {DateTime.utc_now().year} ANIMINA v{Animina.version()}. Open Source mit ❤️
             </p>

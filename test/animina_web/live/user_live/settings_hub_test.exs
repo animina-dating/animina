@@ -17,6 +17,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
       assert html =~ "Account Security"
       assert html =~ "Delete Account"
       assert html =~ "Locations"
+      assert html =~ "Language"
     end
 
     test "has page title", %{conn: conn} do
@@ -55,6 +56,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
       assert has_element?(lv, "a[href='/users/settings/preferences']")
       assert has_element?(lv, "a[href='/users/settings/account']")
       assert has_element?(lv, "a[href='/users/settings/delete-account']")
+      assert has_element?(lv, "a[href='/users/settings/language']")
       assert has_element?(lv, "a[href='/users/settings/locations']")
     end
   end

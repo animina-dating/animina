@@ -37,6 +37,16 @@ defmodule AniminaWeb.UserLive.SettingsHub do
           </.link>
 
           <.link
+            navigate={~p"/users/settings/language"}
+            class="block p-6 rounded-lg border border-base-300 hover:border-primary transition-colors"
+          >
+            <h3 class="text-lg font-semibold text-base-content">{gettext("Language")}</h3>
+            <p class="text-sm text-base-content/70 mt-1">
+              {gettext("Choose your preferred language")}
+            </p>
+          </.link>
+
+          <.link
             navigate={~p"/users/settings/locations"}
             class="block p-6 rounded-lg border border-base-300 hover:border-primary transition-colors"
           >
