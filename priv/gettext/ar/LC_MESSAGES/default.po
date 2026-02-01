@@ -1291,7 +1291,7 @@ msgstr "استضافة ذاتية في ألمانيا"
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "خوادمنا ليست في السحابة – بل تعمل على أجهزتنا المادية الخاصة في ألمانيا."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:133
+#: lib/animina_web/live/admin/user_roles_live.ex:141
 #, elixir-autogen, elixir-format
 msgid "Add Role"
 msgstr "إضافة دور"
@@ -1302,7 +1302,7 @@ msgstr "إضافة دور"
 msgid "Admin"
 msgstr "مسؤول"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:149
+#: lib/animina_web/live/admin/user_roles_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "All roles assigned."
 msgstr "تم تعيين جميع الأدوار."
@@ -1312,14 +1312,14 @@ msgstr "تم تعيين جميع الأدوار."
 msgid "Could not add role."
 msgstr "تعذر إضافة الدور."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:107
+#: lib/animina_web/live/admin/user_roles_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Current Roles"
 msgstr "الأدوار الحالية"
 
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/user_roles_live.ex:11
-#: lib/animina_web/live/admin/user_roles_live.ex:65
+#: lib/animina_web/live/admin/user_roles_live.ex:73
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "إدارة الأدوار"
@@ -1330,17 +1330,17 @@ msgstr "إدارة الأدوار"
 msgid "Moderator"
 msgstr "مشرف"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:123
+#: lib/animina_web/live/admin/user_roles_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr "إزالة الدور"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:56
+#: lib/animina_web/live/admin/user_roles_live.ex:64
 #, elixir-autogen, elixir-format
 msgid "Role not found."
 msgstr "الدور غير موجود."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:73
+#: lib/animina_web/live/admin/user_roles_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Search users by email or name..."
 msgstr "البحث عن المستخدمين بالبريد الإلكتروني أو الاسم..."
@@ -1350,7 +1350,7 @@ msgstr "البحث عن المستخدمين بالبريد الإلكتروني
 msgid "Switch Role"
 msgstr "تبديل الدور"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:53
+#: lib/animina_web/live/admin/user_roles_live.ex:61
 #, elixir-autogen, elixir-format
 msgid "The user role cannot be removed."
 msgstr "لا يمكن إزالة دور المستخدم."
@@ -1375,3 +1375,8 @@ msgstr "ليس لديك هذا الدور."
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "نشط"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "Cannot remove the last admin. Assign another admin first."
+msgstr "لا يمكن إزالة آخر مشرف. قم بتعيين مشرف آخر أولاً."

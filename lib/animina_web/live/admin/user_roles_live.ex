@@ -49,6 +49,14 @@ defmodule AniminaWeb.Admin.UserRolesLive do
         roles = Accounts.get_user_roles(user)
         {:noreply, assign(socket, selected_user_roles: roles)}
 
+      {:error, :last_admin} ->
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           gettext("Cannot remove the last admin. Assign another admin first.")
+         )}
+
       {:error, :implicit_role} ->
         {:noreply, put_flash(socket, :error, gettext("The user role cannot be removed."))}
 

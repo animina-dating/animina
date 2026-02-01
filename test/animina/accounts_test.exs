@@ -1132,7 +1132,9 @@ defmodule Animina.AccountsTest do
   describe "remove_role/2" do
     test "removes an assigned role" do
       user = user_fixture()
+      other_admin = user_fixture()
       {:ok, _} = Accounts.assign_role(user, "admin")
+      {:ok, _} = Accounts.assign_role(other_admin, "admin")
       assert {:ok, _} = Accounts.remove_role(user, "admin")
       refute Accounts.has_role?(user, "admin")
     end
@@ -1145,6 +1147,20 @@ defmodule Animina.AccountsTest do
     test "returns error when role not found" do
       user = user_fixture()
       assert {:error, :not_found} = Accounts.remove_role(user, "admin")
+    end
+
+    test "prevents removing admin role from the last admin" do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      assert {:error, :last_admin} = Accounts.remove_role(user, "admin")
+    end
+
+    test "allows removing admin role when another admin exists" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      {:ok, _} = Accounts.assign_role(user1, "admin")
+      {:ok, _} = Accounts.assign_role(user2, "admin")
+      assert {:ok, _} = Accounts.remove_role(user1, "admin")
     end
   end
 

@@ -3,14 +3,7 @@
 ANIMINA is a web based dating platform. In case you have a question do not
 hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
-![Screenshot of a demo ANIMINA profile](https://github.com/animina-dating/animina/blob/main/priv/static/images/profile-screenshot.webp?raw=true)
-
-> [!WARNING]
-> The current version a beta version. We appreciate all bug reports!
-
-Please do submit bug reports or feature requests with an [issue](https://github.com/animina-dating/animina/issues/new).
-
-For detailed feature specifications, see [docs/features/](docs/features/).
+![Screenshot of an admin ANIMINA view](https://github.com/animina-dating/animina/blob/main/priv/static/images/admin-screenshot.png?raw=true)
 
 > [!NOTE]
 > Project founder Stefan Wintermeyer gave a (German) talk about the first
@@ -19,43 +12,17 @@ For detailed feature specifications, see [docs/features/](docs/features/).
 > - [video recording](https://media.ccc.de/v/froscon2024-3060-parship_tinder_animina_und_co)
 > - [slides](https://speakerdeck.com/wintermeyer/disassembling-online-dating-froscon-2024)
 
-## Features
+## Tech Stack
 
-- **User Authentication**: Email/password registration with 6-digit PIN email confirmation, login with magic link support, [email privacy protection](doc/features/email_privacy_protection.md)
-- **User Profiles**: Display name, birthday (18+ enforced via date picker), gender, height, 1-4 Wohnsitze (residences), and partner preferences
-- **Auto-filled Partner Preferences**: Intelligent defaults based on gender and height
-- **Wizard Registration**: 4-step wizard with progress indicator, Back/Next navigation, and per-step validation
-- **Multi-language UI**: 9 languages (DE, EN, TR, RU, AR, PL, FR, ES, UK) with RTL support for Arabic — see [TRANSLATING.md](TRANSLATING.md)
-- **User Settings**: Settings hub with sub-pages for profile editing, partner preferences, locations management, account security (email/password), and account deletion with 30-day grace period and reactivation support
-- **Waitlist**: New users are placed on a waitlist after registration
-- **Referral System**: Each user gets a unique 6-character code; 5 confirmed referrals auto-activate the account
-- **Geo Data**: Germany with 8000+ cities seeded
-- **Role Management**: Three-tier role system (user, moderator, admin). Admins manage roles at `/admin/roles`. Users with multiple roles can switch between them via the navigation menu.
-- **Debug Page**: `/debug` — live system diagnostics (versions, memory, DB status, load, deployment info) with 5-second auto-refresh
+Elixir 1.19, Phoenix 1.8, LiveView, Tailwind CSS, PostgreSQL
 
-## ANIMINA Installation Guide for Developers
+## Getting Started
 
-What we assume:
-
-- macOS or Linux as an OS
-- Installed [PostgreSQL](https://www.postgresql.org) database.
-- Basic understanding of Elixir and the [Phoenix Framework](https://phoenixframework.org).
-
-### Clone the Project
-
-- Git clone the project with `git clone git@github.com:animina-dating/animina.git`
-- `cd animina` into the local project clone
-
-### Prerequisites
-
-- Erlang/OTP 28.3
-- Elixir 1.19 (compiled with OTP 28)
-
-Use [mise](https://mise.jdx.dev) for version management. The `.tool-versions` file pins the correct versions.
-
-### Setup
+**Prerequisites:** macOS or Linux, [PostgreSQL](https://www.postgresql.org), [mise](https://mise.jdx.dev) for version management (Erlang/OTP 28.3, Elixir 1.19 — pinned in `.tool-versions`)
 
 ```bash
+git clone git@github.com:animina-dating/animina.git
+cd animina
 mise install
 mix deps.get
 mix ecto.setup
@@ -64,7 +31,31 @@ mix phx.server
 
 Visit `http://localhost:4000` to see the landing page. Register at `/users/register`.
 
-### Deployment
+## Development
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for production deployment to Debian Linux with hot code upgrades, automated CI/CD via GitHub Actions, and automatic rollback.
+- `mix test` — run tests
+- `mix precommit` — full quality check (compile, format, credo, test)
 
+## Admin Access
+
+Grant admin privileges to the first user via IEx:
+
+```elixir
+iex -S mix
+
+user = Animina.Accounts.get_user_by_email("admin@example.com")
+Animina.Accounts.assign_role(user, "admin")
+```
+
+After that, manage roles for other users through the web admin panel at `/admin/roles`.
+
+## Documentation
+
+- [DEPLOYMENT.md](DEPLOYMENT.md) — production deployment with hot code upgrades and CI/CD
+- [TRANSLATING.md](TRANSLATING.md) — i18n workflow for all 9 languages
+- [DESIGN.md](DESIGN.md) — design guidelines
+- [docs/features/](docs/features/) — detailed feature specifications
+
+## License
+
+[MIT](LICENSE.md)

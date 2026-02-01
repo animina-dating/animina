@@ -1279,7 +1279,7 @@ msgstr "Almanya'da kendi sunucumuzda"
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Sunucularımız bulutta değil – Almanya'da kendi fiziksel donanımımızda çalışıyor."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:133
+#: lib/animina_web/live/admin/user_roles_live.ex:141
 #, elixir-autogen, elixir-format
 msgid "Add Role"
 msgstr "Rol Ekle"
@@ -1290,7 +1290,7 @@ msgstr "Rol Ekle"
 msgid "Admin"
 msgstr "Yönetici"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:149
+#: lib/animina_web/live/admin/user_roles_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "All roles assigned."
 msgstr "Tüm roller atandı."
@@ -1300,14 +1300,14 @@ msgstr "Tüm roller atandı."
 msgid "Could not add role."
 msgstr "Rol eklenemedi."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:107
+#: lib/animina_web/live/admin/user_roles_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Current Roles"
 msgstr "Mevcut Roller"
 
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/user_roles_live.ex:11
-#: lib/animina_web/live/admin/user_roles_live.ex:65
+#: lib/animina_web/live/admin/user_roles_live.ex:73
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "Rolleri Yönet"
@@ -1318,17 +1318,17 @@ msgstr "Rolleri Yönet"
 msgid "Moderator"
 msgstr "Moderatör"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:123
+#: lib/animina_web/live/admin/user_roles_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr "Rolü kaldır"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:56
+#: lib/animina_web/live/admin/user_roles_live.ex:64
 #, elixir-autogen, elixir-format
 msgid "Role not found."
 msgstr "Rol bulunamadı."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:73
+#: lib/animina_web/live/admin/user_roles_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Search users by email or name..."
 msgstr "E-posta veya ada göre kullanıcı ara..."
@@ -1338,7 +1338,7 @@ msgstr "E-posta veya ada göre kullanıcı ara..."
 msgid "Switch Role"
 msgstr "Rol Değiştir"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:53
+#: lib/animina_web/live/admin/user_roles_live.ex:61
 #, elixir-autogen, elixir-format
 msgid "The user role cannot be removed."
 msgstr "Kullanıcı rolü kaldırılamaz."
@@ -1363,3 +1363,8 @@ msgstr "Bu role sahip değilsiniz."
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "aktif"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "Cannot remove the last admin. Assign another admin first."
+msgstr "Son yönetici kaldırılamaz. Önce başka bir yönetici atayın."

@@ -821,6 +821,22 @@ defmodule Animina.Accounts do
   """
   def remove_role(_user, "user"), do: {:error, :implicit_role}
 
+  def remove_role(%User{id: user_id}, "admin") do
+    case Repo.get_by(UserRole, user_id: user_id, role: "admin") do
+      nil ->
+        {:error, :not_found}
+
+      user_role ->
+        admin_count = Repo.aggregate(from(r in UserRole, where: r.role == "admin"), :count)
+
+        if admin_count <= 1 do
+          {:error, :last_admin}
+        else
+          Repo.delete(user_role)
+        end
+    end
+  end
+
   def remove_role(%User{id: user_id}, role) do
     case Repo.get_by(UserRole, user_id: user_id, role: role) do
       nil -> {:error, :not_found}

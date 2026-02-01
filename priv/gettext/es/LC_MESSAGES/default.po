@@ -1279,7 +1279,7 @@ msgstr "Alojamiento propio en Alemania"
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Nuestros servidores no están en la nube – funcionan en nuestro propio hardware físico en Alemania."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:133
+#: lib/animina_web/live/admin/user_roles_live.ex:141
 #, elixir-autogen, elixir-format
 msgid "Add Role"
 msgstr "Agregar rol"
@@ -1290,7 +1290,7 @@ msgstr "Agregar rol"
 msgid "Admin"
 msgstr "Administrador"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:149
+#: lib/animina_web/live/admin/user_roles_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "All roles assigned."
 msgstr "Todos los roles asignados."
@@ -1300,14 +1300,14 @@ msgstr "Todos los roles asignados."
 msgid "Could not add role."
 msgstr "No se pudo agregar el rol."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:107
+#: lib/animina_web/live/admin/user_roles_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Current Roles"
 msgstr "Roles actuales"
 
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/user_roles_live.ex:11
-#: lib/animina_web/live/admin/user_roles_live.ex:65
+#: lib/animina_web/live/admin/user_roles_live.ex:73
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "Gestionar roles"
@@ -1318,17 +1318,17 @@ msgstr "Gestionar roles"
 msgid "Moderator"
 msgstr "Moderador"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:123
+#: lib/animina_web/live/admin/user_roles_live.ex:131
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr "Eliminar rol"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:56
+#: lib/animina_web/live/admin/user_roles_live.ex:64
 #, elixir-autogen, elixir-format
 msgid "Role not found."
 msgstr "Rol no encontrado."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:73
+#: lib/animina_web/live/admin/user_roles_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Search users by email or name..."
 msgstr "Buscar usuarios por correo o nombre..."
@@ -1338,7 +1338,7 @@ msgstr "Buscar usuarios por correo o nombre..."
 msgid "Switch Role"
 msgstr "Cambiar rol"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:53
+#: lib/animina_web/live/admin/user_roles_live.ex:61
 #, elixir-autogen, elixir-format
 msgid "The user role cannot be removed."
 msgstr "El rol de usuario no se puede eliminar."
@@ -1363,3 +1363,8 @@ msgstr "No tiene ese rol."
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "activo"
+
+#: lib/animina_web/live/admin/user_roles_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "Cannot remove the last admin. Assign another admin first."
+msgstr "No se puede eliminar al último administrador. Asigna otro administrador primero."
