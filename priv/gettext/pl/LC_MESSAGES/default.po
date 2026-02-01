@@ -30,8 +30,8 @@ msgstr[2] "%{count}/%{threshold} poleceń"
 msgid "100% Free"
 msgstr "100% za darmo"
 
-#: lib/animina_web/live/user_live/registration.ex:584
-#: lib/animina_web/live/user_live/registration.ex:605
+#: lib/animina_web/live/user_live/registration.ex:595
+#: lib/animina_web/live/user_live/registration.ex:616
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Kod potwierdzenia został wysłany na %{email}."
@@ -51,7 +51,7 @@ msgstr "O nas"
 msgid "Account"
 msgstr "Konto"
 
-#: lib/animina_web/components/core_components.ex:392
+#: lib/animina_web/components/core_components.ex:393
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Akcje"
@@ -387,11 +387,6 @@ msgstr "Wzrost w cm (80-225)"
 msgid "Hello"
 msgstr "Witaj"
 
-#: lib/animina_web/live/user_live/registration.ex:441
-#, elixir-autogen, elixir-format
-msgid "I accept the Terms of Service and Privacy Policy."
-msgstr "Akceptuję Regulamin i Politykę Prywatności."
-
 #: lib/animina_web/live/demo_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
@@ -453,7 +448,7 @@ msgstr "Lokalizacja"
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:103
-#: lib/animina_web/live/user_live/registration.ex:448
+#: lib/animina_web/live/user_live/registration.ex:459
 #: lib/animina_web/live/user_live/settings_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Locations"
@@ -667,7 +662,7 @@ msgstr "Osobowość się liczy"
 msgid "Personality over superficiality"
 msgstr "Osobowość zamiast powierzchowności"
 
-#: lib/animina_web/live/user_live/registration.ex:668
+#: lib/animina_web/live/user_live/registration.ex:667
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Proszę wpisać prawidłowy 5-cyfrowy kod pocztowy"
@@ -884,7 +879,7 @@ msgstr "To ja"
 msgid "This is what I'm looking for"
 msgstr "Tego szukam"
 
-#: lib/animina_web/live/user_live/registration.ex:677
+#: lib/animina_web/live/user_live/registration.ex:676
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Ta lokalizacja została już dodana"
@@ -1009,13 +1004,13 @@ msgstr[2] "Nieprawidłowy kod. Pozostało %{count} prób."
 msgid "You are on our waitlist. Possible reasons:"
 msgstr "Jesteś na naszej liście oczekujących. Możliwe przyczyny:"
 
-#: lib/animina_web/user_auth.ex:234
-#: lib/animina_web/user_auth.ex:328
+#: lib/animina_web/user_auth.ex:239
+#: lib/animina_web/user_auth.ex:333
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Musisz się zalogować, aby uzyskać dostęp do tej strony."
 
-#: lib/animina_web/user_auth.ex:251
+#: lib/animina_web/user_auth.ex:256
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Musisz ponownie się uwierzytelnić, aby uzyskać dostęp do tej strony."
@@ -1052,7 +1047,7 @@ msgstr "i"
 msgid "approximately 4 weeks"
 msgstr "około 4 tygodnie"
 
-#: lib/animina_web/components/core_components.ex:76
+#: lib/animina_web/components/core_components.ex:77
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "zamknij"
@@ -1087,7 +1082,7 @@ msgstr "z"
 msgid "transparent"
 msgstr "przejrzyste"
 
-#: lib/animina_web/live/user_live/registration.ex:496
+#: lib/animina_web/live/user_live/registration.ex:507
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Utwórz konto"
@@ -1371,3 +1366,23 @@ msgstr "Zmień język"
 #, elixir-autogen, elixir-format
 msgid "Choose your preferred language"
 msgstr "Wybierz preferowany język"
+
+#: lib/animina_web/live/user_live/registration.ex:449
+#, elixir-autogen, elixir-format
+msgid "I accept the"
+msgstr "Akceptuję"
+
+#: lib/animina_web/live/user_live/registration.ex:452
+#, elixir-autogen, elixir-format
+msgid "Privacy Policy"
+msgstr "Politykę prywatności"
+
+#: lib/animina_web/live/user_live/registration.ex:450
+#, elixir-autogen, elixir-format
+msgid "Terms of Service"
+msgstr "Regulamin"
+
+#: lib/animina_web/live/user_live/registration.ex:451
+#, elixir-autogen, elixir-format
+msgid "and the"
+msgstr "oraz"

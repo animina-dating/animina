@@ -101,22 +101,22 @@ msgstr "%{number} değerinden büyük veya eşit olmalı"
 msgid "must be equal to %{number}"
 msgstr "%{number} değerine eşit olmalı"
 
-#: lib/animina/accounts.ex:230
+#: lib/animina/accounts.ex:229
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Davet kodu bulunamadı"
 
-#: lib/animina/accounts/user.ex:236
+#: lib/animina/accounts/user.ex:242
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "geçerli bir telefon numarası değil"
 
-#: lib/animina/accounts/user.ex:140
+#: lib/animina/accounts/user.ex:144
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "6 karakter olmalı (harf ve rakam)"
 
-#: lib/animina/accounts/user.ex:231
+#: lib/animina/accounts/user.ex:237
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "bir cep telefonu numarası olmalı (sabit hat değil)"

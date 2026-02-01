@@ -29,8 +29,8 @@ msgstr[1] "%{count}/%{threshold} davet"
 msgid "100% Free"
 msgstr "100% Ücretsiz"
 
-#: lib/animina_web/live/user_live/registration.ex:584
-#: lib/animina_web/live/user_live/registration.ex:605
+#: lib/animina_web/live/user_live/registration.ex:595
+#: lib/animina_web/live/user_live/registration.ex:616
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "%{email} adresine bir onay kodu gönderildi."
@@ -50,7 +50,7 @@ msgstr "Hakkımızda"
 msgid "Account"
 msgstr "Hesap"
 
-#: lib/animina_web/components/core_components.ex:392
+#: lib/animina_web/components/core_components.ex:393
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "İşlemler"
@@ -386,11 +386,6 @@ msgstr "Boy (cm) (80-225)"
 msgid "Hello"
 msgstr "Merhaba"
 
-#: lib/animina_web/live/user_live/registration.ex:441
-#, elixir-autogen, elixir-format
-msgid "I accept the Terms of Service and Privacy Policy."
-msgstr "Kullanım Koşullarını ve Gizlilik Politikasını kabul ediyorum."
-
 #: lib/animina_web/live/demo_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "I was tired of dating apps that felt like a game. Animina felt different from the start—more thoughtful, more genuine. I met my partner here, and we're now planning our future together."
@@ -452,7 +447,7 @@ msgstr "Konum"
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:103
-#: lib/animina_web/live/user_live/registration.ex:448
+#: lib/animina_web/live/user_live/registration.ex:459
 #: lib/animina_web/live/user_live/settings_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Locations"
@@ -666,7 +661,7 @@ msgstr "Kişilik önemli"
 msgid "Personality over superficiality"
 msgstr "Yüzeysellik yerine kişilik"
 
-#: lib/animina_web/live/user_live/registration.ex:668
+#: lib/animina_web/live/user_live/registration.ex:667
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Lütfen geçerli 5 haneli bir posta kodu girin"
@@ -882,7 +877,7 @@ msgstr "Bu benim"
 msgid "This is what I'm looking for"
 msgstr "Aradığım şey bu"
 
-#: lib/animina_web/live/user_live/registration.ex:677
+#: lib/animina_web/live/user_live/registration.ex:676
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Bu konum zaten eklendi"
@@ -1006,13 +1001,13 @@ msgstr[1] "Yanlış kod. %{count} deneme kaldı."
 msgid "You are on our waitlist. Possible reasons:"
 msgstr "Bekleme listemizdeksiniz. Olası nedenler:"
 
-#: lib/animina_web/user_auth.ex:234
-#: lib/animina_web/user_auth.ex:328
+#: lib/animina_web/user_auth.ex:239
+#: lib/animina_web/user_auth.ex:333
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Bu sayfaya erişmek için giriş yapmalısınız."
 
-#: lib/animina_web/user_auth.ex:251
+#: lib/animina_web/user_auth.ex:256
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Bu sayfaya erişmek için yeniden kimlik doğrulaması yapmalısınız."
@@ -1049,7 +1044,7 @@ msgstr "ve"
 msgid "approximately 4 weeks"
 msgstr "yaklaşık 4 hafta"
 
-#: lib/animina_web/components/core_components.ex:76
+#: lib/animina_web/components/core_components.ex:77
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "kapat"
@@ -1084,7 +1079,7 @@ msgstr "/"
 msgid "transparent"
 msgstr "şeffaf"
 
-#: lib/animina_web/live/user_live/registration.ex:496
+#: lib/animina_web/live/user_live/registration.ex:507
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Hesap Oluştur"
@@ -1368,3 +1363,23 @@ msgstr "Dili değiştir"
 #, elixir-autogen, elixir-format
 msgid "Choose your preferred language"
 msgstr "Tercih ettiğiniz dili seçin"
+
+#: lib/animina_web/live/user_live/registration.ex:449
+#, elixir-autogen, elixir-format
+msgid "I accept the"
+msgstr "Kabul ediyorum:"
+
+#: lib/animina_web/live/user_live/registration.ex:452
+#, elixir-autogen, elixir-format
+msgid "Privacy Policy"
+msgstr "Gizlilik Politikası"
+
+#: lib/animina_web/live/user_live/registration.ex:450
+#, elixir-autogen, elixir-format
+msgid "Terms of Service"
+msgstr "Kullanım Koşulları"
+
+#: lib/animina_web/live/user_live/registration.ex:451
+#, elixir-autogen, elixir-format
+msgid "and the"
+msgstr "ve"

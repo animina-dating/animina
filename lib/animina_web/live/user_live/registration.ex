@@ -435,12 +435,25 @@ defmodule AniminaWeb.UserLive.Registration do
         label={gettext("Search radius (km)")}
         min="1"
       />
-      <.input
-        field={@form[:terms_accepted]}
-        type="checkbox"
-        label={gettext("I accept the Terms of Service and Privacy Policy.")}
-        required
-      />
+      <div class="flex items-start gap-3">
+        <input
+          type="checkbox"
+          id={@form[:terms_accepted].id}
+          name={@form[:terms_accepted].name}
+          value="true"
+          checked={Phoenix.HTML.Form.normalize_value("checkbox", @form[:terms_accepted].value)}
+          required
+          class="checkbox checkbox-sm mt-1"
+        />
+        <label for={@form[:terms_accepted].id} class="text-sm text-base-content/70">
+          {gettext("I accept the")}
+          <a href="#" class="text-primary hover:underline" target="_blank">
+            {gettext("Terms of Service")}
+          </a>
+          {gettext("and the")}
+          <a href="/datenschutz" class="text-primary hover:underline" target="_blank">{gettext("Privacy Policy")}</a>.
+        </label>
+      </div>
     </div>
     """
   end
