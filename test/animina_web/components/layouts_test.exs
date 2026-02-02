@@ -43,11 +43,11 @@ defmodule AniminaWeb.LayoutsTest do
   describe "authenticated user dropdown language picker" do
     setup :register_and_log_in_user
 
-    test "user dropdown contains language settings link", %{conn: conn} do
+    test "user dropdown contains settings link", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/demo")
 
       assert html =~ "user-dropdown"
-      assert html =~ "/users/settings/language"
+      assert html =~ "/users/settings"
     end
 
     test "globe icon is hidden for authenticated users", %{conn: conn} do

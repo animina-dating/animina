@@ -83,9 +83,9 @@
   --color-base-300: #374151;
   /* Text: Warm off-white */
   --color-base-content: #F3F4F6;
-  /* Primary: Lighter slate blue - glows softly */
-  --color-primary: #6B8A96;
-  --color-primary-content: #FFFFFF;
+  /* Primary: Lighter slate blue - glows softly (AA contrast on dark bg) */
+  --color-primary: #83A4B0;
+  --color-primary-content: #1A2023;
   /* Secondary: Lighter sand */
   --color-secondary: #D4B89D;
   --color-secondary-content: #1A2023;
@@ -95,9 +95,9 @@
   /* Neutral: Muted gray */
   --color-neutral: #9CA3AF;
   --color-neutral-content: #1A2023;
-  /* Info: Lighter slate */
-  --color-info: #6B8A96;
-  --color-info-content: #FFFFFF;
+  /* Info: Lighter slate (mirrors primary) */
+  --color-info: #83A4B0;
+  --color-info-content: #1A2023;
   /* Success: Lighter teal */
   --color-success: #6BB5A2;
   --color-success-content: #1A2023;
@@ -218,6 +218,22 @@ body {
 
 .wizard-step-backward {
   animation: wizardStepBackward 250ms ease-out;
+}
+
+/* Keep dashed trait buttons visually dashed on hover.
+   DaisyUI's btn-dash fills solid on hover, making it indistinguishable
+   from the "must have" solid state. Override to keep dashed border
+   with a subtle background tint for hover feedback. */
+@media (hover: hover) {
+  .btn.btn-dash.btn-success:hover,
+  .btn.btn-dash.btn-error:hover {
+    border-style: dashed;
+    --btn-bg: color-mix(in oklab, var(--btn-color) 12%, transparent);
+    --btn-fg: var(--btn-color);
+    --btn-border: var(--btn-color);
+    --btn-noise: none;
+    --btn-shadow: none;
+  }
 }
 
 /* During server disconnect: show friendly deployment notice instead of error */

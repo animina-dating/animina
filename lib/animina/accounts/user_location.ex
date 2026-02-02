@@ -23,8 +23,19 @@ defmodule Animina.Accounts.UserLocation do
     |> cast(attrs, [:user_id, :country_id, :zip_code, :position])
     |> validate_required([:user_id, :country_id, :zip_code, :position])
     |> validate_format(:zip_code, ~r/^\d{5}$/, message: "must be 5 digits")
+    |> validate_zip_code_exists()
     |> validate_inclusion(:position, 1..4, message: "must be between 1 and 4")
     |> unique_constraint([:user_id, :position])
     |> unique_constraint([:user_id, :zip_code])
+  end
+
+  defp validate_zip_code_exists(changeset) do
+    validate_change(changeset, :zip_code, fn :zip_code, zip_code ->
+      if Animina.GeoData.get_city_by_zip_code(zip_code) do
+        []
+      else
+        [zip_code: "zip code not found"]
+      end
+    end)
   end
 end

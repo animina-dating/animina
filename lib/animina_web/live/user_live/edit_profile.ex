@@ -3,18 +3,6 @@ defmodule AniminaWeb.UserLive.EditProfile do
 
   alias Animina.Accounts
 
-  @valid_languages [
-    {"Deutsch", "de"},
-    {"English", "en"},
-    {"Türkçe", "tr"},
-    {"Русский", "ru"},
-    {"العربية", "ar"},
-    {"Polski", "pl"},
-    {"Français", "fr"},
-    {"Español", "es"},
-    {"Українська", "uk"}
-  ]
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -59,12 +47,20 @@ defmodule AniminaWeb.UserLive.EditProfile do
             label={gettext("Occupation")}
           />
 
-          <.input
-            field={@form[:language]}
-            type="select"
-            label={gettext("Language")}
-            options={@language_options}
-          />
+          <div class="mb-4">
+            <label class="label">
+              <span class="label-text">{gettext("Birthday")}</span>
+            </label>
+            <input
+              type="text"
+              value={Date.to_iso8601(@birthday)}
+              disabled
+              class="input input-bordered w-full opacity-60"
+            />
+            <p class="text-xs text-base-content/60 mt-1">
+              {gettext("This field cannot be changed.")}
+            </p>
+          </div>
 
           <.button variant="primary" phx-disable-with={gettext("Saving...")}>
             {gettext("Save Profile")}
@@ -83,7 +79,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
     socket =
       socket
       |> assign(:page_title, gettext("Edit Profile"))
-      |> assign(:language_options, @valid_languages)
+      |> assign(:birthday, user.birthday)
       |> assign(:form, to_form(changeset))
 
     {:ok, socket}

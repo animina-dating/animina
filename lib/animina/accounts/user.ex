@@ -28,6 +28,8 @@ defmodule Animina.Accounts.User do
 
     has_many :locations, Animina.Accounts.UserLocation, preload_order: [asc: :position]
     has_many :user_roles, Animina.Accounts.UserRole
+    has_many :user_flags, Animina.Traits.UserFlag
+    has_many :user_category_opt_ins, Animina.Traits.UserCategoryOptIn
 
     # Partner preferences
     field :preferred_partner_gender, {:array, :string}, default: []

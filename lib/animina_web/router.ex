@@ -76,6 +76,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/preferences", UserLive.EditPreferences, :edit
       live "/users/settings/language", UserLive.LanguageSettings, :edit
       live "/users/settings/locations", UserLive.EditLocations, :edit
+      live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/waitlist", UserLive.Waitlist
     end

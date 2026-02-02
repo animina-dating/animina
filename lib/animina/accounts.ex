@@ -9,6 +9,7 @@ defmodule Animina.Accounts do
   alias Animina.Accounts.{User, UserLocation, UserNotifier, UserRole, UserToken}
   alias Animina.Repo
 
+  @max_locations 4
   @referral_auto_activate_threshold 5
 
   ## Database getters
@@ -624,15 +625,20 @@ defmodule Animina.Accounts do
   end
 
   @doc """
+  Returns the maximum number of locations a user can have.
+  """
+  def max_locations, do: @max_locations
+
+  @doc """
   Adds a new location for a user.
-  Automatically assigns the next available position (max 4).
+  Automatically assigns the next available position (max #{@max_locations}).
   """
   def add_user_location(%User{id: user_id}, attrs) do
     current_count =
       from(l in UserLocation, where: l.user_id == ^user_id, select: count())
       |> Repo.one()
 
-    if current_count >= 4 do
+    if current_count >= @max_locations do
       {:error, :max_locations_reached}
     else
       next_position =
@@ -649,6 +655,21 @@ defmodule Animina.Accounts do
         |> Map.put(:position, next_position)
       )
       |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Updates an existing location for a user (e.g. change zip code or country).
+  """
+  def update_user_location(%User{id: user_id}, location_id, attrs) do
+    case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
+      nil ->
+        {:error, :not_found}
+
+      location ->
+        location
+        |> UserLocation.changeset(attrs)
+        |> Repo.update()
     end
   end
 

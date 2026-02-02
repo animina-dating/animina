@@ -6,18 +6,7 @@ defmodule AniminaWeb.Layouts do
   use AniminaWeb, :html
 
   alias Animina.Accounts.Scope
-
-  @languages [
-    {"de", "DE", "🇩🇪", "Deutsch"},
-    {"en", "EN", "🇬🇧", "English"},
-    {"tr", "TR", "🇹🇷", "Türkçe"},
-    {"ru", "RU", "🇷🇺", "Русский"},
-    {"ar", "AR", "🇸🇦", "العربية"},
-    {"pl", "PL", "🇵🇱", "Polski"},
-    {"fr", "FR", "🇫🇷", "Français"},
-    {"es", "ES", "🇪🇸", "Español"},
-    {"uk", "UK", "🇺🇦", "Українська"}
-  ]
+  alias AniminaWeb.Languages
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
@@ -52,7 +41,7 @@ defmodule AniminaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
-    assigns = assign(assigns, :languages, @languages)
+    assigns = assign(assigns, :languages, Languages.all())
 
     ~H"""
     <div class={[
@@ -199,12 +188,6 @@ defmodule AniminaWeb.Layouts do
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
                       {gettext("Settings")}
-                    </a>
-                    <a
-                      href="/users/settings/language"
-                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                    >
-                      {gettext("Language")}
                     </a>
                     <%= if Scope.admin?(@current_scope) do %>
                       <a

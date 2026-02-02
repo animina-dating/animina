@@ -1,8 +1,16 @@
 # Appendix B: Complete List of Flags by Category
 
-**Total: 16 categories with 217 flags**
+**Total: 18 categories with 251 flags**
 
 ---
+
+## Relationship Status (4 flags)
+| Emoji | Flag Name |
+|-------|-----------|
+| 🙋 | Single |
+| 💑 | In a Relationship |
+| 💍 | Married |
+| 🤷 | It's Complicated |
 
 ## Character (20 flags)
 | Emoji | Flag Name |
@@ -28,21 +36,34 @@
 | 💪 | Self-Confidence |
 | 🌐 | Social Awareness |
 
-## Family Planning (3 flags)
+## Have Children (2 flags)
 | Emoji | Flag Name |
 |-------|-----------|
-| 👨‍👩‍👧‍👦 | Have Children |
-| 👨‍👩‍👧‍👦❌ | Want No More Children |
-| 👨‍👩‍👧‍👦➕ | Open to More Children |
+| 👨‍👩‍👧‍👦 | I Have Children |
+| 🚫👶 | I Don't Have Children |
 
-## Substance Use (3 flags)
+## Want Children (2 flags)
 | Emoji | Flag Name |
 |-------|-----------|
-| 🚬 | Smoking |
-| 🍻 | Alcohol |
-| 🌿 | Marijuana |
+| 👶✨ | I Want (More) Children |
+| 🚫👶 | I Don't Want (More) Children |
 
-## Animals (10 flags)
+## Children in Household (2 flags)
+| Emoji | Flag Name |
+|-------|-----------|
+| 🏠👨‍👩‍👧‍👦 | My Children Live With Me |
+| 🏠 | My Children Don't Live With Me |
+
+## Diet (5 flags)
+| Emoji | Flag Name |
+|-------|-----------|
+| 🍖 | Omnivore |
+| 🥗 | Flexitarian |
+| 🐟 | Pescatarian |
+| 🥦 | Vegetarian |
+| 🌱 | Vegan |
+
+## Pets (10 flags)
 | Emoji | Flag Name |
 |-------|-----------|
 | 🐶 | Dog |
@@ -56,11 +77,9 @@
 | 🦎 | Reptile |
 | 🐴 | Horse |
 
-## Food (24 flags)
+## Food (22 flags)
 | Emoji | Flag Name |
 |-------|-----------|
-| 🌱 | Vegan |
-| 🥦 | Vegetarian |
 | 🍝 | Italian |
 | 🥡 | Chinese |
 | 🍛 | Indian |
@@ -269,7 +288,7 @@
 | 😆 | Stand-Up Comedy |
 | 🎭 | Theater |
 
-## Self Care (7 flags)
+## Self Care (6 flags)
 | Emoji | Flag Name |
 |-------|-----------|
 | 😴 | Good Sleep |
@@ -278,9 +297,52 @@
 | 👥 | Counseling |
 | 🍏 | Nutrition |
 | 📵 | Going Offline |
-| ❤️‍🔥 | Sex Positivity |
 
-## Politics (7 flags)
+## Sexual Preferences (14 flags) — sensitive, requires opt-in
+| Emoji | Flag Name |
+|-------|-----------|
+| 🍦 | Vanilla |
+| 👑 | Dominant |
+| 🧎 | Submissive |
+| 🔄 | Switch |
+| ⛓️ | Bondage |
+| 🖤 | S&M |
+| 🎭 | Role Play |
+| 🕉️ | Tantra |
+| 👠 | Fetish |
+| 🔦 | Exhibitionism |
+| 👀 | Voyeurism |
+| 👥 | Group Play |
+| 🎲 | Toys |
+| 🔁 | Swinging |
+
+## Sexual Practices (22 flags) — sensitive, requires opt-in
+| Emoji | Flag Name |
+|-------|-----------|
+| 👄 | Oral Sex: Giving |
+| 👄 | Oral Sex: Receiving |
+| 🍑 | Anal Sex: Giving |
+| 🍑 | Anal Sex: Receiving |
+| 🤞 | Fingering: Giving |
+| 🤞 | Fingering: Receiving |
+| 💋 | Rimming: Giving |
+| 💋 | Rimming: Receiving |
+| 💆 | Massage: Giving |
+| 💆 | Massage: Receiving |
+| 🔥 | Vaginal Sex |
+| 😘 | Kissing |
+| 🗣️ | Dirty Talk |
+| 📱 | Sexting |
+| 📞 | Phone Sex |
+| 🛏️ | Missionary |
+| 🐕 | Doggy Style |
+| 🤠 | Cowgirl |
+| 🥄 | Spooning |
+| 🔢 | 69 |
+| 🧍 | Standing |
+| 🧱 | Against the Wall |
+
+## Political Parties (7 flags)
 | Emoji | Flag Name |
 |-------|-----------|
 | - | CDU |

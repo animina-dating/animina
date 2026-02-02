@@ -3,17 +3,7 @@ defmodule AniminaWeb.UserLive.LanguageSettings do
 
   import Plug.CSRFProtection, only: [get_csrf_token: 0]
 
-  @languages [
-    {"de", "DE", "🇩🇪", "Deutsch"},
-    {"en", "EN", "🇬🇧", "English"},
-    {"tr", "TR", "🇹🇷", "Türkçe"},
-    {"ru", "RU", "🇷🇺", "Русский"},
-    {"ar", "AR", "🇸🇦", "العربية"},
-    {"pl", "PL", "🇵🇱", "Polski"},
-    {"fr", "FR", "🇫🇷", "Français"},
-    {"es", "ES", "🇪🇸", "Español"},
-    {"uk", "UK", "🇺🇦", "Українська"}
-  ]
+  alias AniminaWeb.Languages
 
   @impl true
   def render(assigns) do
@@ -70,7 +60,7 @@ defmodule AniminaWeb.UserLive.LanguageSettings do
     socket =
       socket
       |> assign(:page_title, gettext("Language"))
-      |> assign(:languages, @languages)
+      |> assign(:languages, Languages.all())
       |> assign(:current_locale, current_locale)
 
     {:ok, socket}

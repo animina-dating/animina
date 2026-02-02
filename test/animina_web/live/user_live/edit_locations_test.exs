@@ -115,13 +115,92 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       refute html =~ "phx-click=\"remove_location\""
     end
 
-    test "has back link to settings hub in breadcrumbs", %{conn: conn} do
-      {:ok, lv, _html} =
+    test "can edit a location", %{conn: conn} do
+      user = user_fixture(language: "en")
+      germany_id = germany_id()
+
+      {:ok, lv, html} =
         conn
-        |> log_in_user(user_fixture(language: "en"))
+        |> log_in_user(user)
         |> live(~p"/users/settings/locations")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      # Edit button should be visible
+      assert html =~ "edit_location"
+
+      [location] = Accounts.list_user_locations(user)
+
+      # Click edit to open inline form
+      lv
+      |> element("button[phx-click='edit_location'][phx-value-id='#{location.id}']")
+      |> render_click()
+
+      # Submit the edit form with new zip code
+      lv
+      |> form("#edit_location_form", %{
+        "location" => %{
+          "country_id" => germany_id,
+          "zip_code" => "80331"
+        }
+      })
+      |> render_submit()
+
+      [updated_location] = Accounts.list_user_locations(user)
+      assert updated_location.zip_code == "80331"
+    end
+
+    test "rejects invalid zip code on edit", %{conn: conn} do
+      user = user_fixture(language: "en")
+      germany_id = germany_id()
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings/locations")
+
+      [location] = Accounts.list_user_locations(user)
+
+      lv
+      |> element("button[phx-click='edit_location'][phx-value-id='#{location.id}']")
+      |> render_click()
+
+      html =
+        lv
+        |> form("#edit_location_form", %{
+          "location" => %{
+            "country_id" => germany_id,
+            "zip_code" => "99999"
+          }
+        })
+        |> render_submit()
+
+      assert html =~ "zip code not found"
+
+      # Original location should be unchanged
+      [unchanged] = Accounts.list_user_locations(user)
+      assert unchanged.zip_code == "10115"
+    end
+
+    test "rejects invalid zip code on add", %{conn: conn} do
+      user = user_fixture(language: "en")
+      germany_id = germany_id()
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings/locations")
+
+      html =
+        lv
+        |> form("#location_form", %{
+          "location" => %{
+            "country_id" => germany_id,
+            "zip_code" => "99999"
+          }
+        })
+        |> render_submit()
+
+      assert html =~ "zip code not found"
+      assert length(Accounts.list_user_locations(user)) == 1
     end
   end
 end

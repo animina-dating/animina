@@ -17,7 +17,6 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       assert html =~ "Display Name"
       assert html =~ "Height"
       assert html =~ "Occupation"
-      assert html =~ "Language"
     end
 
     test "has page title", %{conn: conn} do
@@ -61,8 +60,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
         "user" => %{
           "display_name" => "New Name",
           "height" => "175",
-          "occupation" => "Developer",
-          "language" => "en"
+          "occupation" => "Developer"
         }
       })
       |> render_submit()
@@ -105,13 +103,26 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       assert result =~ "must be greater than or equal to 80"
     end
 
-    test "has back link to settings hub in breadcrumbs", %{conn: conn} do
-      {:ok, lv, _html} =
+    test "displays birthdate as a disabled field", %{conn: conn} do
+      user = user_fixture(language: "en", birthday: ~D[1990-05-15])
+
+      {:ok, lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings/profile")
+
+      assert html =~ "Birthday"
+      assert html =~ "1990-05-15"
+      assert has_element?(lv, "input[disabled]")
+    end
+
+    test "shows note that birthdate cannot be changed", %{conn: conn} do
+      {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings/profile")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert html =~ "This field cannot be changed."
     end
   end
 end

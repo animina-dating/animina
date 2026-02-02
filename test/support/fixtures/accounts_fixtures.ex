@@ -32,6 +32,7 @@ defmodule Animina.AccountsFixtures do
       mobile_phone: unique_mobile_phone(),
       preferred_partner_gender: ["female"],
       terms_accepted: true,
+      language: "en",
       locations: [%{country_id: germany_id(), zip_code: "10115"}]
     })
   end

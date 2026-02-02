@@ -38,14 +38,24 @@ Three roles exist: `user` (implicit, always present), `moderator`, and `admin`. 
 
 ### Translation Conventions
 
+Translation work is split across sessions to avoid context limits.
+
+#### During feature work (same session as code changes)
+
 1. **All user-facing strings must use Gettext** — wrap UI text in `gettext("...")`, validation errors in `dgettext("errors", "...")`, and count-based text in `ngettext()`/`dngettext()`.
 
 2. **After adding or changing `gettext()` calls, run `mix gettext.extract --merge`** to update `.pot` templates and merge new entries into all `.po` files.
 
-3. **Provide translations for all 9 languages** (de, en, tr, ru, ar, pl, fr, es, uk) in the corresponding `.po` files under `priv/gettext/{locale}/LC_MESSAGES/`. Never leave `msgstr ""` empty — translate every new or changed string into all languages.
+3. **Only translate English and German** during the feature session. Fill in `msgstr` for `en` and `de` only. Other languages may have empty `msgstr ""` temporarily.
 
-4. **Plural forms** — languages have different plural counts: 2 forms for de/en/tr/fr/es, 3 forms for ru/pl/uk, 6 forms for ar. Provide the correct number of `msgstr[N]` entries for each language.
+4. **Email templates** — during feature work, update templates for `en` and `de` only. Preserve `<%= @variable %>` placeholders and the subject/`---`/body format.
 
-5. **Email templates** — when adding or modifying an email template, update the template in all 9 locale directories under `priv/email_templates/{locale}/`. Preserve `<%= @variable %>` placeholders and the subject/`---`/body format.
+#### After feature work (separate translation sessions)
 
-6. **Reference `TRANSLATING.md`** for full details on file structure, plural rules, and translation workflow.
+5. **Translate remaining languages in dedicated sessions** — do 2-3 languages per session. Each session reads the English `.po` file as reference and fills in the target language files. Supported languages: tr, ru, ar, pl, fr, es, uk.
+
+6. **Plural forms** — languages have different plural counts: 2 forms for de/en/tr/fr/es, 3 forms for ru/pl/uk, 6 forms for ar. Provide the correct number of `msgstr[N]` entries for each language.
+
+7. **Email templates** — translate remaining locale directories under `priv/email_templates/{locale}/` in the same translation sessions.
+
+8. **Reference `TRANSLATING.md`** for full details on file structure, plural rules, and translation workflow.

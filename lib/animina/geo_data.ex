@@ -42,4 +42,17 @@ defmodule Animina.GeoData do
     from(c in City, where: c.country_id == ^country_id)
     |> Repo.all()
   end
+
+  @doc """
+  Returns a map of `%{zip_code => city_name}` for a list of location structs
+  that each have a `:zip_code` field.
+  """
+  def city_names_for_locations(locations) do
+    Enum.reduce(locations, %{}, fn loc, acc ->
+      case get_city_by_zip_code(loc.zip_code) do
+        nil -> acc
+        city -> Map.put(acc, loc.zip_code, city.name)
+      end
+    end)
+  end
 end

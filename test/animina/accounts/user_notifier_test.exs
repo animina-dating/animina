@@ -91,8 +91,8 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ user.display_name
     end
 
-    test "uses German subject by default (no language set)" do
-      user = user_fixture()
+    test "uses German subject when user language is de" do
+      user = user_fixture(%{language: "de"})
       {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
 
       assert email.subject == "Ihr Bestätigungscode für ANIMINA"
@@ -142,8 +142,8 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ "https://example.com/reset/TOKEN"
     end
 
-    test "uses German subject by default" do
-      user = user_fixture()
+    test "uses German subject when user language is de" do
+      user = user_fixture(%{language: "de"})
 
       {:ok, email} =
         UserNotifier.deliver_password_reset_instructions(user, "https://example.com/reset")
