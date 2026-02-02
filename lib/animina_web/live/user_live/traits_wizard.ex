@@ -443,7 +443,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     else
       user = socket.assigns.current_scope.user
       category = Traits.get_category!(category_id)
-      {:ok, _} = Traits.toggle_category_optin(user, category)
+      {:ok, _} = Traits.toggle_category_optin(user, category, originator: user)
 
       selected_optin_ids = Traits.list_user_optin_category_ids(user)
 
@@ -474,7 +474,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
   def handle_event("delete_all_flags", _params, socket) do
     user = socket.assigns.current_scope.user
-    {:ok, _count} = Traits.delete_all_user_flags(user)
+    {:ok, _count} = Traits.delete_all_user_flags(user, originator: user)
 
     {:noreply,
      socket
@@ -487,10 +487,10 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp do_toggle_flag(socket, user, %{intensity: "soft"} = user_flag, _flag_id, step, color)
        when step in [2, 3] do
     if Traits.exclusive_hard_has_others?(user.id, user_flag.flag_id, color) do
-      {:ok, _} = Traits.remove_user_flag(user, user_flag.id)
+      {:ok, _} = Traits.remove_user_flag(user, user_flag.id, originator: user)
       {:noreply, reload_user_flags(socket, user)}
     else
-      case Traits.update_user_flag_intensity(user_flag.id, "hard") do
+      case Traits.update_user_flag_intensity(user_flag.id, "hard", originator: user) do
         {:ok, _} ->
           {:noreply, reload_user_flags(socket, user)}
 
@@ -502,7 +502,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
   # White flags: simple toggle; Green/red hard flags: remove on third click
   defp do_toggle_flag(socket, user, %{} = user_flag, _flag_id, _step, _color) do
-    {:ok, _} = Traits.remove_user_flag(user, user_flag.id)
+    {:ok, _} = Traits.remove_user_flag(user, user_flag.id, originator: user)
     {:noreply, reload_user_flags(socket, user)}
   end
 
@@ -511,17 +511,20 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     initial_intensity = if step in [2, 3], do: "soft", else: "hard"
 
     case Traits.find_existing_flag_in_category(user.id, flag_id, color) do
-      %{id: existing_id} -> Traits.remove_user_flag(user, existing_id)
+      %{id: existing_id} -> Traits.remove_user_flag(user, existing_id, originator: user)
       nil -> :ok
     end
 
-    case Traits.add_user_flag(%{
-           user_id: user.id,
-           flag_id: flag_id,
-           color: color,
-           intensity: initial_intensity,
-           position: next_position(socket.assigns.user_flags, color)
-         }) do
+    case Traits.add_user_flag(
+           %{
+             user_id: user.id,
+             flag_id: flag_id,
+             color: color,
+             intensity: initial_intensity,
+             position: next_position(socket.assigns.user_flags, color)
+           },
+           originator: user
+         ) do
       {:ok, _user_flag} ->
         {:noreply, reload_user_flags(socket, user)}
 

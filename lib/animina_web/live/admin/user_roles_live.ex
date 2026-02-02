@@ -31,7 +31,9 @@ defmodule AniminaWeb.Admin.UserRolesLive do
   def handle_event("add_role", %{"role" => role}, socket) do
     user = socket.assigns.selected_user
 
-    case Accounts.assign_role(user, role) do
+    admin = socket.assigns.current_scope.user
+
+    case Accounts.assign_role(user, role, originator: admin) do
       {:ok, _} ->
         roles = Accounts.get_user_roles(user)
         {:noreply, assign(socket, selected_user_roles: roles)}
@@ -44,7 +46,9 @@ defmodule AniminaWeb.Admin.UserRolesLive do
   def handle_event("remove_role", %{"role" => role}, socket) do
     user = socket.assigns.selected_user
 
-    case Accounts.remove_role(user, role) do
+    admin = socket.assigns.current_scope.user
+
+    case Accounts.remove_role(user, role, originator: admin) do
       {:ok, _} ->
         roles = Accounts.get_user_roles(user)
         {:noreply, assign(socket, selected_user_roles: roles)}

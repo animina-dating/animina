@@ -72,7 +72,7 @@ defmodule AniminaWeb.UserLive.ReactivateAccount do
   def handle_event("reactivate", _params, socket) do
     user = socket.assigns.reactivation_user
 
-    case Accounts.reactivate_user(user) do
+    case Accounts.reactivate_user(user, originator: user) do
       {:ok, _user} ->
         {:noreply,
          socket

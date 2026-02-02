@@ -12,6 +12,18 @@ defmodule Animina.Accounts do
   @max_locations 4
   @referral_auto_activate_threshold 5
 
+  ## PaperTrail helpers
+
+  defp paper_trail_opts(opts) do
+    case Keyword.get(opts, :originator) do
+      %User{} = user -> [originator: user]
+      _ -> []
+    end
+  end
+
+  defp unwrap_paper_trail({:ok, %{model: model}}), do: {:ok, model}
+  defp unwrap_paper_trail({:error, _} = error), do: error
+
   ## Database getters
 
   @doc """
@@ -168,16 +180,17 @@ defmodule Animina.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_user(attrs) do
+  def register_user(attrs, opts \\ []) do
     locations_attrs = extract_locations(attrs)
     referral_code_input = extract_referral_code_input(attrs)
+    pt_opts = paper_trail_opts(opts)
 
     Repo.transact(fn ->
       changeset = User.registration_changeset(%User{}, attrs)
 
       changeset = resolve_referral_code(changeset, referral_code_input)
 
-      with {:ok, user} <- insert_with_referral_code_retry(changeset),
+      with {:ok, user} <- insert_with_referral_code_retry(changeset, 3, pt_opts),
            :ok <- insert_locations(user, locations_attrs) do
         {:ok, user}
       end
@@ -235,16 +248,16 @@ defmodule Animina.Accounts do
     end
   end
 
-  defp insert_with_referral_code_retry(changeset, attempts \\ 3) do
-    case Repo.insert(changeset) do
-      {:ok, user} ->
+  defp insert_with_referral_code_retry(changeset, attempts, pt_opts) do
+    case PaperTrail.insert(changeset, pt_opts) do
+      {:ok, %{model: user}} ->
         {:ok, user}
 
       {:error, %Ecto.Changeset{errors: errors} = cs} ->
         if attempts > 1 && Keyword.has_key?(errors, :referral_code) do
           changeset
           |> Ecto.Changeset.put_change(:referral_code, User.generate_referral_code())
-          |> insert_with_referral_code_retry(attempts - 1)
+          |> insert_with_referral_code_retry(attempts - 1, pt_opts)
         else
           {:error, cs}
         end
@@ -350,13 +363,17 @@ defmodule Animina.Accounts do
 
   If the token matches, the user email is updated and the token is deleted.
   """
-  def update_user_email(user, token) do
+  def update_user_email(user, token, opts \\ []) do
     context = "change:#{user.email}"
+    pt_opts = paper_trail_opts(opts)
 
     Repo.transact(fn ->
       with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
            %UserToken{sent_to: email} <- Repo.one(query),
-           {:ok, user} <- Repo.update(User.email_changeset(user, %{email: email})),
+           {:ok, user} <-
+             User.email_changeset(user, %{email: email})
+             |> PaperTrail.update(pt_opts)
+             |> unwrap_paper_trail(),
            {_count, _result} <-
              Repo.delete_all(from(UserToken, where: [user_id: ^user.id, context: ^context])) do
         {:ok, user}
@@ -495,7 +512,11 @@ defmodule Animina.Accounts do
   """
   def reset_user_password(user, attrs) do
     Repo.transact(fn ->
-      with {:ok, user} <- user |> User.password_changeset(attrs) |> Repo.update() do
+      with {:ok, user} <-
+             user
+             |> User.password_changeset(attrs)
+             |> PaperTrail.update()
+             |> unwrap_paper_trail() do
         Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
         {:ok, user}
       end
@@ -521,7 +542,11 @@ defmodule Animina.Accounts do
   def send_confirmation_pin(%User{} = user) do
     pin = generate_confirmation_pin()
 
-    with {:ok, updated_user} <- user |> User.confirmation_pin_changeset(pin) |> Repo.update() do
+    with {:ok, updated_user} <-
+           user
+           |> User.confirmation_pin_changeset(pin)
+           |> PaperTrail.update()
+           |> unwrap_paper_trail() do
       UserNotifier.deliver_confirmation_pin(updated_user, pin)
       {:ok, pin}
     end
@@ -609,10 +634,11 @@ defmodule Animina.Accounts do
   @doc """
   Updates the user profile.
   """
-  def update_user_profile(user, attrs) do
+  def update_user_profile(user, attrs, opts \\ []) do
     user
     |> User.profile_changeset(attrs)
-    |> Repo.update()
+    |> PaperTrail.update(paper_trail_opts(opts))
+    |> unwrap_paper_trail()
   end
 
   @doc """
@@ -625,10 +651,21 @@ defmodule Animina.Accounts do
   @doc """
   Updates the user preferences.
   """
-  def update_user_preferences(user, attrs) do
+  def update_user_preferences(user, attrs, opts \\ []) do
     user
     |> User.preferences_changeset(attrs)
-    |> Repo.update()
+    |> PaperTrail.update(paper_trail_opts(opts))
+    |> unwrap_paper_trail()
+  end
+
+  @doc """
+  Updates the user's language preference.
+  """
+  def update_user_language(%User{} = user, language, opts \\ []) do
+    user
+    |> Ecto.Changeset.change(language: language)
+    |> PaperTrail.update(paper_trail_opts(opts))
+    |> unwrap_paper_trail()
   end
 
   ## User locations
@@ -653,7 +690,7 @@ defmodule Animina.Accounts do
   Adds a new location for a user.
   Automatically assigns the next available position (max #{@max_locations}).
   """
-  def add_user_location(%User{id: user_id}, attrs) do
+  def add_user_location(%User{id: user_id}, attrs, opts \\ []) do
     current_count =
       from(l in UserLocation, where: l.user_id == ^user_id, select: count())
       |> Repo.one()
@@ -674,14 +711,15 @@ defmodule Animina.Accounts do
         |> Map.put(:user_id, user_id)
         |> Map.put(:position, next_position)
       )
-      |> Repo.insert()
+      |> PaperTrail.insert(paper_trail_opts(opts))
+      |> unwrap_paper_trail()
     end
   end
 
   @doc """
   Updates an existing location for a user (e.g. change zip code or country).
   """
-  def update_user_location(%User{id: user_id}, location_id, attrs) do
+  def update_user_location(%User{id: user_id}, location_id, attrs, opts \\ []) do
     case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
       nil ->
         {:error, :not_found}
@@ -689,14 +727,15 @@ defmodule Animina.Accounts do
       location ->
         location
         |> UserLocation.changeset(attrs)
-        |> Repo.update()
+        |> PaperTrail.update(paper_trail_opts(opts))
+        |> unwrap_paper_trail()
     end
   end
 
   @doc """
   Removes a user location by its ID.
   """
-  def remove_user_location(%User{id: user_id}, location_id) do
+  def remove_user_location(%User{id: user_id}, location_id, opts \\ []) do
     current_count =
       from(l in UserLocation, where: l.user_id == ^user_id, select: count())
       |> Repo.one()
@@ -706,7 +745,7 @@ defmodule Animina.Accounts do
     else
       case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
         nil -> {:error, :not_found}
-        location -> Repo.delete(location)
+        location -> PaperTrail.delete(location, paper_trail_opts(opts)) |> unwrap_paper_trail()
       end
     end
   end
@@ -724,9 +763,15 @@ defmodule Animina.Accounts do
   Soft-deletes a user by setting `deleted_at`, deleting all session tokens,
   and sending a goodbye email.
   """
-  def soft_delete_user(%User{} = user) do
+  def soft_delete_user(%User{} = user, opts \\ []) do
+    pt_opts = paper_trail_opts(opts)
+
     Repo.transact(fn ->
-      with {:ok, user} <- user |> User.soft_delete_changeset() |> Repo.update() do
+      with {:ok, user} <-
+             user
+             |> User.soft_delete_changeset()
+             |> PaperTrail.update(pt_opts)
+             |> unwrap_paper_trail() do
         Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
         UserNotifier.deliver_account_deletion_goodbye(user)
         {:ok, user}
@@ -761,19 +806,20 @@ defmodule Animina.Accounts do
   Reactivates a soft-deleted user by clearing `deleted_at`.
   Returns `{:error, changeset}` if the email or phone is now claimed by another active user.
   """
-  def reactivate_user(%User{} = user) do
+  def reactivate_user(%User{} = user, opts \\ []) do
     user
     |> Ecto.Changeset.change(deleted_at: nil)
     |> Ecto.Changeset.unique_constraint(:email, name: :users_email_active_index)
     |> Ecto.Changeset.unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
-    |> Repo.update()
+    |> PaperTrail.update(paper_trail_opts(opts))
+    |> unwrap_paper_trail()
   end
 
   @doc """
   Permanently deletes a user record (hard delete).
   """
-  def hard_delete_user(%User{} = user) do
-    Repo.delete(user)
+  def hard_delete_user(%User{} = user, opts \\ []) do
+    PaperTrail.delete(user, paper_trail_opts(opts)) |> unwrap_paper_trail()
   end
 
   @doc """
@@ -803,7 +849,7 @@ defmodule Animina.Accounts do
 
   defp update_user_and_delete_all_tokens(changeset) do
     Repo.transact(fn ->
-      with {:ok, user} <- Repo.update(changeset) do
+      with {:ok, user} <- PaperTrail.update(changeset) |> unwrap_paper_trail() do
         tokens_to_expire = Repo.all_by(UserToken, user_id: user.id)
 
         Repo.delete_all(from(t in UserToken, where: t.id in ^Enum.map(tokens_to_expire, & &1.id)))
@@ -850,19 +896,28 @@ defmodule Animina.Accounts do
   Assigns a role to a user. Idempotent — does nothing if the role already exists.
   Returns `{:ok, user_role}` or `{:error, changeset}`.
   """
-  def assign_role(%User{id: user_id}, role) when role in ["moderator", "admin"] do
-    %UserRole{}
-    |> UserRole.changeset(%{user_id: user_id, role: role})
-    |> Repo.insert(on_conflict: :nothing)
+  def assign_role(%User{id: user_id}, role, opts \\ []) when role in ["moderator", "admin"] do
+    case Repo.get_by(UserRole, user_id: user_id, role: role) do
+      %UserRole{} = existing ->
+        {:ok, existing}
+
+      nil ->
+        %UserRole{}
+        |> UserRole.changeset(%{user_id: user_id, role: role})
+        |> PaperTrail.insert(paper_trail_opts(opts))
+        |> unwrap_paper_trail()
+    end
   end
 
   @doc """
   Removes a role from a user. The implicit "user" role cannot be removed.
   Returns `{:ok, user_role}`, `{:error, :implicit_role}`, or `{:error, :not_found}`.
   """
-  def remove_role(_user, "user"), do: {:error, :implicit_role}
+  def remove_role(user, role, opts \\ [])
 
-  def remove_role(%User{id: user_id}, "admin") do
+  def remove_role(_user, "user", _opts), do: {:error, :implicit_role}
+
+  def remove_role(%User{id: user_id}, "admin", opts) do
     case Repo.get_by(UserRole, user_id: user_id, role: "admin") do
       nil ->
         {:error, :not_found}
@@ -873,15 +928,15 @@ defmodule Animina.Accounts do
         if admin_count <= 1 do
           {:error, :last_admin}
         else
-          Repo.delete(user_role)
+          PaperTrail.delete(user_role, paper_trail_opts(opts)) |> unwrap_paper_trail()
         end
     end
   end
 
-  def remove_role(%User{id: user_id}, role) do
+  def remove_role(%User{id: user_id}, role, opts) do
     case Repo.get_by(UserRole, user_id: user_id, role: role) do
       nil -> {:error, :not_found}
-      user_role -> Repo.delete(user_role)
+      user_role -> PaperTrail.delete(user_role, paper_trail_opts(opts)) |> unwrap_paper_trail()
     end
   end
 

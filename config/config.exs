@@ -91,6 +91,14 @@ config :animina, AniminaWeb.Gettext,
   default_locale: "de",
   locales: ~w(de en tr ru ar pl fr es uk)
 
+# PaperTrail audit trail
+config :paper_trail,
+  repo: Animina.Repo,
+  item_type: Ecto.UUID,
+  originator_type: Ecto.UUID,
+  originator: [name: :user, model: Animina.Accounts.User],
+  strict_mode: false
+
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase
 

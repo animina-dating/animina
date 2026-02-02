@@ -101,7 +101,9 @@ defmodule AniminaWeb.UserLive.Settings do
   @impl true
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
+      case Accounts.update_user_email(socket.assigns.current_scope.user, token,
+             originator: socket.assigns.current_scope.user
+           ) do
         {:ok, _user} ->
           put_flash(socket, :info, gettext("Email changed successfully."))
 

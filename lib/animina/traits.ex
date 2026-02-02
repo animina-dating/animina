@@ -5,8 +5,21 @@ defmodule Animina.Traits do
 
   import Ecto.Query
 
+  alias Animina.Accounts.User
   alias Animina.Repo
   alias Animina.Traits.{Category, Flag, UserCategoryOptIn, UserFlag}
+
+  ## PaperTrail helpers
+
+  defp paper_trail_opts(opts) do
+    case Keyword.get(opts, :originator) do
+      %User{} = user -> [originator: user]
+      _ -> []
+    end
+  end
+
+  defp unwrap_paper_trail({:ok, %{model: model}}), do: {:ok, model}
+  defp unwrap_paper_trail({:error, _} = error), do: error
 
   # --- Categories ---
 
@@ -46,15 +59,18 @@ defmodule Animina.Traits do
     |> Repo.all()
   end
 
-  def toggle_category_optin(user, category) do
+  def toggle_category_optin(user, category, opts \\ []) do
+    pt_opts = paper_trail_opts(opts)
+
     case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
       nil ->
         %UserCategoryOptIn{}
         |> UserCategoryOptIn.changeset(%{user_id: user.id, category_id: category.id})
-        |> Repo.insert()
+        |> PaperTrail.insert(pt_opts)
+        |> unwrap_paper_trail()
 
       opt_in ->
-        Repo.delete(opt_in)
+        PaperTrail.delete(opt_in, pt_opts) |> unwrap_paper_trail()
     end
   end
 
@@ -126,13 +142,14 @@ defmodule Animina.Traits do
 
   # --- User Flags ---
 
-  def add_user_flag(attrs) do
+  def add_user_flag(attrs, opts \\ []) do
     changeset = UserFlag.changeset(%UserFlag{}, attrs)
+    pt_opts = paper_trail_opts(opts)
 
     with :ok <- validate_single_select(attrs),
          :ok <- validate_exclusive_hard(attrs),
          :ok <- validate_no_mixing(attrs) do
-      with {:ok, user_flag} <- Repo.insert(changeset) do
+      with {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> unwrap_paper_trail() do
         expand_on_write(user_flag)
         {:ok, user_flag}
       end
@@ -371,14 +388,16 @@ defmodule Animina.Traits do
     end)
   end
 
-  def update_user_flag_intensity(user_flag_id, new_intensity) do
+  def update_user_flag_intensity(user_flag_id, new_intensity, opts \\ []) do
     user_flag = Repo.get!(UserFlag, user_flag_id)
+    pt_opts = paper_trail_opts(opts)
 
     with :ok <- validate_exclusive_hard_update(user_flag, new_intensity) do
       with {:ok, updated} <-
              user_flag
              |> UserFlag.changeset(%{intensity: new_intensity})
-             |> Repo.update() do
+             |> PaperTrail.update(pt_opts)
+             |> unwrap_paper_trail() do
         from(uf in UserFlag,
           where: uf.user_id == ^updated.user_id and uf.source_flag_id == ^updated.flag_id
         )
@@ -430,19 +449,21 @@ defmodule Animina.Traits do
     |> Repo.aggregate(:count)
   end
 
-  def remove_user_flag(user, user_flag_id) do
+  def remove_user_flag(user, user_flag_id, opts \\ []) do
+    pt_opts = paper_trail_opts(opts)
+
     case Repo.get_by(UserFlag, id: user_flag_id, user_id: user.id) do
       nil ->
         {:ok, :already_removed}
 
       user_flag ->
-        # Remove inherited entries spawned by this flag
+        # Remove inherited entries spawned by this flag (system-generated, no audit)
         from(uf in UserFlag,
           where: uf.user_id == ^user.id and uf.source_flag_id == ^user_flag.flag_id
         )
         |> Repo.delete_all()
 
-        Repo.delete(user_flag)
+        PaperTrail.delete(user_flag, pt_opts) |> unwrap_paper_trail()
     end
   end
 
@@ -555,38 +576,56 @@ defmodule Animina.Traits do
     |> Map.new()
   end
 
-  def delete_all_user_flags(user) do
-    {count, _} =
-      from(uf in UserFlag, where: uf.user_id == ^user.id)
-      |> Repo.delete_all()
+  def delete_all_user_flags(user, opts \\ []) do
+    pt_opts = paper_trail_opts(opts)
 
-    {:ok, count}
+    flags =
+      from(uf in UserFlag, where: uf.user_id == ^user.id)
+      |> Repo.all()
+
+    Enum.each(flags, fn flag ->
+      PaperTrail.delete(flag, pt_opts)
+    end)
+
+    {:ok, length(flags)}
   end
 
   # --- Opt-ins ---
 
-  def opt_into_category(user, category) do
-    %UserCategoryOptIn{}
-    |> UserCategoryOptIn.changeset(%{user_id: user.id, category_id: category.id})
-    |> Repo.insert(on_conflict: :nothing, conflict_target: [:user_id, :category_id])
+  def opt_into_category(user, category, opts \\ []) do
+    case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
+      %UserCategoryOptIn{} = existing ->
+        {:ok, existing}
+
+      nil ->
+        %UserCategoryOptIn{}
+        |> UserCategoryOptIn.changeset(%{user_id: user.id, category_id: category.id})
+        |> PaperTrail.insert(paper_trail_opts(opts))
+        |> unwrap_paper_trail()
+    end
   end
 
-  def opt_out_of_category(user, category) do
-    # Remove all user flags in this category
+  def opt_out_of_category(user, category, opts \\ []) do
+    pt_opts = paper_trail_opts(opts)
+
+    # Remove all user flags in this category (individually for audit)
     flag_ids =
       from(f in Flag, where: f.category_id == ^category.id, select: f.id)
       |> Repo.all()
 
-    from(uf in UserFlag,
-      where: uf.user_id == ^user.id and uf.flag_id in ^flag_ids
-    )
-    |> Repo.delete_all()
+    user_flags =
+      from(uf in UserFlag,
+        where: uf.user_id == ^user.id and uf.flag_id in ^flag_ids
+      )
+      |> Repo.all()
+
+    Enum.each(user_flags, fn uf -> PaperTrail.delete(uf, pt_opts) end)
 
     # Remove opt-in record
-    from(o in UserCategoryOptIn,
-      where: o.user_id == ^user.id and o.category_id == ^category.id
-    )
-    |> Repo.delete_all()
+    case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
+      nil -> :ok
+      opt_in -> PaperTrail.delete(opt_in, pt_opts)
+    end
 
     {:ok, :opted_out}
   end

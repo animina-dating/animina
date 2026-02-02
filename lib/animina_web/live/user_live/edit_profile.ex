@@ -99,7 +99,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
   def handle_event("save", %{"user" => user_params}, socket) do
     user = socket.assigns.current_scope.user
 
-    case Accounts.update_user_profile(user, user_params) do
+    case Accounts.update_user_profile(user, user_params, originator: user) do
       {:ok, _user} ->
         {:noreply,
          socket

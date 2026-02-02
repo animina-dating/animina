@@ -208,9 +208,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
   defp build_preferences_preview(user, min_age, max_age) do
     gender_part =
-      user.preferred_partner_gender
-      |> Enum.map(&gender_label/1)
-      |> Enum.join(", ")
+      Enum.map_join(user.preferred_partner_gender, ", ", &gender_label/1)
 
     parts =
       [

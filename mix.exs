@@ -72,7 +72,8 @@ defmodule Animina.MixProject do
       {:tidewave, "~> 0.5", only: :dev},
       {:tz, "~> 0.28"},
       {:quantum, "~> 3.0"},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:paper_trail, "~> 1.1"}
     ]
   end
 

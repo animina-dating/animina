@@ -8,9 +8,8 @@ defmodule AniminaWeb.LocaleController do
       Gettext.put_locale(AniminaWeb.Gettext, locale)
 
       if conn.assigns[:current_scope] && conn.assigns.current_scope.user do
-        conn.assigns.current_scope.user
-        |> Ecto.Changeset.change(language: locale)
-        |> Animina.Repo.update()
+        user = conn.assigns.current_scope.user
+        Animina.Accounts.update_user_language(user, locale, originator: user)
       end
 
       conn

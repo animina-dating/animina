@@ -143,7 +143,7 @@ defmodule AniminaWeb.UserLive.EditPreferences do
   def handle_event("save_preferences", %{"user" => user_params}, socket) do
     user = socket.assigns.current_scope.user
 
-    case Accounts.update_user_preferences(user, user_params) do
+    case Accounts.update_user_preferences(user, user_params, originator: user) do
       {:ok, _user} ->
         {:noreply,
          socket

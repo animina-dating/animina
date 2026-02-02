@@ -188,10 +188,14 @@ defmodule AniminaWeb.UserLive.EditLocations do
   def handle_event("add_location", %{"location" => location_params}, socket) do
     user = socket.assigns.current_scope.user
 
-    case Accounts.add_user_location(user, %{
-           country_id: location_params["country_id"],
-           zip_code: location_params["zip_code"]
-         }) do
+    case Accounts.add_user_location(
+           user,
+           %{
+             country_id: location_params["country_id"],
+             zip_code: location_params["zip_code"]
+           },
+           originator: user
+         ) do
       {:ok, _location} ->
         {:noreply,
          socket
@@ -244,10 +248,15 @@ defmodule AniminaWeb.UserLive.EditLocations do
   def handle_event("save_location", %{"location_id" => location_id, "location" => params}, socket) do
     user = socket.assigns.current_scope.user
 
-    case Accounts.update_user_location(user, location_id, %{
-           country_id: params["country_id"],
-           zip_code: params["zip_code"]
-         }) do
+    case Accounts.update_user_location(
+           user,
+           location_id,
+           %{
+             country_id: params["country_id"],
+             zip_code: params["zip_code"]
+           },
+           originator: user
+         ) do
       {:ok, _location} ->
         {:noreply,
          socket
@@ -265,7 +274,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
   def handle_event("remove_location", %{"id" => location_id}, socket) do
     user = socket.assigns.current_scope.user
 
-    case Accounts.remove_user_location(user, location_id) do
+    case Accounts.remove_user_location(user, location_id, originator: user) do
       {:ok, _} ->
         {:noreply,
          socket

@@ -67,7 +67,7 @@ defmodule AniminaWeb.UserLive.DeleteAccount do
     user = socket.assigns.current_scope.user
 
     if User.valid_password?(user, password) do
-      {:ok, _user} = Accounts.soft_delete_user(user)
+      {:ok, _user} = Accounts.soft_delete_user(user, originator: user)
 
       {:noreply,
        socket

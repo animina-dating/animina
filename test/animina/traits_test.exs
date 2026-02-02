@@ -2698,4 +2698,141 @@ defmodule Animina.TraitsTest do
       assert category.id in Enum.map(visible, & &1.id)
     end
   end
+
+  describe "PaperTrail audit trail" do
+    test "adding a user flag creates a version; inherited flags do not" do
+      user = user_fixture()
+      {parent, children} = flag_with_children_fixture()
+
+      {:ok, uf} =
+        Traits.add_user_flag(
+          %{
+            user_id: user.id,
+            flag_id: parent.id,
+            color: "white",
+            intensity: "hard",
+            position: 1
+          },
+          originator: user
+        )
+
+      # The parent flag should have a version
+      parent_versions =
+        Animina.Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^uf.id and v.item_type == "UserFlag"
+          )
+        )
+
+      assert length(parent_versions) == 1
+      assert hd(parent_versions).event == "insert"
+      assert hd(parent_versions).originator_id == user.id
+
+      # Inherited child flags should NOT have versions (inserted via plain Repo)
+      inherited_flags = Enum.filter(Traits.list_all_user_flags(user), & &1.inherited)
+      assert length(inherited_flags) == length(children)
+
+      inherited_ids = Enum.map(inherited_flags, & &1.id)
+
+      inherited_versions =
+        Animina.Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id in ^inherited_ids and v.item_type == "UserFlag"
+          )
+        )
+
+      assert inherited_versions == []
+    end
+
+    test "removing a user flag creates a version" do
+      user = user_fixture()
+      flag = flag_fixture()
+
+      {:ok, uf} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} = Traits.remove_user_flag(user, uf.id, originator: user)
+
+      delete_versions =
+        Animina.Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^uf.id and v.item_type == "UserFlag" and v.event == "delete"
+          )
+        )
+
+      assert length(delete_versions) == 1
+      assert hd(delete_versions).originator_id == user.id
+    end
+
+    test "delete_all_user_flags creates individual version records per flag" do
+      user = user_fixture()
+      flag1 = flag_fixture()
+      flag2 = flag_fixture()
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "green",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, count} = Traits.delete_all_user_flags(user, originator: user)
+      assert count == 2
+
+      delete_versions =
+        Animina.Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_type == "UserFlag" and v.event == "delete"
+          )
+        )
+
+      assert length(delete_versions) == 2
+    end
+
+    test "opt_out_of_category creates versions for each deleted flag + opt-in" do
+      user = user_fixture()
+      category = sensitive_category_fixture()
+      flag = flag_fixture(%{category_id: category.id})
+
+      Traits.opt_into_category(user, category)
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} = Traits.opt_out_of_category(user, category, originator: user)
+
+      delete_versions =
+        Animina.Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.event == "delete" and v.originator_id == ^user.id
+          )
+        )
+
+      # Should have at least 2 deletions: the user flag + the opt-in record
+      assert length(delete_versions) >= 2
+    end
+  end
 end

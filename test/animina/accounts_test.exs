@@ -1212,4 +1212,75 @@ defmodule Animina.AccountsTest do
       refute Enum.any?(results, &(&1.id == user.id))
     end
   end
+
+  describe "PaperTrail audit trail" do
+    test "user registration creates a version record" do
+      {:ok, user} = Accounts.register_user(valid_user_attributes())
+
+      versions =
+        Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^user.id and v.item_type == "User"
+          )
+        )
+
+      assert length(versions) == 1
+      assert hd(versions).event == "insert"
+    end
+
+    test "profile update creates a version with correct item_changes" do
+      user = user_fixture()
+
+      {:ok, _updated} =
+        Accounts.update_user_profile(user, %{display_name: "Updated Name"}, originator: user)
+
+      versions =
+        Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^user.id and v.item_type == "User" and v.event == "update"
+          )
+        )
+
+      assert versions != []
+      version = List.last(versions)
+      assert version.originator_id == user.id
+      assert version.item_changes["display_name"] == "Updated Name"
+    end
+
+    test "soft-delete creates an update version containing deleted_at" do
+      user = user_fixture()
+      {:ok, _deleted} = Accounts.soft_delete_user(user, originator: user)
+
+      versions =
+        Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^user.id and v.item_type == "User" and v.event == "update",
+            order_by: [desc: v.inserted_at]
+          )
+        )
+
+      assert versions != []
+      version = hd(versions)
+      assert version.originator_id == user.id
+      assert Map.has_key?(version.item_changes, "deleted_at")
+    end
+
+    test "role assignment creates a version with admin as originator" do
+      admin = user_fixture()
+      target_user = user_fixture()
+
+      {:ok, role} = Accounts.assign_role(target_user, "moderator", originator: admin)
+
+      versions =
+        Repo.all(
+          from(v in PaperTrail.Version,
+            where: v.item_id == ^role.id and v.item_type == "UserRole"
+          )
+        )
+
+      assert length(versions) == 1
+      assert hd(versions).event == "insert"
+      assert hd(versions).originator_id == admin.id
+    end
+  end
 end
