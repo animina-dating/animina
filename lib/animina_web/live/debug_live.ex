@@ -30,6 +30,7 @@ defmodule AniminaWeb.DebugLive do
       socket
       |> assign(page_title: "System Debug")
       |> assign_metrics()
+      |> assign_user_stats()
       |> assign_online_graph()
       |> assign_registration_graph()
 
@@ -43,6 +44,7 @@ defmodule AniminaWeb.DebugLive do
     {:noreply,
      socket
      |> assign_metrics()
+     |> assign_user_stats()
      |> assign_online_graph()
      |> assign_registration_graph()}
   end
@@ -157,6 +159,51 @@ defmodule AniminaWeb.DebugLive do
       uptime: format_uptime()
     )
   end
+
+  defp assign_user_stats(socket) do
+    if admin?(socket) do
+      by_state = Accounts.count_confirmed_users_by_state()
+      by_gender = Accounts.count_confirmed_users_by_gender()
+
+      assign(socket,
+        stat_total_users: Accounts.count_active_users(),
+        stat_confirmed: Accounts.count_confirmed_users(),
+        stat_unconfirmed: Accounts.count_unconfirmed_users(),
+        stat_online_now: AniminaWeb.Presence.online_user_count(),
+        stat_today_berlin: Accounts.count_confirmed_users_today_berlin(),
+        stat_yesterday: Accounts.count_confirmed_users_yesterday_berlin(),
+        stat_last_24h: Accounts.count_confirmed_users_last_24h(),
+        stat_30_day_avg: format_avg(Accounts.average_daily_confirmed_users_last_30_days()),
+        stat_normal: Map.get(by_state, "normal", 0),
+        stat_waitlisted: Map.get(by_state, "waitlisted", 0),
+        stat_male: Map.get(by_gender, "male", 0),
+        stat_female: Map.get(by_gender, "female", 0),
+        stat_diverse: Map.get(by_gender, "diverse", 0)
+      )
+    else
+      assign(socket,
+        stat_total_users: nil,
+        stat_confirmed: nil,
+        stat_unconfirmed: nil,
+        stat_online_now: nil,
+        stat_today_berlin: nil,
+        stat_yesterday: nil,
+        stat_last_24h: nil,
+        stat_30_day_avg: nil,
+        stat_normal: nil,
+        stat_waitlisted: nil,
+        stat_male: nil,
+        stat_female: nil,
+        stat_diverse: nil
+      )
+    end
+  end
+
+  defp format_avg(value) when is_float(value) do
+    :erlang.float_to_binary(value, decimals: 1)
+  end
+
+  defp format_avg(_), do: "0.0"
 
   defp check_database do
     case SQL.query(Animina.Repo, "SELECT 1") do
@@ -551,6 +598,30 @@ defmodule AniminaWeb.DebugLive do
         <h1 class="text-2xl font-bold mb-8">System Debug</h1>
 
         <%= if @current_scope && Scope.admin?(@current_scope) do %>
+          <div class="grid grid-cols-3 gap-6 mb-8">
+            <.section title="User Totals">
+              <.row label="Total Users" value={@stat_total_users} />
+              <.row label="Confirmed" value={@stat_confirmed} />
+              <.row label="Unconfirmed" value={@stat_unconfirmed} />
+              <.row label="Online Now" value={@stat_online_now} />
+            </.section>
+
+            <.section title="Growth (Confirmed)">
+              <.row label="Today (Berlin)" value={@stat_today_berlin} />
+              <.row label="Yesterday" value={@stat_yesterday} />
+              <.row label="Last 24h" value={@stat_last_24h} />
+              <.row label="30-Day Avg" value={@stat_30_day_avg} />
+            </.section>
+
+            <.section title="Breakdown (Confirmed)">
+              <.row label="Normal" value={@stat_normal} />
+              <.row label="Waitlisted" value={@stat_waitlisted} />
+              <.row label="Male" value={@stat_male} />
+              <.row label="Female" value={@stat_female} />
+              <.row label="Diverse" value={@stat_diverse} />
+            </.section>
+          </div>
+
           <div class="mb-8 bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
               <h2 class="text-sm font-semibold text-gray-700">

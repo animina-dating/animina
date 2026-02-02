@@ -116,6 +116,72 @@ defmodule AniminaWeb.DebugLiveTest do
       assert html =~ "No data yet"
     end
 
+    # Admin stats box tests
+
+    test "does not show admin stats box for unauthenticated visitors", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/debug")
+
+      refute html =~ "User Totals"
+      refute html =~ "Growth (Confirmed)"
+      refute html =~ "Breakdown (Confirmed)"
+    end
+
+    test "does not show admin stats box for regular users", %{conn: conn} do
+      user = user_fixture()
+      conn = log_in_user(conn, user)
+
+      {:ok, _view, html} = live(conn, ~p"/debug")
+
+      refute html =~ "User Totals"
+      refute html =~ "Growth (Confirmed)"
+      refute html =~ "Breakdown (Confirmed)"
+    end
+
+    test "shows admin stats box with all sections for admin users", %{conn: conn} do
+      admin = admin_fixture()
+      conn = log_in_user(conn, admin, current_role: "admin")
+
+      {:ok, _view, html} = live(conn, ~p"/debug")
+
+      # Three section headings
+      assert html =~ "User Totals"
+      assert html =~ "Growth (Confirmed)"
+      assert html =~ "Breakdown (Confirmed)"
+
+      # User Totals labels
+      assert html =~ "Total Users"
+      assert html =~ "Confirmed"
+      assert html =~ "Unconfirmed"
+      assert html =~ "Online Now"
+
+      # Growth labels
+      assert html =~ "Today (Berlin)"
+      assert html =~ "Yesterday"
+      assert html =~ "Last 24h"
+      assert html =~ "30-Day Avg"
+
+      # Breakdown labels
+      assert html =~ "Normal"
+      assert html =~ "Waitlisted"
+      assert html =~ "Male"
+      assert html =~ "Female"
+      assert html =~ "Diverse"
+    end
+
+    test "admin stats persist after refresh timer", %{conn: conn} do
+      admin = admin_fixture()
+      conn = log_in_user(conn, admin, current_role: "admin")
+
+      {:ok, view, _html} = live(conn, ~p"/debug")
+
+      send(view.pid, :refresh)
+
+      html = render(view)
+      assert html =~ "User Totals"
+      assert html =~ "Growth (Confirmed)"
+      assert html =~ "Breakdown (Confirmed)"
+    end
+
     # Registration graph tests
 
     test "does not show registration graph for unauthenticated visitors", %{conn: conn} do

@@ -270,6 +270,68 @@ defmodule Animina.Accounts do
     |> Repo.one()
   end
 
+  @doc """
+  Counts all active (non-deleted) users.
+  """
+  def count_active_users do
+    from(u in User, where: is_nil(u.deleted_at), select: count())
+    |> Repo.one()
+  end
+
+  @doc """
+  Counts all confirmed, non-deleted users.
+  """
+  def count_confirmed_users do
+    from(u in User,
+      where: is_nil(u.deleted_at),
+      where: not is_nil(u.confirmed_at),
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Counts all unconfirmed, non-deleted users.
+  """
+  def count_unconfirmed_users do
+    from(u in User,
+      where: is_nil(u.deleted_at),
+      where: is_nil(u.confirmed_at),
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Counts confirmed, non-deleted users grouped by state.
+  Returns a map like `%{"normal" => 10, "waitlisted" => 5}`.
+  """
+  def count_confirmed_users_by_state do
+    from(u in User,
+      where: is_nil(u.deleted_at),
+      where: not is_nil(u.confirmed_at),
+      group_by: u.state,
+      select: {u.state, count()}
+    )
+    |> Repo.all()
+    |> Map.new()
+  end
+
+  @doc """
+  Counts confirmed, non-deleted users grouped by gender.
+  Returns a map like `%{"male" => 10, "female" => 8, "diverse" => 2}`.
+  """
+  def count_confirmed_users_by_gender do
+    from(u in User,
+      where: is_nil(u.deleted_at),
+      where: not is_nil(u.confirmed_at),
+      group_by: u.gender,
+      select: {u.gender, count()}
+    )
+    |> Repo.all()
+    |> Map.new()
+  end
+
   ## User registration
 
   @doc """
