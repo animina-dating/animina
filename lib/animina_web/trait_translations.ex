@@ -339,6 +339,17 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Group Play"),
       gettext("Toys"),
       gettext("Swinging"),
+      # ── Languages flags ──
+      gettext("Languages"),
+      gettext("Deutsch"),
+      gettext("Türkçe"),
+      gettext("Русский"),
+      gettext("العربية"),
+      gettext("Polski"),
+      gettext("Français"),
+      gettext("Español"),
+      gettext("Українська"),
+      # Note: "English" already listed under Food — gettext deduplicates
       # ── Sexual Practices flags ──
       gettext("Oral Sex: Giving"),
       gettext("Oral Sex: Receiving"),

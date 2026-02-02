@@ -2566,6 +2566,51 @@ defmodule Animina.TraitsTest do
     end
   end
 
+  describe "seeded category: Languages" do
+    test "category exists with correct attributes" do
+      categories = Traits.list_categories()
+
+      category = Enum.find(categories, fn c -> c.name == "Languages" end)
+
+      assert category != nil
+      assert category.selection_mode == "multi"
+      assert category.sensitive == false
+      assert category.core == true
+    end
+
+    test "category has all 9 language flags" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Languages" end)
+      assert category != nil
+
+      flags = Traits.list_top_level_flags_by_category(category)
+      assert length(flags) == 9
+
+      flag_names = Enum.map(flags, & &1.name)
+      assert "Deutsch" in flag_names
+      assert "English" in flag_names
+      assert "Türkçe" in flag_names
+      assert "Русский" in flag_names
+      assert "العربية" in flag_names
+      assert "Polski" in flag_names
+      assert "Français" in flag_names
+      assert "Español" in flag_names
+      assert "Українська" in flag_names
+    end
+
+    test "flags have correct emoji" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Languages" end)
+      flags = Traits.list_top_level_flags_by_category(category)
+
+      deutsch = Enum.find(flags, fn f -> f.name == "Deutsch" end)
+      assert deutsch.emoji == "🇩🇪"
+
+      english = Enum.find(flags, fn f -> f.name == "English" end)
+      assert english.emoji == "🇬🇧"
+    end
+  end
+
   describe "marijuana frequency (single-select sensitive)" do
     setup do
       {:ok, category} =
