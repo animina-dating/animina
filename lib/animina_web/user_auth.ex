@@ -364,28 +364,20 @@ defmodule AniminaWeb.UserAuth do
   end
 
   defp maybe_track_presence(socket) do
-    if Phoenix.LiveView.connected?(socket) && !socket.assigns[:presence_tracked] do
-      case socket.assigns[:current_scope] do
-        %{user: %_{id: user_id}} ->
-          AniminaWeb.Presence.track_user(self(), user_id)
+    with true <- Phoenix.LiveView.connected?(socket),
+         false <- !!socket.assigns[:presence_tracked],
+         %{user: %_{id: user_id}} <- socket.assigns[:current_scope] do
+      AniminaWeb.Presence.track_user(self(), user_id)
+      Phoenix.PubSub.subscribe(Animina.PubSub, AniminaWeb.Presence.topic())
 
-          Phoenix.PubSub.subscribe(Animina.PubSub, AniminaWeb.Presence.topic())
-
-          socket
-          |> Phoenix.Component.assign(:presence_tracked, true)
-          |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
-            %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock ->
-              {:halt, sock}
-
-            _other, sock ->
-              {:cont, sock}
-          end)
-
-        _ ->
-          socket
-      end
-    else
       socket
+      |> Phoenix.Component.assign(:presence_tracked, true)
+      |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
+        %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock -> {:halt, sock}
+        _other, sock -> {:cont, sock}
+      end)
+    else
+      _ -> socket
     end
   end
 

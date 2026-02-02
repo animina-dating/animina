@@ -1,7 +1,9 @@
-defmodule Animina.Accounts.OnlineUserCountTest do
+defmodule OnlineUserCountTest do
   use Animina.DataCase, async: true
 
   alias Animina.Accounts
+  alias Animina.Accounts.OnlineUserCount
+  alias Animina.Repo
 
   describe "record_online_user_count/1" do
     test "inserts a count record" do
@@ -24,16 +26,15 @@ defmodule Animina.Accounts.OnlineUserCountTest do
       for i <- 0..5 do
         recorded_at = DateTime.add(now, -i * 5, :minute)
 
-        %Animina.Accounts.OnlineUserCount{}
-        |> Animina.Accounts.OnlineUserCount.changeset(%{count: 10 + i, recorded_at: recorded_at})
-        |> Animina.Repo.insert!()
+        %OnlineUserCount{}
+        |> OnlineUserCount.changeset(%{count: 10 + i, recorded_at: recorded_at})
+        |> Repo.insert!()
       end
 
       since = DateTime.add(now, -1, :hour)
       results = Accounts.online_user_counts_since(since, 10)
 
-      assert is_list(results)
-      assert length(results) > 0
+      assert [_ | _] = results
 
       Enum.each(results, fn %{bucket: bucket, avg_count: avg_count} ->
         assert %DateTime{} = bucket
@@ -49,21 +50,20 @@ defmodule Animina.Accounts.OnlineUserCountTest do
       old = DateTime.add(now, -31, :day)
       recent = DateTime.add(now, -1, :day)
 
-      %Animina.Accounts.OnlineUserCount{}
-      |> Animina.Accounts.OnlineUserCount.changeset(%{count: 5, recorded_at: old})
-      |> Animina.Repo.insert!()
+      %OnlineUserCount{}
+      |> OnlineUserCount.changeset(%{count: 5, recorded_at: old})
+      |> Repo.insert!()
 
-      %Animina.Accounts.OnlineUserCount{}
-      |> Animina.Accounts.OnlineUserCount.changeset(%{count: 10, recorded_at: recent})
-      |> Animina.Repo.insert!()
+      %OnlineUserCount{}
+      |> OnlineUserCount.changeset(%{count: 10, recorded_at: recent})
+      |> Repo.insert!()
 
       {deleted, _} = Accounts.purge_old_online_user_counts(30)
       assert deleted == 1
 
       # Recent record should still exist
       since = DateTime.add(now, -2, :day)
-      results = Accounts.online_user_counts_since(since, 60)
-      assert length(results) == 1
+      assert [_] = Accounts.online_user_counts_since(since, 60)
     end
   end
 end

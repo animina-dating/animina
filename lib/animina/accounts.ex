@@ -8,6 +8,7 @@ defmodule Animina.Accounts do
 
   alias Animina.Accounts.{OnlineUserCount, User, UserLocation, UserNotifier, UserRole, UserToken}
   alias Animina.Repo
+  alias Ecto.Adapters.SQL
 
   @max_locations 4
   @referral_auto_activate_threshold 5
@@ -193,7 +194,7 @@ defmodule Animina.Accounts do
     offset_seconds = berlin_utc_offset_seconds()
 
     %{rows: rows} =
-      Ecto.Adapters.SQL.query!(
+      SQL.query!(
         Repo,
         """
         SELECT CAST(EXTRACT(HOUR FROM inserted_at + INTERVAL '1 second' * $1) AS INTEGER) AS berlin_hour,
@@ -1075,7 +1076,7 @@ defmodule Animina.Accounts do
     bucket_seconds = bucket_minutes * 60
 
     %{rows: rows} =
-      Ecto.Adapters.SQL.query!(
+      SQL.query!(
         Repo,
         """
         SELECT
@@ -1104,7 +1105,7 @@ defmodule Animina.Accounts do
     bucket_seconds = bucket_minutes * 60
 
     %{rows: rows} =
-      Ecto.Adapters.SQL.query!(
+      SQL.query!(
         Repo,
         """
         SELECT
@@ -1133,7 +1134,7 @@ defmodule Animina.Accounts do
     bucket_seconds = bucket_minutes * 60
 
     %{rows: rows} =
-      Ecto.Adapters.SQL.query!(
+      SQL.query!(
         Repo,
         """
         SELECT

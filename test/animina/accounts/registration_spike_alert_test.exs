@@ -65,8 +65,6 @@ defmodule Animina.Accounts.RegistrationSpikeAlertTest do
       user_fixture()
 
       result = Accounts.confirmed_users_today_by_hour_berlin()
-      assert is_list(result)
-      assert length(result) >= 1
 
       # Each entry is {hour, count}
       [{hour, count} | _] = result
