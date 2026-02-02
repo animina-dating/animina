@@ -83,7 +83,8 @@ config :animina, Animina.Scheduler,
   timezone: "Europe/Berlin",
   jobs: [
     {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}},
-    {"0 1 * * *", {Animina.Accounts, :purge_deleted_users, []}}
+    {"0 1 * * *", {Animina.Accounts, :purge_deleted_users, []}},
+    {"0 6-20/2 * * *", {Animina.Accounts.RegistrationSpikeAlert, :run, []}}
   ]
 
 # Gettext i18n configuration

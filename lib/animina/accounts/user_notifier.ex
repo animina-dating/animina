@@ -106,6 +106,26 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
+  Deliver a registration spike alert email.
+  `stats` is a map with keys: today_count, daily_average, threshold, spike_factor,
+  yesterday_count, hourly_breakdown. `recipient` is a `{name, email}` tuple.
+  """
+  def deliver_registration_spike_alert(stats, {_name, email}) do
+    # Admin report is always in German
+    {subject, body} =
+      EmailTemplates.render("de", :registration_spike_alert,
+        today_count: stats.today_count,
+        daily_average: stats.daily_average,
+        threshold: stats.threshold,
+        spike_factor: stats.spike_factor,
+        yesterday_count: stats.yesterday_count,
+        hourly_breakdown: stats.hourly_breakdown
+      )
+
+    deliver(email, subject, body)
+  end
+
+  @doc """
   Deliver a warning email when someone tries to register with an email
   that already belongs to an existing account.
   """

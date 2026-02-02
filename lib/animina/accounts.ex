@@ -152,6 +152,109 @@ defmodule Animina.Accounts do
   end
 
   @doc """
+  Counts confirmed users whose `inserted_at` falls within today (Europe/Berlin).
+  """
+  def count_confirmed_users_today_berlin do
+    {start_utc, end_utc} = berlin_today_utc_range()
+
+    from(u in User,
+      where: not is_nil(u.confirmed_at),
+      where: u.inserted_at >= ^start_utc,
+      where: u.inserted_at < ^end_utc,
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns the 30-day rolling daily average of confirmed users, excluding today.
+  """
+  def average_daily_confirmed_users_last_30_days do
+    {today_start_utc, _} = berlin_today_utc_range()
+    thirty_days_ago = DateTime.add(today_start_utc, -30, :day)
+
+    result =
+      from(u in User,
+        where: not is_nil(u.confirmed_at),
+        where: u.inserted_at >= ^thirty_days_ago,
+        where: u.inserted_at < ^today_start_utc,
+        select: count()
+      )
+      |> Repo.one()
+
+    (result || 0) / 30.0
+  end
+
+  @doc """
+  Returns today's confirmed users grouped by Berlin hour as `[{hour, count}]`.
+  """
+  def confirmed_users_today_by_hour_berlin do
+    {start_utc, end_utc} = berlin_today_utc_range()
+    offset_seconds = berlin_utc_offset_seconds()
+
+    %{rows: rows} =
+      Ecto.Adapters.SQL.query!(
+        Repo,
+        """
+        SELECT CAST(EXTRACT(HOUR FROM inserted_at + INTERVAL '1 second' * $1) AS INTEGER) AS berlin_hour,
+               COUNT(*)
+        FROM users
+        WHERE confirmed_at IS NOT NULL
+          AND inserted_at >= $2
+          AND inserted_at < $3
+        GROUP BY berlin_hour
+        ORDER BY berlin_hour
+        """,
+        [offset_seconds, start_utc, end_utc]
+      )
+
+    Enum.map(rows, fn [hour, count] -> {hour, count} end)
+  end
+
+  @doc """
+  Counts confirmed users whose `inserted_at` falls within yesterday (Europe/Berlin).
+  """
+  def count_confirmed_users_yesterday_berlin do
+    {today_start_utc, _} = berlin_today_utc_range()
+    yesterday_start_utc = DateTime.add(today_start_utc, -1, :day)
+
+    from(u in User,
+      where: not is_nil(u.confirmed_at),
+      where: u.inserted_at >= ^yesterday_start_utc,
+      where: u.inserted_at < ^today_start_utc,
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  defp berlin_today_utc_range do
+    now_berlin =
+      DateTime.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    today_date = DateTime.to_date(now_berlin)
+
+    {:ok, start_naive} = NaiveDateTime.new(today_date, ~T[00:00:00])
+    {:ok, end_naive} = NaiveDateTime.new(Date.add(today_date, 1), ~T[00:00:00])
+
+    {:ok, start_dt} = DateTime.from_naive(start_naive, "Europe/Berlin", Tz.TimeZoneDatabase)
+    {:ok, end_dt} = DateTime.from_naive(end_naive, "Europe/Berlin", Tz.TimeZoneDatabase)
+
+    start_utc = DateTime.shift_zone!(start_dt, "Etc/UTC", Tz.TimeZoneDatabase)
+    end_utc = DateTime.shift_zone!(end_dt, "Etc/UTC", Tz.TimeZoneDatabase)
+
+    {start_utc, end_utc}
+  end
+
+  defp berlin_utc_offset_seconds do
+    now_berlin =
+      DateTime.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    now_berlin.utc_offset + now_berlin.std_offset
+  end
+
+  @doc """
   Counts the number of users who registered and confirmed (PIN verified)
   within the last 24 hours.
   """

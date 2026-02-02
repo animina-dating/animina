@@ -1,0 +1,17 @@
+ANIMINA Registrierungs-Spike: <%= @today_count %> heute (Durchschnitt: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Hallo,
+
+bei ANIMINA wurde ein ungewöhnlich hoher Registrierungswert festgestellt.
+
+Zusammenfassung:
+  Heute bestätigt:     <%= @today_count %>
+  30-Tage-Durchschnitt: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Schwellenwert (1,5x): <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Spike-Faktor:        <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Gestern:             <%= @yesterday_count %>
+
+Stündliche Aufschlüsselung (Europe/Berlin):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 Uhr - <%= count %> <%= if count == 1, do: "Registrierung", else: "Registrierungen" %>
+<% end %>

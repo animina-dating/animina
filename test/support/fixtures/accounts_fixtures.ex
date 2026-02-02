@@ -105,4 +105,21 @@ defmodule Animina.AccountsFixtures do
       set: [inserted_at: dt, authenticated_at: dt]
     )
   end
+
+  @doc """
+  Backdates a confirmed user's `inserted_at` and `confirmed_at` timestamps.
+
+  ## Options
+
+    * `:days_ago` - number of days to shift back (required)
+
+  """
+  def backdate_user(%Accounts.User{} = user, days_ago: days) do
+    dt = DateTime.utc_now(:second) |> DateTime.add(-days, :day)
+
+    Animina.Repo.update_all(
+      from(u in Accounts.User, where: u.id == ^user.id),
+      set: [inserted_at: dt, confirmed_at: dt]
+    )
+  end
 end
