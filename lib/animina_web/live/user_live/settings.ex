@@ -5,6 +5,8 @@ defmodule AniminaWeb.UserLive.Settings do
 
   alias Animina.Accounts
 
+  @dev_routes Application.compile_env(:animina, :dev_routes)
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -27,6 +29,16 @@ defmodule AniminaWeb.UserLive.Settings do
           </.header>
         </div>
 
+        <div :if={@pending_email} class="alert alert-info mb-4" role="alert">
+          <p>
+            {gettext(
+              "Your current email is %{current_email}. A confirmation link has been sent to %{new_email}.",
+              current_email: @current_email,
+              new_email: @pending_email
+            )}
+          </p>
+        </div>
+
         <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
           <.input
             field={@email_form[:email]}
@@ -39,6 +51,12 @@ defmodule AniminaWeb.UserLive.Settings do
             {gettext("Change Email")}
           </.button>
         </.form>
+
+        <p :if={@dev_routes} class="mt-4 text-center text-sm text-base-content/50">
+          <a href="/dev/mailbox" target="_blank" class="underline hover:text-primary">
+            {gettext("Open dev mailbox")}
+          </a>
+        </p>
 
         <div class="divider" />
 
@@ -103,6 +121,8 @@ defmodule AniminaWeb.UserLive.Settings do
       socket
       |> assign(:page_title, gettext("Account Security"))
       |> assign(:current_email, user.email)
+      |> assign(:pending_email, Accounts.get_pending_email_change(user))
+      |> assign(:dev_routes, @dev_routes)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
@@ -127,14 +147,16 @@ defmodule AniminaWeb.UserLive.Settings do
 
     case Accounts.change_user_email(user, user_params) do
       %{valid?: true} = changeset ->
+        applied_user = Ecto.Changeset.apply_action!(changeset, :insert)
+
         Accounts.deliver_user_update_email_instructions(
-          Ecto.Changeset.apply_action!(changeset, :insert),
+          applied_user,
           user.email,
           &url(~p"/users/settings/confirm-email/#{&1}")
         )
 
         info = gettext("A link to confirm your email change has been sent to the new address.")
-        {:noreply, socket |> put_flash(:info, info)}
+        {:noreply, socket |> put_flash(:info, info) |> assign(:pending_email, applied_user.email)}
 
       changeset ->
         {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}

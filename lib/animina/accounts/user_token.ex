@@ -10,7 +10,7 @@ defmodule Animina.Accounts.UserToken do
   @hash_algorithm :sha256
   @rand_size 32
 
-  @change_email_validity_in_days 7
+  @change_email_validity_in_minutes 30
   @reset_password_validity_in_hours 1
   @session_validity_in_days 14
 
@@ -107,7 +107,7 @@ defmodule Animina.Accounts.UserToken do
   This is used to validate requests to change the user
   email.
   The given token is valid if it matches its hashed counterpart in the
-  database and if it has not expired (after @change_email_validity_in_days).
+  database and if it has not expired (after @change_email_validity_in_minutes).
   The context must always start with "change:".
   """
   def verify_change_email_token_query(token, "change:" <> _ = context) do
@@ -117,7 +117,7 @@ defmodule Animina.Accounts.UserToken do
 
         query =
           from token in by_token_and_context_query(hashed_token, context),
-            where: token.inserted_at > ago(@change_email_validity_in_days, "day")
+            where: token.inserted_at > ago(@change_email_validity_in_minutes, "minute")
 
         {:ok, query}
 

@@ -57,6 +57,62 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
   end
 
+  describe "pending email change" do
+    setup %{conn: conn} do
+      user = user_fixture(language: "en")
+      %{conn: log_in_user(conn, user), user: user}
+    end
+
+    test "shows pending email info when email change is pending", %{conn: conn, user: user} do
+      new_email = unique_user_email()
+
+      Accounts.deliver_user_update_email_instructions(
+        %{user | email: new_email},
+        user.email,
+        &"/users/settings/confirm-email/#{&1}"
+      )
+
+      {:ok, _lv, html} = live(conn, ~p"/users/settings/account")
+
+      assert html =~ user.email
+      assert html =~ new_email
+      assert html =~ "confirmation link has been sent"
+    end
+
+    test "does not show pending email info when no change is pending", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/settings/account")
+
+      refute html =~ "confirmation link has been sent"
+    end
+
+    test "shows pending email after submitting email change", %{conn: conn} do
+      new_email = unique_user_email()
+
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/account")
+
+      result =
+        lv
+        |> form("#email_form", %{"user" => %{"email" => new_email}})
+        |> render_submit()
+
+      assert result =~ "A link to confirm your email"
+      assert result =~ new_email
+      assert result =~ "confirmation link has been sent"
+    end
+  end
+
+  describe "dev mailbox link" do
+    test "dev mailbox link is hidden when dev_routes is not enabled", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/users/settings/account")
+
+      refute html =~ "Open dev mailbox"
+      refute html =~ "/dev/mailbox"
+    end
+  end
+
   describe "update email form" do
     setup %{conn: conn} do
       user = user_fixture(language: "en")

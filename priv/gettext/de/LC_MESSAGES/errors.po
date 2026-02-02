@@ -101,7 +101,7 @@ msgstr "muss größer oder gleich %{number} sein"
 msgid "must be equal to %{number}"
 msgstr "muss gleich %{number} sein"
 
-#: lib/animina/accounts.ex:229
+#: lib/animina/accounts.ex:230
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Empfehlungscode nicht gefunden"

@@ -310,6 +310,26 @@ defmodule Animina.Accounts do
 
   def sudo_mode?(_user, _minutes), do: false
 
+  @change_email_validity_in_minutes 30
+
+  @doc """
+  Returns the pending new email address for a user, or `nil` if no change is pending.
+  Checks for a valid (non-expired) change email token.
+  """
+  def get_pending_email_change(%User{} = user) do
+    context = "change:#{user.email}"
+
+    from(t in UserToken,
+      where: t.user_id == ^user.id,
+      where: t.context == ^context,
+      where: t.inserted_at > ago(@change_email_validity_in_minutes, "minute"),
+      select: t.sent_to,
+      order_by: [desc: t.inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
+  end
+
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user email.
 
