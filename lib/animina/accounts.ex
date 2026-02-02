@@ -271,6 +271,34 @@ defmodule Animina.Accounts do
   end
 
   @doc """
+  Counts confirmed users whose `inserted_at` falls within the last 7 days.
+  """
+  def count_confirmed_users_last_7_days do
+    cutoff = DateTime.utc_now() |> DateTime.add(-7, :day)
+
+    from(u in User,
+      where: not is_nil(u.confirmed_at),
+      where: u.inserted_at >= ^cutoff,
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Counts confirmed users whose `inserted_at` falls within the last 28 days.
+  """
+  def count_confirmed_users_last_28_days do
+    cutoff = DateTime.utc_now() |> DateTime.add(-28, :day)
+
+    from(u in User,
+      where: not is_nil(u.confirmed_at),
+      where: u.inserted_at >= ^cutoff,
+      select: count()
+    )
+    |> Repo.one()
+  end
+
+  @doc """
   Counts all active (non-deleted) users.
   """
   def count_active_users do

@@ -172,7 +172,8 @@ defmodule AniminaWeb.DebugLive do
         stat_online_now: AniminaWeb.Presence.online_user_count(),
         stat_today_berlin: Accounts.count_confirmed_users_today_berlin(),
         stat_yesterday: Accounts.count_confirmed_users_yesterday_berlin(),
-        stat_last_24h: Accounts.count_confirmed_users_last_24h(),
+        stat_last_7_days: Accounts.count_confirmed_users_last_7_days(),
+        stat_last_28_days: Accounts.count_confirmed_users_last_28_days(),
         stat_30_day_avg: format_avg(Accounts.average_daily_confirmed_users_last_30_days()),
         stat_normal: Map.get(by_state, "normal", 0),
         stat_waitlisted: Map.get(by_state, "waitlisted", 0),
@@ -188,7 +189,8 @@ defmodule AniminaWeb.DebugLive do
         stat_online_now: nil,
         stat_today_berlin: nil,
         stat_yesterday: nil,
-        stat_last_24h: nil,
+        stat_last_7_days: nil,
+        stat_last_28_days: nil,
         stat_30_day_avg: nil,
         stat_normal: nil,
         stat_waitlisted: nil,
@@ -609,7 +611,8 @@ defmodule AniminaWeb.DebugLive do
             <.section title="Growth (Confirmed)">
               <.row label="Today (Berlin)" value={@stat_today_berlin} />
               <.row label="Yesterday" value={@stat_yesterday} />
-              <.row label="Last 24h" value={@stat_last_24h} />
+              <.row label="Last 7 Days" value={@stat_last_7_days} />
+              <.row label="Last 28 Days" value={@stat_last_28_days} />
               <.row label="30-Day Avg" value={@stat_30_day_avg} />
             </.section>
 

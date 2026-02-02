@@ -157,7 +157,8 @@ defmodule AniminaWeb.DebugLiveTest do
       # Growth labels
       assert html =~ "Today (Berlin)"
       assert html =~ "Yesterday"
-      assert html =~ "Last 24h"
+      assert html =~ "Last 7 Days"
+      assert html =~ "Last 28 Days"
       assert html =~ "30-Day Avg"
 
       # Breakdown labels
