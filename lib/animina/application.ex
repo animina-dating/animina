@@ -16,9 +16,14 @@ defmodule Animina.Application do
         Animina.Repo,
         {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: Animina.PubSub},
+        AniminaWeb.Presence,
         # Start to serve requests, typically the last entry
         AniminaWeb.Endpoint
-      ] ++ maybe_start_cleaner() ++ maybe_start_scheduler() ++ maybe_start_hot_deploy()
+      ] ++
+        maybe_start_cleaner() ++
+        maybe_start_scheduler() ++
+        maybe_start_hot_deploy() ++
+        maybe_start_online_users_logger()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -47,6 +52,14 @@ defmodule Animina.Application do
 
     if config[:enabled] do
       [Animina.HotDeploy]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_online_users_logger do
+    if Application.get_env(:animina, :start_online_users_logger, true) do
+      [Animina.Accounts.OnlineUsersLogger]
     else
       []
     end

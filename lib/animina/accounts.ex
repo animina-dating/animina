@@ -6,7 +6,7 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
-  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserRole, UserToken}
+  alias Animina.Accounts.{OnlineUserCount, User, UserLocation, UserNotifier, UserRole, UserToken}
   alias Animina.Repo
 
   @max_locations 4
@@ -1052,5 +1052,114 @@ defmodule Animina.Accounts do
   def has_role?(%User{id: user_id}, role) do
     from(r in UserRole, where: r.user_id == ^user_id and r.role == ^role)
     |> Repo.exists?()
+  end
+
+  ## Online user counts
+
+  @doc """
+  Records a snapshot of the current online user count.
+  """
+  def record_online_user_count(count) do
+    %OnlineUserCount{}
+    |> OnlineUserCount.changeset(%{count: count, recorded_at: DateTime.utc_now(:second)})
+    |> Repo.insert()
+  end
+
+  @doc """
+  Returns aggregated online user counts since the given datetime,
+  bucketed by `bucket_minutes` intervals.
+
+  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
+  """
+  def online_user_counts_since(since, bucket_minutes) do
+    bucket_seconds = bucket_minutes * 60
+
+    %{rows: rows} =
+      Ecto.Adapters.SQL.query!(
+        Repo,
+        """
+        SELECT
+          to_timestamp(floor(extract(epoch FROM recorded_at) / $1) * $1) AS bucket,
+          CAST(round(avg(count)) AS INTEGER) AS avg_count
+        FROM online_user_counts
+        WHERE recorded_at >= $2
+        GROUP BY bucket
+        ORDER BY bucket
+        """,
+        [bucket_seconds, since]
+      )
+
+    Enum.map(rows, fn [bucket, avg_count] ->
+      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: avg_count}
+    end)
+  end
+
+  @doc """
+  Returns aggregated registration counts (by inserted_at) since the given datetime,
+  bucketed by `bucket_minutes` intervals.
+
+  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
+  """
+  def registration_counts_since(since, bucket_minutes) do
+    bucket_seconds = bucket_minutes * 60
+
+    %{rows: rows} =
+      Ecto.Adapters.SQL.query!(
+        Repo,
+        """
+        SELECT
+          to_timestamp(floor(extract(epoch FROM inserted_at) / $1) * $1) AS bucket,
+          CAST(count(*) AS INTEGER) AS count
+        FROM users
+        WHERE inserted_at >= $2
+        GROUP BY bucket
+        ORDER BY bucket
+        """,
+        [bucket_seconds, since]
+      )
+
+    Enum.map(rows, fn [bucket, count] ->
+      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: count}
+    end)
+  end
+
+  @doc """
+  Returns aggregated confirmation counts (by confirmed_at) since the given datetime,
+  bucketed by `bucket_minutes` intervals.
+
+  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
+  """
+  def confirmation_counts_since(since, bucket_minutes) do
+    bucket_seconds = bucket_minutes * 60
+
+    %{rows: rows} =
+      Ecto.Adapters.SQL.query!(
+        Repo,
+        """
+        SELECT
+          to_timestamp(floor(extract(epoch FROM confirmed_at) / $1) * $1) AS bucket,
+          CAST(count(*) AS INTEGER) AS count
+        FROM users
+        WHERE confirmed_at IS NOT NULL
+          AND confirmed_at >= $2
+        GROUP BY bucket
+        ORDER BY bucket
+        """,
+        [bucket_seconds, since]
+      )
+
+    Enum.map(rows, fn [bucket, count] ->
+      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: count}
+    end)
+  end
+
+  @doc """
+  Deletes online user count records older than `days` days. Defaults to 30.
+  """
+  def purge_old_online_user_counts(days \\ 30) do
+    cutoff = DateTime.utc_now() |> DateTime.add(-days, :day)
+
+    from(o in OnlineUserCount, where: o.recorded_at < ^cutoff)
+    |> Repo.delete_all()
   end
 end

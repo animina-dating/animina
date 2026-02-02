@@ -84,7 +84,8 @@ config :animina, Animina.Scheduler,
   jobs: [
     {"0 0 * * *", {Animina.Accounts.DailyNewUsersReport, :run, []}},
     {"0 1 * * *", {Animina.Accounts, :purge_deleted_users, []}},
-    {"0 6-20/2 * * *", {Animina.Accounts.RegistrationSpikeAlert, :run, []}}
+    {"0 6-20/2 * * *", {Animina.Accounts.RegistrationSpikeAlert, :run, []}},
+    {"0 2 * * *", {Animina.Accounts, :purge_old_online_user_counts, []}}
   ]
 
 # Gettext i18n configuration

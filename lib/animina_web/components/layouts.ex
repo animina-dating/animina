@@ -162,16 +162,16 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Moderator")}
                       </span>
                     <% end %>
-                    <%= if @current_scope.user.state == "waitlisted" do %>
-                      <a
-                        href="/users/waitlist"
-                        id="waitlist-badge"
-                        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
-                      >
-                        {gettext("Waitlist")}
-                      </a>
-                    <% end %>
                   </button>
+                  <%= if @current_scope.user.state == "waitlisted" do %>
+                    <a
+                      href="/users/waitlist"
+                      id="waitlist-badge"
+                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+                    >
+                      {gettext("Waitlist")}
+                    </a>
+                  <% end %>
 
                   <div
                     id="user-dropdown"
@@ -204,6 +204,12 @@ defmodule AniminaWeb.Layouts do
                         class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         {gettext("Manage Roles")}
+                      </a>
+                      <a
+                        href="/debug"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("System Debug")}
                       </a>
                     <% end %>
                     <%= if Scope.has_multiple_roles?(@current_scope) do %>

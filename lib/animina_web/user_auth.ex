@@ -342,6 +342,7 @@ defmodule AniminaWeb.UserAuth do
     socket
     |> Phoenix.Component.assign(:locale, locale)
     |> subscribe_to_deployment_notifications()
+    |> maybe_track_presence()
   end
 
   defp subscribe_to_deployment_notifications(socket) do
@@ -357,6 +358,32 @@ defmodule AniminaWeb.UserAuth do
         _other, sock ->
           {:cont, sock}
       end)
+    else
+      socket
+    end
+  end
+
+  defp maybe_track_presence(socket) do
+    if Phoenix.LiveView.connected?(socket) && !socket.assigns[:presence_tracked] do
+      case socket.assigns[:current_scope] do
+        %{user: %_{id: user_id}} ->
+          AniminaWeb.Presence.track_user(self(), user_id)
+
+          Phoenix.PubSub.subscribe(Animina.PubSub, AniminaWeb.Presence.topic())
+
+          socket
+          |> Phoenix.Component.assign(:presence_tracked, true)
+          |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
+            %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock ->
+              {:halt, sock}
+
+            _other, sock ->
+              {:cont, sock}
+          end)
+
+        _ ->
+          socket
+      end
     else
       socket
     end

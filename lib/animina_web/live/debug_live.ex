@@ -1,25 +1,144 @@
 defmodule AniminaWeb.DebugLive do
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts
+  alias Animina.Accounts.Scope
   alias Ecto.Adapters.SQL
 
   @refresh_interval 5_000
+
+  @chart_width 800
+  @chart_height 300
+  @padding_left 50
+  @padding_right 20
+  @padding_top 20
+  @padding_bottom 40
+
+  @time_frames [
+    {"24h", 24, 10},
+    {"48h", 48, 20},
+    {"72h", 72, 30},
+    {"7d", 168, 120},
+    {"28d", 672, 360}
+  ]
 
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: schedule_refresh()
 
-    {:ok, assign(socket, page_title: "System Debug") |> assign_metrics()}
+    socket =
+      socket
+      |> assign(page_title: "System Debug")
+      |> assign_metrics()
+      |> assign_online_graph()
+      |> assign_registration_graph()
+
+    {:ok, socket}
   end
 
   @impl true
   def handle_info(:refresh, socket) do
     schedule_refresh()
-    {:noreply, assign_metrics(socket)}
+
+    {:noreply,
+     socket
+     |> assign_metrics()
+     |> assign_online_graph()
+     |> assign_registration_graph()}
+  end
+
+  @impl true
+  def handle_event("set_time_frame", %{"frame" => frame}, socket) do
+    if admin?(socket) do
+      {:noreply,
+       socket
+       |> assign(:online_time_frame, frame)
+       |> load_online_data()}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("set_reg_time_frame", %{"frame" => frame}, socket) do
+    if admin?(socket) do
+      {:noreply,
+       socket
+       |> assign(:reg_time_frame, frame)
+       |> load_registration_data()}
+    else
+      {:noreply, socket}
+    end
   end
 
   defp schedule_refresh do
     Process.send_after(self(), :refresh, @refresh_interval)
+  end
+
+  defp admin?(socket) do
+    case socket.assigns[:current_scope] do
+      %Scope{} = scope -> Scope.admin?(scope)
+      _ -> false
+    end
+  end
+
+  defp assign_online_graph(socket) do
+    if admin?(socket) do
+      socket
+      |> assign(:online_time_frame, socket.assigns[:online_time_frame] || "24h")
+      |> assign(:online_user_count, AniminaWeb.Presence.online_user_count())
+      |> assign_chart_dimensions()
+      |> load_online_data()
+    else
+      socket
+      |> assign(:online_time_frame, nil)
+      |> assign(:online_data, [])
+      |> assign(:online_user_count, nil)
+    end
+  end
+
+  defp assign_registration_graph(socket) do
+    if admin?(socket) do
+      socket
+      |> assign(:reg_time_frame, socket.assigns[:reg_time_frame] || "7d")
+      |> load_registration_data()
+    else
+      socket
+      |> assign(:reg_time_frame, nil)
+      |> assign(:reg_data, [])
+      |> assign(:confirm_data, [])
+    end
+  end
+
+  defp assign_chart_dimensions(socket) do
+    assign(socket,
+      chart_width: @chart_width,
+      chart_height: @chart_height,
+      padding_left: @padding_left,
+      padding_right: @padding_right,
+      padding_top: @padding_top,
+      padding_bottom: @padding_bottom
+    )
+  end
+
+  defp load_online_data(socket) do
+    frame = socket.assigns.online_time_frame
+    {_label, hours, bucket_minutes} = Enum.find(@time_frames, fn {l, _, _} -> l == frame end)
+    since = DateTime.utc_now() |> DateTime.add(-hours, :hour)
+    data = Accounts.online_user_counts_since(since, bucket_minutes)
+    assign(socket, :online_data, data)
+  end
+
+  defp load_registration_data(socket) do
+    frame = socket.assigns.reg_time_frame
+    {_label, hours, bucket_minutes} = Enum.find(@time_frames, fn {l, _, _} -> l == frame end)
+    since = DateTime.utc_now() |> DateTime.add(-hours, :hour)
+
+    reg_data = Accounts.registration_counts_since(since, bucket_minutes)
+    confirm_data = Accounts.confirmation_counts_since(since, bucket_minutes)
+
+    socket
+    |> assign(:reg_data, reg_data)
+    |> assign(:confirm_data, confirm_data)
   end
 
   defp assign_metrics(socket) do
@@ -206,12 +325,316 @@ defmodule AniminaWeb.DebugLive do
     end
   end
 
+  # SVG chart helpers
+
+  defp chart_points(data, max_count) when length(data) < 2 or max_count < 1, do: ""
+
+  defp chart_points(data, max_count) do
+    plot_w = @chart_width - @padding_left - @padding_right
+    plot_h = @chart_height - @padding_top - @padding_bottom
+    n = length(data)
+
+    data
+    |> Enum.with_index()
+    |> Enum.map(fn {%{avg_count: count}, i} ->
+      x = @padding_left + i * plot_w / max(n - 1, 1)
+      y = @padding_top + plot_h - count / max_count * plot_h
+      "#{Float.round(x, 1)},#{Float.round(y, 1)}"
+    end)
+    |> Enum.join(" ")
+  end
+
+  defp y_axis_labels_for_max(max_count) do
+    plot_h = @chart_height - @padding_top - @padding_bottom
+    steps = 4
+
+    for i <- 0..steps do
+      val = round(max_count * i / steps)
+      y = @padding_top + plot_h - i / steps * plot_h
+      {Integer.to_string(val), Float.round(y, 1)}
+    end
+  end
+
+  defp x_axis_labels(data, _time_frame) when length(data) < 1, do: []
+
+  defp x_axis_labels(data, time_frame) do
+    plot_w = @chart_width - @padding_left - @padding_right
+    n = length(data)
+    label_count = min(n, 6)
+    step = max(div(n - 1, label_count), 1)
+    use_date? = time_frame in ["7d", "28d"]
+
+    data
+    |> Enum.with_index()
+    |> Enum.filter(fn {_, i} -> rem(i, step) == 0 end)
+    |> Enum.map(fn {%{bucket: bucket}, i} ->
+      x = @padding_left + i * plot_w / max(n - 1, 1)
+      berlin = DateTime.shift_zone!(bucket, "Europe/Berlin", Tz.TimeZoneDatabase)
+
+      label =
+        if use_date?,
+          do: Calendar.strftime(berlin, "%d.%m %H:%M"),
+          else: Calendar.strftime(berlin, "%H:%M")
+
+      {label, Float.round(x, 1)}
+    end)
+  end
+
+  defp grid_y_positions(data) when length(data) < 1, do: []
+
+  defp grid_y_positions(_data) do
+    plot_h = @chart_height - @padding_top - @padding_bottom
+    steps = 4
+
+    for i <- 1..steps do
+      Float.round(@padding_top + plot_h - i / steps * plot_h, 1)
+    end
+  end
+
+  defp chart_point_circles(data, max_count) when length(data) < 2 or max_count < 1, do: []
+
+  defp chart_point_circles(data, max_count) do
+    plot_w = @chart_width - @padding_left - @padding_right
+    plot_h = @chart_height - @padding_top - @padding_bottom
+    n = length(data)
+
+    if n <= 50 do
+      data
+      |> Enum.with_index()
+      |> Enum.map(fn {%{avg_count: count}, i} ->
+        x = @padding_left + i * plot_w / max(n - 1, 1)
+        y = @padding_top + plot_h - count / max_count * plot_h
+        %{x: Float.round(x, 1), y: Float.round(y, 1)}
+      end)
+    else
+      []
+    end
+  end
+
+  defp max_count_for(data) do
+    case data do
+      [] -> 1
+      _ -> data |> Enum.map(& &1.avg_count) |> Enum.max() |> max(1)
+    end
+  end
+
+  defp time_frame_options do
+    [
+      {"24h", "24 hours"},
+      {"48h", "48 hours"},
+      {"72h", "72 hours"},
+      {"7d", "7 days"},
+      {"28d", "28 days"}
+    ]
+  end
+
+  # Reusable chart function component
+
+  attr :data, :list, required: true
+  attr :data2, :list, default: nil
+  attr :time_frame, :string, required: true
+  attr :color, :string, default: "#2563eb"
+  attr :color2, :string, default: nil
+
+  defp chart(assigns) do
+    primary_max = max_count_for(assigns.data)
+
+    secondary_max =
+      if assigns.data2, do: max_count_for(assigns.data2), else: 0
+
+    max_count = max(primary_max, secondary_max)
+    x_data = if assigns.data != [], do: assigns.data, else: assigns.data2 || []
+
+    assigns =
+      assigns
+      |> assign(:max_count, max_count)
+      |> assign(:x_data, x_data)
+      |> assign(:chart_width, @chart_width)
+      |> assign(:chart_height, @chart_height)
+      |> assign(:padding_left, @padding_left)
+      |> assign(:padding_right, @padding_right)
+      |> assign(:padding_top, @padding_top)
+      |> assign(:padding_bottom, @padding_bottom)
+
+    ~H"""
+    <svg
+      viewBox={"0 0 #{@chart_width} #{@chart_height}"}
+      class="w-full h-auto"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <%!-- Grid lines --%>
+      <%= for y <- grid_y_positions(@data) do %>
+        <line
+          x1={@padding_left}
+          y1={y}
+          x2={@chart_width - @padding_right}
+          y2={y}
+          stroke="#e5e7eb"
+          stroke-dasharray="4,4"
+        />
+      <% end %>
+      <%!-- Y axis labels --%>
+      <%= for {label, y} <- y_axis_labels_for_max(@max_count) do %>
+        <text
+          x={@padding_left - 8}
+          y={y + 4}
+          text-anchor="end"
+          class="fill-gray-400"
+          font-size="11"
+          font-family="monospace"
+        >
+          {label}
+        </text>
+      <% end %>
+      <%!-- X axis labels --%>
+      <%= for {label, x} <- x_axis_labels(@x_data, @time_frame) do %>
+        <text
+          x={x}
+          y={@chart_height - 8}
+          text-anchor="middle"
+          class="fill-gray-400"
+          font-size="10"
+          font-family="monospace"
+        >
+          {label}
+        </text>
+      <% end %>
+      <%!-- Axes --%>
+      <line
+        x1={@padding_left}
+        y1={@padding_top}
+        x2={@padding_left}
+        y2={@chart_height - @padding_bottom}
+        stroke="#9ca3af"
+        stroke-width="1"
+      />
+      <line
+        x1={@padding_left}
+        y1={@chart_height - @padding_bottom}
+        x2={@chart_width - @padding_right}
+        y2={@chart_height - @padding_bottom}
+        stroke="#9ca3af"
+        stroke-width="1"
+      />
+      <%!-- Primary data line --%>
+      <polyline
+        points={chart_points(@data, @max_count)}
+        fill="none"
+        stroke={@color}
+        stroke-width="2"
+        stroke-linejoin="round"
+      />
+      <%= for point <- chart_point_circles(@data, @max_count) do %>
+        <circle cx={point.x} cy={point.y} r="3" fill={@color} />
+      <% end %>
+      <%!-- Secondary data line --%>
+      <%= if @data2 do %>
+        <polyline
+          points={chart_points(@data2, @max_count)}
+          fill="none"
+          stroke={@color2}
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+        <%= for point <- chart_point_circles(@data2, @max_count) do %>
+          <circle cx={point.x} cy={point.y} r="3" fill={@color2} />
+        <% end %>
+      <% end %>
+    </svg>
+    """
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-4xl mx-auto py-8 px-4">
         <h1 class="text-2xl font-bold mb-8">System Debug</h1>
+
+        <%= if @current_scope && Scope.admin?(@current_scope) do %>
+          <div class="mb-8 bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+              <h2 class="text-sm font-semibold text-gray-700">
+                Online Users
+                <span class="ml-2 text-xs font-normal text-gray-500">
+                  (currently {@online_user_count})
+                </span>
+              </h2>
+              <div class="flex gap-1">
+                <%= for {key, label} <- time_frame_options() do %>
+                  <button
+                    phx-click="set_time_frame"
+                    phx-value-frame={key}
+                    class={[
+                      "px-2.5 py-1 text-xs font-medium rounded",
+                      if(@online_time_frame == key,
+                        do: "bg-blue-600 text-white",
+                        else: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      )
+                    ]}
+                  >
+                    {label}
+                  </button>
+                <% end %>
+              </div>
+            </div>
+            <div class="p-4">
+              <%= if @online_data == [] do %>
+                <p class="text-sm text-gray-400 text-center py-8">
+                  No data yet. Data is recorded every 2 minutes.
+                </p>
+              <% else %>
+                <.chart data={@online_data} time_frame={@online_time_frame} color="#2563eb" />
+              <% end %>
+            </div>
+          </div>
+
+          <div class="mb-8 bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+              <h2 class="text-sm font-semibold text-gray-700">New Registrations</h2>
+              <div class="flex gap-1">
+                <%= for {key, label} <- time_frame_options() do %>
+                  <button
+                    phx-click="set_reg_time_frame"
+                    phx-value-frame={key}
+                    class={[
+                      "px-2.5 py-1 text-xs font-medium rounded",
+                      if(@reg_time_frame == key,
+                        do: "bg-blue-600 text-white",
+                        else: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      )
+                    ]}
+                  >
+                    {label}
+                  </button>
+                <% end %>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="flex gap-4 mb-2 text-xs text-gray-700">
+                <span class="flex items-center gap-1">
+                  <span class="inline-block w-3 h-0.5 bg-[#16a34a]"></span> Registered
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="inline-block w-3 h-0.5 bg-[#2563eb]"></span> Confirmed
+                </span>
+              </div>
+              <%= if @reg_data == [] && @confirm_data == [] do %>
+                <p class="text-sm text-gray-400 text-center py-8">
+                  No registration data for this period.
+                </p>
+              <% else %>
+                <.chart
+                  data={@reg_data}
+                  data2={@confirm_data}
+                  time_frame={@reg_time_frame}
+                  color="#16a34a"
+                  color2="#2563eb"
+                />
+              <% end %>
+            </div>
+          </div>
+        <% end %>
 
         <div class="grid grid-cols-2 gap-6">
           <%!-- Deployment --%>
@@ -263,8 +686,8 @@ defmodule AniminaWeb.DebugLive do
             <.row label="PostgreSQL">
               <span class={[
                 "inline-flex items-center gap-1 font-medium",
-                @db_status == :ok && "text-green-600",
-                @db_status == :error && "text-red-600"
+                @db_status == :ok && "text-green-800",
+                @db_status == :error && "text-red-800"
               ]}>
                 {if @db_status == :ok, do: "● Connected", else: "● Unreachable"}
               </span>
