@@ -336,12 +336,11 @@ defmodule AniminaWeb.DebugLive do
 
     data
     |> Enum.with_index()
-    |> Enum.map(fn {%{avg_count: count}, i} ->
+    |> Enum.map_join(" ", fn {%{avg_count: count}, i} ->
       x = @padding_left + i * plot_w / max(n - 1, 1)
       y = @padding_top + plot_h - count / max_count * plot_h
       "#{Float.round(x, 1)},#{Float.round(y, 1)}"
     end)
-    |> Enum.join(" ")
   end
 
   defp y_axis_labels_for_max(max_count) do
@@ -355,7 +354,7 @@ defmodule AniminaWeb.DebugLive do
     end
   end
 
-  defp x_axis_labels(data, _time_frame) when length(data) < 1, do: []
+  defp x_axis_labels([], _time_frame), do: []
 
   defp x_axis_labels(data, time_frame) do
     plot_w = @chart_width - @padding_left - @padding_right
@@ -380,7 +379,7 @@ defmodule AniminaWeb.DebugLive do
     end)
   end
 
-  defp grid_y_positions(data) when length(data) < 1, do: []
+  defp grid_y_positions([]), do: []
 
   defp grid_y_positions(_data) do
     plot_h = @chart_height - @padding_top - @padding_bottom
