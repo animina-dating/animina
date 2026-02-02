@@ -56,5 +56,23 @@ defmodule AniminaWeb.LayoutsTest do
       refute html =~ "language-menu-button"
       refute html =~ "language-dropdown"
     end
+
+    test "shows waitlist badge for waitlisted user", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/demo")
+
+      assert html =~ "waitlist-badge"
+      assert html =~ "Waitlist"
+      assert html =~ "/users/waitlist"
+    end
+
+    test "hides waitlist badge for normal user", %{conn: conn, user: user} do
+      user
+      |> Ecto.Changeset.change(state: "normal")
+      |> Animina.Repo.update!()
+
+      {:ok, _view, html} = live(conn, ~p"/demo")
+
+      refute html =~ "waitlist-badge"
+    end
   end
 end

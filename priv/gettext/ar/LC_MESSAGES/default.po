@@ -95,8 +95,8 @@ msgstr "أنيمينا مصممة لمن يبحثون عن علاقات حقيق
 msgid "At ANIMINA everything is different."
 msgstr "في ANIMINA كل شيء مختلف."
 
-#: lib/animina_web/components/layouts.ex:433
-#: lib/animina_web/components/layouts.ex:445
+#: lib/animina_web/components/layouts.ex:442
+#: lib/animina_web/components/layouts.ex:454
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "محاولة إعادة الاتصال"
@@ -369,7 +369,7 @@ msgstr "كنت متعباً من تطبيقات التعارف التي تبدو
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "إذا كان هناك حساب مرتبط بهذا البريد الإلكتروني، ستتلقى تعليمات إعادة تعيين كلمة المرور قريباً."
 
-#: lib/animina_web/components/layouts.ex:362
+#: lib/animina_web/components/layouts.ex:371
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "البصمة القانونية"
@@ -390,7 +390,7 @@ msgid "Joy instead of addiction"
 msgstr "الفرح بدلاً من الإدمان"
 
 #: lib/animina_web/components/layouts.ex:107
-#: lib/animina_web/components/layouts.ex:288
+#: lib/animina_web/components/layouts.ex:297
 #: lib/animina_web/live/user_live/language_settings.ex:18
 #: lib/animina_web/live/user_live/language_settings.ex:24
 #: lib/animina_web/live/user_live/language_settings.ex:62
@@ -419,7 +419,7 @@ msgstr "الموقع"
 msgid "Locations"
 msgstr "المواقع"
 
-#: lib/animina_web/components/layouts.ex:326
+#: lib/animina_web/components/layouts.ex:335
 #: lib/animina_web/live/user_live/login.ex:12
 #: lib/animina_web/live/user_live/login.ex:54
 #, elixir-autogen, elixir-format
@@ -431,8 +431,8 @@ msgstr "تسجيل الدخول"
 msgid "Log in now"
 msgstr "سجّل الدخول الآن"
 
-#: lib/animina_web/components/layouts.ex:238
-#: lib/animina_web/components/layouts.ex:316
+#: lib/animina_web/components/layouts.ex:247
+#: lib/animina_web/components/layouts.ex:325
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "تسجيل الخروج"
@@ -609,7 +609,7 @@ msgstr "يرجى إدخال رمز بريدي صالح مكون من 5 أرقا�
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "يرجى إعادة المصادقة لتنفيذ إجراءات حساسة."
 
-#: lib/animina_web/components/layouts.ex:359
+#: lib/animina_web/components/layouts.ex:368
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "الخصوصية"
@@ -665,7 +665,7 @@ msgstr[5] "أوصِ بـ ANIMINA! بعد %{count} إحالة مؤكدة سيتم
 msgid "Referral code (optional)"
 msgstr "رمز الإحالة (اختياري)"
 
-#: lib/animina_web/components/layouts.ex:332
+#: lib/animina_web/components/layouts.ex:341
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "التسجيل"
@@ -739,7 +739,7 @@ msgstr "إرسال رابط إعادة التعيين"
 msgid "Set new password"
 msgstr "تعيين كلمة مرور جديدة"
 
-#: lib/animina_web/components/layouts.ex:190
+#: lib/animina_web/components/layouts.ex:199
 #: lib/animina_web/live/user_live/delete_account.ex:15
 #: lib/animina_web/live/user_live/edit_locations.ex:15
 #: lib/animina_web/live/user_live/edit_preferences.ex:20
@@ -758,7 +758,7 @@ msgstr "الإعدادات"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "أظهر من أنت، حدد ما تبحث عنه وأين حدودك."
 
-#: lib/animina_web/components/layouts.ex:440
+#: lib/animina_web/components/layouts.ex:449
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "حدث خطأ ما!"
@@ -844,6 +844,7 @@ msgstr "جارٍ التحقق..."
 msgid "View code on GitHub"
 msgstr "عرض الكود على GitHub"
 
+#: lib/animina_web/components/layouts.ex:171
 #: lib/animina_web/live/user_live/waitlist.ex:16
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
@@ -854,7 +855,7 @@ msgstr "قائمة الانتظار"
 msgid "We are working on new features and need some breathing room."
 msgstr "نحن نعمل على ميزات جديدة ونحتاج بعض الوقت."
 
-#: lib/animina_web/components/layouts.ex:428
+#: lib/animina_web/components/layouts.ex:437
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "لا يمكن العثور على اتصال بالإنترنت"
@@ -951,7 +952,7 @@ msgid "Your account has been deleted. Please register again."
 msgstr "تم حذف حسابك. يرجى التسجيل مرة أخرى."
 
 #: lib/animina_web/components/layouts.ex:137
-#: lib/animina_web/components/layouts.ex:251
+#: lib/animina_web/components/layouts.ex:260
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "ملفك الشخصي"
@@ -1001,12 +1002,12 @@ msgstr "من"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – إنشاء حساب"
 
-#: lib/animina_web/components/layouts.ex:452
+#: lib/animina_web/components/layouts.ex:461
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "تحديث ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:459
+#: lib/animina_web/components/layouts.ex:468
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "يتم تثبيت إصدار جديد من البرنامج على الخادم. لن يستغرق هذا سوى لحظة..."
@@ -1291,7 +1292,7 @@ msgid "Add Role"
 msgstr "إضافة دور"
 
 #: lib/animina_web/components/layouts.ex:157
-#: lib/animina_web/components/layouts.ex:404
+#: lib/animina_web/components/layouts.ex:413
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "مسؤول"
@@ -1311,7 +1312,7 @@ msgstr "تعذر إضافة الدور."
 msgid "Current Roles"
 msgstr "الأدوار الحالية"
 
-#: lib/animina_web/components/layouts.ex:197
+#: lib/animina_web/components/layouts.ex:206
 #: lib/animina_web/live/admin/user_roles_live.ex:11
 #: lib/animina_web/live/admin/user_roles_live.ex:73
 #, elixir-autogen, elixir-format
@@ -1319,7 +1320,7 @@ msgid "Manage Roles"
 msgstr "إدارة الأدوار"
 
 #: lib/animina_web/components/layouts.ex:162
-#: lib/animina_web/components/layouts.ex:405
+#: lib/animina_web/components/layouts.ex:414
 #, elixir-autogen, elixir-format
 msgid "Moderator"
 msgstr "مشرف"
@@ -1339,7 +1340,7 @@ msgstr "الدور غير موجود."
 msgid "Search users by email or name..."
 msgstr "البحث عن المستخدمين بالبريد الإلكتروني أو الاسم..."
 
-#: lib/animina_web/components/layouts.ex:204
+#: lib/animina_web/components/layouts.ex:213
 #, elixir-autogen, elixir-format
 msgid "Switch Role"
 msgstr "تبديل الدور"
@@ -1349,7 +1350,7 @@ msgstr "تبديل الدور"
 msgid "The user role cannot be removed."
 msgstr "لا يمكن إزالة دور المستخدم."
 
-#: lib/animina_web/components/layouts.ex:406
+#: lib/animina_web/components/layouts.ex:415
 #, elixir-autogen, elixir-format
 msgid "User"
 msgstr "مستخدم"
@@ -1365,7 +1366,7 @@ msgstr "ليس لديك صلاحية للوصول إلى هذه الصفحة."
 msgid "You do not have that role."
 msgstr "ليس لديك هذا الدور."
 
-#: lib/animina_web/components/layouts.ex:224
+#: lib/animina_web/components/layouts.ex:233
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "نشط"

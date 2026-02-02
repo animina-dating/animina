@@ -162,6 +162,15 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Moderator")}
                       </span>
                     <% end %>
+                    <%= if @current_scope.user.state == "waitlisted" do %>
+                      <a
+                        href="/users/waitlist"
+                        id="waitlist-badge"
+                        class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+                      >
+                        {gettext("Waitlist")}
+                      </a>
+                    <% end %>
                   </button>
 
                   <div
