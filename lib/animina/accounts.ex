@@ -1,43 +1,27 @@
 defmodule Animina.Accounts do
   @moduledoc """
   The Accounts context.
+
+  This module acts as a facade, delegating to specialized sub-modules:
+  - `Animina.Accounts.Locations` - User location management
+  - `Animina.Accounts.Roles` - Role assignment and checking
+  - `Animina.Accounts.SoftDelete` - Soft delete and reactivation
+  - `Animina.Accounts.Statistics` - User counts and analytics
   """
 
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
-  alias Animina.Accounts.{OnlineUserCount, User, UserLocation, UserNotifier, UserRole, UserToken}
+  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
   alias Animina.Repo
-  alias Ecto.Adapters.SQL
+  alias Animina.Utils.PaperTrail, as: PT
 
-  @max_locations 4
   @referral_auto_activate_threshold 5
-
-  ## PaperTrail helpers
-
-  defp paper_trail_opts(opts) do
-    case Keyword.get(opts, :originator) do
-      %User{} = user -> [originator: user]
-      _ -> []
-    end
-  end
-
-  defp unwrap_paper_trail({:ok, %{model: model}}), do: {:ok, model}
-  defp unwrap_paper_trail({:error, _} = error), do: error
 
   ## Database getters
 
   @doc """
   Gets a user by email.
-
-  ## Examples
-
-      iex> get_user_by_email("foo@example.com")
-      %User{}
-
-      iex> get_user_by_email("unknown@example.com")
-      nil
-
   """
   def get_user_by_email(email) when is_binary(email) do
     from(u in User,
@@ -50,15 +34,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Gets a user by email and password.
-
-  ## Examples
-
-      iex> get_user_by_email_and_password("foo@example.com", "correct_password")
-      %User{}
-
-      iex> get_user_by_email_and_password("foo@example.com", "invalid_password")
-      nil
-
   """
   def get_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
@@ -74,29 +49,17 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Gets a single user.
-
-  Raises `Ecto.NoResultsError` if the User does not exist.
-
-  ## Examples
-
-      iex> get_user!(123)
-      %User{}
-
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
-
+  Gets a single user. Raises `Ecto.NoResultsError` if not found.
   """
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
-  Gets a single user. Returns `nil` if the user does not exist.
+  Gets a single user. Returns `nil` if not found.
   """
   def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Gets a user by referral code (case-insensitive, trimmed).
-  Returns `nil` if no user is found.
   """
   def get_user_by_referral_code(nil), do: nil
   def get_user_by_referral_code(""), do: nil
@@ -107,7 +70,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Counts the number of confirmed referrals for a user.
-  A confirmed referral is a user who has `referred_by_id` set and `confirmed_at` not nil.
   """
   def count_confirmed_referrals(%User{id: user_id}) do
     count_confirmed_referrals_by_id(user_id)
@@ -124,8 +86,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Processes referral credit after PIN confirmation.
-  Increments `waitlist_priority` for both the referred user and the referrer.
-  Auto-activates either user if they reach the threshold of #{@referral_auto_activate_threshold} referrals.
   """
   def process_referral(%User{referred_by_id: nil}), do: :ok
 
@@ -152,232 +112,15 @@ defmodule Animina.Accounts do
     end
   end
 
-  @doc """
-  Counts confirmed users whose `inserted_at` falls within today (Europe/Berlin).
-  """
-  def count_confirmed_users_today_berlin do
-    {start_utc, end_utc} = berlin_today_utc_range()
-
-    from(u in User,
-      where: not is_nil(u.confirmed_at),
-      where: u.inserted_at >= ^start_utc,
-      where: u.inserted_at < ^end_utc,
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Returns the 30-day rolling daily average of confirmed users, excluding today.
-  """
-  def average_daily_confirmed_users_last_30_days do
-    {today_start_utc, _} = berlin_today_utc_range()
-    thirty_days_ago = DateTime.add(today_start_utc, -30, :day)
-
-    result =
-      from(u in User,
-        where: not is_nil(u.confirmed_at),
-        where: u.inserted_at >= ^thirty_days_ago,
-        where: u.inserted_at < ^today_start_utc,
-        select: count()
-      )
-      |> Repo.one()
-
-    (result || 0) / 30.0
-  end
-
-  @doc """
-  Returns today's confirmed users grouped by Berlin hour as `[{hour, count}]`.
-  """
-  def confirmed_users_today_by_hour_berlin do
-    {start_utc, end_utc} = berlin_today_utc_range()
-    offset_seconds = berlin_utc_offset_seconds()
-
-    %{rows: rows} =
-      SQL.query!(
-        Repo,
-        """
-        SELECT CAST(EXTRACT(HOUR FROM inserted_at + INTERVAL '1 second' * $1) AS INTEGER) AS berlin_hour,
-               COUNT(*)
-        FROM users
-        WHERE confirmed_at IS NOT NULL
-          AND inserted_at >= $2
-          AND inserted_at < $3
-        GROUP BY berlin_hour
-        ORDER BY berlin_hour
-        """,
-        [offset_seconds, start_utc, end_utc]
-      )
-
-    Enum.map(rows, fn [hour, count] -> {hour, count} end)
-  end
-
-  @doc """
-  Counts confirmed users whose `inserted_at` falls within yesterday (Europe/Berlin).
-  """
-  def count_confirmed_users_yesterday_berlin do
-    {today_start_utc, _} = berlin_today_utc_range()
-    yesterday_start_utc = DateTime.add(today_start_utc, -1, :day)
-
-    from(u in User,
-      where: not is_nil(u.confirmed_at),
-      where: u.inserted_at >= ^yesterday_start_utc,
-      where: u.inserted_at < ^today_start_utc,
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  defp berlin_today_utc_range do
-    now_berlin =
-      DateTime.utc_now()
-      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
-
-    today_date = DateTime.to_date(now_berlin)
-
-    {:ok, start_naive} = NaiveDateTime.new(today_date, ~T[00:00:00])
-    {:ok, end_naive} = NaiveDateTime.new(Date.add(today_date, 1), ~T[00:00:00])
-
-    {:ok, start_dt} = DateTime.from_naive(start_naive, "Europe/Berlin", Tz.TimeZoneDatabase)
-    {:ok, end_dt} = DateTime.from_naive(end_naive, "Europe/Berlin", Tz.TimeZoneDatabase)
-
-    start_utc = DateTime.shift_zone!(start_dt, "Etc/UTC", Tz.TimeZoneDatabase)
-    end_utc = DateTime.shift_zone!(end_dt, "Etc/UTC", Tz.TimeZoneDatabase)
-
-    {start_utc, end_utc}
-  end
-
-  defp berlin_utc_offset_seconds do
-    now_berlin =
-      DateTime.utc_now()
-      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
-
-    now_berlin.utc_offset + now_berlin.std_offset
-  end
-
-  @doc """
-  Counts the number of users who registered and confirmed (PIN verified)
-  within the last 24 hours.
-  """
-  def count_confirmed_users_last_24h do
-    cutoff = DateTime.utc_now() |> DateTime.add(-24, :hour)
-
-    from(u in User,
-      where: not is_nil(u.confirmed_at),
-      where: u.inserted_at >= ^cutoff,
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts confirmed users whose `inserted_at` falls within the last 7 days.
-  """
-  def count_confirmed_users_last_7_days do
-    cutoff = DateTime.utc_now() |> DateTime.add(-7, :day)
-
-    from(u in User,
-      where: not is_nil(u.confirmed_at),
-      where: u.inserted_at >= ^cutoff,
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts confirmed users whose `inserted_at` falls within the last 28 days.
-  """
-  def count_confirmed_users_last_28_days do
-    cutoff = DateTime.utc_now() |> DateTime.add(-28, :day)
-
-    from(u in User,
-      where: not is_nil(u.confirmed_at),
-      where: u.inserted_at >= ^cutoff,
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts all active (non-deleted) users.
-  """
-  def count_active_users do
-    from(u in User, where: is_nil(u.deleted_at), select: count())
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts all confirmed, non-deleted users.
-  """
-  def count_confirmed_users do
-    from(u in User,
-      where: is_nil(u.deleted_at),
-      where: not is_nil(u.confirmed_at),
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts all unconfirmed, non-deleted users.
-  """
-  def count_unconfirmed_users do
-    from(u in User,
-      where: is_nil(u.deleted_at),
-      where: is_nil(u.confirmed_at),
-      select: count()
-    )
-    |> Repo.one()
-  end
-
-  @doc """
-  Counts confirmed, non-deleted users grouped by state.
-  Returns a map like `%{"normal" => 10, "waitlisted" => 5}`.
-  """
-  def count_confirmed_users_by_state do
-    from(u in User,
-      where: is_nil(u.deleted_at),
-      where: not is_nil(u.confirmed_at),
-      group_by: u.state,
-      select: {u.state, count()}
-    )
-    |> Repo.all()
-    |> Map.new()
-  end
-
-  @doc """
-  Counts confirmed, non-deleted users grouped by gender.
-  Returns a map like `%{"male" => 10, "female" => 8, "diverse" => 2}`.
-  """
-  def count_confirmed_users_by_gender do
-    from(u in User,
-      where: is_nil(u.deleted_at),
-      where: not is_nil(u.confirmed_at),
-      group_by: u.gender,
-      select: {u.gender, count()}
-    )
-    |> Repo.all()
-    |> Map.new()
-  end
-
   ## User registration
 
   @doc """
   Registers a user.
-
-  ## Examples
-
-      iex> register_user(%{field: value})
-      {:ok, %User{}}
-
-      iex> register_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
   def register_user(attrs, opts \\ []) do
     locations_attrs = extract_locations(attrs)
     referral_code_input = extract_referral_code_input(attrs)
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
     Repo.transact(fn ->
       changeset = User.registration_changeset(%User{}, attrs)
@@ -392,9 +135,7 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Returns `true` if the changeset contains an email uniqueness error,
-  covering both `unsafe_validate_unique` (validation: :unsafe_unique)
-  and `unique_constraint` (constraint: :unique).
+  Returns `true` if the changeset contains an email uniqueness error.
   """
   def email_uniqueness_error?(%Ecto.Changeset{} = changeset) do
     changeset.errors
@@ -405,8 +146,7 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Returns `true` when the email uniqueness error is the **only** error
-  on the changeset (i.e. all other fields are valid).
+  Returns `true` when the email uniqueness error is the only error.
   """
   def only_email_uniqueness_error?(%Ecto.Changeset{} = changeset) do
     email_uniqueness_error?(changeset) and
@@ -486,12 +226,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user registration changes.
-
-  ## Examples
-
-      iex> change_user_registration(user)
-      %Ecto.Changeset{data: %User{}}
-
   """
   def change_user_registration(user, attrs \\ %{}, opts \\ []) do
     User.registration_changeset(
@@ -505,9 +239,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Checks whether the user is in sudo mode.
-
-  The user is in sudo mode when the last authentication was done no further
-  than 20 minutes ago. The limit can be given as second argument in minutes.
   """
   def sudo_mode?(user, minutes \\ -20)
 
@@ -520,8 +251,7 @@ defmodule Animina.Accounts do
   @change_email_validity_in_minutes 30
 
   @doc """
-  Returns the pending new email address for a user, or `nil` if no change is pending.
-  Checks for a valid (non-expired) change email token.
+  Returns the pending new email address for a user.
   """
   def get_pending_email_change(%User{} = user) do
     context = "change:#{user.email}"
@@ -539,14 +269,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user email.
-
-  See `Animina.Accounts.User.email_changeset/3` for a list of supported options.
-
-  ## Examples
-
-      iex> change_user_email(user)
-      %Ecto.Changeset{data: %User{}}
-
   """
   def change_user_email(user, attrs \\ %{}, opts \\ []) do
     User.email_changeset(user, attrs, opts)
@@ -554,12 +276,10 @@ defmodule Animina.Accounts do
 
   @doc """
   Updates the user email using the given token.
-
-  If the token matches, the user email is updated and the token is deleted.
   """
   def update_user_email(user, token, opts \\ []) do
     context = "change:#{user.email}"
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
     Repo.transact(fn ->
       with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
@@ -567,7 +287,7 @@ defmodule Animina.Accounts do
            {:ok, user} <-
              User.email_changeset(user, %{email: email})
              |> PaperTrail.update(pt_opts)
-             |> unwrap_paper_trail(),
+             |> PT.unwrap(),
            {_count, _result} <-
              Repo.delete_all(from(UserToken, where: [user_id: ^user.id, context: ^context])) do
         {:ok, user}
@@ -579,14 +299,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user password.
-
-  See `Animina.Accounts.User.password_changeset/3` for a list of supported options.
-
-  ## Examples
-
-      iex> change_user_password(user)
-      %Ecto.Changeset{data: %User{}}
-
   """
   def change_user_password(user, attrs \\ %{}, opts \\ []) do
     User.password_changeset(user, attrs, opts)
@@ -594,17 +306,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Updates the user password.
-
-  Returns a tuple with the updated user, as well as a list of expired tokens.
-
-  ## Examples
-
-      iex> update_user_password(user, %{password: ...})
-      {:ok, {%User{}, [...]}}
-
-      iex> update_user_password(user, %{password: "too short"})
-      {:error, %Ecto.Changeset{}}
-
   """
   def update_user_password(user, attrs) do
     user
@@ -625,22 +326,14 @@ defmodule Animina.Accounts do
 
   @doc """
   Gets the user with the given signed token.
-
-  If the token is valid `{user, token_inserted_at}` is returned, otherwise `nil` is returned.
   """
   def get_user_by_session_token(token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
     Repo.one(query)
   end
 
-  @doc ~S"""
+  @doc """
   Delivers the update email instructions to the given user.
-
-  ## Examples
-
-      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/users/settings/confirm-email/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
-
   """
   def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
@@ -660,14 +353,8 @@ defmodule Animina.Accounts do
 
   ## Password reset
 
-  @doc ~S"""
+  @doc """
   Delivers the password reset instructions to the given user.
-
-  ## Examples
-
-      iex> deliver_user_password_reset_instructions(user, &url(~p"/users/reset-password/#{&1}"))
-      {:ok, %{to: ..., body: ...}}
-
   """
   def deliver_user_password_reset_instructions(%User{} = user, reset_password_url_fun)
       when is_function(reset_password_url_fun, 1) do
@@ -678,15 +365,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Gets the user by password reset token.
-
-  ## Examples
-
-      iex> get_user_by_password_reset_token("validtoken")
-      %User{}
-
-      iex> get_user_by_password_reset_token("invalidtoken")
-      nil
-
   """
   def get_user_by_password_reset_token(token) do
     case UserToken.verify_password_reset_token_query(token) do
@@ -697,12 +375,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Resets the user password.
-
-  ## Examples
-
-      iex> reset_user_password(user, %{password: "new long password"})
-      {:ok, %User{}}
-
   """
   def reset_user_password(user, attrs) do
     Repo.transact(fn ->
@@ -710,7 +382,7 @@ defmodule Animina.Accounts do
              user
              |> User.password_changeset(attrs)
              |> PaperTrail.update()
-             |> unwrap_paper_trail() do
+             |> PT.unwrap() do
         Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
         {:ok, user}
       end
@@ -731,7 +403,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Generates a PIN, stores its hash on the user, and sends it via email.
-  Returns `{:ok, pin}` on success.
   """
   def send_confirmation_pin(%User{} = user) do
     pin = generate_confirmation_pin()
@@ -740,7 +411,7 @@ defmodule Animina.Accounts do
            user
            |> User.confirmation_pin_changeset(pin)
            |> PaperTrail.update()
-           |> unwrap_paper_trail() do
+           |> PT.unwrap() do
       UserNotifier.deliver_confirmation_pin(updated_user, pin)
       {:ok, pin}
     end
@@ -748,13 +419,6 @@ defmodule Animina.Accounts do
 
   @doc """
   Verifies a confirmation PIN for the given user.
-
-  Returns:
-    - `{:ok, user}` on correct PIN (user is confirmed, PIN fields cleared)
-    - `{:error, :wrong_pin}` on incorrect PIN (attempts incremented)
-    - `{:error, :too_many_attempts}` when max attempts exceeded (user deleted)
-    - `{:error, :expired}` when PIN has expired (user deleted)
-    - `{:error, :not_found}` when user is nil
   """
   def verify_confirmation_pin(nil, _pin), do: {:error, :not_found}
 
@@ -831,8 +495,8 @@ defmodule Animina.Accounts do
   def update_user_profile(user, attrs, opts \\ []) do
     user
     |> User.profile_changeset(attrs)
-    |> PaperTrail.update(paper_trail_opts(opts))
-    |> unwrap_paper_trail()
+    |> PaperTrail.update(PT.opts(opts))
+    |> PT.unwrap()
   end
 
   @doc """
@@ -848,8 +512,8 @@ defmodule Animina.Accounts do
   def update_user_preferences(user, attrs, opts \\ []) do
     user
     |> User.preferences_changeset(attrs)
-    |> PaperTrail.update(paper_trail_opts(opts))
-    |> unwrap_paper_trail()
+    |> PaperTrail.update(PT.opts(opts))
+    |> PT.unwrap()
   end
 
   @doc """
@@ -858,206 +522,14 @@ defmodule Animina.Accounts do
   def update_user_language(%User{} = user, language, opts \\ []) do
     user
     |> Ecto.Changeset.change(language: language)
-    |> PaperTrail.update(paper_trail_opts(opts))
-    |> unwrap_paper_trail()
-  end
-
-  ## User locations
-
-  @doc """
-  Lists all locations for a user, ordered by position.
-  """
-  def list_user_locations(%User{id: user_id}) do
-    from(l in UserLocation,
-      where: l.user_id == ^user_id,
-      order_by: [asc: l.position]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  Returns the maximum number of locations a user can have.
-  """
-  def max_locations, do: @max_locations
-
-  @doc """
-  Adds a new location for a user.
-  Automatically assigns the next available position (max #{@max_locations}).
-  """
-  def add_user_location(%User{id: user_id}, attrs, opts \\ []) do
-    current_count =
-      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
-      |> Repo.one()
-
-    if current_count >= @max_locations do
-      {:error, :max_locations_reached}
-    else
-      next_position =
-        (from(l in UserLocation,
-           where: l.user_id == ^user_id,
-           select: max(l.position)
-         )
-         |> Repo.one() || 0) + 1
-
-      %UserLocation{}
-      |> UserLocation.changeset(
-        attrs
-        |> Map.put(:user_id, user_id)
-        |> Map.put(:position, next_position)
-      )
-      |> PaperTrail.insert(paper_trail_opts(opts))
-      |> unwrap_paper_trail()
-    end
-  end
-
-  @doc """
-  Updates an existing location for a user (e.g. change zip code or country).
-  """
-  def update_user_location(%User{id: user_id}, location_id, attrs, opts \\ []) do
-    case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
-      nil ->
-        {:error, :not_found}
-
-      location ->
-        location
-        |> UserLocation.changeset(attrs)
-        |> PaperTrail.update(paper_trail_opts(opts))
-        |> unwrap_paper_trail()
-    end
-  end
-
-  @doc """
-  Removes a user location by its ID.
-  """
-  def remove_user_location(%User{id: user_id}, location_id, opts \\ []) do
-    current_count =
-      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
-      |> Repo.one()
-
-    if current_count <= 1 do
-      {:error, :last_location}
-    else
-      case Repo.get_by(UserLocation, id: location_id, user_id: user_id) do
-        nil -> {:error, :not_found}
-        location -> PaperTrail.delete(location, paper_trail_opts(opts)) |> unwrap_paper_trail()
-      end
-    end
-  end
-
-  ## Soft delete
-
-  @doc """
-  Returns `true` if the user has been soft-deleted.
-  """
-  def user_deleted?(nil), do: false
-  def user_deleted?(%User{deleted_at: nil}), do: false
-  def user_deleted?(%User{deleted_at: _}), do: true
-
-  @doc """
-  Soft-deletes a user by setting `deleted_at`, deleting all session tokens,
-  and sending a goodbye email.
-  """
-  def soft_delete_user(%User{} = user, opts \\ []) do
-    pt_opts = paper_trail_opts(opts)
-
-    Repo.transact(fn ->
-      with {:ok, user} <-
-             user
-             |> User.soft_delete_changeset()
-             |> PaperTrail.update(pt_opts)
-             |> unwrap_paper_trail() do
-        Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
-        UserNotifier.deliver_account_deletion_goodbye(user)
-        {:ok, user}
-      end
-    end)
-  end
-
-  @grace_period_days 30
-
-  @doc """
-  Gets a soft-deleted user by email and password within the 30-day grace period.
-  Returns the most recently deleted user if multiple exist.
-  """
-  def get_deleted_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
-
-    user =
-      from(u in User,
-        where: u.email == ^email,
-        where: not is_nil(u.deleted_at),
-        where: u.deleted_at > ^cutoff,
-        order_by: [desc: u.deleted_at],
-        limit: 1
-      )
-      |> Repo.one()
-
-    if User.valid_password?(user, password), do: user
-  end
-
-  @doc """
-  Reactivates a soft-deleted user by clearing `deleted_at`.
-  Returns `{:error, changeset}` if the email or phone is now claimed by another active user.
-  """
-  def reactivate_user(%User{} = user, opts \\ []) do
-    user
-    |> Ecto.Changeset.change(deleted_at: nil)
-    |> Ecto.Changeset.unique_constraint(:email, name: :users_email_active_index)
-    |> Ecto.Changeset.unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
-    |> PaperTrail.update(paper_trail_opts(opts))
-    |> unwrap_paper_trail()
-  end
-
-  @doc """
-  Permanently deletes a user record (hard delete).
-  """
-  def hard_delete_user(%User{} = user, opts \\ []) do
-    PaperTrail.delete(user, paper_trail_opts(opts)) |> unwrap_paper_trail()
-  end
-
-  @doc """
-  Returns `true` if the user's `deleted_at` is within the 30-day grace period.
-  """
-  def within_grace_period?(%User{deleted_at: nil}), do: false
-
-  def within_grace_period?(%User{deleted_at: deleted_at}) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
-    DateTime.after?(deleted_at, cutoff)
-  end
-
-  @doc """
-  Hard-deletes users whose `deleted_at` is older than 30 days.
-  """
-  def purge_deleted_users do
-    cutoff = DateTime.utc_now() |> DateTime.add(-30, :day)
-
-    from(u in User,
-      where: not is_nil(u.deleted_at),
-      where: u.deleted_at < ^cutoff
-    )
-    |> Repo.delete_all()
-  end
-
-  ## Token helper
-
-  defp update_user_and_delete_all_tokens(changeset) do
-    Repo.transact(fn ->
-      with {:ok, user} <- PaperTrail.update(changeset) |> unwrap_paper_trail() do
-        tokens_to_expire = Repo.all_by(UserToken, user_id: user.id)
-
-        Repo.delete_all(from(t in UserToken, where: t.id in ^Enum.map(tokens_to_expire, & &1.id)))
-
-        {:ok, {user, tokens_to_expire}}
-      end
-    end)
+    |> PaperTrail.update(PT.opts(opts))
+    |> PT.unwrap()
   end
 
   ## User search
 
   @doc """
-  Searches for active users by email or display name (case-insensitive, partial match).
-  Returns up to 20 results.
+  Searches for active users by email or display name.
   """
   def search_users(query) when is_binary(query) and byte_size(query) > 0 do
     pattern = "%#{query}%"
@@ -1073,184 +545,69 @@ defmodule Animina.Accounts do
 
   def search_users(_), do: []
 
-  ## Roles
+  ## Token helper
 
-  @doc """
-  Returns all roles for the given user, always including the implicit "user" role.
-  """
-  def get_user_roles(%User{id: user_id}) do
-    db_roles =
-      from(r in UserRole, where: r.user_id == ^user_id, select: r.role)
-      |> Repo.all()
+  defp update_user_and_delete_all_tokens(changeset) do
+    Repo.transact(fn ->
+      with {:ok, user} <- PaperTrail.update(changeset) |> PT.unwrap() do
+        tokens_to_expire = Repo.all_by(UserToken, user_id: user.id)
 
-    ["user" | db_roles]
-  end
+        Repo.delete_all(from(t in UserToken, where: t.id in ^Enum.map(tokens_to_expire, & &1.id)))
 
-  @doc """
-  Assigns a role to a user. Idempotent — does nothing if the role already exists.
-  Returns `{:ok, user_role}` or `{:error, changeset}`.
-  """
-  def assign_role(%User{id: user_id}, role, opts \\ []) when role in ["moderator", "admin"] do
-    case Repo.get_by(UserRole, user_id: user_id, role: role) do
-      %UserRole{} = existing ->
-        {:ok, existing}
-
-      nil ->
-        %UserRole{}
-        |> UserRole.changeset(%{user_id: user_id, role: role})
-        |> PaperTrail.insert(paper_trail_opts(opts))
-        |> unwrap_paper_trail()
-    end
-  end
-
-  @doc """
-  Removes a role from a user. The implicit "user" role cannot be removed.
-  Returns `{:ok, user_role}`, `{:error, :implicit_role}`, or `{:error, :not_found}`.
-  """
-  def remove_role(user, role, opts \\ [])
-
-  def remove_role(_user, "user", _opts), do: {:error, :implicit_role}
-
-  def remove_role(%User{id: user_id}, "admin", opts) do
-    case Repo.get_by(UserRole, user_id: user_id, role: "admin") do
-      nil ->
-        {:error, :not_found}
-
-      user_role ->
-        admin_count = Repo.aggregate(from(r in UserRole, where: r.role == "admin"), :count)
-
-        if admin_count <= 1 do
-          {:error, :last_admin}
-        else
-          PaperTrail.delete(user_role, paper_trail_opts(opts)) |> unwrap_paper_trail()
-        end
-    end
-  end
-
-  def remove_role(%User{id: user_id}, role, opts) do
-    case Repo.get_by(UserRole, user_id: user_id, role: role) do
-      nil -> {:error, :not_found}
-      user_role -> PaperTrail.delete(user_role, paper_trail_opts(opts)) |> unwrap_paper_trail()
-    end
-  end
-
-  @doc """
-  Returns true if the user has the given role.
-  The "user" role is always true.
-  """
-  def has_role?(%User{}, "user"), do: true
-
-  def has_role?(%User{id: user_id}, role) do
-    from(r in UserRole, where: r.user_id == ^user_id and r.role == ^role)
-    |> Repo.exists?()
-  end
-
-  ## Online user counts
-
-  @doc """
-  Records a snapshot of the current online user count.
-  """
-  def record_online_user_count(count) do
-    %OnlineUserCount{}
-    |> OnlineUserCount.changeset(%{count: count, recorded_at: DateTime.utc_now(:second)})
-    |> Repo.insert()
-  end
-
-  @doc """
-  Returns aggregated online user counts since the given datetime,
-  bucketed by `bucket_minutes` intervals.
-
-  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
-  """
-  def online_user_counts_since(since, bucket_minutes) do
-    bucket_seconds = bucket_minutes * 60
-
-    %{rows: rows} =
-      SQL.query!(
-        Repo,
-        """
-        SELECT
-          to_timestamp(floor(extract(epoch FROM recorded_at) / $1) * $1) AS bucket,
-          CAST(round(avg(count)) AS INTEGER) AS avg_count
-        FROM online_user_counts
-        WHERE recorded_at >= $2
-        GROUP BY bucket
-        ORDER BY bucket
-        """,
-        [bucket_seconds, since]
-      )
-
-    Enum.map(rows, fn [bucket, avg_count] ->
-      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: avg_count}
+        {:ok, {user, tokens_to_expire}}
+      end
     end)
   end
 
-  @doc """
-  Returns aggregated registration counts (by inserted_at) since the given datetime,
-  bucketed by `bucket_minutes` intervals.
+  # --- Delegations to Statistics ---
 
-  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
-  """
-  def registration_counts_since(since, bucket_minutes) do
-    bucket_seconds = bucket_minutes * 60
+  defdelegate count_confirmed_users_today_berlin(), to: Animina.Accounts.Statistics
+  defdelegate average_daily_confirmed_users_last_30_days(), to: Animina.Accounts.Statistics
+  defdelegate confirmed_users_today_by_hour_berlin(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_yesterday_berlin(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_last_24h(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_last_7_days(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_last_28_days(), to: Animina.Accounts.Statistics
+  defdelegate count_active_users(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users(), to: Animina.Accounts.Statistics
+  defdelegate count_unconfirmed_users(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_by_state(), to: Animina.Accounts.Statistics
+  defdelegate count_confirmed_users_by_gender(), to: Animina.Accounts.Statistics
+  defdelegate record_online_user_count(count), to: Animina.Accounts.Statistics
+  defdelegate online_user_counts_since(since, bucket_minutes), to: Animina.Accounts.Statistics
+  defdelegate registration_counts_since(since, bucket_minutes), to: Animina.Accounts.Statistics
+  defdelegate confirmation_counts_since(since, bucket_minutes), to: Animina.Accounts.Statistics
+  defdelegate purge_old_online_user_counts(days \\ 30), to: Animina.Accounts.Statistics
 
-    %{rows: rows} =
-      SQL.query!(
-        Repo,
-        """
-        SELECT
-          to_timestamp(floor(extract(epoch FROM inserted_at) / $1) * $1) AS bucket,
-          CAST(count(*) AS INTEGER) AS count
-        FROM users
-        WHERE inserted_at >= $2
-        GROUP BY bucket
-        ORDER BY bucket
-        """,
-        [bucket_seconds, since]
-      )
+  # --- Delegations to Roles ---
 
-    Enum.map(rows, fn [bucket, count] ->
-      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: count}
-    end)
-  end
+  defdelegate get_user_roles(user), to: Animina.Accounts.Roles
+  defdelegate assign_role(user, role, opts \\ []), to: Animina.Accounts.Roles
+  defdelegate remove_role(user, role, opts \\ []), to: Animina.Accounts.Roles
+  defdelegate has_role?(user, role), to: Animina.Accounts.Roles
+  defdelegate count_users_with_role(role), to: Animina.Accounts.Roles
 
-  @doc """
-  Returns aggregated confirmation counts (by confirmed_at) since the given datetime,
-  bucketed by `bucket_minutes` intervals.
+  # --- Delegations to Locations ---
 
-  Returns a list of `%{bucket: DateTime.t(), avg_count: integer()}`.
-  """
-  def confirmation_counts_since(since, bucket_minutes) do
-    bucket_seconds = bucket_minutes * 60
+  defdelegate max_locations(), to: Animina.Accounts.Locations
+  defdelegate list_user_locations(user), to: Animina.Accounts.Locations
+  defdelegate add_user_location(user, attrs, opts \\ []), to: Animina.Accounts.Locations
 
-    %{rows: rows} =
-      SQL.query!(
-        Repo,
-        """
-        SELECT
-          to_timestamp(floor(extract(epoch FROM confirmed_at) / $1) * $1) AS bucket,
-          CAST(count(*) AS INTEGER) AS count
-        FROM users
-        WHERE confirmed_at IS NOT NULL
-          AND confirmed_at >= $2
-        GROUP BY bucket
-        ORDER BY bucket
-        """,
-        [bucket_seconds, since]
-      )
+  defdelegate update_user_location(user, location_id, attrs, opts \\ []),
+    to: Animina.Accounts.Locations
 
-    Enum.map(rows, fn [bucket, count] ->
-      %{bucket: DateTime.from_naive!(bucket, "Etc/UTC"), avg_count: count}
-    end)
-  end
+  defdelegate remove_user_location(user, location_id, opts \\ []), to: Animina.Accounts.Locations
 
-  @doc """
-  Deletes online user count records older than `days` days. Defaults to 30.
-  """
-  def purge_old_online_user_counts(days \\ 30) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-days, :day)
+  # --- Delegations to SoftDelete ---
 
-    from(o in OnlineUserCount, where: o.recorded_at < ^cutoff)
-    |> Repo.delete_all()
-  end
+  defdelegate user_deleted?(user), to: Animina.Accounts.SoftDelete
+  defdelegate soft_delete_user(user, opts \\ []), to: Animina.Accounts.SoftDelete
+
+  defdelegate get_deleted_user_by_email_and_password(email, password),
+    to: Animina.Accounts.SoftDelete
+
+  defdelegate reactivate_user(user, opts \\ []), to: Animina.Accounts.SoftDelete
+  defdelegate hard_delete_user(user, opts \\ []), to: Animina.Accounts.SoftDelete
+  defdelegate within_grace_period?(user), to: Animina.Accounts.SoftDelete
+  defdelegate purge_deleted_users(), to: Animina.Accounts.SoftDelete
 end

@@ -3,6 +3,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
   alias Animina.Accounts
   alias Animina.GeoData
+  alias Animina.Photos
   alias Animina.Traits
   alias AniminaWeb.Languages
 
@@ -20,9 +21,17 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <%!-- Profile Summary --%>
         <div class="flex items-center gap-4 mb-8 p-4 rounded-lg bg-base-200/50">
-          <div class="flex-shrink-0 w-14 h-14 rounded-full bg-primary text-primary-content flex items-center justify-center text-xl font-bold">
-            {String.first(@user.display_name)}
-          </div>
+          <%= if @avatar_url do %>
+            <img
+              src={@avatar_url}
+              alt={@user.display_name}
+              class="flex-shrink-0 w-14 h-14 rounded-full object-cover"
+            />
+          <% else %>
+            <div class="flex-shrink-0 w-14 h-14 rounded-full bg-primary text-primary-content flex items-center justify-center text-xl font-bold">
+              {String.first(@user.display_name)}
+            </div>
+          <% end %>
           <div>
             <div class="font-semibold text-base-content">{@user.display_name}</div>
             <div class="text-sm text-base-content/60">{@user.email}</div>
@@ -33,6 +42,12 @@ defmodule AniminaWeb.UserLive.SettingsHub do
         <.section_heading title={gettext("Profile & Matching")} />
 
         <div class="grid gap-3 mb-8">
+          <.settings_card
+            navigate={~p"/users/settings/avatar"}
+            icon="hero-camera"
+            title={gettext("Profile Photo")}
+            preview={@avatar_preview}
+          />
           <.settings_card
             navigate={~p"/users/settings/profile"}
             icon="hero-user-circle"
@@ -162,6 +177,8 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       socket
       |> assign(:page_title, gettext("Settings"))
       |> assign(:user, user)
+      |> assign(:avatar_url, Photos.get_user_avatar_url(user.id))
+      |> assign(:avatar_preview, build_avatar_preview(user))
       |> assign(:profile_preview, build_profile_preview(user, user_age))
       |> assign(:location_preview, build_location_preview(city_names))
       |> assign(
@@ -174,13 +191,24 @@ defmodule AniminaWeb.UserLive.SettingsHub do
     {:ok, socket}
   end
 
+  defp build_avatar_preview(user) do
+    case Photos.get_user_avatar_any_state(user.id) do
+      nil -> gettext("No photo")
+      %{state: "approved"} -> gettext("Photo uploaded")
+      %{state: "error"} -> gettext("Upload failed")
+      _ -> gettext("Processing")
+    end
+  end
+
   defp compute_user_age(birthday) do
     today = Date.utc_today()
     age = today.year - birthday.year
 
-    if {today.month, today.day} < {birthday.month, birthday.day},
-      do: age - 1,
-      else: age
+    if {today.month, today.day} < {birthday.month, birthday.day} do
+      age - 1
+    else
+      age
+    end
   end
 
   defp build_profile_preview(user, user_age) do

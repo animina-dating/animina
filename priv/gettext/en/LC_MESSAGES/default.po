@@ -40,11 +40,12 @@ msgstr ""
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr ""
 
+#: lib/animina_web/components/layouts.ex:229
 #: lib/animina_web/live/user_live/registration.ex:10
 #: lib/animina_web/live/user_live/settings_hub.ex:90
 #, elixir-autogen, elixir-format
 msgid "Account"
-msgstr ""
+msgstr "Account"
 
 #: lib/animina_web/components/core_components.ex:393
 #, elixir-autogen, elixir-format
@@ -91,8 +92,8 @@ msgstr ""
 msgid "At ANIMINA everything is different."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:475
-#: lib/animina_web/components/layouts.ex:487
+#: lib/animina_web/components/layouts.ex:568
+#: lib/animina_web/components/layouts.ex:580
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -221,7 +222,7 @@ msgstr ""
 
 #: lib/animina_web/live/user_live/registration.ex:249
 #: lib/animina_web/live/user_live/registration.ex:386
-#: lib/animina_web/live/user_live/settings_hub.ex:268
+#: lib/animina_web/live/user_live/settings_hub.ex:270
 #, elixir-autogen, elixir-format
 msgid "Diverse"
 msgstr ""
@@ -280,7 +281,7 @@ msgstr ""
 
 #: lib/animina_web/live/user_live/registration.ex:248
 #: lib/animina_web/live/user_live/registration.ex:385
-#: lib/animina_web/live/user_live/settings_hub.ex:267
+#: lib/animina_web/live/user_live/settings_hub.ex:269
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr ""
@@ -365,7 +366,7 @@ msgstr ""
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:404
+#: lib/animina_web/components/layouts.ex:475
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr ""
@@ -385,8 +386,8 @@ msgstr ""
 msgid "Joy instead of addiction"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:107
-#: lib/animina_web/components/layouts.ex:330
+#: lib/animina_web/components/layouts.ex:108
+#: lib/animina_web/components/layouts.ex:401
 #: lib/animina_web/live/user_live/language_settings.ex:18
 #: lib/animina_web/live/user_live/language_settings.ex:24
 #: lib/animina_web/live/user_live/language_settings.ex:62
@@ -415,7 +416,7 @@ msgstr ""
 msgid "Locations"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:368
+#: lib/animina_web/components/layouts.ex:439
 #: lib/animina_web/live/user_live/login.ex:12
 #: lib/animina_web/live/user_live/login.ex:54
 #, elixir-autogen, elixir-format
@@ -427,8 +428,8 @@ msgstr ""
 msgid "Log in now"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:280
-#: lib/animina_web/components/layouts.ex:358
+#: lib/animina_web/components/layouts.ex:351
+#: lib/animina_web/components/layouts.ex:429
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr ""
@@ -440,7 +441,7 @@ msgstr ""
 
 #: lib/animina_web/live/user_live/registration.ex:247
 #: lib/animina_web/live/user_live/registration.ex:384
-#: lib/animina_web/live/user_live/settings_hub.ex:266
+#: lib/animina_web/live/user_live/settings_hub.ex:268
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr ""
@@ -605,7 +606,7 @@ msgstr ""
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:401
+#: lib/animina_web/components/layouts.ex:472
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr ""
@@ -657,7 +658,7 @@ msgstr[1] ""
 msgid "Referral code (optional)"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:374
+#: lib/animina_web/components/layouts.ex:445
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr ""
@@ -731,7 +732,8 @@ msgstr ""
 msgid "Set new password"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:226
+#: lib/animina_web/components/layouts.ex:236
+#: lib/animina_web/live/admin/feature_flags_live.ex:209
 #: lib/animina_web/live/user_live/avatar_upload.ex:14
 #: lib/animina_web/live/user_live/delete_account.ex:15
 #: lib/animina_web/live/user_live/edit_locations.ex:15
@@ -751,7 +753,7 @@ msgstr ""
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:482
+#: lib/animina_web/components/layouts.ex:575
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -847,7 +849,7 @@ msgstr ""
 msgid "We are working on new features and need some breathing room."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:470
+#: lib/animina_web/components/layouts.ex:563
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -939,8 +941,8 @@ msgstr ""
 msgid "Your account has been deleted. Please register again."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:137
-#: lib/animina_web/components/layouts.ex:293
+#: lib/animina_web/components/layouts.ex:138
+#: lib/animina_web/components/layouts.ex:364
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr ""
@@ -990,12 +992,12 @@ msgstr ""
 msgid "ANIMINA – Create Account"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:494
+#: lib/animina_web/components/layouts.ex:587
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Updating ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:501
+#: lib/animina_web/components/layouts.ex:594
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "A new software version is being installed on the server. This will only take a moment..."
@@ -1244,7 +1246,7 @@ msgstr "Your account was scheduled for deletion. What would you like to do?"
 msgid "Your old account has been removed. You can now register a new account."
 msgstr "Your old account has been removed. You can now register a new account."
 
-#: lib/animina_web/components/layouts.ex:73
+#: lib/animina_web/components/layouts.ex:74
 #, elixir-autogen, elixir-format
 msgid "Change language"
 msgstr "Change language"
@@ -1279,8 +1281,9 @@ msgstr "Our servers are not in the cloud – they run on our own physical hardwa
 msgid "Add Role"
 msgstr "Add Role"
 
-#: lib/animina_web/components/layouts.ex:165
-#: lib/animina_web/components/layouts.ex:446
+#: lib/animina_web/components/layouts.ex:166
+#: lib/animina_web/components/layouts.ex:517
+#: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Admin"
@@ -1300,15 +1303,16 @@ msgstr "Could not add role."
 msgid "Current Roles"
 msgstr "Current Roles"
 
-#: lib/animina_web/components/layouts.ex:233
+#: lib/animina_web/components/layouts.ex:297
 #: lib/animina_web/live/admin/user_roles_live.ex:11
 #: lib/animina_web/live/admin/user_roles_live.ex:77
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "Manage Roles"
 
-#: lib/animina_web/components/layouts.ex:170
-#: lib/animina_web/components/layouts.ex:447
+#: lib/animina_web/components/layouts.ex:171
+#: lib/animina_web/components/layouts.ex:518
+#: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
 msgstr "Moderator"
@@ -1328,7 +1332,7 @@ msgstr "Role not found."
 msgid "Search users by email or name..."
 msgstr "Search users by email or name..."
 
-#: lib/animina_web/components/layouts.ex:246
+#: lib/animina_web/components/layouts.ex:318
 #, elixir-autogen, elixir-format
 msgid "Switch Role"
 msgstr "Switch Role"
@@ -1338,7 +1342,9 @@ msgstr "Switch Role"
 msgid "The user role cannot be removed."
 msgstr "The user role cannot be removed."
 
-#: lib/animina_web/components/layouts.ex:448
+#: lib/animina_web/components/layouts.ex:519
+#: lib/animina_web/live/admin/photo_history_live.ex:177
+#: lib/animina_web/live/admin/photo_reviews_live.ex:602
 #, elixir-autogen, elixir-format
 msgid "User"
 msgstr "User"
@@ -1354,7 +1360,7 @@ msgstr "You are not authorized to access this page."
 msgid "You do not have that role."
 msgstr "You do not have that role."
 
-#: lib/animina_web/components/layouts.ex:266
+#: lib/animina_web/components/layouts.ex:326
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "active"
@@ -1556,27 +1562,27 @@ msgstr "My Flags — I Like in a Partner"
 msgid "My Flags — Partner Deal Breakers"
 msgstr "My Flags — Partner Deal Breakers"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:258
+#: lib/animina_web/live/user_live/settings_hub.ex:260
 #, elixir-autogen, elixir-format
 msgid "%{count} green"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:259
+#: lib/animina_web/live/user_live/settings_hub.ex:261
 #, elixir-autogen, elixir-format
 msgid "%{count} red"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:257
+#: lib/animina_web/live/user_live/settings_hub.ex:259
 #, elixir-autogen, elixir-format
 msgid "%{count} white"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:242
+#: lib/animina_web/live/user_live/settings_hub.ex:244
 #, elixir-autogen, elixir-format
 msgid "%{min}–%{max} years"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:243
+#: lib/animina_web/live/user_live/settings_hub.ex:245
 #, elixir-autogen, elixir-format
 msgid "%{radius} km"
 msgstr ""
@@ -1586,13 +1592,13 @@ msgstr ""
 msgid "App"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:226
+#: lib/animina_web/live/user_live/settings_hub.ex:228
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No locations"
 msgstr "No locations added yet."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:251
-#: lib/animina_web/live/user_live/settings_hub.ex:263
+#: lib/animina_web/live/user_live/settings_hub.ex:253
+#: lib/animina_web/live/user_live/settings_hub.ex:265
 #, elixir-autogen, elixir-format
 msgid "Not configured"
 msgstr ""
@@ -1607,6 +1613,10 @@ msgstr "Permanently delete your account and all associated data"
 msgid "Profile & Matching"
 msgstr ""
 
+#: lib/animina_web/live/admin/feature_flags_live.ex:277
+#: lib/animina_web/live/admin/ollama_queue_live.ex:571
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:211
+#: lib/animina_web/live/admin/photo_reviews_live.ex:737
 #: lib/animina_web/live/user_live/edit_locations.ex:65
 #, elixir-autogen, elixir-format
 msgid "Cancel"
@@ -1628,12 +1638,13 @@ msgstr ""
 msgid "Location updated."
 msgstr "Location added."
 
+#: lib/animina_web/live/admin/feature_flags_live.ex:280
 #: lib/animina_web/live/user_live/edit_locations.ex:58
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:216
+#: lib/animina_web/live/user_live/settings_hub.ex:218
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{age} years"
 msgstr ""
@@ -3258,35 +3269,26 @@ msgstr ""
 msgid "العربية"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:243
-#: lib/animina_web/live/user_live/avatar_upload.ex:244
+#: lib/animina_web/live/user_live/avatar_upload.ex:83
+#: lib/animina_web/live/user_live/avatar_upload.ex:335
+#: lib/animina_web/live/user_live/avatar_upload.ex:336
 #, elixir-autogen, elixir-format
 msgid "Checking content"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:81
+#: lib/animina_web/live/user_live/avatar_upload.ex:178
 #, elixir-autogen, elixir-format
 msgid "Choose file"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:78
+#: lib/animina_web/live/user_live/avatar_upload.ex:175
 #, elixir-autogen, elixir-format
 msgid "Drag and drop your photo here, or"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:251
-#, elixir-autogen, elixir-format
-msgid "File is too large (max 10MB)"
-msgstr ""
-
-#: lib/animina_web/live/user_live/avatar_upload.ex:252
+#: lib/animina_web/live/user_live/avatar_upload.ex:406
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
-msgstr ""
-
-#: lib/animina_web/live/user_live/avatar_upload.ex:85
-#, elixir-autogen, elixir-format
-msgid "JPG, PNG, WEBP or HEIC. Max 10MB."
 msgstr ""
 
 #: lib/animina_web/live/user_live/settings_hub.ex:196
@@ -3294,29 +3296,30 @@ msgstr ""
 msgid "No photo"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:253
+#: lib/animina_web/live/user_live/avatar_upload.ex:407
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:241
+#: lib/animina_web/live/user_live/avatar_upload.ex:333
 #, elixir-autogen, elixir-format
 msgid "Pending review"
 msgstr ""
 
+#: lib/animina_web/live/admin/photo_history_live.ex:157
 #: lib/animina_web/live/user_live/settings_hub.ex:197
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:188
-#: lib/animina_web/live/user_live/avatar_upload.ex:204
+#: lib/animina_web/live/user_live/avatar_upload.ex:383
+#: lib/animina_web/live/user_live/avatar_upload.ex:392
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:242
-#: lib/animina_web/live/user_live/avatar_upload.ex:246
+#: lib/animina_web/live/user_live/avatar_upload.ex:334
+#: lib/animina_web/live/user_live/avatar_upload.ex:344
 #: lib/animina_web/live/user_live/settings_hub.ex:199
 #, elixir-autogen, elixir-format
 msgid "Processing"
@@ -3325,18 +3328,18 @@ msgstr ""
 #: lib/animina_web/live/user_live/avatar_upload.ex:16
 #: lib/animina_web/live/user_live/avatar_upload.ex:22
 #: lib/animina_web/live/user_live/avatar_upload.ex:33
-#: lib/animina_web/live/user_live/avatar_upload.ex:149
+#: lib/animina_web/live/user_live/avatar_upload.ex:246
 #: lib/animina_web/live/user_live/settings_hub.ex:48
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile Photo"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:239
+#: lib/animina_web/components/layouts.ex:309
 #, elixir-autogen, elixir-format
 msgid "System Debug"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:127
+#: lib/animina_web/live/user_live/avatar_upload.ex:224
 #, elixir-autogen, elixir-format
 msgid "Upload Photo"
 msgstr ""
@@ -3346,33 +3349,875 @@ msgstr ""
 msgid "Upload a photo that shows your face clearly"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:254
+#: lib/animina_web/live/user_live/avatar_upload.ex:408
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:245
+#: lib/animina_web/live/user_live/avatar_upload.ex:341
 #: lib/animina_web/live/user_live/settings_hub.ex:198
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
-msgstr ""
+msgstr "This image cannot be used as an avatar"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:195
+#: lib/animina_web/live/user_live/avatar_upload.ex:398
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:205
+#: lib/animina_web/components/layouts.ex:209
 #, elixir-autogen, elixir-format
 msgid "On Waitlist"
 msgstr "On Waitlist"
 
-#: lib/animina_web/components/layouts.ex:156
+#: lib/animina_web/components/layouts.ex:157
 #, elixir-autogen, elixir-format
 msgid "On waitlist"
 msgstr "On waitlist"
 
-#: lib/animina_web/components/layouts.ex:210
+#: lib/animina_web/components/layouts.ex:214
 #, elixir-autogen, elixir-format
 msgid "Referral progress"
 msgstr "Referral progress"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:91
+#: lib/animina_web/live/user_live/avatar_upload.ex:337
+#: lib/animina_web/live/user_live/avatar_upload.ex:338
+#, elixir-autogen, elixir-format
+msgid "Detecting face"
+msgstr "Detecting face"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:339
+#, elixir-autogen, elixir-format
+msgid "No face detected"
+msgstr "No single person in the photo."
+
+#: lib/animina_web/live/admin/photo_history_live.ex:176
+#, elixir-autogen, elixir-format
+msgid "AI"
+msgstr "AI"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:541
+#: lib/animina_web/live/admin/photo_reviews_live.ex:690
+#, elixir-autogen, elixir-format
+msgid "Add notes about your decision..."
+msgstr "Add notes about your decision..."
+
+#: lib/animina_web/live/admin/photo_history_live.ex:171
+#, elixir-autogen, elixir-format
+msgid "Added to blacklist"
+msgstr "Added to blacklist"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:657
+#, elixir-autogen, elixir-format
+msgid "Appeal Reason"
+msgstr "Appeal Reason"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:169
+#, elixir-autogen, elixir-format
+msgid "Appeal approved"
+msgstr "Appeal approved"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:170
+#: lib/animina_web/live/user_live/avatar_upload.ex:343
+#, elixir-autogen, elixir-format
+msgid "Appeal rejected"
+msgstr "Appeal rejected"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:145
+#, elixir-autogen, elixir-format
+msgid "Appeal rejected."
+msgstr "Appeal rejected."
+
+#: lib/animina_web/live/admin/photo_history_live.ex:168
+#, elixir-autogen, elixir-format
+msgid "Appeal submitted"
+msgstr "Appeal submitted"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:588
+#: lib/animina_web/live/admin/photo_reviews_live.ex:745
+#, elixir-autogen, elixir-format
+msgid "Approve"
+msgstr "Approve"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:160
+#, elixir-autogen, elixir-format
+msgid "Blacklist checked"
+msgstr "Blacklist checked"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:161
+#, elixir-autogen, elixir-format
+msgid "Blacklist match found"
+msgstr "Blacklist match found"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:109
+#: lib/animina_web/live/admin/photo_reviews_live.ex:123
+#, elixir-autogen, elixir-format
+msgid "Could not approve: %{reason}"
+msgstr "Could not approve: %{reason}"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:139
+#: lib/animina_web/live/admin/photo_reviews_live.ex:154
+#, elixir-autogen, elixir-format
+msgid "Could not reject: %{reason}"
+msgstr "Could not reject: %{reason}"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:297
+#, elixir-autogen, elixir-format
+msgid "Could not submit appeal. Please try again."
+msgstr "Could not submit appeal. Please try again."
+
+#: lib/animina_web/live/admin/photo_history_live.ex:165
+#, elixir-autogen, elixir-format
+msgid "Escalated to Ollama (Face)"
+msgstr "Escalated to Ollama (Face)"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:163
+#, elixir-autogen, elixir-format
+msgid "Escalated to Ollama (NSFW)"
+msgstr "Escalated to Ollama (NSFW)"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:164
+#, elixir-autogen, elixir-format
+msgid "Face detection completed"
+msgstr "Face detection completed"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:32
+#, elixir-autogen, elixir-format
+msgid "History"
+msgstr "History"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:600
+#: lib/animina_web/live/admin/photo_history_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "NSFW"
+msgstr "NSFW"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:162
+#, elixir-autogen, elixir-format
+msgid "NSFW check completed"
+msgstr "NSFW check completed"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:60
+#, elixir-autogen, elixir-format
+msgid "No Face"
+msgstr "No Face"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:148
+#, elixir-autogen, elixir-format
+msgid "No history recorded for this photo."
+msgstr "No history recorded for this photo."
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:449
+#, elixir-autogen, elixir-format
+msgid "No pending appeals."
+msgstr "No pending appeals."
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:342
+#, elixir-autogen, elixir-format
+msgid "Pending moderator review"
+msgstr "Pending moderator review"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Photo"
+msgstr "Photo"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:16
+#: lib/animina_web/live/admin/photo_history_live.ex:48
+#, elixir-autogen, elixir-format
+msgid "Photo History"
+msgstr "Photo History"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:64
+#, elixir-autogen, elixir-format
+msgid "Photo ID: %{id}"
+msgstr "Photo ID: %{id}"
+
+#: lib/animina_web/components/layouts.ex:252
+#: lib/animina_web/live/admin/photo_history_live.ex:30
+#: lib/animina_web/live/admin/photo_reviews_live.ex:15
+#: lib/animina_web/live/admin/photo_reviews_live.ex:391
+#, elixir-autogen, elixir-format
+msgid "Photo Reviews"
+msgstr "Photo Reviews"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:166
+#, elixir-autogen, elixir-format
+msgid "Photo approved"
+msgstr "Photo approved"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:100
+#: lib/animina_web/live/admin/photo_reviews_live.ex:114
+#, elixir-autogen, elixir-format
+msgid "Photo approved."
+msgstr "Photo approved."
+
+#: lib/animina_web/live/admin/photo_history_live.ex:167
+#, elixir-autogen, elixir-format
+msgid "Photo rejected"
+msgstr "Photo rejected"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:466
+#: lib/animina_web/live/admin/photo_reviews_live.ex:473
+#: lib/animina_web/live/admin/photo_reviews_live.ex:593
+#, elixir-autogen, elixir-format
+msgid "Photo under review"
+msgstr "Photo under review"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:159
+#, elixir-autogen, elixir-format
+msgid "Processing completed"
+msgstr "Processing completed"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:158
+#, elixir-autogen, elixir-format
+msgid "Processing started"
+msgstr "Processing started"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:583
+#: lib/animina_web/live/admin/photo_reviews_live.ex:741
+#, elixir-autogen, elixir-format
+msgid "Reject"
+msgstr "Reject"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:230
+#: lib/animina_web/live/admin/photo_reviews_live.ex:709
+#, elixir-autogen, elixir-format
+msgid "Remove from blacklist"
+msgstr "Remove from blacklist"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:172
+#, elixir-autogen, elixir-format
+msgid "Removed from blacklist"
+msgstr "Removed from blacklist"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:128
+#, elixir-autogen, elixir-format
+msgid "Request Human Review"
+msgstr "Request Human Review"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:585
+#, elixir-autogen, elixir-format
+msgid "Review Appeal"
+msgstr "Review Appeal"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:537
+#: lib/animina_web/live/admin/photo_reviews_live.ex:686
+#, elixir-autogen, elixir-format
+msgid "Reviewer Notes (optional)"
+msgstr "Reviewer Notes (optional)"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:561
+#: lib/animina_web/live/admin/photo_reviews_live.ex:726
+#, elixir-autogen, elixir-format
+msgid "Similar images will be auto-rejected"
+msgstr "Similar images will be auto-rejected"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:664
+#, elixir-autogen, elixir-format
+msgid "Submitted"
+msgstr "Submitted"
+
+#: lib/animina_web/live/admin/photo_history_live.ex:175
+#, elixir-autogen, elixir-format
+msgid "System"
+msgstr "System"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:119
+#, elixir-autogen, elixir-format
+msgid "Think this was a mistake? You can request a human review."
+msgstr "Think this was a mistake? You can request a human review."
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:711
+#, elixir-autogen, elixir-format
+msgid "This photo is currently blacklisted"
+msgstr "This photo is currently blacklisted"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:528
+#: lib/animina_web/live/admin/photo_reviews_live.ex:676
+#, elixir-autogen, elixir-format
+msgid "View full history"
+msgstr "View full history"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:138
+#, elixir-autogen, elixir-format
+msgid "Your appeal was rejected. Please upload a different photo."
+msgstr "Your appeal was rejected. Please upload a different photo."
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:615
+#, elixir-autogen, elixir-format
+msgid "AI Analysis"
+msgstr "AI Analysis"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:724
+#, elixir-autogen, elixir-format
+msgid "Add rejected photo to blacklist automatically"
+msgstr "Add rejected photo to blacklist automatically"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:760
+#, elixir-autogen, elixir-format
+msgid "Blacklist check"
+msgstr "Blacklist check"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:761
+#, elixir-autogen, elixir-format
+msgid "Blacklist match"
+msgstr "Blacklist match"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:758
+#, elixir-autogen, elixir-format
+msgid "Face detection"
+msgstr "Face detection"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:764
+#, elixir-autogen, elixir-format
+msgid "Face escalated to Ollama"
+msgstr "Face escalated to Ollama"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:757
+#, elixir-autogen, elixir-format
+msgid "NSFW check"
+msgstr "NSFW check"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:763
+#, elixir-autogen, elixir-format
+msgid "NSFW escalated to Ollama"
+msgstr "NSFW escalated to Ollama"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:762
+#, elixir-autogen, elixir-format
+msgid "Rejected"
+msgstr "Rejected"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:149
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to delete your profile photo?"
+msgstr "Are you sure you want to delete your profile photo?"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:314
+#, elixir-autogen, elixir-format
+msgid "Could not delete photo. Please try again."
+msgstr "Could not delete photo. Please try again."
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:154
+#, elixir-autogen, elixir-format
+msgid "Delete Photo"
+msgstr "Delete Photo"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:308
+#, elixir-autogen, elixir-format
+msgid "Photo deleted."
+msgstr "Photo deleted."
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:270
+#, elixir-autogen, elixir-format
+msgid "Artificial delay in milliseconds (0 = no delay)"
+msgstr "Artificial delay in milliseconds (0 = no delay)"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:137
+#, elixir-autogen, elixir-format
+msgid "Auto"
+msgstr "Auto"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:225
+#, elixir-autogen, elixir-format
+msgid "Auto-approve"
+msgstr "Auto-approve"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:186
+#, elixir-autogen, elixir-format
+msgid "Auto-approve skips the check and returns a preset value"
+msgstr "Auto-approve skips the check and returns a preset value"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:236
+#, elixir-autogen, elixir-format
+msgid "Auto-approve value"
+msgstr "Auto-approve value"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:111
+#, elixir-autogen, elixir-format
+msgid "Control feature flags for development and testing."
+msgstr "Control feature flags for development and testing."
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:93
+#, elixir-autogen, elixir-format
+msgid "Could not save settings."
+msgstr "Could not save settings."
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:256
+#, elixir-autogen, elixir-format
+msgid "Delay (ms)"
+msgstr "Delay (ms)"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:187
+#, elixir-autogen, elixir-format
+msgid "Delays simulate slow processing for UX testing"
+msgstr "Delays simulate slow processing for UX testing"
+
+#: lib/animina_web/components/layouts.ex:303
+#: lib/animina_web/live/admin/feature_flags_live.ex:14
+#: lib/animina_web/live/admin/feature_flags_live.ex:109
+#, elixir-autogen, elixir-format
+msgid "Feature Flags"
+msgstr "Feature Flags"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:183
+#, elixir-autogen, elixir-format
+msgid "How it works"
+msgstr "How it works"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:172
+#, elixir-autogen, elixir-format
+msgid "Off"
+msgstr "Off"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:165
+#, elixir-autogen, elixir-format
+msgid "On"
+msgstr "On"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:119
+#, elixir-autogen, elixir-format
+msgid "Photo Processing"
+msgstr "Photo Processing"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:88
+#, elixir-autogen, elixir-format
+msgid "Settings saved."
+msgstr "Settings saved."
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:227
+#, elixir-autogen, elixir-format
+msgid "Skip this check and return a preset value"
+msgstr "Skip this check and return a preset value"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:185
+#, elixir-autogen, elixir-format
+msgid "Toggle switches enable/disable processing steps"
+msgstr "Toggle switches enable/disable processing steps"
+
+#: lib/animina_web/live/admin/feature_flags_live.ex:248
+#, elixir-autogen, elixir-format
+msgid "Value returned when auto-approve is enabled"
+msgstr "Value returned when auto-approve is enabled"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:144
+#, elixir-autogen, elixir-format
+msgid "%{count} entry"
+msgid_plural "%{count} entries"
+msgstr[0] "%{count} entry"
+msgstr[1] "%{count} entries"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:182
+#, elixir-autogen, elixir-format
+msgid "Added:"
+msgstr "Added:"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:65
+#, elixir-autogen, elixir-format
+msgid "Blacklist entry deleted."
+msgstr "Blacklist entry deleted."
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:156
+#, elixir-autogen, elixir-format
+msgid "Blacklisted photo"
+msgstr "Blacklisted photo"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:187
+#, elixir-autogen, elixir-format
+msgid "By:"
+msgstr "By:"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:70
+#, elixir-autogen, elixir-format
+msgid "Could not delete entry."
+msgstr "Could not delete entry."
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:219
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr "Delete"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:204
+#, elixir-autogen, elixir-format
+msgid "Delete this entry?"
+msgstr "Delete this entry?"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:56
+#, elixir-autogen, elixir-format
+msgid "Entry not found."
+msgstr "Entry not found."
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:130
+#, elixir-autogen, elixir-format
+msgid "Manage blacklisted photo hashes. Photos matching these hashes are automatically rejected."
+msgstr "Manage blacklisted photo hashes. Photos matching these hashes are automatically rejected."
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:139
+#, elixir-autogen, elixir-format
+msgid "No blacklist entries yet."
+msgstr "No blacklist entries yet."
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:162
+#, elixir-autogen, elixir-format
+msgid "No thumbnail"
+msgstr "No thumbnail"
+
+#: lib/animina_web/components/layouts.ex:291
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:14
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:128
+#, elixir-autogen, elixir-format
+msgid "Photo Blacklist"
+msgstr "Photo Blacklist"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:193
+#, elixir-autogen, elixir-format
+msgid "Source user:"
+msgstr "Source user:"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:393
+#, elixir-autogen, elixir-format
+msgid "%{count} pending appeal"
+msgid_plural "%{count} pending appeals"
+msgstr[0] "%{count} pending appeal"
+msgstr[1] "%{count} pending appeals"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:406
+#, elixir-autogen, elixir-format
+msgid "%{count} selected"
+msgid_plural "%{count} selected"
+msgstr[0] "%{count} selected"
+msgstr[1] "%{count} selected"
+
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:287
+#: lib/animina_web/live/admin/photo_reviews_live.ex:552
+#, elixir-autogen, elixir-format
+msgid "%{count} total"
+msgid_plural "%{count} total"
+msgstr[0] "%{count} total"
+msgstr[1] "%{count} total"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:433
+#, elixir-autogen, elixir-format
+msgid "Add to blacklist"
+msgstr "Add to blacklist"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:441
+#, elixir-autogen, elixir-format
+msgid "Clear selection"
+msgstr "Clear selection"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:568
+#, elixir-autogen, elixir-format
+msgid "Click"
+msgstr "Click"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:561
+#, elixir-autogen, elixir-format
+msgid "Close / Deselect"
+msgstr "Close / Deselect"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:563
+#, elixir-autogen, elixir-format
+msgid "Navigate pages"
+msgstr "Navigate pages"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:223
+#: lib/animina_web/live/admin/photo_reviews_live.ex:263
+#, elixir-autogen, elixir-format
+msgid "No appeals selected."
+msgstr "No appeals selected."
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:412
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:253
+#: lib/animina_web/live/admin/photo_reviews_live.ex:518
+#, elixir-autogen, elixir-format
+msgid "Page %{page} of %{total}"
+msgstr "Page %{page} of %{total}"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:427
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:268
+#: lib/animina_web/live/admin/photo_reviews_live.ex:533
+#, elixir-autogen, elixir-format
+msgid "Per page:"
+msgstr "Per page:"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:568
+#, elixir-autogen, elixir-format
+msgid "Range select"
+msgstr "Range select"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:422
+#, elixir-autogen, elixir-format
+msgid "Reject Selected"
+msgstr "Reject Selected"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:560
+#, elixir-autogen, elixir-format
+msgid "Reject selected"
+msgstr "Reject selected"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:246
+#, elixir-autogen, elixir-format
+msgid "Rejected %{count} appeal."
+msgid_plural "Rejected %{count} appeals."
+msgstr[0] "Rejected %{count} appeal."
+msgstr[1] "Rejected %{count} appeals."
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:241
+#, elixir-autogen, elixir-format
+msgid "Rejected %{resolved} appeals. %{failed} already resolved."
+msgstr "Rejected %{resolved} appeals. %{failed} already resolved."
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:558
+#, elixir-autogen, elixir-format
+msgid "Select all"
+msgstr "Select all"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:416
+#, elixir-autogen, elixir-format
+msgid "Approve Selected"
+msgstr ""
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:559
+#, elixir-autogen, elixir-format
+msgid "Approve selected"
+msgstr ""
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:279
+#, elixir-autogen, elixir-format
+msgid "Approved %{count} appeal."
+msgid_plural "Approved %{count} appeals."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:274
+#, elixir-autogen, elixir-format
+msgid "Approved %{resolved} appeals. %{failed} already resolved."
+msgstr ""
+
+#: lib/animina_web/components/layouts.ex:266
+#, elixir-autogen, elixir-format
+msgid "Administration"
+msgstr "Administration"
+
+#: lib/animina_web/components/layouts.ex:243
+#, elixir-autogen, elixir-format
+msgid "Moderation"
+msgstr "Moderation"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:75
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Processing image"
+msgstr ""
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:96
+#, elixir-autogen, elixir-format
+msgid "This usually takes 40 seconds"
+msgstr "This usually takes 40 seconds"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:405
+#, elixir-autogen, elixir-format
+msgid "File is too large (max 6MB)"
+msgstr ""
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:182
+#, elixir-autogen, elixir-format
+msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
+msgstr ""
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:645
+#, elixir-autogen, elixir-format
+msgid "Server"
+msgstr "Server"
+
+#: lib/animina_web/live/admin/photo_reviews_live.ex:759
+#, elixir-autogen, elixir-format
+msgid "Age detection"
+msgstr "Age detection"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:340
+#, elixir-autogen, elixir-format
+msgid "Age verification failed"
+msgstr "Age verification failed"
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:107
+#, elixir-autogen, elixir-format
+msgid "This photo appears to show a person under 20 years old. Only adults can use this dating platform."
+msgstr "This photo appears to show a person under 20 years old. Only adults can use this dating platform."
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:254
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{count} photo pending"
+msgid_plural "%{count} photos pending"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:630
+#, elixir-autogen, elixir-format
+msgid "%{n} days"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:629
+#, elixir-autogen, elixir-format
+msgid "%{n} hr"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:628
+#, elixir-autogen, elixir-format
+msgid "%{n} min"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:627
+#, elixir-autogen, elixir-format
+msgid "< 1 min"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:559
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Add to blacklist if rejected"
+msgstr "Add to blacklist"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:319
+#, elixir-autogen, elixir-format
+msgid "All"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:494
+#, elixir-autogen, elixir-format
+msgid "Bumblebee Score"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:489
+#, elixir-autogen, elixir-format
+msgid "Check Type"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:164
+#, elixir-autogen, elixir-format
+msgid "Could not queue for retry: %{reason}"
+msgstr ""
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:601
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Face"
+msgstr "France"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:281
+#, elixir-autogen, elixir-format
+msgid "Failed"
+msgstr "Failed"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:312
+#, elixir-autogen, elixir-format
+msgid "Filter by state"
+msgstr "Filter by state"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:602
+#, elixir-autogen, elixir-format
+msgid "Manual"
+msgstr "Manual"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:327
+#, elixir-autogen, elixir-format
+msgid "Needs Manual Review"
+msgstr "Needs Manual Review"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:511
+#, elixir-autogen, elixir-format
+msgid "Next Retry"
+msgstr "Next Retry"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:336
+#, elixir-autogen, elixir-format
+msgid "No photos in queue."
+msgstr "No photos in queue."
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:289
+#, elixir-autogen, elixir-format
+msgid "Ollama Health"
+msgstr "Ollama Health"
+
+#: lib/animina_web/components/layouts.ex:280
+#: lib/animina_web/live/admin/ollama_queue_live.ex:21
+#: lib/animina_web/live/admin/ollama_queue_live.ex:252
+#, elixir-autogen, elixir-format
+msgid "Ollama Queue"
+msgstr "Ollama Queue"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:324
+#, elixir-autogen, elixir-format
+msgid "Pending Face"
+msgstr "Pending Face"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:321
+#, elixir-autogen, elixir-format
+msgid "Pending NSFW"
+msgstr "Pending NSFW"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:350
+#, elixir-autogen, elixir-format
+msgid "Photo in queue"
+msgstr "Photo in queue"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:155
+#, elixir-autogen, elixir-format
+msgid "Photo queued for retry."
+msgstr "Photo queued for retry."
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:130
+#, elixir-autogen, elixir-format
+msgid "Photo rejected."
+msgstr "Photo rejected."
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:271
+#, elixir-autogen, elixir-format
+msgid "Processed"
+msgstr "Processed"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:266
+#, elixir-autogen, elixir-format
+msgid "Queue Size"
+msgstr "Queue Size"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:382
+#: lib/animina_web/live/admin/ollama_queue_live.ex:577
+#, elixir-autogen, elixir-format
+msgid "Retry"
+msgstr "Retry"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:505
+#, elixir-autogen, elixir-format
+msgid "Retry Count"
+msgstr "Retry Count"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:459
+#, elixir-autogen, elixir-format
+msgid "Review Photo"
+msgstr "Review Photo"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:391
+#, elixir-autogen, elixir-format
+msgid "Score"
+msgstr "Score"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:474
+#, elixir-autogen, elixir-format
+msgid "State"
+msgstr "State"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:276
+#, elixir-autogen, elixir-format
+msgid "Succeeded"
+msgstr "Succeeded"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:517
+#, elixir-autogen, elixir-format
+msgid "Uploaded"
+msgstr "Uploaded"
+
+#: lib/animina_web/live/admin/ollama_queue_live.ex:626
+#, elixir-autogen, elixir-format
+msgid "overdue"
+msgstr "overdue"

@@ -33,17 +33,19 @@ defmodule AniminaWeb.Router do
     end
   end
 
+  # Photo serving with signed URLs
+  scope "/", AniminaWeb do
+    pipe_through :browser
+
+    get "/photos/:signature/:filename", PhotoController, :show
+  end
+
   # Health check endpoint (excluded from force_ssl in prod.exs)
   scope "/", AniminaWeb do
     pipe_through :api
 
     get "/health", HealthController, :index
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", AniminaWeb do
-  #   pipe_through :api
-  # end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:animina, :dev_routes) do
@@ -78,12 +80,22 @@ defmodule AniminaWeb.Router do
       live "/users/settings/locations", UserLive.EditLocations, :edit
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
+      live "/users/settings/avatar", UserLive.AvatarUpload, :edit
       live "/users/waitlist", UserLive.Waitlist
+    end
+
+    live_session :require_moderator,
+      on_mount: [{AniminaWeb.UserAuth, :require_moderator}] do
+      live "/admin/photo-reviews", Admin.PhotoReviewsLive
     end
 
     live_session :require_admin,
       on_mount: [{AniminaWeb.UserAuth, :require_admin}] do
       live "/admin/roles", Admin.UserRolesLive
+      live "/admin/photos/:id/history", Admin.PhotoHistoryLive
+      live "/admin/feature-flags", Admin.FeatureFlagsLive
+      live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
+      live "/admin/ollama-queue", Admin.OllamaQueueLive
     end
 
     post "/role/switch", RoleController, :switch

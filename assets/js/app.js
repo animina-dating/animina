@@ -41,11 +41,36 @@ const AutoDismissFlash = {
   }
 }
 
+// ShiftSelect hook for range selection when shift-clicking checkboxes
+const ShiftSelect = {
+  mounted() {
+    this.el.addEventListener("click", (e) => {
+      const checkbox = e.target.closest("[data-appeal-checkbox]")
+      if (!checkbox) return
+
+      if (e.shiftKey) {
+        e.preventDefault()
+        const lastClickedId = checkbox.dataset.lastClickedId
+        const currentId = checkbox.dataset.appealCheckbox
+
+        if (lastClickedId && lastClickedId !== currentId) {
+          this.pushEvent("select-range", {
+            id: currentId,
+            last_id: lastClickedId
+          })
+        } else {
+          this.pushEvent("toggle-select", { id: currentId })
+        }
+      }
+    })
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, AutoDismissFlash},
+  hooks: {...colocatedHooks, AutoDismissFlash, ShiftSelect},
 })
 
 // Show progress bar on live navigation and form submits
@@ -76,6 +101,27 @@ window.addEventListener("phx:page-loading-stop", () => {
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
+
+// Open user dropdown menu if ?menu=open is in the URL (used after role switch)
+// We need to wait for LiveView to fully mount before manipulating the DOM
+function openMenuIfRequested() {
+  const urlParams = new URLSearchParams(window.location.search)
+  if (urlParams.get("menu") === "open") {
+    const dropdown = document.getElementById("user-dropdown")
+    if (dropdown) {
+      dropdown.classList.remove("hidden")
+    }
+    // Clean up the URL parameter
+    urlParams.delete("menu")
+    const newUrl = urlParams.toString()
+      ? `${window.location.pathname}?${urlParams.toString()}`
+      : window.location.pathname
+    window.history.replaceState({}, "", newUrl)
+  }
+}
+
+// Run after LiveView finishes loading (fires after initial mount and navigation)
+window.addEventListener("phx:page-loading-stop", openMenuIfRequested, { once: true })
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()

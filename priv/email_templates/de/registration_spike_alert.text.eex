@@ -15,3 +15,4 @@ Zusammenfassung:
 Stündliche Aufschlüsselung (Europe/Berlin):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 Uhr - <%= count %> <%= if count == 1, do: "Registrierung", else: "Registrierungen" %>
 <% end %>
+Debug-Übersicht: https://animina.de/debug

@@ -36,6 +36,13 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ "3"
     end
 
+    test "includes debug link in body" do
+      {:ok, email} =
+        UserNotifier.deliver_daily_new_users_report(3, {"Stefan", "stefan@example.com"})
+
+      assert email.text_body =~ "https://animina.de/debug"
+    end
+
     test "uses singular for count of 1" do
       {:ok, email} =
         UserNotifier.deliver_daily_new_users_report(1, {"Stefan", "stefan@example.com"})
@@ -64,6 +71,27 @@ defmodule Animina.Accounts.UserNotifierTest do
 
       assert email.text_body =~ "Wintermeyer Consulting"
       assert email.text_body =~ "sw@wintermeyer-consulting.de"
+    end
+  end
+
+  describe "deliver_registration_spike_alert/2" do
+    @spike_stats %{
+      today_count: 10,
+      daily_average: 3.0,
+      threshold: 4.5,
+      spike_factor: 3.3,
+      yesterday_count: 4,
+      hourly_breakdown: [{9, 5}, {10, 5}]
+    }
+
+    test "includes debug link in body" do
+      {:ok, email} =
+        UserNotifier.deliver_registration_spike_alert(
+          @spike_stats,
+          {"Stefan", "stefan@example.com"}
+        )
+
+      assert email.text_body =~ "https://animina.de/debug"
     end
   end
 

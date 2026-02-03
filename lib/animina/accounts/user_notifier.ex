@@ -145,6 +145,24 @@ defmodule Animina.Accounts.UserNotifier do
   defp user_display_name(%{display_name: name}) when is_binary(name), do: name
   defp user_display_name(_), do: nil
 
+  @doc """
+  Deliver an Ollama queue alert email to the admin.
+  Sent when the queue exceeds the threshold (default: 20 photos).
+  """
+  def deliver_ollama_queue_alert(stats) do
+    # Admin alert is always sent to Stefan in German
+    email = "sw@wintermeyer-consulting.de"
+
+    {subject, body} =
+      EmailTemplates.render("de", :ollama_queue_alert,
+        queue_count: stats.queue_count,
+        oldest_photo_age_hours: stats.oldest_photo_age_hours,
+        ollama_status: stats.ollama_status
+      )
+
+    deliver(email, subject, body)
+  end
+
   @german_months %{
     1 => "Januar",
     2 => "Februar",

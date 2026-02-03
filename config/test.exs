@@ -38,6 +38,14 @@ config :animina, start_scheduler: false
 # Disable the online users logger GenServer in tests
 config :animina, start_online_users_logger: false
 
+# Disable photo processing GenServer and ML models in tests
+config :animina, start_photo_processor: false
+config :animina, start_photo_serving: false
+config :animina, start_face_serving: false
+
+# Use a temp directory for photo uploads in tests
+config :animina, Animina.Photos, upload_dir: "tmp/test_uploads"
+
 # Use English locale in tests so assertions match English msgid strings
 config :animina, AniminaWeb.Gettext, default_locale: "en"
 

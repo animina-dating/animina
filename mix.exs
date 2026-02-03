@@ -4,7 +4,7 @@ defmodule Animina.MixProject do
   def project do
     [
       app: :animina,
-      version: "2.2.17",
+      version: "2.3.0",
       elixir: "~> 1.19",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -21,7 +21,7 @@ defmodule Animina.MixProject do
   def application do
     [
       mod: {Animina.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :fun_with_flags]
     ]
   end
 
@@ -73,7 +73,12 @@ defmodule Animina.MixProject do
       {:tz, "~> 0.28"},
       {:quantum, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:paper_trail, "~> 1.1"}
+      {:paper_trail, "~> 1.1"},
+      {:image, "~> 0.62"},
+      {:bumblebee, "~> 0.6"},
+      {:exla, "~> 0.10"},
+      {:ollama, "~> 0.9"},
+      {:fun_with_flags, "~> 1.12"}
     ]
   end
 

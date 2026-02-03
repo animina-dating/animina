@@ -27,6 +27,12 @@ defmodule AniminaWeb.Endpoint do
     only: AniminaWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
+  # Serve blacklist thumbnails for admin interface
+  plug Plug.Static,
+    at: "/uploads/blacklist",
+    from: "uploads/blacklist",
+    gzip: false
+
   if Code.ensure_loaded?(Tidewave) do
     plug Tidewave
   end

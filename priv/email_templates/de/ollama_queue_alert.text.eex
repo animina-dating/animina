@@ -1,0 +1,16 @@
+[ANIMINA] Ollama-Warteschlange Warnung: <%= @queue_count %> Fotos warten
+---
+
+Hallo,
+
+Die Ollama-Fotoverifizierungs-Warteschlange hat den Schwellenwert überschritten.
+
+Status der Warteschlange:
+- Wartende Fotos: <%= @queue_count %>
+- Ältestes Foto: <%= @oldest_photo_age_hours %> Stunden alt
+- Ollama-Status: <%= @ollama_status %>
+
+Bitte überprüfen Sie die Admin-Seite, um Maßnahmen zu ergreifen:
+https://animina.de/admin/ollama-queue
+
+Diese Warnung wird nur einmal pro Stunde gesendet.

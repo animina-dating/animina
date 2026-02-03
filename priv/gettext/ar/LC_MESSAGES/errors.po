@@ -137,7 +137,7 @@ msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
 msgid "must be equal to %{number}"
 msgstr "يجب أن يساوي %{number}"
 
-#: lib/animina/accounts.ex:230
+#: lib/animina/accounts.ex:437
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"

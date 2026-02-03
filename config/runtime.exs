@@ -23,6 +23,26 @@ end
 config :animina, AniminaWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Ollama multi-instance configuration via environment variable
+# Format: comma-separated URLs, e.g., "http://server1:11434/api,http://server2:11434/api"
+if ollama_urls = System.get_env("OLLAMA_URLS") do
+  default_timeout = String.to_integer(System.get_env("OLLAMA_TIMEOUT", "120000"))
+
+  instances =
+    ollama_urls
+    |> String.split(",")
+    |> Enum.map(&String.trim/1)
+    |> Enum.filter(&(&1 != ""))
+    |> Enum.with_index(1)
+    |> Enum.map(fn {url, priority} ->
+      %{url: url, timeout: default_timeout, priority: priority}
+    end)
+
+  if instances != [] do
+    config :animina, Animina.Photos, ollama_instances: instances
+  end
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||

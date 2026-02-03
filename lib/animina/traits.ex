@@ -1,25 +1,18 @@
 defmodule Animina.Traits do
   @moduledoc """
   Context for personality traits: categories, flags, user flags, opt-ins, and matching.
+
+  This module acts as a facade, delegating to specialized sub-modules:
+  - `Animina.Traits.Matching` - Flag overlap computation for user compatibility
+  - `Animina.Traits.Validations` - Single-select, exclusive-hard, and mixing validations
   """
 
   import Ecto.Query
 
-  alias Animina.Accounts.User
   alias Animina.Repo
   alias Animina.Traits.{Category, Flag, UserCategoryOptIn, UserFlag}
-
-  ## PaperTrail helpers
-
-  defp paper_trail_opts(opts) do
-    case Keyword.get(opts, :originator) do
-      %User{} = user -> [originator: user]
-      _ -> []
-    end
-  end
-
-  defp unwrap_paper_trail({:ok, %{model: model}}), do: {:ok, model}
-  defp unwrap_paper_trail({:error, _} = error), do: error
+  alias Animina.Traits.Validations
+  alias Animina.Utils.PaperTrail, as: PT
 
   # --- Categories ---
 
@@ -60,17 +53,17 @@ defmodule Animina.Traits do
   end
 
   def toggle_category_optin(user, category, opts \\ []) do
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
     case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
       nil ->
         %UserCategoryOptIn{}
         |> UserCategoryOptIn.changeset(%{user_id: user.id, category_id: category.id})
         |> PaperTrail.insert(pt_opts)
-        |> unwrap_paper_trail()
+        |> PT.unwrap()
 
       opt_in ->
-        PaperTrail.delete(opt_in, pt_opts) |> unwrap_paper_trail()
+        PaperTrail.delete(opt_in, pt_opts) |> PT.unwrap()
     end
   end
 
@@ -144,229 +137,15 @@ defmodule Animina.Traits do
 
   def add_user_flag(attrs, opts \\ []) do
     changeset = UserFlag.changeset(%UserFlag{}, attrs)
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
-    with :ok <- validate_single_select(attrs),
-         :ok <- validate_exclusive_hard(attrs),
-         :ok <- validate_no_mixing(attrs) do
-      with {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> unwrap_paper_trail() do
+    with :ok <- Validations.validate_single_select(attrs),
+         :ok <- Validations.validate_exclusive_hard(attrs),
+         :ok <- Validations.validate_no_mixing(attrs) do
+      with {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> PT.unwrap() do
         expand_on_write(user_flag)
         {:ok, user_flag}
       end
-    end
-  end
-
-  defp validate_single_select(attrs) do
-    flag_id = attrs[:flag_id] || attrs["flag_id"]
-    user_id = attrs[:user_id] || attrs["user_id"]
-
-    if flag_id && user_id do
-      do_validate_single_select(attrs, flag_id, user_id)
-    else
-      :ok
-    end
-  end
-
-  defp do_validate_single_select(attrs, flag_id, user_id) do
-    color = attrs[:color] || attrs["color"]
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
-    category = flag.category
-
-    if single_select_enforced?(category.selection_mode, color) do
-      check_single_select_count(attrs, user_id, color, category)
-    else
-      :ok
-    end
-  end
-
-  defp check_single_select_count(attrs, user_id, color, category) do
-    existing_count =
-      from(uf in UserFlag,
-        join: f in Flag,
-        on: f.id == uf.flag_id,
-        where:
-          uf.user_id == ^user_id and
-            uf.color == ^color and
-            uf.inherited == false and
-            f.category_id == ^category.id
-      )
-      |> Repo.aggregate(:count)
-
-    if existing_count > 0 do
-      changeset =
-        UserFlag.changeset(%UserFlag{}, attrs)
-        |> Ecto.Changeset.add_error(
-          :flag_id,
-          "single-select category allows only one flag per color"
-        )
-
-      {:error, changeset}
-    else
-      :ok
-    end
-  end
-
-  defp single_select_enforced?("single", _color), do: true
-  defp single_select_enforced?("single_white", "white"), do: true
-  defp single_select_enforced?(_mode, _color), do: false
-
-  defp validate_exclusive_hard(attrs) do
-    color = attrs[:color] || attrs["color"]
-
-    if color in ["white", "red"] do
-      :ok
-    else
-      flag_id = attrs[:flag_id] || attrs["flag_id"]
-      user_id = attrs[:user_id] || attrs["user_id"]
-
-      if flag_id && user_id do
-        do_validate_exclusive_hard(attrs, flag_id, user_id, color)
-      else
-        :ok
-      end
-    end
-  end
-
-  defp do_validate_exclusive_hard(attrs, flag_id, user_id, color) do
-    intensity = attrs[:intensity] || attrs["intensity"]
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
-
-    if flag.category.exclusive_hard do
-      check_exclusive_hard_add(attrs, user_id, color, flag.category.id, intensity)
-    else
-      :ok
-    end
-  end
-
-  defp check_exclusive_hard_add(attrs, user_id, color, category_id, "hard") do
-    if count_non_inherited_in_category(user_id, color, category_id) > 0 do
-      exclusive_hard_error(attrs, "cannot add hard flag when other flags exist")
-    else
-      :ok
-    end
-  end
-
-  defp check_exclusive_hard_add(attrs, user_id, color, category_id, "soft") do
-    if has_hard_in_category?(user_id, color, category_id) do
-      exclusive_hard_error(attrs, "cannot add soft flag when hard flag exists")
-    else
-      :ok
-    end
-  end
-
-  defp check_exclusive_hard_add(_attrs, _user_id, _color, _category_id, _intensity), do: :ok
-
-  defp count_non_inherited_in_category(user_id, color, category_id) do
-    from(uf in UserFlag,
-      join: f in Flag,
-      on: f.id == uf.flag_id,
-      where:
-        uf.user_id == ^user_id and
-          uf.color == ^color and
-          uf.inherited == false and
-          f.category_id == ^category_id
-    )
-    |> Repo.aggregate(:count)
-  end
-
-  defp has_hard_in_category?(user_id, color, category_id) do
-    from(uf in UserFlag,
-      join: f in Flag,
-      on: f.id == uf.flag_id,
-      where:
-        uf.user_id == ^user_id and
-          uf.color == ^color and
-          uf.inherited == false and
-          uf.intensity == "hard" and
-          f.category_id == ^category_id
-    )
-    |> Repo.exists?()
-  end
-
-  defp exclusive_hard_error(attrs, message) do
-    changeset =
-      UserFlag.changeset(%UserFlag{}, attrs)
-      |> Ecto.Changeset.add_error(:flag_id, "exclusive hard category: " <> message)
-
-    {:error, changeset}
-  end
-
-  defp validate_no_mixing(attrs) do
-    flag_id = attrs[:flag_id] || attrs["flag_id"]
-    user_id = attrs[:user_id] || attrs["user_id"]
-
-    if flag_id && user_id do
-      do_validate_no_mixing(attrs, flag_id, user_id)
-    else
-      :ok
-    end
-  end
-
-  defp do_validate_no_mixing(attrs, flag_id, user_id) do
-    color = attrs[:color] || attrs["color"]
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:children)
-
-    cond do
-      flag.children != [] ->
-        check_no_children_selected(attrs, flag, user_id, color)
-
-      flag.parent_id != nil ->
-        check_no_parent_selected(attrs, flag, user_id, color)
-
-      true ->
-        :ok
-    end
-  end
-
-  defp check_no_children_selected(attrs, flag, user_id, color) do
-    child_ids = Enum.map(flag.children, & &1.id)
-
-    existing =
-      from(uf in UserFlag,
-        where:
-          uf.user_id == ^user_id and
-            uf.color == ^color and
-            uf.inherited == false and
-            uf.flag_id in ^child_ids
-      )
-      |> Repo.aggregate(:count)
-
-    if existing > 0 do
-      changeset =
-        UserFlag.changeset(%UserFlag{}, attrs)
-        |> Ecto.Changeset.add_error(
-          :flag_id,
-          "cannot select parent when children are already selected"
-        )
-
-      {:error, changeset}
-    else
-      :ok
-    end
-  end
-
-  defp check_no_parent_selected(attrs, flag, user_id, color) do
-    existing =
-      from(uf in UserFlag,
-        where:
-          uf.user_id == ^user_id and
-            uf.color == ^color and
-            uf.inherited == false and
-            uf.flag_id == ^flag.parent_id
-      )
-      |> Repo.aggregate(:count)
-
-    if existing > 0 do
-      changeset =
-        UserFlag.changeset(%UserFlag{}, attrs)
-        |> Ecto.Changeset.add_error(
-          :flag_id,
-          "cannot select child when parent is already selected"
-        )
-
-      {:error, changeset}
-    else
-      :ok
     end
   end
 
@@ -390,14 +169,14 @@ defmodule Animina.Traits do
 
   def update_user_flag_intensity(user_flag_id, new_intensity, opts \\ []) do
     user_flag = Repo.get!(UserFlag, user_flag_id)
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
-    with :ok <- validate_exclusive_hard_update(user_flag, new_intensity) do
+    with :ok <- Validations.validate_exclusive_hard_update(user_flag, new_intensity) do
       with {:ok, updated} <-
              user_flag
              |> UserFlag.changeset(%{intensity: new_intensity})
              |> PaperTrail.update(pt_opts)
-             |> unwrap_paper_trail() do
+             |> PT.unwrap() do
         from(uf in UserFlag,
           where: uf.user_id == ^updated.user_id and uf.source_flag_id == ^updated.flag_id
         )
@@ -408,62 +187,20 @@ defmodule Animina.Traits do
     end
   end
 
-  defp validate_exclusive_hard_update(user_flag, new_intensity) do
-    if new_intensity == "hard" && user_flag.color not in ["white", "red"] do
-      check_exclusive_hard_promotion(user_flag, new_intensity)
-    else
-      :ok
-    end
-  end
-
-  defp check_exclusive_hard_promotion(user_flag, new_intensity) do
-    flag = Repo.get!(Flag, user_flag.flag_id) |> Repo.preload(:category)
-    category = flag.category
-
-    if category.exclusive_hard && count_others_in_category(user_flag, category) > 0 do
-      changeset =
-        user_flag
-        |> UserFlag.changeset(%{intensity: new_intensity})
-        |> Ecto.Changeset.add_error(
-          :flag_id,
-          "exclusive hard category: cannot promote to hard when other flags exist"
-        )
-
-      {:error, changeset}
-    else
-      :ok
-    end
-  end
-
-  defp count_others_in_category(user_flag, category) do
-    from(uf in UserFlag,
-      join: f in Flag,
-      on: f.id == uf.flag_id,
-      where:
-        uf.user_id == ^user_flag.user_id and
-          uf.color == ^user_flag.color and
-          uf.inherited == false and
-          f.category_id == ^category.id and
-          uf.id != ^user_flag.id
-    )
-    |> Repo.aggregate(:count)
-  end
-
   def remove_user_flag(user, user_flag_id, opts \\ []) do
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
     case Repo.get_by(UserFlag, id: user_flag_id, user_id: user.id) do
       nil ->
         {:ok, :already_removed}
 
       user_flag ->
-        # Remove inherited entries spawned by this flag (system-generated, no audit)
         from(uf in UserFlag,
           where: uf.user_id == ^user.id and uf.source_flag_id == ^user_flag.flag_id
         )
         |> Repo.delete_all()
 
-        PaperTrail.delete(user_flag, pt_opts) |> unwrap_paper_trail()
+        PaperTrail.delete(user_flag, pt_opts) |> PT.unwrap()
     end
   end
 
@@ -525,7 +262,7 @@ defmodule Animina.Traits do
     flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
     category = flag.category
 
-    if single_select_enforced?(category.selection_mode, color) do
+    if Validations.single_select_enforced?(category.selection_mode, color) do
       from(uf in UserFlag,
         join: f in Flag,
         on: f.id == uf.flag_id,
@@ -577,7 +314,7 @@ defmodule Animina.Traits do
   end
 
   def delete_all_user_flags(user, opts \\ []) do
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
     flags =
       from(uf in UserFlag, where: uf.user_id == ^user.id)
@@ -600,15 +337,14 @@ defmodule Animina.Traits do
       nil ->
         %UserCategoryOptIn{}
         |> UserCategoryOptIn.changeset(%{user_id: user.id, category_id: category.id})
-        |> PaperTrail.insert(paper_trail_opts(opts))
-        |> unwrap_paper_trail()
+        |> PaperTrail.insert(PT.opts(opts))
+        |> PT.unwrap()
     end
   end
 
   def opt_out_of_category(user, category, opts \\ []) do
-    pt_opts = paper_trail_opts(opts)
+    pt_opts = PT.opts(opts)
 
-    # Remove all user flags in this category (individually for audit)
     flag_ids =
       from(f in Flag, where: f.category_id == ^category.id, select: f.id)
       |> Repo.all()
@@ -621,7 +357,6 @@ defmodule Animina.Traits do
 
     Enum.each(user_flags, fn uf -> PaperTrail.delete(uf, pt_opts) end)
 
-    # Remove opt-in record
     case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
       nil -> :ok
       opt_in -> PaperTrail.delete(opt_in, pt_opts)
@@ -637,105 +372,7 @@ defmodule Animina.Traits do
     |> Repo.exists?()
   end
 
-  # --- Matching ---
+  # --- Delegations to Matching ---
 
-  def compute_flag_overlap(user_a, user_b) do
-    # Get all flags for both users (including inherited, for matching)
-    a_flags = list_all_user_flags(user_a)
-    b_flags = list_all_user_flags(user_b)
-
-    # Get sensitive categories each user has opted into
-    a_opted = list_user_opt_in_category_ids(user_a)
-    b_opted = list_user_opt_in_category_ids(user_b)
-
-    # Get sensitive category IDs
-    sensitive_ids = list_sensitive_category_ids()
-
-    # Filter out sensitive flags where both users haven't opted in
-    mutual_sensitive = MapSet.intersection(MapSet.new(a_opted), MapSet.new(b_opted))
-
-    a_flags = filter_sensitive(a_flags, sensitive_ids, mutual_sensitive)
-    b_flags = filter_sensitive(b_flags, sensitive_ids, mutual_sensitive)
-
-    a_by_color = group_by_color(a_flags)
-    b_by_color = group_by_color(b_flags)
-
-    a_white_ids = flag_ids(a_by_color["white"])
-    b_white_ids = flag_ids(b_by_color["white"])
-    a_green_ids = flag_ids(a_by_color["green"])
-    b_green_ids = flag_ids(b_by_color["green"])
-    a_red_ids = flag_ids(a_by_color["red"])
-    b_red_ids = flag_ids(b_by_color["red"])
-
-    # White-white: shared traits (bidirectional)
-    white_white = MapSet.intersection(a_white_ids, b_white_ids) |> MapSet.to_list()
-
-    # Green-white: B's green matches A's white OR A's green matches B's white
-    green_white_ba = MapSet.intersection(b_green_ids, a_white_ids) |> MapSet.to_list()
-    green_white_ab = MapSet.intersection(a_green_ids, b_white_ids) |> MapSet.to_list()
-    green_white = Enum.uniq(green_white_ba ++ green_white_ab)
-
-    # Red-white: B's red matches A's white OR A's red matches B's white
-    red_white_ba = MapSet.intersection(b_red_ids, a_white_ids) |> MapSet.to_list()
-    red_white_ab = MapSet.intersection(a_red_ids, b_white_ids) |> MapSet.to_list()
-    red_white = Enum.uniq(red_white_ba ++ red_white_ab)
-
-    # Build intensity lookup for green and red flags (from both users)
-    green_intensity =
-      build_intensity_map(a_by_color["green"])
-      |> Map.merge(build_intensity_map(b_by_color["green"]))
-
-    red_intensity =
-      build_intensity_map(a_by_color["red"]) |> Map.merge(build_intensity_map(b_by_color["red"]))
-
-    {green_white_hard, green_white_soft} = split_by_intensity(green_white, green_intensity)
-    {red_white_hard, red_white_soft} = split_by_intensity(red_white, red_intensity)
-
-    %{
-      white_white: white_white,
-      green_white: green_white,
-      green_white_hard: green_white_hard,
-      green_white_soft: green_white_soft,
-      red_white: red_white,
-      red_white_hard: red_white_hard,
-      red_white_soft: red_white_soft
-    }
-  end
-
-  defp list_user_opt_in_category_ids(user) do
-    from(o in UserCategoryOptIn, where: o.user_id == ^user.id, select: o.category_id)
-    |> Repo.all()
-  end
-
-  defp list_sensitive_category_ids do
-    from(c in Category, where: c.sensitive == true, select: c.id)
-    |> Repo.all()
-  end
-
-  defp filter_sensitive(user_flags, sensitive_ids, mutual_sensitive) do
-    sensitive_set = MapSet.new(sensitive_ids)
-
-    Enum.filter(user_flags, fn uf ->
-      flag = uf.flag
-      category_id = flag.category_id
-
-      if MapSet.member?(sensitive_set, category_id) do
-        MapSet.member?(mutual_sensitive, category_id)
-      else
-        true
-      end
-    end)
-  end
-
-  defp group_by_color(flags), do: Enum.group_by(flags, & &1.color)
-
-  defp flag_ids(nil), do: MapSet.new()
-  defp flag_ids(flags), do: flags |> Enum.map(& &1.flag_id) |> MapSet.new()
-
-  defp build_intensity_map(nil), do: %{}
-  defp build_intensity_map(flags), do: Map.new(flags, &{&1.flag_id, &1.intensity})
-
-  defp split_by_intensity(flag_ids, intensity_map) do
-    Enum.split_with(flag_ids, fn id -> Map.get(intensity_map, id, "hard") == "hard" end)
-  end
+  defdelegate compute_flag_overlap(user_a, user_b), to: Animina.Traits.Matching
 end

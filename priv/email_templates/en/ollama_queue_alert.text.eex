@@ -1,0 +1,16 @@
+[ANIMINA] Ollama queue alert: <%= @queue_count %> photos waiting
+---
+
+Hello,
+
+The Ollama photo verification queue has exceeded the threshold.
+
+Queue status:
+- Photos waiting: <%= @queue_count %>
+- Oldest photo age: <%= @oldest_photo_age_hours %> hours
+- Ollama health: <%= @ollama_status %>
+
+Please check the admin page to review and take action:
+https://animina.de/admin/ollama-queue
+
+This alert will only be sent once per hour.

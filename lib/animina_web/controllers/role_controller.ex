@@ -11,7 +11,7 @@ defmodule AniminaWeb.RoleController do
     if role in roles do
       conn
       |> put_session(:current_role, role)
-      |> redirect_back()
+      |> redirect_back(keep_menu_open: true)
     else
       conn
       |> put_flash(:error, gettext("You do not have that role."))
@@ -23,15 +23,30 @@ defmodule AniminaWeb.RoleController do
     redirect_back(conn)
   end
 
-  defp redirect_back(conn) do
+  defp redirect_back(conn, opts \\ []) do
+    keep_menu_open = Keyword.get(opts, :keep_menu_open, false)
+
     path =
       case get_req_header(conn, "referer") do
         [referer | _] ->
           uri = URI.parse(referer)
-          if uri.query, do: "#{uri.path || "/"}?#{uri.query}", else: uri.path || "/"
+          base_path = uri.path || "/"
+
+          # Build query params, adding menu=open if needed
+          existing_params =
+            if uri.query, do: URI.decode_query(uri.query), else: %{}
+
+          params =
+            if keep_menu_open,
+              do: Map.put(existing_params, "menu", "open"),
+              else: existing_params
+
+          if map_size(params) > 0,
+            do: "#{base_path}?#{URI.encode_query(params)}",
+            else: base_path
 
         _ ->
-          "/"
+          if keep_menu_open, do: "/?menu=open", else: "/"
       end
 
     redirect(conn, to: path)

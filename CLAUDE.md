@@ -13,8 +13,16 @@ ANIMINA is a Phoenix/Elixir online dating platform.
 The application is organized into these contexts:
 
 - **Animina.Accounts** (`lib/animina/accounts/`) - Users, authentication, messages, bookmarks, reactions, credits, reports, user roles
+  - Sub-modules: `Locations`, `Roles`, `SoftDelete`, `Statistics`
+- **Animina.Photos** (`lib/animina/photos/`) - Photo upload, processing, moderation
+  - Sub-modules: `Appeals`, `AuditLog`, `Blacklist`, `FileManagement`, `OllamaQueue`, `UrlSigning`
 - **Animina.Traits** (`lib/animina/traits/`) - Categories, flags, user_flags (personality traits system with white/green/red flags)
+  - Sub-modules: `Matching`, `Validations`
 - **Animina.GeoData** (`lib/animina/geo_data/`) - City data for location features
+- **Animina.Utils** (`lib/animina/utils/`) - Shared utilities
+  - `Pagination` - Common pagination logic
+  - `PaperTrail` - PaperTrail audit helpers
+  - `Timezone` - Berlin timezone conversions
 
 ### Layout Convention
 

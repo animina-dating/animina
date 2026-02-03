@@ -12,7 +12,8 @@ defmodule AniminaWeb.RoleControllerTest do
         |> log_in_user(user)
         |> post(~p"/role/switch", %{"role" => "admin"})
 
-      assert redirected_to(conn) == "/"
+      # Successful role switch includes ?menu=open to keep dropdown open
+      assert redirected_to(conn) == "/?menu=open"
       assert get_session(conn, :current_role) == "admin"
     end
 
@@ -36,11 +37,12 @@ defmodule AniminaWeb.RoleControllerTest do
         |> log_in_user(user, current_role: "admin")
         |> post(~p"/role/switch", %{"role" => "user"})
 
-      assert redirected_to(conn) == "/"
+      # Successful role switch includes ?menu=open to keep dropdown open
+      assert redirected_to(conn) == "/?menu=open"
       assert get_session(conn, :current_role) == "user"
     end
 
-    test "redirects back to referer", %{conn: conn} do
+    test "redirects back to referer with menu=open param", %{conn: conn} do
       user = admin_fixture()
 
       conn =
@@ -49,7 +51,8 @@ defmodule AniminaWeb.RoleControllerTest do
         |> put_req_header("referer", "http://localhost:4000/users/settings")
         |> post(~p"/role/switch", %{"role" => "admin"})
 
-      assert redirected_to(conn) == "/users/settings"
+      # Successful role switch includes ?menu=open to keep dropdown open
+      assert redirected_to(conn) == "/users/settings?menu=open"
     end
 
     test "requires authentication", %{conn: conn} do

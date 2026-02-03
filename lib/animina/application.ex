@@ -5,6 +5,8 @@ defmodule Animina.Application do
 
   use Application
 
+  alias Animina.Photos.PhotoProcessor
+
   @impl true
   def start(_type, _args) do
     # Reapply any pending hot code upgrade from a previous deploy
@@ -23,12 +25,45 @@ defmodule Animina.Application do
         maybe_start_cleaner() ++
         maybe_start_scheduler() ++
         maybe_start_hot_deploy() ++
-        maybe_start_online_users_logger()
+        maybe_start_online_users_logger() ++
+        maybe_start_ollama_health_tracker() ++
+        maybe_start_photo_processor() ++
+        maybe_start_ollama_retry_scheduler()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Animina.Supervisor]
-    Supervisor.start_link(children, opts)
+    result = Supervisor.start_link(children, opts)
+
+    # Initialize feature flags after Repo is ready
+    initialize_feature_flags()
+
+    # Recover stuck photos after services are ready (delayed to ensure GenServers are up)
+    recover_stuck_photos()
+
+    result
+  end
+
+  defp recover_stuck_photos do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      # Spawn a task to recover stuck photos after a short delay
+      # This ensures the PhotoProcessor GenServer is fully started
+      Task.start(fn ->
+        Process.sleep(1000)
+        PhotoProcessor.recover_stuck_photos()
+      end)
+    end
+  rescue
+    # Don't crash on startup if this fails
+    _ -> :ok
+  end
+
+  defp initialize_feature_flags do
+    # Enable all photo processing flags by default for safety
+    Animina.FeatureFlags.initialize_photo_flags()
+  rescue
+    # Don't crash on startup if this fails (e.g., during migrations)
+    _ -> :ok
   end
 
   defp maybe_start_cleaner do
@@ -60,6 +95,30 @@ defmodule Animina.Application do
   defp maybe_start_online_users_logger do
     if Application.get_env(:animina, :start_online_users_logger, true) do
       [Animina.Accounts.OnlineUsersLogger]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_ollama_health_tracker do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      [Animina.Photos.OllamaHealthTracker]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_photo_processor do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      [Animina.Photos.PhotoProcessor]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_ollama_retry_scheduler do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      [Animina.Photos.OllamaRetryScheduler]
     else
       []
     end

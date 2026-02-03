@@ -3,6 +3,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
 
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
+  import Animina.PhotosFixtures
   import Animina.TraitsFixtures
 
   alias Animina.Traits
@@ -41,12 +42,13 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
       assert %{"error" => "You must log in to access this page."} = flash
     end
 
-    test "all 7 navigation links are present with correct paths", %{conn: conn} do
+    test "all 8 navigation links are present with correct paths", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings")
 
+      assert has_element?(lv, "a[href='/users/settings/avatar']")
       assert has_element?(lv, "a[href='/users/settings/profile']")
       assert has_element?(lv, "a[href='/users/settings/preferences']")
       assert has_element?(lv, "a[href='/users/settings/account']")
@@ -123,6 +125,51 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
 
       # User fixture creates location with zip 10115 which is Berlin
       assert html =~ "Berlin"
+    end
+
+    test "shows Profile Photo card in settings", %{conn: conn} do
+      {:ok, lv, html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/users/settings")
+
+      assert html =~ "Profile Photo"
+      assert has_element?(lv, "a[href='/users/settings/avatar']")
+    end
+
+    test "shows No photo preview when no avatar", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings")
+
+      assert html =~ "No photo"
+    end
+
+    test "shows Photo uploaded preview when avatar is approved", %{conn: conn} do
+      user = user_fixture(language: "en")
+      _avatar = approved_photo_fixture(%{owner_type: "User", owner_id: user.id, type: "avatar"})
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings")
+
+      assert html =~ "Photo uploaded"
+    end
+
+    test "shows Processing preview when avatar is pending", %{conn: conn} do
+      user = user_fixture(language: "en")
+      _avatar = photo_fixture(%{owner_type: "User", owner_id: user.id, type: "avatar"})
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/settings")
+
+      assert html =~ "Processing"
     end
   end
 end

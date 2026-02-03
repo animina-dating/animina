@@ -101,8 +101,41 @@ config :paper_trail,
   originator: [name: :user, model: Animina.Accounts.User],
   strict_mode: false
 
+# Photo storage and processing configuration
+config :animina, Animina.Photos,
+  upload_dir: "uploads",
+  max_upload_size: 10_000_000,
+  max_dimension: 1200,
+  thumbnail_dimension: 400,
+  webp_quality: 80,
+  pixelate_scale: 0.05,
+  # Ollama configuration - supports multiple instances with failover
+  # If ollama_instances is not set, ollama_url is used as a single instance
+  ollama_url: "http://localhost:11434/api",
+  ollama_model: "qwen3-vl:8b",
+  ollama_timeout: 120_000,
+  ollama_total_timeout: 300_000,
+  ollama_circuit_breaker_threshold: 3,
+  # Example multi-instance config (uncomment to enable):
+  # ollama_instances: [
+  #   %{url: "http://localhost:11434/api", timeout: 120_000, priority: 1},
+  #   %{url: "http://192.168.1.100:11434/api", timeout: 120_000, priority: 2}
+  # ],
+  ollama_circuit_breaker_reset_ms: 60_000
+
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase
+
+# FunWithFlags feature flag library
+config :fun_with_flags, :persistence,
+  adapter: FunWithFlags.Store.Persistent.Ecto,
+  repo: Animina.Repo
+
+config :fun_with_flags, :cache,
+  enabled: true,
+  ttl: 900
+
+config :fun_with_flags, :cache_bust_notifications, enabled: false
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

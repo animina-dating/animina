@@ -6,6 +6,7 @@ defmodule AniminaWeb.Layouts do
   use AniminaWeb, :html
 
   alias Animina.Accounts.Scope
+  alias Animina.Photos
   alias AniminaWeb.Languages
 
   # Embed all files in layouts/* within this module.
@@ -183,6 +184,7 @@ defmodule AniminaWeb.Layouts do
                       )
                     }
                   >
+                    <!-- User Info -->
                     <div class="px-4 py-2 border-b border-base-300">
                       <p class="text-sm font-medium text-base-content truncate">
                         {@current_scope.user.display_name}
@@ -191,12 +193,13 @@ defmodule AniminaWeb.Layouts do
                         {@current_scope.user.email}
                       </p>
                     </div>
-                    <%= if @current_scope.user.state == "waitlisted" do %>
+                    <!-- Waitlist Banner (only shown in user role) -->
+                    <%= if @current_scope.user.state == "waitlisted" && @current_scope.current_role == "user" do %>
                       <% referral_count =
                         Animina.Accounts.count_confirmed_referrals(@current_scope.user) %>
                       <a
                         href="/users/waitlist"
-                        class="block px-4 py-2 bg-amber-50 border-b border-base-300 hover:bg-amber-100 transition-colors"
+                        class="waitlist-badge block px-4 py-2 bg-amber-50 border-b border-base-300 hover:bg-amber-100 transition-colors"
                       >
                         <div class="flex items-center gap-2">
                           <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold">
@@ -220,59 +223,127 @@ defmodule AniminaWeb.Layouts do
                         </div>
                       </a>
                     <% end %>
+                    <!-- Account Section -->
+                    <div class="px-4 py-1.5">
+                      <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                        {gettext("Account")}
+                      </p>
+                    </div>
                     <a
                       href="/users/settings"
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
                       {gettext("Settings")}
                     </a>
-                    <%= if Scope.admin?(@current_scope) do %>
-                      <a
-                        href="/admin/roles"
-                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                      >
-                        {gettext("Manage Roles")}
-                      </a>
-                      <a
-                        href="/debug"
-                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                      >
-                        {gettext("System Debug")}
-                      </a>
+                    <!-- Moderation Section (only in moderator role) -->
+                    <%= if @current_scope.current_role == "moderator" do %>
+                      <div class="border-t border-base-300 mt-1">
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                            {gettext("Moderation")}
+                          </p>
+                        </div>
+                        <% pending_count =
+                          Photos.count_pending_appeals(viewer_id: @current_scope.user.id) %>
+                        <a
+                          href="/admin/photo-reviews"
+                          class="flex items-center justify-between px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          <span>{gettext("Photo Reviews")}</span>
+                          <%= if pending_count > 0 do %>
+                            <span class="badge badge-sm badge-error">
+                              {format_count(pending_count)}
+                            </span>
+                          <% end %>
+                        </a>
+                      </div>
                     <% end %>
+                    <!-- Administration Section (only in admin role) -->
+                    <%= if @current_scope.current_role == "admin" do %>
+                      <div class="border-t border-base-300 mt-1">
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                            {gettext("Administration")}
+                          </p>
+                        </div>
+                        <% ollama_queue_count = Photos.count_ollama_queue() %>
+                        <a
+                          href="/admin/ollama-queue"
+                          class={[
+                            "flex items-center justify-between px-4 py-2 text-sm transition-colors",
+                            if(ollama_queue_count > 0,
+                              do: "text-base-content/70 hover:bg-base-200 hover:text-primary",
+                              else:
+                                "text-base-content/40 hover:bg-base-200 hover:text-base-content/60"
+                            )
+                          ]}
+                        >
+                          <span>{gettext("Ollama Queue")}</span>
+                          <%= if ollama_queue_count > 0 do %>
+                            <span class="badge badge-sm badge-warning">
+                              {format_count(ollama_queue_count)}
+                            </span>
+                          <% end %>
+                        </a>
+                        <a
+                          href="/admin/photo-blacklist"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Photo Blacklist")}
+                        </a>
+                        <a
+                          href="/admin/roles"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Manage Roles")}
+                        </a>
+                        <a
+                          href="/admin/feature-flags"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Feature Flags")}
+                        </a>
+                        <a
+                          href="/debug"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("System Debug")}
+                        </a>
+                      </div>
+                    <% end %>
+                    <!-- Role Switcher -->
                     <%= if Scope.has_multiple_roles?(@current_scope) do %>
-                      <div class="border-t border-base-300">
-                        <div class="px-4 py-2">
-                          <p class="text-xs font-semibold text-base-content/50 uppercase tracking-wider">
+                      <div class="border-t border-base-300 mt-1">
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
                             {gettext("Switch Role")}
                           </p>
                         </div>
                         <%= for role <- @current_scope.roles do %>
-                          <form action="/role/switch" method="post">
-                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
-                            <input type="hidden" name="role" value={role} />
-                            <button
-                              type="submit"
-                              class={[
-                                "block w-full text-start px-4 py-2 text-sm transition-colors",
-                                if(role == @current_scope.current_role,
-                                  do: "bg-primary/10 text-primary font-medium",
-                                  else: "text-base-content/70 hover:bg-base-200 hover:text-primary"
-                                )
-                              ]}
-                            >
+                          <%= if role == @current_scope.current_role do %>
+                            <div class="block w-full text-start px-4 py-2 text-sm bg-primary/10 text-primary font-medium cursor-default">
                               {role_label(role)}
-                              <%= if role == @current_scope.current_role do %>
-                                <span class="text-xs text-base-content/50">
-                                  ({gettext("active")})
-                                </span>
-                              <% end %>
-                            </button>
-                          </form>
+                              <span class="text-xs text-base-content/50">
+                                ({gettext("active")})
+                              </span>
+                            </div>
+                          <% else %>
+                            <form action="/role/switch" method="post">
+                              <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                              <input type="hidden" name="role" value={role} />
+                              <button
+                                type="submit"
+                                class="block w-full text-start px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                              >
+                                {role_label(role)}
+                              </button>
+                            </form>
+                          <% end %>
                         <% end %>
                       </div>
                     <% end %>
-                    <div class="border-t border-base-300">
+                    <!-- Logout -->
+                    <div class="border-t border-base-300 mt-1">
                       <.link
                         href="/users/log-out"
                         method="delete"
@@ -448,6 +519,28 @@ defmodule AniminaWeb.Layouts do
   defp role_label("moderator"), do: gettext("Moderator")
   defp role_label("user"), do: gettext("User")
   defp role_label(role), do: role
+
+  defp format_count(count) when count >= 1_000_000 do
+    value = count / 1_000_000
+    format_decimal(value) <> "m"
+  end
+
+  defp format_count(count) when count >= 1_000 do
+    value = count / 1_000
+    format_decimal(value) <> "k"
+  end
+
+  defp format_count(count), do: to_string(count)
+
+  defp format_decimal(value) do
+    rounded = Float.round(value, 1)
+
+    if rounded == trunc(rounded) do
+      to_string(trunc(rounded))
+    else
+      to_string(rounded)
+    end
+  end
 
   @doc """
   Shows the flash group with standard titles and content.
