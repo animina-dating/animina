@@ -144,10 +144,18 @@ defmodule AniminaWeb.Layouts do
                       )
                     }
                   >
-                    <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-primary border-primary">
-                      <span class="text-sm font-semibold text-primary-content">
-                        {String.first(@current_scope.user.display_name || @current_scope.user.email)}
-                      </span>
+                    <div class="relative">
+                      <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-primary border-primary">
+                        <span class="text-sm font-semibold text-primary-content">
+                          {String.first(@current_scope.user.display_name || @current_scope.user.email)}
+                        </span>
+                      </div>
+                      <%= if @current_scope.user.state == "waitlisted" do %>
+                        <span
+                          class="absolute -top-0.5 -end-0.5 w-3 h-3 bg-amber-500 border-2 border-base-200 rounded-full"
+                          title={gettext("On waitlist")}
+                        />
+                      <% end %>
                     </div>
                     <span class="text-sm font-medium text-base-content truncate max-w-32">
                       {@current_scope.user.display_name || @current_scope.user.email}
@@ -163,15 +171,6 @@ defmodule AniminaWeb.Layouts do
                       </span>
                     <% end %>
                   </button>
-                  <%= if @current_scope.user.state == "waitlisted" do %>
-                    <a
-                      href="/users/waitlist"
-                      id="waitlist-badge"
-                      class="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
-                    >
-                      {gettext("Waitlist")}
-                    </a>
-                  <% end %>
 
                   <div
                     id="user-dropdown"
@@ -192,6 +191,35 @@ defmodule AniminaWeb.Layouts do
                         {@current_scope.user.email}
                       </p>
                     </div>
+                    <%= if @current_scope.user.state == "waitlisted" do %>
+                      <% referral_count =
+                        Animina.Accounts.count_confirmed_referrals(@current_scope.user) %>
+                      <a
+                        href="/users/waitlist"
+                        class="block px-4 py-2 bg-amber-50 border-b border-base-300 hover:bg-amber-100 transition-colors"
+                      >
+                        <div class="flex items-center gap-2">
+                          <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold">
+                            <.icon name="hero-clock-micro" class="size-3" />
+                          </span>
+                          <span class="text-sm font-medium text-amber-800">
+                            {gettext("On Waitlist")}
+                          </span>
+                        </div>
+                        <div class="mt-2">
+                          <div class="flex justify-between text-xs text-amber-700 mb-1">
+                            <span>{gettext("Referral progress")}</span>
+                            <span class="font-medium">{referral_count}/5</span>
+                          </div>
+                          <div class="w-full bg-amber-200 rounded-full h-1.5">
+                            <div
+                              class="bg-amber-500 h-1.5 rounded-full"
+                              style={"width: #{min(100, referral_count / 5 * 100)}%"}
+                            />
+                          </div>
+                        </div>
+                      </a>
+                    <% end %>
                     <a
                       href="/users/settings"
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
