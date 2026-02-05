@@ -91,34 +91,30 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
 
   @impl true
   def mount(%{"user_id" => user_id}, _session, socket) do
-    case Accounts.get_user(user_id) do
-      nil ->
-        {:ok,
-         socket
-         |> put_flash(:error, gettext("User not found"))
-         |> redirect(to: ~p"/")}
+    current_user = socket.assigns.current_scope && socket.assigns.current_scope.user
+    profile_user = Accounts.get_user(user_id)
+    owner? = current_user && profile_user && current_user.id == profile_user.id
 
-      profile_user ->
-        current_user = socket.assigns.current_scope && socket.assigns.current_scope.user
-        owner? = current_user && current_user.id == profile_user.id
+    if owner? do
+      # Show moodboard with all items (including hidden)
+      items = Moodboard.list_moodboard_with_hidden(profile_user.id)
 
-        items =
-          if owner? do
-            Moodboard.list_moodboard_with_hidden(profile_user.id)
-          else
-            Moodboard.list_moodboard(profile_user.id)
-          end
-
-        {:ok,
-         assign(socket,
-           page_title: "#{profile_user.display_name} - #{gettext("Moodboard")}",
-           profile_user: profile_user,
-           owner?: owner?,
-           items: items,
-           current_user_id: current_user && current_user.id,
-           device_type: "desktop",
-           columns: 3
-         )}
+      {:ok,
+       assign(socket,
+         page_title: "#{profile_user.display_name} - #{gettext("Moodboard")}",
+         profile_user: profile_user,
+         owner?: true,
+         items: items,
+         current_user_id: current_user.id,
+         device_type: "desktop",
+         columns: 3
+       )}
+    else
+      # Vague denial - same for non-existent user OR non-owner
+      {:ok,
+       socket
+       |> put_flash(:error, gettext("This page doesn't exist or you don't have access."))
+       |> redirect(to: ~p"/")}
     end
   end
 

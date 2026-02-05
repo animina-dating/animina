@@ -3294,7 +3294,7 @@ msgstr "Datei auswählen"
 msgid "Drag and drop your photo here, or"
 msgstr "Ziehe dein Foto hierher oder"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:550
+#: lib/animina_web/live/user_live/avatar_upload.ex:547
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
 msgstr "Ungültiger Dateityp. Bitte lade ein Bild hoch."
@@ -3304,12 +3304,12 @@ msgstr "Ungültiger Dateityp. Bitte lade ein Bild hoch."
 msgid "No photo"
 msgstr "Kein Foto"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:551
+#: lib/animina_web/live/user_live/avatar_upload.ex:548
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
 msgstr "Nur eine Datei gleichzeitig"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:445
+#: lib/animina_web/live/user_live/avatar_upload.ex:444
 #, elixir-autogen, elixir-format
 msgid "Pending review"
 msgstr "Wird überprüft"
@@ -3320,14 +3320,14 @@ msgstr "Wird überprüft"
 msgid "Photo uploaded"
 msgstr "Foto hochgeladen"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:527
-#: lib/animina_web/live/user_live/avatar_upload.ex:536
+#: lib/animina_web/live/user_live/avatar_upload.ex:524
+#: lib/animina_web/live/user_live/avatar_upload.ex:533
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
 msgstr "Foto hochgeladen! Es wird in Kürze überprüft."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:446
-#: lib/animina_web/live/user_live/avatar_upload.ex:491
+#: lib/animina_web/live/user_live/avatar_upload.ex:445
+#: lib/animina_web/live/user_live/avatar_upload.ex:471
 #: lib/animina_web/live/user_live/settings_hub.ex:199
 #, elixir-autogen, elixir-format
 msgid "Processing"
@@ -3357,20 +3357,21 @@ msgstr "Foto hochladen"
 msgid "Upload a photo that shows your face clearly"
 msgstr "Lade ein Foto hoch, auf dem dein Gesicht gut zu sehen ist"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:552
+#: lib/animina_web/live/user_live/avatar_upload.ex:549
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:1038
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr "Fehler beim Hochladen"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:484
-#: lib/animina_web/live/user_live/avatar_upload.ex:488
+#: lib/animina_web/live/user_live/avatar_upload.ex:468
+#: lib/animina_web/live/user_live/avatar_upload.ex:473
+#: lib/animina_web/live/user_live/avatar_upload.ex:486
 #: lib/animina_web/live/user_live/settings_hub.ex:198
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr "Dieses Bild kann nicht als Avatar verwendet werden"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:542
+#: lib/animina_web/live/user_live/avatar_upload.ex:539
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
 msgstr "Hochladen fehlgeschlagen. Bitte versuche es erneut."
@@ -3390,8 +3391,8 @@ msgstr "Auf der Warteliste"
 msgid "Referral progress"
 msgstr "Empfehlungen"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:459
-#: lib/animina_web/live/user_live/avatar_upload.ex:463
+#: lib/animina_web/live/user_live/avatar_upload.ex:458
+#: lib/animina_web/live/user_live/avatar_upload.ex:462
 #, elixir-autogen, elixir-format
 msgid "No face detected"
 msgstr "Keine einzelne Person auf dem Foto."
@@ -3423,7 +3424,7 @@ msgid "Appeal approved"
 msgstr "Einspruch genehmigt"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:170
-#: lib/animina_web/live/user_live/avatar_upload.ex:490
+#: lib/animina_web/live/user_live/avatar_upload.ex:470
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
 msgstr "Einspruch abgelehnt"
@@ -3516,7 +3517,7 @@ msgstr "Kein Verlauf für dieses Foto vorhanden."
 msgid "No pending appeals."
 msgstr "Keine ausstehenden Einsprüche."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:489
+#: lib/animina_web/live/user_live/avatar_upload.ex:469
 #, elixir-autogen, elixir-format
 msgid "Pending moderator review"
 msgstr "Warte auf Moderator-Prüfung"
@@ -4019,7 +4020,7 @@ msgstr "Wird verarbeitet"
 msgid "This usually takes 40 seconds"
 msgstr "Das dauert normalerweise 40 Sekunden"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:549
+#: lib/animina_web/live/user_live/avatar_upload.ex:546
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:1035
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 6MB)"
@@ -4194,7 +4195,7 @@ msgid "Add Photo"
 msgstr "Foto hinzufügen"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:90
-#: lib/animina_web/live/user_live/avatar_upload.ex:447
+#: lib/animina_web/live/user_live/avatar_upload.ex:446
 #, elixir-autogen, elixir-format
 msgid "Analyzing photo"
 msgstr "Foto wird analysiert"
@@ -4270,11 +4271,6 @@ msgstr "Ausstehende Ollama-Prüfung"
 #, elixir-autogen, elixir-format
 msgid "Too many files"
 msgstr "Zu viele Dateien"
-
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:98
-#, elixir-autogen, elixir-format
-msgid "User not found"
-msgstr "Benutzer nicht gefunden"
 
 #: lib/animina_web/components/moodboard_components.ex:108
 #, elixir-autogen, elixir-format
@@ -4529,7 +4525,7 @@ msgstr "Element zum Moodboard hinzugefügt"
 
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:32
 #: lib/animina_web/live/user_live/profile_moodboard_live.ex:29
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:114
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
 msgstr "Moodboard"
@@ -4810,25 +4806,27 @@ msgstr "Letzte %{count} gespeichert"
 msgid "Control feature flags and system settings."
 msgstr "Feature-Flags und Systemeinstellungen verwalten."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:478
+#: lib/animina_web/live/user_live/avatar_upload.ex:483
 #, elixir-autogen, elixir-format
 msgid "Attire violation"
 msgstr "Kleidungsverstoß"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:469
-#: lib/animina_web/live/user_live/avatar_upload.ex:472
-#: lib/animina_web/live/user_live/avatar_upload.ex:475
-#: lib/animina_web/live/user_live/avatar_upload.ex:481
+#: lib/animina_web/live/user_live/avatar_upload.ex:480
 #, elixir-autogen, elixir-format
 msgid "Content violation"
 msgstr "Inhaltsverstoß"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:453
+#: lib/animina_web/live/user_live/avatar_upload.ex:452
 #, elixir-autogen, elixir-format
 msgid "Multiple people detected"
 msgstr "Mehrere Personen erkannt"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:456
+#: lib/animina_web/live/user_live/avatar_upload.ex:455
 #, elixir-autogen, elixir-format
 msgid "Photo not allowed"
 msgstr "Foto nicht erlaubt"
+
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:116
+#, elixir-autogen, elixir-format
+msgid "This page doesn't exist or you don't have access."
+msgstr "Diese Seite existiert nicht oder Sie haben keinen Zugriff."

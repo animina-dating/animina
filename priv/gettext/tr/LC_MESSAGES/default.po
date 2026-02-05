@@ -3294,7 +3294,7 @@ msgstr ""
 msgid "Drag and drop your photo here, or"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:550
+#: lib/animina_web/live/user_live/avatar_upload.ex:547
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
 msgstr ""
@@ -3304,12 +3304,12 @@ msgstr ""
 msgid "No photo"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:551
+#: lib/animina_web/live/user_live/avatar_upload.ex:548
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:445
+#: lib/animina_web/live/user_live/avatar_upload.ex:444
 #, elixir-autogen, elixir-format
 msgid "Pending review"
 msgstr ""
@@ -3320,14 +3320,14 @@ msgstr ""
 msgid "Photo uploaded"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:527
-#: lib/animina_web/live/user_live/avatar_upload.ex:536
+#: lib/animina_web/live/user_live/avatar_upload.ex:524
+#: lib/animina_web/live/user_live/avatar_upload.ex:533
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:446
-#: lib/animina_web/live/user_live/avatar_upload.ex:491
+#: lib/animina_web/live/user_live/avatar_upload.ex:445
+#: lib/animina_web/live/user_live/avatar_upload.ex:471
 #: lib/animina_web/live/user_live/settings_hub.ex:199
 #, elixir-autogen, elixir-format
 msgid "Processing"
@@ -3357,20 +3357,21 @@ msgstr ""
 msgid "Upload a photo that shows your face clearly"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:552
+#: lib/animina_web/live/user_live/avatar_upload.ex:549
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:1038
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:484
-#: lib/animina_web/live/user_live/avatar_upload.ex:488
+#: lib/animina_web/live/user_live/avatar_upload.ex:468
+#: lib/animina_web/live/user_live/avatar_upload.ex:473
+#: lib/animina_web/live/user_live/avatar_upload.ex:486
 #: lib/animina_web/live/user_live/settings_hub.ex:198
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:542
+#: lib/animina_web/live/user_live/avatar_upload.ex:539
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
 msgstr ""
@@ -3390,8 +3391,8 @@ msgstr "Bekleme listesi"
 msgid "Referral progress"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:459
-#: lib/animina_web/live/user_live/avatar_upload.ex:463
+#: lib/animina_web/live/user_live/avatar_upload.ex:458
+#: lib/animina_web/live/user_live/avatar_upload.ex:462
 #, elixir-autogen, elixir-format
 msgid "No face detected"
 msgstr ""
@@ -3423,7 +3424,7 @@ msgid "Appeal approved"
 msgstr ""
 
 #: lib/animina_web/live/admin/photo_history_live.ex:170
-#: lib/animina_web/live/user_live/avatar_upload.ex:490
+#: lib/animina_web/live/user_live/avatar_upload.ex:470
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
 msgstr ""
@@ -3516,7 +3517,7 @@ msgstr ""
 msgid "No pending appeals."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:489
+#: lib/animina_web/live/user_live/avatar_upload.ex:469
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Pending moderator review"
 msgstr ""
@@ -4019,7 +4020,7 @@ msgstr ""
 msgid "This usually takes 40 seconds"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:549
+#: lib/animina_web/live/user_live/avatar_upload.ex:546
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:1035
 #, elixir-autogen, elixir-format, fuzzy
 msgid "File is too large (max 6MB)"
@@ -4194,7 +4195,7 @@ msgid "Add Photo"
 msgstr ""
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:90
-#: lib/animina_web/live/user_live/avatar_upload.ex:447
+#: lib/animina_web/live/user_live/avatar_upload.ex:446
 #, elixir-autogen, elixir-format
 msgid "Analyzing photo"
 msgstr ""
@@ -4269,11 +4270,6 @@ msgstr ""
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:1037
 #, elixir-autogen, elixir-format
 msgid "Too many files"
-msgstr ""
-
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:98
-#, elixir-autogen, elixir-format
-msgid "User not found"
 msgstr ""
 
 #: lib/animina_web/components/moodboard_components.ex:108
@@ -4529,7 +4525,7 @@ msgstr ""
 
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:32
 #: lib/animina_web/live/user_live/profile_moodboard_live.ex:29
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:114
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
 msgstr ""
@@ -4810,25 +4806,27 @@ msgstr ""
 msgid "Control feature flags and system settings."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:478
+#: lib/animina_web/live/user_live/avatar_upload.ex:483
 #, elixir-autogen, elixir-format
 msgid "Attire violation"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:469
-#: lib/animina_web/live/user_live/avatar_upload.ex:472
-#: lib/animina_web/live/user_live/avatar_upload.ex:475
-#: lib/animina_web/live/user_live/avatar_upload.ex:481
+#: lib/animina_web/live/user_live/avatar_upload.ex:480
 #, elixir-autogen, elixir-format
 msgid "Content violation"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:453
+#: lib/animina_web/live/user_live/avatar_upload.ex:452
 #, elixir-autogen, elixir-format
 msgid "Multiple people detected"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:456
+#: lib/animina_web/live/user_live/avatar_upload.ex:455
 #, elixir-autogen, elixir-format
 msgid "Photo not allowed"
+msgstr ""
+
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:116
+#, elixir-autogen, elixir-format
+msgid "This page doesn't exist or you don't have access."
 msgstr ""
