@@ -96,7 +96,7 @@ jobs:
         run: mix deps.get --only prod
 
       - name: Install npm dependencies
-        run: cd assets && mise exec -- npm ci
+        run: mise exec -- bash -c 'cd assets && npm ci'
 
       - name: Compile application
         run: mix compile
