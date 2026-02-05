@@ -64,7 +64,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
         </p>
         
     <!-- Add item buttons -->
-        <div class="flex gap-2 mb-8">
+        <div class="flex flex-wrap gap-2 mb-8">
           <button
             type="button"
             class={["btn btn-primary", !@about_me_complete? && "btn-disabled"]}

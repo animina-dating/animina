@@ -20,6 +20,70 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLiveTest do
       assert html =~ user.display_name
     end
 
+    test "displays height, gender icon, and occupation on moodboard", %{conn: conn} do
+      user =
+        user_fixture(
+          language: "en",
+          height: 175,
+          gender: "female",
+          occupation: "Software Engineer"
+        )
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/moodboard/#{user.id}")
+
+      # Check height is displayed (175 cm -> 1,75 m)
+      assert html =~ "1,75 m"
+
+      # Check gender icon is displayed (female symbol ♀)
+      assert html =~ "♀"
+
+      # Check occupation is displayed
+      assert html =~ "Software Engineer"
+    end
+
+    test "displays male gender icon", %{conn: conn} do
+      user = user_fixture(language: "en", gender: "male")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/moodboard/#{user.id}")
+
+      # Check male gender icon is displayed (♂)
+      assert html =~ "♂"
+    end
+
+    test "does not display occupation when not set", %{conn: conn} do
+      user = user_fixture(language: "en", occupation: nil)
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/moodboard/#{user.id}")
+
+      # Occupation paragraph should not appear
+      refute html =~ ~r/<p[^>]*class="text-base-content\/60">\s*[^<]+\s*<\/p>\s*<\/div>\s*<\.link/
+    end
+
+    test "page title includes display name, gender, age, height, and location", %{conn: conn} do
+      user = user_fixture(language: "en", height: 172, gender: "female", display_name: "Jane Doe")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/moodboard/#{user.id}")
+
+      # Page title should include: Display Name · ♀ XX years · 1,72 m · XXXXX City
+      assert html =~ "<title"
+      assert html =~ "Jane Doe"
+      assert html =~ "♀"
+      assert html =~ "1,72 m"
+      assert html =~ "10115"
+    end
+
     test "anonymous user sees vague denial and is redirected to /", %{conn: conn} do
       user = user_fixture(language: "en")
 

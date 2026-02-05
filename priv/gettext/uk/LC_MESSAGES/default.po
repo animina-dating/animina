@@ -1647,7 +1647,8 @@ msgstr "Місцезнаходження додано."
 msgid "Save"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:35
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:36
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:268
 #: lib/animina_web/live/user_live/settings_hub.ex:236
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{age} years"
@@ -4288,21 +4289,21 @@ msgstr ""
 
 #: lib/animina_web/components/moodboard_components.ex:138
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:173
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:164
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:173
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Single column"
 msgstr ""
 
 #: lib/animina_web/components/moodboard_components.ex:155
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:190
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:181
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Two columns"
 msgstr ""
 
 #: lib/animina_web/components/moodboard_components.ex:173
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:208
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:199
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:208
 #, elixir-autogen, elixir-format
 msgid "Three columns"
 msgstr ""
@@ -4515,14 +4516,14 @@ msgstr ""
 msgid "Edit Text"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:150
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:159
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Add photos and text to your moodboard to share with others."
 msgstr ""
 
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:61
 #: lib/animina_web/live/user_live/moodboard_editor_live.ex:679
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:84
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:91
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr ""
@@ -4542,7 +4543,7 @@ msgstr ""
 msgid "My Moodboard"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:147
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:156
 #, elixir-autogen, elixir-format
 msgid "No moodboard items yet"
 msgstr ""
@@ -4833,7 +4834,7 @@ msgstr ""
 msgid "Photo not allowed"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:269
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "This page doesn't exist or you don't have access."
 msgstr ""
@@ -4894,17 +4895,17 @@ msgstr ""
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:47
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:54
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Partner flags:"
 msgstr "Партнер"
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:109
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:118
 #, elixir-autogen, elixir-format
 msgid "Private flags not shown on profile"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard_live.ex:125
+#: lib/animina_web/live/user_live/profile_moodboard_live.ex:134
 #, elixir-autogen, elixir-format, fuzzy
 msgid "private"
 msgstr ""

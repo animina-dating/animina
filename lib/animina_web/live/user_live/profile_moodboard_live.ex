@@ -32,10 +32,17 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
           <div>
             <h1 class="text-3xl font-bold">{@profile_user.display_name}</h1>
             <p class="text-base-content/60">
+              <span>{gender_icon(@profile_user.gender)}</span>
               {gettext("%{age} years", age: @age)}
+              <%= if @profile_user.height do %>
+                · {format_height(@profile_user.height)}
+              <% end %>
               <%= if @city do %>
                 · {@zip_code} {@city.name}
               <% end %>
+            </p>
+            <p :if={@profile_user.occupation} class="text-base-content/60">
+              {@profile_user.occupation}
             </p>
             <div
               :if={
@@ -87,17 +94,17 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
         
     <!-- White flags display -->
         <div :if={length(@white_flags) > 0 || @private_white_flags_count > 0} class="mb-8">
-          <div class="flex flex-wrap gap-3">
+          <div class="flex flex-wrap gap-1.5 sm:gap-3">
             <%= for {category_name, flags} <- group_flags_by_category(@white_flags) do %>
-              <div class="inline-flex items-center gap-2 bg-base-100 rounded-2xl px-4 py-2.5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-base-200/80">
-                <span class="text-xs font-medium text-base-content/40 uppercase tracking-wide shrink-0">
+              <div class="inline-flex items-center gap-1 sm:gap-2 bg-base-100 rounded-xl sm:rounded-2xl px-2 sm:px-4 py-1.5 sm:py-2.5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-base-200/80">
+                <span class="text-[10px] sm:text-xs font-medium text-base-content/40 uppercase tracking-wide shrink-0">
                   {AniminaWeb.TraitTranslations.translate(category_name)}
                 </span>
-                <div class="flex flex-wrap items-center gap-2">
+                <div class="flex flex-wrap items-center gap-1 sm:gap-2">
                   <%= for user_flag <- flags do %>
-                    <span class="inline-flex items-center gap-1 text-sm bg-base-200/50 rounded-lg px-2 py-0.5">
-                      <span>{user_flag.flag.emoji}</span>
-                      <span class="text-base-content/80">
+                    <span class="inline-flex items-center gap-0.5 sm:gap-1 text-xs sm:text-sm bg-base-200/50 rounded-lg px-1.5 sm:px-2 py-0.5 max-w-[120px] sm:max-w-[180px]">
+                      <span class="shrink-0">{user_flag.flag.emoji}</span>
+                      <span class="text-base-content/80 truncate">
                         {AniminaWeb.TraitTranslations.translate(user_flag.flag.name)}
                       </span>
                     </span>
@@ -107,7 +114,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
             <% end %>
             <div
               :if={@private_white_flags_count > 0}
-              class="inline-flex items-center gap-1.5 bg-base-200/30 rounded-2xl px-4 py-2.5 text-base-content/40 text-sm border border-dashed border-base-300"
+              class="inline-flex items-center gap-1 sm:gap-1.5 bg-base-200/30 rounded-xl sm:rounded-2xl px-2 sm:px-4 py-1.5 sm:py-2.5 text-base-content/40 text-xs sm:text-sm border border-dashed border-base-300"
               title={gettext("Private flags not shown on profile")}
             >
               <svg
@@ -245,6 +252,37 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   defp column_count(columns) when columns in [1, 2, 3], do: columns
   defp column_count(_), do: 2
 
+  # Gender icon helper
+  defp gender_icon("male"), do: raw("&#9794;")
+  defp gender_icon("female"), do: raw("&#9792;")
+  defp gender_icon(_), do: raw("&#9898;")
+
+  # Gender symbol for page title (plain text, not HTML)
+  defp gender_symbol("male"), do: "♂"
+  defp gender_symbol("female"), do: "♀"
+  defp gender_symbol(_), do: "○"
+
+  # Build page title with profile info: Display Name · ♀ 32 Jahre · 1,72 m · 56068 Koblenz
+  defp build_page_title(user, age, city, zip_code) do
+    parts = [
+      user.display_name,
+      gender_symbol(user.gender) <> " " <> gettext("%{age} years", age: age),
+      if(user.height, do: format_height(user.height)),
+      if(city, do: "#{zip_code} #{city.name}")
+    ]
+
+    parts
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join(" · ")
+  end
+
+  # Format height from cm to meters with comma decimal separator (172 -> "1,72 m")
+  defp format_height(height_cm) do
+    meters = height_cm / 100
+    formatted = :erlang.float_to_binary(meters, decimals: 2)
+    String.replace(formatted, ".", ",") <> " m"
+  end
+
   # Group white flags by their category name, preserving order
   defp group_flags_by_category(white_flags) do
     white_flags
@@ -317,8 +355,11 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
     white_flags = Traits.list_published_white_flags(profile_user)
     private_white_flags_count = Traits.count_private_white_flags(profile_user)
 
+    # Build page title with profile info
+    page_title = build_page_title(profile_user, age, city, zip_code)
+
     assign(socket,
-      page_title: profile_user.display_name,
+      page_title: page_title,
       profile_user: profile_user,
       owner?: owner?,
       items: items,
