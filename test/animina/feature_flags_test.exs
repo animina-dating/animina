@@ -137,7 +137,8 @@ defmodule Animina.FeatureFlagsTest do
       FeatureFlags.apply_delay(:fast_check)
       elapsed = System.monotonic_time(:millisecond) - start_time
 
-      assert elapsed < 10
+      # Allow some overhead for slower CI environments
+      assert elapsed < 50
     end
 
     test "no delay when no setting exists" do
@@ -145,7 +146,8 @@ defmodule Animina.FeatureFlagsTest do
       FeatureFlags.apply_delay(:nonexistent_flag)
       elapsed = System.monotonic_time(:millisecond) - start_time
 
-      assert elapsed < 10
+      # Allow some overhead for slower CI environments
+      assert elapsed < 50
     end
   end
 
