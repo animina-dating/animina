@@ -44,6 +44,15 @@ Three roles exist: `user` (implicit, always present), `moderator`, and `admin`. 
 
 - All resources use UUIDs for primary keys, not auto-incrementing integers
 
+### Bug Fix Conventions
+
+When fixing bugs, always verify that the fix doesn't break related functionality. Run relevant tests and manually verify the feature still works end-to-end before considering the task complete.
+
+Before marking a bug fix complete, explicitly verify:
+1. The original bug is fixed
+2. Related features still work (run the feature manually)
+3. No visual regressions in UI elements like avatars and images
+
 ### Photo Display Convention
 
 **ALWAYS** use `LivePhotoComponent` when displaying photos in LiveViews:

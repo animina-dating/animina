@@ -92,10 +92,13 @@ defmodule Animina.Moodboard.Items do
         end
       end)
 
-    # Enqueue photo processing AFTER transaction commits
+    # Enqueue photo processing AFTER transaction commits (unless skip_enqueue)
     case result do
       {:ok, {item, photo}} ->
-        PhotoProcessor.enqueue(photo)
+        unless Keyword.get(photo_opts, :skip_enqueue, false) do
+          PhotoProcessor.enqueue(photo)
+        end
+
         broadcast_item_created(item)
         {:ok, item}
 
@@ -153,10 +156,13 @@ defmodule Animina.Moodboard.Items do
         end
       end)
 
-    # Enqueue photo processing AFTER transaction commits
+    # Enqueue photo processing AFTER transaction commits (unless skip_enqueue)
     case result do
       {:ok, {item, photo}} ->
-        PhotoProcessor.enqueue(photo)
+        unless Keyword.get(photo_opts, :skip_enqueue, false) do
+          PhotoProcessor.enqueue(photo)
+        end
+
         broadcast_item_created(item)
         {:ok, item}
 

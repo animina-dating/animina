@@ -1,6 +1,9 @@
 defmodule AniminaWeb.UserLive.Login do
   use AniminaWeb, :live_view
 
+  @dev_routes Application.compile_env(:animina, :dev_routes)
+  @dev_password "password12345"
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -64,10 +67,75 @@ defmodule AniminaWeb.UserLive.Login do
             </.link>
           </div>
         </div>
+
+        <.dev_users_panel :if={@dev_routes && !@current_scope} dev_users={@dev_users} />
       </div>
     </Layouts.app>
     """
   end
+
+  attr :dev_users, :list, required: true
+
+  defp dev_users_panel(assigns) do
+    ~H"""
+    <div :if={length(@dev_users) > 0} class="mt-6 bg-surface rounded-xl shadow-md p-4">
+      <div class="text-center mb-3">
+        <h2 class="text-lg font-semibold text-base-content">Dev Test Accounts</h2>
+        <p class="text-xs text-base-content/60">Click to log in instantly</p>
+      </div>
+
+      <div class="max-h-80 overflow-y-auto">
+        <div class="grid grid-cols-2 gap-1">
+          <.dev_user_button :for={user <- @dev_users} user={user} />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :user, :map, required: true
+
+  defp dev_user_button(assigns) do
+    ~H"""
+    <form action={~p"/users/log-in"} method="post" class="contents">
+      <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+      <input type="hidden" name="user[email]" value={@user.email} />
+      <input type="hidden" name="user[password]" value={dev_password()} />
+      <input type="hidden" name="user[remember_me]" value="true" />
+      <button
+        type="submit"
+        class="flex items-center gap-1.5 px-2 py-1.5 text-xs rounded hover:bg-base-200 transition-colors text-left w-full"
+      >
+        <span class="flex-shrink-0">{gender_icon(@user.gender)}</span>
+        <span class="truncate flex-1 font-medium">{@user.display_name}</span>
+        <span class="text-base-content/60">{@user.age}</span>
+        <.role_badges roles={@user.roles} />
+      </button>
+    </form>
+    """
+  end
+
+  attr :roles, :list, required: true
+
+  defp role_badges(assigns) do
+    ~H"""
+    <span :if={:admin in @roles} class="px-1 py-0.5 text-[10px] bg-error/20 text-error rounded">
+      A
+    </span>
+    <span
+      :if={:moderator in @roles}
+      class="px-1 py-0.5 text-[10px] bg-warning/20 text-warning rounded"
+    >
+      M
+    </span>
+    """
+  end
+
+  defp gender_icon("male"), do: raw("&#9794;")
+  defp gender_icon("female"), do: raw("&#9792;")
+  defp gender_icon(_), do: raw("&#9898;")
+
+  defp dev_password, do: @dev_password
 
   @impl true
   def mount(_params, _session, socket) do
@@ -77,11 +145,65 @@ defmodule AniminaWeb.UserLive.Login do
 
     form = to_form(%{"email" => email}, as: "user")
 
-    {:ok, assign(socket, form: form, trigger_submit: false)}
+    dev_users =
+      if @dev_routes do
+        load_dev_users()
+      else
+        []
+      end
+
+    {:ok,
+     assign(socket,
+       form: form,
+       trigger_submit: false,
+       dev_routes: @dev_routes,
+       dev_users: dev_users
+     )}
   end
 
   @impl true
   def handle_event("submit_password", _params, socket) do
     {:noreply, assign(socket, :trigger_submit, true)}
+  end
+
+  defp load_dev_users do
+    import Ecto.Query
+
+    query =
+      from(u in Animina.Accounts.User,
+        where: like(u.email, "dev-%@animina.test"),
+        where: is_nil(u.deleted_at),
+        left_join: r in assoc(u, :user_roles),
+        preload: [user_roles: r],
+        order_by: [asc: u.gender, asc: u.display_name]
+      )
+
+    Animina.Repo.all(query)
+    |> Enum.map(fn user ->
+      age = calculate_age(user.birthday)
+
+      roles =
+        user.user_roles
+        |> Enum.map(fn ur -> String.to_atom(ur.role) end)
+
+      %{
+        email: user.email,
+        display_name: user.display_name,
+        gender: user.gender,
+        age: age,
+        roles: roles
+      }
+    end)
+  end
+
+  defp calculate_age(birthday) do
+    today = Date.utc_today()
+    age = today.year - birthday.year
+
+    if {today.month, today.day} < {birthday.month, birthday.day} do
+      age - 1
+    else
+      age
+    end
   end
 end

@@ -142,7 +142,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     ~H"""
     <div class="editorial-quote-card">
       <div class="bg-gradient-to-br from-base-100 to-base-200/50 rounded-2xl p-6 sm:p-8 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.15)] transition-shadow duration-300">
-        <div class="prose prose-lg max-w-none prose-p:text-base-content/80 prose-p:leading-relaxed prose-headings:text-base-content">
+        <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-headings:text-base-content">
           {raw(@rendered_content)}
         </div>
       </div>

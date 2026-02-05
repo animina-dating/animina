@@ -36,6 +36,11 @@ Visit `http://localhost:4000` to see the landing page. Register at `/users/regis
 
 - `mix test` — run tests
 - `mix precommit` — full quality check (compile, format, credo, test)
+- `mix dev:reset` — reset database and seed 50 test accounts (dev only)
+
+### Dev Test Accounts
+
+In development, run `mix dev:reset` to create 50 test accounts with full profiles, traits, and moodboards. The login page shows a one-click panel for instant access. All accounts use password `password12345`.
 
 ## Admin Access
 

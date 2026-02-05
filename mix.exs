@@ -88,11 +88,10 @@ defmodule Animina.MixProject do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    [
+    base_aliases = [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      "dev:reset": ["uploads.clear", "ecto.reset"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["compile", "tailwind animina", "esbuild animina"],
@@ -109,5 +108,12 @@ defmodule Animina.MixProject do
         "test"
       ]
     ]
+
+    # dev:reset is only available in dev environment
+    if Mix.env() == :dev do
+      Keyword.put(base_aliases, :"dev:reset", ["uploads.clear", "ecto.reset"])
+    else
+      base_aliases
+    end
   end
 end

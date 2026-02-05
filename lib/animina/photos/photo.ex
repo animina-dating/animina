@@ -10,7 +10,8 @@ defmodule Animina.Photos.Photo do
 
   @valid_states ~w(pending processing ollama_checking pending_ollama needs_manual_review approved no_face_error error appeal_pending appeal_rejected)
   @valid_transitions %{
-    "pending" => ["processing", "error"],
+    # "approved" is allowed for seeding/testing when skip_enqueue is used
+    "pending" => ["processing", "error", "approved"],
     # Processing can go back to pending for recovery after restart
     "processing" => ["ollama_checking", "error", "pending"],
     # Ollama checking: uses simple prompt to check family_friendly, contains_person, person_facing_camera_count

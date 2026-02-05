@@ -322,4 +322,70 @@ defmodule Animina.Photos do
 
   defdelegate retry_from_manual_review(photo, reviewer), to: Animina.Photos.OllamaQueue
   defdelegate get_oldest_ollama_queue_photo(), to: Animina.Photos.OllamaQueue
+
+  # --- Seeding helpers ---
+
+  @doc """
+  Processes a photo for seeding without Ollama classification.
+
+  This function:
+  1. Processes the image (resize, convert to webp, create thumbnails)
+  2. Transitions directly to approved state
+
+  Used by development seeds to create photos without triggering Ollama.
+
+  **Only available in :dev and :test environments.**
+  """
+  def process_for_seeding(%Photo{} = photo) do
+    unless Mix.env() in [:dev, :test] do
+      raise "process_for_seeding/1 is only available in development and test environments"
+    end
+
+    case original_path(photo) do
+      {:ok, source_path} ->
+        do_process_for_seeding(photo, source_path)
+
+      {:error, _} ->
+        {:error, :original_not_found}
+    end
+  end
+
+  defp do_process_for_seeding(photo, source_path) do
+    max_dim = max_dimension()
+    thumb_dim = thumbnail_dimension()
+    quality = webp_quality()
+
+    # Create processed directory
+    proc_dir = processed_path_dir(photo.owner_type, photo.owner_id)
+    File.mkdir_p!(proc_dir)
+
+    main_path = processed_path(photo, :main)
+    thumbnail_path = processed_path(photo, :thumbnail)
+
+    with {:ok, image} <- Image.open(source_path),
+         {:ok, image} <- resize_to_max(image, max_dim),
+         {:ok, _} <- Image.write(image, main_path, quality: quality, strip_metadata: true),
+         {width, height} <- {Image.width(image), Image.height(image)},
+         {:ok, thumb} <- resize_to_max(image, thumb_dim),
+         {:ok, _} <- Image.write(thumb, thumbnail_path, quality: quality, strip_metadata: true) do
+      # Transition directly to approved
+      transition_photo(photo, "approved", %{width: width, height: height})
+    else
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  defp resize_to_max(image, max_dim) do
+    width = Image.width(image)
+    height = Image.height(image)
+    longest = max(width, height)
+
+    if longest > max_dim do
+      scale = max_dim / longest
+      Image.resize(image, scale)
+    else
+      {:ok, image}
+    end
+  end
 end
