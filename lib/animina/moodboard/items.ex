@@ -278,7 +278,11 @@ defmodule Animina.Moodboard.Items do
 
   @doc """
   Soft-deletes a moodboard item.
+
+  Returns `{:error, :cannot_delete_pinned_item}` if the item is pinned.
   """
+  def delete_item(%MoodboardItem{pinned: true}), do: {:error, :cannot_delete_pinned_item}
+
   def delete_item(%MoodboardItem{} = item) do
     # First delete associated photo files if any
     item = Repo.preload(item, moodboard_photo: :photo)

@@ -184,6 +184,16 @@ defmodule Animina.MoodboardTest do
       assert {:ok, deleted_item} = Moodboard.delete_item(item)
       assert deleted_item.state == "deleted"
     end
+
+    test "cannot delete pinned item" do
+      user = bare_user_fixture()
+      {:ok, pinned} = Moodboard.create_pinned_intro_item(user, "About me")
+
+      assert {:error, :cannot_delete_pinned_item} = Moodboard.delete_item(pinned)
+
+      # Item should still exist
+      assert Moodboard.get_pinned_item(user.id) != nil
+    end
   end
 
   describe "count_items/2" do
@@ -308,12 +318,16 @@ defmodule Animina.MoodboardTest do
       assert Moodboard.get_pinned_item(user.id) == nil
     end
 
-    test "excludes deleted pinned items" do
+    test "pinned items cannot be deleted" do
       user = bare_user_fixture()
       {:ok, item} = Moodboard.create_pinned_intro_item(user, "My intro")
-      {:ok, _} = Moodboard.delete_item(item)
 
-      assert Moodboard.get_pinned_item(user.id) == nil
+      # Attempting to delete a pinned item should fail
+      assert {:error, :cannot_delete_pinned_item} = Moodboard.delete_item(item)
+
+      # Item should still be returned by get_pinned_item
+      found = Moodboard.get_pinned_item(user.id)
+      assert found.id == item.id
     end
   end
 
