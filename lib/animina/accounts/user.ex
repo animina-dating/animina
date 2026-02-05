@@ -56,6 +56,11 @@ defmodule Animina.Accounts.User do
     field :waitlist_priority, :integer, default: 0
     belongs_to :referred_by, __MODULE__, foreign_key: :referred_by_id
 
+    # Moodboard preferences
+    field :moodboard_columns_mobile, :integer, default: 2
+    field :moodboard_columns_tablet, :integer, default: 2
+    field :moodboard_columns_desktop, :integer, default: 3
+
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
     field :partner_minimum_age, :integer, virtual: true
@@ -503,8 +508,29 @@ defmodule Animina.Accounts.User do
 
   @doc """
   A changeset for soft-deleting a user.
+
+  Sets `deleted_at` to a future date (current time + grace period days).
+  The grace period is configured via the :soft_delete_grace_days system setting.
   """
   def soft_delete_changeset(user) do
-    change(user, deleted_at: DateTime.utc_now(:second))
+    grace_days = Animina.FeatureFlags.soft_delete_grace_days()
+
+    hard_delete_date =
+      DateTime.utc_now()
+      |> DateTime.add(grace_days, :day)
+      |> DateTime.truncate(:second)
+
+    change(user, deleted_at: hard_delete_date)
+  end
+
+  @doc """
+  A changeset for updating gallery column preferences.
+  """
+  def moodboard_columns_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:moodboard_columns_mobile, :moodboard_columns_tablet, :moodboard_columns_desktop])
+    |> validate_inclusion(:moodboard_columns_mobile, [1, 2, 3])
+    |> validate_inclusion(:moodboard_columns_tablet, [1, 2, 3])
+    |> validate_inclusion(:moodboard_columns_desktop, [1, 2, 3])
   end
 end

@@ -17,6 +17,9 @@
   themes: false;
 }
 
+/* Tailwind Typography plugin for prose styling of Markdown content */
+@plugin "@tailwindcss/typography";
+
 /* Animina "Coastal Morning" Theme
    Design philosophy: Clean, fresh, modern yet approachable
    Like a refreshing beach morning walk - trustworthy, calm, and open
@@ -142,6 +145,13 @@ body {
    See DESIGN.md for design system documentation
    ============================================ */
 
+/* Reduce spacing between list items in prose (markdown) content */
+.prose ul > li,
+.prose ol > li {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
 /* Subtle animations for dropdowns and modals */
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -238,3 +248,66 @@ body {
 
 /* During server disconnect: show friendly deployment notice instead of error */
 .phx-server-error #server-error { display: none !important; }
+
+/* ============================================
+   TOAST UI Editor Theme Overrides
+   ============================================ */
+
+/* Make editor blend with daisyUI modal */
+.toastui-editor-defaultUI {
+  border: 1px solid var(--color-base-300) !important;
+  border-radius: var(--radius-box) !important;
+  overflow: hidden;
+}
+
+/* Toolbar styling */
+.toastui-editor-defaultUI .toastui-editor-toolbar {
+  background-color: var(--color-base-200) !important;
+  border-bottom: 1px solid var(--color-base-300) !important;
+}
+
+/* Editor content area */
+.toastui-editor-defaultUI .toastui-editor-md-container,
+.toastui-editor-defaultUI .toastui-editor-ww-container {
+  background-color: var(--color-base-100) !important;
+}
+
+/* Placeholder text */
+.toastui-editor-defaultUI .ProseMirror .placeholder {
+  color: var(--color-base-content) !important;
+  opacity: 0.4;
+}
+
+/* Mode switch tabs */
+.toastui-editor-mode-switch {
+  background-color: var(--color-base-200) !important;
+  border-top: 1px solid var(--color-base-300) !important;
+}
+
+.toastui-editor-mode-switch .tab-item {
+  color: var(--color-base-content) !important;
+  opacity: 0.7;
+}
+
+.toastui-editor-mode-switch .tab-item.active {
+  color: var(--color-primary) !important;
+  opacity: 1;
+}
+
+/* Dark mode adjustments */
+[data-theme=dark] .toastui-editor-defaultUI {
+  color: var(--color-base-content);
+}
+
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-toolbar button {
+  color: var(--color-base-content) !important;
+}
+
+[data-theme=dark] .toastui-editor-defaultUI .ProseMirror {
+  color: var(--color-base-content) !important;
+}
+
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-md-preview {
+  background-color: var(--color-base-200) !important;
+  color: var(--color-base-content) !important;
+}
