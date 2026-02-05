@@ -345,16 +345,21 @@ defmodule Animina.Moodboard.Items do
     if get_pinned_item(user.id) do
       {:error, :already_exists}
     else
-      Repo.transaction(fn ->
-        # Shift existing items to make room for position 1
-        shift_positions_for_pinned(user.id)
+      do_create_pinned_intro_item(user.id, story_content)
+    end
+  end
 
-        with {:ok, item} <- create_pinned_item(user.id, story_content) do
-          Repo.preload(item, :moodboard_story)
-        else
-          {:error, reason} -> Repo.rollback(reason)
-        end
-      end)
+  defp do_create_pinned_intro_item(user_id, story_content) do
+    Repo.transaction(fn ->
+      shift_positions_for_pinned(user_id)
+      create_and_preload_pinned_item(user_id, story_content)
+    end)
+  end
+
+  defp create_and_preload_pinned_item(user_id, story_content) do
+    case create_pinned_item(user_id, story_content) do
+      {:ok, item} -> Repo.preload(item, :moodboard_story)
+      {:error, reason} -> Repo.rollback(reason)
     end
   end
 

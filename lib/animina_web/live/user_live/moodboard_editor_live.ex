@@ -1051,24 +1051,30 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
     # Ensure we have all columns (even empty ones)
     all_columns =
       Enum.map(0..(num_columns - 1), fn col_idx ->
-        case Enum.find(columns, fn {_, idx} -> idx == col_idx end) do
-          {items, _} -> {items, col_idx}
-          nil -> {[], col_idx}
-        end
+        find_column_items(columns, col_idx)
       end)
 
     # Add placeholders to columns that need them
     Enum.map(all_columns, fn {column_items, col_idx} ->
-      placeholders =
-        if needs_placeholders? and Enum.empty?(column_items) do
-          # Alternate between photo and text placeholders for visual variety
-          if rem(col_idx, 2) == 0, do: [:photo], else: [:text]
-        else
-          []
-        end
-
+      placeholders = get_placeholders(needs_placeholders?, column_items, col_idx)
       {column_items, placeholders, col_idx}
     end)
+  end
+
+  defp find_column_items(columns, col_idx) do
+    case Enum.find(columns, fn {_, idx} -> idx == col_idx end) do
+      {items, _} -> {items, col_idx}
+      nil -> {[], col_idx}
+    end
+  end
+
+  defp get_placeholders(needs_placeholders?, column_items, col_idx) do
+    if needs_placeholders? and Enum.empty?(column_items) do
+      # Alternate between photo and text placeholders for visual variety
+      if rem(col_idx, 2) == 0, do: [:photo], else: [:text]
+    else
+      []
+    end
   end
 
   defp get_columns_for_device(user, device_type) do

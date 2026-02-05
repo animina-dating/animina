@@ -115,16 +115,7 @@ defmodule Animina.FeatureFlags.OllamaDebugStore do
     key = {-counter, entry[:timestamp] || DateTime.utc_now()}
 
     # Truncate images to avoid storing massive base64 data
-    entry =
-      Map.update(entry, :images, [], fn images ->
-        Enum.map(images || [], fn img ->
-          if is_binary(img) and byte_size(img) > 100 do
-            String.slice(img, 0, 100) <> "... [truncated, #{byte_size(img)} bytes total]"
-          else
-            img
-          end
-        end)
-      end)
+    entry = Map.update(entry, :images, [], &truncate_images/1)
 
     :ets.insert(@table_name, {key, entry})
 
@@ -195,6 +186,16 @@ defmodule Animina.FeatureFlags.OllamaDebugStore do
   end
 
   # --- Private Functions ---
+
+  defp truncate_images(images) do
+    Enum.map(images || [], &truncate_image/1)
+  end
+
+  defp truncate_image(img) when is_binary(img) and byte_size(img) > 100 do
+    String.slice(img, 0, 100) <> "... [truncated, #{byte_size(img)} bytes total]"
+  end
+
+  defp truncate_image(img), do: img
 
   defp cleanup_excess do
     size = :ets.info(@table_name, :size)

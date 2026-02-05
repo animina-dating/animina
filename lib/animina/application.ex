@@ -5,6 +5,7 @@ defmodule Animina.Application do
 
   use Application
 
+  alias Animina.Photos.OllamaWarmup
   alias Animina.Photos.PhotoProcessor
 
   @impl true
@@ -54,7 +55,7 @@ defmodule Animina.Application do
       Task.start(fn ->
         # Wait for OllamaHealthTracker GenServer to be fully initialized
         Process.sleep(2000)
-        Animina.Photos.OllamaWarmup.warmup_all()
+        OllamaWarmup.warmup_all()
       end)
     end
   end

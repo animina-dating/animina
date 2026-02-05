@@ -65,25 +65,30 @@ defmodule Animina.Photos.FileManagement do
           type: type
         }
 
-        case Photos.create_photo(attrs) do
-          {:ok, photo} ->
-            # Only enqueue if not explicitly skipped (for transactional contexts)
-            unless Keyword.get(opts, :skip_enqueue, false) do
-              PhotoProcessor.enqueue(photo)
-            end
-
-            {:ok, photo}
-
-          error ->
-            File.rm(dest)
-            # Also clean up crop file if it exists
-            crop_path = Path.join(original_dir, "#{filename}.crop.json")
-            File.rm(crop_path)
-            error
-        end
+        create_photo_record(attrs, dest, original_dir, filename, opts)
 
       {:error, _reason} = error ->
         error
+    end
+  end
+
+  defp create_photo_record(attrs, dest, original_dir, filename, opts) do
+    case Photos.create_photo(attrs) do
+      {:ok, photo} ->
+        maybe_enqueue_photo(photo, opts)
+        {:ok, photo}
+
+      error ->
+        File.rm(dest)
+        crop_path = Path.join(original_dir, "#{filename}.crop.json")
+        File.rm(crop_path)
+        error
+    end
+  end
+
+  defp maybe_enqueue_photo(photo, opts) do
+    unless Keyword.get(opts, :skip_enqueue, false) do
+      PhotoProcessor.enqueue(photo)
     end
   end
 

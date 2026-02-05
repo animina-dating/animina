@@ -145,22 +145,27 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
 
   defp get_columns_for_device(socket, device_type) do
     if socket.assigns.owner? do
-      user = socket.assigns.current_scope.user
-
-      case device_type do
-        "mobile" -> user.moodboard_columns_mobile || 2
-        "tablet" -> user.moodboard_columns_tablet || 2
-        "desktop" -> user.moodboard_columns_desktop || 3
-        _ -> 2
-      end
+      get_user_columns(socket.assigns.current_scope.user, device_type)
     else
-      # Default columns for non-owners
-      case device_type do
-        "mobile" -> 2
-        "tablet" -> 2
-        "desktop" -> 3
-        _ -> 2
-      end
+      get_default_columns(device_type)
+    end
+  end
+
+  defp get_user_columns(user, device_type) do
+    case device_type do
+      "mobile" -> user.moodboard_columns_mobile || 2
+      "tablet" -> user.moodboard_columns_tablet || 2
+      "desktop" -> user.moodboard_columns_desktop || 3
+      _ -> 2
+    end
+  end
+
+  defp get_default_columns(device_type) do
+    case device_type do
+      "mobile" -> 2
+      "tablet" -> 2
+      "desktop" -> 3
+      _ -> 2
     end
   end
 end

@@ -3,6 +3,7 @@ defmodule Animina.PhotosTest do
 
   alias Animina.Photos
   alias Animina.Photos.Photo
+  alias Animina.Photos.PhotoProcessor
 
   import Animina.PhotosFixtures
 
@@ -911,7 +912,7 @@ defmodule Animina.PhotosTest do
       # Create a test image (20x10 pixels, landscape)
       {:ok, image} = Image.new(20, 10, color: [255, 0, 0])
 
-      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+      {:ok, cropped} = PhotoProcessor.apply_center_crop(image)
 
       # Should be 10x10 (the minimum dimension)
       assert Image.width(cropped) == 10
@@ -922,7 +923,7 @@ defmodule Animina.PhotosTest do
       # Create a test image (10x20 pixels, portrait)
       {:ok, image} = Image.new(10, 20, color: [0, 255, 0])
 
-      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+      {:ok, cropped} = PhotoProcessor.apply_center_crop(image)
 
       # Should be 10x10 (the minimum dimension)
       assert Image.width(cropped) == 10
@@ -933,7 +934,7 @@ defmodule Animina.PhotosTest do
       # Create a test image (10x10 pixels, already square)
       {:ok, image} = Image.new(10, 10, color: [0, 0, 255])
 
-      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+      {:ok, cropped} = PhotoProcessor.apply_center_crop(image)
 
       # Should remain 10x10
       assert Image.width(cropped) == 10
