@@ -95,6 +95,9 @@ jobs:
       - name: Install dependencies
         run: mix deps.get --only prod
 
+      - name: Install npm dependencies
+        run: npm ci --prefix assets
+
       - name: Compile application
         run: mix compile
 
