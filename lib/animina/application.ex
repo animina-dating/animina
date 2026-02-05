@@ -76,8 +76,10 @@ defmodule Animina.Application do
     Animina.FeatureFlags.initialize_photo_flags()
     # Initialize system settings with defaults
     Animina.FeatureFlags.initialize_system_settings()
-    # Initialize debug flags (disabled by default)
-    Animina.FeatureFlags.initialize_debug_flags()
+    # Initialize ollama settings (flags and values)
+    Animina.FeatureFlags.initialize_ollama_settings()
+    # Initialize admin flags (disabled by default)
+    Animina.FeatureFlags.initialize_admin_flags()
   rescue
     # Don't crash on startup if this fails (e.g., during migrations)
     _ -> :ok

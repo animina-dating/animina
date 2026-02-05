@@ -26,13 +26,15 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
 
       assert html =~ "Feature Flags"
       assert html =~ "Photo Processing"
+      assert html =~ "AI / Ollama"
       assert html =~ "Ollama Photo Check"
       assert html =~ "Blacklist Check"
-      assert has_element?(view, "[data-flag='photo_ollama_check']")
+      # Ollama Photo Check is now in ollama_settings section with data-setting
+      assert has_element?(view, "[data-setting='photo_ollama_check']")
       assert has_element?(view, "[data-flag='photo_blacklist_check']")
     end
 
-    test "can toggle a flag", %{conn: conn, admin: admin} do
+    test "can toggle an ollama flag", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
 
       # Initially enable the flag
@@ -41,45 +43,45 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
 
       # Toggle the flag off
       view
-      |> element("[data-flag='photo_ollama_check'] [phx-click='toggle-flag']")
+      |> element("[data-setting='photo_ollama_check'] [phx-click='toggle-ollama-flag']")
       |> render_click()
 
       assert FeatureFlags.enabled?(:photo_ollama_check) == false
 
       # Toggle it back on
       view
-      |> element("[data-flag='photo_ollama_check'] [phx-click='toggle-flag']")
+      |> element("[data-setting='photo_ollama_check'] [phx-click='toggle-ollama-flag']")
       |> render_click()
 
       assert FeatureFlags.enabled?(:photo_ollama_check) == true
     end
 
-    test "can open settings modal", %{conn: conn, admin: admin} do
+    test "can open ollama settings modal", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
       {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
 
       view
-      |> element("[data-flag='photo_ollama_check'] [phx-click='open-settings']")
+      |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
       |> render_click()
 
-      assert has_element?(view, "#settings-modal")
+      assert has_element?(view, "#ollama-setting-modal")
       assert render(view) =~ "Auto-approve"
       assert render(view) =~ "Delay"
     end
 
-    test "can save settings", %{conn: conn, admin: admin} do
+    test "can save ollama settings", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
       {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
 
       # Open settings modal
       view
-      |> element("[data-flag='photo_ollama_check'] [phx-click='open-settings']")
+      |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
       |> render_click()
 
       # Submit settings form
       view
-      |> form("#settings-form", %{
-        "settings" => %{
+      |> form("#ollama-setting-form", %{
+        "ollama_setting" => %{
           "auto_approve" => "true",
           "delay_ms" => "500"
         }
@@ -114,23 +116,23 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       assert html =~ "Auto"
     end
 
-    test "can close settings modal", %{conn: conn, admin: admin} do
+    test "can close ollama settings modal", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
       {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
 
       # Open modal
       view
-      |> element("[data-flag='photo_ollama_check'] [phx-click='open-settings']")
+      |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
       |> render_click()
 
-      assert has_element?(view, "#settings-modal")
+      assert has_element?(view, "#ollama-setting-modal")
 
       # Close modal using the Cancel button (the one that says "Cancel")
       view
-      |> element(".modal-action button.btn-ghost[phx-click='close-modal']")
+      |> element(".modal-action button.btn-ghost[phx-click='close-ollama-modal']")
       |> render_click()
 
-      refute has_element?(view, "#settings-modal")
+      refute has_element?(view, "#ollama-setting-modal")
     end
   end
 end

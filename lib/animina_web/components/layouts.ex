@@ -269,11 +269,44 @@ defmodule AniminaWeb.Layouts do
                     <!-- Administration Section (only in admin role) -->
                     <%= if @current_scope.current_role == "admin" do %>
                       <div class="border-t border-base-300 mt-1">
+                        <%!-- Photos --%>
                         <div class="px-4 py-1.5 pt-2">
                           <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Administration")}
+                            {gettext("Photos")}
                           </p>
                         </div>
+                        <a
+                          href="/admin/photo-blacklist"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Photo Blacklist")}
+                        </a>
+
+                        <%!-- Users --%>
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                            {gettext("Users")}
+                          </p>
+                        </div>
+                        <a
+                          href="/admin/roles"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Manage Roles")}
+                        </a>
+
+                        <%!-- System --%>
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                            {gettext("System")}
+                          </p>
+                        </div>
+                        <a
+                          href="/admin/feature-flags"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Feature Flags")}
+                        </a>
                         <% ollama_queue_count = Photos.count_ollama_queue() %>
                         <a
                           href="/admin/ollama-queue"
@@ -298,30 +331,6 @@ defmodule AniminaWeb.Layouts do
                           class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                         >
                           {gettext("Ollama Debug")}
-                        </a>
-                        <a
-                          href="/admin/photo-blacklist"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Photo Blacklist")}
-                        </a>
-                        <a
-                          href="/admin/roles"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Manage Roles")}
-                        </a>
-                        <a
-                          href="/admin/feature-flags"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Feature Flags")}
-                        </a>
-                        <a
-                          href="/debug"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("System Debug")}
                         </a>
                       </div>
                     <% end %>

@@ -184,10 +184,23 @@ defmodule Animina.FeatureFlagsTest do
   end
 
   describe "get_all_photo_flags/0" do
-    test "returns all photo processing flags with their states and settings" do
+    test "returns photo processing flags with their states and settings" do
+      # Set specific states for testing
+      FunWithFlags.enable(:photo_blacklist_check)
+
+      flags = FeatureFlags.get_all_photo_flags()
+
+      # After reorganization, only blacklist_check remains in photo_flags
+      blacklist = Enum.find(flags, fn f -> f.name == :photo_blacklist_check end)
+      assert blacklist.enabled == true
+    end
+  end
+
+  describe "get_all_ollama_settings/0" do
+    test "returns all ollama settings with their states and values" do
       # Set specific states for testing
       FunWithFlags.enable(:photo_ollama_check)
-      FunWithFlags.enable(:photo_blacklist_check)
+      FunWithFlags.enable(:ollama_debug_display)
 
       # Update the existing setting with custom values
       setting = FeatureFlags.get_flag_setting(:photo_ollama_check)
@@ -204,14 +217,28 @@ defmodule Animina.FeatureFlagsTest do
         })
       end
 
-      flags = FeatureFlags.get_all_photo_flags()
+      settings = FeatureFlags.get_all_ollama_settings()
 
-      ollama_check = Enum.find(flags, fn f -> f.name == :photo_ollama_check end)
+      # Check flag type setting
+      ollama_check = Enum.find(settings, fn s -> s.name == :photo_ollama_check end)
+      assert ollama_check.type == :flag
       assert ollama_check.enabled == true
       assert ollama_check.setting.settings["delay_ms"] == 100
 
-      blacklist = Enum.find(flags, fn f -> f.name == :photo_blacklist_check end)
-      assert blacklist.enabled == true
+      # Check string type setting
+      ollama_model = Enum.find(settings, fn s -> s.name == :ollama_model end)
+      assert ollama_model.type == :string
+      assert ollama_model.default_value == "qwen3-vl:8b"
+
+      # Check integer type setting
+      debug_entries = Enum.find(settings, fn s -> s.name == :ollama_debug_max_entries end)
+      assert debug_entries.type == :integer
+      assert debug_entries.default_value == 100
+
+      # Check another flag type
+      debug_display = Enum.find(settings, fn s -> s.name == :ollama_debug_display end)
+      assert debug_display.type == :flag
+      assert debug_display.enabled == true
     end
   end
 
@@ -219,7 +246,8 @@ defmodule Animina.FeatureFlagsTest do
     test "system_setting_definitions/0 returns all setting definitions" do
       definitions = FeatureFlags.system_setting_definitions()
 
-      assert length(definitions) == 4
+      # After reorganization, only referral_threshold and soft_delete_grace_days remain
+      assert length(definitions) == 2
 
       referral_def = Enum.find(definitions, &(&1.name == :referral_threshold))
       assert referral_def.label == "Referral Threshold"
@@ -232,11 +260,6 @@ defmodule Animina.FeatureFlagsTest do
       assert grace_def.default_value == 28
       assert grace_def.min_value == 1
       assert grace_def.max_value == 365
-
-      ollama_def = Enum.find(definitions, &(&1.name == :ollama_model))
-      assert ollama_def.label == "Ollama Model"
-      assert ollama_def.default_value == "qwen3-vl:8b"
-      assert ollama_def.type == :string
     end
 
     test "referral_threshold/0 returns default value when not configured" do
@@ -269,16 +292,14 @@ defmodule Animina.FeatureFlagsTest do
     test "get_all_system_settings/0 returns all settings with current values" do
       settings = FeatureFlags.get_all_system_settings()
 
-      assert length(settings) == 4
+      # After reorganization, only referral_threshold and soft_delete_grace_days remain
+      assert length(settings) == 2
 
       referral = Enum.find(settings, &(&1.name == :referral_threshold))
       assert referral.current_value == 3
 
       grace = Enum.find(settings, &(&1.name == :soft_delete_grace_days))
       assert grace.current_value == 28
-
-      ollama = Enum.find(settings, &(&1.name == :ollama_model))
-      assert ollama.current_value == "qwen3-vl:8b"
     end
   end
 end

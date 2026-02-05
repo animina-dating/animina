@@ -32,16 +32,43 @@ defmodule Animina.FeatureFlags do
 
   @photo_flags [
     %{
-      name: :photo_ollama_check,
-      label: "Ollama Photo Check",
-      description: "Photo classification using Ollama vision model",
-      default_auto_approve_value: true
-    },
-    %{
       name: :photo_blacklist_check,
       label: "Blacklist Check",
       description: "Check photos against dhash blacklist",
       default_auto_approve_value: nil
+    }
+  ]
+
+  @ollama_settings [
+    %{
+      name: :photo_ollama_check,
+      label: "Ollama Photo Check",
+      description: "Photo classification using Ollama vision model",
+      type: :flag,
+      default_auto_approve_value: true
+    },
+    %{
+      name: :ollama_model,
+      label: "Ollama Model",
+      description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
+      type: :string,
+      default_value: "qwen3-vl:8b"
+    },
+    %{
+      name: :ollama_debug_max_entries,
+      label: "Ollama Debug Max Entries",
+      description: "Maximum number of Ollama debug entries to store and display",
+      type: :integer,
+      default_value: 100,
+      min_value: 10,
+      max_value: 1000
+    },
+    %{
+      name: :ollama_debug_display,
+      label: "Ollama Debug Display",
+      description:
+        "Show Ollama API calls at the bottom of pages for admins (useful for debugging)",
+      type: :flag
     }
   ]
 
@@ -63,31 +90,6 @@ defmodule Animina.FeatureFlags do
       default_value: 28,
       min_value: 1,
       max_value: 365
-    },
-    %{
-      name: :ollama_model,
-      label: "Ollama Model",
-      description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
-      type: :string,
-      default_value: "qwen3-vl:8b"
-    },
-    %{
-      name: :ollama_debug_max_entries,
-      label: "Ollama Debug Max Entries",
-      description: "Maximum number of Ollama debug entries to store and display",
-      type: :integer,
-      default_value: 100,
-      min_value: 10,
-      max_value: 1000
-    }
-  ]
-
-  @debug_flags [
-    %{
-      name: :ollama_debug_display,
-      label: "Ollama Debug Display",
-      description:
-        "Show Ollama API calls at the bottom of pages for admins (useful for debugging)"
     }
   ]
 
@@ -324,40 +326,92 @@ defmodule Animina.FeatureFlags do
     end)
   end
 
-  # --- Debug Flags ---
+  # --- Ollama Settings ---
 
   @doc """
-  Returns the list of debug flag definitions.
+  Returns the list of ollama setting definitions.
   """
-  def debug_flag_definitions do
-    @debug_flags
+  def ollama_settings_definitions do
+    @ollama_settings
   end
 
   @doc """
-  Returns all debug flags with their current states.
+  Returns all ollama settings with their current states and values.
   """
-  def get_all_debug_flags do
-    Enum.map(@debug_flags, fn flag_def ->
-      %{
-        name: flag_def.name,
-        label: flag_def.label,
-        description: flag_def.description,
-        enabled: enabled?(flag_def.name)
-      }
+  def get_all_ollama_settings do
+    Enum.map(@ollama_settings, fn setting_def ->
+      case setting_def.type do
+        :flag ->
+          flag_setting = get_flag_setting(setting_def.name)
+
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :flag,
+            enabled: enabled?(setting_def.name),
+            setting: flag_setting,
+            default_auto_approve_value: Map.get(setting_def, :default_auto_approve_value)
+          }
+
+        :string ->
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :string,
+            current_value: get_system_setting_value(setting_def.name, setting_def.default_value),
+            default_value: setting_def.default_value
+          }
+
+        :integer ->
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :integer,
+            current_value: get_system_setting_value(setting_def.name, setting_def.default_value),
+            default_value: setting_def.default_value,
+            min_value: setting_def.min_value,
+            max_value: setting_def.max_value
+          }
+      end
     end)
   end
 
   @doc """
-  Initializes default debug flag states.
-  Called during application startup. Debug flags are disabled by default.
+  Initializes default ollama settings.
+  Called during application startup. Flags are disabled by default.
   """
-  def initialize_debug_flags do
-    Enum.each(@debug_flags, fn flag_def ->
-      # Create default settings if they don't exist
-      get_or_create_flag_setting(flag_def.name, %{
-        description: flag_def.description,
-        settings: %{}
-      })
+  def initialize_ollama_settings do
+    Enum.each(@ollama_settings, fn setting_def ->
+      case setting_def.type do
+        :flag ->
+          # Enable flag if not already set (preserves existing settings)
+          unless FunWithFlags.enabled?(setting_def.name) do
+            FunWithFlags.enable(setting_def.name)
+            Logger.info("Feature flag #{setting_def.name} enabled by default")
+          end
+
+          # Create default settings if they don't exist
+          get_or_create_flag_setting(setting_def.name, %{
+            description: setting_def.description,
+            settings: %{
+              auto_approve: false,
+              auto_approve_value: Map.get(setting_def, :default_auto_approve_value),
+              delay_ms: 0
+            }
+          })
+
+        _ ->
+          flag_name = "system:#{setting_def.name}"
+
+          # Create default settings if they don't exist
+          get_or_create_flag_setting(flag_name, %{
+            description: setting_def.description,
+            settings: %{value: setting_def.default_value}
+          })
+      end
     end)
   end
 
