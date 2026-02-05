@@ -2,9 +2,8 @@ defmodule AniminaWeb.UserLive.Waitlist do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.FeatureFlags
   alias Animina.GeoData
-
-  @referral_threshold 5
 
   @impl true
   def render(assigns) do
@@ -140,12 +139,13 @@ defmodule AniminaWeb.UserLive.Waitlist do
       end)
 
     referral_count = Accounts.count_confirmed_referrals(user)
+    referral_threshold = FeatureFlags.referral_threshold()
 
     {:ok,
      socket
      |> assign(:city_names, city_names)
      |> assign(:referral_code, user.referral_code)
      |> assign(:referral_count, referral_count)
-     |> assign(:referral_threshold, @referral_threshold)}
+     |> assign(:referral_threshold, referral_threshold)}
   end
 end

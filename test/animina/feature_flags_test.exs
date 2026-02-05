@@ -212,4 +212,71 @@ defmodule Animina.FeatureFlagsTest do
       assert blacklist.enabled == true
     end
   end
+
+  describe "system settings" do
+    test "system_setting_definitions/0 returns all setting definitions" do
+      definitions = FeatureFlags.system_setting_definitions()
+
+      assert length(definitions) == 3
+
+      referral_def = Enum.find(definitions, &(&1.name == :referral_threshold))
+      assert referral_def.label == "Referral Threshold"
+      assert referral_def.default_value == 3
+      assert referral_def.min_value == 1
+      assert referral_def.max_value == 100
+
+      grace_def = Enum.find(definitions, &(&1.name == :soft_delete_grace_days))
+      assert grace_def.label == "Soft Delete Grace Period"
+      assert grace_def.default_value == 28
+      assert grace_def.min_value == 1
+      assert grace_def.max_value == 365
+
+      ollama_def = Enum.find(definitions, &(&1.name == :ollama_model))
+      assert ollama_def.label == "Ollama Model"
+      assert ollama_def.default_value == "qwen3-vl:8b"
+      assert ollama_def.type == :string
+    end
+
+    test "referral_threshold/0 returns default value when not configured" do
+      assert FeatureFlags.referral_threshold() == 3
+    end
+
+    test "soft_delete_grace_days/0 returns default value when not configured" do
+      assert FeatureFlags.soft_delete_grace_days() == 28
+    end
+
+    test "ollama_model/0 returns default value when not configured" do
+      assert FeatureFlags.ollama_model() == "qwen3-vl:8b"
+    end
+
+    test "get_system_setting_value/2 returns configured value" do
+      {:ok, setting} =
+        FeatureFlags.get_or_create_flag_setting("system:referral_threshold", %{
+          settings: %{value: 5}
+        })
+
+      FeatureFlags.update_flag_setting(setting, %{settings: %{value: 5}})
+
+      assert FeatureFlags.get_system_setting_value(:referral_threshold, 3) == 5
+    end
+
+    test "get_system_setting_value/2 returns default when not configured" do
+      assert FeatureFlags.get_system_setting_value(:referral_threshold, 3) == 3
+    end
+
+    test "get_all_system_settings/0 returns all settings with current values" do
+      settings = FeatureFlags.get_all_system_settings()
+
+      assert length(settings) == 3
+
+      referral = Enum.find(settings, &(&1.name == :referral_threshold))
+      assert referral.current_value == 3
+
+      grace = Enum.find(settings, &(&1.name == :soft_delete_grace_days))
+      assert grace.current_value == 28
+
+      ollama = Enum.find(settings, &(&1.name == :ollama_model))
+      assert ollama.current_value == "qwen3-vl:8b"
+    end
+  end
 end

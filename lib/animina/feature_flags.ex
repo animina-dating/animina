@@ -45,6 +45,51 @@ defmodule Animina.FeatureFlags do
     }
   ]
 
+  @system_settings [
+    %{
+      name: :referral_threshold,
+      label: "Referral Threshold",
+      description: "Number of confirmed referrals needed to auto-activate waitlisted users",
+      type: :integer,
+      default_value: 3,
+      min_value: 1,
+      max_value: 100
+    },
+    %{
+      name: :soft_delete_grace_days,
+      label: "Soft Delete Grace Period",
+      description: "Number of days before soft-deleted accounts are permanently removed",
+      type: :integer,
+      default_value: 28,
+      min_value: 1,
+      max_value: 365
+    },
+    %{
+      name: :ollama_model,
+      label: "Ollama Model",
+      description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
+      type: :string,
+      default_value: "qwen3-vl:4b"
+    },
+    %{
+      name: :ollama_debug_max_entries,
+      label: "Ollama Debug Max Entries",
+      description: "Maximum number of Ollama debug entries to store and display",
+      type: :integer,
+      default_value: 100,
+      min_value: 10,
+      max_value: 1000
+    }
+  ]
+
+  @debug_flags [
+    %{
+      name: :ollama_debug_display,
+      label: "Ollama Debug Display",
+      description: "Show Ollama API calls at the bottom of pages for admins (useful for debugging)"
+    }
+  ]
+
   # --- Flag Settings CRUD ---
 
   @doc """
@@ -203,6 +248,14 @@ defmodule Animina.FeatureFlags do
     enabled?(:photo_blacklist_check)
   end
 
+  @doc """
+  Returns whether Ollama debug display is enabled.
+  When enabled, admins can see Ollama API calls at the bottom of pages.
+  """
+  def ollama_debug_enabled? do
+    enabled?(:ollama_debug_display)
+  end
+
   # --- Photo Flags Listing ---
 
   @doc """
@@ -252,5 +305,127 @@ defmodule Animina.FeatureFlags do
         }
       })
     end)
+  end
+
+  # --- Debug Flags ---
+
+  @doc """
+  Returns the list of debug flag definitions.
+  """
+  def debug_flag_definitions do
+    @debug_flags
+  end
+
+  @doc """
+  Returns all debug flags with their current states.
+  """
+  def get_all_debug_flags do
+    Enum.map(@debug_flags, fn flag_def ->
+      %{
+        name: flag_def.name,
+        label: flag_def.label,
+        description: flag_def.description,
+        enabled: enabled?(flag_def.name)
+      }
+    end)
+  end
+
+  @doc """
+  Initializes default debug flag states.
+  Called during application startup. Debug flags are disabled by default.
+  """
+  def initialize_debug_flags do
+    Enum.each(@debug_flags, fn flag_def ->
+      # Create default settings if they don't exist
+      get_or_create_flag_setting(flag_def.name, %{
+        description: flag_def.description,
+        settings: %{}
+      })
+    end)
+  end
+
+  # --- System Settings ---
+
+  @doc """
+  Returns the list of system setting definitions.
+  """
+  def system_setting_definitions do
+    @system_settings
+  end
+
+  @doc """
+  Returns all system settings with their current values.
+  """
+  def get_all_system_settings do
+    Enum.map(@system_settings, fn setting_def ->
+      Map.put(setting_def, :current_value, get_system_setting_value(setting_def.name, setting_def.default_value))
+    end)
+  end
+
+  @doc """
+  Gets the current value for a system setting.
+  Returns the default value if not configured.
+  """
+  def get_system_setting_value(name, default) do
+    flag_name = "system:#{name}"
+
+    case get_flag_setting(flag_name) do
+      %FlagSetting{settings: settings} when is_map(settings) ->
+        value = Map.get(settings, "value") || Map.get(settings, :value)
+        if is_nil(value) || value == "", do: default, else: value
+
+      _ ->
+        default
+    end
+  end
+
+  @doc """
+  Initializes default system settings.
+  Called during application startup.
+  """
+  def initialize_system_settings do
+    Enum.each(@system_settings, fn setting_def ->
+      flag_name = "system:#{setting_def.name}"
+
+      # Create default settings if they don't exist
+      get_or_create_flag_setting(flag_name, %{
+        description: setting_def.description,
+        settings: %{value: setting_def.default_value}
+      })
+    end)
+  end
+
+  # --- System Settings Convenience Functions ---
+
+  @doc """
+  Returns the configured referral threshold.
+  Default: 3
+  """
+  def referral_threshold do
+    get_system_setting_value(:referral_threshold, 3)
+  end
+
+  @doc """
+  Returns the configured soft delete grace period in days.
+  Default: 28
+  """
+  def soft_delete_grace_days do
+    get_system_setting_value(:soft_delete_grace_days, 28)
+  end
+
+  @doc """
+  Returns the configured Ollama model for photo classification.
+  Default: "qwen3-vl:4b"
+  """
+  def ollama_model do
+    get_system_setting_value(:ollama_model, "qwen3-vl:4b")
+  end
+
+  @doc """
+  Returns the configured maximum number of Ollama debug entries to store.
+  Default: 100
+  """
+  def ollama_debug_max_entries do
+    get_system_setting_value(:ollama_debug_max_entries, 100)
   end
 end

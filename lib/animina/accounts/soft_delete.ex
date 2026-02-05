@@ -1,6 +1,17 @@
 defmodule Animina.Accounts.SoftDelete do
   @moduledoc """
   User soft delete and reactivation functions.
+
+  ## Soft Delete Semantics
+
+  When a user is soft-deleted, their `deleted_at` field is set to a **future date**
+  representing when the account will be permanently deleted (hard delete).
+
+  - `deleted_at` in the future: User is within grace period and can reactivate
+  - `deleted_at` in the past: Grace period expired, eligible for permanent deletion
+  - `deleted_at` is nil: User is active
+
+  The grace period is configured via the `:soft_delete_grace_days` system setting.
   """
 
   import Ecto.Query
@@ -8,8 +19,6 @@ defmodule Animina.Accounts.SoftDelete do
   alias Animina.Accounts.{User, UserNotifier, UserToken}
   alias Animina.Repo
   alias Animina.Utils.PaperTrail, as: PT
-
-  @grace_period_days 30
 
   @doc """
   Returns `true` if the user has been soft-deleted.
@@ -39,18 +48,19 @@ defmodule Animina.Accounts.SoftDelete do
   end
 
   @doc """
-  Gets a soft-deleted user by email and password within the 30-day grace period.
+  Gets a soft-deleted user by email and password within the grace period.
+  A user is within the grace period if their `deleted_at` is in the future.
   Returns the most recently deleted user if multiple exist.
   """
   def get_deleted_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
+    now = DateTime.utc_now()
 
     user =
       from(u in User,
         where: u.email == ^email,
         where: not is_nil(u.deleted_at),
-        where: u.deleted_at > ^cutoff,
+        where: u.deleted_at > ^now,
         order_by: [desc: u.deleted_at],
         limit: 1
       )
@@ -80,24 +90,23 @@ defmodule Animina.Accounts.SoftDelete do
   end
 
   @doc """
-  Returns `true` if the user's `deleted_at` is within the 30-day grace period.
+  Returns `true` if the user's `deleted_at` is in the future (within grace period).
   """
   def within_grace_period?(%User{deleted_at: nil}), do: false
 
   def within_grace_period?(%User{deleted_at: deleted_at}) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-@grace_period_days, :day)
-    DateTime.after?(deleted_at, cutoff)
+    DateTime.after?(deleted_at, DateTime.utc_now())
   end
 
   @doc """
-  Hard-deletes users whose `deleted_at` is older than 30 days.
+  Hard-deletes users whose `deleted_at` is in the past (grace period expired).
   """
   def purge_deleted_users do
-    cutoff = DateTime.utc_now() |> DateTime.add(-30, :day)
+    now = DateTime.utc_now()
 
     from(u in User,
       where: not is_nil(u.deleted_at),
-      where: u.deleted_at < ^cutoff
+      where: u.deleted_at < ^now
     )
     |> Repo.delete_all()
   end

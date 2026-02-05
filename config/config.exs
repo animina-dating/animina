@@ -108,7 +108,6 @@ config :animina, Animina.Photos,
   max_dimension: 1200,
   thumbnail_dimension: 400,
   webp_quality: 80,
-  pixelate_scale: 0.05,
   # Ollama configuration - supports multiple instances with failover
   # If ollama_instances is not set, ollama_url is used as a single instance
   ollama_url: "http://localhost:11434/api",

@@ -47,7 +47,8 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      assert html =~ "0/5 referrals"
+      # Default threshold is 3 (from system settings)
+      assert html =~ "0/3 referrals"
       assert html =~ "Get activated faster"
     end
   end

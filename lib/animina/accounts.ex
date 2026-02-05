@@ -13,10 +13,9 @@ defmodule Animina.Accounts do
   use Gettext, backend: AniminaWeb.Gettext
 
   alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
+  alias Animina.Gallery
   alias Animina.Repo
   alias Animina.Utils.PaperTrail, as: PT
-
-  @referral_auto_activate_threshold 5
 
   ## Database getters
 
@@ -103,7 +102,9 @@ defmodule Animina.Accounts do
   end
 
   defp maybe_auto_activate(user_id) do
-    if count_confirmed_referrals_by_id(user_id) >= @referral_auto_activate_threshold do
+    threshold = Animina.FeatureFlags.referral_threshold()
+
+    if count_confirmed_referrals_by_id(user_id) >= threshold do
       from(u in User,
         where: u.id == ^user_id,
         where: u.state == "waitlisted"
@@ -128,11 +129,19 @@ defmodule Animina.Accounts do
       changeset = resolve_referral_code(changeset, referral_code_input)
 
       with {:ok, user} <- insert_with_referral_code_retry(changeset, 3, pt_opts),
-           :ok <- insert_locations(user, locations_attrs) do
+           :ok <- insert_locations(user, locations_attrs),
+           {:ok, _pinned_item} <- create_pinned_intro_item(user) do
         {:ok, user}
       end
     end)
   end
+
+  defp create_pinned_intro_item(user) do
+    Gallery.create_pinned_intro_item(user, default_intro_prompt(user.language))
+  end
+
+  defp default_intro_prompt("de"), do: gettext("Erzähl uns etwas über dich...")
+  defp default_intro_prompt(_), do: gettext("Tell us about yourself...")
 
   @doc """
   Returns `true` if the changeset contains an email uniqueness error.
@@ -524,6 +533,18 @@ defmodule Animina.Accounts do
     |> Ecto.Changeset.change(language: language)
     |> PaperTrail.update(PT.opts(opts))
     |> PT.unwrap()
+  end
+
+  @doc """
+  Updates gallery column preference for a specific device type.
+  """
+  def update_gallery_columns(%User{} = user, device_type, columns)
+      when device_type in ["mobile", "tablet", "desktop"] and columns in [1, 2, 3] do
+    field = String.to_existing_atom("gallery_columns_#{device_type}")
+
+    user
+    |> User.gallery_columns_changeset(%{field => columns})
+    |> Repo.update()
   end
 
   ## User search
