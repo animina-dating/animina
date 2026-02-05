@@ -14,6 +14,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.Scope
+  alias Animina.FeatureFlags
   alias Animina.Moodboard
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
@@ -171,36 +173,54 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
 
   @impl true
   def mount(%{"user_id" => user_id}, _session, socket) do
-    current_user = socket.assigns.current_scope && socket.assigns.current_scope.user
+    current_scope = socket.assigns.current_scope
+    current_user = current_scope && current_scope.user
     profile_user = Accounts.get_user(user_id)
+
+    case check_access(current_user, profile_user, current_scope) do
+      {:ok, owner?} ->
+        {:ok, mount_moodboard(socket, profile_user, current_user, owner?)}
+
+      :denied ->
+        {:ok,
+         socket
+         |> put_flash(:error, gettext("This page doesn't exist or you don't have access."))
+         |> redirect(to: ~p"/")}
+    end
+  end
+
+  defp check_access(current_user, profile_user, current_scope) do
     owner? = current_user && profile_user && current_user.id == profile_user.id
 
-    if owner? do
-      # Show moodboard with all items (including hidden)
-      items = Moodboard.list_moodboard_with_hidden(profile_user.id)
+    admin_viewing? =
+      profile_user &&
+        !owner? &&
+        Scope.admin?(current_scope) &&
+        FeatureFlags.admin_can_view_moodboards?()
 
-      # Subscribe to moodboard updates for real-time changes
-      if connected?(socket) do
-        Phoenix.PubSub.subscribe(Animina.PubSub, "moodboard:#{profile_user.id}")
-      end
-
-      {:ok,
-       assign(socket,
-         page_title: "#{profile_user.display_name} - #{gettext("Moodboard")}",
-         profile_user: profile_user,
-         owner?: true,
-         items: items,
-         current_user_id: current_user.id,
-         device_type: "desktop",
-         columns: 3
-       )}
-    else
-      # Vague denial - same for non-existent user OR non-owner
-      {:ok,
-       socket
-       |> put_flash(:error, gettext("This page doesn't exist or you don't have access."))
-       |> redirect(to: ~p"/")}
+    cond do
+      owner? -> {:ok, true}
+      admin_viewing? -> {:ok, false}
+      true -> :denied
     end
+  end
+
+  defp mount_moodboard(socket, profile_user, current_user, owner?) do
+    items = Moodboard.list_moodboard_with_hidden(profile_user.id)
+
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Animina.PubSub, "moodboard:#{profile_user.id}")
+    end
+
+    assign(socket,
+      page_title: "#{profile_user.display_name} - #{gettext("Moodboard")}",
+      profile_user: profile_user,
+      owner?: owner?,
+      items: items,
+      current_user_id: current_user.id,
+      device_type: "desktop",
+      columns: 3
+    )
   end
 
   @impl true

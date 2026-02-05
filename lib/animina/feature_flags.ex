@@ -91,6 +91,14 @@ defmodule Animina.FeatureFlags do
     }
   ]
 
+  @admin_flags [
+    %{
+      name: :admin_view_moodboards,
+      label: "Admin View Moodboards",
+      description: "Allow admins to view any user's moodboard (for moderation purposes)"
+    }
+  ]
+
   # --- Flag Settings CRUD ---
 
   @doc """
@@ -257,6 +265,14 @@ defmodule Animina.FeatureFlags do
     enabled?(:ollama_debug_display)
   end
 
+  @doc """
+  Returns whether admins can view any user's moodboard.
+  Disabled by default for privacy.
+  """
+  def admin_can_view_moodboards? do
+    enabled?(:admin_view_moodboards)
+  end
+
   # --- Photo Flags Listing ---
 
   @doc """
@@ -337,6 +353,43 @@ defmodule Animina.FeatureFlags do
   """
   def initialize_debug_flags do
     Enum.each(@debug_flags, fn flag_def ->
+      # Create default settings if they don't exist
+      get_or_create_flag_setting(flag_def.name, %{
+        description: flag_def.description,
+        settings: %{}
+      })
+    end)
+  end
+
+  # --- Admin Flags ---
+
+  @doc """
+  Returns the list of admin flag definitions.
+  """
+  def admin_flag_definitions do
+    @admin_flags
+  end
+
+  @doc """
+  Returns all admin flags with their current states.
+  """
+  def get_all_admin_flags do
+    Enum.map(@admin_flags, fn flag_def ->
+      %{
+        name: flag_def.name,
+        label: flag_def.label,
+        description: flag_def.description,
+        enabled: enabled?(flag_def.name)
+      }
+    end)
+  end
+
+  @doc """
+  Initializes default admin flag states.
+  Called during application startup. Admin flags are disabled by default.
+  """
+  def initialize_admin_flags do
+    Enum.each(@admin_flags, fn flag_def ->
       # Create default settings if they don't exist
       get_or_create_flag_setting(flag_def.name, %{
         description: flag_def.description,

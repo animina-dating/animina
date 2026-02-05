@@ -10,6 +10,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
     flags = FeatureFlags.get_all_photo_flags()
     system_settings = FeatureFlags.get_all_system_settings()
     debug_flags = FeatureFlags.get_all_debug_flags()
+    admin_flags = FeatureFlags.get_all_admin_flags()
 
     {:ok,
      assign(socket,
@@ -17,6 +18,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
        photo_flags: flags,
        system_settings: system_settings,
        debug_flags: debug_flags,
+       admin_flags: admin_flags,
        selected_flag: nil,
        selected_system_setting: nil,
        form: nil,
@@ -49,6 +51,18 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
     end
 
     {:noreply, assign(socket, debug_flags: FeatureFlags.get_all_debug_flags())}
+  end
+
+  def handle_event("toggle-admin-flag", %{"flag" => flag_name}, socket) do
+    flag_atom = String.to_existing_atom(flag_name)
+
+    if FeatureFlags.enabled?(flag_atom) do
+      FeatureFlags.disable(flag_atom)
+    else
+      FeatureFlags.enable(flag_atom)
+    end
+
+    {:noreply, assign(socket, admin_flags: FeatureFlags.get_all_admin_flags())}
   end
 
   def handle_event("open-settings", %{"flag" => flag_name}, socket) do
@@ -331,6 +345,55 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
                       type="checkbox"
                       checked={flag.enabled}
                       phx-click="toggle-debug-flag"
+                      phx-value-flag={flag.name}
+                    />
+                    <div class={[
+                      "swap-on flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+                      "bg-success/20 text-success"
+                    ]}>
+                      <.icon name="hero-check-circle-mini" class="h-4 w-4" />
+                      {gettext("On")}
+                    </div>
+                    <div class={[
+                      "swap-off flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+                      "bg-base-300 text-base-content/50"
+                    ]}>
+                      <.icon name="hero-x-circle-mini" class="h-4 w-4" />
+                      {gettext("Off")}
+                    </div>
+                  </label>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <%!-- Admin Flags Section --%>
+        <div class="mb-8">
+          <h2 class="text-lg font-semibold text-base-content mb-4 flex items-center gap-2">
+            <.icon name="hero-shield-check" class="h-5 w-5" />
+            {gettext("Admin Flags")}
+          </h2>
+
+          <div class="space-y-3">
+            <%= for flag <- @admin_flags do %>
+              <div
+                class="bg-base-200 rounded-lg p-4 flex items-center justify-between"
+                data-flag={flag.name}
+              >
+                <div class="flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="font-medium text-base-content">{flag.label}</span>
+                  </div>
+                  <p class="text-sm text-base-content/60 mt-1">{flag.description}</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <label class="swap swap-flip">
+                    <input
+                      type="checkbox"
+                      checked={flag.enabled}
+                      phx-click="toggle-admin-flag"
                       phx-value-flag={flag.name}
                     />
                     <div class={[
