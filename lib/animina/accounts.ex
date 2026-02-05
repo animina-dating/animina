@@ -492,6 +492,15 @@ defmodule Animina.Accounts do
   ## User profile & preferences
 
   @doc """
+  Computes the age from a birthday.
+  """
+  def compute_age(birthday) do
+    today = Date.utc_today()
+    age = today.year - birthday.year
+    if {today.month, today.day} < {birthday.month, birthday.day}, do: age - 1, else: age
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for changing user profile fields.
   """
   def change_user_profile(user, attrs \\ %{}) do

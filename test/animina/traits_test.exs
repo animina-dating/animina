@@ -2699,6 +2699,243 @@ defmodule Animina.TraitsTest do
     end
   end
 
+  describe "white flag category publish settings" do
+    test "toggle_white_flag_category_publish/2 creates publish record when not published" do
+      user = user_fixture()
+      category = category_fixture()
+
+      assert {:ok, _} = Traits.toggle_white_flag_category_publish(user, category)
+      assert Traits.white_flag_category_published?(user, category)
+    end
+
+    test "toggle_white_flag_category_publish/2 removes publish record when already published" do
+      user = user_fixture()
+      category = category_fixture()
+
+      {:ok, _} = Traits.toggle_white_flag_category_publish(user, category)
+      assert Traits.white_flag_category_published?(user, category)
+
+      {:ok, _} = Traits.toggle_white_flag_category_publish(user, category)
+      refute Traits.white_flag_category_published?(user, category)
+    end
+
+    test "set_white_flag_category_publish/3 sets publish state to true" do
+      user = user_fixture()
+      category = category_fixture()
+
+      refute Traits.white_flag_category_published?(user, category)
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, true)
+      assert Traits.white_flag_category_published?(user, category)
+    end
+
+    test "set_white_flag_category_publish/3 sets publish state to false" do
+      user = user_fixture()
+      category = category_fixture()
+
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, true)
+      assert Traits.white_flag_category_published?(user, category)
+
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, false)
+      refute Traits.white_flag_category_published?(user, category)
+    end
+
+    test "set_white_flag_category_publish/3 is idempotent for true" do
+      user = user_fixture()
+      category = category_fixture()
+
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, true)
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, true)
+      assert Traits.white_flag_category_published?(user, category)
+    end
+
+    test "set_white_flag_category_publish/3 is idempotent for false" do
+      user = user_fixture()
+      category = category_fixture()
+
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, false)
+      {:ok, _} = Traits.set_white_flag_category_publish(user, category, false)
+      refute Traits.white_flag_category_published?(user, category)
+    end
+
+    test "white_flag_category_published?/2 returns false when not published" do
+      user = user_fixture()
+      category = category_fixture()
+
+      refute Traits.white_flag_category_published?(user, category)
+    end
+
+    test "list_published_white_flag_category_ids/1 returns published category IDs" do
+      user = user_fixture()
+      cat1 = category_fixture()
+      cat2 = category_fixture()
+      _cat3 = category_fixture()
+
+      Traits.set_white_flag_category_publish(user, cat1, true)
+      Traits.set_white_flag_category_publish(user, cat2, true)
+
+      ids = Traits.list_published_white_flag_category_ids(user)
+      assert cat1.id in ids
+      assert cat2.id in ids
+      assert length(ids) == 2
+    end
+  end
+
+  describe "count_published_user_flags_by_color/1" do
+    test "returns empty map for user with no flags" do
+      user = user_fixture()
+      assert Traits.count_published_user_flags_by_color(user) == %{}
+    end
+
+    test "always counts green and red flags regardless of publish status" do
+      user = user_fixture()
+      flag1 = flag_fixture()
+      flag2 = flag_fixture()
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "green",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "red",
+          intensity: "hard",
+          position: 1
+        })
+
+      # No publish records, but green and red should still be counted
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["green"] == 1
+      assert counts["red"] == 1
+    end
+
+    test "only counts white flags from published categories" do
+      user = user_fixture()
+      cat1 = category_fixture()
+      cat2 = category_fixture()
+
+      flag1 = flag_fixture(%{category_id: cat1.id})
+      flag2 = flag_fixture(%{category_id: cat2.id})
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "white",
+          intensity: "hard",
+          position: 2
+        })
+
+      # No categories published - white count should be 0
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["white"] == nil || counts["white"] == 0
+
+      # Publish cat1 only
+      Traits.set_white_flag_category_publish(user, cat1, true)
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["white"] == 1
+
+      # Publish cat2 as well
+      Traits.set_white_flag_category_publish(user, cat2, true)
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["white"] == 2
+    end
+
+    test "mixed colors with partial white flag publishing" do
+      user = user_fixture()
+      cat1 = category_fixture()
+      cat2 = category_fixture()
+
+      flag1 = flag_fixture(%{category_id: cat1.id})
+      flag2 = flag_fixture(%{category_id: cat2.id})
+      flag3 = flag_fixture()
+
+      # Add white flags from different categories
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "white",
+          intensity: "hard",
+          position: 2
+        })
+
+      # Add green and red flags
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag3.id,
+          color: "green",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag3.id,
+          color: "red",
+          intensity: "soft",
+          position: 1
+        })
+
+      # Publish only cat1
+      Traits.set_white_flag_category_publish(user, cat1, true)
+
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["white"] == 1
+      assert counts["green"] == 1
+      assert counts["red"] == 1
+    end
+
+    test "excludes inherited white flags from count" do
+      user = user_fixture()
+      {parent, _children} = flag_with_children_fixture()
+      category = Animina.Repo.get!(Animina.Traits.Category, parent.category_id)
+
+      # Add parent flag (creates inherited children)
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: parent.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      # Publish the category
+      Traits.set_white_flag_category_publish(user, category, true)
+
+      # Should only count the parent, not inherited children
+      counts = Traits.count_published_user_flags_by_color(user)
+      assert counts["white"] == 1
+    end
+  end
+
   describe "PaperTrail audit trail" do
     test "adding a user flag creates a version; inherited flags do not" do
       user = user_fixture()

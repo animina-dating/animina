@@ -52,6 +52,8 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Single"),
       gettext("In a Relationship"),
       gettext("Married"),
+      gettext("Separated"),
+      gettext("Divorced"),
       gettext("It's Complicated"),
       # ── What I'm Looking For flags ──
       gettext("Long-term Relationship"),

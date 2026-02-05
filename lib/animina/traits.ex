@@ -10,7 +10,7 @@ defmodule Animina.Traits do
   import Ecto.Query
 
   alias Animina.Repo
-  alias Animina.Traits.{Category, Flag, UserCategoryOptIn, UserFlag}
+  alias Animina.Traits.{Category, Flag, UserCategoryOptIn, UserFlag, UserWhiteFlagCategoryPublish}
   alias Animina.Traits.Validations
   alias Animina.Utils.PaperTrail, as: PT
 
@@ -141,13 +141,19 @@ defmodule Animina.Traits do
 
     with :ok <- Validations.validate_single_select(attrs),
          :ok <- Validations.validate_exclusive_hard(attrs),
-         :ok <- Validations.validate_no_mixing(attrs) do
-      with {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> PT.unwrap() do
-        expand_on_write(user_flag)
-        {:ok, user_flag}
-      end
+         :ok <- Validations.validate_no_mixing(attrs),
+         {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> PT.unwrap() do
+      expand_on_write(user_flag)
+      maybe_broadcast_white_flags(user_flag)
+      {:ok, user_flag}
     end
   end
+
+  defp maybe_broadcast_white_flags(%{color: "white", user_id: user_id}) do
+    broadcast_white_flags_updated(user_id)
+  end
+
+  defp maybe_broadcast_white_flags(_user_flag), do: :ok
 
   defp expand_on_write(user_flag) do
     flag = Repo.get!(Flag, user_flag.flag_id) |> Repo.preload(:children)
@@ -195,12 +201,21 @@ defmodule Animina.Traits do
         {:ok, :already_removed}
 
       user_flag ->
+        color = user_flag.color
+
         from(uf in UserFlag,
           where: uf.user_id == ^user.id and uf.source_flag_id == ^user_flag.flag_id
         )
         |> Repo.delete_all()
 
-        PaperTrail.delete(user_flag, pt_opts) |> PT.unwrap()
+        result = PaperTrail.delete(user_flag, pt_opts) |> PT.unwrap()
+
+        # Broadcast white flag changes
+        if color == "white" do
+          broadcast_white_flags_updated(user.id)
+        end
+
+        result
     end
   end
 
@@ -370,6 +385,211 @@ defmodule Animina.Traits do
       where: o.user_id == ^user.id and o.category_id == ^category.id
     )
     |> Repo.exists?()
+  end
+
+  # --- White Flag Category Publish ---
+
+  @default_published_category_names ["Relationship Status", "What I'm Looking For", "Languages"]
+
+  @doc """
+  Returns the list of category names that are published by default.
+  """
+  def default_published_category_names, do: @default_published_category_names
+
+  @doc """
+  Ensures that default published categories have publish records for the user.
+  Called on first visit to traits wizard to set up defaults for new users.
+  """
+  def ensure_default_published_categories(user, opts \\ []) do
+    pt_opts = PT.opts(opts)
+
+    default_category_ids =
+      from(c in Category,
+        where: c.name in ^@default_published_category_names,
+        select: c.id
+      )
+      |> Repo.all()
+
+    existing_published_ids = list_published_white_flag_category_ids(user)
+
+    Enum.each(default_category_ids, fn category_id ->
+      unless category_id in existing_published_ids do
+        %UserWhiteFlagCategoryPublish{}
+        |> UserWhiteFlagCategoryPublish.changeset(%{user_id: user.id, category_id: category_id})
+        |> PaperTrail.insert(pt_opts)
+      end
+    end)
+
+    :ok
+  end
+
+  @doc """
+  Toggles the publish state for a user's white flags in a category.
+  If published, removes the record. If not published, creates one.
+  """
+  def toggle_white_flag_category_publish(user, category, opts \\ []) do
+    pt_opts = PT.opts(opts)
+
+    result =
+      case Repo.get_by(UserWhiteFlagCategoryPublish, user_id: user.id, category_id: category.id) do
+        nil ->
+          %UserWhiteFlagCategoryPublish{}
+          |> UserWhiteFlagCategoryPublish.changeset(%{user_id: user.id, category_id: category.id})
+          |> PaperTrail.insert(pt_opts)
+          |> PT.unwrap()
+
+        publish ->
+          PaperTrail.delete(publish, pt_opts) |> PT.unwrap()
+      end
+
+    # Broadcast white flag changes (visibility changed)
+    broadcast_white_flags_updated(user.id)
+
+    result
+  end
+
+  @doc """
+  Sets the publish state for a user's white flags in a category.
+  If publish? is true, creates a record. If false, removes the record.
+  Idempotent - calling with the same state multiple times has no effect.
+  """
+  def set_white_flag_category_publish(user, category, publish?, opts \\ [])
+
+  def set_white_flag_category_publish(user, category, true, opts) do
+    pt_opts = PT.opts(opts)
+
+    case Repo.get_by(UserWhiteFlagCategoryPublish, user_id: user.id, category_id: category.id) do
+      %UserWhiteFlagCategoryPublish{} = existing ->
+        {:ok, existing}
+
+      nil ->
+        %UserWhiteFlagCategoryPublish{}
+        |> UserWhiteFlagCategoryPublish.changeset(%{user_id: user.id, category_id: category.id})
+        |> PaperTrail.insert(pt_opts)
+        |> PT.unwrap()
+    end
+  end
+
+  def set_white_flag_category_publish(user, category, false, opts) do
+    pt_opts = PT.opts(opts)
+
+    case Repo.get_by(UserWhiteFlagCategoryPublish, user_id: user.id, category_id: category.id) do
+      nil ->
+        {:ok, :already_unpublished}
+
+      publish ->
+        PaperTrail.delete(publish, pt_opts) |> PT.unwrap()
+    end
+  end
+
+  @doc """
+  Returns true if the user has published their white flags for the given category.
+  """
+  def white_flag_category_published?(user, category) do
+    from(p in UserWhiteFlagCategoryPublish,
+      where: p.user_id == ^user.id and p.category_id == ^category.id
+    )
+    |> Repo.exists?()
+  end
+
+  @doc """
+  Returns a list of category IDs where the user has published their white flags.
+  """
+  def list_published_white_flag_category_ids(user) do
+    from(p in UserWhiteFlagCategoryPublish, where: p.user_id == ^user.id, select: p.category_id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Counts user flags by color, but only includes white flags from published categories.
+  Green and red flags are always counted regardless of publish status.
+  """
+  def count_published_user_flags_by_color(user) do
+    published_category_ids = list_published_white_flag_category_ids(user)
+
+    # Count green and red flags (always shown)
+    green_red_counts =
+      from(uf in UserFlag,
+        where: uf.user_id == ^user.id and uf.inherited == false and uf.color in ["green", "red"],
+        group_by: uf.color,
+        select: {uf.color, count(uf.id)}
+      )
+      |> Repo.all()
+
+    # Count white flags only from published categories
+    white_count =
+      from(uf in UserFlag,
+        join: f in Flag,
+        on: f.id == uf.flag_id,
+        where:
+          uf.user_id == ^user.id and
+            uf.inherited == false and
+            uf.color == "white" and
+            f.category_id in ^published_category_ids,
+        select: count(uf.id)
+      )
+      |> Repo.one()
+
+    counts = Map.new(green_red_counts)
+
+    if white_count && white_count > 0 do
+      Map.put(counts, "white", white_count)
+    else
+      counts
+    end
+  end
+
+  @doc """
+  Returns published white flags for a user (flags from published categories).
+  Each flag includes the flag details (name, emoji) and category.
+  """
+  def list_published_white_flags(user) do
+    published_category_ids = list_published_white_flag_category_ids(user)
+
+    from(uf in UserFlag,
+      join: f in Flag,
+      on: f.id == uf.flag_id,
+      join: c in Category,
+      on: c.id == f.category_id,
+      where:
+        uf.user_id == ^user.id and
+          uf.inherited == false and
+          uf.color == "white" and
+          f.category_id in ^published_category_ids,
+      order_by: [c.position, uf.position],
+      preload: [flag: {f, category: c}]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Counts private (unpublished) white flags for a user.
+  """
+  def count_private_white_flags(user) do
+    published_category_ids = list_published_white_flag_category_ids(user)
+
+    from(uf in UserFlag,
+      join: f in Flag,
+      on: f.id == uf.flag_id,
+      where:
+        uf.user_id == ^user.id and
+          uf.inherited == false and
+          uf.color == "white" and
+          f.category_id not in ^published_category_ids,
+      select: count(uf.id)
+    )
+    |> Repo.one() || 0
+  end
+
+  @doc """
+  Broadcasts white flag changes via PubSub.
+  """
+  def broadcast_white_flags_updated(user_id) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{user_id}",
+      {:white_flags_updated, %{user_id: user_id}}
+    )
   end
 
   # --- Delegations to Matching ---

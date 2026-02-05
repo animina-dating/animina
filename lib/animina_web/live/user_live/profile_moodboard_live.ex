@@ -16,7 +16,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   alias Animina.Accounts
   alias Animina.Accounts.Scope
   alias Animina.FeatureFlags
+  alias Animina.GeoData
   alias Animina.Moodboard
+  alias Animina.Traits
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
 
@@ -29,7 +31,35 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="text-3xl font-bold">{@profile_user.display_name}</h1>
-            <p class="text-base-content/60">{gettext("Moodboard")}</p>
+            <p class="text-base-content/60">
+              {gettext("%{age} years", age: @age)}
+              <%= if @city do %>
+                · {@zip_code} {@city.name}
+              <% end %>
+            </p>
+            <div
+              :if={
+                (@flag_counts["green"] && @flag_counts["green"] > 0) ||
+                  (@flag_counts["red"] && @flag_counts["red"] > 0)
+              }
+              class="flex gap-3 mt-2 text-sm"
+            >
+              <span class="text-base-content/60">{gettext("Partner flags:")}</span>
+              <span
+                :if={@flag_counts["green"] && @flag_counts["green"] > 0}
+                class="flex items-center gap-1"
+              >
+                <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                {@flag_counts["green"]}
+              </span>
+              <span
+                :if={@flag_counts["red"] && @flag_counts["red"] > 0}
+                class="flex items-center gap-1"
+              >
+                <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                {@flag_counts["red"]}
+              </span>
+            </div>
           </div>
 
           <.link
@@ -53,6 +83,50 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
             </svg>
             {gettext("Edit Moodboard")}
           </.link>
+        </div>
+        
+    <!-- White flags display -->
+        <div :if={length(@white_flags) > 0 || @private_white_flags_count > 0} class="mb-8">
+          <div class="flex flex-wrap gap-3">
+            <%= for {category_name, flags} <- group_flags_by_category(@white_flags) do %>
+              <div class="inline-flex items-center gap-2 bg-base-100 rounded-2xl px-4 py-2.5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-base-200/80">
+                <span class="text-xs font-medium text-base-content/40 uppercase tracking-wide shrink-0">
+                  {AniminaWeb.TraitTranslations.translate(category_name)}
+                </span>
+                <div class="flex flex-wrap items-center gap-2">
+                  <%= for user_flag <- flags do %>
+                    <span class="inline-flex items-center gap-1 text-sm bg-base-200/50 rounded-lg px-2 py-0.5">
+                      <span>{user_flag.flag.emoji}</span>
+                      <span class="text-base-content/80">
+                        {AniminaWeb.TraitTranslations.translate(user_flag.flag.name)}
+                      </span>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+            <div
+              :if={@private_white_flags_count > 0}
+              class="inline-flex items-center gap-1.5 bg-base-200/30 rounded-2xl px-4 py-2.5 text-base-content/40 text-sm border border-dashed border-base-300"
+              title={gettext("Private flags not shown on profile")}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                />
+              </svg>
+              <span>+{@private_white_flags_count} {gettext("private")}</span>
+            </div>
+          </div>
         </div>
         
     <!-- Empty state -->
@@ -171,6 +245,16 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   defp column_count(columns) when columns in [1, 2, 3], do: columns
   defp column_count(_), do: 2
 
+  # Group white flags by their category name, preserving order
+  defp group_flags_by_category(white_flags) do
+    white_flags
+    |> Enum.group_by(& &1.flag.category.name)
+    |> Enum.sort_by(fn {_name, flags} ->
+      # Sort by the first flag's category position (flags are already ordered by category)
+      hd(flags).flag.category.position
+    end)
+  end
+
   @impl true
   def mount(%{"user_id" => user_id}, _session, socket) do
     current_scope = socket.assigns.current_scope
@@ -212,14 +296,41 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
       Phoenix.PubSub.subscribe(Animina.PubSub, "moodboard:#{profile_user.id}")
     end
 
+    # Compute age
+    age = Accounts.compute_age(profile_user.birthday)
+
+    # Get primary location (position 1) with city name
+    locations = Accounts.list_user_locations(profile_user)
+    primary_location = Enum.find(locations, &(&1.position == 1))
+
+    {city, zip_code} =
+      if primary_location do
+        {GeoData.get_city_by_zip_code(primary_location.zip_code), primary_location.zip_code}
+      else
+        {nil, nil}
+      end
+
+    # Get flag counts (only includes white flags from published categories)
+    flag_counts = Traits.count_published_user_flags_by_color(profile_user)
+
+    # Get published white flags for display
+    white_flags = Traits.list_published_white_flags(profile_user)
+    private_white_flags_count = Traits.count_private_white_flags(profile_user)
+
     assign(socket,
-      page_title: "#{profile_user.display_name} - #{gettext("Moodboard")}",
+      page_title: profile_user.display_name,
       profile_user: profile_user,
       owner?: owner?,
       items: items,
       current_user_id: current_user.id,
       device_type: "desktop",
-      columns: 3
+      columns: 3,
+      age: age,
+      city: city,
+      zip_code: zip_code,
+      flag_counts: flag_counts,
+      white_flags: white_flags,
+      private_white_flags_count: private_white_flags_count
     )
   end
 
@@ -283,6 +394,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
     {:noreply, reload_items(socket)}
   end
 
+  # Handle white flag updates
+  @impl true
+  def handle_info({:white_flags_updated, _payload}, socket) do
+    {:noreply, reload_white_flags(socket)}
+  end
+
   @impl true
   def handle_info(_msg, socket) do
     {:noreply, socket}
@@ -291,5 +408,18 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   defp reload_items(socket) do
     items = Moodboard.list_moodboard_with_hidden(socket.assigns.profile_user.id)
     assign(socket, :items, items)
+  end
+
+  defp reload_white_flags(socket) do
+    profile_user = socket.assigns.profile_user
+    flag_counts = Traits.count_published_user_flags_by_color(profile_user)
+    white_flags = Traits.list_published_white_flags(profile_user)
+    private_white_flags_count = Traits.count_private_white_flags(profile_user)
+
+    assign(socket,
+      flag_counts: flag_counts,
+      white_flags: white_flags,
+      private_white_flags_count: private_white_flags_count
+    )
   end
 end

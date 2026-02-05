@@ -423,6 +423,9 @@ defmodule Animina.Seeds.DevUsers do
   end
 
   defp assign_traits(user, seed_index) do
+    # Ensure default published categories are set
+    Traits.ensure_default_published_categories(user)
+
     # Get all core categories
     categories = Traits.list_core_categories()
 
@@ -460,7 +463,7 @@ defmodule Animina.Seeds.DevUsers do
             user_id: user.id,
             flag_id: flag.id,
             color: "white",
-            intensity: "soft",
+            intensity: "hard",
             position: pos
           })
         end

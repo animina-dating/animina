@@ -98,6 +98,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           flags_by_category={@flags_by_category}
           user_flags={@user_flags}
           current_step={@current_step}
+          published_category_ids={@published_category_ids}
         />
 
         <%!-- Category picker --%>
@@ -113,6 +114,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           flags_by_category={@flags_by_category}
           user_flags={@user_flags}
           current_step={@current_step}
+          published_category_ids={@published_category_ids}
         />
 
         <%!-- Navigation buttons --%>
@@ -200,9 +202,66 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp category_flags(assigns) do
     ~H"""
     <div :for={category <- @categories} class="mb-8">
-      <h3 class="text-sm font-semibold text-base-content mb-3">
-        {TraitTranslations.translate(category.name)}
-      </h3>
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-semibold text-base-content">
+          {TraitTranslations.translate(category.name)}
+        </h3>
+        <button
+          :if={@current_step == 1}
+          type="button"
+          phx-click="toggle_publish"
+          phx-value-category-id={category.id}
+          class={[
+            "flex items-center gap-1.5 px-2 py-1 rounded-full text-xs transition-colors",
+            if(category.id in @published_category_ids,
+              do: "bg-success/20 text-success hover:bg-success/30",
+              else: "bg-base-300 text-base-content/50 hover:bg-base-300/80"
+            )
+          ]}
+        >
+          <svg
+            :if={category.id in @published_category_ids}
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            />
+          </svg>
+          <svg
+            :if={category.id not in @published_category_ids}
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3.5 w-3.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+            />
+          </svg>
+          <span>
+            {if category.id in @published_category_ids,
+              do: gettext("Visible"),
+              else: gettext("Private")}
+          </span>
+        </button>
+      </div>
 
       <div class="flex flex-wrap gap-2">
         <button
@@ -282,18 +341,22 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp step_page_title(2), do: gettext("My Flags — I Like in a Partner")
   defp step_page_title(3), do: gettext("My Flags — Partner Deal Breakers")
 
-  defp step_explanation(1), do: gettext("Select traits that describe who you are.")
+  defp step_explanation(1),
+    do:
+      gettext(
+        "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
+      )
 
   defp step_explanation(2),
     do:
       gettext(
-        "Select traits you'd like your partner to have. Click once for nice to have, again for must have."
+        "Select traits you'd like your partner to have. Click once for nice to have, again for must have. These flags are always private and only used for matching."
       )
 
   defp step_explanation(3),
     do:
       gettext(
-        "Select traits you don't want in a partner. Click once for prefer not, again for deal breaker."
+        "Select traits you don't want in a partner. Click once for prefer not, again for deal breaker. These flags are always private and only used for matching."
       )
 
   defp step_subtitle(1),
@@ -378,9 +441,14 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   @impl true
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
+
+    # Ensure default published categories are set for new users
+    Traits.ensure_default_published_categories(user)
+
     core_categories = Traits.list_core_categories()
     optin_categories = Traits.list_optin_categories()
     selected_optin_ids = Traits.list_user_optin_category_ids(user)
+    published_category_ids = Traits.list_published_white_flag_category_ids(user)
 
     selected_optin_categories =
       Enum.filter(optin_categories, &(&1.id in selected_optin_ids))
@@ -402,6 +470,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
      |> assign(:selected_optin_categories, selected_optin_categories)
      |> assign(:flags_by_category, flags_by_category)
      |> assign(:user_flags, user_flags)
+     |> assign(:published_category_ids, published_category_ids)
      |> assign(:locked_category_ids, locked_category_ids(user_flags, flags_by_category))}
   end
 
@@ -470,6 +539,15 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     user_flag = find_user_flag(socket.assigns.user_flags, flag_id, color)
 
     do_toggle_flag(socket, user, user_flag, flag_id, step, color)
+  end
+
+  def handle_event("toggle_publish", %{"category-id" => category_id}, socket) do
+    user = socket.assigns.current_scope.user
+    category = Traits.get_category!(category_id)
+    {:ok, _} = Traits.toggle_white_flag_category_publish(user, category, originator: user)
+
+    published_category_ids = Traits.list_published_white_flag_category_ids(user)
+    {:noreply, assign(socket, :published_category_ids, published_category_ids)}
   end
 
   def handle_event("delete_all_flags", _params, socket) do
