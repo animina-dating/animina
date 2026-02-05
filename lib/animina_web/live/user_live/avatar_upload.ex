@@ -60,7 +60,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
                   "badge badge-sm",
                   status_badge_class(@avatar.state)
                 ]}>
-                  {status_label(@avatar.state)}
+                  {status_label(@avatar.state, @avatar)}
                 </span>
               </div>
             <% end %>
@@ -71,7 +71,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
             <div class="mt-4 w-full max-w-xs" data-role="processing-progress">
               <div class="flex items-center gap-2 mb-2">
                 <span class="loading loading-spinner loading-sm"></span>
-                <span class="text-sm font-medium">{status_label(@avatar.state)}</span>
+                <span class="text-sm font-medium">{status_label(@avatar.state, @avatar)}</span>
               </div>
               <div class="flex gap-1">
                 <div
@@ -94,6 +94,16 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
               <p class="text-xs text-base-content/60 mt-2 text-center">
                 {gettext("This usually takes 40 seconds")}
               </p>
+            </div>
+          <% end %>
+
+          <%!-- Error Message Display --%>
+          <%= if @avatar && error_state?(@avatar.state) && @avatar.error_message do %>
+            <div class="mt-4 w-full max-w-md" data-role="error-message">
+              <div class="alert alert-error">
+                <.icon name="hero-exclamation-circle" class="h-5 w-5 shrink-0" />
+                <span class="text-sm">{@avatar.error_message}</span>
+              </div>
             </div>
           <% end %>
 
@@ -431,14 +441,51 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
     {:noreply, socket}
   end
 
-  defp status_label("pending"), do: gettext("Pending review")
-  defp status_label("processing"), do: gettext("Processing")
-  defp status_label("ollama_checking"), do: gettext("Analyzing photo")
-  defp status_label("no_face_error"), do: gettext("No face detected")
-  defp status_label("error"), do: gettext("Upload failed")
-  defp status_label("appeal_pending"), do: gettext("Pending moderator review")
-  defp status_label("appeal_rejected"), do: gettext("Appeal rejected")
-  defp status_label(_), do: gettext("Processing")
+  defp status_label("pending", _photo), do: gettext("Pending review")
+  defp status_label("processing", _photo), do: gettext("Processing")
+  defp status_label("ollama_checking", _photo), do: gettext("Analyzing photo")
+
+  defp status_label("no_face_error", photo) when not is_nil(photo) do
+    # Use short label for badge; full message shown separately
+    cond do
+      photo.error_message && String.contains?(photo.error_message, "multiple") ->
+        gettext("Multiple people detected")
+
+      photo.error_message && String.contains?(photo.error_message, "children") ->
+        gettext("Photo not allowed")
+
+      true ->
+        gettext("No face detected")
+    end
+  end
+
+  defp status_label("no_face_error", _photo), do: gettext("No face detected")
+
+  defp status_label("error", photo) when not is_nil(photo) do
+    error_message_to_label(photo.error_message)
+  end
+
+  defp status_label("error", _photo), do: gettext("Upload failed")
+  defp status_label("appeal_pending", _photo), do: gettext("Pending moderator review")
+  defp status_label("appeal_rejected", _photo), do: gettext("Appeal rejected")
+  defp status_label(_, _photo), do: gettext("Processing")
+
+  defp error_message_to_label(nil), do: gettext("Upload failed")
+
+  defp error_message_to_label(msg) do
+    content_violation_keywords = ["nudity", "firearm", "hunting", "sexual"]
+
+    cond do
+      Enum.any?(content_violation_keywords, &String.contains?(msg, &1)) ->
+        gettext("Content violation")
+
+      String.contains?(msg, "attire") ->
+        gettext("Attire violation")
+
+      true ->
+        gettext("Upload failed")
+    end
+  end
 
   defp status_badge_class("error"), do: "badge-error"
   defp status_badge_class("no_face_error"), do: "badge-error"
@@ -449,6 +496,12 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   defp can_request_appeal?("no_face_error"), do: true
   defp can_request_appeal?("error"), do: true
   defp can_request_appeal?(_), do: false
+
+  # Check if photo is in an error state that should show the error message
+  defp error_state?("no_face_error"), do: true
+  defp error_state?("error"), do: true
+  defp error_state?("appeal_rejected"), do: true
+  defp error_state?(_), do: false
 
   # Check if photo is in an active processing state
   defp processing?("pending"), do: true

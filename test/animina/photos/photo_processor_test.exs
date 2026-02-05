@@ -100,15 +100,56 @@ defmodule Animina.Photos.PhotoProcessorTest do
   end
 
   describe "parse_ollama_response/1" do
-    test "parses JSON with single person and family friendly content" do
+    test "parses new nested JSON format with single person and family friendly content" do
+      response = ~s|{
+        "photo_analysis": {
+          "person_detection": {
+            "contains_person": true,
+            "person_count": 1,
+            "persons_facing_camera": 1,
+            "children_present": false,
+            "adult_present": true
+          },
+          "content_safety": {
+            "family_friendly": true,
+            "nudity_detected": false,
+            "explicit_content": false,
+            "illegal_activity": false,
+            "drug_use": false,
+            "violence": false,
+            "firearms_visible": false,
+            "hunting_scene": false
+          },
+          "attire_assessment": {
+            "appropriate_attire": true,
+            "swimwear_detected": false,
+            "underwear_detected": false,
+            "shirtless": false,
+            "outdoor_context": false,
+            "beach_context": false
+          },
+          "sex_scene": false
+        }
+      }|
+
+      result = PhotoProcessor.parse_ollama_response(response)
+
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == true
+      assert result.person_detection.persons_facing_camera == 1
+      assert result.content_safety.nudity_detected == false
+      assert result.content_safety.firearms_visible == false
+    end
+
+    test "parses legacy JSON format for backwards compatibility" do
       response =
         ~s|{"contains_person": true, "person_facing_camera_count": 1, "family_friendly": true}|
 
       result = PhotoProcessor.parse_ollama_response(response)
 
-      assert result.family_friendly == true
-      assert result.contains_person == true
-      assert result.person_facing_camera_count == 1
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == true
+      assert result.person_detection.persons_facing_camera == 1
     end
 
     test "parses JSON with no person" do
@@ -117,9 +158,9 @@ defmodule Animina.Photos.PhotoProcessorTest do
 
       result = PhotoProcessor.parse_ollama_response(response)
 
-      assert result.family_friendly == true
-      assert result.contains_person == false
-      assert result.person_facing_camera_count == 0
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == false
+      assert result.person_detection.persons_facing_camera == 0
     end
 
     test "parses JSON with multiple people" do
@@ -128,9 +169,9 @@ defmodule Animina.Photos.PhotoProcessorTest do
 
       result = PhotoProcessor.parse_ollama_response(response)
 
-      assert result.family_friendly == true
-      assert result.contains_person == true
-      assert result.person_facing_camera_count == 3
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == true
+      assert result.person_detection.persons_facing_camera == 3
     end
 
     test "parses JSON with NSFW content (not family friendly)" do
@@ -139,9 +180,9 @@ defmodule Animina.Photos.PhotoProcessorTest do
 
       result = PhotoProcessor.parse_ollama_response(response)
 
-      assert result.family_friendly == false
-      assert result.contains_person == true
-      assert result.person_facing_camera_count == 1
+      assert result.content_safety.family_friendly == false
+      assert result.person_detection.contains_person == true
+      assert result.person_detection.persons_facing_camera == 1
     end
 
     test "handles JSON with extra text around it" do
@@ -153,8 +194,8 @@ defmodule Animina.Photos.PhotoProcessorTest do
 
       result = PhotoProcessor.parse_ollama_response(response)
 
-      assert result.family_friendly == true
-      assert result.contains_person == true
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == true
     end
 
     test "falls back to text parsing when no JSON found" do
@@ -166,8 +207,47 @@ defmodule Animina.Photos.PhotoProcessorTest do
       result = PhotoProcessor.parse_ollama_response(response)
 
       # Defaults when no JSON found
-      assert result.family_friendly == true
-      assert result.contains_person == false
+      assert result.content_safety.family_friendly == true
+      assert result.person_detection.contains_person == false
+    end
+
+    test "parses new format with content violations" do
+      response = ~s|{
+        "photo_analysis": {
+          "person_detection": {
+            "contains_person": true,
+            "person_count": 1,
+            "persons_facing_camera": 1,
+            "children_present": false,
+            "adult_present": true
+          },
+          "content_safety": {
+            "family_friendly": false,
+            "nudity_detected": true,
+            "explicit_content": false,
+            "illegal_activity": false,
+            "drug_use": false,
+            "violence": false,
+            "firearms_visible": false,
+            "hunting_scene": false
+          },
+          "attire_assessment": {
+            "appropriate_attire": false,
+            "swimwear_detected": false,
+            "underwear_detected": false,
+            "shirtless": false,
+            "outdoor_context": false,
+            "beach_context": false
+          },
+          "sex_scene": false
+        }
+      }|
+
+      result = PhotoProcessor.parse_ollama_response(response)
+
+      assert result.content_safety.family_friendly == false
+      assert result.content_safety.nudity_detected == true
+      assert result.attire_assessment.appropriate_attire == false
     end
   end
 

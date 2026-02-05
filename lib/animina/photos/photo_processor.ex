@@ -20,6 +20,7 @@ defmodule Animina.Photos.PhotoProcessor do
   alias Animina.Photos
   alias Animina.Photos.OllamaClient
   alias Animina.Photos.Photo
+  alias Animina.Photos.PhotoFeedback
 
   # --- Client API ---
 
@@ -159,9 +160,7 @@ defmodule Animina.Photos.PhotoProcessor do
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
-    prompt = """
-    You are an image classifier. Given the image, respond with JSON: { "contains_person": true/false, "person_facing_camera_count": number, "family_friendly": true/false } Check if the image shows exactly one person and if the content is appropriate for all ages.
-    """
+    prompt = ollama_prompt()
 
     # Look up user info for debug logging
     {user_email, user_display_name} = get_owner_info(photo)
@@ -196,9 +195,10 @@ defmodule Animina.Photos.PhotoProcessor do
           nil,
           %{
             model: ollama_model,
-            contains_person: parsed.contains_person,
-            person_facing_camera_count: parsed.person_facing_camera_count,
-            family_friendly: parsed.family_friendly,
+            person_detection: parsed.person_detection,
+            content_safety: parsed.content_safety,
+            attire_assessment: parsed.attire_assessment,
+            sex_scene: parsed.sex_scene,
             raw_response: response
           },
           duration_ms: duration_ms,
@@ -229,49 +229,179 @@ defmodule Animina.Photos.PhotoProcessor do
   end
 
   @doc """
+  Returns the Ollama prompt for photo analysis.
+
+  The prompt requests detailed JSON with person detection, content safety,
+  and attire assessment fields to enable specific user feedback.
+  """
+  def ollama_prompt do
+    """
+    You are an image classifier for a dating platform. Analyze the image and respond with ONLY valid JSON (no other text):
+
+    {
+      "photo_analysis": {
+        "person_detection": {
+          "contains_person": true/false,
+          "person_count": number,
+          "persons_facing_camera": number,
+          "children_present": true/false,
+          "adult_present": true/false
+        },
+        "content_safety": {
+          "family_friendly": true/false,
+          "nudity_detected": true/false,
+          "explicit_content": true/false,
+          "illegal_activity": true/false,
+          "drug_use": true/false,
+          "violence": true/false,
+          "firearms_visible": true/false,
+          "hunting_scene": true/false
+        },
+        "attire_assessment": {
+          "appropriate_attire": true/false,
+          "swimwear_detected": true/false,
+          "underwear_detected": true/false,
+          "shirtless": true/false,
+          "outdoor_context": true/false,
+          "beach_context": true/false
+        },
+        "sex_scene": true/false
+      }
+    }
+
+    Rules:
+    - family_friendly: false if content is not appropriate for all ages
+    - nudity_detected: true if any nudity or exposed private parts
+    - explicit_content: true if sexually explicit content
+    - firearms_visible: true if any guns, rifles, or weapons visible
+    - hunting_scene: true if hunting activity or dead animals shown
+    - appropriate_attire: false if underwear visible or inappropriate for context
+    - swimwear_detected: true if wearing swimsuit/bikini
+    - beach_context: true if clearly at beach, pool, or similar outdoor water setting
+    """
+  end
+
+  @doc """
   Parses the Ollama response to extract classification results.
 
-  Expected JSON format:
-  ```json
-  {
-    "contains_person": true/false,
-    "person_facing_camera_count": number,
-    "family_friendly": true/false
-  }
-  ```
-
-  Returns a map with the parsed values.
+  Returns a structured map with nested person_detection, content_safety,
+  and attire_assessment fields.
   """
   def parse_ollama_response(response) do
     case parse_json_response(response) do
       {:ok, parsed} ->
-        %{
-          contains_person: Map.get(parsed, "contains_person", false),
-          person_facing_camera_count: Map.get(parsed, "person_facing_camera_count", 0),
-          family_friendly: Map.get(parsed, "family_friendly", true)
-        }
+        normalize_parsed_response(parsed)
 
       {:error, _} ->
-        # Fallback to text parsing for robustness
-        parse_text_response(response)
+        # Fallback to legacy parsing for backwards compatibility
+        parse_legacy_response(response)
     end
   end
 
   defp parse_json_response(response) do
     # Try to extract JSON from the response (model may include extra text)
-    case Regex.run(~r/\{[^}]+\}/s, response) do
+    # Use a more robust regex that handles nested objects
+    case Regex.run(~r/\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\}/s, response) do
       [json_str] -> Jason.decode(json_str)
       nil -> {:error, :no_json_found}
     end
   end
 
-  defp parse_text_response(response) do
-    upper = String.upcase(response)
+  defp normalize_parsed_response(parsed) do
+    # Handle both new nested format and legacy flat format
+    photo_analysis = Map.get(parsed, "photo_analysis", parsed)
+
+    person = Map.get(photo_analysis, "person_detection", %{})
+    content = Map.get(photo_analysis, "content_safety", %{})
+    attire = Map.get(photo_analysis, "attire_assessment", %{})
 
     %{
-      contains_person: parse_contains_person(upper),
-      person_facing_camera_count: parse_person_count(upper),
-      family_friendly: parse_family_friendly(upper)
+      person_detection: %{
+        contains_person:
+          get_bool(person, "contains_person", get_bool(parsed, "contains_person", false)),
+        person_count: get_int(person, "person_count", 0),
+        persons_facing_camera:
+          get_int(
+            person,
+            "persons_facing_camera",
+            get_int(parsed, "person_facing_camera_count", 0)
+          ),
+        children_present: get_bool(person, "children_present", false),
+        adult_present: get_bool(person, "adult_present", true)
+      },
+      content_safety: %{
+        family_friendly:
+          get_bool(content, "family_friendly", get_bool(parsed, "family_friendly", true)),
+        nudity_detected: get_bool(content, "nudity_detected", false),
+        explicit_content: get_bool(content, "explicit_content", false),
+        illegal_activity: get_bool(content, "illegal_activity", false),
+        drug_use: get_bool(content, "drug_use", false),
+        violence: get_bool(content, "violence", false),
+        firearms_visible: get_bool(content, "firearms_visible", false),
+        hunting_scene: get_bool(content, "hunting_scene", false)
+      },
+      attire_assessment: %{
+        appropriate_attire: get_bool(attire, "appropriate_attire", true),
+        swimwear_detected: get_bool(attire, "swimwear_detected", false),
+        underwear_detected: get_bool(attire, "underwear_detected", false),
+        shirtless: get_bool(attire, "shirtless", false),
+        outdoor_context: get_bool(attire, "outdoor_context", false),
+        beach_context: get_bool(attire, "beach_context", false)
+      },
+      sex_scene: get_bool(photo_analysis, "sex_scene", false)
+    }
+  end
+
+  defp get_bool(map, key, default) when is_map(map) do
+    case Map.get(map, key) do
+      true -> true
+      false -> false
+      _ -> default
+    end
+  end
+
+  defp get_int(map, key, default) when is_map(map) do
+    case Map.get(map, key) do
+      n when is_integer(n) -> n
+      _ -> default
+    end
+  end
+
+  # Legacy parsing for backwards compatibility with old response format
+  defp parse_legacy_response(response) do
+    upper = String.upcase(response)
+
+    contains_person = parse_contains_person(upper)
+    person_count = parse_person_count(upper)
+    family_friendly = parse_family_friendly(upper)
+
+    %{
+      person_detection: %{
+        contains_person: contains_person,
+        person_count: if(contains_person, do: max(person_count, 1), else: 0),
+        persons_facing_camera: person_count,
+        children_present: false,
+        adult_present: contains_person
+      },
+      content_safety: %{
+        family_friendly: family_friendly,
+        nudity_detected: not family_friendly,
+        explicit_content: false,
+        illegal_activity: false,
+        drug_use: false,
+        violence: false,
+        firearms_visible: false,
+        hunting_scene: false
+      },
+      attire_assessment: %{
+        appropriate_attire: true,
+        swimwear_detected: false,
+        underwear_detected: false,
+        shirtless: false,
+        outdoor_context: false,
+        beach_context: false
+      },
+      sex_scene: false
     }
   end
 
@@ -303,45 +433,38 @@ defmodule Animina.Photos.PhotoProcessor do
   end
 
   defp finalize_ollama_result(photo, parsed) do
-    cond do
-      not parsed.family_friendly ->
-        # Not family friendly - reject
-        maybe_auto_blacklist(photo)
+    # Use PhotoFeedback to analyze the image based on photo type
+    analysis_result =
+      if moodboard_photo?(photo) do
+        PhotoFeedback.analyze_moodboard(parsed)
+      else
+        PhotoFeedback.analyze_avatar(parsed)
+      end
 
-        Photos.log_event(photo, "photo_rejected", "system", nil, %{
-          reason: "not_family_friendly",
-          state: "error"
-        })
-
-        Photos.transition_photo(photo, "error", %{
-          error_message: "Content is not family friendly"
-        })
-
-        {:error, :not_family_friendly}
-
-      moodboard_photo?(photo) ->
-        # Moodboard photos skip face detection - any content is allowed
-        # (as long as it's family friendly, checked above)
+    case analysis_result do
+      {:ok, :approved} ->
         Photos.transition_photo(photo, "approved")
 
-      not parsed.contains_person or parsed.person_facing_camera_count != 1 ->
-        # No person or not exactly one person facing camera - reject
+      {:error, violation, message} ->
+        new_state = PhotoFeedback.violation_to_state(violation)
+
+        # Auto-blacklist if warranted
+        if PhotoFeedback.should_blacklist?(violation) do
+          maybe_auto_blacklist(photo)
+        end
+
         Photos.log_event(photo, "photo_rejected", "system", nil, %{
-          reason: "no_face_detected",
-          contains_person: parsed.contains_person,
-          person_facing_camera_count: parsed.person_facing_camera_count,
-          state: "no_face_error"
+          reason: Atom.to_string(violation),
+          state: new_state,
+          person_detection: parsed.person_detection,
+          content_safety: parsed.content_safety
         })
 
-        Photos.transition_photo(photo, "no_face_error", %{
-          error_message: "Photo must show exactly one person facing the camera"
+        Photos.transition_photo(photo, new_state, %{
+          error_message: message
         })
 
-        {:error, :no_face_detected}
-
-      true ->
-        # All checks passed - approve
-        Photos.transition_photo(photo, "approved")
+        {:error, violation}
     end
   end
 

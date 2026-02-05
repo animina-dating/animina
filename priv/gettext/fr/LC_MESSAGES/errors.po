@@ -120,3 +120,63 @@ msgstr "doit comporter 6 caractères (lettres et chiffres)"
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "doit être un numéro de portable (pas de fixe)"
+
+#: lib/animina/photos/photo_feedback.ex:177
+#, elixir-autogen, elixir-format
+msgid "Hunting photos aren't allowed on our platform. Please upload a different photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:170
+#, elixir-autogen, elixir-format
+msgid "Photos showing firearms aren't allowed on our platform. Please upload a different photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:149
+#, elixir-autogen, elixir-format
+msgid "Profile photos of children alone aren't allowed for safety reasons. If you'd like to include children in your photos, please ensure you (an adult) are also clearly visible in the photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:212
+#, elixir-autogen, elixir-format
+msgid "Shirtless photos are only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:205
+#, elixir-autogen, elixir-format
+msgid "Swimwear is only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:198
+#, elixir-autogen, elixir-format
+msgid "The attire in this photo doesn't meet our guidelines. Please upload a photo where you're appropriately dressed."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:191
+#, elixir-autogen, elixir-format
+msgid "This photo contains content depicting illegal activities, drugs, or violence. Please upload a different photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:163
+#, elixir-autogen, elixir-format
+msgid "This photo contains content that isn't appropriate for our platform. Please upload a family-friendly photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:184
+#, elixir-autogen, elixir-format
+msgid "This photo contains sexual content that isn't allowed on our platform. Please upload a different photo."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:142
+#, elixir-autogen, elixir-format
+msgid "We couldn't detect a clear face in your photo. Please upload a photo where you're looking at the camera with your face clearly visible."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:156
+#, elixir-autogen, elixir-format
+msgid "We detected nudity in this photo. Please upload a photo where you're appropriately dressed."
+msgstr ""
+
+#: lib/animina/photos/photo_feedback.ex:135
+#, elixir-autogen, elixir-format
+msgid "Your profile photo should show only you. We detected multiple people facing the camera. Please upload a photo where you're the only one visible, or use a group photo for your moodboard instead."
+msgstr ""

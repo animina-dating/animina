@@ -20,6 +20,7 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   alias Animina.Photos.OllamaClient
   alias Animina.Photos.OllamaHealthTracker
   alias Animina.Photos.Photo
+  alias Animina.Photos.PhotoFeedback
   alias Animina.Photos.PhotoProcessor
 
   @poll_interval_ms 60_000
@@ -175,9 +176,7 @@ defmodule Animina.Photos.OllamaRetryScheduler do
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
-    prompt = """
-    You are an image classifier. Given the image, respond with JSON: { "contains_person": true/false, "person_facing_camera_count": number, "family_friendly": true/false } Check if the image shows exactly one person and if the content is appropriate for all ages.
-    """
+    prompt = PhotoProcessor.ollama_prompt()
 
     # Look up user info for debug logging
     {user_email, user_display_name} = get_owner_info(photo)
@@ -212,9 +211,10 @@ defmodule Animina.Photos.OllamaRetryScheduler do
           nil,
           %{
             model: ollama_model,
-            contains_person: parsed.contains_person,
-            person_facing_camera_count: parsed.person_facing_camera_count,
-            family_friendly: parsed.family_friendly,
+            person_detection: parsed.person_detection,
+            content_safety: parsed.content_safety,
+            attire_assessment: parsed.attire_assessment,
+            sex_scene: parsed.sex_scene,
             via: "retry_scheduler"
           },
           duration_ms: duration_ms,
@@ -236,46 +236,44 @@ defmodule Animina.Photos.OllamaRetryScheduler do
       ollama_check_type: nil
     }
 
-    cond do
-      not parsed.family_friendly ->
-        # Not family friendly - reject and blacklist
-        maybe_auto_blacklist(photo)
+    # Use PhotoFeedback to analyze based on photo type
+    analysis_result =
+      if moodboard_photo?(photo) do
+        PhotoFeedback.analyze_moodboard(parsed)
+      else
+        PhotoFeedback.analyze_avatar(parsed)
+      end
 
-        Photos.log_event(photo, "photo_rejected", "system", nil, %{
-          reason: "not_family_friendly",
-          state: "error"
-        })
-
-        Photos.transition_photo(
-          photo,
-          "error",
-          Map.put(base_attrs, :error_message, "Content is not family friendly")
-        )
-
-      not parsed.contains_person or parsed.person_facing_camera_count != 1 ->
-        # No person or not exactly one person facing camera - reject
-        Photos.log_event(photo, "photo_rejected", "system", nil, %{
-          reason: "no_face_detected",
-          contains_person: parsed.contains_person,
-          person_facing_camera_count: parsed.person_facing_camera_count,
-          state: "no_face_error"
-        })
-
-        Photos.transition_photo(
-          photo,
-          "no_face_error",
-          Map.put(
-            base_attrs,
-            :error_message,
-            "Photo must show exactly one person facing the camera"
-          )
-        )
-
-      true ->
-        # All checks passed - approve
+    case analysis_result do
+      {:ok, :approved} ->
         Photos.transition_photo(photo, "approved", base_attrs)
+
+      {:error, violation, message} ->
+        new_state = PhotoFeedback.violation_to_state(violation)
+
+        # Auto-blacklist if warranted
+        if PhotoFeedback.should_blacklist?(violation) do
+          maybe_auto_blacklist(photo)
+        end
+
+        Photos.log_event(photo, "photo_rejected", "system", nil, %{
+          reason: Atom.to_string(violation),
+          state: new_state,
+          person_detection: parsed.person_detection,
+          content_safety: parsed.content_safety
+        })
+
+        Photos.transition_photo(
+          photo,
+          new_state,
+          Map.put(base_attrs, :error_message, message)
+        )
     end
   end
+
+  # Moodboard photos have owner_type "MoodboardItem" and skip face detection
+  defp moodboard_photo?(%Photo{owner_type: "MoodboardItem"}), do: true
+  defp moodboard_photo?(_), do: false
 
   defp maybe_auto_blacklist(%Photo{dhash: nil}), do: :ok
 
