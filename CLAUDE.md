@@ -44,6 +44,42 @@ Three roles exist: `user` (implicit, always present), `moderator`, and `admin`. 
 
 - All resources use UUIDs for primary keys, not auto-incrementing integers
 
+### Photo Display Convention
+
+**ALWAYS** use `LivePhotoComponent` when displaying photos in LiveViews:
+
+```heex
+<.live_component
+  module={AniminaWeb.LivePhotoComponent}
+  id={"photo-#{@photo.id}"}
+  photo={@photo}
+  owner?={@is_owner}
+  variant={:main}
+  class="w-full h-auto"
+/>
+```
+
+This ensures:
+- Real-time status updates via PubSub subscriptions
+- Correct status badges for owners (Processing, Analyzing, Under review, error messages)
+- "In review" placeholder for non-owners when photo is not approved
+- Automatic subscription cleanup on unmount
+
+**Variants:** `:main` (default, full size) or `:thumbnail` (small)
+
+For moodboard items, use `LiveMoodboardItemComponent` which wraps photo and story handling:
+
+```heex
+<.live_component
+  module={AniminaWeb.LiveMoodboardItemComponent}
+  id={"moodboard-item-#{@item.id}"}
+  item={@item}
+  owner?={@is_owner}
+/>
+```
+
+**NEVER** render photos with plain `<img src={Photos.signed_url(photo)}>` in LiveViews — this bypasses real-time updates and status handling.
+
 ### Translation Conventions
 
 Translation work is split across sessions to avoid context limits.

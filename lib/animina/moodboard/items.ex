@@ -4,6 +4,16 @@ defmodule Animina.Moodboard.Items do
 
   Handles creation of different item types (photo, story, combined),
   position ordering for drag/drop, and visibility management.
+
+  ## PubSub Notifications
+
+  This module broadcasts changes via Phoenix.PubSub on the topic `"moodboard:\#{user_id}"`:
+
+  - `{:moodboard_item_created, item}` - When a new item is created
+  - `{:moodboard_item_updated, item}` - When an item is updated (hide/unhide)
+  - `{:moodboard_item_deleted, item_id}` - When an item is deleted
+  - `{:moodboard_positions_updated, user_id}` - When item positions change
+  - `{:story_updated, story}` - When a story's content is updated
   """
 
   import Ecto.Query
@@ -14,6 +24,48 @@ defmodule Animina.Moodboard.Items do
   alias Animina.Photos
   alias Animina.Photos.PhotoProcessor
   alias Animina.Repo
+
+  # --- PubSub helpers ---
+
+  defp broadcast_item_created(item) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{item.user_id}",
+      {:moodboard_item_created, item}
+    )
+  end
+
+  defp broadcast_item_updated(item) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{item.user_id}",
+      {:moodboard_item_updated, item}
+    )
+  end
+
+  defp broadcast_item_deleted(item) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{item.user_id}",
+      {:moodboard_item_deleted, item.id}
+    )
+  end
+
+  defp broadcast_positions_updated(user_id) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{user_id}",
+      {:moodboard_positions_updated, user_id}
+    )
+  end
+
+  defp broadcast_story_updated(story, user_id) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "moodboard:#{user_id}",
+      {:story_updated, story}
+    )
+  end
 
   # --- Create operations ---
 
@@ -44,6 +96,7 @@ defmodule Animina.Moodboard.Items do
     case result do
       {:ok, {item, photo}} ->
         PhotoProcessor.enqueue(photo)
+        broadcast_item_created(item)
         {:ok, item}
 
       error ->
@@ -55,16 +108,26 @@ defmodule Animina.Moodboard.Items do
   Creates a story-only moodboard item with Markdown content.
   """
   def create_story_item(user, content) do
-    Repo.transaction(fn ->
-      position = next_position(user.id)
+    result =
+      Repo.transaction(fn ->
+        position = next_position(user.id)
 
-      with {:ok, item} <- create_item(user.id, "story", position),
-           {:ok, _story} <- create_moodboard_story(item.id, content) do
-        Repo.preload(item, :moodboard_story)
-      else
-        {:error, reason} -> Repo.rollback(reason)
-      end
-    end)
+        with {:ok, item} <- create_item(user.id, "story", position),
+             {:ok, _story} <- create_moodboard_story(item.id, content) do
+          Repo.preload(item, :moodboard_story)
+        else
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end)
+
+    case result do
+      {:ok, item} ->
+        broadcast_item_created(item)
+        {:ok, item}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -94,6 +157,7 @@ defmodule Animina.Moodboard.Items do
     case result do
       {:ok, {item, photo}} ->
         PhotoProcessor.enqueue(photo)
+        broadcast_item_created(item)
         {:ok, item}
 
       error ->
@@ -218,62 +282,104 @@ defmodule Animina.Moodboard.Items do
   relative positions after the specified items.
   """
   def update_positions(user_id, item_ids_in_order) when is_list(item_ids_in_order) do
-    Repo.transaction(fn ->
-      # Get the pinned item ID if exists
-      pinned_id =
-        MoodboardItem
-        |> where([i], i.user_id == ^user_id and i.pinned == true and i.state != "deleted")
-        |> select([i], i.id)
-        |> Repo.one()
+    result =
+      Repo.transaction(fn ->
+        # Get the pinned item ID if exists
+        pinned_id =
+          MoodboardItem
+          |> where([i], i.user_id == ^user_id and i.pinned == true and i.state != "deleted")
+          |> select([i], i.id)
+          |> Repo.one()
 
-      # Start positions at 2 if there's a pinned item, otherwise at 1
-      start_position = if pinned_id, do: 2, else: 1
+        # Start positions at 2 if there's a pinned item, otherwise at 1
+        start_position = if pinned_id, do: 2, else: 1
 
-      # Filter out the pinned item from the list first, then assign positions
-      item_ids_in_order
-      |> Enum.reject(&(&1 == pinned_id))
-      |> Enum.with_index(start_position)
-      |> Enum.each(fn {item_id, position} ->
-        MoodboardItem
-        |> where([i], i.id == ^item_id and i.user_id == ^user_id and i.pinned == false)
-        |> Repo.update_all(set: [position: position, updated_at: DateTime.utc_now(:second)])
+        # Filter out the pinned item from the list first, then assign positions
+        item_ids_in_order
+        |> Enum.reject(&(&1 == pinned_id))
+        |> Enum.with_index(start_position)
+        |> Enum.each(fn {item_id, position} ->
+          MoodboardItem
+          |> where([i], i.id == ^item_id and i.user_id == ^user_id and i.pinned == false)
+          |> Repo.update_all(set: [position: position, updated_at: DateTime.utc_now(:second)])
+        end)
+
+        :ok
       end)
 
-      :ok
-    end)
+    case result do
+      {:ok, :ok} ->
+        broadcast_positions_updated(user_id)
+        {:ok, :ok}
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Updates a story's content.
   """
   def update_story(%MoodboardStory{} = story, content) do
-    story
-    |> MoodboardStory.update_changeset(%{content: content})
-    |> Repo.update()
+    result =
+      story
+      |> MoodboardStory.update_changeset(%{content: content})
+      |> Repo.update()
+
+    case result do
+      {:ok, updated_story} ->
+        # Get the moodboard item to find the user_id
+        item = get_item(updated_story.moodboard_item_id)
+        if item, do: broadcast_story_updated(updated_story, item.user_id)
+        {:ok, updated_story}
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Hides a moodboard item (e.g., due to a report).
   """
   def hide_item(%MoodboardItem{} = item, reason) do
-    item
-    |> MoodboardItem.state_changeset("hidden", %{
-      hidden_at: DateTime.utc_now(:second),
-      hidden_reason: reason
-    })
-    |> Repo.update()
+    result =
+      item
+      |> MoodboardItem.state_changeset("hidden", %{
+        hidden_at: DateTime.utc_now(:second),
+        hidden_reason: reason
+      })
+      |> Repo.update()
+
+    case result do
+      {:ok, updated_item} ->
+        broadcast_item_updated(updated_item)
+        {:ok, updated_item}
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Unhides a moodboard item (e.g., after appeal approved).
   """
   def unhide_item(%MoodboardItem{} = item) do
-    item
-    |> MoodboardItem.state_changeset("active", %{
-      hidden_at: nil,
-      hidden_reason: nil
-    })
-    |> Repo.update()
+    result =
+      item
+      |> MoodboardItem.state_changeset("active", %{
+        hidden_at: nil,
+        hidden_reason: nil
+      })
+      |> Repo.update()
+
+    case result do
+      {:ok, updated_item} ->
+        broadcast_item_updated(updated_item)
+        {:ok, updated_item}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -291,9 +397,19 @@ defmodule Animina.Moodboard.Items do
       Photos.delete_photo(item.moodboard_photo.photo)
     end
 
-    item
-    |> MoodboardItem.state_changeset("deleted", %{})
-    |> Repo.update()
+    result =
+      item
+      |> MoodboardItem.state_changeset("deleted", %{})
+      |> Repo.update()
+
+    case result do
+      {:ok, deleted_item} ->
+        broadcast_item_deleted(deleted_item)
+        {:ok, deleted_item}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -451,33 +567,5 @@ defmodule Animina.Moodboard.Items do
     |> where([i], i.user_id == ^user_id and i.pinned == true and i.state != "deleted")
     |> preload([:moodboard_story, moodboard_photo: :photo])
     |> Repo.one()
-  end
-
-  @doc """
-  Updates the positions of moodboard items based on a list of item IDs in desired order.
-  Pinned items are excluded from reordering - they always stay at position 1.
-
-  The list should contain item IDs in the new order. Items not in the list retain their
-  relative positions after the specified items.
-  """
-  def update_positions_excluding_pinned(user_id, item_ids_in_order)
-      when is_list(item_ids_in_order) do
-    Repo.transaction(fn ->
-      # Get the pinned item to exclude it
-      pinned_item = get_pinned_item(user_id)
-      pinned_id = pinned_item && pinned_item.id
-
-      # Filter out pinned item and update positions starting at 2
-      item_ids_in_order
-      |> Enum.reject(&(&1 == pinned_id))
-      |> Enum.with_index(2)
-      |> Enum.each(fn {item_id, position} ->
-        MoodboardItem
-        |> where([i], i.id == ^item_id and i.user_id == ^user_id and i.pinned == false)
-        |> Repo.update_all(set: [position: position, updated_at: DateTime.utc_now(:second)])
-      end)
-
-      :ok
-    end)
   end
 end

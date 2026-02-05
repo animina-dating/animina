@@ -626,10 +626,15 @@ defmodule AniminaWeb.MoodboardComponents do
   defp column_count(columns) when columns in [1, 2, 3], do: columns
   defp column_count(_), do: 2
 
-  # Helper to render Markdown content
-  defp render_markdown(nil), do: ""
+  @doc """
+  Renders Markdown content to HTML with heading downgrade.
 
-  defp render_markdown(content) do
+  Headings are reduced by one level (h1 -> h2, etc.) to maintain
+  proper document structure within cards.
+  """
+  def render_markdown(nil), do: ""
+
+  def render_markdown(content) do
     content
     |> Earmark.as_html!(escape: true, smartypants: true, breaks: true)
     |> downgrade_headings()

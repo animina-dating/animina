@@ -1,4 +1,13 @@
 defmodule AniminaWeb.UserLive.SettingsHub do
+  @moduledoc """
+  Settings hub LiveView showing all settings categories.
+
+  Features:
+  - Profile summary with real-time avatar updates
+  - Navigation to all settings pages
+  - Preview of current settings values
+  """
+
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
@@ -19,12 +28,15 @@ defmodule AniminaWeb.UserLive.SettingsHub do
           </.header>
         </div>
 
-        <%!-- Profile Summary --%>
+        <%!-- Profile Summary with real-time avatar --%>
         <div class="flex items-center gap-4 mb-8 p-4 rounded-lg bg-base-200/50">
-          <%= if @avatar_url do %>
-            <img
-              src={@avatar_url}
-              alt={@user.display_name}
+          <%= if @avatar_photo do %>
+            <.live_component
+              module={AniminaWeb.LivePhotoComponent}
+              id={"avatar-#{@avatar_photo.id}"}
+              photo={@avatar_photo}
+              owner?={true}
+              variant={:thumbnail}
               class="flex-shrink-0 w-14 h-14 rounded-full object-cover"
             />
           <% else %>
@@ -168,6 +180,12 @@ defmodule AniminaWeb.UserLive.SettingsHub do
     city_names = GeoData.city_names_for_locations(locations)
     flag_counts = Traits.count_user_flags_by_color(user)
     current_locale = Gettext.get_locale(AniminaWeb.Gettext)
+    avatar_photo = Photos.get_user_avatar_any_state(user.id)
+
+    # Subscribe to photo updates for real-time avatar status
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Animina.PubSub, "photos:User:#{user.id}")
+    end
 
     user_age = compute_user_age(user.birthday)
     partner_min_age = user_age - user.partner_minimum_age_offset
@@ -177,7 +195,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       socket
       |> assign(:page_title, gettext("Settings"))
       |> assign(:user, user)
-      |> assign(:avatar_url, Photos.get_user_avatar_url(user.id))
+      |> assign(:avatar_photo, avatar_photo)
       |> assign(:avatar_preview, build_avatar_preview(user))
       |> assign(:profile_preview, build_profile_preview(user, user_age))
       |> assign(:location_preview, build_location_preview(city_names))
@@ -269,4 +287,22 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   defp gender_label("female"), do: gettext("Female")
   defp gender_label("diverse"), do: gettext("Diverse")
   defp gender_label(_), do: nil
+
+  # Handle photo state changes for real-time avatar updates
+  @impl true
+  def handle_info({event, photo}, socket)
+      when event in [:photo_state_changed, :photo_approved] do
+    avatar_photo = socket.assigns.avatar_photo
+
+    if avatar_photo && photo.id == avatar_photo.id do
+      {:noreply, assign(socket, :avatar_photo, photo)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(_msg, socket) do
+    {:noreply, socket}
+  end
 end

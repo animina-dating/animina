@@ -663,8 +663,12 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
     user = socket.assigns.current_scope.user
     items = Moodboard.list_moodboard_with_hidden(user.id)
 
-    # Subscribe to photo approval notifications for all moodboard items
+    # Subscribe to moodboard updates and photo approval notifications
     if connected?(socket) do
+      # Subscribe to moodboard topic for item-level updates
+      Phoenix.PubSub.subscribe(Animina.PubSub, "moodboard:#{user.id}")
+
+      # Subscribe to photo topics for real-time photo state updates
       for item <- items, item.moodboard_photo do
         Phoenix.PubSub.subscribe(Animina.PubSub, "photos:MoodboardItem:#{item.id}")
       end
@@ -989,25 +993,41 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
     {:noreply, assign(socket, :columns, columns)}
   end
 
-  # Handle photo state change notifications - refresh items to show current state
+  # Handle moodboard_item_created - need to subscribe to photo updates for new item
   @impl true
-  def handle_info({:photo_state_changed, _photo}, socket) do
-    items = Moodboard.list_moodboard_with_hidden(socket.assigns.user.id)
+  def handle_info({:moodboard_item_created, item}, socket) do
+    if item.moodboard_photo do
+      Phoenix.PubSub.subscribe(Animina.PubSub, "photos:MoodboardItem:#{item.id}")
+    end
 
-    {:noreply,
-     socket
-     |> assign(:items, items)
-     |> assign(:about_me_complete?, about_me_complete?(items))}
+    {:noreply, reload_items(socket)}
+  end
+
+  # Handle all other moodboard and photo PubSub messages - all trigger a reload
+  @impl true
+  def handle_info({event, _payload}, socket)
+      when event in [
+             :photo_state_changed,
+             :photo_approved,
+             :moodboard_item_deleted,
+             :moodboard_item_updated,
+             :moodboard_positions_updated,
+             :story_updated
+           ] do
+    {:noreply, reload_items(socket)}
   end
 
   @impl true
-  def handle_info({:photo_approved, _photo}, socket) do
+  def handle_info(_msg, socket) do
+    {:noreply, socket}
+  end
+
+  defp reload_items(socket) do
     items = Moodboard.list_moodboard_with_hidden(socket.assigns.user.id)
 
-    {:noreply,
-     socket
-     |> assign(:items, items)
-     |> assign(:about_me_complete?, about_me_complete?(items))}
+    socket
+    |> assign(:items, items)
+    |> assign(:about_me_complete?, about_me_complete?(items))
   end
 
   # Helpers
