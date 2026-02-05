@@ -382,12 +382,6 @@ defmodule AniminaWeb.Admin.OllamaQueueLive do
                   <% end %>
                 </div>
 
-                <%!-- Bumblebee score --%>
-                <%= if photo.ollama_bumblebee_score do %>
-                  <span class="text-xs text-base-content/50">
-                    {gettext("Score")}: {Float.round(photo.ollama_bumblebee_score, 2)}
-                  </span>
-                <% end %>
               </div>
             <% end %>
           </div>
@@ -479,19 +473,6 @@ defmodule AniminaWeb.Admin.OllamaQueueLive do
                     ]}>
                       {state_label(@selected_photo.state)}
                     </span>
-                  </div>
-
-                  <div>
-                    <p class="text-sm font-medium text-base-content/70">
-                      {gettext("Bumblebee Score")}
-                    </p>
-                    <p class="font-medium">
-                      <%= if @selected_photo.ollama_bumblebee_score do %>
-                        {Float.round(@selected_photo.ollama_bumblebee_score, 3)}
-                      <% else %>
-                        -
-                      <% end %>
-                    </p>
                   </div>
 
                   <div>

@@ -27,13 +27,18 @@ defmodule Animina.Photos.OllamaClient do
 
   require Logger
 
+  alias Animina.FeatureFlags
+  alias Animina.FeatureFlags.OllamaDebugStore
   alias Animina.Photos
   alias Animina.Photos.OllamaHealthTracker
 
   @type completion_opts :: [
           model: String.t(),
           prompt: String.t(),
-          images: [String.t()]
+          images: [String.t()],
+          photo_id: String.t(),
+          user_email: String.t(),
+          user_display_name: String.t()
         ]
 
   @failover_eligible_errors [
@@ -70,6 +75,9 @@ defmodule Animina.Photos.OllamaClient do
     model = Keyword.get(opts, :model, Photos.ollama_model())
     prompt = Keyword.fetch!(opts, :prompt)
     images = Keyword.get(opts, :images, [])
+    photo_id = Keyword.get(opts, :photo_id)
+    user_email = Keyword.get(opts, :user_email)
+    user_display_name = Keyword.get(opts, :user_display_name)
 
     instances = Photos.ollama_instances()
     total_timeout = Photos.ollama_total_timeout()
@@ -77,7 +85,39 @@ defmodule Animina.Photos.OllamaClient do
 
     instances_to_try = get_instances_to_try(instances, OllamaHealthTracker)
 
-    try_instances(instances_to_try, model, prompt, images, deadline, [])
+    start_time = System.monotonic_time(:millisecond)
+    result = try_instances(instances_to_try, model, prompt, images, deadline, [])
+    duration_ms = System.monotonic_time(:millisecond) - start_time
+
+    # Store debug info if feature flag is enabled
+    maybe_store_debug(model, prompt, images, result, duration_ms, photo_id, user_email, user_display_name)
+
+    result
+  end
+
+  defp maybe_store_debug(model, prompt, images, result, duration_ms, photo_id, user_email, user_display_name) do
+    if FeatureFlags.ollama_debug_enabled?() do
+      {status, response, server_url, error} =
+        case result do
+          {:ok, resp, url} -> {:success, resp, url, nil}
+          {:error, reason} -> {:error, nil, nil, inspect(reason)}
+        end
+
+      OllamaDebugStore.store_call(%{
+        timestamp: DateTime.utc_now(),
+        model: model,
+        prompt: prompt,
+        images: images,
+        response: response,
+        server_url: server_url,
+        duration_ms: duration_ms,
+        photo_id: photo_id,
+        status: status,
+        error: error,
+        user_email: user_email,
+        user_display_name: user_display_name
+      })
+    end
   end
 
   @doc """

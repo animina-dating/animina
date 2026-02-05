@@ -53,24 +53,23 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
     end
 
     test "queues photo for retry with correct fields", %{photo: photo} do
-      assert {:ok, updated} = Photos.queue_for_ollama_retry(photo, 0.55)
+      assert {:ok, updated} = Photos.queue_for_ollama_retry(photo)
 
       assert updated.state == "pending_ollama"
       assert updated.ollama_retry_count == 1
-      assert updated.ollama_bumblebee_score == 0.55
       assert updated.ollama_retry_at != nil
     end
 
     test "increments retry count on subsequent retries", %{photo: photo} do
       # First retry
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.ollama_retry_count == 1
 
       # Return to checking state (simulating retry)
       {:ok, photo} = Photos.return_to_ollama_checking(photo)
 
       # Second retry
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.ollama_retry_count == 2
     end
 
@@ -81,7 +80,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Repo.update()
 
-      {:ok, updated} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, updated} = Photos.queue_for_ollama_retry(photo)
 
       assert updated.state == "needs_manual_review"
       assert updated.ollama_retry_count == 21
@@ -97,7 +96,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
     end
 
     test "transitions pending_ollama back to ollama_checking", %{photo: photo} do
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.state == "pending_ollama"
 
       {:ok, updated} = Photos.return_to_ollama_checking(photo)
@@ -119,7 +118,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
     test "returns photos with ollama_retry_at <= now", %{user: user} do
       # Create a photo due for retry (past time)
       photo1 = ollama_checking_photo(user.id)
-      {:ok, photo1} = Photos.queue_for_ollama_retry(photo1, 0.55)
+      {:ok, photo1} = Photos.queue_for_ollama_retry(photo1)
 
       {:ok, photo1} =
         photo1
@@ -131,7 +130,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
 
       # Create a photo not yet due (future time)
       photo2 = ollama_checking_photo(user.id)
-      {:ok, _photo2} = Photos.queue_for_ollama_retry(photo2, 0.55)
+      {:ok, _photo2} = Photos.queue_for_ollama_retry(photo2)
 
       due_photos = Photos.list_photos_due_for_ollama_retry()
 
@@ -148,7 +147,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
         |> Repo.update()
 
       # This will transition to needs_manual_review
-      {:ok, _photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, _photo} = Photos.queue_for_ollama_retry(photo)
 
       due_photos = Photos.list_photos_due_for_ollama_retry()
       assert Enum.empty?(due_photos)
@@ -164,10 +163,10 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
     test "counts all photos in queue states", %{user: user} do
       # Create photos in queue state
       photo1 = ollama_checking_photo(user.id)
-      {:ok, _} = Photos.queue_for_ollama_retry(photo1, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo1)
 
       photo2 = ollama_checking_photo(user.id)
-      {:ok, _} = Photos.queue_for_ollama_retry(photo2, 0.45)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo2)
 
       photo3 = ollama_checking_photo(user.id)
 
@@ -176,14 +175,14 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Repo.update()
 
-      {:ok, _} = Photos.queue_for_ollama_retry(photo3, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo3)
 
       assert Photos.count_ollama_queue() == 3
     end
 
     test "filters by state when specified", %{user: user} do
       photo1 = ollama_checking_photo(user.id)
-      {:ok, _} = Photos.queue_for_ollama_retry(photo1, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo1)
 
       photo2 = ollama_checking_photo(user.id)
 
@@ -192,7 +191,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Repo.update()
 
-      {:ok, _} = Photos.queue_for_ollama_retry(photo2, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo2)
 
       assert Photos.count_ollama_queue(state_filter: "pending_ollama") == 1
       assert Photos.count_ollama_queue(state_filter: "needs_manual_review") == 1
@@ -212,7 +211,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
       photo: photo,
       admin: admin
     } do
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.state == "pending_ollama"
 
       {:ok, updated} = Photos.approve_from_ollama_queue(photo, admin)
@@ -227,7 +226,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
       photo: photo,
       admin: admin
     } do
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, updated} = Photos.reject_from_ollama_queue(photo, admin)
 
@@ -242,7 +241,7 @@ defmodule Animina.Photos.OllamaRetrySchedulerTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Repo.update()
 
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.state == "needs_manual_review"
 
       {:ok, updated} = Photos.retry_from_manual_review(photo, admin)

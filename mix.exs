@@ -75,10 +75,9 @@ defmodule Animina.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:paper_trail, "~> 1.1"},
       {:image, "~> 0.62"},
-      {:bumblebee, "~> 0.6"},
-      {:exla, "~> 0.10"},
       {:ollama, "~> 0.9"},
-      {:fun_with_flags, "~> 1.12"}
+      {:fun_with_flags, "~> 1.12"},
+      {:earmark, "~> 1.4"}
     ]
   end
 
@@ -93,6 +92,7 @@ defmodule Animina.MixProject do
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "dev:reset": ["uploads.clear", "ecto.reset"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["compile", "tailwind animina", "esbuild animina"],

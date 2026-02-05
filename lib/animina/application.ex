@@ -19,6 +19,8 @@ defmodule Animina.Application do
         {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: Animina.PubSub},
         AniminaWeb.Presence,
+        # Debug store for Ollama calls (always started, but only logs when flag enabled)
+        Animina.FeatureFlags.OllamaDebugStore,
         # Start to serve requests, typically the last entry
         AniminaWeb.Endpoint
       ] ++
@@ -41,7 +43,20 @@ defmodule Animina.Application do
     # Recover stuck photos after services are ready (delayed to ensure GenServers are up)
     recover_stuck_photos()
 
+    # Warm up Ollama model (delayed to ensure OllamaHealthTracker is ready)
+    warmup_ollama()
+
     result
+  end
+
+  defp warmup_ollama do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      Task.start(fn ->
+        # Wait for OllamaHealthTracker GenServer to be fully initialized
+        Process.sleep(2000)
+        Animina.Photos.OllamaWarmup.warmup_all()
+      end)
+    end
   end
 
   defp recover_stuck_photos do
@@ -53,14 +68,15 @@ defmodule Animina.Application do
         PhotoProcessor.recover_stuck_photos()
       end)
     end
-  rescue
-    # Don't crash on startup if this fails
-    _ -> :ok
   end
 
   defp initialize_feature_flags do
     # Enable all photo processing flags by default for safety
     Animina.FeatureFlags.initialize_photo_flags()
+    # Initialize system settings with defaults
+    Animina.FeatureFlags.initialize_system_settings()
+    # Initialize debug flags (disabled by default)
+    Animina.FeatureFlags.initialize_debug_flags()
   rescue
     # Don't crash on startup if this fails (e.g., during migrations)
     _ -> :ok

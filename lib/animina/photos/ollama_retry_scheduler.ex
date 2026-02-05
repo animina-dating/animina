@@ -13,7 +13,9 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   use GenServer
   require Logger
 
+  alias Animina.Accounts
   alias Animina.Accounts.UserNotifier
+  alias Animina.FeatureFlags
   alias Animina.Photos
   alias Animina.Photos.OllamaClient
   alias Animina.Photos.OllamaHealthTracker
@@ -165,8 +167,11 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   end
 
   defp run_ollama_classification(%Photo{} = photo) do
+    # Apply configured delay for UX testing
+    FeatureFlags.apply_delay(:photo_ollama_check)
+
     ollama_model = Photos.ollama_model()
-    thumbnail_path = Photos.processed_path(photo.id, :thumbnail)
+    thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
@@ -174,9 +179,19 @@ defmodule Animina.Photos.OllamaRetryScheduler do
     You are an image classifier. Given the image, respond with JSON: { "contains_person": true/false, "person_facing_camera_count": number, "family_friendly": true/false } Check if the image shows exactly one person and if the content is appropriate for all ages.
     """
 
+    # Look up user info for debug logging
+    {user_email, user_display_name} = get_owner_info(photo)
+
     {duration_us, result} =
       :timer.tc(fn ->
-        OllamaClient.completion(model: ollama_model, prompt: prompt, images: [image_data])
+        OllamaClient.completion(
+          model: ollama_model,
+          prompt: prompt,
+          images: [image_data],
+          photo_id: photo.id,
+          user_email: user_email,
+          user_display_name: user_display_name
+        )
       end)
 
     duration_ms = div(duration_us, 1000)
@@ -218,8 +233,7 @@ defmodule Animina.Photos.OllamaRetryScheduler do
     base_attrs = %{
       ollama_retry_count: 0,
       ollama_retry_at: nil,
-      ollama_check_type: nil,
-      ollama_bumblebee_score: nil
+      ollama_check_type: nil
     }
 
     cond do
@@ -284,7 +298,7 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   end
 
   defp requeue_photo(%Photo{} = photo) do
-    Photos.queue_for_ollama_retry(photo, 0.5)
+    Photos.queue_for_ollama_retry(photo)
   end
 
   defp check_queue_alert(state) do
@@ -348,4 +362,15 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   rescue
     _ -> "unknown"
   end
+
+  # Look up owner info for debug logging
+  # Only returns user info for User-owned photos
+  defp get_owner_info(%Photo{owner_type: "User", owner_id: owner_id}) when not is_nil(owner_id) do
+    case Accounts.get_user(owner_id) do
+      nil -> {nil, nil}
+      user -> {user.email, user.display_name}
+    end
+  end
+
+  defp get_owner_info(_photo), do: {nil, nil}
 end

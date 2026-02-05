@@ -67,7 +67,6 @@ defmodule Animina.Photos.Photo do
     field :ollama_retry_count, :integer, default: 0
     field :ollama_retry_at, :utc_datetime
     field :ollama_check_type, :string
-    field :ollama_bumblebee_score, :float
 
     timestamps(type: :utc_datetime)
   end
@@ -112,8 +111,7 @@ defmodule Animina.Photos.Photo do
         :dhash,
         :ollama_retry_count,
         :ollama_retry_at,
-        :ollama_check_type,
-        :ollama_bumblebee_score
+        :ollama_check_type
       ])
       |> put_change(:state, new_state)
     else

@@ -63,7 +63,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
     test "displays photos in queue", %{conn: conn, admin: admin, user: user} do
       # Create a photo in the queue
       photo = ollama_checking_photo(user.id)
-      {:ok, _photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, _photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, _view, html} =
         conn
@@ -76,7 +76,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
 
     test "shows stats cards", %{conn: conn, admin: admin, user: user} do
       photo = ollama_checking_photo(user.id)
-      {:ok, _photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, _photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, _view, html} =
         conn
@@ -93,7 +93,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
     test "filters by state", %{conn: conn, admin: admin, user: user} do
       # Create photos in different states
       photo1 = ollama_checking_photo(user.id)
-      {:ok, _} = Photos.queue_for_ollama_retry(photo1, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo1)
 
       photo2 = ollama_checking_photo(user.id)
 
@@ -102,7 +102,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Animina.Repo.update()
 
-      {:ok, _} = Photos.queue_for_ollama_retry(photo2, 0.55)
+      {:ok, _} = Photos.queue_for_ollama_retry(photo2)
 
       {:ok, view, _html} =
         conn
@@ -131,7 +131,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
   describe "photo review modal" do
     test "opens modal when clicking photo", %{conn: conn, admin: admin, user: user} do
       photo = ollama_checking_photo(user.id)
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, view, _html} =
         conn
@@ -145,13 +145,12 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
         |> render_click()
 
       assert html =~ "Review Photo"
-      assert html =~ "Bumblebee Score"
       assert html =~ "Retry Count"
     end
 
     test "approves photo from modal", %{conn: conn, admin: admin, user: user} do
       photo = ollama_checking_photo(user.id)
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, view, _html} =
         conn
@@ -177,7 +176,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
 
     test "rejects photo from modal", %{conn: conn, admin: admin, user: user} do
       photo = ollama_checking_photo(user.id)
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, view, _html} =
         conn
@@ -213,7 +212,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Animina.Repo.update()
 
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
       assert photo.state == "needs_manual_review"
 
       {:ok, view, _html} =
@@ -238,7 +237,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
         |> Ecto.Changeset.change(%{ollama_retry_count: 20})
         |> Animina.Repo.update()
 
-      {:ok, photo} = Photos.queue_for_ollama_retry(photo, 0.55)
+      {:ok, photo} = Photos.queue_for_ollama_retry(photo)
 
       {:ok, view, _html} =
         conn
@@ -269,7 +268,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLiveTest do
       # Create enough photos to paginate (using small per_page)
       for _i <- 1..3 do
         photo = ollama_checking_photo(user.id)
-        Photos.queue_for_ollama_retry(photo, 0.55)
+        Photos.queue_for_ollama_retry(photo)
       end
 
       {:ok, view, _html} =

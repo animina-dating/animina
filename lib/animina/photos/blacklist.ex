@@ -53,7 +53,7 @@ defmodule Animina.Photos.Blacklist do
   defp copy_thumbnail_to_blacklist(nil), do: nil
 
   defp copy_thumbnail_to_blacklist(%Photo{} = photo) do
-    source = Photos.FileManagement.processed_path(photo.id, :thumbnail)
+    source = Photos.FileManagement.processed_path(photo, :thumbnail)
 
     if File.exists?(source) do
       blacklist_dir = blacklist_dir()

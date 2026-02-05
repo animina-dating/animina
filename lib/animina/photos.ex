@@ -27,13 +27,12 @@ defmodule Animina.Photos do
 
   def upload_dir, do: config(:upload_dir, "uploads")
   def max_upload_size, do: config(:max_upload_size, 6_000_000)
-  def max_dimension, do: config(:max_dimension, 1200)
+  def max_dimension, do: config(:max_dimension, 1400)
   def webp_quality, do: config(:webp_quality, 80)
-  def pixelate_scale, do: config(:pixelate_scale, 0.05)
   def blacklist_hamming_threshold, do: config(:blacklist_hamming_threshold, 10)
-  def thumbnail_dimension, do: config(:thumbnail_dimension, 400)
+  def thumbnail_dimension, do: config(:thumbnail_dimension, 500)
   def ollama_timeout, do: config(:ollama_timeout, 120_000)
-  def ollama_model, do: config(:ollama_model, "qwen3-vl:8b")
+  def ollama_model, do: Animina.FeatureFlags.ollama_model()
   def ollama_total_timeout, do: config(:ollama_total_timeout, 300_000)
   def ollama_circuit_breaker_threshold, do: config(:ollama_circuit_breaker_threshold, 3)
   def ollama_circuit_breaker_reset_ms, do: config(:ollama_circuit_breaker_reset_ms, 60_000)
@@ -225,8 +224,14 @@ defmodule Animina.Photos do
 
   @doc """
   Deletes all avatar photos for a user.
+
+  Also unlinks from the pinned gallery item if one exists.
   """
   def delete_user_avatars(user_id) do
+    # Unlink from pinned gallery item first
+    Animina.Gallery.unlink_avatar_from_pinned_item(user_id)
+
+    # Then delete the photos
     Photo
     |> where([p], p.owner_type == "User" and p.owner_id == ^user_id and p.type == "avatar")
     |> Repo.all()
@@ -248,8 +253,11 @@ defmodule Animina.Photos do
   defdelegate validate_image_magic(file_path), to: Animina.Photos.FileManagement
   defdelegate original_path_dir(owner_type, owner_id), to: Animina.Photos.FileManagement
   defdelegate processed_dir(), to: Animina.Photos.FileManagement
-  defdelegate processed_path(photo_id, variant \\ :main), to: Animina.Photos.FileManagement
+  defdelegate processed_path_dir(owner_type, owner_id), to: Animina.Photos.FileManagement
+  defdelegate processed_path(photo, variant \\ :main), to: Animina.Photos.FileManagement
   defdelegate original_path(photo), to: Animina.Photos.FileManagement
+  defdelegate get_crop_data(photo), to: Animina.Photos.FileManagement
+  defdelegate delete_crop_data(photo), to: Animina.Photos.FileManagement
 
   # --- Delegations to AuditLog ---
 
@@ -304,7 +312,7 @@ defmodule Animina.Photos do
   defdelegate count_ollama_queue(opts \\ []), to: Animina.Photos.OllamaQueue
   defdelegate list_photos_due_for_ollama_retry(limit \\ 10), to: Animina.Photos.OllamaQueue
   defdelegate calculate_next_retry_at(retry_count), to: Animina.Photos.OllamaQueue
-  defdelegate queue_for_ollama_retry(photo, bumblebee_score), to: Animina.Photos.OllamaQueue
+  defdelegate queue_for_ollama_retry(photo), to: Animina.Photos.OllamaQueue
   defdelegate return_to_ollama_checking(photo), to: Animina.Photos.OllamaQueue
   defdelegate clear_ollama_retry_fields(photo), to: Animina.Photos.OllamaQueue
   defdelegate approve_from_ollama_queue(photo, reviewer), to: Animina.Photos.OllamaQueue

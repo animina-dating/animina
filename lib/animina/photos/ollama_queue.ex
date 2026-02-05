@@ -120,40 +120,35 @@ defmodule Animina.Photos.OllamaQueue do
   Sets the photo to pending_ollama state with:
   - retry_count incremented
   - retry_at set based on backoff formula
-  - bumblebee_score stored for context
 
   If retry_count reaches max_ollama_retries, transitions to needs_manual_review instead.
   """
-  def queue_for_ollama_retry(%Photo{} = photo, bumblebee_score) do
+  def queue_for_ollama_retry(%Photo{} = photo) do
     current_count = photo.ollama_retry_count || 0
     new_count = current_count + 1
 
     if new_count > Photos.max_ollama_retries() do
       AuditLog.log_event(photo, "ollama_retries_exhausted", "system", nil, %{
-        retry_count: current_count,
-        bumblebee_score: bumblebee_score
+        retry_count: current_count
       })
 
       Photos.transition_photo(photo, "needs_manual_review", %{
         ollama_retry_count: new_count,
         ollama_retry_at: nil,
-        ollama_check_type: nil,
-        ollama_bumblebee_score: bumblebee_score
+        ollama_check_type: nil
       })
     else
       next_retry_at = calculate_next_retry_at(new_count)
 
       AuditLog.log_event(photo, "ollama_retry_queued", "system", nil, %{
         retry_count: new_count,
-        next_retry_at: next_retry_at,
-        bumblebee_score: bumblebee_score
+        next_retry_at: next_retry_at
       })
 
       Photos.transition_photo(photo, "pending_ollama", %{
         ollama_retry_count: new_count,
         ollama_retry_at: next_retry_at,
-        ollama_check_type: nil,
-        ollama_bumblebee_score: bumblebee_score
+        ollama_check_type: nil
       })
     end
   end
@@ -177,8 +172,7 @@ defmodule Animina.Photos.OllamaQueue do
     |> Ecto.Changeset.change(%{
       ollama_retry_count: 0,
       ollama_retry_at: nil,
-      ollama_check_type: nil,
-      ollama_bumblebee_score: nil
+      ollama_check_type: nil
     })
     |> Repo.update()
   end
@@ -191,8 +185,7 @@ defmodule Animina.Photos.OllamaQueue do
 
     AuditLog.log_event(photo, "manual_review_approved", actor_type, reviewer.id, %{
       previous_state: photo.state,
-      check_type: photo.ollama_check_type,
-      bumblebee_score: photo.ollama_bumblebee_score
+      check_type: photo.ollama_check_type
     })
 
     with {:ok, photo} <- Photos.transition_photo(photo, "approved") do
@@ -210,8 +203,7 @@ defmodule Animina.Photos.OllamaQueue do
 
     AuditLog.log_event(photo, "manual_review_rejected", actor_type, reviewer.id, %{
       previous_state: photo.state,
-      check_type: photo.ollama_check_type,
-      bumblebee_score: photo.ollama_bumblebee_score
+      check_type: photo.ollama_check_type
     })
 
     with {:ok, photo} <-
