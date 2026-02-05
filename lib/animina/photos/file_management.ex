@@ -41,6 +41,7 @@ defmodule Animina.Photos.FileManagement do
     original_filename = Keyword.get(opts, :original_filename)
     content_type = detected_type || Keyword.get(opts, :content_type)
     type = Keyword.get(opts, :type)
+    crop_data = Keyword.get(opts, :crop_data)
     ext = extension_from_content_type(content_type) || Path.extname(source_path)
 
     original_dir = original_path_dir(owner_type, owner_id)
@@ -49,6 +50,12 @@ defmodule Animina.Photos.FileManagement do
 
     case strip_exif_and_copy(source_path, dest) do
       :ok ->
+        # Store crop data as sidecar JSON if provided
+        if crop_data do
+          crop_path = Path.join(original_dir, "#{filename}.crop.json")
+          File.write!(crop_path, Jason.encode!(crop_data))
+        end
+
         attrs = %{
           owner_type: owner_type,
           owner_id: owner_id,
@@ -60,11 +67,18 @@ defmodule Animina.Photos.FileManagement do
 
         case Photos.create_photo(attrs) do
           {:ok, photo} ->
-            PhotoProcessor.enqueue(photo)
+            # Only enqueue if not explicitly skipped (for transactional contexts)
+            unless Keyword.get(opts, :skip_enqueue, false) do
+              PhotoProcessor.enqueue(photo)
+            end
+
             {:ok, photo}
 
           error ->
             File.rm(dest)
+            # Also clean up crop file if it exists
+            crop_path = Path.join(original_dir, "#{filename}.crop.json")
+            File.rm(crop_path)
             error
         end
 
@@ -123,9 +137,8 @@ defmodule Animina.Photos.FileManagement do
   Deletes all files associated with a photo (processed variants and original).
   """
   def delete_photo_files(%Photo{} = photo) do
-    File.rm(processed_path(photo.id, :main))
-    File.rm(processed_path(photo.id, :pixelated))
-    File.rm(processed_path(photo.id, :thumbnail))
+    File.rm(processed_path(photo, :main))
+    File.rm(processed_path(photo, :thumbnail))
 
     case original_path(photo) do
       {:ok, path} -> File.rm(path)
@@ -141,24 +154,42 @@ defmodule Animina.Photos.FileManagement do
   end
 
   @doc """
-  Returns the directory for processed photos.
+  Returns the base directory for processed photos.
   """
   def processed_dir do
     Path.join(Photos.upload_dir(), "processed")
   end
 
   @doc """
-  Returns the path to a processed photo variant.
+  Returns the directory for processed photos of a given owner.
   """
-  def processed_path(photo_id, variant \\ :main) do
-    filename =
-      case variant do
-        :main -> "#{photo_id}.webp"
-        :pixelated -> "#{photo_id}_pixelated.webp"
-        :thumbnail -> "#{photo_id}_thumb.webp"
-      end
+  def processed_path_dir(owner_type, owner_id) do
+    Path.join([processed_dir(), owner_type, owner_id])
+  end
 
-    Path.join(processed_dir(), filename)
+  @doc """
+  Returns the path to a processed photo variant.
+
+  Accepts either a Photo struct (preferred) or a photo_id with owner info.
+  When given a Photo struct, uses owner_type and owner_id to build the path.
+  """
+  def processed_path(%Photo{} = photo, variant \\ :main) do
+    dir = processed_path_dir(photo.owner_type, photo.owner_id)
+    filename = processed_filename(photo.id, variant)
+    Path.join(dir, filename)
+  end
+
+  def processed_path(photo_id, owner_type, owner_id, variant) when is_binary(photo_id) do
+    dir = processed_path_dir(owner_type, owner_id)
+    filename = processed_filename(photo_id, variant)
+    Path.join(dir, filename)
+  end
+
+  defp processed_filename(photo_id, variant) do
+    case variant do
+      :main -> "#{photo_id}.webp"
+      :thumbnail -> "#{photo_id}_thumb.webp"
+    end
   end
 
   @doc """
@@ -169,9 +200,44 @@ defmodule Animina.Photos.FileManagement do
     pattern = Path.join(dir, "#{photo.filename}.*")
 
     case Path.wildcard(pattern) do
-      [path | _] -> {:ok, path}
-      [] -> {:error, :not_found}
+      paths ->
+        # Filter out .crop.json files
+        image_paths = Enum.reject(paths, &String.ends_with?(&1, ".crop.json"))
+
+        case image_paths do
+          [path | _] -> {:ok, path}
+          [] -> {:error, :not_found}
+        end
     end
+  end
+
+  @doc """
+  Reads crop data from the sidecar JSON file if it exists.
+  Returns the crop data map or nil if no crop data exists.
+  """
+  def get_crop_data(%Photo{} = photo) do
+    dir = original_path_dir(photo.owner_type, photo.owner_id)
+    crop_path = Path.join(dir, "#{photo.filename}.crop.json")
+
+    case File.read(crop_path) do
+      {:ok, json} ->
+        case Jason.decode(json, keys: :atoms) do
+          {:ok, data} -> data
+          _ -> nil
+        end
+
+      _ ->
+        nil
+    end
+  end
+
+  @doc """
+  Deletes the crop data sidecar file if it exists.
+  """
+  def delete_crop_data(%Photo{} = photo) do
+    dir = original_path_dir(photo.owner_type, photo.owner_id)
+    crop_path = Path.join(dir, "#{photo.filename}.crop.json")
+    File.rm(crop_path)
   end
 
   defp extension_from_content_type("image/jpeg"), do: ".jpg"

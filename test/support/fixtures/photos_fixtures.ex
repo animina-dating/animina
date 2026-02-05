@@ -171,22 +171,22 @@ defmodule Animina.PhotosFixtures do
 
   @doc """
   Creates dummy processed WebP files for a photo so the controller can serve it.
+  Files are created in the owner-specific subdirectory.
   """
   def create_processed_files(photo) do
-    dir = Photos.processed_dir()
+    # Create owner-specific directory
+    dir = Photos.processed_path_dir(photo.owner_type, photo.owner_id)
     File.mkdir_p!(dir)
 
-    main_path = Photos.processed_path(photo.id, :main)
-    pixelated_path = Photos.processed_path(photo.id, :pixelated)
-    thumbnail_path = Photos.processed_path(photo.id, :thumbnail)
+    main_path = Photos.processed_path(photo, :main)
+    thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     # Write minimal valid WebP files (RIFF header + WEBP chunk with minimal VP8 data)
     webp_data = create_minimal_webp()
     File.write!(main_path, webp_data)
-    File.write!(pixelated_path, webp_data)
     File.write!(thumbnail_path, webp_data)
 
-    {main_path, pixelated_path, thumbnail_path}
+    {main_path, thumbnail_path}
   end
 
   defp create_minimal_webp do

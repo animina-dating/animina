@@ -8,7 +8,7 @@ defmodule AniminaWeb.PhotoControllerTest do
   describe "GET /photos/:signature/:filename" do
     test "serves an approved photo with valid signature", %{conn: conn} do
       photo = approved_photo_fixture()
-      {_main, _pix, _thumb} = create_processed_files(photo)
+      {_main, _thumb} = create_processed_files(photo)
 
       on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
 
@@ -56,29 +56,6 @@ defmodule AniminaWeb.PhotoControllerTest do
       conn = get(conn, url)
       assert conn.status == 200
       assert get_resp_header(conn, "content-type") == ["image/webp"]
-    end
-
-    test "serves pixelated variant for NSFW photo main URL", %{conn: conn} do
-      photo = nsfw_photo_fixture()
-      {_main, _pix, _thumb} = create_processed_files(photo)
-
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
-
-      # Request the main variant — controller should serve pixelated instead
-      url = Photos.signed_url(photo, :main)
-      conn = get(conn, url)
-      assert conn.status == 200
-    end
-
-    test "serves pixelated variant directly", %{conn: conn} do
-      photo = approved_photo_fixture()
-      create_processed_files(photo)
-
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
-
-      url = Photos.signed_url(photo, :pixelated)
-      conn = get(conn, url)
-      assert conn.status == 200
     end
 
     test "serves thumbnail variant directly", %{conn: conn} do

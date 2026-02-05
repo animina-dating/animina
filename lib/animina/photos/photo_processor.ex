@@ -2,7 +2,7 @@ defmodule Animina.Photos.PhotoProcessor do
   @moduledoc """
   GenServer for asynchronous photo processing.
 
-  Pipeline: resize → convert to WebP → strip EXIF → pixelate → blacklist check → Ollama check → approve/reject.
+  Pipeline: resize → convert to WebP → strip EXIF → blacklist check → Ollama check → approve/reject.
 
   Ollama checks for:
   - family_friendly: must be true
@@ -15,6 +15,8 @@ defmodule Animina.Photos.PhotoProcessor do
   use GenServer
   require Logger
 
+  alias Animina.Accounts
+  alias Animina.FeatureFlags
   alias Animina.Photos
   alias Animina.Photos.OllamaClient
   alias Animina.Photos.Photo
@@ -95,7 +97,17 @@ defmodule Animina.Photos.PhotoProcessor do
   # --- Processing pipeline ---
 
   defp process_photo(photo_id) do
-    photo = Photos.get_photo!(photo_id)
+    photo = Photos.get_photo(photo_id)
+
+    if is_nil(photo) do
+      Logger.warning("PhotoProcessor: Photo #{photo_id} not found, skipping processing")
+      :ok
+    else
+      do_process_photo(photo)
+    end
+  end
+
+  defp do_process_photo(photo) do
 
     # Log photo uploaded event
     Photos.log_event(photo, "photo_uploaded", "user", photo.owner_id, %{
@@ -119,16 +131,16 @@ defmodule Animina.Photos.PhotoProcessor do
       Logger.info("Photo #{photo.id} processed and approved")
     else
       {:error, :blacklisted} ->
-        Logger.info("Photo #{photo_id} rejected: matches blacklist")
+        Logger.info("Photo #{photo.id} rejected: matches blacklist")
 
       {:error, :no_face_detected} ->
-        Logger.info("Photo #{photo_id} rejected: no face detected or not facing camera")
+        Logger.info("Photo #{photo.id} rejected: no face detected or not facing camera")
 
       {:error, :not_family_friendly} ->
-        Logger.info("Photo #{photo_id} rejected: not family friendly")
+        Logger.info("Photo #{photo.id} rejected: not family friendly")
 
       {:error, reason} ->
-        Logger.error("Photo #{photo_id} processing failed: #{inspect(reason)}")
+        Logger.error("Photo #{photo.id} processing failed: #{inspect(reason)}")
     end
   end
 
@@ -137,12 +149,14 @@ defmodule Animina.Photos.PhotoProcessor do
 
   defp run_ollama_check(photo) do
     # Photo is already in ollama_checking state (transitioned by process_image)
+    # Apply configured delay for UX testing
+    FeatureFlags.apply_delay(:photo_ollama_check)
     run_ollama_classification(photo)
   end
 
   defp run_ollama_classification(photo) do
     ollama_model = Photos.ollama_model()
-    thumbnail_path = Photos.processed_path(photo.id, :thumbnail)
+    thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
@@ -150,9 +164,19 @@ defmodule Animina.Photos.PhotoProcessor do
     You are an image classifier. Given the image, respond with JSON: { "contains_person": true/false, "person_facing_camera_count": number, "family_friendly": true/false } Check if the image shows exactly one person and if the content is appropriate for all ages.
     """
 
+    # Look up user info for debug logging
+    {user_email, user_display_name} = get_owner_info(photo)
+
     {duration_us, result} =
       :timer.tc(fn ->
-        OllamaClient.completion(model: ollama_model, prompt: prompt, images: [image_data])
+        OllamaClient.completion(
+          model: ollama_model,
+          prompt: prompt,
+          images: [image_data],
+          photo_id: photo.id,
+          user_email: user_email,
+          user_display_name: user_display_name
+        )
       end)
 
     duration_ms = div(duration_us, 1000)
@@ -201,7 +225,7 @@ defmodule Animina.Photos.PhotoProcessor do
         )
 
         # Queue for retry
-        Photos.queue_for_ollama_retry(photo, 0.5)
+        Photos.queue_for_ollama_retry(photo)
     end
   end
 
@@ -296,6 +320,11 @@ defmodule Animina.Photos.PhotoProcessor do
 
         {:error, :not_family_friendly}
 
+      gallery_photo?(photo) ->
+        # Gallery photos skip face detection - any content is allowed
+        # (as long as it's family friendly, checked above)
+        Photos.transition_photo(photo, "approved")
+
       not parsed.contains_person or parsed.person_facing_camera_count != 1 ->
         # No person or not exactly one person facing camera - reject
         Photos.log_event(photo, "photo_rejected", "system", nil, %{
@@ -317,6 +346,10 @@ defmodule Animina.Photos.PhotoProcessor do
     end
   end
 
+  # Gallery photos have owner_type "GalleryItem" and skip face detection
+  defp gallery_photo?(%Photo{owner_type: "GalleryItem"}), do: true
+  defp gallery_photo?(_), do: false
+
   defp transition_to_processing(photo) do
     Photos.log_event(photo, "processing_started", "system", nil, %{})
     Photos.transition_photo(photo, "processing")
@@ -337,38 +370,46 @@ defmodule Animina.Photos.PhotoProcessor do
     max_dim = Photos.max_dimension()
     thumb_dim = Photos.thumbnail_dimension()
     quality = Photos.webp_quality()
-    pixelate_scale = Photos.pixelate_scale()
-    processed_dir = Photos.processed_dir()
 
+    # Create owner-specific directory for processed photos
+    processed_dir = Photos.processed_path_dir(photo.owner_type, photo.owner_id)
     File.mkdir_p!(processed_dir)
 
-    main_path = Photos.processed_path(photo.id, :main)
-    pixelated_path = Photos.processed_path(photo.id, :pixelated)
-    thumbnail_path = Photos.processed_path(photo.id, :thumbnail)
+    main_path = Photos.processed_path(photo, :main)
+    thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     with {:ok, image} <- Image.open(original_path),
+         # Apply crop if available (mandatory for avatars, optional for gallery)
+         {:ok, image} <- maybe_apply_crop(image, photo),
          {:ok, image} <- resize_to_max(image, max_dim),
          {:ok, _} <- Image.write(image, main_path, quality: quality, strip_metadata: true),
          {width, height} <- {Image.width(image), Image.height(image)},
          # Create thumbnail for AI analysis and UX
          {:ok, thumb} <- resize_to_max(image, thumb_dim),
          {:ok, _} <- Image.write(thumb, thumbnail_path, quality: quality, strip_metadata: true),
-         # Create pixelated version
-         {:ok, pixelated} <- Image.pixelate(image, pixelate_scale),
-         {:ok, _} <-
-           Image.write(pixelated, pixelated_path, quality: quality, strip_metadata: true),
          # Compute dhash for blacklist checking
-         {:ok, dhash} <- Photos.compute_dhash(main_path) do
+         {:ok, dhash} <- Photos.compute_dhash(main_path),
+         # Clean up crop data file after successful processing
+         _ <- Photos.delete_crop_data(photo) do
       Photos.log_event(photo, "processing_completed", "system", nil, %{
         width: width,
         height: height
       })
 
-      Photos.transition_photo(photo, "ollama_checking", %{
-        width: width,
-        height: height,
-        dhash: dhash
-      })
+      result =
+        Photos.transition_photo(photo, "ollama_checking", %{
+          width: width,
+          height: height,
+          dhash: dhash
+        })
+
+      # Broadcast state change so UI can show "Analyzing..." overlay
+      case result do
+        {:ok, updated_photo} -> broadcast_state_changed(updated_photo)
+        _ -> :ok
+      end
+
+      result
     else
       {:error, reason} ->
         error_msg = "Image processing failed: #{inspect(reason)}"
@@ -381,6 +422,53 @@ defmodule Animina.Photos.PhotoProcessor do
         Photos.transition_photo(photo, "error", %{error_message: error_msg})
         {:error, reason}
     end
+  end
+
+  # Apply crop based on photo type:
+  # - Avatar photos: ALWAYS crop to square (mandatory, use center crop if no data)
+  # - Gallery photos: ONLY crop if user explicitly selected a crop region
+  defp maybe_apply_crop(image, %Photo{type: "avatar"} = photo) do
+    case Photos.get_crop_data(photo) do
+      nil ->
+        # Avatar with no crop data: apply center square crop as fallback
+        apply_center_crop(image)
+
+      crop_data ->
+        # Avatar with crop data: apply user's selection
+        apply_crop(image, crop_data)
+    end
+  end
+
+  defp maybe_apply_crop(image, photo) do
+    # Gallery photos or other types: only crop if user explicitly chose to
+    case Photos.get_crop_data(photo) do
+      nil ->
+        # No crop data: keep original dimensions
+        {:ok, image}
+
+      crop_data ->
+        # User chose to crop: apply their selection
+        apply_crop(image, crop_data)
+    end
+  end
+
+  # Apply crop using coordinates from user selection
+  defp apply_crop(image, %{x: x, y: y, width: width, height: height}) do
+    Image.crop(image, x, y, width, height)
+  end
+
+  # Center square crop for avatars without explicit crop data
+  @doc """
+  Applies a center square crop to an image.
+  Used as fallback for avatar photos when no crop data is provided.
+  """
+  def apply_center_crop(image) do
+    img_width = Image.width(image)
+    img_height = Image.height(image)
+    size = min(img_width, img_height)
+    x = div(img_width - size, 2)
+    y = div(img_height - size, 2)
+    Image.crop(image, x, y, size, size)
   end
 
   # --- Blacklist check ---
@@ -472,11 +560,30 @@ defmodule Animina.Photos.PhotoProcessor do
     end
   end
 
+  # Look up owner info for debug logging
+  # Only returns user info for User-owned photos
+  defp get_owner_info(%Photo{owner_type: "User", owner_id: owner_id}) when not is_nil(owner_id) do
+    case Accounts.get_user(owner_id) do
+      nil -> {nil, nil}
+      user -> {user.email, user.display_name}
+    end
+  end
+
+  defp get_owner_info(_photo), do: {nil, nil}
+
   defp broadcast_approved(%Photo{} = photo) do
     Phoenix.PubSub.broadcast(
       Animina.PubSub,
       "photos:#{photo.owner_type}:#{photo.owner_id}",
       {:photo_approved, photo}
+    )
+  end
+
+  defp broadcast_state_changed(%Photo{} = photo) do
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      "photos:#{photo.owner_type}:#{photo.owner_id}",
+      {:photo_state_changed, photo}
     )
   end
 

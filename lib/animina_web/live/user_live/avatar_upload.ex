@@ -1,13 +1,20 @@
 defmodule AniminaWeb.UserLive.AvatarUpload do
   use AniminaWeb, :live_view
 
+  alias Animina.Gallery
   alias Animina.Photos
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-2xl px-4 py-8">
+      <div
+        id="avatar-upload-container"
+        class="mx-auto max-w-2xl px-4 py-8"
+        phx-hook="ImageCropper"
+        data-mandatory="true"
+        data-aspect-ratio="1:1"
+      >
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
@@ -161,12 +168,31 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
                 </p>
               </div>
 
-              <%!-- Upload Preview --%>
+              <%!-- Upload Preview with Crop Status --%>
               <%= for entry <- @uploads.avatar.entries do %>
                 <div class="flex items-center gap-4 p-4 bg-base-100 rounded-lg">
-                  <.live_img_preview entry={entry} class="w-16 h-16 rounded-lg object-cover" />
+                  <%= if @crop_preview do %>
+                    <img
+                      src={@crop_preview}
+                      alt={gettext("Cropped preview")}
+                      class="w-16 h-16 rounded-full object-cover"
+                    />
+                  <% else %>
+                    <.live_img_preview entry={entry} class="w-16 h-16 rounded-lg object-cover" />
+                  <% end %>
                   <div class="flex-1 min-w-0">
                     <p class="font-medium text-sm truncate">{entry.client_name}</p>
+                    <%= if @crop_data do %>
+                      <p class="text-xs text-success flex items-center gap-1 mt-1">
+                        <.icon name="hero-check-circle" class="h-4 w-4" />
+                        {gettext("Ready to upload")}
+                      </p>
+                    <% else %>
+                      <p class="text-xs text-base-content/60 flex items-center gap-1 mt-1">
+                        <span class="loading loading-spinner loading-xs"></span>
+                        {gettext("Processing...")}
+                      </p>
+                    <% end %>
                     <div class="w-full bg-base-300 rounded-full h-2 mt-2">
                       <div
                         class="bg-primary h-2 rounded-full transition-all"
@@ -196,15 +222,53 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
                 <p class="text-error text-sm">{error_to_string(err)}</p>
               <% end %>
 
-              <%!-- Submit Button --%>
+              <%!-- Submit Button (only enabled when crop is done) --%>
               <%= if length(@uploads.avatar.entries) > 0 do %>
-                <button type="submit" class="btn btn-primary w-full">
+                <button
+                  type="submit"
+                  class="btn btn-primary w-full"
+                  disabled={is_nil(@crop_data)}
+                >
                   {gettext("Upload Photo")}
                 </button>
               <% end %>
             </form>
           </div>
         </div>
+
+        <%!-- Crop Modal --%>
+        <dialog data-cropper-modal class="modal">
+          <div class="modal-box max-w-2xl max-h-[90vh]">
+            <h3 class="font-bold text-lg mb-2">{gettext("Crop Photo")}</h3>
+            <p class="text-sm text-base-content/70 mb-4">
+              {gettext("Adjust the square to select the area for your profile photo.")}
+            </p>
+
+            <div class="w-full max-h-[60vh] overflow-hidden bg-base-200 rounded-lg">
+              <img data-cropper-image src="" alt="" class="max-w-full" />
+            </div>
+
+            <div class="modal-action">
+              <button
+                type="button"
+                class="btn btn-ghost"
+                data-cropper-action="cancel"
+              >
+                {gettext("Cancel")}
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-cropper-action="apply"
+              >
+                {gettext("Apply Crop")}
+              </button>
+            </div>
+          </div>
+          <form method="dialog" class="modal-backdrop">
+            <button type="button" data-cropper-action="cancel">close</button>
+          </form>
+        </dialog>
       </div>
     </Layouts.app>
     """
@@ -224,6 +288,8 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
       |> assign(:page_title, gettext("Profile Photo"))
       |> assign(:user, user)
       |> assign(:avatar, avatar)
+      |> assign(:crop_data, nil)
+      |> assign(:crop_preview, nil)
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png .webp .heic),
         max_entries: 1,
@@ -241,24 +307,76 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   @impl true
   def handle_event("save", _params, socket) do
     user = socket.assigns.user
+    crop_data = socket.assigns.crop_data
 
     results =
       consume_uploaded_entries(socket, :avatar, fn %{path: path}, entry ->
         Photos.delete_user_avatars(user.id)
 
-        Photos.upload_photo("User", user.id, path,
-          original_filename: entry.client_name,
-          content_type: entry.client_type,
-          type: "avatar"
-        )
+        result =
+          Photos.upload_photo("User", user.id, path,
+            original_filename: entry.client_name,
+            content_type: entry.client_type,
+            type: "avatar",
+            crop_data: crop_data
+          )
+
+        # Link avatar to pinned gallery item
+        case result do
+          {:ok, photo} -> Gallery.link_avatar_to_pinned_item(user.id, photo.id)
+          %Animina.Photos.Photo{} = photo -> Gallery.link_avatar_to_pinned_item(user.id, photo.id)
+          _ -> :ok
+        end
+
+        result
       end)
+
+    socket =
+      socket
+      |> assign(:crop_data, nil)
+      |> assign(:crop_preview, nil)
 
     handle_upload_results(socket, results)
   end
 
   @impl true
   def handle_event("cancel-upload", %{"ref" => ref}, socket) do
-    {:noreply, cancel_upload(socket, :avatar, ref)}
+    socket =
+      socket
+      |> cancel_upload(:avatar, ref)
+      |> assign(:crop_data, nil)
+      |> assign(:crop_preview, nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("crop-applied", %{"x" => x, "y" => y, "width" => w, "height" => h}, socket) do
+    crop_data = %{x: x, y: y, width: w, height: h}
+    {:noreply, assign(socket, :crop_data, crop_data)}
+  end
+
+  @impl true
+  def handle_event("crop-preview", %{"previewUrl" => preview_url}, socket) do
+    {:noreply, assign(socket, :crop_preview, preview_url)}
+  end
+
+  @impl true
+  def handle_event("crop-cancelled", _params, socket) do
+    # Cancel the upload when user cancels cropping (mandatory for avatars)
+    socket =
+      case socket.assigns.uploads.avatar.entries do
+        [entry | _] ->
+          socket
+          |> cancel_upload(:avatar, entry.ref)
+          |> assign(:crop_data, nil)
+          |> assign(:crop_preview, nil)
+
+        [] ->
+          socket
+      end
+
+    {:noreply, socket}
   end
 
   @impl true

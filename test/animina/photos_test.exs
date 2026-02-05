@@ -267,12 +267,6 @@ defmodule Animina.PhotosTest do
       assert Photos.verify_signature(signature, photo_id)
     end
 
-    test "signed_url for pixelated variant" do
-      photo = approved_photo_fixture()
-      url = Photos.signed_url(photo, :pixelated)
-      assert String.contains?(url, "_pixelated.webp")
-    end
-
     test "signed_url for thumbnail variant" do
       photo = approved_photo_fixture()
       url = Photos.signed_url(photo, :thumbnail)
@@ -438,19 +432,25 @@ defmodule Animina.PhotosTest do
       assert String.ends_with?(dir, "originals/User/abc-123")
     end
 
-    test "processed_path builds correct path for main variant" do
-      path = Photos.processed_path("photo-id", :main)
-      assert String.ends_with?(path, "processed/photo-id.webp")
+    test "processed_path_dir builds correct path" do
+      dir = Photos.processed_path_dir("User", "abc-123")
+      assert String.ends_with?(dir, "processed/User/abc-123")
     end
 
-    test "processed_path builds correct path for pixelated variant" do
-      path = Photos.processed_path("photo-id", :pixelated)
-      assert String.ends_with?(path, "processed/photo-id_pixelated.webp")
+    test "processed_path builds correct path for main variant" do
+      owner_id = Ecto.UUID.generate()
+      photo = photo_fixture(%{owner_type: "User", owner_id: owner_id})
+      path = Photos.processed_path(photo, :main)
+      assert String.contains?(path, "processed/User/#{owner_id}")
+      assert String.ends_with?(path, "#{photo.id}.webp")
     end
 
     test "processed_path builds correct path for thumbnail variant" do
-      path = Photos.processed_path("photo-id", :thumbnail)
-      assert String.ends_with?(path, "processed/photo-id_thumb.webp")
+      owner_id = Ecto.UUID.generate()
+      photo = photo_fixture(%{owner_type: "User", owner_id: owner_id})
+      path = Photos.processed_path(photo, :thumbnail)
+      assert String.contains?(path, "processed/User/#{owner_id}")
+      assert String.ends_with?(path, "#{photo.id}_thumb.webp")
     end
   end
 
@@ -823,6 +823,119 @@ defmodule Animina.PhotosTest do
     test "returns error for non-existent file" do
       path = "/non/existent/file.jpg"
       assert {:error, :file_read_error} = Photos.validate_image_magic(path)
+    end
+  end
+
+  describe "crop data management" do
+    test "get_crop_data returns nil when no crop file exists" do
+      photo = photo_fixture()
+      assert nil == Photos.get_crop_data(photo)
+    end
+
+    test "crop data can be stored and retrieved" do
+      owner_id = Ecto.UUID.generate()
+
+      # Create original dir
+      original_dir = Photos.original_path_dir("User", owner_id)
+      File.mkdir_p!(original_dir)
+      on_exit(fn -> File.rm_rf!(original_dir) end)
+
+      # Create a photo
+      photo = photo_fixture(%{owner_type: "User", owner_id: owner_id})
+
+      # Write crop data
+      crop_path = Path.join(original_dir, "#{photo.filename}.crop.json")
+      crop_data = %{x: 10, y: 20, width: 100, height: 100}
+      File.write!(crop_path, Jason.encode!(crop_data))
+
+      # Read it back
+      result = Photos.get_crop_data(photo)
+      assert result.x == 10
+      assert result.y == 20
+      assert result.width == 100
+      assert result.height == 100
+    end
+
+    test "delete_crop_data removes the crop file" do
+      owner_id = Ecto.UUID.generate()
+
+      # Create original dir
+      original_dir = Photos.original_path_dir("User", owner_id)
+      File.mkdir_p!(original_dir)
+      on_exit(fn -> File.rm_rf!(original_dir) end)
+
+      # Create a photo
+      photo = photo_fixture(%{owner_type: "User", owner_id: owner_id})
+
+      # Write crop data
+      crop_path = Path.join(original_dir, "#{photo.filename}.crop.json")
+      File.write!(crop_path, Jason.encode!(%{x: 10, y: 20, width: 100, height: 100}))
+
+      assert File.exists?(crop_path)
+
+      # Delete it
+      Photos.delete_crop_data(photo)
+
+      refute File.exists?(crop_path)
+    end
+
+    test "original_path does not return crop.json files" do
+      owner_id = Ecto.UUID.generate()
+
+      # Create original dir
+      original_dir = Photos.original_path_dir("User", owner_id)
+      File.mkdir_p!(original_dir)
+      on_exit(fn -> File.rm_rf!(original_dir) end)
+
+      # Create a photo
+      photo = photo_fixture(%{owner_type: "User", owner_id: owner_id})
+
+      # Create both an image file and a crop file
+      image_path = Path.join(original_dir, "#{photo.filename}.jpg")
+      crop_path = Path.join(original_dir, "#{photo.filename}.crop.json")
+
+      File.write!(image_path, "fake image content")
+      File.write!(crop_path, Jason.encode!(%{x: 10, y: 20, width: 100, height: 100}))
+
+      # original_path should return the image, not the crop file
+      assert {:ok, path} = Photos.original_path(photo)
+      assert String.ends_with?(path, ".jpg")
+      refute String.ends_with?(path, ".crop.json")
+    end
+  end
+
+  describe "PhotoProcessor.apply_center_crop/1" do
+    test "crops landscape image to square" do
+      # Create a test image (20x10 pixels, landscape)
+      {:ok, image} = Image.new(20, 10, color: [255, 0, 0])
+
+      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+
+      # Should be 10x10 (the minimum dimension)
+      assert Image.width(cropped) == 10
+      assert Image.height(cropped) == 10
+    end
+
+    test "crops portrait image to square" do
+      # Create a test image (10x20 pixels, portrait)
+      {:ok, image} = Image.new(10, 20, color: [0, 255, 0])
+
+      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+
+      # Should be 10x10 (the minimum dimension)
+      assert Image.width(cropped) == 10
+      assert Image.height(cropped) == 10
+    end
+
+    test "keeps square image unchanged" do
+      # Create a test image (10x10 pixels, already square)
+      {:ok, image} = Image.new(10, 10, color: [0, 0, 255])
+
+      {:ok, cropped} = Animina.Photos.PhotoProcessor.apply_center_crop(image)
+
+      # Should remain 10x10
+      assert Image.width(cropped) == 10
+      assert Image.height(cropped) == 10
     end
   end
 

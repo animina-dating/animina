@@ -3,7 +3,7 @@ defmodule AniminaWeb.PhotoController do
   Serves processed photos with signed URL verification.
 
   URLs follow the pattern: `/photos/:signature/:filename`
-  where filename is `{photo_id}.webp` or `{photo_id}_pixelated.webp`.
+  where filename is `{photo_id}.webp` or `{photo_id}_thumb.webp`.
   """
 
   use AniminaWeb, :controller
@@ -25,10 +25,7 @@ defmodule AniminaWeb.PhotoController do
   end
 
   defp serve_photo(conn, photo, variant) do
-    # If photo is NSFW and the requested variant is :main, serve the pixelated version instead
-    actual_variant = if photo.nsfw and variant == :main, do: :pixelated, else: variant
-
-    path = Photos.processed_path(photo.id, actual_variant)
+    path = Photos.processed_path(photo, variant)
 
     if File.exists?(path) do
       conn
@@ -44,10 +41,6 @@ defmodule AniminaWeb.PhotoController do
 
   defp parse_filename(filename) do
     cond do
-      String.ends_with?(filename, "_pixelated.webp") ->
-        photo_id = String.replace_trailing(filename, "_pixelated.webp", "")
-        {:ok, photo_id, :pixelated}
-
       String.ends_with?(filename, "_thumb.webp") ->
         photo_id = String.replace_trailing(filename, "_thumb.webp", "")
         {:ok, photo_id, :thumbnail}
