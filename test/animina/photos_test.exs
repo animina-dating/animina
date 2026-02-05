@@ -60,11 +60,17 @@ defmodule Animina.PhotosTest do
       assert changeset.valid?
     end
 
-    test "pending -> approved is invalid" do
+    test "pending -> approved is valid (for seeding)" do
       photo = photo_fixture(%{state: "pending"})
       changeset = Photo.transition_changeset(photo, "approved")
+      assert changeset.valid?
+    end
+
+    test "pending -> ollama_checking is invalid" do
+      photo = photo_fixture(%{state: "pending"})
+      changeset = Photo.transition_changeset(photo, "ollama_checking")
       refute changeset.valid?
-      assert "cannot transition from pending to approved" in errors_on(changeset).state
+      assert "cannot transition from pending to ollama_checking" in errors_on(changeset).state
     end
 
     test "processing -> ollama_checking is valid" do
@@ -141,8 +147,8 @@ defmodule Animina.PhotosTest do
 
     test "returns error for invalid transition" do
       photo = photo_fixture()
-      {:error, changeset} = Photos.transition_photo(photo, "approved")
-      assert "cannot transition from pending to approved" in errors_on(changeset).state
+      {:error, changeset} = Photos.transition_photo(photo, "ollama_checking")
+      assert "cannot transition from pending to ollama_checking" in errors_on(changeset).state
     end
 
     test "broadcasts state change on successful transition" do
@@ -164,7 +170,7 @@ defmodule Animina.PhotosTest do
       # Subscribe to PubSub
       Phoenix.PubSub.subscribe(Animina.PubSub, topic)
 
-      {:error, _changeset} = Photos.transition_photo(photo, "approved")
+      {:error, _changeset} = Photos.transition_photo(photo, "ollama_checking")
 
       refute_receive {:photo_state_changed, _}
     end
