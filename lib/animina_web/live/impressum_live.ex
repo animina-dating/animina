@@ -13,7 +13,7 @@ defmodule AniminaWeb.ImpressumLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div>
         <article class="space-y-10">
           <%!-- ===== HEADER ===== --%>
           <header class="text-center space-y-2">

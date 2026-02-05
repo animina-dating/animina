@@ -17,7 +17,7 @@ defmodule AniminaWeb.DemoLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} full_width={true}>
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <!-- Subtle gradient background -->

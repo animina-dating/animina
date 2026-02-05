@@ -381,7 +381,6 @@ defmodule AniminaWeb.Admin.PhotoReviewsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div
-        class="mx-auto max-w-6xl px-4 py-8"
         phx-window-keydown="keydown"
         id="photo-reviews-container"
         phx-hook="ShiftSelect"

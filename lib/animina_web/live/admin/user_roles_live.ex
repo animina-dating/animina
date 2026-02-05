@@ -73,7 +73,7 @@ defmodule AniminaWeb.Admin.UserRolesLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-3xl px-4 py-8">
+      <div>
         <h1 class="text-2xl font-bold text-base-content mb-6">{gettext("Manage Roles")}</h1>
 
         <div class="mb-6">

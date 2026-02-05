@@ -384,35 +384,36 @@ defmodule Animina.FeatureFlags do
   Called during application startup. Flags are disabled by default.
   """
   def initialize_ollama_settings do
-    Enum.each(@ollama_settings, fn setting_def ->
-      case setting_def.type do
-        :flag ->
-          # Enable flag if not already set (preserves existing settings)
-          unless FunWithFlags.enabled?(setting_def.name) do
-            FunWithFlags.enable(setting_def.name)
-            Logger.info("Feature flag #{setting_def.name} enabled by default")
-          end
+    Enum.each(@ollama_settings, &initialize_ollama_setting/1)
+  end
 
-          # Create default settings if they don't exist
-          get_or_create_flag_setting(setting_def.name, %{
-            description: setting_def.description,
-            settings: %{
-              auto_approve: false,
-              auto_approve_value: Map.get(setting_def, :default_auto_approve_value),
-              delay_ms: 0
-            }
-          })
+  defp initialize_ollama_setting(%{type: :flag} = setting_def) do
+    maybe_enable_flag(setting_def.name)
 
-        _ ->
-          flag_name = "system:#{setting_def.name}"
+    get_or_create_flag_setting(setting_def.name, %{
+      description: setting_def.description,
+      settings: %{
+        auto_approve: false,
+        auto_approve_value: Map.get(setting_def, :default_auto_approve_value),
+        delay_ms: 0
+      }
+    })
+  end
 
-          # Create default settings if they don't exist
-          get_or_create_flag_setting(flag_name, %{
-            description: setting_def.description,
-            settings: %{value: setting_def.default_value}
-          })
-      end
-    end)
+  defp initialize_ollama_setting(setting_def) do
+    flag_name = "system:#{setting_def.name}"
+
+    get_or_create_flag_setting(flag_name, %{
+      description: setting_def.description,
+      settings: %{value: setting_def.default_value}
+    })
+  end
+
+  defp maybe_enable_flag(flag_name) do
+    unless FunWithFlags.enabled?(flag_name) do
+      FunWithFlags.enable(flag_name)
+      Logger.info("Feature flag #{flag_name} enabled by default")
+    end
   end
 
   # --- Admin Flags ---

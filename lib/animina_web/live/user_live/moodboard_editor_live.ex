@@ -21,7 +21,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div id="moodboard-editor-container" class="mx-auto max-w-4xl px-4 py-8" phx-hook="DeviceType">
+      <div id="moodboard-editor-container" phx-hook="DeviceType">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div class="breadcrumbs text-sm">

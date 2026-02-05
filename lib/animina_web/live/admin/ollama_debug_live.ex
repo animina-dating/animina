@@ -227,7 +227,7 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-7xl px-4 py-8">
+      <div>
         <%!-- Header --%>
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>

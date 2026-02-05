@@ -10,7 +10,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div
         id="avatar-upload-container"
-        class="mx-auto max-w-2xl px-4 py-8"
+        class="max-w-2xl mx-auto"
         phx-hook="ImageCropper"
         data-mandatory="true"
         data-aspect-ratio="1:1"

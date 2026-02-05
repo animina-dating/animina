@@ -29,7 +29,7 @@ defmodule AniminaWeb.UserLive.Registration do
       current_scope={@current_scope}
       display_name={navbar_display_name(@current_step, @last_params)}
     >
-      <div class="mx-auto max-w-2xl px-4 py-8">
+      <div class="max-w-2xl mx-auto">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">

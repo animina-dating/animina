@@ -359,7 +359,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
 
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-4xl px-4 py-8">
+      <div>
         <div class="mb-8">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Feature Flags")}</h1>
           <p class="text-base-content/70 mt-1">

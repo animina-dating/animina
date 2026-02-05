@@ -247,7 +247,7 @@ defmodule AniminaWeb.Admin.OllamaQueueLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-6xl px-4 py-8">
+      <div>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Ollama Queue")}</h1>

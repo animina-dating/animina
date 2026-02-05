@@ -20,7 +20,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-2xl px-4 py-8">
+      <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
           <.header>
             {gettext("Settings")}

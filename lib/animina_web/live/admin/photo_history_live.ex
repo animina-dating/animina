@@ -23,7 +23,7 @@ defmodule AniminaWeb.Admin.PhotoHistoryLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-4xl px-4 py-8">
+      <div>
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>

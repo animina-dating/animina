@@ -10,7 +10,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-md px-4 py-8">
+      <div class="max-w-md mx-auto">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-6">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">

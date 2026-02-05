@@ -19,7 +19,7 @@ defmodule AniminaWeb.DemoIndex2Live do
   @impl true
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} full_width={true}>
       <!-- Hero Section -->
       <section class="relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-accent/10 via-transparent to-transparent" />

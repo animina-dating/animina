@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="mx-auto max-w-2xl px-4 py-8">
+      <div class="max-w-2xl mx-auto">
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <h1 class="text-2xl sm:text-3xl font-light text-base-content mb-6 text-center">
             {gettext("Waitlist")}

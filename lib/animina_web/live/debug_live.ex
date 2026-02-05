@@ -596,7 +596,7 @@ defmodule AniminaWeb.DebugLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-4xl mx-auto py-8 px-4">
+      <div>
         <h1 class="text-2xl font-bold mb-8">System Debug</h1>
 
         <%= if @current_scope && Scope.admin?(@current_scope) do %>

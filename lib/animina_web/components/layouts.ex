@@ -40,6 +40,10 @@ defmodule AniminaWeb.Layouts do
     default: nil,
     doc: "optional display name to show in navbar (e.g. during registration)"
 
+  attr :full_width, :boolean,
+    default: false,
+    doc: "if true, skip the default max-w-7xl container around inner_block content"
+
   slot :inner_block, required: true
 
   def app(assigns) do
@@ -479,7 +483,12 @@ defmodule AniminaWeb.Layouts do
       </div>
       <!-- Main Content -->
       <main class="flex-1 pt-16">
-        {render_slot(@inner_block)}
+        <div :if={!@full_width} class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          {render_slot(@inner_block)}
+        </div>
+        <div :if={@full_width}>
+          {render_slot(@inner_block)}
+        </div>
       </main>
       <!-- Footer -->
       <footer class="border-t border-base-300 bg-base-200/50">
