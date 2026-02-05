@@ -1,5 +1,5 @@
 defmodule Animina.Photos.OllamaWarmupTest do
-  use ExUnit.Case, async: true
+  use Animina.DataCase, async: true
 
   alias Animina.Photos.OllamaWarmup
 

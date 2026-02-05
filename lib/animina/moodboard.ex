@@ -1,12 +1,12 @@
 defmodule Animina.Moodboard do
   @moduledoc """
-  Context for managing user galleries.
+  Context for managing user moodboards.
 
   This module acts as a facade, delegating to the specialized sub-module:
   - `Animina.Moodboard.Items` - CRUD operations, ordering, and visibility
 
   Moodboard items can be:
-  - **photo**: A photo uploaded to the gallery
+  - **photo**: A photo uploaded to the moodboard
   - **story**: A Markdown text block (max 2000 chars)
   - **combined**: A photo with accompanying story text
 
@@ -21,7 +21,9 @@ defmodule Animina.Moodboard do
   # Create operations
   defdelegate create_photo_item(user, source_path, opts \\ []), to: Animina.Moodboard.Items
   defdelegate create_story_item(user, content), to: Animina.Moodboard.Items
-  defdelegate create_combined_item(user, source_path, content, opts \\ []), to: Animina.Moodboard.Items
+
+  defdelegate create_combined_item(user, source_path, content, opts \\ []),
+    to: Animina.Moodboard.Items
 
   # Read operations
   defdelegate get_item(id), to: Animina.Moodboard.Items

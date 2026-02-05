@@ -137,22 +137,22 @@ msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
 msgid "must be equal to %{number}"
 msgstr "يجب أن يساوي %{number}"
 
-#: lib/animina/accounts.ex:437
+#: lib/animina/accounts.ex:186
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"
 
-#: lib/animina/accounts/user.ex:245
+#: lib/animina/accounts/user.ex:250
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "ليس رقم هاتف صالح"
 
-#: lib/animina/accounts/user.ex:147
+#: lib/animina/accounts/user.ex:152
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "يجب أن يتكون من 6 أحرف (حروف وأرقام)"
 
-#: lib/animina/accounts/user.ex:240
+#: lib/animina/accounts/user.ex:245
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "يجب أن يكون رقم هاتف محمول (ليس خط أرضي)"

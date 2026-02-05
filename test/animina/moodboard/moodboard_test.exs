@@ -22,7 +22,7 @@ defmodule Animina.MoodboardTest do
   end
 
   describe "list_moodboard/1" do
-    test "returns active gallery items for a user" do
+    test "returns active moodboard items for a user" do
       user = bare_user_fixture()
       _item1 = photo_moodboard_item_fixture(user, %{position: 1})
       _item2 = story_moodboard_item_fixture(user, "My story", %{position: 2})
@@ -316,20 +316,26 @@ defmodule Animina.MoodboardTest do
   end
 
   describe "link_avatar_to_pinned_item/2" do
-    test "creates gallery photo link when none exists" do
+    test "creates moodboard photo link when none exists" do
       user = bare_user_fixture()
       {:ok, _pinned} = Moodboard.create_pinned_intro_item(user, "About me")
-      photo = Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
+      photo =
+        Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
 
       assert {:ok, moodboard_photo} = Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
       assert moodboard_photo.photo_id == photo.id
     end
 
-    test "updates existing gallery photo link" do
+    test "updates existing moodboard photo link" do
       user = bare_user_fixture()
       {:ok, _pinned} = Moodboard.create_pinned_intro_item(user, "About me")
-      photo1 = Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
-      photo2 = Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
+      photo1 =
+        Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
+      photo2 =
+        Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
 
       {:ok, _} = Moodboard.link_avatar_to_pinned_item(user.id, photo1.id)
       {:ok, updated} = Moodboard.link_avatar_to_pinned_item(user.id, photo2.id)
@@ -339,17 +345,22 @@ defmodule Animina.MoodboardTest do
 
     test "returns error if no pinned item exists" do
       user = bare_user_fixture()
-      photo = Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
+      photo =
+        Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
 
       assert {:error, :no_pinned_item} = Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
     end
   end
 
   describe "unlink_avatar_from_pinned_item/1" do
-    test "removes gallery photo but keeps the item" do
+    test "removes moodboard photo but keeps the item" do
       user = bare_user_fixture()
       {:ok, pinned} = Moodboard.create_pinned_intro_item(user, "About me")
-      photo = Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
+      photo =
+        Animina.PhotosFixtures.approved_photo_fixture(%{owner_type: "User", owner_id: user.id})
+
       {:ok, _} = Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
 
       assert :ok = Moodboard.unlink_avatar_from_pinned_item(user.id)

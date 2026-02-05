@@ -108,7 +108,6 @@ defmodule Animina.Photos.PhotoProcessor do
   end
 
   defp do_process_photo(photo) do
-
     # Log photo uploaded event
     Photos.log_event(photo, "photo_uploaded", "user", photo.owner_id, %{
       filename: photo.original_filename,
@@ -320,8 +319,8 @@ defmodule Animina.Photos.PhotoProcessor do
 
         {:error, :not_family_friendly}
 
-      gallery_photo?(photo) ->
-        # Gallery photos skip face detection - any content is allowed
+      moodboard_photo?(photo) ->
+        # Moodboard photos skip face detection - any content is allowed
         # (as long as it's family friendly, checked above)
         Photos.transition_photo(photo, "approved")
 
@@ -346,9 +345,9 @@ defmodule Animina.Photos.PhotoProcessor do
     end
   end
 
-  # Gallery photos have owner_type "GalleryItem" and skip face detection
-  defp gallery_photo?(%Photo{owner_type: "GalleryItem"}), do: true
-  defp gallery_photo?(_), do: false
+  # Moodboard photos have owner_type "MoodboardItem" and skip face detection
+  defp moodboard_photo?(%Photo{owner_type: "MoodboardItem"}), do: true
+  defp moodboard_photo?(_), do: false
 
   defp transition_to_processing(photo) do
     Photos.log_event(photo, "processing_started", "system", nil, %{})
@@ -379,7 +378,7 @@ defmodule Animina.Photos.PhotoProcessor do
     thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     with {:ok, image} <- Image.open(original_path),
-         # Apply crop if available (mandatory for avatars, optional for gallery)
+         # Apply crop if available (mandatory for avatars, optional for moodboard)
          {:ok, image} <- maybe_apply_crop(image, photo),
          {:ok, image} <- resize_to_max(image, max_dim),
          {:ok, _} <- Image.write(image, main_path, quality: quality, strip_metadata: true),
@@ -426,7 +425,7 @@ defmodule Animina.Photos.PhotoProcessor do
 
   # Apply crop based on photo type:
   # - Avatar photos: ALWAYS crop to square (mandatory, use center crop if no data)
-  # - Gallery photos: ONLY crop if user explicitly selected a crop region
+  # - Moodboard photos: ONLY crop if user explicitly selected a crop region
   defp maybe_apply_crop(image, %Photo{type: "avatar"} = photo) do
     case Photos.get_crop_data(photo) do
       nil ->
@@ -440,7 +439,7 @@ defmodule Animina.Photos.PhotoProcessor do
   end
 
   defp maybe_apply_crop(image, photo) do
-    # Gallery photos or other types: only crop if user explicitly chose to
+    # Moodboard photos or other types: only crop if user explicitly chose to
     case Photos.get_crop_data(photo) do
       nil ->
         # No crop data: keep original dimensions

@@ -1,6 +1,6 @@
 defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   @moduledoc """
-  LiveView for displaying a user's gallery.
+  LiveView for displaying a user's moodboard.
 
   Features:
   - Editorial magazine-style Pinterest masonry layout
@@ -21,7 +21,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div id="gallery-container" class="mx-auto max-w-6xl px-4 py-8" phx-hook="DeviceType">
+      <div id="moodboard-container" class="mx-auto max-w-6xl px-4 py-8" phx-hook="DeviceType">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>
@@ -51,7 +51,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
             {gettext("Edit Moodboard")}
           </.link>
         </div>
-
+        
     <!-- Empty state -->
         <div :if={Enum.empty?(@items)} class="text-center py-16">
           <svg
@@ -75,9 +75,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
             {gettext("Add photos and text to your moodboard to share with others.")}
           </p>
         </div>
-
-    <!-- Editorial gallery -->
-        <.editorial_gallery
+        
+    <!-- Editorial moodboard -->
+        <.editorial_moodboard
           :if={!Enum.empty?(@items)}
           items={@items}
           current_user_id={@current_user_id}

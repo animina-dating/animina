@@ -1,6 +1,6 @@
 defmodule Animina.Moodboard.MoodboardItem do
   @moduledoc """
-  Schema for gallery items - the core container for gallery content.
+  Schema for moodboard items - the core container for moodboard content.
 
   Moodboard items can be photos, stories (Markdown), or combined (photo + story).
   Items can be reordered via drag/drop and have visibility states.
@@ -39,7 +39,7 @@ defmodule Animina.Moodboard.MoodboardItem do
   end
 
   @doc """
-  Changeset for creating a new gallery item.
+  Changeset for creating a new moodboard item.
   """
   def create_changeset(item, attrs) do
     item

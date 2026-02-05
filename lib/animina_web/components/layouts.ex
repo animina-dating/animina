@@ -6,6 +6,7 @@ defmodule AniminaWeb.Layouts do
   use AniminaWeb, :html
 
   alias Animina.Accounts.Scope
+  alias Animina.FeatureFlags
   alias Animina.Photos
   alias AniminaWeb.Languages
 
@@ -210,14 +211,15 @@ defmodule AniminaWeb.Layouts do
                           </span>
                         </div>
                         <div class="mt-2">
+                          <% threshold = FeatureFlags.referral_threshold() %>
                           <div class="flex justify-between text-xs text-amber-700 mb-1">
                             <span>{gettext("Referral progress")}</span>
-                            <span class="font-medium">{referral_count}/5</span>
+                            <span class="font-medium">{referral_count}/{threshold}</span>
                           </div>
                           <div class="w-full bg-amber-200 rounded-full h-1.5">
                             <div
                               class="bg-amber-500 h-1.5 rounded-full"
-                              style={"width: #{min(100, referral_count / 5 * 100)}%"}
+                              style={"width: #{min(100, referral_count / threshold * 100)}%"}
                             />
                           </div>
                         </div>
@@ -234,6 +236,12 @@ defmodule AniminaWeb.Layouts do
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
                       {gettext("Settings")}
+                    </a>
+                    <a
+                      href="/users/settings/moodboard"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("My Moodboard")}
                     </a>
                     <!-- Moderation Section (only in moderator role) -->
                     <%= if @current_scope.current_role == "moderator" do %>
@@ -284,6 +292,12 @@ defmodule AniminaWeb.Layouts do
                               {format_count(ollama_queue_count)}
                             </span>
                           <% end %>
+                        </a>
+                        <a
+                          href="/admin/ollama-debug"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Ollama Debug")}
                         </a>
                         <a
                           href="/admin/photo-blacklist"

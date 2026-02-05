@@ -524,11 +524,15 @@ defmodule Animina.Accounts.User do
   end
 
   @doc """
-  A changeset for updating gallery column preferences.
+  A changeset for updating moodboard column preferences.
   """
   def moodboard_columns_changeset(user, attrs) do
     user
-    |> cast(attrs, [:moodboard_columns_mobile, :moodboard_columns_tablet, :moodboard_columns_desktop])
+    |> cast(attrs, [
+      :moodboard_columns_mobile,
+      :moodboard_columns_tablet,
+      :moodboard_columns_desktop
+    ])
     |> validate_inclusion(:moodboard_columns_mobile, [1, 2, 3])
     |> validate_inclusion(:moodboard_columns_tablet, [1, 2, 3])
     |> validate_inclusion(:moodboard_columns_desktop, [1, 2, 3])

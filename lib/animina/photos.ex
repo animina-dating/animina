@@ -225,11 +225,11 @@ defmodule Animina.Photos do
   @doc """
   Deletes all avatar photos for a user.
 
-  Also unlinks from the pinned gallery item if one exists.
+  Also unlinks from the pinned moodboard item if one exists.
   """
   def delete_user_avatars(user_id) do
-    # Unlink from pinned gallery item first
-    Animina.Gallery.unlink_avatar_from_pinned_item(user_id)
+    # Unlink from pinned moodboard item first
+    Animina.Moodboard.unlink_avatar_from_pinned_item(user_id)
 
     # Then delete the photos
     Photo

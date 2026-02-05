@@ -1,6 +1,6 @@
 defmodule Animina.Moodboard.Items do
   @moduledoc """
-  CRUD operations and queries for gallery items.
+  CRUD operations and queries for moodboard items.
 
   Handles creation of different item types (photo, story, combined),
   position ordering for drag/drop, and visibility management.
@@ -18,7 +18,7 @@ defmodule Animina.Moodboard.Items do
   # --- Create operations ---
 
   @doc """
-  Creates a photo-only gallery item.
+  Creates a photo-only moodboard item.
 
   Uploads the photo via the Photos context with owner_type "MoodboardItem".
   """
@@ -31,7 +31,8 @@ defmodule Animina.Moodboard.Items do
         position = next_position(user.id)
 
         with {:ok, item} <- create_item(user.id, "photo", position),
-             {:ok, photo} <- Photos.upload_photo("MoodboardItem", item.id, source_path, opts_with_skip),
+             {:ok, photo} <-
+               Photos.upload_photo("MoodboardItem", item.id, source_path, opts_with_skip),
              {:ok, _moodboard_photo} <- create_moodboard_photo(item.id, photo.id) do
           {Repo.preload(item, [:moodboard_photo, moodboard_photo: :photo]), photo}
         else
@@ -51,7 +52,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Creates a story-only gallery item with Markdown content.
+  Creates a story-only moodboard item with Markdown content.
   """
   def create_story_item(user, content) do
     Repo.transaction(fn ->
@@ -67,7 +68,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Creates a combined gallery item with both photo and story.
+  Creates a combined moodboard item with both photo and story.
   """
   def create_combined_item(user, source_path, content, photo_opts \\ []) do
     # Skip enqueue inside transaction to avoid race condition
@@ -78,10 +79,12 @@ defmodule Animina.Moodboard.Items do
         position = next_position(user.id)
 
         with {:ok, item} <- create_item(user.id, "combined", position),
-             {:ok, photo} <- Photos.upload_photo("MoodboardItem", item.id, source_path, opts_with_skip),
+             {:ok, photo} <-
+               Photos.upload_photo("MoodboardItem", item.id, source_path, opts_with_skip),
              {:ok, _moodboard_photo} <- create_moodboard_photo(item.id, photo.id),
              {:ok, _story} <- create_moodboard_story(item.id, content) do
-          {Repo.preload(item, [:moodboard_story, :moodboard_photo, moodboard_photo: :photo]), photo}
+          {Repo.preload(item, [:moodboard_story, :moodboard_photo, moodboard_photo: :photo]),
+           photo}
         else
           {:error, reason} -> Repo.rollback(reason)
         end
@@ -100,13 +103,20 @@ defmodule Animina.Moodboard.Items do
 
   defp create_item(user_id, item_type, position) do
     %MoodboardItem{}
-    |> MoodboardItem.create_changeset(%{user_id: user_id, item_type: item_type, position: position})
+    |> MoodboardItem.create_changeset(%{
+      user_id: user_id,
+      item_type: item_type,
+      position: position
+    })
     |> Repo.insert()
   end
 
   defp create_moodboard_photo(moodboard_item_id, photo_id) do
     %MoodboardPhoto{}
-    |> MoodboardPhoto.create_changeset(%{moodboard_item_id: moodboard_item_id, photo_id: photo_id})
+    |> MoodboardPhoto.create_changeset(%{
+      moodboard_item_id: moodboard_item_id,
+      photo_id: photo_id
+    })
     |> Repo.insert()
   end
 
@@ -137,17 +147,17 @@ defmodule Animina.Moodboard.Items do
   # --- Read operations ---
 
   @doc """
-  Gets a gallery item by ID.
+  Gets a moodboard item by ID.
   """
   def get_item(id), do: Repo.get(MoodboardItem, id)
 
   @doc """
-  Gets a gallery item by ID, raising if not found.
+  Gets a moodboard item by ID, raising if not found.
   """
   def get_item!(id), do: Repo.get!(MoodboardItem, id)
 
   @doc """
-  Gets a gallery item by ID with all associations preloaded.
+  Gets a moodboard item by ID with all associations preloaded.
   """
   def get_item_with_preloads(id) do
     MoodboardItem
@@ -157,7 +167,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Lists active gallery items for a user (visitor view).
+  Lists active moodboard items for a user (visitor view).
   Only shows items in "active" state.
   """
   def list_moodboard(user_id) do
@@ -169,7 +179,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Lists all gallery items for a user including hidden (owner view).
+  Lists all moodboard items for a user including hidden (owner view).
   Excludes deleted items.
   """
   def list_moodboard_with_hidden(user_id) do
@@ -181,7 +191,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Counts gallery items for a user.
+  Counts moodboard items for a user.
   """
   def count_items(user_id, include_hidden \\ false) do
     query =
@@ -199,7 +209,7 @@ defmodule Animina.Moodboard.Items do
   # --- Update operations ---
 
   @doc """
-  Updates the positions of gallery items based on a list of item IDs in desired order.
+  Updates the positions of moodboard items based on a list of item IDs in desired order.
 
   Pinned items are excluded from reordering - they always stay at position 1.
   Non-pinned items are assigned positions starting at 2 (if there's a pinned item) or 1 (if not).
@@ -243,7 +253,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Hides a gallery item (e.g., due to a report).
+  Hides a moodboard item (e.g., due to a report).
   """
   def hide_item(%MoodboardItem{} = item, reason) do
     item
@@ -255,7 +265,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Unhides a gallery item (e.g., after appeal approved).
+  Unhides a moodboard item (e.g., after appeal approved).
   """
   def unhide_item(%MoodboardItem{} = item) do
     item
@@ -267,7 +277,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Soft-deletes a gallery item.
+  Soft-deletes a moodboard item.
   """
   def delete_item(%MoodboardItem{} = item) do
     # First delete associated photo files if any
@@ -283,7 +293,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Permanently deletes a gallery item and its associations.
+  Permanently deletes a moodboard item and its associations.
   Used for cleanup, not normal operation.
   """
   def hard_delete_item(%MoodboardItem{} = item) do
@@ -299,7 +309,7 @@ defmodule Animina.Moodboard.Items do
   # --- Query helpers ---
 
   @doc """
-  Lists all gallery photos for a user (for rating queries).
+  Lists all moodboard photos for a user (for rating queries).
   Returns moodboard_photo records with associated photo.
   """
   def list_moodboard_photos(user_id) do
@@ -311,7 +321,7 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Lists all gallery stories for a user (for rating queries).
+  Lists all moodboard stories for a user.
   """
   def list_moodboard_stories(user_id) do
     MoodboardStory
@@ -435,13 +445,14 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
-  Updates the positions of gallery items based on a list of item IDs in desired order.
+  Updates the positions of moodboard items based on a list of item IDs in desired order.
   Pinned items are excluded from reordering - they always stay at position 1.
 
   The list should contain item IDs in the new order. Items not in the list retain their
   relative positions after the specified items.
   """
-  def update_positions_excluding_pinned(user_id, item_ids_in_order) when is_list(item_ids_in_order) do
+  def update_positions_excluding_pinned(user_id, item_ids_in_order)
+      when is_list(item_ids_in_order) do
     Repo.transaction(fn ->
       # Get the pinned item to exclude it
       pinned_item = get_pinned_item(user_id)

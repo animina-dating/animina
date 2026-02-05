@@ -69,7 +69,7 @@ defmodule Animina.FeatureFlags do
       label: "Ollama Model",
       description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
       type: :string,
-      default_value: "qwen3-vl:4b"
+      default_value: "qwen3-vl:8b"
     },
     %{
       name: :ollama_debug_max_entries,
@@ -86,7 +86,8 @@ defmodule Animina.FeatureFlags do
     %{
       name: :ollama_debug_display,
       label: "Ollama Debug Display",
-      description: "Show Ollama API calls at the bottom of pages for admins (useful for debugging)"
+      description:
+        "Show Ollama API calls at the bottom of pages for admins (useful for debugging)"
     }
   ]
 
@@ -358,7 +359,11 @@ defmodule Animina.FeatureFlags do
   """
   def get_all_system_settings do
     Enum.map(@system_settings, fn setting_def ->
-      Map.put(setting_def, :current_value, get_system_setting_value(setting_def.name, setting_def.default_value))
+      Map.put(
+        setting_def,
+        :current_value,
+        get_system_setting_value(setting_def.name, setting_def.default_value)
+      )
     end)
   end
 
@@ -415,10 +420,10 @@ defmodule Animina.FeatureFlags do
 
   @doc """
   Returns the configured Ollama model for photo classification.
-  Default: "qwen3-vl:4b"
+  Default: "qwen3-vl:8b"
   """
   def ollama_model do
-    get_system_setting_value(:ollama_model, "qwen3-vl:4b")
+    get_system_setting_value(:ollama_model, "qwen3-vl:8b")
   end
 
   @doc """

@@ -1,8 +1,8 @@
 defmodule Animina.Moodboard.MoodboardStory do
   @moduledoc """
-  Schema for gallery story content in Markdown format.
+  Schema for moodboard story content in Markdown format.
 
-  Each story belongs to exactly one gallery item.
+  Each story belongs to exactly one moodboard item.
   Content is limited to 2000 characters.
   """
 
@@ -24,7 +24,7 @@ defmodule Animina.Moodboard.MoodboardStory do
   end
 
   @doc """
-  Changeset for creating a new gallery story.
+  Changeset for creating a new moodboard story.
   """
   def create_changeset(story, attrs) do
     story
@@ -36,7 +36,7 @@ defmodule Animina.Moodboard.MoodboardStory do
   end
 
   @doc """
-  Changeset for updating a gallery story.
+  Changeset for updating a moodboard story.
   """
   def update_changeset(story, attrs) do
     story

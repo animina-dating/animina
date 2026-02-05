@@ -30,6 +30,7 @@ defmodule AniminaWeb.Router do
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
       live "/impressum", ImpressumLive
+      live "/moodboard/:user_id", UserLive.ProfileMoodboardLive
     end
   end
 
@@ -81,6 +82,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/settings/avatar", UserLive.AvatarUpload, :edit
+      live "/users/settings/moodboard", UserLive.MoodboardEditorLive
       live "/users/waitlist", UserLive.Waitlist
     end
 
@@ -96,6 +98,7 @@ defmodule AniminaWeb.Router do
       live "/admin/feature-flags", Admin.FeatureFlagsLive
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
       live "/admin/ollama-queue", Admin.OllamaQueueLive
+      live "/admin/ollama-debug", Admin.OllamaDebugLive
     end
 
     post "/role/switch", RoleController, :switch

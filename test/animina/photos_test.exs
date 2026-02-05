@@ -194,7 +194,7 @@ defmodule Animina.PhotosTest do
       _avatar =
         approved_photo_fixture(%{owner_type: "User", owner_id: owner_id, type: "avatar"})
 
-      _gallery =
+      _moodboard =
         approved_photo_fixture(%{owner_type: "User", owner_id: owner_id, type: "moodboard"})
 
       photos = Photos.list_photos("User", owner_id, "avatar")
@@ -292,7 +292,9 @@ defmodule Animina.PhotosTest do
 
     test "ignores non-avatar photos" do
       user_id = Ecto.UUID.generate()
-      _gallery = approved_photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
+
+      _moodboard =
+        approved_photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
 
       assert nil == Photos.get_user_avatar(user_id)
     end
@@ -386,7 +388,7 @@ defmodule Animina.PhotosTest do
 
     test "ignores non-avatar photos" do
       user_id = Ecto.UUID.generate()
-      _gallery = photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
+      _moodboard = photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
 
       assert nil == Photos.get_user_avatar_any_state(user_id)
     end
@@ -406,12 +408,12 @@ defmodule Animina.PhotosTest do
 
     test "does not delete non-avatar photos" do
       user_id = Ecto.UUID.generate()
-      gallery = photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
+      moodboard = photo_fixture(%{owner_type: "User", owner_id: user_id, type: "moodboard"})
       _avatar = photo_fixture(%{owner_type: "User", owner_id: user_id, type: "avatar"})
 
       Photos.delete_user_avatars(user_id)
 
-      assert Photos.get_photo(gallery.id) != nil
+      assert Photos.get_photo(moodboard.id) != nil
     end
 
     test "does not delete other users' avatars" do

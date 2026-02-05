@@ -115,15 +115,16 @@ defmodule Animina.FeatureFlags.OllamaDebugStore do
     key = {-counter, entry[:timestamp] || DateTime.utc_now()}
 
     # Truncate images to avoid storing massive base64 data
-    entry = Map.update(entry, :images, [], fn images ->
-      Enum.map(images || [], fn img ->
-        if is_binary(img) and byte_size(img) > 100 do
-          String.slice(img, 0, 100) <> "... [truncated, #{byte_size(img)} bytes total]"
-        else
-          img
-        end
+    entry =
+      Map.update(entry, :images, [], fn images ->
+        Enum.map(images || [], fn img ->
+          if is_binary(img) and byte_size(img) > 100 do
+            String.slice(img, 0, 100) <> "... [truncated, #{byte_size(img)} bytes total]"
+          else
+            img
+          end
+        end)
       end)
-    end)
 
     :ets.insert(@table_name, {key, entry})
 

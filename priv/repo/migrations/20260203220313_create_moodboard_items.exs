@@ -2,7 +2,7 @@ defmodule Animina.Repo.Migrations.CreateMoodboardItems do
   use Ecto.Migration
 
   def change do
-    # Core container for gallery content
+    # Core container for moodboard content
     create table(:moodboard_items, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
@@ -21,30 +21,30 @@ defmodule Animina.Repo.Migrations.CreateMoodboardItems do
     create index(:moodboard_items, [:user_id, :position])
 
     create constraint(:moodboard_items, :valid_item_type,
-      check: "item_type IN ('photo', 'story', 'combined')"
-    )
+             check: "item_type IN ('photo', 'story', 'combined')"
+           )
 
     create constraint(:moodboard_items, :valid_state,
-      check: "state IN ('active', 'hidden', 'deleted')"
-    )
+             check: "state IN ('active', 'hidden', 'deleted')"
+           )
 
     # Pinned items MUST be at position 1
     create constraint(:moodboard_items, :pinned_must_be_position_one,
-      check: "(NOT pinned) OR (pinned AND position = 1)"
-    )
+             check: "(NOT pinned) OR (pinned AND position = 1)"
+           )
 
     # Only one pinned item per user (excluding deleted items)
     create unique_index(:moodboard_items, [:user_id],
-      where: "pinned = true AND state != 'deleted'",
-      name: :moodboard_items_user_pinned_unique
-    )
+             where: "pinned = true AND state != 'deleted'",
+             name: :moodboard_items_user_pinned_unique
+           )
 
     # Markdown story content
     create table(:moodboard_stories, primary_key: false) do
       add :id, :binary_id, primary_key: true
 
-      add :moodboard_item_id, references(:moodboard_items, type: :binary_id, on_delete: :delete_all),
-        null: false
+      add :moodboard_item_id,
+          references(:moodboard_items, type: :binary_id, on_delete: :delete_all), null: false
 
       add :content, :text, null: false
 
@@ -53,12 +53,12 @@ defmodule Animina.Repo.Migrations.CreateMoodboardItems do
 
     create unique_index(:moodboard_stories, [:moodboard_item_id])
 
-    # Links gallery items to photos
+    # Links moodboard items to photos
     create table(:moodboard_photos, primary_key: false) do
       add :id, :binary_id, primary_key: true
 
-      add :moodboard_item_id, references(:moodboard_items, type: :binary_id, on_delete: :delete_all),
-        null: false
+      add :moodboard_item_id,
+          references(:moodboard_items, type: :binary_id, on_delete: :delete_all), null: false
 
       add :photo_id, references(:photos, type: :binary_id, on_delete: :delete_all), null: false
 

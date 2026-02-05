@@ -506,7 +506,9 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
                     />
                     <label class="label">
                       <span class="label-text-alt text-base-content/50">
-                        {gettext("Default: %{default}", default: @selected_system_setting.default_value)}
+                        {gettext("Default: %{default}",
+                          default: @selected_system_setting.default_value
+                        )}
                       </span>
                     </label>
                   <% else %>

@@ -1,6 +1,6 @@
 defmodule Animina.MoodboardFixtures do
   @moduledoc """
-  Test helpers for creating gallery entities.
+  Test helpers for creating moodboard entities.
   """
 
   alias Animina.Moodboard
@@ -12,7 +12,7 @@ defmodule Animina.MoodboardFixtures do
   import Animina.PhotosFixtures, only: [approved_photo_fixture: 1]
 
   @doc """
-  Creates a gallery item directly in the database.
+  Creates a moodboard item directly in the database.
   """
   def moodboard_item_fixture(attrs \\ %{}) do
     attrs =
@@ -32,7 +32,7 @@ defmodule Animina.MoodboardFixtures do
   end
 
   @doc """
-  Creates a photo gallery item with an associated approved photo.
+  Creates a photo moodboard item with an associated approved photo.
   """
   def photo_moodboard_item_fixture(user, attrs \\ %{}) do
     item = moodboard_item_fixture(Map.merge(%{user_id: user.id, item_type: "photo"}, attrs))
@@ -50,12 +50,12 @@ defmodule Animina.MoodboardFixtures do
       |> Repo.insert()
 
     item
-    |> Repo.preload([moodboard_photo: :photo])
+    |> Repo.preload(moodboard_photo: :photo)
     |> Map.put(:moodboard_photo, %{moodboard_photo | photo: photo})
   end
 
   @doc """
-  Creates a story gallery item with Markdown content.
+  Creates a story moodboard item with Markdown content.
   """
   def story_moodboard_item_fixture(user, content \\ "# Hello\n\nThis is my story.", attrs \\ %{}) do
     item = moodboard_item_fixture(Map.merge(%{user_id: user.id, item_type: "story"}, attrs))
@@ -71,7 +71,7 @@ defmodule Animina.MoodboardFixtures do
   end
 
   @doc """
-  Creates a combined gallery item with both photo and story.
+  Creates a combined moodboard item with both photo and story.
   """
   def combined_moodboard_item_fixture(user, content \\ "Caption for my photo", attrs \\ %{}) do
     item = moodboard_item_fixture(Map.merge(%{user_id: user.id, item_type: "combined"}, attrs))
@@ -100,7 +100,7 @@ defmodule Animina.MoodboardFixtures do
   end
 
   @doc """
-  Creates a hidden gallery item.
+  Creates a hidden moodboard item.
   """
   def hidden_moodboard_item_fixture(user, reason \\ "inappropriate_adult") do
     item = moodboard_item_fixture(%{user_id: user.id, item_type: "photo"})

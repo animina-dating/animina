@@ -1,7 +1,7 @@
 defmodule AniminaWeb.UserLive.AvatarUpload do
   use AniminaWeb, :live_view
 
-  alias Animina.Gallery
+  alias Animina.Moodboard
   alias Animina.Photos
 
   @impl true
@@ -321,11 +321,16 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
             crop_data: crop_data
           )
 
-        # Link avatar to pinned gallery item
+        # Link avatar to pinned moodboard item
         case result do
-          {:ok, photo} -> Gallery.link_avatar_to_pinned_item(user.id, photo.id)
-          %Animina.Photos.Photo{} = photo -> Gallery.link_avatar_to_pinned_item(user.id, photo.id)
-          _ -> :ok
+          {:ok, photo} ->
+            Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
+
+          %Animina.Photos.Photo{} = photo ->
+            Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
+
+          _ ->
+            :ok
         end
 
         result

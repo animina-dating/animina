@@ -160,7 +160,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
           </p>
         </div>
         
-    <!-- Gallery items (sortable) - Editorial card layout -->
+    <!-- Moodboard items (sortable) - Editorial card layout -->
         <div :if={!Enum.empty?(@items)}>
           <!-- Column toggle -->
           <div class="flex justify-end mb-4">
@@ -221,8 +221,8 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
               </button>
             </div>
           </div>
-
-          <!-- Single column layout -->
+          
+    <!-- Single column layout -->
           <div
             :if={@columns == 1}
             id="moodboard-items"
@@ -238,8 +238,8 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
               />
             <% end %>
           </div>
-
-          <!-- Multi-column layout (2 or 3 columns) -->
+          
+    <!-- Multi-column layout (2 or 3 columns) -->
           <div
             :if={@columns > 1}
             id="moodboard-columns"
@@ -337,8 +337,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
                         phx-click="set-aspect-ratio"
                         phx-value-ratio="16:9"
                         class="hidden"
-                      />
-                      16:9
+                      /> 16:9
                     </label>
                     <label class={[
                       "btn btn-sm",
@@ -353,8 +352,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
                         phx-click="set-aspect-ratio"
                         phx-value-ratio="4:3"
                         class="hidden"
-                      />
-                      4:3
+                      /> 4:3
                     </label>
                     <label class={[
                       "btn btn-sm",
@@ -374,8 +372,8 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
                     </label>
                   </div>
                 </div>
-
-                <!-- Orientation Selection (only shown for non-original, non-square ratios) -->
+                
+    <!-- Orientation Selection (only shown for non-original, non-square ratios) -->
                 <div :if={@aspect_ratio not in ["original", "1:1"]} class="mb-4">
                   <label class="label">
                     <span class="label-text">{gettext("Orientation")}</span>
@@ -504,7 +502,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
                   <p class="text-error text-sm mt-1">{upload_error_message(err)}</p>
                 <% end %>
               </div>
-
+              
     <!-- Story editor -->
               <div :if={@modal_type in ["story", "combined"]} class="mb-4">
                 <label class="label">
@@ -541,7 +539,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
               </div>
             </form>
 
-            <%!-- Crop Modal for Gallery Photos (optional) --%>
+            <%!-- Crop Modal for Moodboard Photos (optional) --%>
             <dialog data-cropper-modal class="modal">
               <div class="modal-box max-w-2xl max-h-[90vh]">
                 <h3 class="font-bold text-lg mb-2">{gettext("Crop Photo")}</h3>
@@ -579,7 +577,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
             <button type="button" phx-click="close-modal">close</button>
           </form>
         </dialog>
-
+        
     <!-- Delete Confirmation Modal -->
         <dialog :if={@deleting_item} id="delete-modal" class="modal modal-open">
           <div class="modal-box">
@@ -601,7 +599,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
             <button type="button" phx-click="cancel-delete">close</button>
           </form>
         </dialog>
-
+        
     <!-- Edit Story Modal -->
         <dialog :if={@editing_item} id="edit-story-modal" class="modal modal-open">
           <div class="modal-box max-w-2xl">
@@ -1039,8 +1037,9 @@ defmodule AniminaWeb.UserLive.MoodboardEditorLive do
   defp upload_error_message(:too_many_files), do: gettext("Too many files")
   defp upload_error_message(_), do: gettext("Upload error")
 
-  # Distribute items to columns with placeholder cards for sparse galleries
-  # When a user has fewer than 3 items, add placeholder cards to empty columns to show what the gallery could look like
+  # Distribute items to columns with placeholder cards for sparse moodboards.
+  # When a user has fewer than 3 items, add placeholder cards to empty columns
+  # to show what the moodboard could look like.
   # Returns: [{column_items, placeholder_variants, col_idx}, ...]
   defp distribute_with_placeholders(items, num_columns) do
     item_count = length(items)

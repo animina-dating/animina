@@ -207,7 +207,14 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
     prompt = Map.get(params, "prompt", prompt_editor.edited_prompt)
 
     # Mark as loading and update the edited_prompt
-    prompt_editor = %{prompt_editor | loading: true, result: nil, error: nil, edited_prompt: prompt}
+    prompt_editor = %{
+      prompt_editor
+      | loading: true,
+        result: nil,
+        error: nil,
+        edited_prompt: prompt
+    }
+
     socket = assign(socket, prompt_editor: prompt_editor)
 
     # Send request asynchronously
@@ -232,7 +239,10 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
 
           <div class="flex items-center gap-3">
             <label class="flex items-center gap-2 cursor-pointer">
-              <span class={["text-sm font-medium", if(@debug_enabled, do: "text-success", else: "text-base-content/60")]}>
+              <span class={[
+                "text-sm font-medium",
+                if(@debug_enabled, do: "text-success", else: "text-base-content/60")
+              ]}>
                 {gettext("Debug")}
               </span>
               <input
@@ -257,211 +267,220 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
         </div>
 
         <%!-- Stats --%>
-          <div class="stats shadow mb-6">
-            <div class="stat">
-              <div class="stat-title">{gettext("Total Calls")}</div>
-              <div class="stat-value text-primary">{length(@calls)}</div>
-              <div class="stat-desc">{gettext("Last %{count} stored", count: @max_entries)}</div>
-            </div>
+        <div class="stats shadow mb-6">
+          <div class="stat">
+            <div class="stat-title">{gettext("Total Calls")}</div>
+            <div class="stat-value text-primary">{length(@calls)}</div>
+            <div class="stat-desc">{gettext("Last %{count} stored", count: @max_entries)}</div>
+          </div>
 
-            <div class="stat">
-              <div class="stat-title">{gettext("Success Rate")}</div>
-              <div class="stat-value text-success">
-                {calculate_success_rate(@calls)}%
-              </div>
-              <div class="stat-desc">
-                {count_by_status(@calls, :success)} / {length(@calls)}
-              </div>
+          <div class="stat">
+            <div class="stat-title">{gettext("Success Rate")}</div>
+            <div class="stat-value text-success">
+              {calculate_success_rate(@calls)}%
             </div>
-
-            <div class="stat">
-              <div class="stat-title">{gettext("Errors")}</div>
-              <div class="stat-value text-error">{count_by_status(@calls, :error)}</div>
+            <div class="stat-desc">
+              {count_by_status(@calls, :success)} / {length(@calls)}
             </div>
           </div>
 
-          <%!-- Howto Section --%>
-          <div class="collapse collapse-arrow bg-base-200 mb-6">
-            <input type="checkbox" />
-            <div class="collapse-title font-medium">
-              <.icon name="hero-question-mark-circle" class="h-5 w-5 inline mr-2" />
-              {gettext("How to replay an Ollama call")}
-            </div>
-            <div class="collapse-content">
-              <div class="prose prose-sm max-w-none">
-                <h4>{gettext("Using curl (recommended for images)")}</h4>
-                <pre class="bg-base-300 p-3 rounded text-xs overflow-x-auto whitespace-pre-wrap"><%= raw(curl_example()) %></pre>
-
-                <h4>{gettext("Using Ollama CLI (text only)")}</h4>
-                <pre class="bg-base-300 p-3 rounded text-xs overflow-x-auto whitespace-pre-wrap"><%= raw(cli_example()) %></pre>
-
-                <p class="text-base-content/70">
-                  {gettext("Tip: Use the 'Copy curl' button in the detail modal to get a pre-filled command for a specific call.")}
-                </p>
-              </div>
-            </div>
+          <div class="stat">
+            <div class="stat-title">{gettext("Errors")}</div>
+            <div class="stat-value text-error">{count_by_status(@calls, :error)}</div>
           </div>
+        </div>
 
-          <%= if @calls == [] do %>
-            <div class="text-center py-16">
-              <.icon name="hero-inbox" class="h-16 w-16 mx-auto text-base-content/30 mb-4" />
-              <p class="text-lg text-base-content/70">{gettext("No Ollama calls recorded yet.")}</p>
-              <p class="text-sm text-base-content/50 mt-1">
-                {gettext("Calls will appear here automatically when photos are processed.")}
+        <%!-- Howto Section --%>
+        <div class="collapse collapse-arrow bg-base-200 mb-6">
+          <input type="checkbox" />
+          <div class="collapse-title font-medium">
+            <.icon name="hero-question-mark-circle" class="h-5 w-5 inline mr-2" />
+            {gettext("How to replay an Ollama call")}
+          </div>
+          <div class="collapse-content">
+            <div class="prose prose-sm max-w-none">
+              <h4>{gettext("Using curl (recommended for images)")}</h4>
+              <pre class="bg-base-300 p-3 rounded text-xs overflow-x-auto whitespace-pre-wrap"><%= raw(curl_example()) %></pre>
+
+              <h4>{gettext("Using Ollama CLI (text only)")}</h4>
+              <pre class="bg-base-300 p-3 rounded text-xs overflow-x-auto whitespace-pre-wrap"><%= raw(cli_example()) %></pre>
+
+              <p class="text-base-content/70">
+                {gettext(
+                  "Tip: Use the 'Copy curl' button in the detail modal to get a pre-filled command for a specific call."
+                )}
               </p>
             </div>
-          <% else %>
-            <%!-- Calls Table --%>
-            <div class="overflow-x-auto">
-              <table class="table table-zebra">
-                <thead>
-                  <tr>
-                    <th>{gettext("Time")}</th>
-                    <th>{gettext("Status")}</th>
-                    <th>{gettext("Duration")}</th>
-                    <th>{gettext("User")}</th>
-                    <th>{gettext("Photo ID")}</th>
-                    <th>{gettext("Server")}</th>
-                    <th>{gettext("Actions")}</th>
-                  </tr>
-                </thead>
-                <tbody id="ollama-calls-table" phx-update="stream">
-                  <%= for {call, index} <- Enum.with_index(@calls) do %>
-                    <tr id={"call-#{index}"} class="hover cursor-pointer" phx-click="select-call" phx-value-index={index}>
-                      <td class="font-mono text-sm">
-                        {format_timestamp(call[:timestamp])}
-                      </td>
-                      <td>
+          </div>
+        </div>
+
+        <%= if @calls == [] do %>
+          <div class="text-center py-16">
+            <.icon name="hero-inbox" class="h-16 w-16 mx-auto text-base-content/30 mb-4" />
+            <p class="text-lg text-base-content/70">{gettext("No Ollama calls recorded yet.")}</p>
+            <p class="text-sm text-base-content/50 mt-1">
+              {gettext("Calls will appear here automatically when photos are processed.")}
+            </p>
+          </div>
+        <% else %>
+          <%!-- Calls Table --%>
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>{gettext("Time")}</th>
+                  <th>{gettext("Status")}</th>
+                  <th>{gettext("Duration")}</th>
+                  <th>{gettext("User")}</th>
+                  <th>{gettext("Photo ID")}</th>
+                  <th>{gettext("Server")}</th>
+                  <th>{gettext("Actions")}</th>
+                </tr>
+              </thead>
+              <tbody id="ollama-calls-table" phx-update="stream">
+                <%= for {call, index} <- Enum.with_index(@calls) do %>
+                  <tr
+                    id={"call-#{index}"}
+                    class="hover cursor-pointer"
+                    phx-click="select-call"
+                    phx-value-index={index}
+                  >
+                    <td class="font-mono text-sm">
+                      {format_timestamp(call[:timestamp])}
+                    </td>
+                    <td>
+                      <span class={[
+                        "badge badge-sm",
+                        if(call[:status] == :success, do: "badge-success", else: "badge-error")
+                      ]}>
+                        {call[:status]}
+                      </span>
+                    </td>
+                    <td>
+                      <%= if call[:duration_ms] do %>
                         <span class={[
-                          "badge badge-sm",
-                          if(call[:status] == :success, do: "badge-success", else: "badge-error")
+                          "font-mono text-sm",
+                          duration_color(call[:duration_ms])
                         ]}>
-                          {call[:status]}
+                          {call[:duration_ms]}ms
                         </span>
-                      </td>
-                      <td>
-                        <%= if call[:duration_ms] do %>
-                          <span class={[
-                            "font-mono text-sm",
-                            duration_color(call[:duration_ms])
-                          ]}>
-                            {call[:duration_ms]}ms
-                          </span>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <%= if call[:user_display_name] || call[:user_email] do %>
-                          <div class="flex flex-col">
-                            <%= if call[:user_display_name] do %>
-                              <span class="text-sm font-medium">{call[:user_display_name]}</span>
-                            <% end %>
-                            <%= if call[:user_email] do %>
-                              <span class="text-xs text-base-content/60">{call[:user_email]}</span>
-                            <% end %>
-                          </div>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <%= if call[:photo_id] do %>
-                          <span class="font-mono text-xs">{String.slice(call[:photo_id], 0, 8)}...</span>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <%= if call[:server_url] do %>
-                          <span class="font-mono text-xs">{format_server_url(call[:server_url])}</span>
-                        <% else %>
-                          <span class="text-base-content/50">-</span>
-                        <% end %>
-                      </td>
-                      <td>
-                        <button
-                          type="button"
-                          class="btn btn-xs btn-ghost"
-                          onclick={"copyOllamaDebug(#{index})"}
-                          title={gettext("Copy to clipboard")}
-                        >
-                          <.icon name="hero-clipboard-document" class="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
-            </div>
+                      <% else %>
+                        <span class="text-base-content/50">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <%= if call[:user_display_name] || call[:user_email] do %>
+                        <div class="flex flex-col">
+                          <%= if call[:user_display_name] do %>
+                            <span class="text-sm font-medium">{call[:user_display_name]}</span>
+                          <% end %>
+                          <%= if call[:user_email] do %>
+                            <span class="text-xs text-base-content/60">{call[:user_email]}</span>
+                          <% end %>
+                        </div>
+                      <% else %>
+                        <span class="text-base-content/50">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <%= if call[:photo_id] do %>
+                        <span class="font-mono text-xs">
+                          {String.slice(call[:photo_id], 0, 8)}...
+                        </span>
+                      <% else %>
+                        <span class="text-base-content/50">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <%= if call[:server_url] do %>
+                        <span class="font-mono text-xs">{format_server_url(call[:server_url])}</span>
+                      <% else %>
+                        <span class="text-base-content/50">-</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        class="btn btn-xs btn-ghost"
+                        onclick={"copyOllamaDebug(#{index})"}
+                        title={gettext("Copy to clipboard")}
+                      >
+                        <.icon name="hero-clipboard-document" class="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
 
-            <%!-- Hidden data for copy functionality --%>
-            <script id="ollama-debug-data" type="application/json">
-              <%= raw(Jason.encode!(Enum.map(@calls, fn call -> %{
-                timestamp: call[:timestamp],
-                photo_id: call[:photo_id],
-                model: call[:model],
-                server_url: call[:server_url],
-                duration_ms: call[:duration_ms],
-                status: call[:status],
-                prompt: call[:prompt],
-                response: call[:response],
-                error: call[:error],
-                user_email: call[:user_email],
-                user_display_name: call[:user_display_name],
-                images: call[:images]
-              } end))) %>
-            </script>
+          <%!-- Hidden data for copy functionality --%>
+          <script id="ollama-debug-data" type="application/json">
+            <%= raw(Jason.encode!(Enum.map(@calls, fn call -> %{
+              timestamp: call[:timestamp],
+              photo_id: call[:photo_id],
+              model: call[:model],
+              server_url: call[:server_url],
+              duration_ms: call[:duration_ms],
+              status: call[:status],
+              prompt: call[:prompt],
+              response: call[:response],
+              error: call[:error],
+              user_email: call[:user_email],
+              user_display_name: call[:user_display_name],
+              images: call[:images]
+            } end))) %>
+          </script>
 
-            <script>
-              function copyOllamaDebug(index) {
-                const dataEl = document.getElementById('ollama-debug-data');
-                if (dataEl) {
-                  const allData = JSON.parse(dataEl.textContent);
-                  const data = allData[index];
-                  if (data) {
-                    const formatted = JSON.stringify(data, null, 2);
-                    navigator.clipboard.writeText(formatted).then(() => {
-                      // Brief visual feedback
-                      const btn = event.currentTarget;
-                      const icon = btn.querySelector('svg');
-                      if (icon) {
-                        icon.style.color = '#22c55e';
-                        setTimeout(() => { icon.style.color = ''; }, 1000);
-                      }
-                    });
-                  }
+          <script>
+            function copyOllamaDebug(index) {
+              const dataEl = document.getElementById('ollama-debug-data');
+              if (dataEl) {
+                const allData = JSON.parse(dataEl.textContent);
+                const data = allData[index];
+                if (data) {
+                  const formatted = JSON.stringify(data, null, 2);
+                  navigator.clipboard.writeText(formatted).then(() => {
+                    // Brief visual feedback
+                    const btn = event.currentTarget;
+                    const icon = btn.querySelector('svg');
+                    if (icon) {
+                      icon.style.color = '#22c55e';
+                      setTimeout(() => { icon.style.color = ''; }, 1000);
+                    }
+                  });
                 }
               }
+            }
 
-              function copyCurlCommand(serverUrl, model, prompt) {
-                // Escape prompt for shell
-                const escapedPrompt = prompt.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+            function copyCurlCommand(serverUrl, model, prompt) {
+              // Escape prompt for shell
+              const escapedPrompt = prompt.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
 
-                const curlCmd = "# First encode your image:\n" +
-                  "base64_image=$(base64 < /path/to/your/image.jpg)\n\n" +
-                  "# Then run:\n" +
-                  "curl -X POST " + serverUrl + "/api/generate \\\n" +
-                  "  -H \"Content-Type: application/json\" \\\n" +
-                  "  -d '{\n" +
-                  "    \"model\": \"" + model + "\",\n" +
-                  "    \"prompt\": \"" + escapedPrompt + "\",\n" +
-                  "    \"images\": [\"'\"$base64_image\"'\"],\n" +
-                  "    \"stream\": false\n" +
-                  "  }'";
+              const curlCmd = "# First encode your image:\n" +
+                "base64_image=$(base64 < /path/to/your/image.jpg)\n\n" +
+                "# Then run:\n" +
+                "curl -X POST " + serverUrl + "/api/generate \\\n" +
+                "  -H \"Content-Type: application/json\" \\\n" +
+                "  -d '{\n" +
+                "    \"model\": \"" + model + "\",\n" +
+                "    \"prompt\": \"" + escapedPrompt + "\",\n" +
+                "    \"images\": [\"'\"$base64_image\"'\"],\n" +
+                "    \"stream\": false\n" +
+                "  }'";
 
-                navigator.clipboard.writeText(curlCmd).then(() => {
-                  const btn = event.currentTarget;
-                  btn.classList.add('btn-success');
-                  btn.classList.remove('btn-primary');
-                  setTimeout(() => {
-                    btn.classList.remove('btn-success');
-                    btn.classList.add('btn-primary');
-                  }, 1500);
-                });
-              }
-            </script>
-          <% end %>
+              navigator.clipboard.writeText(curlCmd).then(() => {
+                const btn = event.currentTarget;
+                btn.classList.add('btn-success');
+                btn.classList.remove('btn-primary');
+                setTimeout(() => {
+                  btn.classList.remove('btn-success');
+                  btn.classList.add('btn-primary');
+                }, 1500);
+              });
+            }
+          </script>
+        <% end %>
 
         <%!-- Detail Modal --%>
         <%= if @selected_call do %>
@@ -499,37 +518,53 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
                 <%!-- Info Grid --%>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase">{gettext("Photo ID")}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase">
+                      {gettext("Photo ID")}
+                    </div>
                     <div class="font-mono text-sm break-all">{@selected_call[:photo_id] || "-"}</div>
                   </div>
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase">{gettext("Model")}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase">
+                      {gettext("Model")}
+                    </div>
                     <div class="font-mono text-sm">{@selected_call[:model] || "-"}</div>
                   </div>
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase">{gettext("Server URL")}</div>
-                    <div class="font-mono text-sm break-all">{@selected_call[:server_url] || "-"}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase">
+                      {gettext("Server URL")}
+                    </div>
+                    <div class="font-mono text-sm break-all">
+                      {@selected_call[:server_url] || "-"}
+                    </div>
                   </div>
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase">{gettext("User Email")}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase">
+                      {gettext("User Email")}
+                    </div>
                     <div class="text-sm">{@selected_call[:user_email] || "-"}</div>
                   </div>
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase">{gettext("User Name")}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase">
+                      {gettext("User Name")}
+                    </div>
                     <div class="text-sm">{@selected_call[:user_display_name] || "-"}</div>
                   </div>
                 </div>
 
                 <%!-- Prompt --%>
                 <div>
-                  <div class="text-xs font-medium text-base-content/60 uppercase mb-1">{gettext("Prompt")}</div>
+                  <div class="text-xs font-medium text-base-content/60 uppercase mb-1">
+                    {gettext("Prompt")}
+                  </div>
                   <pre class="text-sm bg-base-200 rounded p-3 overflow-x-auto whitespace-pre-wrap font-mono max-h-32">{@selected_call[:prompt]}</pre>
                 </div>
 
                 <%!-- Response --%>
                 <%= if @selected_call[:response] do %>
                   <div>
-                    <div class="text-xs font-medium text-base-content/60 uppercase mb-1">{gettext("Response")}</div>
+                    <div class="text-xs font-medium text-base-content/60 uppercase mb-1">
+                      {gettext("Response")}
+                    </div>
                     <pre class="text-sm bg-base-200 rounded p-3 overflow-x-auto whitespace-pre-wrap font-mono max-h-48">{format_response(@selected_call[:response])}</pre>
                   </div>
                 <% end %>
@@ -537,7 +572,9 @@ defmodule AniminaWeb.Admin.OllamaDebugLive do
                 <%!-- Error --%>
                 <%= if @selected_call[:error] do %>
                   <div>
-                    <div class="text-xs font-medium text-error uppercase mb-1">{gettext("Error")}</div>
+                    <div class="text-xs font-medium text-error uppercase mb-1">
+                      {gettext("Error")}
+                    </div>
                     <pre class="text-sm bg-error/10 text-error rounded p-3 overflow-x-auto whitespace-pre-wrap font-mono">{@selected_call[:error]}</pre>
                   </div>
                 <% end %>

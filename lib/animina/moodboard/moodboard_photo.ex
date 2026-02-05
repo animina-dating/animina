@@ -1,8 +1,8 @@
 defmodule Animina.Moodboard.MoodboardPhoto do
   @moduledoc """
-  Junction schema linking gallery items to photos.
+  Junction schema linking moodboard items to photos.
 
-  Each gallery photo belongs to exactly one gallery item
+  Each moodboard photo belongs to exactly one moodboard item
   and references one photo from the Photos context.
   """
 
@@ -22,7 +22,7 @@ defmodule Animina.Moodboard.MoodboardPhoto do
   end
 
   @doc """
-  Changeset for creating a new gallery photo link.
+  Changeset for creating a new moodboard photo link.
   """
   def create_changeset(moodboard_photo, attrs) do
     moodboard_photo

@@ -14,7 +14,7 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 ## Tech Stack
 
-Elixir 1.19, Phoenix 1.8, LiveView, Tailwind CSS, PostgreSQL
+Elixir 1.19, Phoenix 1.8, LiveView, Tailwind CSS, PostgreSQL, TOAST UI Editor (WYSIWYG Markdown)
 
 ## Getting Started
 
@@ -25,6 +25,7 @@ git clone git@github.com:animina-dating/animina.git
 cd animina
 mise install
 mix deps.get
+cd assets && npm install && cd ..
 mix ecto.setup
 mix phx.server
 ```
@@ -56,16 +57,15 @@ Polymorphic photo upload and processing system. Any schema (User, Event, Group) 
 ### Features
 
 - **Background processing**: Resize to max 1200px, convert to WebP, strip EXIF metadata, generate pixelated variant and 400px thumbnail (for AI analysis and UX)
-- **NSFW detection**: Layered approach — Bumblebee ViT classifier (fast, ~200ms) as primary; Ollama vision model as secondary for borderline cases (0.3-0.85 score range)
-- **Face detection** (avatars only): Ensures profile photos contain a human face. Uses Bumblebee with `nateraw/vit-age-classifier` as a proxy (high-confidence age prediction = face present); Ollama fallback for borderline cases
-- **Single combined Ollama prompt**: When any check needs Ollama escalation, a single combined prompt handles both NSFW and avatar suitability checks — simpler code, fewer states to maintain
-- **Child photo filter**: Rejects avatars where the detected age range is under 20 (labels: `0-2`, `3-9`, `10-19`). Uses the same age classifier model as face detection for conservative age estimation
+- **Content moderation**: Ollama vision model checks photos for family-friendly content and face detection (for avatars)
+- **Face detection** (avatars only): Ensures profile photos contain exactly one person facing the camera
 - **Hotlink protection**: Daily-rotating HMAC-signed URLs — old URLs expire at midnight UTC
 - **State machine**: `pending → processing → nsfw_checking → [ollama_checking] → face_checking → approved` (with `pending_ollama` retry queue and `error`/`no_face_error`/`underage_error` fallbacks)
 - **Appeal system**: Users can request human review of rejected photos; moderators approve/reject via `/admin/photo-reviews`
 - **Blacklist**: Perceptual hashing (dhash) blocks re-uploads of rejected content; NSFW photos auto-blacklisted
+- **Image cropping**: Mobile-friendly Cropper.js integration. Avatar photos require mandatory square cropping; gallery photos offer optional square cropping
 - **Audit logging**: Complete history of all photo events (AI decisions, appeals, moderator actions) at `/admin/photos/:id/history`
-- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing
+- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing. Also includes system settings for referral threshold (default: 3) and soft delete grace period (default: 28 days). Enable "Ollama Debug Display" to capture API calls, viewable at `/admin/ollama-debug`
 - **Cold deploy resilience**: Photos stuck in intermediate processing states are automatically recovered and re-processed on server restart
 
 ### Usage
@@ -102,7 +102,6 @@ config :animina, Animina.Photos,
   max_dimension: 1200,             # Longest edge in pixels
   thumbnail_dimension: 400,        # Thumbnail for AI analysis and UX
   webp_quality: 80,                # WebP compression quality
-  pixelate_scale: 0.05,            # 5% = heavy pixelation
   nsfw_threshold_high: 0.85,       # Above = definitely NSFW
   nsfw_threshold_low: 0.3,         # Below = definitely SFW
   face_detection_enabled: true,    # Enable face detection for avatars
@@ -136,21 +135,19 @@ uploads/
   originals/                       # Never publicly accessible
     {owner_type}/{owner_id}/{photo_id}.{ext}
   processed/                       # Served via signed URLs
-    {photo_id}.webp                # Main processed photo (1200px max)
-    {photo_id}_pixelated.webp      # Blurred variant
-    {photo_id}_thumb.webp          # Thumbnail (400px max, used for AI analysis)
+    {owner_type}/{owner_id}/
+      {photo_id}.webp              # Main processed photo (1200px max)
+      {photo_id}_thumb.webp        # Thumbnail (400px max, used for AI analysis)
 ```
 
 ### Dependencies
 
 The photo system requires these additional dependencies (already in `mix.exs`):
 - `image` — libvips-based image processing
-- `bumblebee` — ML model loading for NSFW classification
-- `exla` — Hardware-accelerated inference backend
-- `ollama` — Secondary NSFW/face classification via Ollama API
+- `ollama` — Content moderation and face detection via Ollama API
 - `fun_with_flags` — Feature flag management with Ecto persistence
 
-**Ollama setup:** For NSFW and face detection fallback, install [Ollama](https://ollama.ai) and pull the vision model:
+**Ollama setup:** For content moderation and face detection, install [Ollama](https://ollama.ai) and pull the vision model:
 ```bash
 ollama pull qwen3-vl:8b
 ```

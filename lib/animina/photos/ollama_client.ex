@@ -90,12 +90,30 @@ defmodule Animina.Photos.OllamaClient do
     duration_ms = System.monotonic_time(:millisecond) - start_time
 
     # Store debug info if feature flag is enabled
-    maybe_store_debug(model, prompt, images, result, duration_ms, photo_id, user_email, user_display_name)
+    maybe_store_debug(
+      model,
+      prompt,
+      images,
+      result,
+      duration_ms,
+      photo_id,
+      user_email,
+      user_display_name
+    )
 
     result
   end
 
-  defp maybe_store_debug(model, prompt, images, result, duration_ms, photo_id, user_email, user_display_name) do
+  defp maybe_store_debug(
+         model,
+         prompt,
+         images,
+         result,
+         duration_ms,
+         photo_id,
+         user_email,
+         user_display_name
+       ) do
     if FeatureFlags.ollama_debug_enabled?() do
       {status, response, server_url, error} =
         case result do

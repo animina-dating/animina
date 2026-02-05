@@ -1,6 +1,6 @@
 defmodule AniminaWeb.MoodboardComponents do
   @moduledoc """
-  Components for the gallery feature including gallery cards.
+  Components for the moodboard feature including moodboard cards.
   """
 
   use Phoenix.Component
@@ -17,7 +17,7 @@ defmodule AniminaWeb.MoodboardComponents do
   ]
 
   @doc """
-  Renders a gallery card with photo, story, or combined content.
+  Renders a moodboard card with photo, story, or combined content.
 
   ## Examples
 
@@ -41,12 +41,12 @@ defmodule AniminaWeb.MoodboardComponents do
         <span class="font-medium">{gettext("Hidden")}</span>
         <span :if={@item.hidden_reason}>- {@item.hidden_reason}</span>
       </div>
-
+      
     <!-- Photo content -->
       <figure :if={@item.item_type in ["photo", "combined"] && @item.moodboard_photo}>
         <.moodboard_photo photo={@item.moodboard_photo.photo} />
       </figure>
-
+      
     <!-- Only show card-body if there's story content -->
       <div
         :if={@item.item_type in ["story", "combined"]}
@@ -71,7 +71,7 @@ defmodule AniminaWeb.MoodboardComponents do
   @analyzing_states ~w(ollama_checking pending_ollama)
 
   @doc """
-  Renders a gallery photo with signed URL.
+  Renders a moodboard photo with signed URL.
 
   Shows a loading placeholder for photos that are still being processed.
   Shows an "Analyzing" overlay for photos undergoing AI analysis.
@@ -113,7 +113,7 @@ defmodule AniminaWeb.MoodboardComponents do
   end
 
   @doc """
-  Renders an editorial-style masonry gallery.
+  Renders an editorial-style masonry moodboard.
   Pinterest-like mixed heights with premium magazine feel.
 
   Supports 1, 2, or 3 columns on all screen sizes.
@@ -124,7 +124,7 @@ defmodule AniminaWeb.MoodboardComponents do
   attr :columns, :integer, default: 2, doc: "Number of columns (1, 2, or 3)"
   attr :on_column_change, :string, default: nil, doc: "Event for column change"
 
-  def editorial_gallery(assigns) do
+  def editorial_moodboard(assigns) do
     ~H"""
     <div>
       <!-- Column toggle (visible on all screens) -->
@@ -186,7 +186,7 @@ defmodule AniminaWeb.MoodboardComponents do
           </button>
         </div>
       </div>
-
+      
     <!-- Moodboard grid using Flexbox columns for consistent alignment -->
       <div class={[
         "flex gap-4 md:gap-5 lg:gap-6 pt-6",
@@ -211,7 +211,7 @@ defmodule AniminaWeb.MoodboardComponents do
   end
 
   @doc """
-  Renders an editorial-style card for the masonry gallery.
+  Renders an editorial-style card for the masonry moodboard.
   Supports photo cards, quote cards, and combined cards.
   """
   attr :item, :map, required: true
@@ -242,14 +242,14 @@ defmodule AniminaWeb.MoodboardComponents do
       >
         {gettext("Hidden")}
       </div>
-
+      
     <!-- Photo card -->
       <div :if={@has_photo && !@has_story} class="editorial-photo-card">
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300">
           <.moodboard_photo photo={@item.moodboard_photo.photo} class="w-full h-auto block" />
         </div>
       </div>
-
+      
     <!-- Quote card (story only) -->
       <div :if={!@has_photo && @has_story} class="editorial-quote-card">
         <div class="bg-gradient-to-br from-base-100 to-base-200/50 rounded-2xl p-6 sm:p-8 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.15)] transition-shadow duration-300">
@@ -258,12 +258,12 @@ defmodule AniminaWeb.MoodboardComponents do
           </div>
         </div>
       </div>
-
+      
     <!-- Combined card (photo + caption) -->
       <div :if={@has_photo && @has_story} class="editorial-combined-card">
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300 bg-base-100">
           <.moodboard_photo photo={@item.moodboard_photo.photo} class="w-full h-auto block" />
-
+          
     <!-- Caption below photo -->
           <div class="p-5 sm:p-6">
             <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0">
@@ -277,7 +277,7 @@ defmodule AniminaWeb.MoodboardComponents do
   end
 
   @doc """
-  Renders an editorial-style card for the gallery editor with drag handle and action buttons.
+  Renders an editorial-style card for the moodboard editor with drag handle and action buttons.
   A variant of `editorial_card` with editor overlays.
   """
   attr :item, :map, required: true
@@ -321,7 +321,10 @@ defmodule AniminaWeb.MoodboardComponents do
       <!-- Editor toolbar overlay -->
       <div class="absolute -top-3 left-0 right-0 z-20 flex items-center justify-between px-2">
         <!-- Drag handle (left) - hidden for pinned items -->
-        <div :if={!@is_pinned} class="drag-handle cursor-grab active:cursor-grabbing bg-base-100/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:shadow-lg transition-shadow">
+        <div
+          :if={!@is_pinned}
+          class="drag-handle cursor-grab active:cursor-grabbing bg-base-100/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:shadow-lg transition-shadow"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="h-5 w-5 text-base-content/60"
@@ -332,13 +335,16 @@ defmodule AniminaWeb.MoodboardComponents do
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
           </svg>
         </div>
-
-        <!-- About Me badge for pinned items -->
-        <div :if={@is_pinned} class="bg-primary text-primary-content px-3 py-1.5 text-xs font-medium rounded-full shadow-md">
+        
+    <!-- About Me badge for pinned items -->
+        <div
+          :if={@is_pinned}
+          class="bg-primary text-primary-content px-3 py-1.5 text-xs font-medium rounded-full shadow-md"
+        >
           {gettext("About Me")}
         </div>
-
-        <!-- Action buttons (right) -->
+        
+    <!-- Action buttons (right) -->
         <div class="flex items-center gap-1">
           <!-- Edit button (for story/combined items) -->
           <button
@@ -364,8 +370,8 @@ defmodule AniminaWeb.MoodboardComponents do
               />
             </svg>
           </button>
-
-          <!-- Delete button - hidden for pinned items -->
+          
+    <!-- Delete button - hidden for pinned items -->
           <button
             :if={!@is_pinned}
             type="button"
@@ -391,23 +397,23 @@ defmodule AniminaWeb.MoodboardComponents do
           </button>
         </div>
       </div>
-
-      <!-- Hidden badge -->
+      
+    <!-- Hidden badge -->
       <div
         :if={@item.state == "hidden"}
         class="absolute top-4 right-4 z-10 bg-warning text-warning-content px-2.5 py-1 text-xs font-medium rounded-full shadow-md"
       >
         {gettext("Hidden")}
       </div>
-
-      <!-- Photo card -->
+      
+    <!-- Photo card -->
       <div :if={@has_photo && !@has_story} class="editorial-photo-card pt-4">
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300">
           <.moodboard_photo photo={@item.moodboard_photo.photo} class="w-full h-auto block" />
         </div>
       </div>
-
-      <!-- Quote card (story only, non-pinned) -->
+      
+    <!-- Quote card (story only, non-pinned) -->
       <div :if={!@has_photo && @has_story && !@is_pinned} class="editorial-quote-card pt-4">
         <div class="bg-gradient-to-br from-base-100 to-base-200/50 rounded-2xl p-6 sm:p-8 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.15)] transition-shadow duration-300">
           <div
@@ -422,8 +428,8 @@ defmodule AniminaWeb.MoodboardComponents do
           </div>
         </div>
       </div>
-
-      <!-- Pinned item without photo (avatar not yet uploaded) -->
+      
+    <!-- Pinned item without photo (avatar not yet uploaded) -->
       <div :if={!@has_photo && @has_story && @is_pinned} class="editorial-pinned-placeholder pt-4">
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300 bg-base-100">
           <!-- Placeholder for avatar -->
@@ -449,8 +455,8 @@ defmodule AniminaWeb.MoodboardComponents do
               {gettext("Add Photo")}
             </a>
           </div>
-
-          <!-- Story content -->
+          
+    <!-- Story content -->
           <div class="p-5 sm:p-6">
             <div
               class="group/edit flex items-start gap-2 cursor-pointer hover:opacity-80 transition-opacity"
@@ -479,13 +485,13 @@ defmodule AniminaWeb.MoodboardComponents do
           </div>
         </div>
       </div>
-
-      <!-- Combined card (photo + caption) -->
+      
+    <!-- Combined card (photo + caption) -->
       <div :if={@has_photo && @has_story} class="editorial-combined-card pt-4">
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300 bg-base-100">
           <.moodboard_photo photo={@item.moodboard_photo.photo} class="w-full h-auto block" />
-
-          <!-- Caption below photo -->
+          
+    <!-- Caption below photo -->
           <div class="p-5 sm:p-6">
             <div
               class="group/edit flex items-start gap-2 cursor-pointer hover:opacity-80 transition-opacity"
@@ -520,8 +526,8 @@ defmodule AniminaWeb.MoodboardComponents do
   end
 
   @doc """
-  Renders a placeholder card for empty gallery columns.
-  Shows grayed-out, blurred content to demonstrate what the gallery could look like.
+  Renders a placeholder card for empty moodboard columns.
+  Shows grayed-out, blurred content to demonstrate what the moodboard could look like.
   """
   attr :variant, :atom, default: :photo, values: [:photo, :text]
 
@@ -549,7 +555,7 @@ defmodule AniminaWeb.MoodboardComponents do
           </div>
         </div>
       </div>
-
+      
     <!-- Text-like placeholder -->
       <div :if={@variant == :text} class="editorial-quote-card pt-4">
         <div class="bg-gradient-to-br from-base-200 to-base-300/50 rounded-2xl p-6 sm:p-8 shadow-[0_4px_12px_-4px_rgba(0,0,0,0.08)]">

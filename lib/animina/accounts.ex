@@ -13,7 +13,7 @@ defmodule Animina.Accounts do
   use Gettext, backend: AniminaWeb.Gettext
 
   alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
-  alias Animina.Gallery
+  alias Animina.Moodboard
   alias Animina.Repo
   alias Animina.Utils.PaperTrail, as: PT
 
@@ -137,7 +137,7 @@ defmodule Animina.Accounts do
   end
 
   defp create_pinned_intro_item(user) do
-    Gallery.create_pinned_intro_item(user, default_intro_prompt(user.language))
+    Moodboard.create_pinned_intro_item(user, default_intro_prompt(user.language))
   end
 
   defp default_intro_prompt("de"), do: gettext("Erzähl uns etwas über dich...")
@@ -536,14 +536,14 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Updates gallery column preference for a specific device type.
+  Updates moodboard column preference for a specific device type.
   """
-  def update_gallery_columns(%User{} = user, device_type, columns)
+  def update_moodboard_columns(%User{} = user, device_type, columns)
       when device_type in ["mobile", "tablet", "desktop"] and columns in [1, 2, 3] do
-    field = String.to_existing_atom("gallery_columns_#{device_type}")
+    field = String.to_existing_atom("moodboard_columns_#{device_type}")
 
     user
-    |> User.gallery_columns_changeset(%{field => columns})
+    |> User.moodboard_columns_changeset(%{field => columns})
     |> Repo.update()
   end
 

@@ -381,7 +381,6 @@ defmodule AniminaWeb.Admin.OllamaQueueLive do
                     </div>
                   <% end %>
                 </div>
-
               </div>
             <% end %>
           </div>
