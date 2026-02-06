@@ -49,6 +49,7 @@ defmodule Animina.HotDeploy do
       try do
         Logger.info("[HotDeploy] Reapplying current hot upgrade from #{lib_dir}")
         load_beam_files(lib_dir, purge: false)
+        update_deploy_info(lib_dir)
       rescue
         e ->
           Logger.error("[HotDeploy] Startup reapply failed: #{Exception.message(e)}")
@@ -109,6 +110,7 @@ defmodule Animina.HotDeploy do
       if File.dir?(lib_dir) do
         {loaded, errors} = load_beam_files(lib_dir, purge: true)
         Logger.info("[HotDeploy] Loaded #{loaded} modules, #{errors} errors")
+        update_deploy_info(lib_dir)
       end
 
       File.rm(sentinel)
@@ -157,5 +159,28 @@ defmodule Animina.HotDeploy do
         Logger.warning("[HotDeploy] Failed to load #{module_name}: #{inspect(reason)}")
         :error
     end
+  end
+
+  defp update_deploy_info(lib_dir) do
+    case extract_version_from_lib_dir(lib_dir) do
+      nil ->
+        Logger.warning("[HotDeploy] Could not extract version from #{lib_dir}")
+
+      version ->
+        Logger.info("[HotDeploy] Updating deploy info to version #{version}")
+        Animina.set_deploy_info(version, DateTime.utc_now())
+    end
+  end
+
+  defp extract_version_from_lib_dir(lib_dir) do
+    lib_dir
+    |> Path.join("animina-*")
+    |> Path.wildcard()
+    |> Enum.find_value(fn path ->
+      case Path.basename(path) do
+        "animina-" <> version -> version
+        _ -> nil
+      end
+    end)
   end
 end

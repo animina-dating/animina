@@ -10,6 +10,8 @@ defmodule Animina.Application do
 
   @impl true
   def start(_type, _args) do
+    # Seed persistent_term with compile-time version; hot upgrade may overwrite
+    Animina.initialize_deploy_info()
     # Reapply any pending hot code upgrade from a previous deploy
     Animina.HotDeploy.startup_reapply_current()
 
