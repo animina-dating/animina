@@ -5,7 +5,7 @@ defmodule AniminaWeb.LiveStoryComponentTest do
   import Animina.AccountsFixtures
   import Animina.MoodboardFixtures
 
-  describe "LiveStoryComponent rendering via ProfileMoodboardLive" do
+  describe "LiveStoryComponent rendering via ProfileMoodboard" do
     test "renders markdown content correctly", %{conn: conn} do
       user = user_fixture(language: "en")
 

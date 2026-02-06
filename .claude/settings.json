@@ -5,8 +5,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/stefan/GitHub/animina/.claude/stop_hook.sh",
-            "timeout": 120
+            "command": "cd \"$CLAUDE_PROJECT_DIR\" && mix precommit",
+            "timeout": 300,
+            "statusMessage": "Running mix precommit..."
           }
         ]
       }

@@ -343,6 +343,7 @@ defmodule AniminaWeb.UserAuth do
     |> Phoenix.Component.assign(:locale, locale)
     |> subscribe_to_deployment_notifications()
     |> maybe_track_presence()
+    |> maybe_subscribe_messages()
   end
 
   defp subscribe_to_deployment_notifications(socket) do
@@ -375,6 +376,39 @@ defmodule AniminaWeb.UserAuth do
       |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
         %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock -> {:halt, sock}
         _other, sock -> {:cont, sock}
+      end)
+    else
+      _ -> socket
+    end
+  end
+
+  defp maybe_subscribe_messages(socket) do
+    with true <- Phoenix.LiveView.connected?(socket),
+         false <- !!socket.assigns[:messages_subscribed],
+         %{user: %_{id: user_id}} <- socket.assigns[:current_scope] do
+      Phoenix.PubSub.subscribe(Animina.PubSub, Animina.Messaging.user_topic(user_id))
+
+      socket
+      |> Phoenix.Component.assign(:messages_subscribed, true)
+      |> Phoenix.LiveView.attach_hook(:unread_badge, :handle_info, fn
+        {:unread_count_changed, _count}, sock ->
+          Phoenix.LiveView.send_update(AniminaWeb.LiveUnreadBadgeComponent,
+            id: "unread-badge",
+            user_id: user_id
+          )
+
+          {:cont, sock}
+
+        {:new_message, _conv_id, _msg}, sock ->
+          Phoenix.LiveView.send_update(AniminaWeb.LiveUnreadBadgeComponent,
+            id: "unread-badge",
+            user_id: user_id
+          )
+
+          {:cont, sock}
+
+        _other, sock ->
+          {:cont, sock}
       end)
     else
       _ -> socket

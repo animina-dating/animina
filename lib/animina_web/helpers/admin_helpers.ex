@@ -135,4 +135,33 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_datetime_full(datetime) do
     Calendar.strftime(datetime, "%Y-%m-%d %H:%M:%S")
   end
+
+  @doc """
+  Parses a string value as an integer (including negative values), returning a default if parsing fails.
+
+  Unlike `parse_int/2` and `parse_non_negative_int/2`, this allows negative values.
+  Used for settings like discovery score penalties.
+
+  ## Examples
+
+      iex> parse_integer("10", 0)
+      10
+
+      iex> parse_integer("-15", 0)
+      -15
+
+      iex> parse_integer("invalid", 5)
+      5
+  """
+  def parse_integer(nil, default), do: default
+
+  def parse_integer(val, default) when is_binary(val) do
+    case Integer.parse(val) do
+      {n, _} -> n
+      :error -> default
+    end
+  end
+
+  def parse_integer(val, _default) when is_integer(val), do: val
+  def parse_integer(_, default), do: default
 end

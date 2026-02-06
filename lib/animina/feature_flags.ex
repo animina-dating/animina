@@ -101,6 +101,202 @@ defmodule Animina.FeatureFlags do
     }
   ]
 
+  @discovery_settings [
+    # General settings
+    %{
+      name: :discovery_suggestions_per_list,
+      label: "Suggestions Per List",
+      description: "Number of partner suggestions per list (Combined, Safe, Attracted)",
+      type: :integer,
+      default_value: 8,
+      min_value: 1,
+      max_value: 50
+    },
+    %{
+      name: :discovery_cooldown_days,
+      label: "Cooldown Days",
+      description: "Days before a user can reappear in suggestions",
+      type: :integer,
+      default_value: 30,
+      min_value: 1,
+      max_value: 365
+    },
+    %{
+      name: :discovery_new_user_boost_days,
+      label: "New User Boost Days",
+      description: "Days during which new users get a score boost",
+      type: :integer,
+      default_value: 14,
+      min_value: 1,
+      max_value: 90
+    },
+    %{
+      name: :discovery_default_search_radius,
+      label: "Default Search Radius (km)",
+      description: "Default search radius in km if user hasn't set one",
+      type: :integer,
+      default_value: 60,
+      min_value: 10,
+      max_value: 500
+    },
+    # Scoring weights
+    %{
+      name: :discovery_soft_red_penalty,
+      label: "Soft Red Penalty",
+      description: "Score penalty per soft-red flag match (negative)",
+      type: :integer,
+      default_value: -50,
+      min_value: -200,
+      max_value: 0
+    },
+    %{
+      name: :discovery_green_hard_bonus,
+      label: "Green Hard Bonus",
+      description: "Score bonus per hard green-white flag match",
+      type: :integer,
+      default_value: 20,
+      min_value: 1,
+      max_value: 100
+    },
+    %{
+      name: :discovery_green_soft_bonus,
+      label: "Green Soft Bonus",
+      description: "Score bonus per soft green-white flag match",
+      type: :integer,
+      default_value: 10,
+      min_value: 1,
+      max_value: 50
+    },
+    %{
+      name: :discovery_white_white_bonus,
+      label: "White-White Bonus",
+      description: "Score bonus per shared white trait",
+      type: :integer,
+      default_value: 5,
+      min_value: 1,
+      max_value: 25
+    },
+    %{
+      name: :discovery_new_user_boost,
+      label: "New User Score Boost",
+      description: "Score boost for users registered within boost period",
+      type: :integer,
+      default_value: 100,
+      min_value: 0,
+      max_value: 500
+    },
+    %{
+      name: :discovery_incomplete_penalty,
+      label: "Incomplete Profile Penalty",
+      description: "Score penalty for profiles missing photo/height/gender",
+      type: :integer,
+      default_value: -30,
+      min_value: -200,
+      max_value: 0
+    },
+    # Category multipliers
+    %{
+      name: :discovery_category_multiplier_languages,
+      label: "Languages Category Multiplier",
+      description: "Score multiplier for Language category matches",
+      type: :integer,
+      default_value: 3,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :discovery_category_multiplier_relationship_goals,
+      label: "Relationship Goals Multiplier",
+      description: "Score multiplier for 'What I'm Looking For' category matches",
+      type: :integer,
+      default_value: 2,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :discovery_category_default_multiplier,
+      label: "Default Category Multiplier",
+      description: "Default score multiplier for other categories",
+      type: :integer,
+      default_value: 1,
+      min_value: 1,
+      max_value: 10
+    },
+    # Algorithm selection
+    %{
+      name: :discovery_scorer_module,
+      label: "Scorer Algorithm",
+      description: "Scoring algorithm: 'weighted' (default) or 'simple'",
+      type: :string,
+      default_value: "weighted"
+    },
+    %{
+      name: :discovery_filter_module,
+      label: "Filter Strategy",
+      description: "Filter strategy: 'standard' (default) or 'relaxed'",
+      type: :string,
+      default_value: "standard"
+    },
+    # Filter options
+    %{
+      name: :discovery_exclude_incomplete_profiles,
+      label: "Exclude Incomplete Profiles",
+      description: "If true, fully exclude profiles missing photo/height/gender",
+      type: :flag
+    },
+    %{
+      name: :discovery_require_mutual_bookmark_exclusion,
+      label: "Exclude Mutually Bookmarked",
+      description: "Exclude users who have mutually bookmarked each other",
+      type: :flag,
+      default_enabled: true
+    },
+    # Wildcard settings
+    %{
+      name: :discovery_wildcard_count,
+      label: "Wildcard Count",
+      description: "Number of random wildcard profiles shown on the discover page",
+      type: :integer,
+      default_value: 2,
+      min_value: 0,
+      max_value: 10
+    },
+    # Popularity protection settings
+    %{
+      name: :discovery_popularity_enabled,
+      label: "Popular User Protection",
+      description: "Enable daily inquiry limits and popularity scoring adjustments",
+      type: :flag
+    },
+    %{
+      name: :discovery_daily_inquiry_limit,
+      label: "Daily Inquiry Limit",
+      description: "Max inquiries per day before temporary removal from discovery",
+      type: :integer,
+      default_value: 6,
+      min_value: 1,
+      max_value: 50
+    },
+    %{
+      name: :discovery_popularity_score_bonus,
+      label: "Low Popularity Bonus",
+      description: "Score bonus for users with low popularity (increases visibility)",
+      type: :integer,
+      default_value: 10,
+      min_value: 0,
+      max_value: 100
+    },
+    %{
+      name: :discovery_popularity_score_penalty,
+      label: "High Popularity Penalty",
+      description: "Score penalty for highly popular users (balances exposure)",
+      type: :integer,
+      default_value: -15,
+      min_value: -100,
+      max_value: 0
+    }
+  ]
+
   # --- Flag Settings CRUD ---
 
   @doc """
@@ -540,5 +736,255 @@ defmodule Animina.FeatureFlags do
   """
   def ollama_debug_max_entries do
     get_system_setting_value(:ollama_debug_max_entries, 100)
+  end
+
+  # --- Discovery Settings ---
+
+  @doc """
+  Returns the list of discovery setting definitions.
+  """
+  def discovery_settings_definitions do
+    @discovery_settings
+  end
+
+  @doc """
+  Returns all discovery settings with their current values.
+  """
+  def get_all_discovery_settings do
+    Enum.map(@discovery_settings, fn setting_def ->
+      case setting_def.type do
+        :flag ->
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :flag,
+            enabled: enabled?(setting_def.name),
+            default_enabled: Map.get(setting_def, :default_enabled, false)
+          }
+
+        :integer ->
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :integer,
+            current_value: get_system_setting_value(setting_def.name, setting_def.default_value),
+            default_value: setting_def.default_value,
+            min_value: setting_def[:min_value],
+            max_value: setting_def[:max_value]
+          }
+
+        :string ->
+          %{
+            name: setting_def.name,
+            label: setting_def.label,
+            description: setting_def.description,
+            type: :string,
+            current_value: get_system_setting_value(setting_def.name, setting_def.default_value),
+            default_value: setting_def.default_value
+          }
+      end
+    end)
+  end
+
+  @doc """
+  Initializes default discovery settings.
+  Called during application startup.
+  """
+  def initialize_discovery_settings do
+    Enum.each(@discovery_settings, &initialize_discovery_setting/1)
+  end
+
+  defp initialize_discovery_setting(%{type: :flag} = setting_def) do
+    if Map.get(setting_def, :default_enabled, false) do
+      maybe_enable_flag(setting_def.name)
+    end
+
+    get_or_create_flag_setting(setting_def.name, %{
+      description: setting_def.description,
+      settings: %{}
+    })
+  end
+
+  defp initialize_discovery_setting(setting_def) do
+    flag_name = "system:#{setting_def.name}"
+
+    get_or_create_flag_setting(flag_name, %{
+      description: setting_def.description,
+      settings: %{value: setting_def.default_value}
+    })
+  end
+
+  # --- Discovery Settings Convenience Functions ---
+
+  @doc """
+  Returns the configured number of suggestions per list.
+  Default: 8
+  """
+  def discovery_suggestions_per_list do
+    get_system_setting_value(:discovery_suggestions_per_list, 8)
+  end
+
+  @doc """
+  Returns the configured cooldown period in days.
+  Default: 30
+  """
+  def discovery_cooldown_days do
+    get_system_setting_value(:discovery_cooldown_days, 30)
+  end
+
+  @doc """
+  Returns the configured new user boost period in days.
+  Default: 14
+  """
+  def discovery_new_user_boost_days do
+    get_system_setting_value(:discovery_new_user_boost_days, 14)
+  end
+
+  @doc """
+  Returns the configured default search radius in km.
+  Default: 60
+  """
+  def discovery_default_search_radius do
+    get_system_setting_value(:discovery_default_search_radius, 60)
+  end
+
+  @doc """
+  Returns the configured soft red penalty score.
+  Default: -50
+  """
+  def discovery_soft_red_penalty do
+    get_system_setting_value(:discovery_soft_red_penalty, -50)
+  end
+
+  @doc """
+  Returns the configured green hard bonus score.
+  Default: 20
+  """
+  def discovery_green_hard_bonus do
+    get_system_setting_value(:discovery_green_hard_bonus, 20)
+  end
+
+  @doc """
+  Returns the configured green soft bonus score.
+  Default: 10
+  """
+  def discovery_green_soft_bonus do
+    get_system_setting_value(:discovery_green_soft_bonus, 10)
+  end
+
+  @doc """
+  Returns the configured white-white bonus score.
+  Default: 5
+  """
+  def discovery_white_white_bonus do
+    get_system_setting_value(:discovery_white_white_bonus, 5)
+  end
+
+  @doc """
+  Returns the configured new user score boost.
+  Default: 100
+  """
+  def discovery_new_user_boost do
+    get_system_setting_value(:discovery_new_user_boost, 100)
+  end
+
+  @doc """
+  Returns the configured incomplete profile penalty.
+  Default: -30
+  """
+  def discovery_incomplete_penalty do
+    get_system_setting_value(:discovery_incomplete_penalty, -30)
+  end
+
+  @doc """
+  Returns the configured number of wildcard profiles to show.
+  Default: 2
+  """
+  def discovery_wildcard_count do
+    get_system_setting_value(:discovery_wildcard_count, 2)
+  end
+
+  @doc """
+  Returns the category multiplier for a given category name.
+  """
+  def discovery_category_multiplier(category_name) do
+    case category_name do
+      "Languages" ->
+        get_system_setting_value(:discovery_category_multiplier_languages, 3)
+
+      "What I'm Looking For" ->
+        get_system_setting_value(:discovery_category_multiplier_relationship_goals, 2)
+
+      _ ->
+        get_system_setting_value(:discovery_category_default_multiplier, 1)
+    end
+  end
+
+  @doc """
+  Returns the configured scorer module name.
+  Default: "weighted"
+  """
+  def discovery_scorer_module do
+    get_system_setting_value(:discovery_scorer_module, "weighted")
+  end
+
+  @doc """
+  Returns the configured filter module name.
+  Default: "standard"
+  """
+  def discovery_filter_module do
+    get_system_setting_value(:discovery_filter_module, "standard")
+  end
+
+  @doc """
+  Returns whether incomplete profiles should be fully excluded.
+  Default: false
+  """
+  def discovery_exclude_incomplete_profiles? do
+    enabled?(:discovery_exclude_incomplete_profiles)
+  end
+
+  @doc """
+  Returns whether mutually bookmarked users should be excluded.
+  Default: true
+  """
+  def discovery_require_mutual_bookmark_exclusion? do
+    enabled?(:discovery_require_mutual_bookmark_exclusion)
+  end
+
+  # --- Popularity Protection Settings ---
+
+  @doc """
+  Returns whether popular user protection is enabled.
+  Default: false
+  """
+  def discovery_popularity_enabled? do
+    enabled?(:discovery_popularity_enabled)
+  end
+
+  @doc """
+  Returns the configured daily inquiry limit.
+  Default: 6
+  """
+  def discovery_daily_inquiry_limit do
+    get_system_setting_value(:discovery_daily_inquiry_limit, 6)
+  end
+
+  @doc """
+  Returns the configured score bonus for low-popularity users.
+  Default: 10
+  """
+  def discovery_popularity_score_bonus do
+    get_system_setting_value(:discovery_popularity_score_bonus, 10)
+  end
+
+  @doc """
+  Returns the configured score penalty for high-popularity users.
+  Default: -15
+  """
+  def discovery_popularity_score_penalty do
+    get_system_setting_value(:discovery_popularity_score_penalty, -15)
   end
 end

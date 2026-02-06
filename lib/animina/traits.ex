@@ -104,6 +104,17 @@ defmodule Animina.Traits do
     |> Repo.all()
   end
 
+  @doc """
+  Returns flags for the given list of IDs, preloading their category.
+  """
+  def list_flags_by_ids(ids) when is_list(ids) do
+    from(f in Flag,
+      where: f.id in ^ids,
+      preload: [:category]
+    )
+    |> Repo.all()
+  end
+
   def get_flag_with_children!(id) do
     Flag
     |> Repo.get!(id)

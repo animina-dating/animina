@@ -295,8 +295,10 @@ defmodule AniminaWeb.UserLive.Registration do
         >
           <div class="flex items-center gap-3">
             <span class="text-sm font-medium">{country_name(@country_options, loc.country_id)}</span>
-            <span class="text-sm text-base-content/70">{loc.zip_code}</span>
-            <span :if={loc.city_name} class="text-sm text-base-content/50">{loc.city_name}</span>
+            <span class="whitespace-nowrap">
+              <span class="text-sm text-base-content/70">{loc.zip_code}</span>
+              <span :if={loc.city_name} class="text-sm text-base-content/50">{loc.city_name}</span>
+            </span>
           </div>
           <button
             type="button"

@@ -142,17 +142,17 @@ msgstr "يجب أن يساوي %{number}"
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"
 
-#: lib/animina/accounts/user.ex:250
+#: lib/animina/accounts/user.ex:253
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "ليس رقم هاتف صالح"
 
-#: lib/animina/accounts/user.ex:152
+#: lib/animina/accounts/user.ex:155
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "يجب أن يتكون من 6 أحرف (حروف وأرقام)"
 
-#: lib/animina/accounts/user.ex:245
+#: lib/animina/accounts/user.ex:248
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "يجب أن يكون رقم هاتف محمول (ليس خط أرضي)"

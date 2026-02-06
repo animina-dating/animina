@@ -30,7 +30,7 @@ defmodule AniminaWeb.Router do
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
       live "/impressum", ImpressumLive
-      live "/moodboard/:user_id", UserLive.ProfileMoodboardLive
+      live "/moodboard/:user_id", UserLive.ProfileMoodboard
     end
   end
 
@@ -82,8 +82,11 @@ defmodule AniminaWeb.Router do
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/settings/avatar", UserLive.AvatarUpload, :edit
-      live "/users/settings/moodboard", UserLive.MoodboardEditorLive
+      live "/users/settings/moodboard", UserLive.MoodboardEditor
       live "/users/waitlist", UserLive.Waitlist
+      live "/discover", DiscoverLive
+      live "/messages", MessagesLive, :index
+      live "/messages/:conversation_id", MessagesLive, :show
     end
 
     live_session :require_moderator,

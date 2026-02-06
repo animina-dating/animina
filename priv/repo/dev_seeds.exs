@@ -234,6 +234,7 @@ defmodule Animina.Seeds.DevUsers do
   ]
 
   # Avatar photos - gender-specific from priv/static/images/seeds/avatars/{male,female}/
+  # 25 unique male avatars (one per male user)
   @male_avatar_photos [
     "male/avatar-01.jpg",
     "male/avatar-02.jpg",
@@ -244,9 +245,25 @@ defmodule Animina.Seeds.DevUsers do
     "male/avatar-07.jpg",
     "male/avatar-08.jpg",
     "male/avatar-09.jpg",
-    "male/avatar-10.jpg"
+    "male/avatar-10.jpg",
+    "male/avatar-11.jpg",
+    "male/avatar-12.jpg",
+    "male/avatar-13.jpg",
+    "male/avatar-14.jpg",
+    "male/avatar-15.jpg",
+    "male/avatar-16.jpg",
+    "male/avatar-17.jpg",
+    "male/avatar-18.jpg",
+    "male/avatar-19.jpg",
+    "male/avatar-20.jpg",
+    "male/avatar-21.jpg",
+    "male/avatar-22.jpg",
+    "male/avatar-23.jpg",
+    "male/avatar-24.jpg",
+    "male/avatar-25.jpg"
   ]
 
+  # 25 unique female avatars (one per female user)
   @female_avatar_photos [
     "female/avatar-01.jpg",
     "female/avatar-02.jpg",
@@ -257,7 +274,22 @@ defmodule Animina.Seeds.DevUsers do
     "female/avatar-07.jpg",
     "female/avatar-08.jpg",
     "female/avatar-09.jpg",
-    "female/avatar-10.jpg"
+    "female/avatar-10.jpg",
+    "female/avatar-11.jpg",
+    "female/avatar-12.jpg",
+    "female/avatar-13.jpg",
+    "female/avatar-14.jpg",
+    "female/avatar-15.jpg",
+    "female/avatar-16.jpg",
+    "female/avatar-17.jpg",
+    "female/avatar-18.jpg",
+    "female/avatar-19.jpg",
+    "female/avatar-20.jpg",
+    "female/avatar-21.jpg",
+    "female/avatar-22.jpg",
+    "female/avatar-23.jpg",
+    "female/avatar-24.jpg",
+    "female/avatar-25.jpg"
   ]
 
   def seed_all do
@@ -316,7 +348,7 @@ defmodule Animina.Seeds.DevUsers do
         # Assign roles
         assign_roles(user, user_data.roles)
 
-        # Add traits
+        # Add traits (German only for languages)
         assign_traits(user, index)
 
         # Update pinned intro item with actual content
@@ -360,7 +392,7 @@ defmodule Animina.Seeds.DevUsers do
 
     {1, _} =
       Repo.update_all(
-        Ecto.Query.from(u in Animina.Accounts.User, where: u.id == ^user.id),
+        from(u in Animina.Accounts.User, where: u.id == ^user.id),
         set: [confirmed_at: now, state: "normal"]
       )
 
@@ -426,36 +458,43 @@ defmodule Animina.Seeds.DevUsers do
     # Ensure default published categories are set
     Traits.ensure_default_published_categories(user)
 
-    # Get all core categories
-    categories = Traits.list_core_categories()
-
     # Shuffle based on user seed for variety
     :rand.seed(:exsss, {seed_index, seed_index * 2, seed_index * 3})
-    selected_categories = Enum.take_random(categories, Enum.random(5..8))
+
+    # Get all categories
+    all_categories = Traits.list_categories()
+
+    # Assign white flags (traits about oneself) from core categories
+    assign_white_flags(user, all_categories, seed_index)
+
+    # Assign "Deutsch" as the only spoken language
+    assign_german_language(user)
+
+    # Assign green flags (desired traits in partner) from multi categories
+    assign_green_flags(user, all_categories, seed_index)
+
+    # Assign red flags (deal-breakers) from single categories
+    assign_red_flags(user, all_categories, seed_index)
+  end
+
+  defp assign_white_flags(user, all_categories, seed_index) do
+    # White flags: traits describing oneself
+    # Select from core categories (excluding Languages, handled separately)
+    core_categories = Enum.filter(all_categories, fn c -> c.core and c.name != "Languages" end)
+    :rand.seed(:exsss, {seed_index, seed_index * 2, seed_index * 3})
+    selected_categories = Enum.take_random(core_categories, Enum.random(5..8))
 
     for category <- selected_categories do
       flags = Traits.list_flags_by_category(category)
-
-      # Filter to top-level flags only (no parent)
-      top_level_flags =
-        Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
+      top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
 
       if length(top_level_flags) > 0 do
-        # Select flags based on category selection_mode
         selected_flags =
           case category.selection_mode do
-            "single" ->
-              [Enum.random(top_level_flags)]
-
-            "single_white" ->
-              [Enum.random(top_level_flags)]
-
-            "multi" ->
-              count = min(Enum.random(1..3), length(top_level_flags))
-              Enum.take_random(top_level_flags, count)
-
-            _ ->
-              [Enum.random(top_level_flags)]
+            "single" -> [Enum.random(top_level_flags)]
+            "single_white" -> [Enum.random(top_level_flags)]
+            "multi" -> Enum.take_random(top_level_flags, min(Enum.random(1..3), length(top_level_flags)))
+            _ -> [Enum.random(top_level_flags)]
           end
 
         for {flag, pos} <- Enum.with_index(selected_flags, 1) do
@@ -465,6 +504,102 @@ defmodule Animina.Seeds.DevUsers do
             color: "white",
             intensity: "hard",
             position: pos
+          })
+        end
+      end
+    end
+  end
+
+  defp assign_german_language(user) do
+    # Assign only "Deutsch" as spoken language
+    all_categories = Traits.list_categories()
+    lang_category = Enum.find(all_categories, fn c -> c.name == "Languages" end)
+
+    if lang_category do
+      flags = Traits.list_flags_by_category(lang_category)
+      deutsch = Enum.find(flags, fn f -> f.name == "Deutsch" end)
+
+      if deutsch do
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: deutsch.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+      end
+    end
+  end
+
+  defp assign_green_flags(user, all_categories, seed_index) do
+    # Green flags: traits desired in a partner
+    # Only multi categories allow green flags
+    green_categories =
+      all_categories
+      |> Enum.filter(fn c -> c.selection_mode == "multi" end)
+      |> Enum.filter(fn c -> c.name in ["Character", "What I'm Looking For"] end)
+
+    :rand.seed(:exsss, {seed_index * 5, seed_index * 7, seed_index * 11})
+
+    # Select 1-3 categories to add green flags from
+    selected_categories = Enum.take_random(green_categories, Enum.random(1..3))
+
+    for category <- selected_categories do
+      flags = Traits.list_flags_by_category(category)
+      top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
+
+      if length(top_level_flags) > 0 do
+        # Select 1-2 flags as green (desired traits)
+        count = min(Enum.random(1..2), length(top_level_flags))
+        selected_flags = Enum.take_random(top_level_flags, count)
+
+        for {flag, pos} <- Enum.with_index(selected_flags, 1) do
+          # Randomly choose hard or soft intensity
+          intensity = if :rand.uniform() > 0.5, do: "hard", else: "soft"
+
+          Traits.add_user_flag(%{
+            user_id: user.id,
+            flag_id: flag.id,
+            color: "green",
+            intensity: intensity,
+            position: pos
+          })
+        end
+      end
+    end
+  end
+
+  defp assign_red_flags(user, all_categories, seed_index) do
+    # Red flags: deal-breakers
+    # Select from categories where red flags make sense
+    red_categories =
+      all_categories
+      |> Enum.filter(fn c -> c.selection_mode == "single" end)
+      |> Enum.filter(fn c -> c.name in ["Have Children", "Want Children", "Diet"] end)
+
+    :rand.seed(:exsss, {seed_index * 13, seed_index * 17, seed_index * 19})
+
+    # Only ~50% of users will have red flags (some people are more open-minded)
+    if :rand.uniform() > 0.5 do
+      # Select 1-2 categories to add red flags from
+      selected_categories = Enum.take_random(red_categories, Enum.random(1..2))
+
+      for category <- selected_categories do
+        flags = Traits.list_flags_by_category(category)
+        top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
+
+        if length(top_level_flags) > 0 do
+          # Select 1 flag as red (deal-breaker)
+          flag = Enum.random(top_level_flags)
+          # Randomly choose hard (strict) or soft (warning) red flag
+          intensity = if :rand.uniform() > 0.7, do: "hard", else: "soft"
+
+          Traits.add_user_flag(%{
+            user_id: user.id,
+            flag_id: flag.id,
+            color: "red",
+            intensity: intensity,
+            position: 1
           })
         end
       end

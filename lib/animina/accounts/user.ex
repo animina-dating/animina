@@ -61,6 +61,9 @@ defmodule Animina.Accounts.User do
     field :moodboard_columns_tablet, :integer, default: 2
     field :moodboard_columns_desktop, :integer, default: 3
 
+    # Messaging
+    field :last_message_notified_at, :utc_datetime
+
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
     field :partner_minimum_age, :integer, virtual: true

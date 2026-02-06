@@ -18,9 +18,13 @@ The application is organized into these contexts:
   - Sub-modules: `Appeals`, `AuditLog`, `Blacklist`, `FileManagement`, `OllamaQueue`, `UrlSigning`
 - **Animina.Traits** (`lib/animina/traits/`) - Categories, flags, user_flags (personality traits system with white/green/red flags)
   - Sub-modules: `Matching`, `Validations`
+- **Animina.Moodboard** (`lib/animina/moodboard/`) - Profile moodboard items (photos, stories, combined cards)
+- **Animina.Discovery** (`lib/animina/discovery/`) - Partner suggestions, scoring, popularity protection
+  - Sub-modules: `Filters`, `Scorers`, `Popularity`, `Settings`
+- **Animina.Messaging** (`lib/animina/messaging/`) - Conversations, messages, read receipts, blocking
+  - Sub-modules: `UnreadNotifier`
 - **Animina.GeoData** (`lib/animina/geo_data/`) - City data for location features
 - **Animina.Utils** (`lib/animina/utils/`) - Shared utilities
-  - `Pagination` - Common pagination logic
   - `PaperTrail` - PaperTrail audit helpers
   - `Timezone` - Berlin timezone conversions
 

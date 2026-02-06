@@ -1,0 +1,10 @@
+Du hast ungelesene Nachrichten auf ANIMINA
+---
+Hallo<%= if @display_name do %> <%= @display_name %><% end %>,
+
+Du hast <%= @unread_count %> ungelesene Nachricht<%= if @unread_count > 1, do: "en" %> auf ANIMINA.
+
+Jemand möchte dich kennenlernen! Lass ihn/sie nicht warten.
+
+Melde dich jetzt an, um deine Nachrichten zu lesen:
+https://animina.de/messages

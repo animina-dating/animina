@@ -135,6 +135,11 @@ defmodule AniminaWeb.Layouts do
                 </div>
               <% end %>
               <%= if @current_scope && !@display_name do %>
+                <.live_component
+                  module={AniminaWeb.LiveUnreadBadgeComponent}
+                  id="unread-badge"
+                  user_id={@current_scope.user.id}
+                />
                 <div class="relative">
                   <button
                     type="button"
@@ -235,6 +240,18 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Account")}
                       </p>
                     </div>
+                    <a
+                      href="/discover"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("Discover")}
+                    </a>
+                    <a
+                      href="/messages"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("Messages")}
+                    </a>
                     <a
                       href="/users/settings"
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"

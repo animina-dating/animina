@@ -163,6 +163,21 @@ defmodule Animina.Accounts.UserNotifier do
     deliver(email, subject, body)
   end
 
+  @doc """
+  Deliver a notification about unread messages.
+  Sent after 24 hours of unread messages to remind users.
+  """
+  def deliver_unread_messages_notification(user, unread_count) do
+    {subject, body} =
+      EmailTemplates.render(user_locale(user), :unread_messages,
+        email: user.email,
+        display_name: user.display_name,
+        unread_count: unread_count
+      )
+
+    deliver(user.email, subject, body)
+  end
+
   @german_months %{
     1 => "Januar",
     2 => "Februar",

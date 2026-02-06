@@ -14,7 +14,32 @@ hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
 ## Tech Stack
 
-Elixir 1.19, Phoenix 1.8, LiveView, Tailwind CSS, PostgreSQL, TOAST UI Editor (WYSIWYG Markdown)
+Elixir 1.19, Phoenix 1.8, LiveView, Tailwind CSS (DaisyUI), PostgreSQL, TOAST UI Editor (WYSIWYG Markdown)
+
+## Architecture
+
+```
+lib/animina/              # Business logic (contexts)
+  accounts/               # Users, auth, roles, locations, soft delete
+  photos/                 # Upload, processing, moderation, signed URLs
+  traits/                 # Categories, flags, matching (white/green/red)
+  moodboard/              # Profile moodboard items (photos + stories)
+  messaging/              # Conversations, messages, read receipts
+  discovery/              # Partner suggestions, scoring, popularity
+  geo_data/               # City/zip code lookups
+  feature_flags/          # FunWithFlags wrappers
+  utils/                  # Shared helpers (timezone, paper_trail)
+
+lib/animina_web/          # Web layer
+  live/                   # LiveView pages
+    user_live/            # User settings, profile, moodboard editor
+    admin/                # Admin panel (roles, photos, flags, queues)
+    components/           # Reusable LiveComponents
+  components/             # Function components (layouts, core)
+  helpers/                # Shared helpers for LiveViews
+```
+
+All schemas use UUIDs for primary keys. Real-time updates use Phoenix PubSub. Feature flags via [FunWithFlags](https://github.com/tompave/fun_with_flags) with admin UI at `/admin/feature-flags`.
 
 ## Getting Started
 
@@ -42,9 +67,9 @@ Visit `http://localhost:4000` to see the landing page. Register at `/users/regis
 
 In development, run `mix dev:reset` to create 50 test accounts with full profiles, traits, and moodboards. The login page shows a one-click panel for instant access. All accounts use password `password12345`.
 
-## Admin Access
+## Roles and Admin Access
 
-Grant admin privileges to the first user via IEx:
+Three roles: `user` (implicit), `moderator` (photo reviews), and `admin` (full access). Grant admin privileges to the first user via IEx:
 
 ```elixir
 iex -S mix
@@ -53,7 +78,7 @@ user = Animina.Accounts.get_user_by_email("admin@example.com")
 Animina.Accounts.assign_role(user, "admin")
 ```
 
-After that, manage roles for other users through the web admin panel at `/admin/roles`.
+After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/ollama-queue`, `/admin/ollama-debug`.
 
 ## Photo System
 
@@ -157,11 +182,69 @@ The photo system requires these additional dependencies (already in `mix.exs`):
 ollama pull qwen3-vl:8b
 ```
 
+## Trait System (Flags)
+
+Users express personality and preferences through a three-color flag system:
+
+- **White flags**: "This describes me" — personal traits (e.g., "I love hiking", "I'm introverted")
+- **Green flags**: "I'm attracted to this" — desired traits in a partner
+- **Red flags**: "This is a dealbreaker" — traits to avoid in a partner
+
+Flags are organized into categories. The discovery system uses bidirectional flag matching to score compatibility: a user's white flags are checked against others' green/red flags and vice versa. Users manage their flags at `/users/settings/traits`.
+
+## Moodboard
+
+Each user has a public moodboard (`/moodboard/:user_id`) — a visual profile composed of photos, stories (Markdown text), and combined photo+caption cards. Owners edit their moodboard at `/users/settings/moodboard` with drag-and-drop reordering and inline story editing via TOAST UI Editor.
+
+## Messaging System
+
+Real-time 1:1 messaging between users at `/messages`.
+
+### Features
+
+- **Real-time messages** via PubSub with typing indicators (auto-timeout after 3s)
+- **Read receipts** with double-check icon on the last read message
+- **Markdown rendering** — bold, italic, links rendered via Earmark with XSS protection
+- **Unread badge** — real-time unread count in the navigation bar across all pages
+- **Enter-to-send** with Shift+Enter for newlines and auto-growing textarea
+- **Smart scroll** — only auto-scrolls on new messages if you're near the bottom
+- **Date separators** between messages from different days ("Today", "Yesterday", weekday, date)
+- **Message grouping** — consecutive messages from the same sender within 2 minutes are visually clustered
+- **Message deletion** — trash icon on hover for own unread messages; deleting updates recipient's unread count
+- **Blocking** per conversation
+
+## Discovery System
+
+The partner discovery system suggests compatible matches across three lists:
+
+- **Combined**: Smart scoring balancing red flag avoidance with green flag attraction
+- **Safe**: Only users with zero red flag matches
+- **Attracted**: Prioritizes users matching the viewer's green flags
+
+### Features
+
+- **Bidirectional matching**: Both users must fit each other's criteria
+- **Profile visit tracking**: "Visited" badge on discover cards for profiles you've viewed
+- **Active chat indicator**: "Chat" badge on discover cards for users you have conversations with
+- **Privacy-safe conflict warnings**: Generic "Potential conflicts" without counts to prevent flag reverse-engineering
+- **Cooldown period**: Users reappear after 30 days (configurable)
+- **Popular user protection**: Users receiving 6+ daily inquiries are temporarily hidden
+- **Scoring adjustments**: Low-popularity users get visibility boosts; high-popularity users get balanced exposure
+
+### Configuration
+
+Enable popularity protection via feature flags at `/admin/feature-flags`:
+- `discovery_popularity_enabled` — master toggle (default: off)
+- `discovery_daily_inquiry_limit` — threshold before hiding (default: 6)
+- `discovery_popularity_score_bonus` — boost for low-popularity users (default: +10)
+- `discovery_popularity_score_penalty` — penalty for high-popularity users (default: -15)
+
 ## Documentation
 
+- [CLAUDE.md](CLAUDE.md) — development conventions and coding guidelines
 - [DEPLOYMENT.md](DEPLOYMENT.md) — production deployment with hot code upgrades and CI/CD
 - [TRANSLATING.md](TRANSLATING.md) — i18n workflow for all 9 languages
-- [DESIGN.md](DESIGN.md) — design guidelines
+- [DESIGN.md](DESIGN.md) — design system ("Coastal Morning" theme, DaisyUI components)
 - [docs/features/](docs/features/) — detailed feature specifications
 
 ## License

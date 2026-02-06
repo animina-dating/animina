@@ -69,7 +69,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
                 </div>
               <% else %>
                 <div class="flex items-center justify-between p-3 rounded-lg border border-base-300">
-                  <span class="text-sm text-base-content">
+                  <span class="text-sm text-base-content whitespace-nowrap">
                     {location.zip_code}
                     <%= if @city_names[location.zip_code] do %>
                       ({@city_names[location.zip_code]})

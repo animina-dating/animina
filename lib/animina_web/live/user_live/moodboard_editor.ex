@@ -1,4 +1,4 @@
-defmodule AniminaWeb.UserLive.MoodboardEditorLive do
+defmodule AniminaWeb.UserLive.MoodboardEditor do
   @moduledoc """
   LiveView for editing a user's moodboard.
 

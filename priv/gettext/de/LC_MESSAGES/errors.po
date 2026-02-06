@@ -106,17 +106,17 @@ msgstr "muss gleich %{number} sein"
 msgid "Referral code not found"
 msgstr "Empfehlungscode nicht gefunden"
 
-#: lib/animina/accounts/user.ex:250
+#: lib/animina/accounts/user.ex:253
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "ist keine gültige Telefonnummer"
 
-#: lib/animina/accounts/user.ex:152
+#: lib/animina/accounts/user.ex:155
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "muss aus 6 Zeichen bestehen (Buchstaben und Ziffern)"
 
-#: lib/animina/accounts/user.ex:245
+#: lib/animina/accounts/user.ex:248
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "muss eine Handynummer sein (kein Festnetz)"

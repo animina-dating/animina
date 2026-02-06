@@ -3,7 +3,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
 
   alias Animina.FeatureFlags
 
-  import AniminaWeb.Helpers.AdminHelpers, only: [parse_non_negative_int: 2]
+  import AniminaWeb.Helpers.AdminHelpers, only: [parse_non_negative_int: 2, parse_integer: 2]
 
   @impl true
   def mount(_params, _session, socket) do
@@ -11,6 +11,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
     ollama_settings = FeatureFlags.get_all_ollama_settings()
     system_settings = FeatureFlags.get_all_system_settings()
     admin_flags = FeatureFlags.get_all_admin_flags()
+    discovery_settings = FeatureFlags.get_all_discovery_settings()
 
     {:ok,
      assign(socket,
@@ -19,20 +20,23 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
        ollama_settings: ollama_settings,
        system_settings: system_settings,
        admin_flags: admin_flags,
+       discovery_settings: discovery_settings,
        search_query: "",
        selected_flag: nil,
        selected_system_setting: nil,
        selected_ollama_setting: nil,
+       selected_discovery_setting: nil,
        form: nil,
        system_form: nil,
-       ollama_form: nil
+       ollama_form: nil,
+       discovery_form: nil
      )}
   end
 
   # --- Event Handlers (grouped together) ---
 
   @impl true
-  def handle_event("toggle-flag", %{"flag" => flag_name}, socket) do
+  def handle_event("toggle-" <> _ = event, %{"flag" => flag_name}, socket) do
     flag_atom = String.to_existing_atom(flag_name)
 
     if FeatureFlags.enabled?(flag_atom) do
@@ -41,19 +45,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
       FeatureFlags.enable(flag_atom)
     end
 
-    {:noreply, assign(socket, photo_flags: FeatureFlags.get_all_photo_flags())}
-  end
-
-  def handle_event("toggle-ollama-flag", %{"flag" => flag_name}, socket) do
-    flag_atom = String.to_existing_atom(flag_name)
-
-    if FeatureFlags.enabled?(flag_atom) do
-      FeatureFlags.disable(flag_atom)
-    else
-      FeatureFlags.enable(flag_atom)
-    end
-
-    {:noreply, assign(socket, ollama_settings: FeatureFlags.get_all_ollama_settings())}
+    {:noreply, assign(socket, refresh_after_toggle(event))}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
@@ -62,18 +54,6 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
 
   def handle_event("clear-search", _params, socket) do
     {:noreply, assign(socket, search_query: "")}
-  end
-
-  def handle_event("toggle-admin-flag", %{"flag" => flag_name}, socket) do
-    flag_atom = String.to_existing_atom(flag_name)
-
-    if FeatureFlags.enabled?(flag_atom) do
-      FeatureFlags.disable(flag_atom)
-    else
-      FeatureFlags.enable(flag_atom)
-    end
-
-    {:noreply, assign(socket, admin_flags: FeatureFlags.get_all_admin_flags())}
   end
 
   def handle_event("open-settings", %{"flag" => flag_name}, socket) do
@@ -157,32 +137,11 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
 
   def handle_event("save-system-setting", %{"system_setting" => params}, socket) do
     setting = socket.assigns.selected_system_setting
-    value = parse_system_setting_value(params["value"], setting)
 
-    flag_name = "system:#{setting.name}"
-
-    {:ok, flag_setting} =
-      FeatureFlags.get_or_create_flag_setting(flag_name, %{
-        description: setting.description,
-        settings: %{value: setting.default_value}
-      })
-
-    case FeatureFlags.update_flag_setting(flag_setting, %{settings: %{value: value}}) do
-      {:ok, _updated} ->
-        socket =
-          socket
-          |> assign(
-            system_settings: FeatureFlags.get_all_system_settings(),
-            selected_system_setting: nil,
-            system_form: nil
-          )
-          |> put_flash(:info, gettext("Setting saved."))
-
-        {:noreply, socket}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, gettext("Could not save setting."))}
-    end
+    save_value_setting(socket, setting, params["value"],
+      refresh: [system_settings: FeatureFlags.get_all_system_settings()],
+      clear: [selected_system_setting: nil, system_form: nil]
+    )
   end
 
   def handle_event("open-ollama-setting", %{"setting" => setting_name}, socket) do
@@ -263,35 +222,80 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
         end
 
       _ ->
-        value = parse_ollama_setting_value(params["value"], setting)
-        flag_name = "system:#{setting.name}"
-
-        {:ok, flag_setting} =
-          FeatureFlags.get_or_create_flag_setting(flag_name, %{
-            description: setting.description,
-            settings: %{value: setting.default_value}
-          })
-
-        case FeatureFlags.update_flag_setting(flag_setting, %{settings: %{value: value}}) do
-          {:ok, _updated} ->
-            socket =
-              socket
-              |> assign(
-                ollama_settings: FeatureFlags.get_all_ollama_settings(),
-                selected_ollama_setting: nil,
-                ollama_form: nil
-              )
-              |> put_flash(:info, gettext("Setting saved."))
-
-            {:noreply, socket}
-
-          {:error, _changeset} ->
-            {:noreply, put_flash(socket, :error, gettext("Could not save setting."))}
-        end
+        save_value_setting(socket, setting, params["value"],
+          refresh: [ollama_settings: FeatureFlags.get_all_ollama_settings()],
+          clear: [selected_ollama_setting: nil, ollama_form: nil]
+        )
     end
   end
 
+  # --- Discovery Settings Handlers ---
+
+  def handle_event("open-discovery-setting", %{"setting" => setting_name}, socket) do
+    setting_atom = String.to_existing_atom(setting_name)
+    setting = Enum.find(socket.assigns.discovery_settings, fn s -> s.name == setting_atom end)
+
+    form_data = %{"value" => setting.current_value}
+
+    {:noreply,
+     assign(socket,
+       selected_discovery_setting: setting,
+       discovery_form: to_form(form_data, as: "discovery_setting")
+     )}
+  end
+
+  def handle_event("close-discovery-modal", _params, socket) do
+    {:noreply, assign(socket, selected_discovery_setting: nil, discovery_form: nil)}
+  end
+
+  def handle_event("save-discovery-setting", %{"discovery_setting" => params}, socket) do
+    setting = socket.assigns.selected_discovery_setting
+
+    save_value_setting(socket, setting, params["value"],
+      refresh: [discovery_settings: FeatureFlags.get_all_discovery_settings()],
+      clear: [selected_discovery_setting: nil, discovery_form: nil]
+    )
+  end
+
   # --- Private Helpers ---
+
+  defp save_value_setting(socket, setting, raw_value, opts) do
+    value = parse_setting_value(raw_value, setting)
+    flag_name = "system:#{setting.name}"
+
+    {:ok, flag_setting} =
+      FeatureFlags.get_or_create_flag_setting(flag_name, %{
+        description: setting.description,
+        settings: %{value: setting.default_value}
+      })
+
+    case FeatureFlags.update_flag_setting(flag_setting, %{settings: %{value: value}}) do
+      {:ok, _updated} ->
+        assigns = Keyword.get(opts, :refresh, []) ++ Keyword.get(opts, :clear, [])
+
+        socket =
+          socket
+          |> assign(assigns)
+          |> put_flash(:info, gettext("Setting saved."))
+
+        {:noreply, socket}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not save setting."))}
+    end
+  end
+
+  defp refresh_after_toggle("toggle-flag"),
+    do: [photo_flags: FeatureFlags.get_all_photo_flags()]
+
+  defp refresh_after_toggle("toggle-ollama-flag"),
+    do: [ollama_settings: FeatureFlags.get_all_ollama_settings()]
+
+  defp refresh_after_toggle("toggle-admin-flag"),
+    do: [admin_flags: FeatureFlags.get_all_admin_flags()]
+
+  defp refresh_after_toggle("toggle-discovery-flag"),
+    do: [discovery_settings: FeatureFlags.get_all_discovery_settings()]
 
   defp parse_auto_approve_value("true"), do: true
   defp parse_auto_approve_value("false"), do: false
@@ -299,27 +303,18 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
   defp parse_auto_approve_value(nil), do: nil
   defp parse_auto_approve_value(value), do: value
 
-  defp parse_system_setting_value(value, %{type: :string}) do
+  defp parse_setting_value(value, %{type: :string}) do
     value |> to_string() |> String.trim()
   end
 
-  defp parse_system_setting_value(value, setting) do
-    # Integer type (default)
-    parsed = parse_non_negative_int(value, setting.default_value)
-    max(setting.min_value, min(setting.max_value, parsed))
+  defp parse_setting_value(value, setting) do
+    min_val = setting[:min_value] || 0
+    max_val = setting[:max_value] || 999
+    parsed = parse_integer(value, setting.default_value)
+    max(min_val, min(max_val, parsed))
   end
 
-  defp parse_ollama_setting_value(value, %{type: :string}) do
-    value |> to_string() |> String.trim()
-  end
-
-  defp parse_ollama_setting_value(value, setting) do
-    # Integer type
-    parsed = parse_non_negative_int(value, setting.default_value)
-    max(setting.min_value, min(setting.max_value, parsed))
-  end
-
-  defp matches_search?(_item, query) when query == "", do: true
+  defp matches_search?(_item, ""), do: true
 
   defp matches_search?(item, query) do
     query = String.downcase(query)
@@ -332,30 +327,50 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
       String.contains?(description, query)
   end
 
-  defp filter_by_search(items, query) when query == "", do: items
+  defp filter_by_search(items, ""), do: items
   defp filter_by_search(items, query), do: Enum.filter(items, &matches_search?(&1, query))
+
+  defp flag_toggle(assigns) do
+    ~H"""
+    <label class="swap swap-flip">
+      <input
+        type="checkbox"
+        checked={@checked}
+        phx-click={@event}
+        phx-value-flag={@flag_name}
+      />
+      <div class={[
+        "swap-on flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+        "bg-success/20 text-success"
+      ]}>
+        <.icon name="hero-check-circle-mini" class="h-4 w-4" />
+        {gettext("On")}
+      </div>
+      <div class={[
+        "swap-off flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+        "bg-base-300 text-base-content/50"
+      ]}>
+        <.icon name="hero-x-circle-mini" class="h-4 w-4" />
+        {gettext("Off")}
+      </div>
+    </label>
+    """
+  end
 
   @impl true
   def render(assigns) do
-    # Filter items by search query
+    filter_pairs = [
+      {:filtered_ollama_settings, :ollama_settings},
+      {:filtered_photo_flags, :photo_flags},
+      {:filtered_system_settings, :system_settings},
+      {:filtered_admin_flags, :admin_flags},
+      {:filtered_discovery_settings, :discovery_settings}
+    ]
+
     assigns =
-      assigns
-      |> assign(
-        :filtered_ollama_settings,
-        filter_by_search(assigns.ollama_settings, assigns.search_query)
-      )
-      |> assign(
-        :filtered_photo_flags,
-        filter_by_search(assigns.photo_flags, assigns.search_query)
-      )
-      |> assign(
-        :filtered_system_settings,
-        filter_by_search(assigns.system_settings, assigns.search_query)
-      )
-      |> assign(
-        :filtered_admin_flags,
-        filter_by_search(assigns.admin_flags, assigns.search_query)
-      )
+      Enum.reduce(filter_pairs, assigns, fn {target, source}, acc ->
+        assign(acc, target, filter_by_search(acc[source], acc.search_query))
+      end)
 
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
@@ -395,7 +410,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
           </div>
         </div>
 
-        <%= if @search_query != "" && Enum.empty?(@filtered_ollama_settings) && Enum.empty?(@filtered_photo_flags) && Enum.empty?(@filtered_system_settings) && Enum.empty?(@filtered_admin_flags) do %>
+        <%= if @search_query != "" && Enum.empty?(@filtered_ollama_settings) && Enum.empty?(@filtered_photo_flags) && Enum.empty?(@filtered_system_settings) && Enum.empty?(@filtered_admin_flags) && Enum.empty?(@filtered_discovery_settings) do %>
           <div class="text-center py-12">
             <.icon name="hero-magnifying-glass" class="h-12 w-12 text-base-content/30 mx-auto mb-4" />
             <p class="text-base-content/60">
@@ -470,28 +485,11 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
                       <% end %>
 
                       <%= if setting.type == :flag do %>
-                        <label class="swap swap-flip">
-                          <input
-                            type="checkbox"
-                            checked={setting.enabled}
-                            phx-click="toggle-ollama-flag"
-                            phx-value-flag={setting.name}
-                          />
-                          <div class={[
-                            "swap-on flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                            "bg-success/20 text-success"
-                          ]}>
-                            <.icon name="hero-check-circle-mini" class="h-4 w-4" />
-                            {gettext("On")}
-                          </div>
-                          <div class={[
-                            "swap-off flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                            "bg-base-300 text-base-content/50"
-                          ]}>
-                            <.icon name="hero-x-circle-mini" class="h-4 w-4" />
-                            {gettext("Off")}
-                          </div>
-                        </label>
+                        <.flag_toggle
+                          checked={setting.enabled}
+                          event="toggle-ollama-flag"
+                          flag_name={setting.name}
+                        />
                       <% else %>
                         <button
                           type="button"
@@ -555,28 +553,11 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
                         <.icon name="hero-cog-6-tooth" class="h-4 w-4" />
                       </button>
 
-                      <label class="swap swap-flip">
-                        <input
-                          type="checkbox"
-                          checked={flag.enabled}
-                          phx-click="toggle-flag"
-                          phx-value-flag={flag.name}
-                        />
-                        <div class={[
-                          "swap-on flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                          "bg-success/20 text-success"
-                        ]}>
-                          <.icon name="hero-check-circle-mini" class="h-4 w-4" />
-                          {gettext("On")}
-                        </div>
-                        <div class={[
-                          "swap-off flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                          "bg-base-300 text-base-content/50"
-                        ]}>
-                          <.icon name="hero-x-circle-mini" class="h-4 w-4" />
-                          {gettext("Off")}
-                        </div>
-                      </label>
+                      <.flag_toggle
+                        checked={flag.enabled}
+                        event="toggle-flag"
+                        flag_name={flag.name}
+                      />
                     </div>
                   </div>
                 <% end %>
@@ -669,28 +650,89 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
                     </div>
 
                     <div class="flex items-center gap-3">
-                      <label class="swap swap-flip">
-                        <input
-                          type="checkbox"
-                          checked={flag.enabled}
-                          phx-click="toggle-admin-flag"
-                          phx-value-flag={flag.name}
+                      <.flag_toggle
+                        checked={flag.enabled}
+                        event="toggle-admin-flag"
+                        flag_name={flag.name}
+                      />
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <%!-- Discovery Settings Section --%>
+          <%= if Enum.any?(@filtered_discovery_settings) do %>
+            <div class="mb-8">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 rounded-lg bg-pink-500/10">
+                  <.icon name="hero-sparkles" class="h-5 w-5 text-pink-600" />
+                </div>
+                <div>
+                  <h2 class="text-lg font-semibold text-base-content">
+                    {gettext("Discovery / Matching")}
+                  </h2>
+                  <p class="text-sm text-base-content/50">
+                    {gettext("Partner suggestion algorithm tuning")}
+                  </p>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <%= for setting <- @filtered_discovery_settings do %>
+                  <div
+                    class="border border-base-300 rounded-xl p-4 flex items-center justify-between hover:border-pink-300 transition-colors shadow-sm"
+                    data-setting={setting.name}
+                  >
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2">
+                        <span class="font-medium text-base-content">{setting.label}</span>
+                        <%= if setting.type == :flag do %>
+                          <span class={[
+                            "badge badge-sm",
+                            if(setting.enabled, do: "badge-success", else: "badge-ghost")
+                          ]}>
+                            {if setting.enabled, do: gettext("On"), else: gettext("Off")}
+                          </span>
+                        <% else %>
+                          <span class="badge badge-sm badge-primary">{setting.current_value}</span>
+                        <% end %>
+                      </div>
+                      <p class="text-sm text-base-content/60 mt-1">{setting.description}</p>
+                      <%= if setting.type == :integer do %>
+                        <p class="text-xs text-base-content/40 mt-1">
+                          {gettext("Default: %{default}, Range: %{min}-%{max}",
+                            default: setting.default_value,
+                            min: setting.min_value,
+                            max: setting.max_value
+                          )}
+                        </p>
+                      <% end %>
+                      <%= if setting.type == :string do %>
+                        <p class="text-xs text-base-content/40 mt-1">
+                          {gettext("Default: %{default}", default: setting.default_value)}
+                        </p>
+                      <% end %>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                      <%= if setting.type == :flag do %>
+                        <.flag_toggle
+                          checked={setting.enabled}
+                          event="toggle-discovery-flag"
+                          flag_name={setting.name}
                         />
-                        <div class={[
-                          "swap-on flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                          "bg-success/20 text-success"
-                        ]}>
-                          <.icon name="hero-check-circle-mini" class="h-4 w-4" />
-                          {gettext("On")}
-                        </div>
-                        <div class={[
-                          "swap-off flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
-                          "bg-base-300 text-base-content/50"
-                        ]}>
-                          <.icon name="hero-x-circle-mini" class="h-4 w-4" />
-                          {gettext("Off")}
-                        </div>
-                      </label>
+                      <% else %>
+                        <button
+                          type="button"
+                          class="btn btn-ghost btn-sm"
+                          phx-click="open-discovery-setting"
+                          phx-value-setting={setting.name}
+                        >
+                          <.icon name="hero-pencil" class="h-4 w-4" />
+                        </button>
+                      <% end %>
                     </div>
                   </div>
                 <% end %>
@@ -1046,6 +1088,90 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
               </.form>
             </div>
             <div class="modal-backdrop" phx-click="close-ollama-modal"></div>
+          </div>
+        <% end %>
+
+        <%!-- Discovery Setting Modal --%>
+        <%= if @selected_discovery_setting do %>
+          <div
+            class="modal modal-open"
+            id="discovery-setting-modal"
+            phx-window-keydown="close-discovery-modal"
+            phx-key="escape"
+          >
+            <div class="modal-box">
+              <button
+                type="button"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                phx-click="close-discovery-modal"
+              >
+                <.icon name="hero-x-mark" class="h-5 w-5" />
+              </button>
+
+              <h3 class="font-bold text-lg mb-4">
+                {@selected_discovery_setting.label}
+              </h3>
+
+              <p class="text-sm text-base-content/70 mb-4">
+                {@selected_discovery_setting.description}
+              </p>
+
+              <.form
+                for={@discovery_form}
+                id="discovery-setting-form"
+                phx-submit="save-discovery-setting"
+                class="space-y-4"
+              >
+                <div class="form-control">
+                  <label class="label">
+                    <span class="label-text">{gettext("Value")}</span>
+                  </label>
+                  <%= if @selected_discovery_setting.type == :string do %>
+                    <input
+                      type="text"
+                      name="discovery_setting[value]"
+                      value={@discovery_form[:value].value}
+                      class="input input-bordered"
+                    />
+                    <label class="label">
+                      <span class="label-text-alt text-base-content/50">
+                        {gettext("Default: %{default}",
+                          default: @selected_discovery_setting.default_value
+                        )}
+                      </span>
+                    </label>
+                  <% else %>
+                    <input
+                      type="number"
+                      name="discovery_setting[value]"
+                      value={@discovery_form[:value].value}
+                      min={@selected_discovery_setting.min_value}
+                      max={@selected_discovery_setting.max_value}
+                      class="input input-bordered"
+                    />
+                    <label class="label">
+                      <span class="label-text-alt text-base-content/50">
+                        {gettext("Default: %{default}, Range: %{min}-%{max}",
+                          default: @selected_discovery_setting.default_value,
+                          min: @selected_discovery_setting.min_value,
+                          max: @selected_discovery_setting.max_value
+                        )}
+                      </span>
+                    </label>
+                  <% end %>
+                </div>
+
+                <div class="modal-action">
+                  <button type="button" class="btn btn-ghost" phx-click="close-discovery-modal">
+                    {gettext("Cancel")}
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    {gettext("Save")}
+                  </button>
+                </div>
+              </.form>
+            </div>
+            <div class="modal-backdrop" phx-click="close-discovery-modal"></div>
           </div>
         <% end %>
       </div>

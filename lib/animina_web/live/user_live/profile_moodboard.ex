@@ -1,4 +1,4 @@
-defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
+defmodule AniminaWeb.UserLive.ProfileMoodboard do
   @moduledoc """
   LiveView for displaying a user's moodboard.
 
@@ -14,9 +14,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.Accounts.Scope
-  alias Animina.FeatureFlags
+  alias Animina.Discovery
   alias Animina.GeoData
+  alias Animina.Messaging
   alias Animina.Moodboard
   alias Animina.Traits
 
@@ -26,8 +26,29 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div id="moodboard-container" phx-hook="DeviceType">
-        <!-- Header -->
+      <div
+        id="moodboard-container"
+        phx-hook="DeviceType"
+        class={[
+          if(@chat_open,
+            do: "lg:mr-[396px] transition-all duration-300",
+            else: "transition-all duration-300"
+          )
+        ]}
+      >
+        <!-- Wildcard notice -->
+        <div
+          :if={@wildcard?}
+          class="flex items-center gap-3 rounded-lg border-2 border-dashed border-accent/40 bg-accent/5 px-4 py-3 mb-6"
+        >
+          <.icon name="hero-bolt" class="h-5 w-5 text-accent flex-shrink-0" />
+          <p class="text-sm text-base-content/70">
+            <span class="font-semibold text-accent">{gettext("Wildcard pick")}</span>
+            — {gettext("This profile was suggested randomly and may not match your preferences.")}
+          </p>
+        </div>
+        
+    <!-- Header -->
         <div class="flex items-center justify-between mb-8">
           <div>
             <h1 class="text-3xl font-bold">{@profile_user.display_name}</h1>
@@ -38,58 +59,46 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
                 · {format_height(@profile_user.height)}
               <% end %>
               <%= if @city do %>
-                · {@zip_code} {@city.name}
+                · <span class="whitespace-nowrap">{@zip_code} {@city.name}</span>
               <% end %>
             </p>
             <p :if={@profile_user.occupation} class="text-base-content/60">
               {@profile_user.occupation}
             </p>
-            <div
-              :if={
-                (@flag_counts["green"] && @flag_counts["green"] > 0) ||
-                  (@flag_counts["red"] && @flag_counts["red"] > 0)
-              }
-              class="flex gap-3 mt-2 text-sm"
-            >
-              <span class="text-base-content/60">{gettext("Partner flags:")}</span>
-              <span
-                :if={@flag_counts["green"] && @flag_counts["green"] > 0}
-                class="flex items-center gap-1"
-              >
-                <span class="w-3 h-3 rounded-full bg-green-500"></span>
-                {@flag_counts["green"]}
-              </span>
-              <span
-                :if={@flag_counts["red"] && @flag_counts["red"] > 0}
-                class="flex items-center gap-1"
-              >
-                <span class="w-3 h-3 rounded-full bg-red-500"></span>
-                {@flag_counts["red"]}
-              </span>
-            </div>
           </div>
 
-          <.link
-            :if={@owner?}
-            navigate={~p"/users/settings/moodboard"}
-            class="btn btn-primary"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div class="flex items-center gap-2">
+            <button
+              :if={@show_chat_toggle}
+              phx-click="toggle_chat"
+              class={["btn", if(@chat_open, do: "btn-primary", else: "btn-outline btn-primary")]}
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-              />
-            </svg>
-            {gettext("Edit Moodboard")}
-          </.link>
+              <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 mr-2" />
+              {gettext("Message")}
+            </button>
+
+            <.link
+              :if={@owner?}
+              navigate={~p"/users/settings/moodboard"}
+              class="btn btn-primary"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              {gettext("Edit Moodboard")}
+            </.link>
+          </div>
         </div>
         
     <!-- White flags display -->
@@ -244,6 +253,16 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
           </div>
         </div>
       </div>
+
+      <.live_component
+        :if={@show_chat_toggle}
+        module={AniminaWeb.ChatPanelComponent}
+        id="chat-panel"
+        current_user_id={@current_user_id}
+        profile_user={@profile_user}
+        open={@chat_open}
+        conversation_id={@chat_conversation_id}
+      />
     </Layouts.app>
     """
   end
@@ -268,7 +287,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
       user.display_name,
       gender_symbol(user.gender) <> " " <> gettext("%{age} years", age: age),
       if(user.height, do: format_height(user.height)),
-      if(city, do: "#{zip_code} #{city.name}")
+      if(city, do: "#{zip_code}\u00A0#{city.name}")
     ]
 
     parts
@@ -301,6 +320,11 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
 
     case check_access(current_user, profile_user, current_scope) do
       {:ok, owner?} ->
+        # Record profile visit (only if not viewing own profile)
+        if !owner? && current_user do
+          Discovery.record_profile_visit(current_user.id, profile_user.id)
+        end
+
         {:ok, mount_moodboard(socket, profile_user, current_user, owner?)}
 
       :denied ->
@@ -311,18 +335,13 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
     end
   end
 
-  defp check_access(current_user, profile_user, current_scope) do
+  defp check_access(current_user, profile_user, _current_scope) do
     owner? = current_user && profile_user && current_user.id == profile_user.id
 
-    admin_viewing? =
-      profile_user &&
-        !owner? &&
-        Scope.admin?(current_scope) &&
-        FeatureFlags.admin_can_view_moodboards?()
-
     cond do
+      is_nil(profile_user) -> :denied
       owner? -> {:ok, true}
-      admin_viewing? -> {:ok, false}
+      current_user != nil -> {:ok, false}
       true -> :denied
     end
   end
@@ -348,15 +367,23 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
         {nil, nil}
       end
 
-    # Get flag counts (only includes white flags from published categories)
-    flag_counts = Traits.count_published_user_flags_by_color(profile_user)
-
     # Get published white flags for display
     white_flags = Traits.list_published_white_flags(profile_user)
     private_white_flags_count = Traits.count_private_white_flags(profile_user)
 
     # Build page title with profile info
     page_title = build_page_title(profile_user, age, city, zip_code)
+
+    # Chat panel assigns
+    show_chat_toggle = !owner? && current_user != nil
+
+    chat_conversation_id =
+      if show_chat_toggle do
+        case Messaging.find_existing_conversation(current_user.id, profile_user.id) do
+          nil -> nil
+          conversation -> conversation.id
+        end
+      end
 
     assign(socket,
       page_title: page_title,
@@ -369,10 +396,20 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
       age: age,
       city: city,
       zip_code: zip_code,
-      flag_counts: flag_counts,
       white_flags: white_flags,
-      private_white_flags_count: private_white_flags_count
+      private_white_flags_count: private_white_flags_count,
+      show_chat_toggle: show_chat_toggle,
+      chat_open: false,
+      chat_conversation_id: chat_conversation_id,
+      chat_subscribed: false,
+      chat_typing_timer: nil,
+      wildcard?: false
     )
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    {:noreply, assign(socket, :wildcard?, params["ref"] == "wildcard")}
   end
 
   @impl true
@@ -380,6 +417,38 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
     # Load column preference for this device type from user's preferences
     columns = get_columns_for_device(socket, device_type)
     {:noreply, assign(socket, device_type: device_type, columns: columns)}
+  end
+
+  @impl true
+  def handle_event("toggle_chat", _params, socket) do
+    chat_open = !socket.assigns.chat_open
+
+    socket =
+      if chat_open && !socket.assigns.chat_subscribed && socket.assigns.chat_conversation_id do
+        subscribe_to_chat(socket, socket.assigns.chat_conversation_id)
+      else
+        socket
+      end
+
+    {:noreply, assign(socket, :chat_open, chat_open)}
+  end
+
+  @impl true
+  def handle_event("close_panel", _params, socket) do
+    {:noreply, assign(socket, :chat_open, false)}
+  end
+
+  @impl true
+  def handle_event("save_draft", %{"content" => content}, socket) do
+    if socket.assigns.chat_conversation_id && socket.assigns.current_scope.user do
+      Animina.Messaging.save_draft(
+        socket.assigns.chat_conversation_id,
+        socket.assigns.current_scope.user.id,
+        content
+      )
+    end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -441,9 +510,117 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
     {:noreply, reload_white_flags(socket)}
   end
 
+  # --- Chat panel PubSub forwarding ---
+
+  @impl true
+  def handle_info({:chat_panel_subscribe, conversation_id}, socket) do
+    socket =
+      socket
+      |> assign(:chat_conversation_id, conversation_id)
+      |> subscribe_to_chat(conversation_id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(:close_chat_panel, socket) do
+    {:noreply, assign(socket, :chat_open, false)}
+  end
+
+  # Conversation-specific PubSub (2-tuple) — forward to ChatPanelComponent
+  @impl true
+  def handle_info({:new_message, %{__struct__: _} = message}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:new_message, message}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:message_edited, message}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:message_edited, message}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:message_deleted, message}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:message_deleted, message}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:read_receipt, user_id}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:read_receipt, user_id}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:typing, user_id, typing?}, socket) do
+    if user_id != socket.assigns.current_user_id do
+      # Cancel existing timer
+      if socket.assigns.chat_typing_timer do
+        Process.cancel_timer(socket.assigns.chat_typing_timer)
+      end
+
+      if typing? do
+        timer = Process.send_after(self(), :clear_chat_typing, 3_000)
+
+        send_update(AniminaWeb.ChatPanelComponent,
+          id: "chat-panel",
+          chat_event: {:typing, user_id}
+        )
+
+        {:noreply, assign(socket, :chat_typing_timer, timer)}
+      else
+        send_update(AniminaWeb.ChatPanelComponent,
+          id: "chat-panel",
+          chat_event: :clear_typing
+        )
+
+        {:noreply, assign(socket, :chat_typing_timer, nil)}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info(:clear_chat_typing, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: :clear_typing
+    )
+
+    {:noreply, assign(socket, :chat_typing_timer, nil)}
+  end
+
   @impl true
   def handle_info(_msg, socket) do
     {:noreply, socket}
+  end
+
+  defp subscribe_to_chat(socket, conversation_id) do
+    if connected?(socket) && !socket.assigns.chat_subscribed do
+      Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.conversation_topic(conversation_id))
+      Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.typing_topic(conversation_id))
+      assign(socket, :chat_subscribed, true)
+    else
+      socket
+    end
   end
 
   defp reload_items(socket) do
@@ -453,12 +630,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardLive do
 
   defp reload_white_flags(socket) do
     profile_user = socket.assigns.profile_user
-    flag_counts = Traits.count_published_user_flags_by_color(profile_user)
     white_flags = Traits.list_published_white_flags(profile_user)
     private_white_flags_count = Traits.count_private_white_flags(profile_user)
 
     assign(socket,
-      flag_counts: flag_counts,
       white_flags: white_flags,
       private_white_flags_count: private_white_flags_count
     )
