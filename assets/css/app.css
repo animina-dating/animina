@@ -272,6 +272,12 @@ body {
   background-color: var(--color-base-100) !important;
 }
 
+.toastui-editor-defaultUI .toastui-editor-contents,
+.toastui-editor-defaultUI .ProseMirror {
+  background-color: var(--color-base-100) !important;
+  color: var(--color-base-content) !important;
+}
+
 /* Placeholder text */
 .toastui-editor-defaultUI .ProseMirror .placeholder {
   color: var(--color-base-content) !important;
@@ -303,7 +309,28 @@ body {
   color: var(--color-base-content) !important;
 }
 
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-toolbar button svg {
+  fill: var(--color-base-content) !important;
+  color: var(--color-base-content) !important;
+}
+
 [data-theme=dark] .toastui-editor-defaultUI .ProseMirror {
+  color: var(--color-base-content) !important;
+}
+
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents {
+  color: var(--color-base-content) !important;
+}
+
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents p,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h1,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h2,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h3,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h4,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h5,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents h6,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents li,
+[data-theme=dark] .toastui-editor-defaultUI .toastui-editor-contents blockquote {
   color: var(--color-base-content) !important;
 }
 
