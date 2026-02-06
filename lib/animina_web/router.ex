@@ -29,6 +29,7 @@ defmodule AniminaWeb.Router do
       live "/demo", DemoLive
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
+      live "/agb", TermsOfServiceLive
       live "/impressum", ImpressumLive
       live "/moodboard/:user_id", UserLive.ProfileMoodboard
     end
@@ -78,8 +79,13 @@ defmodule AniminaWeb.Router do
   scope "/", AniminaWeb do
     pipe_through [:browser, :require_authenticated_user]
 
-    live_session :require_authenticated_user,
+    live_session :require_authenticated_no_tos,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated}] do
+      live "/users/accept-terms", UserLive.AcceptTerms
+    end
+
+    live_session :require_authenticated_user,
+      on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
       live "/users/settings", UserLive.SettingsHub, :index
       live "/users/settings/account", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email

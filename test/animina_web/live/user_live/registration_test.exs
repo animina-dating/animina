@@ -268,6 +268,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Gender"
       assert html =~ "Search radius"
       assert html =~ "Privacy Policy"
+      assert html =~ "Terms of Service"
       # Step 4 should show "Create account" instead of "Next"
       assert html =~ "Create account"
     end

@@ -29,8 +29,8 @@ msgstr[1] "%{count}/%{threshold} Empfehlungen"
 msgid "100% Free"
 msgstr "100% Kostenlos"
 
-#: lib/animina_web/live/user_live/registration.ex:595
-#: lib/animina_web/live/user_live/registration.ex:616
+#: lib/animina_web/live/user_live/registration.ex:597
+#: lib/animina_web/live/user_live/registration.ex:618
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Ein Bestätigungscode wurde an %{email} gesendet."
@@ -93,8 +93,8 @@ msgstr "Animina ist für Menschen gemacht, die echte Beziehungen suchen – nich
 msgid "At ANIMINA everything is different."
 msgstr "Bei ANIMINA ist alles anders."
 
-#: lib/animina_web/components/layouts.ex:673
-#: lib/animina_web/components/layouts.ex:685
+#: lib/animina_web/components/layouts.ex:676
+#: lib/animina_web/components/layouts.ex:688
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Verbindung wird wiederhergestellt"
@@ -367,7 +367,7 @@ msgstr "Ich hatte genug von Dating-Apps, die sich wie ein Spiel anfühlten. Anim
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "Falls ein Konto mit dieser E-Mail existiert, erhältst du in Kürze Anweisungen zum Zurücksetzen des Passworts."
 
-#: lib/animina_web/components/layouts.ex:580
+#: lib/animina_web/components/layouts.ex:583
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "Impressum"
@@ -411,7 +411,7 @@ msgstr "Wohnsitz"
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:160
-#: lib/animina_web/live/user_live/registration.ex:459
+#: lib/animina_web/live/user_live/registration.ex:461
 #: lib/animina_web/live/user_live/settings_hub.ex:72
 #, elixir-autogen, elixir-format
 msgid "Locations"
@@ -597,7 +597,7 @@ msgstr "Menschen, die dir gefallen könnten"
 msgid "Personality counts"
 msgstr "Persönlichkeit zählt"
 
-#: lib/animina_web/live/user_live/registration.ex:667
+#: lib/animina_web/live/user_live/registration.ex:669
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Bitte gib eine gültige 5-stellige PLZ ein"
@@ -755,7 +755,7 @@ msgstr "Einstellungen"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Zeige, wer du bist, definiere, was du suchst und wo deine Grenzen liegen."
 
-#: lib/animina_web/components/layouts.ex:680
+#: lib/animina_web/components/layouts.ex:683
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Etwas ist schiefgelaufen!"
@@ -806,7 +806,7 @@ msgstr "Das bin ich"
 msgid "This is what I'm looking for"
 msgstr "Das suche ich"
 
-#: lib/animina_web/live/user_live/registration.ex:676
+#: lib/animina_web/live/user_live/registration.ex:678
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Dieser Wohnsitz wurde bereits hinzugefügt"
@@ -851,7 +851,7 @@ msgstr "Warteliste"
 msgid "We are working on new features and need some breathing room."
 msgstr "Wir arbeiten an neuen Funktionen und brauchen etwas Luft."
 
-#: lib/animina_web/components/layouts.ex:668
+#: lib/animina_web/components/layouts.ex:671
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Keine Internetverbindung gefunden"
@@ -926,13 +926,14 @@ msgstr[1] "Falscher Code. Noch %{count} Versuche übrig."
 msgid "You are on our waitlist. Possible reasons:"
 msgstr "Du stehst auf unserer Warteliste. Mögliche Gründe:"
 
-#: lib/animina_web/user_auth.ex:245
-#: lib/animina_web/user_auth.ex:434
+#: lib/animina_web/user_auth.ex:246
+#: lib/animina_web/user_auth.ex:260
+#: lib/animina_web/user_auth.ex:456
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Du musst dich anmelden, um auf diese Seite zuzugreifen."
 
-#: lib/animina_web/user_auth.ex:298
+#: lib/animina_web/user_auth.ex:320
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Du musst dich erneut authentifizieren, um auf diese Seite zuzugreifen."
@@ -989,17 +990,17 @@ msgstr "Minuten"
 msgid "of"
 msgstr "von"
 
-#: lib/animina_web/live/user_live/registration.ex:507
+#: lib/animina_web/live/user_live/registration.ex:509
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Account erstellen"
 
-#: lib/animina_web/components/layouts.ex:692
+#: lib/animina_web/components/layouts.ex:695
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "ANIMINA wird aktualisiert"
 
-#: lib/animina_web/components/layouts.ex:699
+#: lib/animina_web/components/layouts.ex:702
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "Eine neue Software-Version wird auf dem Server installiert. Das dauert nur einen Moment..."
@@ -1259,11 +1260,14 @@ msgstr "Sprache ändern"
 msgid "Choose your preferred language"
 msgstr "Wähle deine bevorzugte Sprache"
 
+#: lib/animina_web/live/user_live/accept_terms.ex:59
 #: lib/animina_web/live/user_live/registration.ex:451
 #, elixir-autogen, elixir-format
 msgid "I accept the"
 msgstr "Ich akzeptiere die"
 
+#: lib/animina_web/live/user_live/accept_terms.ex:43
+#: lib/animina_web/live/user_live/accept_terms.ex:62
 #: lib/animina_web/live/user_live/registration.ex:452
 #, elixir-autogen, elixir-format
 msgid "Privacy Policy"
@@ -1285,7 +1289,7 @@ msgid "Add Role"
 msgstr "Rolle hinzufügen"
 
 #: lib/animina_web/components/layouts.ex:182
-#: lib/animina_web/components/layouts.ex:622
+#: lib/animina_web/components/layouts.ex:625
 #: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -1314,7 +1318,7 @@ msgid "Manage Roles"
 msgstr "Rollen verwalten"
 
 #: lib/animina_web/components/layouts.ex:187
-#: lib/animina_web/components/layouts.ex:623
+#: lib/animina_web/components/layouts.ex:626
 #: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
@@ -1345,7 +1349,7 @@ msgstr "Rolle wechseln"
 msgid "The user role cannot be removed."
 msgstr "Die Benutzerrolle kann nicht entfernt werden."
 
-#: lib/animina_web/components/layouts.ex:624
+#: lib/animina_web/components/layouts.ex:627
 #: lib/animina_web/live/admin/ollama_debug_live.ex:334
 #: lib/animina_web/live/admin/photo_history_live.ex:177
 #: lib/animina_web/live/admin/photo_reviews_live.ex:601
@@ -1353,8 +1357,8 @@ msgstr "Die Benutzerrolle kann nicht entfernt werden."
 msgid "User"
 msgstr "Benutzer"
 
-#: lib/animina_web/user_auth.ex:262
-#: lib/animina_web/user_auth.ex:280
+#: lib/animina_web/user_auth.ex:284
+#: lib/animina_web/user_auth.ex:302
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page."
 msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen."
@@ -4465,12 +4469,12 @@ msgstr "Quadrat"
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
 msgstr "Dein Foto muss nicht zugeschnitten werden. Klicke auf 'Vollständiges Bild verwenden', um fortzufahren."
 
-#: lib/animina/accounts.ex:144
+#: lib/animina/accounts.ex:156
 #, elixir-autogen, elixir-format
 msgid "Erzähl uns etwas über dich..."
 msgstr ""
 
-#: lib/animina/accounts.ex:145
+#: lib/animina/accounts.ex:157
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself..."
 msgstr "Erzähl uns etwas über dich..."
@@ -5242,3 +5246,82 @@ msgstr "Lieber nicht (-50 Pkt.) — klicken, um zu Ausschlusskriterium (ausgesch
 #, elixir-autogen, elixir-format
 msgid "**bold** *italic* `code` — Enter to send, Shift+Enter for new line"
 msgstr "**fett** *kursiv* `Code` — Enter zum Senden, Shift+Enter für neue Zeile"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:8
+#, elixir-autogen, elixir-format
+msgid "Accept Terms of Service"
+msgstr "Nutzungsbedingungen akzeptieren"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:68
+#, elixir-autogen, elixir-format
+msgid "Accept and continue"
+msgstr "Akzeptieren und fortfahren"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:34
+#, elixir-autogen, elixir-format
+msgid "Account suspension and deletion policies"
+msgstr "Kontosperrung und Löschungsrichtlinien"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:33
+#, elixir-autogen, elixir-format
+msgid "Content moderation by administrators and moderators"
+msgstr "Inhaltsmoderation durch Administratoren und Moderatoren"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:71
+#, elixir-autogen, elixir-format
+msgid "Decline and log out"
+msgstr "Ablehnen und abmelden"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:22
+#, elixir-autogen, elixir-format
+msgid "Please accept our updated Terms of Service to continue using ANIMINA."
+msgstr "Bitte akzeptieren Sie unsere aktualisierten Nutzungsbedingungen, um ANIMINA weiterhin nutzen zu können."
+
+#: lib/animina_web/live/user_live/accept_terms.ex:32
+#, elixir-autogen, elixir-format
+msgid "Rules for using the platform"
+msgstr "Regeln für die Nutzung der Plattform"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:93
+#, elixir-autogen, elixir-format
+msgid "Something went wrong. Please try again."
+msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+
+#: lib/animina_web/components/layouts.ex:580
+#: lib/animina_web/live/user_live/accept_terms.ex:40
+#: lib/animina_web/live/user_live/accept_terms.ex:60
+#: lib/animina_web/live/user_live/registration.ex:454
+#, elixir-autogen, elixir-format
+msgid "Terms of Service"
+msgstr "Allgemeine Geschäftsbedingungen"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:89
+#, elixir-autogen, elixir-format
+msgid "Terms of Service accepted. Welcome back!"
+msgstr "Nutzungsbedingungen akzeptiert. Willkommen zurück!"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:19
+#, elixir-autogen, elixir-format
+msgid "Updated Terms of Service"
+msgstr "Aktualisierte Nutzungsbedingungen"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:29
+#, elixir-autogen, elixir-format
+msgid "We have introduced Terms of Service (AGB) that cover:"
+msgstr "Wir haben Allgemeine Geschäftsbedingungen (AGB) eingeführt, die Folgendes regeln:"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:102
+#, elixir-autogen, elixir-format
+msgid "You can accept the Terms of Service the next time you log in."
+msgstr "Sie können die Nutzungsbedingungen bei Ihrer nächsten Anmeldung akzeptieren."
+
+#: lib/animina_web/live/user_live/accept_terms.ex:35
+#, elixir-autogen, elixir-format
+msgid "Your right to delete your account at any time"
+msgstr "Ihr Recht, Ihr Konto jederzeit zu löschen"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:61
+#: lib/animina_web/live/user_live/registration.ex:453
+#, elixir-autogen, elixir-format
+msgid "and the"
+msgstr "und die"

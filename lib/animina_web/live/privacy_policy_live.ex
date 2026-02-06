@@ -20,7 +20,7 @@ defmodule AniminaWeb.PrivacyPolicyLive do
             <h1 class="text-3xl sm:text-4xl font-light tracking-tight text-base-content">
               Datenschutzerklärung
             </h1>
-            <p class="text-base-content/50 text-sm">Stand: 1. Februar 2026</p>
+            <p class="text-base-content/50 text-sm">Stand: 6. Februar 2026</p>
           </header>
 
           <%!-- ===== PRÄAMBEL ===== --%>
@@ -118,6 +118,9 @@ defmodule AniminaWeb.PrivacyPolicyLive do
                   Kontostatus und Soft-Delete
                 </a>
                 <a href="#mPortability" class="block text-primary hover:underline">Datenexport</a>
+                <a href="#mAdminAccess" class="block text-primary hover:underline">
+                  Admin- und Moderatorzugriff
+                </a>
 
                 <p class="font-semibold text-base-content/60 uppercase text-xs tracking-wider pt-4">
                   Infrastruktur &amp; Kommunikation
@@ -951,6 +954,73 @@ defmodule AniminaWeb.PrivacyPolicyLive do
                 sw@wintermeyer-consulting.de
               </a>
               anfordern. Wir werden Ihrem Antrag innerhalb der gesetzlichen Frist nachkommen.
+            </p>
+          </section>
+
+          <%!-- ===== ADMIN- UND MODERATORZUGRIFF ===== --%>
+          <section id="mAdminAccess" class="space-y-4">
+            <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
+              Admin- und Moderatorzugriff auf Nutzerdaten
+            </h2>
+            <p class="text-base-content/80 leading-relaxed">
+              Zur Sicherstellung eines sicheren und regelkonformen Betriebs der Plattform
+              können autorisierte Administratoren und Moderatoren auf bestimmte Nutzerdaten
+              zugreifen.
+            </p>
+            <div class="space-y-3">
+              <div class="bg-base-200/50 rounded-lg p-4">
+                <h3 class="font-semibold text-base-content text-sm">Zugriffsberechtigte</h3>
+                <p class="text-sm text-base-content/70 mt-1">
+                  Administratoren und Moderatoren der Plattform, die vom Betreiber autorisiert
+                  wurden. Die Anzahl der Berechtigten wird auf das notwendige Minimum
+                  beschränkt.
+                </p>
+              </div>
+              <div class="bg-base-200/50 rounded-lg p-4">
+                <h3 class="font-semibold text-base-content text-sm">Zugängliche Daten</h3>
+                <p class="text-sm text-base-content/70 mt-1">
+                  Profilinformationen, Profilfotos, Moodboard-Inhalte, Nachrichtenverläufe,
+                  Standortdaten (Postleitzahlen) und Kontoinformationen.
+                </p>
+              </div>
+              <div class="bg-base-200/50 rounded-lg p-4">
+                <h3 class="font-semibold text-base-content text-sm">Zweckbindung</h3>
+                <p class="text-sm text-base-content/70 mt-1">
+                  Der Zugriff erfolgt ausschließlich zu folgenden Zwecken: Moderation von
+                  Inhalten, Sicherheit der Nutzer, Bearbeitung von Supportanfragen,
+                  Betrugsbekämpfung sowie Erfüllung gesetzlicher Pflichten (z.&nbsp;B.
+                  behördliche Anfragen).
+                </p>
+              </div>
+              <div class="bg-base-200/50 rounded-lg p-4">
+                <h3 class="font-semibold text-base-content text-sm">Protokollierung</h3>
+                <p class="text-sm text-base-content/70 mt-1">
+                  Zugriffe auf Nutzerdaten durch Administratoren werden in einem Audit-Log
+                  protokolliert, um die Nachvollziehbarkeit und Überprüfbarkeit
+                  sicherzustellen.
+                </p>
+              </div>
+              <div class="bg-base-200/50 rounded-lg p-4">
+                <h3 class="font-semibold text-base-content text-sm">
+                  Löschung durch Administratoren
+                </h3>
+                <p class="text-sm text-base-content/70 mt-1">
+                  Administratoren können bei Verstößen gegen die Nutzungsbedingungen einzelne
+                  Inhalte (Fotos, Nachrichten) oder ganze Nutzerkonten löschen. Betroffene
+                  Nutzer werden über solche Maßnahmen informiert, sofern dies nicht
+                  behördlichen Auflagen widerspricht.
+                </p>
+              </div>
+            </div>
+            <p class="text-sm text-base-content/60">
+              <strong>Rechtsgrundlagen:</strong>
+              Berechtigte Interessen (Art.&nbsp;6 Abs.&nbsp;1 S.&nbsp;1 lit.&nbsp;f DSGVO) –
+              Sicherheit der Plattform und Schutz der Nutzer;
+              Vertragserfüllung (Art.&nbsp;6 Abs.&nbsp;1 S.&nbsp;1 lit.&nbsp;b DSGVO) –
+              Durchsetzung der Nutzungsbedingungen.
+              Siehe auch unsere
+              <a href="/agb" class="text-primary hover:underline">Allgemeinen Geschäftsbedingungen</a>
+              (§ 5, § 6, § 7).
             </p>
           </section>
 

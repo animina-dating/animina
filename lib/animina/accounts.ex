@@ -114,6 +114,18 @@ defmodule Animina.Accounts do
     end
   end
 
+  ## Terms of Service
+
+  @doc """
+  Accepts the Terms of Service for an existing user (re-consent flow).
+  Sets `tos_accepted_at` to the current time.
+  """
+  def accept_terms_of_service(%User{} = user) do
+    user
+    |> User.tos_acceptance_changeset()
+    |> Repo.update()
+  end
+
   ## User registration
 
   @doc """

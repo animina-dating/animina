@@ -48,6 +48,7 @@ defmodule Animina.Accounts.User do
 
     # Additional fields
     field :terms_accepted_at, :utc_datetime
+    field :tos_accepted_at, :utc_datetime
     field :occupation, :string
     field :language, :string, default: "de"
     field :state, :string, default: "waitlisted"
@@ -68,6 +69,7 @@ defmodule Animina.Accounts.User do
 
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
+    field :tos_accepted, :boolean, virtual: true
     field :partner_minimum_age, :integer, virtual: true
     field :partner_maximum_age, :integer, virtual: true
     field :referral_code_input, :string, virtual: true
@@ -293,7 +295,9 @@ defmodule Animina.Accounts.User do
   defp validate_terms_accepted(changeset) do
     case get_change(changeset, :terms_accepted) do
       true ->
-        put_change(changeset, :terms_accepted_at, DateTime.utc_now(:second))
+        changeset
+        |> put_change(:terms_accepted_at, DateTime.utc_now(:second))
+        |> put_change(:tos_accepted_at, DateTime.utc_now(:second))
 
       _ ->
         if get_field(changeset, :terms_accepted_at) do
@@ -302,6 +306,13 @@ defmodule Animina.Accounts.User do
           add_error(changeset, :terms_accepted, "must be accepted")
         end
     end
+  end
+
+  @doc """
+  A changeset for accepting the Terms of Service (re-consent flow).
+  """
+  def tos_acceptance_changeset(user) do
+    change(user, tos_accepted_at: DateTime.utc_now(:second))
   end
 
   @doc """

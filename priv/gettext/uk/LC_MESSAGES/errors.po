@@ -110,22 +110,22 @@ msgstr "повинно бути більше або дорівнювати %{num
 msgid "must be equal to %{number}"
 msgstr "повинно дорівнювати %{number}"
 
-#: lib/animina/accounts.ex:187
+#: lib/animina/accounts.ex:199
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Код запрошення не знайдено"
 
-#: lib/animina/accounts/user.ex:255
+#: lib/animina/accounts/user.ex:257
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "не є дійсним номером телефону"
 
-#: lib/animina/accounts/user.ex:157
+#: lib/animina/accounts/user.ex:159
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "повинно містити 6 символів (літери та цифри)"
 
-#: lib/animina/accounts/user.ex:250
+#: lib/animina/accounts/user.ex:252
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "повинен бути мобільним номером (не стаціонарним)"

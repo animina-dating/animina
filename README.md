@@ -239,6 +239,15 @@ Enable popularity protection via feature flags at `/admin/feature-flags`:
 - `discovery_popularity_score_bonus` — boost for low-popularity users (default: +10)
 - `discovery_popularity_score_penalty` — penalty for high-popularity users (default: -15)
 
+## Legal Compliance
+
+German DSGVO/GDPR compliant with:
+- **Terms of Service (AGB)** at `/agb` — covers moderation rights, user obligations, admin access to content
+- **Privacy Policy** at `/datenschutz` — detailed data processing disclosures including admin/moderator access
+- **Imprint** at `/impressum`
+- **Re-consent flow**: Existing users must accept updated ToS on next login; new users accept during registration
+- **Self-service account deletion** at `/users/settings/delete-account` with 30-day grace period
+
 ## Documentation
 
 - [CLAUDE.md](CLAUDE.md) — development conventions and coding guidelines

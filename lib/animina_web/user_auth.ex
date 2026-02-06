@@ -43,6 +43,7 @@ defmodule AniminaWeb.UserAuth do
 
     redirect_to =
       cond do
+        is_nil(user.tos_accepted_at) -> ~p"/users/accept-terms"
         user_return_to -> user_return_to
         user.state == "waitlisted" -> ~p"/users/waitlist"
         true -> signed_in_path(conn)
@@ -246,6 +247,27 @@ defmodule AniminaWeb.UserAuth do
         |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
 
       {:halt, socket}
+    end
+  end
+
+  def on_mount(:require_authenticated_with_tos, _params, session, socket) do
+    socket = mount_current_scope(socket, session)
+
+    cond do
+      not match?(%{current_scope: %{user: %_{}}}, socket.assigns) ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(:error, gettext("You must log in to access this page."))
+          |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
+
+        {:halt, socket}
+
+      is_nil(socket.assigns.current_scope.user.tos_accepted_at) ->
+        socket = Phoenix.LiveView.redirect(socket, to: ~p"/users/accept-terms")
+        {:halt, socket}
+
+      true ->
+        {:cont, socket}
     end
   end
 

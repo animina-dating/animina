@@ -576,6 +576,9 @@ defmodule AniminaWeb.Layouts do
               <a href="/datenschutz" class="hover:text-primary transition-colors">
                 {gettext("Privacy")}
               </a>
+              <a href="/agb" class="hover:text-primary transition-colors">
+                {gettext("Terms of Service")}
+              </a>
               <a href="/impressum" class="hover:text-primary transition-colors">
                 {gettext("Imprint")}
               </a>
