@@ -170,6 +170,24 @@ defmodule Animina.PhotosFixtures do
   end
 
   @doc """
+  Creates dummy processed WebP files at the legacy flat path (pre-directory-reorganization).
+  Used to test backward compatibility with photos processed before 2.3.1.
+  """
+  def create_legacy_processed_files(photo) do
+    dir = Photos.processed_dir()
+    File.mkdir_p!(dir)
+
+    main_path = Path.join(dir, "#{photo.id}.webp")
+    thumbnail_path = Path.join(dir, "#{photo.id}_thumb.webp")
+
+    webp_data = create_minimal_webp()
+    File.write!(main_path, webp_data)
+    File.write!(thumbnail_path, webp_data)
+
+    {main_path, thumbnail_path}
+  end
+
+  @doc """
   Creates dummy processed WebP files for a photo so the controller can serve it.
   Files are created in the owner-specific subdirectory.
   """

@@ -64,11 +64,9 @@ defmodule Animina.TimeMachine do
     end
 
     defp offset_seconds do
-      try do
-        :persistent_term.get(@key)
-      rescue
-        ArgumentError -> 0
-      end
+      :persistent_term.get(@key)
+    rescue
+      ArgumentError -> 0
     end
 
     defp format_seconds(total) do
