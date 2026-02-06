@@ -18,6 +18,8 @@ defmodule AniminaWeb.MessagesLive do
 
   use AniminaWeb, :live_view
 
+  import AniminaWeb.MessageComponents
+
   alias Animina.Messaging
   alias Animina.Photos
 
@@ -79,32 +81,13 @@ defmodule AniminaWeb.MessagesLive do
         </div>
 
         <%!-- Message Input --%>
-        <div class="pt-4 border-t border-base-300">
-          <%= if @conversation_data && @conversation_data.blocked do %>
-            <div class="text-center text-base-content/50 py-4">
-              {gettext("You cannot send messages in this conversation")}
-            </div>
-          <% else %>
-            <.form for={@form} id="message-form" phx-submit="send_message" phx-change="typing">
-              <div class="flex gap-2 items-end">
-                <textarea
-                  id="message-input"
-                  name="message[content]"
-                  placeholder={gettext("Type a message...")}
-                  class="flex-1 textarea resize-none leading-snug"
-                  rows="1"
-                  phx-debounce="300"
-                  phx-hook="MessageInput"
-                  data-draft-key={"draft:#{@current_scope.user.id}:#{@conversation_data.other_user.id}"}
-                  style="overflow-y: hidden;"
-                >{Phoenix.HTML.Form.normalize_value("textarea", @form[:content].value)}</textarea>
-                <button type="submit" class="btn btn-primary self-end">
-                  <.icon name="hero-paper-airplane" class="h-5 w-5" />
-                </button>
-              </div>
-            </.form>
-          <% end %>
-        </div>
+        <.chat_input
+          form={@form}
+          input_id="message-input"
+          form_id="message-form"
+          draft_key={"draft:#{@current_scope.user.id}:#{@conversation_data && @conversation_data.other_user.id}"}
+          blocked={@conversation_data != nil && @conversation_data.blocked}
+        />
       </div>
     </Layouts.app>
     """
@@ -838,27 +821,6 @@ defmodule AniminaWeb.MessagesLive do
       user = socket.assigns.current_scope.user
       Messaging.save_draft(conversation_data.conversation.id, user.id, content)
     end
-  end
-
-  defp render_markdown(content) do
-    # Prefix each line with a zero-width space to prevent Earmark from treating
-    # HTML-only lines as HTML blocks (which bypass escape: true)
-    safe_content =
-      content
-      |> String.split("\n")
-      |> Enum.map_join("\n", fn line ->
-        if Regex.match?(~r/^\s*</, line), do: "\u200B" <> line, else: line
-      end)
-
-    safe_content
-    |> Earmark.as_html!(escape: true, smartypants: true, breaks: true)
-    |> Phoenix.HTML.raw()
-  end
-
-  defp strip_markdown(content) do
-    content
-    |> String.replace(~r/[*_`~#\[\]()]/, "")
-    |> String.replace(~r/\n+/, " ")
   end
 
   defp load_avatar_photos(conversations) do

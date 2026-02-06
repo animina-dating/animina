@@ -13,6 +13,8 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   use AniminaWeb, :live_component
 
+  import AniminaWeb.MessageComponents
+
   alias Animina.Messaging
   alias Animina.Photos
 
@@ -208,38 +210,16 @@ defmodule AniminaWeb.ChatPanelComponent do
         </div>
 
         <%!-- Input --%>
-        <div class="px-4 py-3 border-t border-base-300">
-          <%= if @blocked do %>
-            <div class="text-center text-base-content/50 py-2 text-sm">
-              {gettext("You cannot send messages in this conversation")}
-            </div>
-          <% else %>
-            <.form
-              for={@form}
-              id="chat-panel-form"
-              phx-submit="send_message"
-              phx-change="chat_typing"
-              phx-target={@myself}
-            >
-              <div class="flex gap-2 items-end">
-                <textarea
-                  id="chat-panel-input"
-                  name="message[content]"
-                  placeholder={gettext("Type a message...")}
-                  class="flex-1 textarea textarea-sm resize-none leading-snug"
-                  rows="1"
-                  phx-debounce="300"
-                  phx-hook="MessageInput"
-                  data-draft-key={"draft:#{@current_user_id}:#{@profile_user.id}"}
-                  style="overflow-y: hidden;"
-                >{Phoenix.HTML.Form.normalize_value("textarea", @form[:content].value)}</textarea>
-                <button type="submit" class="btn btn-primary btn-sm self-end">
-                  <.icon name="hero-paper-airplane" class="h-4 w-4" />
-                </button>
-              </div>
-            </.form>
-          <% end %>
-        </div>
+        <.chat_input
+          form={@form}
+          input_id="chat-panel-input"
+          form_id="chat-panel-form"
+          draft_key={"draft:#{@current_user_id}:#{@profile_user.id}"}
+          blocked={@blocked}
+          size={:sm}
+          phx_target={@myself}
+          typing_event="chat_typing"
+        />
       </div>
     </div>
     """
@@ -646,18 +626,5 @@ defmodule AniminaWeb.ChatPanelComponent do
       diff_days < 7 -> Calendar.strftime(datetime, "%A %H:%M")
       true -> Calendar.strftime(datetime, "%d.%m.%Y %H:%M")
     end
-  end
-
-  defp render_markdown(content) do
-    safe_content =
-      content
-      |> String.split("\n")
-      |> Enum.map_join("\n", fn line ->
-        if Regex.match?(~r/^\s*</, line), do: "\u200B" <> line, else: line
-      end)
-
-    safe_content
-    |> Earmark.as_html!(escape: true, smartypants: true, breaks: true)
-    |> Phoenix.HTML.raw()
   end
 end
