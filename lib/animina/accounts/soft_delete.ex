@@ -18,6 +18,7 @@ defmodule Animina.Accounts.SoftDelete do
 
   alias Animina.Accounts.{User, UserNotifier, UserToken}
   alias Animina.Repo
+  alias Animina.TimeMachine
   alias Animina.Utils.PaperTrail, as: PT
 
   @doc """
@@ -54,7 +55,7 @@ defmodule Animina.Accounts.SoftDelete do
   """
   def get_deleted_user_by_email_and_password(email, password)
       when is_binary(email) and is_binary(password) do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
 
     user =
       from(u in User,
@@ -95,14 +96,14 @@ defmodule Animina.Accounts.SoftDelete do
   def within_grace_period?(%User{deleted_at: nil}), do: false
 
   def within_grace_period?(%User{deleted_at: deleted_at}) do
-    DateTime.after?(deleted_at, DateTime.utc_now())
+    DateTime.after?(deleted_at, TimeMachine.utc_now())
   end
 
   @doc """
   Hard-deletes users whose `deleted_at` is in the past (grace period expired).
   """
   def purge_deleted_users do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
 
     from(u in User,
       where: not is_nil(u.deleted_at),

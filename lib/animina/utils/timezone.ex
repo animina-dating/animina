@@ -3,6 +3,8 @@ defmodule Animina.Utils.Timezone do
   Shared timezone utilities, primarily for Europe/Berlin conversions.
   """
 
+  alias Animina.TimeMachine
+
   @doc """
   Returns the UTC datetime range for "today" in Europe/Berlin timezone.
 
@@ -15,7 +17,7 @@ defmodule Animina.Utils.Timezone do
   """
   def berlin_today_utc_range do
     now_berlin =
-      DateTime.utc_now()
+      TimeMachine.utc_now()
       |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
 
     today_date = DateTime.to_date(now_berlin)
@@ -50,7 +52,7 @@ defmodule Animina.Utils.Timezone do
   """
   def berlin_utc_offset_seconds do
     now_berlin =
-      DateTime.utc_now()
+      TimeMachine.utc_now()
       |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
 
     now_berlin.utc_offset + now_berlin.std_offset

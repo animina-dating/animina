@@ -11,6 +11,7 @@ defmodule Animina.Photos.PhotoAuditLog do
 
   alias Animina.Accounts.User
   alias Animina.Photos.Photo
+  alias Animina.TimeMachine
 
   @valid_event_types ~w(
     photo_uploaded
@@ -69,7 +70,7 @@ defmodule Animina.Photos.PhotoAuditLog do
     |> validate_inclusion(:event_type, @valid_event_types)
     |> validate_inclusion(:actor_type, @valid_actor_types)
     |> validate_number(:duration_ms, greater_than_or_equal_to: 0)
-    |> put_change(:inserted_at, DateTime.utc_now(:second))
+    |> put_change(:inserted_at, TimeMachine.utc_now(:second))
     |> foreign_key_constraint(:photo_id)
     |> foreign_key_constraint(:actor_id)
   end

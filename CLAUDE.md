@@ -54,6 +54,23 @@ Three roles exist: `user` (implicit, always present), `moderator`, and `admin`. 
 
 - All resources use UUIDs for primary keys, not auto-incrementing integers
 
+### Time Convention (TimeMachine)
+
+**ALWAYS** use `Animina.TimeMachine` instead of `DateTime.utc_now()` / `Date.utc_today()` in business logic code. This enables dev-only time travel for testing time-sensitive features (cooldowns, grace periods, statistics, age calculations, etc.).
+
+- `TimeMachine.utc_now()` — replaces `DateTime.utc_now()`
+- `TimeMachine.utc_now(:second)` — replaces `DateTime.utc_now(:second)`
+- `TimeMachine.utc_today()` — replaces `Date.utc_today()`
+
+In prod/test these compile to direct passthroughs with zero overhead. In dev, they respect a time offset set via the "Time Travel" UI in the profile dropdown.
+
+**Exceptions** — keep `DateTime.utc_now()` for:
+- Auth/security: PIN expiry, sudo mode, token validation, `confirmed_at`, `terms_accepted_at`
+- Ecto `timestamps()` (automatic `inserted_at`/`updated_at`)
+- URL signing (`daily_secret`)
+- Ollama debug/timing tools
+- Presence tracking (`System.system_time`)
+
 ### Bug Fix Conventions
 
 When fixing bugs, always verify that the fix doesn't break related functionality. Run relevant tests and manually verify the feature still works end-to-end before considering the task complete.

@@ -15,6 +15,7 @@ defmodule Animina.Accounts do
   alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
   alias Animina.Moodboard
   alias Animina.Repo
+  alias Animina.TimeMachine
   alias Animina.Utils.PaperTrail, as: PT
 
   ## Database getters
@@ -495,7 +496,7 @@ defmodule Animina.Accounts do
   Computes the age from a birthday.
   """
   def compute_age(birthday) do
-    today = Date.utc_today()
+    today = TimeMachine.utc_today()
     age = today.year - birthday.year
     if {today.month, today.day} < {birthday.month, birthday.day}, do: age - 1, else: age
   end

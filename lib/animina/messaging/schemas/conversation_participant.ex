@@ -13,6 +13,7 @@ defmodule Animina.Messaging.Schemas.ConversationParticipant do
 
   alias Animina.Accounts.User
   alias Animina.Messaging.Schemas.Conversation
+  alias Animina.TimeMachine
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -39,11 +40,11 @@ defmodule Animina.Messaging.Schemas.ConversationParticipant do
   end
 
   def mark_read_changeset(participant) do
-    change(participant, last_read_at: DateTime.utc_now(:second))
+    change(participant, last_read_at: TimeMachine.utc_now(:second))
   end
 
   def block_changeset(participant) do
-    change(participant, blocked_at: DateTime.utc_now(:second))
+    change(participant, blocked_at: TimeMachine.utc_now(:second))
   end
 
   def unblock_changeset(participant) do
@@ -54,7 +55,7 @@ defmodule Animina.Messaging.Schemas.ConversationParticipant do
     if content == nil || content == "" do
       change(participant, draft_content: nil, draft_updated_at: nil)
     else
-      change(participant, draft_content: content, draft_updated_at: DateTime.utc_now(:second))
+      change(participant, draft_content: content, draft_updated_at: TimeMachine.utc_now(:second))
     end
   end
 end

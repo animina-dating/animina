@@ -14,6 +14,7 @@ defmodule Animina.Messaging.Schemas.Message do
 
   alias Animina.Accounts.User
   alias Animina.Messaging.Schemas.Conversation
+  alias Animina.TimeMachine
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -42,11 +43,11 @@ defmodule Animina.Messaging.Schemas.Message do
 
   def edit_changeset(message, new_content) do
     message
-    |> change(content: new_content, edited_at: DateTime.utc_now(:second))
+    |> change(content: new_content, edited_at: TimeMachine.utc_now(:second))
     |> validate_length(:content, min: 1, max: @max_content_length)
   end
 
   def delete_changeset(message) do
-    change(message, deleted_at: DateTime.utc_now(:second))
+    change(message, deleted_at: TimeMachine.utc_now(:second))
   end
 end

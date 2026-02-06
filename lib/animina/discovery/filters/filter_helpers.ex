@@ -4,6 +4,7 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   """
 
   alias Animina.GeoData
+  alias Animina.TimeMachine
 
   @doc """
   Extracts the viewer's primary location coordinates (lat/lon).
@@ -26,7 +27,7 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   def compute_age(nil), do: nil
 
   def compute_age(birthday) do
-    today = Date.utc_today()
+    today = TimeMachine.utc_today()
     age = today.year - birthday.year
 
     if {today.month, today.day} < {birthday.month, birthday.day},

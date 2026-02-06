@@ -15,6 +15,7 @@ defmodule Animina.Messaging.UnreadNotifier do
   alias Animina.Messaging
   alias Animina.Messaging.Schemas.{ConversationParticipant, Message}
   alias Animina.Repo
+  alias Animina.TimeMachine
 
   require Logger
 
@@ -37,7 +38,7 @@ defmodule Animina.Messaging.UnreadNotifier do
   and haven't been notified in the last 24 hours.
   """
   def users_with_old_unread_messages do
-    cutoff_24h_ago = DateTime.utc_now() |> DateTime.add(-24, :hour)
+    cutoff_24h_ago = TimeMachine.utc_now() |> DateTime.add(-24, :hour)
 
     # Find users with unread messages older than 24h
     User
@@ -90,7 +91,7 @@ defmodule Animina.Messaging.UnreadNotifier do
 
   defp update_notified_at(user) do
     user
-    |> Ecto.Changeset.change(last_message_notified_at: DateTime.utc_now(:second))
+    |> Ecto.Changeset.change(last_message_notified_at: TimeMachine.utc_now(:second))
     |> Repo.update()
   end
 end

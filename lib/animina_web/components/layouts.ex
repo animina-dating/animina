@@ -8,7 +8,10 @@ defmodule AniminaWeb.Layouts do
   alias Animina.Accounts.Scope
   alias Animina.FeatureFlags
   alias Animina.Photos
+  alias Animina.TimeMachine
   alias AniminaWeb.Languages
+
+  @dev Application.compile_env(:animina, :dev_routes)
 
   # Embed all files in layouts/* within this module.
   # The default root.html.heex file contains the HTML
@@ -47,7 +50,10 @@ defmodule AniminaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
-    assigns = assign(assigns, :languages, Languages.all())
+    assigns =
+      assigns
+      |> assign(:languages, Languages.all())
+      |> assign(:dev, @dev)
 
     ~H"""
     <div class={[
@@ -384,6 +390,55 @@ defmodule AniminaWeb.Layouts do
                             </form>
                           <% end %>
                         <% end %>
+                      </div>
+                    <% end %>
+                    <!-- Time Travel (dev only) -->
+                    <%= if @dev do %>
+                      <div class="border-t border-amber-300 mt-1 bg-amber-50/50">
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">
+                            Time Travel
+                          </p>
+                        </div>
+                        <div class="px-4 py-1 text-xs text-amber-700">
+                          {TimeMachine.virtual_now()}
+                        </div>
+                        <%= if TimeMachine.format_offset() do %>
+                          <div class="px-4 py-0.5 text-xs font-mono font-medium text-amber-800">
+                            {TimeMachine.format_offset()}
+                          </div>
+                        <% end %>
+                        <div class="flex gap-1 px-4 py-2">
+                          <form action="/dev/time-travel/add-hours" method="post" class="inline">
+                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                            <input type="hidden" name="hours" value="1" />
+                            <button
+                              type="submit"
+                              class="px-2 py-1 text-xs font-medium rounded bg-amber-200 text-amber-800 hover:bg-amber-300 transition-colors"
+                            >
+                              +1h
+                            </button>
+                          </form>
+                          <form action="/dev/time-travel/add-days" method="post" class="inline">
+                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                            <input type="hidden" name="days" value="1" />
+                            <button
+                              type="submit"
+                              class="px-2 py-1 text-xs font-medium rounded bg-amber-200 text-amber-800 hover:bg-amber-300 transition-colors"
+                            >
+                              +1d
+                            </button>
+                          </form>
+                          <form action="/dev/time-travel/reset" method="post" class="inline">
+                            <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
+                            <button
+                              type="submit"
+                              class="px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-700 hover:bg-amber-200 transition-colors"
+                            >
+                              Reset
+                            </button>
+                          </form>
+                        </div>
                       </div>
                     <% end %>
                     <!-- Logout -->

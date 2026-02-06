@@ -63,6 +63,14 @@ defmodule AniminaWeb.Router do
       live_dashboard "/dashboard", metrics: AniminaWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+
+    scope "/dev", AniminaWeb do
+      pipe_through :browser
+
+      post "/time-travel/add-hours", TimeMachineController, :add_hours
+      post "/time-travel/add-days", TimeMachineController, :add_days
+      post "/time-travel/reset", TimeMachineController, :reset
+    end
   end
 
   ## Authentication routes

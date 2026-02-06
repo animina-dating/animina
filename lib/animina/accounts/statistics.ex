@@ -7,6 +7,7 @@ defmodule Animina.Accounts.Statistics do
 
   alias Animina.Accounts.{OnlineUserCount, User}
   alias Animina.Repo
+  alias Animina.TimeMachine
   alias Animina.Utils.Timezone
   alias Ecto.Adapters.SQL
 
@@ -90,21 +91,21 @@ defmodule Animina.Accounts.Statistics do
   Counts the number of users who registered and confirmed within the last 24 hours.
   """
   def count_confirmed_users_last_24h do
-    count_confirmed_users_since(DateTime.utc_now() |> DateTime.add(-24, :hour))
+    count_confirmed_users_since(TimeMachine.utc_now() |> DateTime.add(-24, :hour))
   end
 
   @doc """
   Counts confirmed users whose `inserted_at` falls within the last 7 days.
   """
   def count_confirmed_users_last_7_days do
-    count_confirmed_users_since(DateTime.utc_now() |> DateTime.add(-7, :day))
+    count_confirmed_users_since(TimeMachine.utc_now() |> DateTime.add(-7, :day))
   end
 
   @doc """
   Counts confirmed users whose `inserted_at` falls within the last 28 days.
   """
   def count_confirmed_users_last_28_days do
-    count_confirmed_users_since(DateTime.utc_now() |> DateTime.add(-28, :day))
+    count_confirmed_users_since(TimeMachine.utc_now() |> DateTime.add(-28, :day))
   end
 
   defp count_confirmed_users_since(cutoff) do
@@ -185,7 +186,7 @@ defmodule Animina.Accounts.Statistics do
   """
   def record_online_user_count(count) do
     %OnlineUserCount{}
-    |> OnlineUserCount.changeset(%{count: count, recorded_at: DateTime.utc_now(:second)})
+    |> OnlineUserCount.changeset(%{count: count, recorded_at: TimeMachine.utc_now(:second)})
     |> Repo.insert()
   end
 
@@ -281,7 +282,7 @@ defmodule Animina.Accounts.Statistics do
   Deletes online user count records older than `days` days. Defaults to 30.
   """
   def purge_old_online_user_counts(days \\ 30) do
-    cutoff = DateTime.utc_now() |> DateTime.add(-days, :day)
+    cutoff = TimeMachine.utc_now() |> DateTime.add(-days, :day)
 
     from(o in OnlineUserCount, where: o.recorded_at < ^cutoff)
     |> Repo.delete_all()

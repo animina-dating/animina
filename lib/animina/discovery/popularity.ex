@@ -28,6 +28,7 @@ defmodule Animina.Discovery.Popularity do
   alias Animina.Discovery.Schemas.{Inquiry, PopularityStat}
   alias Animina.Discovery.Settings
   alias Animina.Repo
+  alias Animina.TimeMachine
 
   # --- Inquiry Recording ---
 
@@ -44,7 +45,7 @@ defmodule Animina.Discovery.Popularity do
     attrs = %{
       sender_id: sender_id,
       receiver_id: receiver_id,
-      inquiry_date: Date.utc_today()
+      inquiry_date: TimeMachine.utc_today()
     }
 
     %Inquiry{}
@@ -98,7 +99,7 @@ defmodule Animina.Discovery.Popularity do
   """
   def exceeded_daily_limit?(user_id) do
     limit = Settings.daily_inquiry_limit()
-    count = get_daily_count(user_id, Date.utc_today())
+    count = get_daily_count(user_id, TimeMachine.utc_today())
     count >= limit
   end
 
@@ -109,7 +110,7 @@ defmodule Animina.Discovery.Popularity do
   """
   def users_exceeding_daily_limit do
     limit = Settings.daily_inquiry_limit()
-    today = Date.utc_today()
+    today = TimeMachine.utc_today()
 
     Inquiry
     |> where([i], i.inquiry_date == ^today)
@@ -225,7 +226,7 @@ defmodule Animina.Discovery.Popularity do
   Deletes stats older than the specified number of days (default: 60).
   """
   def cleanup_old_stats(days_to_keep \\ 60) do
-    cutoff = Date.add(Date.utc_today(), -days_to_keep)
+    cutoff = Date.add(TimeMachine.utc_today(), -days_to_keep)
 
     {count, _} =
       PopularityStat

@@ -7,6 +7,8 @@ defmodule Animina.Accounts.User do
   import Ecto.Changeset
   use Gettext, backend: AniminaWeb.Gettext
 
+  alias Animina.TimeMachine
+
   @valid_genders ~w(male female diverse)
   @valid_languages ~w(de en tr ru ar pl fr es uk)
 
@@ -190,7 +192,7 @@ defmodule Animina.Accounts.User do
   defp maybe_put_max_offset(changeset, _user_age, _max_age), do: changeset
 
   defp compute_user_age(birthday) do
-    today = Date.utc_today()
+    today = TimeMachine.utc_today()
     age = today.year - birthday.year
 
     if {today.month, today.day} < {birthday.month, birthday.day},
@@ -260,7 +262,7 @@ defmodule Animina.Accounts.User do
         changeset
 
       birthday ->
-        today = Date.utc_today()
+        today = TimeMachine.utc_today()
         age = Date.diff(today, birthday) |> div(365)
 
         if age < 18 do
@@ -519,7 +521,7 @@ defmodule Animina.Accounts.User do
     grace_days = Animina.FeatureFlags.soft_delete_grace_days()
 
     hard_delete_date =
-      DateTime.utc_now()
+      TimeMachine.utc_now()
       |> DateTime.add(grace_days, :day)
       |> DateTime.truncate(:second)
 

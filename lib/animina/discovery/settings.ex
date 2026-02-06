@@ -5,6 +5,7 @@ defmodule Animina.Discovery.Settings do
   """
 
   alias Animina.FeatureFlags
+  alias Animina.TimeMachine
 
   # --- General Settings ---
 
@@ -159,7 +160,7 @@ defmodule Animina.Discovery.Settings do
   Users shown after this date are still in cooldown.
   """
   def cooldown_cutoff_date do
-    DateTime.utc_now()
+    TimeMachine.utc_now()
     |> DateTime.add(-cooldown_days(), :day)
     |> DateTime.truncate(:second)
   end
@@ -169,7 +170,7 @@ defmodule Animina.Discovery.Settings do
   Users registered after this date get the boost.
   """
   def new_user_cutoff_date do
-    DateTime.utc_now()
+    TimeMachine.utc_now()
     |> DateTime.add(-new_user_boost_days(), :day)
     |> DateTime.truncate(:second)
   end

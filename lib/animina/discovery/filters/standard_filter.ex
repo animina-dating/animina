@@ -24,6 +24,7 @@ defmodule Animina.Discovery.Filters.StandardFilter do
   alias Animina.Discovery.Popularity
   alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
   alias Animina.Discovery.Settings
+  alias Animina.TimeMachine
 
   @impl true
   def filter_candidates(query, viewer, opts) do
@@ -122,7 +123,7 @@ defmodule Animina.Discovery.Filters.StandardFilter do
       viewer_max_age = viewer_age + (viewer.partner_maximum_age_offset || 2)
 
       # Date boundaries for candidates
-      today = Date.utc_today()
+      today = TimeMachine.utc_today()
       max_birthday = Date.add(today, -viewer_min_age * 365)
       min_birthday = Date.add(today, -viewer_max_age * 365)
 

@@ -45,6 +45,7 @@ defmodule Animina.Discovery do
   alias Animina.Discovery.Schemas.{Dismissal, ProfileVisit, SuggestionView}
   alias Animina.Discovery.{Settings, SuggestionGenerator}
   alias Animina.Repo
+  alias Animina.TimeMachine
 
   # --- Suggestion Generation ---
 
@@ -254,7 +255,7 @@ defmodule Animina.Discovery do
     %ProfileVisit{}
     |> ProfileVisit.changeset(attrs)
     |> Repo.insert(
-      on_conflict: [set: [updated_at: DateTime.utc_now(:second)]],
+      on_conflict: [set: [updated_at: TimeMachine.utc_now(:second)]],
       conflict_target: [:visitor_id, :visited_id]
     )
   end

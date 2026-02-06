@@ -24,6 +24,7 @@ defmodule Animina.Moodboard.Items do
   alias Animina.Photos
   alias Animina.Photos.PhotoProcessor
   alias Animina.Repo
+  alias Animina.TimeMachine
 
   # --- PubSub helpers ---
 
@@ -307,7 +308,7 @@ defmodule Animina.Moodboard.Items do
         |> Enum.each(fn {item_id, position} ->
           MoodboardItem
           |> where([i], i.id == ^item_id and i.user_id == ^user_id and i.pinned == false)
-          |> Repo.update_all(set: [position: position, updated_at: DateTime.utc_now(:second)])
+          |> Repo.update_all(set: [position: position, updated_at: TimeMachine.utc_now(:second)])
         end)
 
         :ok
@@ -351,7 +352,7 @@ defmodule Animina.Moodboard.Items do
     result =
       item
       |> MoodboardItem.state_changeset("hidden", %{
-        hidden_at: DateTime.utc_now(:second),
+        hidden_at: TimeMachine.utc_now(:second),
         hidden_reason: reason
       })
       |> Repo.update()
