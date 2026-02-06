@@ -122,3 +122,7 @@ Translation work is split across sessions to avoid context limits.
 7. **Email templates** — translate remaining locale directories under `priv/email_templates/{locale}/` in the same translation sessions.
 
 8. **Reference `TRANSLATING.md`** for full details on file structure, plural rules, and translation workflow.
+
+### Discovery Algorithm Documentation
+
+When modifying any code in `lib/animina/discovery/`, `lib/animina/traits/matching.ex`, or the discovery-related feature flags in `lib/animina/feature_flags/`, update `DISCOVERY_ALGORITHM.md` to reflect the changes. This includes changes to filters, scoring weights, category multipliers, popularity protection, or the overall pipeline flow.

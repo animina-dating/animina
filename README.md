@@ -245,6 +245,7 @@ Enable popularity protection via feature flags at `/admin/feature-flags`:
 - [DEPLOYMENT.md](DEPLOYMENT.md) — production deployment with hot code upgrades and CI/CD
 - [TRANSLATING.md](TRANSLATING.md) — i18n workflow for all 9 languages
 - [DESIGN.md](DESIGN.md) — design system ("Coastal Morning" theme, DaisyUI components)
+- [DISCOVERY_ALGORITHM.md](DISCOVERY_ALGORITHM.md) — how the matching algorithm works (filtering, scoring, examples)
 - [docs/features/](docs/features/) — detailed feature specifications
 
 ## License
