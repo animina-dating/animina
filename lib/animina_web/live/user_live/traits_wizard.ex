@@ -4,7 +4,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   alias Animina.Traits
   alias AniminaWeb.TraitTranslations
 
-  @step_colors %{1 => "white", 2 => "green", 3 => "red"}
+  @step_params %{1 => "white", 2 => "green", 3 => "red"}
 
   @impl true
   def render(assigns) do
@@ -39,7 +39,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
             count={flag_count(@user_flags, "white")}
           />
           <div class={[
-            "h-0.5 w-12",
+            "h-0.5 w-8 sm:w-12",
             if(@current_step > 1, do: "bg-success", else: "bg-base-300")
           ]}>
           </div>
@@ -50,7 +50,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
             count={flag_count(@user_flags, "green")}
           />
           <div class={[
-            "h-0.5 w-12",
+            "h-0.5 w-8 sm:w-12",
             if(@current_step > 2, do: "bg-error", else: "bg-base-300")
           ]}>
           </div>
@@ -71,25 +71,43 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         </p>
 
         <%!-- Intensity legend for green and red steps --%>
-        <div :if={@current_step in [2, 3]} class="flex flex-wrap items-center gap-3 mb-6 text-xs">
+        <div
+          :if={@current_step in [2, 3]}
+          class="flex flex-wrap items-center gap-3 mb-6 text-xs"
+        >
           <span class="text-base-content/60">{gettext("Click to cycle:")}</span>
-          <span class={[
-            "btn btn-xs gap-1 pointer-events-none btn-dash",
-            step_btn_class(@current_step)
-          ]}>
-            {intensity_soft_label(@current_step)}
-          </span>
+          <div class="flex flex-col items-center">
+            <span class={[
+              "btn btn-xs gap-1 pointer-events-none btn-dash",
+              step_btn_class(@current_step)
+            ]}>
+              {intensity_soft_label(@current_step)}
+            </span>
+            <span class="text-xs text-base-content/50 mt-0.5">
+              {intensity_impact_label(@current_step, :soft)}
+            </span>
+          </div>
           <span class="text-base-content/40">&rarr;</span>
-          <span class={[
-            "btn btn-xs gap-1 pointer-events-none",
-            step_btn_class(@current_step)
-          ]}>
-            {intensity_hard_label(@current_step)}
-          </span>
+          <div class="flex flex-col items-center">
+            <span class={[
+              "btn btn-xs gap-1 pointer-events-none",
+              step_btn_class(@current_step)
+            ]}>
+              {intensity_hard_label(@current_step)}
+            </span>
+            <span class="text-xs text-base-content/50 mt-0.5">
+              {intensity_impact_label(@current_step, :hard)}
+            </span>
+          </div>
           <span class="text-base-content/40">&rarr;</span>
-          <span class="btn btn-xs gap-1 pointer-events-none btn-outline">
-            {gettext("off")}
-          </span>
+          <div class="flex flex-col items-center">
+            <span class="btn btn-xs gap-1 pointer-events-none btn-outline">
+              {gettext("off")}
+            </span>
+            <span class="text-xs text-base-content/50 mt-0.5">
+              {gettext("0 pts")}
+            </span>
+          </div>
         </div>
 
         <%!-- Core categories with their flags --%>
@@ -279,6 +297,12 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           ]}
         >
           <span>{flag.emoji}</span> {TraitTranslations.translate(flag.name)}
+          <span
+            :if={flag_points_label(@user_flags, flag.id, @current_step)}
+            class="text-xs opacity-60"
+          >
+            {flag_points_label(@user_flags, flag.id, @current_step)}
+          </span>
         </button>
       </div>
     </div>
@@ -350,13 +374,13 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp step_explanation(2),
     do:
       gettext(
-        "Select traits you'd like your partner to have. Click once for nice to have, again for must have. These flags are always private and only used for matching."
+        "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
       )
 
   defp step_explanation(3),
     do:
       gettext(
-        "Select traits you don't want in a partner. Click once for prefer not, again for deal breaker. These flags are always private and only used for matching."
+        "Select traits you don't want in a partner. Click once for prefer not (-50 pts, still visible), again for deal breaker (excluded — hides profiles with this trait). These flags are always private."
       )
 
   defp step_subtitle(1),
@@ -374,7 +398,12 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp intensity_soft_label(2), do: gettext("nice to have")
   defp intensity_soft_label(3), do: gettext("prefer not")
 
-  defp step_color(step), do: Map.fetch!(@step_colors, step)
+  defp intensity_impact_label(2, :soft), do: gettext("+10 pts")
+  defp intensity_impact_label(2, :hard), do: gettext("Required")
+  defp intensity_impact_label(3, :soft), do: gettext("-50 pts")
+  defp intensity_impact_label(3, :hard), do: gettext("Excluded")
+
+  defp step_color(step) when step in [1, 2, 3], do: Map.fetch!(@step_params, step)
 
   defp step_color_class(1), do: "text-base-content"
   defp step_color_class(2), do: "text-success"
@@ -400,22 +429,34 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     case find_user_flag(user_flags, flag_id, color) do
       nil ->
         if step == 2,
-          do: gettext("click to set as nice to have"),
-          else: gettext("click to set as prefer not")
+          do: gettext("click to set as nice to have (+10 pts)"),
+          else: gettext("click to set as prefer not (-50 pts)")
 
       %{intensity: "soft"} ->
         if step == 2,
-          do: gettext("nice to have — click to change to must have"),
-          else: gettext("prefer not — click to change to deal breaker")
+          do: gettext("nice to have (+10 pts) — click to change to must have (required)"),
+          else: gettext("prefer not (-50 pts) — click to change to deal breaker (excluded)")
 
       %{intensity: "hard"} ->
         if step == 2,
-          do: gettext("must have — click to remove"),
-          else: gettext("deal breaker — click to remove")
+          do: gettext("must have (required) — click to remove"),
+          else: gettext("deal breaker (excluded) — click to remove")
     end
   end
 
   defp flag_tooltip(_user_flags, _flag_id, _step), do: nil
+
+  defp flag_points_label(user_flags, flag_id, step) when step in [2, 3] do
+    color = step_color(step)
+
+    case find_user_flag(user_flags, flag_id, color) do
+      %{intensity: "soft"} -> intensity_impact_label(step, :soft)
+      %{intensity: "hard"} -> intensity_impact_label(step, :hard)
+      nil -> nil
+    end
+  end
+
+  defp flag_points_label(_user_flags, _flag_id, _step), do: nil
 
   # A flag is "taken" on step 2 (green) if it's already selected as red, and vice versa.
   defp flag_taken?(user_flags, flag_id, 2),
@@ -655,7 +696,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   end
 
   defp traits_path(step) do
-    ~p"/users/settings/traits?step=#{@step_colors[step]}"
+    ~p"/users/settings/traits?step=#{@step_params[step]}"
   end
 
   defp step_from_param("green"), do: 2

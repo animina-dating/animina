@@ -54,7 +54,7 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
       assert html =~ "About Me"
     end
 
-    test "step 3 shows Deal Breakers with Finish button", %{conn: conn} do
+    test "step 3 shows Deal Breakers with Finish link", %{conn: conn} do
       {:ok, view, _html} = live(conn, ~p"/users/settings/traits")
 
       # Navigate to step 2
@@ -203,6 +203,73 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
 
       assert html =~ "deal breaker"
       assert html =~ "prefer not"
+    end
+
+    test "step 2 legend shows scoring impact labels", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/users/settings/traits?step=green")
+
+      assert html =~ "+10 pts"
+      assert html =~ "Required"
+    end
+
+    test "step 3 legend shows scoring impact labels", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/users/settings/traits?step=red")
+
+      assert html =~ "-50 pts"
+      assert html =~ "Excluded"
+    end
+
+    test "step 1 does not show scoring impact labels", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/users/settings/traits")
+
+      refute html =~ "+10 pts"
+      refute html =~ "-50 pts"
+    end
+
+    test "selecting a green flag on step 2 shows point badge on button", %{
+      conn: conn,
+      flag1: flag1
+    } do
+      {:ok, view, _html} = live(conn, ~p"/users/settings/traits?step=green")
+
+      # Click flag to select as nice to have (soft)
+      html =
+        view
+        |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
+        |> render_click()
+
+      assert html =~ "+10 pts"
+
+      # Click again to cycle to must have (hard) — shows "Required"
+      html =
+        view
+        |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
+        |> render_click()
+
+      assert html =~ "Required"
+    end
+
+    test "selecting a red-hard flag on step 3 shows Excluded on button", %{
+      conn: conn,
+      flag1: flag1
+    } do
+      {:ok, view, _html} = live(conn, ~p"/users/settings/traits?step=red")
+
+      # Click flag to select as prefer not (soft)
+      html =
+        view
+        |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
+        |> render_click()
+
+      assert html =~ "-50 pts"
+
+      # Click again to cycle to deal breaker (hard) — shows "Excluded"
+      html =
+        view
+        |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
+        |> render_click()
+
+      assert html =~ "Excluded"
     end
 
     test "green flags selected as red are disabled on step 2", %{conn: conn, flag1: flag1} do

@@ -8,9 +8,11 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
   - Users who want to see more potential matches
 
   Differences from StandardFilter:
-  - Bidirectional filters are optional (one-way matching allowed)
   - Distance filter is more lenient (2x the search radius)
   - Incomplete profiles are always included
+
+  All gender, age, and height filters remain **bidirectional** — both sides
+  must satisfy the other's preferences.
   """
 
   @behaviour Animina.Discovery.Behaviours.Filter
@@ -31,9 +33,9 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
     |> exclude_soft_deleted()
     |> filter_by_state()
     |> filter_by_distance_relaxed(viewer)
-    |> filter_by_gender_one_way(viewer)
-    |> filter_by_age_one_way(viewer)
-    |> filter_by_height_one_way(viewer)
+    |> filter_by_bidirectional_gender(viewer)
+    |> filter_by_bidirectional_age(viewer)
+    |> filter_by_bidirectional_height(viewer)
     |> exclude_dismissed(viewer)
     |> exclude_recently_shown(viewer, list_type)
     |> maybe_exclude_at_daily_limit()
@@ -82,18 +84,26 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
     end
   end
 
-  defp filter_by_gender_one_way(query, viewer) do
-    # Only apply one-way filter: candidate must match viewer's preferences
+  defp filter_by_bidirectional_gender(query, viewer) do
+    viewer_gender = viewer.gender
     viewer_prefs = viewer.preferred_partner_gender || []
 
-    if viewer_prefs == [] do
-      query
-    else
-      where(query, [u], u.gender in ^viewer_prefs)
-    end
+    query =
+      if viewer_prefs == [] do
+        query
+      else
+        where(query, [u], u.gender in ^viewer_prefs)
+      end
+
+    where(
+      query,
+      [u],
+      fragment("cardinality(?) = 0", u.preferred_partner_gender) or
+        fragment("? @> ARRAY[?]::varchar[]", u.preferred_partner_gender, ^viewer_gender)
+    )
   end
 
-  defp filter_by_age_one_way(query, viewer) do
+  defp filter_by_bidirectional_age(query, viewer) do
     viewer_age = FilterHelpers.compute_age(viewer.birthday)
 
     if viewer_age do
@@ -104,23 +114,57 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
       max_birthday = Date.add(today, -viewer_min_age * 365)
       min_birthday = Date.add(today, -viewer_max_age * 365)
 
-      # Only one-way: candidate within viewer's age range
-      where(query, [u], u.birthday >= ^min_birthday and u.birthday <= ^max_birthday)
+      query
+      # Candidate must be within viewer's age range
+      |> where([u], u.birthday >= ^min_birthday and u.birthday <= ^max_birthday)
+      # Viewer must be within candidate's age range (bidirectional)
+      |> where(
+        [u],
+        fragment(
+          "? >= (EXTRACT(YEAR FROM age(current_date, ?)) - COALESCE(?, 6))",
+          ^viewer_age,
+          u.birthday,
+          u.partner_minimum_age_offset
+        )
+      )
+      |> where(
+        [u],
+        fragment(
+          "? <= (EXTRACT(YEAR FROM age(current_date, ?)) + COALESCE(?, 2))",
+          ^viewer_age,
+          u.birthday,
+          u.partner_maximum_age_offset
+        )
+      )
     else
       query
     end
   end
 
-  defp filter_by_height_one_way(query, viewer) do
+  defp filter_by_bidirectional_height(query, viewer) do
+    viewer_height = viewer.height
     viewer_min_height = viewer.partner_height_min || 80
     viewer_max_height = viewer.partner_height_max || 225
 
-    # Only one-way: candidate within viewer's height range
-    where(
-      query,
-      [u],
-      is_nil(u.height) or (u.height >= ^viewer_min_height and u.height <= ^viewer_max_height)
-    )
+    if viewer_height do
+      query
+      # Candidate must be within viewer's height range
+      |> where(
+        [u],
+        is_nil(u.height) or (u.height >= ^viewer_min_height and u.height <= ^viewer_max_height)
+      )
+      # Viewer must be within candidate's height range (bidirectional)
+      |> where(
+        [u],
+        is_nil(u.partner_height_min) or ^viewer_height >= u.partner_height_min
+      )
+      |> where(
+        [u],
+        is_nil(u.partner_height_max) or ^viewer_height <= u.partner_height_max
+      )
+    else
+      query
+    end
   end
 
   defp exclude_dismissed(query, viewer) do

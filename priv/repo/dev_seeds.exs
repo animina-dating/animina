@@ -44,7 +44,12 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Maximilian", email: "dev-maximilian@animina.test", age: 36, roles: []},
     %{name: "Jens", email: "dev-jens@animina.test", age: 43, roles: []},
     %{name: "Dennis", email: "dev-dennis@animina.test", age: 28, roles: []},
-    %{name: "Nico", email: "dev-nico@animina.test", age: 25, roles: []}
+    %{name: "Nico", email: "dev-nico@animina.test", age: 25, roles: []},
+    %{name: "Oliver", email: "dev-oliver@animina.test", age: 34, roles: []},
+    %{name: "Robert", email: "dev-robert@animina.test", age: 39, roles: []},
+    %{name: "Konstantin", email: "dev-konstantin@animina.test", age: 30, roles: []},
+    %{name: "Benjamin", email: "dev-benjamin@animina.test", age: 27, roles: []},
+    %{name: "Moritz", email: "dev-moritz@animina.test", age: 33, roles: []}
   ]
 
   @female_users [
@@ -72,7 +77,12 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Kerstin", email: "dev-kerstin@animina.test", age: 33, roles: []},
     %{name: "Bianca", email: "dev-bianca@animina.test", age: 26, roles: []},
     %{name: "Simone", email: "dev-simone@animina.test", age: 40, roles: []},
-    %{name: "Petra", email: "dev-petra@animina.test", age: 45, roles: []}
+    %{name: "Petra", email: "dev-petra@animina.test", age: 45, roles: []},
+    %{name: "Elena", email: "dev-elena@animina.test", age: 31, roles: []},
+    %{name: "Charlotte", email: "dev-charlotte@animina.test", age: 28, roles: []},
+    %{name: "Franziska", email: "dev-franziska@animina.test", age: 35, roles: []},
+    %{name: "Marie", email: "dev-marie@animina.test", age: 29, roles: []},
+    %{name: "Lena", email: "dev-lena@animina.test", age: 32, roles: []}
   ]
 
   @german_story_contents [
@@ -292,6 +302,244 @@ defmodule Animina.Seeds.DevUsers do
     "female/avatar-25.jpg"
   ]
 
+  # 10 personality profiles designed as 5 complementary pairs.
+  # Males cycle 0..9, females cycle 1..9,0 (offset by 1) so complementary
+  # profiles land on opposite genders for high discovery scores.
+  @trait_profiles [
+    # Profile 0: Adventurer — loves outdoor action, travel, rock music
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Love of Adventure", "Courage", "Active", "Self-Confidence", "Humor"],
+        "Sports" => ["Hiking", "Climbing", "Surfing", "Cycling"],
+        "Travels" => ["Hiking Vacation", "Active and Sports Vacation", "Camping"],
+        "Favorite Destinations" => ["Norway", "Australia", "Canada"],
+        "Music" => ["Rock", "Indie", "Alternative"],
+        "At Home" => ["Fitness Exercises", "Podcasts", "Cooking"],
+        "Going Out" => ["Festivals", "Concerts"],
+        "Food" => ["BBQ", "Street Food", "Mexican"],
+        "Creativity" => ["Photography", "Video Production"]
+      },
+      green: %{
+        "Character" => ["Love of Adventure", "Active", "Humor"],
+        "What I'm Looking For" => ["Long-term Relationship", "Shared Activities"],
+        "Sports" => ["Hiking", "Climbing"]
+      },
+      red: %{
+        "Diet" => ["Vegan"]
+      }
+    },
+    # Profile 1: Nature Soul — calm outdoors lover, wellness, folk music
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Empathy", "Caring", "Modesty", "Active", "Love of Adventure"],
+        "Sports" => ["Hiking", "Yoga", "Swimming", "Jogging"],
+        "Travels" => ["Hiking Vacation", "Wellness", "Beach"],
+        "Favorite Destinations" => ["Austria", "Switzerland", "Norway"],
+        "Music" => ["Folk", "Indie", "Classical"],
+        "At Home" => ["Gardening", "Reading", "Meditation", "Cooking"],
+        "Going Out" => ["Cafes", "Museums & Galleries"],
+        "Food" => ["Healthy Food", "Mediterranean", "Italian"],
+        "Self Care" => ["Mindfulness", "Good Sleep", "Nutrition"],
+        "Pets" => ["Dog", "Cat"]
+      },
+      green: %{
+        "Character" => ["Love of Adventure", "Active", "Empathy", "Caring"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Sports" => ["Hiking", "Yoga"]
+      },
+      red: %{
+        "Substance Use" => ["Hard Drugs"]
+      }
+    },
+    # Profile 2: Creative — artistic, music-loving, design-focused
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Dates"],
+        "Character" => ["Creativity", "Intelligence", "Empathy", "Optimism", "Being Romantic"],
+        "Sports" => ["Yoga", "Pilates", "Swimming"],
+        "Travels" => ["City Trips", "Cultural Trips"],
+        "Favorite Destinations" => ["Italy", "France", "Spain"],
+        "Music" => ["Jazz", "Soul", "Classical", "Indie"],
+        "At Home" => ["Drawing", "Music", "Reading", "Movies"],
+        "Going Out" => ["Museums & Galleries", "Theater", "Concerts"],
+        "Food" => ["French", "Italian", "Japanese"],
+        "Creativity" => ["Painting", "Photography", "Design", "Making Music"],
+        "Literature" => ["Novels", "Poetry", "Philosophy"]
+      },
+      green: %{
+        "Character" => ["Intelligence", "Creativity", "Empathy"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Sports" => ["Yoga"]
+      },
+      red: %{}
+    },
+    # Profile 3: Intellectual — reader, thinker, deep conversations
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Friendship"],
+        "Character" => ["Intelligence", "Honesty", "Empathy", "Creativity", "Sense of Justice"],
+        "Sports" => ["Swimming", "Jogging", "Cycling"],
+        "Travels" => ["Cultural Trips", "City Trips"],
+        "Favorite Destinations" => ["United Kingdom", "France", "Germany"],
+        "Music" => ["Classical", "Jazz", "Blues", "Folk"],
+        "At Home" => ["Reading", "Online Courses", "Podcasts", "Board Games"],
+        "Going Out" => ["Museums & Galleries", "Theater", "Stand-Up Comedy"],
+        "Food" => ["Indian", "Japanese", "Mediterranean"],
+        "Creativity" => ["Writing", "Photography"],
+        "Literature" => ["Science", "Philosophy", "Non-Fiction", "Biographies"],
+        "Self Care" => ["Deep Conversations", "Mindfulness"]
+      },
+      green: %{
+        "Character" => ["Intelligence", "Empathy", "Creativity", "Honesty"],
+        "What I'm Looking For" => ["Long-term Relationship"]
+      },
+      red: %{}
+    },
+    # Profile 4: Family Person — caring, home-loving, traditional values
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
+        "Character" => ["Family-Oriented", "Honesty", "Caring", "Sense of Responsibility", "Generosity"],
+        "Want Children" => ["I Want (More) Children"],
+        "Sports" => ["Swimming", "Cycling", "Jogging"],
+        "Travels" => ["Beach", "Camping", "Wellness"],
+        "Favorite Destinations" => ["Spain", "Italy", "Croatia"],
+        "Music" => ["Pop", "Schlager", "Folk Music"],
+        "At Home" => ["Cooking", "Baking", "Gardening", "Board Games", "Movies"],
+        "Going Out" => ["Cafes", "Theater"],
+        "Food" => ["German", "Italian", "BBQ", "Pastries"],
+        "Pets" => ["Dog"]
+      },
+      green: %{
+        "Character" => ["Family-Oriented", "Honesty", "Caring"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+      },
+      red: %{
+        "Want Children" => ["I Don't Want (More) Children"]
+      }
+    },
+    # Profile 5: Caring Partner — nurturing, empathetic, family-ready
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
+        "Character" => ["Caring", "Empathy", "Family-Oriented", "Honesty", "Modesty"],
+        "Want Children" => ["I Want (More) Children"],
+        "Sports" => ["Yoga", "Pilates", "Swimming"],
+        "Travels" => ["Beach", "Wellness", "Cultural Trips"],
+        "Favorite Destinations" => ["Greece", "Italy", "Portugal"],
+        "Music" => ["Pop", "Soul", "R&B"],
+        "At Home" => ["Cooking", "Baking", "Reading", "Handicrafts", "Series"],
+        "Going Out" => ["Cafes", "Karaoke"],
+        "Food" => ["Italian", "Greek", "Healthy Food", "Desserts"],
+        "Self Care" => ["Deep Conversations", "Good Sleep"],
+        "Pets" => ["Cat", "Dog"]
+      },
+      green: %{
+        "Character" => ["Family-Oriented", "Caring", "Honesty", "Empathy"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+      },
+      red: %{
+        "Want Children" => ["I Don't Want (More) Children"]
+      }
+    },
+    # Profile 6: Social Star — party-loving, outgoing, sporty
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Something Casual"],
+        "Character" => ["Humor", "Self-Confidence", "Active", "Optimism", "Social Awareness"],
+        "Sports" => ["Soccer", "Basketball", "Gym", "Boxing"],
+        "Travels" => ["City Trips", "Beach", "Active and Sports Vacation"],
+        "Favorite Destinations" => ["USA", "Spain", "Thailand"],
+        "Music" => ["Hip-Hop", "Rap", "Techno", "House"],
+        "At Home" => ["Video Games", "Fitness Exercises", "Cooking"],
+        "Going Out" => ["Clubbing", "Bars", "Concerts", "Stand-Up Comedy"],
+        "Food" => ["American", "Mexican", "Fast Food", "Street Food"],
+        "Creativity" => ["Video Production", "Social Media"]
+      },
+      green: %{
+        "Character" => ["Humor", "Self-Confidence", "Active"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Sports" => ["Gym"]
+      },
+      red: %{}
+    },
+    # Profile 7: Free Spirit — independent, spontaneous, travel-loving
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Dates"],
+        "Character" => ["Self-Confidence", "Humor", "Love of Adventure", "Active", "Courage"],
+        "Sports" => ["Surfing", "Yoga", "Cycling", "Jogging"],
+        "Travels" => ["Beach", "City Trips", "Camping", "Bike Tours"],
+        "Favorite Destinations" => ["Bali", "Thailand", "Portugal", "South America"],
+        "Music" => ["Reggae", "Electronic", "Latin", "Indie"],
+        "At Home" => ["Cooking", "Podcasts", "Meditation", "Music"],
+        "Going Out" => ["Festivals", "Bars", "Concerts"],
+        "Food" => ["Thai", "Vietnamese", "Street Food", "Healthy Food"],
+        "Creativity" => ["Photography", "Making Music", "Dancing"],
+        "Self Care" => ["Mindfulness", "Going Offline"]
+      },
+      green: %{
+        "Character" => ["Humor", "Active", "Self-Confidence", "Love of Adventure"],
+        "What I'm Looking For" => ["Long-term Relationship"]
+      },
+      red: %{}
+    },
+    # Profile 8: Quiet Thinker — introverted, deep, book-loving
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Honesty", "Intelligence", "Empathy", "Modesty", "Resilience"],
+        "Sports" => ["Hiking", "Swimming", "Yoga"],
+        "Travels" => ["Cultural Trips", "Hiking Vacation"],
+        "Favorite Destinations" => ["Germany", "Austria", "United Kingdom"],
+        "Music" => ["Classical", "Folk", "Blues", "Jazz"],
+        "At Home" => ["Reading", "Puzzles", "Meditation", "Audiobooks", "Journaling"],
+        "Going Out" => ["Museums & Galleries", "Cafes"],
+        "Food" => ["Japanese", "Indian", "Mediterranean"],
+        "Literature" => ["Philosophy", "Science Fiction", "Classics", "Psychology"],
+        "Self Care" => ["Deep Conversations", "Mindfulness", "Good Sleep"]
+      },
+      green: %{
+        "Character" => ["Honesty", "Empathy", "Intelligence"],
+        "What I'm Looking For" => ["Long-term Relationship"]
+      },
+      red: %{}
+    },
+    # Profile 9: Romantic — loving, sentimental, partner-focused
+    %{
+      white: %{
+        "Relationship Status" => ["Single"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
+        "Character" => ["Being Romantic", "Empathy", "Honesty", "Caring", "Intelligence"],
+        "Sports" => ["Yoga", "Swimming", "Pilates"],
+        "Travels" => ["Beach", "Wellness", "Cruises"],
+        "Favorite Destinations" => ["Italy", "Greece", "France", "Mallorca"],
+        "Music" => ["Pop", "Soul", "Classical", "R&B"],
+        "At Home" => ["Cooking", "Movies", "Series", "Reading", "Baking"],
+        "Going Out" => ["Theater", "Cafes", "Concerts"],
+        "Food" => ["Italian", "French", "Desserts", "Mediterranean"],
+        "Creativity" => ["Photography", "Writing"],
+        "Literature" => ["Romance Novels", "Novels", "Poetry"]
+      },
+      green: %{
+        "Character" => ["Honesty", "Empathy", "Being Romantic", "Intelligence"],
+        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+      },
+      red: %{}
+    }
+  ]
+
   def seed_all do
     IO.puts("\n=== Seeding Development Users ===\n")
 
@@ -312,11 +560,11 @@ defmodule Animina.Seeds.DevUsers do
     IO.puts("\nCreating female users...")
 
     for {user_data, index} <- Enum.with_index(@female_users) do
-      create_user(user_data, "female", country.id, index + 25)
+      create_user(user_data, "female", country.id, index + 30)
     end
 
     IO.puts("\n=== Development Users Seeded Successfully ===")
-    IO.puts("Total users created: 50")
+    IO.puts("Total users created: 60")
     IO.puts("Password for all: #{@password}\n")
   end
 
@@ -348,8 +596,8 @@ defmodule Animina.Seeds.DevUsers do
         # Assign roles
         assign_roles(user, user_data.roles)
 
-        # Add traits (German only for languages)
-        assign_traits(user, index)
+        # Add traits from personality profile
+        assign_traits(user, gender, index)
 
         # Update pinned intro item with actual content
         update_intro_story(user, index)
@@ -454,153 +702,87 @@ defmodule Animina.Seeds.DevUsers do
     ])
   end
 
-  defp assign_traits(user, seed_index) do
+  defp assign_traits(user, gender, seed_index) do
     # Ensure default published categories are set
     Traits.ensure_default_published_categories(user)
 
-    # Shuffle based on user seed for variety
-    :rand.seed(:exsss, {seed_index, seed_index * 2, seed_index * 3})
+    # Build lookup once and assign from personality profile
+    lookup = build_flag_lookup()
 
-    # Get all categories
-    all_categories = Traits.list_categories()
+    # Males use position directly (0,1,2,...), females offset by 1 (1,2,3,...,0)
+    # so complementary profile pairs land on opposite genders
+    position = if gender == "male", do: seed_index, else: seed_index - 30
+    profile_index = if gender == "male", do: rem(position, 10), else: rem(position + 1, 10)
+    profile = Enum.at(@trait_profiles, profile_index)
 
-    # Assign white flags (traits about oneself) from core categories
-    assign_white_flags(user, all_categories, seed_index)
+    assign_profile_traits(user, profile, lookup)
 
-    # Assign "Deutsch" as the only spoken language
-    assign_german_language(user)
-
-    # Assign green flags (desired traits in partner) from multi categories
-    assign_green_flags(user, all_categories, seed_index)
-
-    # Assign red flags (deal-breakers) from single categories
-    assign_red_flags(user, all_categories, seed_index)
+    # Always assign "Deutsch" as spoken language
+    case get_in(lookup, ["Languages", "Deutsch"]) do
+      nil -> :ok
+      flag -> Traits.add_user_flag(%{user_id: user.id, flag_id: flag.id, color: "white", intensity: "hard", position: 1})
+    end
   end
 
-  defp assign_white_flags(user, all_categories, seed_index) do
-    # White flags: traits describing oneself
-    # Select from core categories (excluding Languages, handled separately)
-    core_categories = Enum.filter(all_categories, fn c -> c.core and c.name != "Languages" end)
-    :rand.seed(:exsss, {seed_index, seed_index * 2, seed_index * 3})
-    selected_categories = Enum.take_random(core_categories, Enum.random(5..8))
-
-    for category <- selected_categories do
+  defp build_flag_lookup do
+    # Build %{category_name => %{flag_name => flag}} for efficient lookups
+    for category <- Traits.list_categories(), into: %{} do
       flags = Traits.list_flags_by_category(category)
-      top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
+      flag_map = for f <- flags, into: %{}, do: {f.name, f}
+      {category.name, flag_map}
+    end
+  end
 
-      if length(top_level_flags) > 0 do
-        selected_flags =
-          case category.selection_mode do
-            "single" -> [Enum.random(top_level_flags)]
-            "single_white" -> [Enum.random(top_level_flags)]
-            "multi" -> Enum.take_random(top_level_flags, min(Enum.random(1..3), length(top_level_flags)))
-            _ -> [Enum.random(top_level_flags)]
-          end
+  defp assign_profile_traits(user, profile, lookup) do
+    # Assign white flags
+    for {category_name, flag_names} <- profile.white do
+      for {flag_name, pos} <- Enum.with_index(flag_names, 1) do
+        case get_in(lookup, [category_name, flag_name]) do
+          nil ->
+            IO.puts("    Warning: flag '#{flag_name}' not found in '#{category_name}'")
 
-        for {flag, pos} <- Enum.with_index(selected_flags, 1) do
-          Traits.add_user_flag(%{
-            user_id: user.id,
-            flag_id: flag.id,
-            color: "white",
-            intensity: "hard",
-            position: pos
-          })
+          flag ->
+            Traits.add_user_flag(%{
+              user_id: user.id,
+              flag_id: flag.id,
+              color: "white",
+              intensity: "hard",
+              position: pos
+            })
         end
       end
     end
-  end
 
-  defp assign_german_language(user) do
-    # Assign only "Deutsch" as spoken language
-    all_categories = Traits.list_categories()
-    lang_category = Enum.find(all_categories, fn c -> c.name == "Languages" end)
-
-    if lang_category do
-      flags = Traits.list_flags_by_category(lang_category)
-      deutsch = Enum.find(flags, fn f -> f.name == "Deutsch" end)
-
-      if deutsch do
-        Traits.add_user_flag(%{
-          user_id: user.id,
-          flag_id: deutsch.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-      end
-    end
-  end
-
-  defp assign_green_flags(user, all_categories, seed_index) do
-    # Green flags: traits desired in a partner
-    # Only multi categories allow green flags
-    green_categories =
-      all_categories
-      |> Enum.filter(fn c -> c.selection_mode == "multi" end)
-      |> Enum.filter(fn c -> c.name in ["Character", "What I'm Looking For"] end)
-
-    :rand.seed(:exsss, {seed_index * 5, seed_index * 7, seed_index * 11})
-
-    # Select 1-3 categories to add green flags from
-    selected_categories = Enum.take_random(green_categories, Enum.random(1..3))
-
-    for category <- selected_categories do
-      flags = Traits.list_flags_by_category(category)
-      top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
-
-      if length(top_level_flags) > 0 do
-        # Select 1-2 flags as green (desired traits)
-        count = min(Enum.random(1..2), length(top_level_flags))
-        selected_flags = Enum.take_random(top_level_flags, count)
-
-        for {flag, pos} <- Enum.with_index(selected_flags, 1) do
-          # Randomly choose hard or soft intensity
-          intensity = if :rand.uniform() > 0.5, do: "hard", else: "soft"
-
-          Traits.add_user_flag(%{
-            user_id: user.id,
-            flag_id: flag.id,
-            color: "green",
-            intensity: intensity,
-            position: pos
-          })
+    # Assign green flags
+    for {category_name, flag_names} <- profile.green do
+      for {flag_name, pos} <- Enum.with_index(flag_names, 1) do
+        case get_in(lookup, [category_name, flag_name]) do
+          nil -> :ok
+          flag ->
+            Traits.add_user_flag(%{
+              user_id: user.id,
+              flag_id: flag.id,
+              color: "green",
+              intensity: "hard",
+              position: pos
+            })
         end
       end
     end
-  end
 
-  defp assign_red_flags(user, all_categories, seed_index) do
-    # Red flags: deal-breakers
-    # Select from categories where red flags make sense
-    red_categories =
-      all_categories
-      |> Enum.filter(fn c -> c.selection_mode == "single" end)
-      |> Enum.filter(fn c -> c.name in ["Have Children", "Want Children", "Diet"] end)
-
-    :rand.seed(:exsss, {seed_index * 13, seed_index * 17, seed_index * 19})
-
-    # Only ~50% of users will have red flags (some people are more open-minded)
-    if :rand.uniform() > 0.5 do
-      # Select 1-2 categories to add red flags from
-      selected_categories = Enum.take_random(red_categories, Enum.random(1..2))
-
-      for category <- selected_categories do
-        flags = Traits.list_flags_by_category(category)
-        top_level_flags = Enum.filter(flags, fn f -> is_nil(Map.get(f, :parent_id)) end)
-
-        if length(top_level_flags) > 0 do
-          # Select 1 flag as red (deal-breaker)
-          flag = Enum.random(top_level_flags)
-          # Randomly choose hard (strict) or soft (warning) red flag
-          intensity = if :rand.uniform() > 0.7, do: "hard", else: "soft"
-
-          Traits.add_user_flag(%{
-            user_id: user.id,
-            flag_id: flag.id,
-            color: "red",
-            intensity: intensity,
-            position: 1
-          })
+    # Assign red flags
+    for {category_name, flag_names} <- profile.red do
+      for {flag_name, pos} <- Enum.with_index(flag_names, 1) do
+        case get_in(lookup, [category_name, flag_name]) do
+          nil -> :ok
+          flag ->
+            Traits.add_user_flag(%{
+              user_id: user.id,
+              flag_id: flag.id,
+              color: "red",
+              intensity: "hard",
+              position: pos
+            })
         end
       end
     end

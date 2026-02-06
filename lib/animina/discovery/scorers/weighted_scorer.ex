@@ -5,6 +5,8 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
   Scores are computed using configurable weights from feature flags,
   with category multipliers applied to make certain categories (e.g., Languages)
   more influential in the final score.
+
+  All flags use fixed system defaults (green soft: +10, red soft: -50).
   """
 
   @behaviour Animina.Discovery.Behaviours.Scorer
@@ -21,14 +23,17 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
 
     # Red penalties (soft red only - hard red is excluded by filter)
     red_penalty =
-      compute_category_weighted_score(overlap.red_white_soft, Settings.soft_red_penalty())
+      compute_category_weighted_score(
+        overlap.red_white_soft,
+        Settings.soft_red_penalty()
+      )
 
-    # Green bonuses
-    green_hard_bonus =
-      compute_category_weighted_score(overlap.green_white_hard, Settings.green_hard_bonus())
-
+    # Green bonuses (soft only - hard green is excluded by filter)
     green_soft_bonus =
-      compute_category_weighted_score(overlap.green_white_soft, Settings.green_soft_bonus())
+      compute_category_weighted_score(
+        overlap.green_white_soft,
+        Settings.green_soft_bonus()
+      )
 
     # White-white bonus
     white_bonus =
@@ -42,7 +47,7 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
 
     popularity_adjustment = compute_popularity_adjustment(candidate)
 
-    base_score + red_penalty + green_hard_bonus + green_soft_bonus + white_bonus + new_user_bonus +
+    base_score + red_penalty + green_soft_bonus + white_bonus + new_user_bonus +
       incomplete_penalty + popularity_adjustment
   end
 
@@ -51,11 +56,12 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
     # Safe list has no red matches, so only count positives
     base_score = 0
 
-    green_hard_bonus =
-      compute_category_weighted_score(overlap.green_white_hard, Settings.green_hard_bonus())
-
+    # Green bonuses (soft only - hard green is excluded by filter)
     green_soft_bonus =
-      compute_category_weighted_score(overlap.green_white_soft, Settings.green_soft_bonus())
+      compute_category_weighted_score(
+        overlap.green_white_soft,
+        Settings.green_soft_bonus()
+      )
 
     white_bonus =
       compute_category_weighted_score(overlap.white_white, Settings.white_white_bonus())
@@ -67,7 +73,7 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
 
     popularity_adjustment = compute_popularity_adjustment(candidate)
 
-    base_score + green_hard_bonus + green_soft_bonus + white_bonus + new_user_bonus +
+    base_score + green_soft_bonus + white_bonus + new_user_bonus +
       incomplete_penalty + popularity_adjustment
   end
 
@@ -76,12 +82,12 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
     # Attracted list prioritizes green matches with double weight
     base_score = 0
 
-    # Double the green bonuses for attracted list
-    green_hard_bonus =
-      compute_category_weighted_score(overlap.green_white_hard, Settings.green_hard_bonus() * 2)
-
+    # Double the green bonuses for attracted list (soft only - hard green is excluded by filter)
     green_soft_bonus =
-      compute_category_weighted_score(overlap.green_white_soft, Settings.green_soft_bonus() * 2)
+      compute_category_weighted_score(
+        overlap.green_white_soft,
+        Settings.green_soft_bonus() * 2
+      )
 
     new_user_bonus = if Settings.new_user?(candidate), do: Settings.new_user_boost(), else: 0
 
@@ -90,7 +96,7 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
 
     popularity_adjustment = compute_popularity_adjustment(candidate)
 
-    base_score + green_hard_bonus + green_soft_bonus + new_user_bonus + incomplete_penalty +
+    base_score + green_soft_bonus + new_user_bonus + incomplete_penalty +
       popularity_adjustment
   end
 
@@ -113,16 +119,16 @@ defmodule Animina.Discovery.Scorers.WeightedScorer do
     end
   end
 
-  defp compute_category_weighted_score([], _base_score), do: 0
+  defp compute_category_weighted_score([], _default_base), do: 0
 
-  defp compute_category_weighted_score(flag_ids, base_score) when is_list(flag_ids) do
+  defp compute_category_weighted_score(flag_ids, default_base) when is_list(flag_ids) do
     # Load flags with their categories to get category names for multipliers
     flags_with_categories = load_flags_with_categories(flag_ids)
 
     Enum.reduce(flags_with_categories, 0, fn flag, acc ->
       category_name = flag.category && flag.category.name
-      multiplier = Settings.category_multiplier(category_name)
-      acc + base_score * multiplier
+      cat_multiplier = Settings.category_multiplier(category_name)
+      acc + default_base * cat_multiplier
     end)
   end
 

@@ -105,7 +105,7 @@ msgid "Authentic profiles from your area"
 msgstr "Authentische Profile aus deiner Nähe"
 
 #: lib/animina_web/live/user_live/registration.ex:93
-#: lib/animina_web/live/user_live/traits_wizard.ex:128
+#: lib/animina_web/live/user_live/traits_wizard.ex:146
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Zurück"
@@ -494,7 +494,7 @@ msgid "New password"
 msgstr "Neues Passwort"
 
 #: lib/animina_web/live/user_live/registration.ex:104
-#: lib/animina_web/live/user_live/traits_wizard.ex:135
+#: lib/animina_web/live/user_live/traits_wizard.ex:153
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Weiter"
@@ -1375,137 +1375,107 @@ msgid "Cannot remove the last admin. Assign another admin first."
 msgstr "Der letzte Admin kann nicht entfernt werden. Weise zuerst einen anderen Admin zu."
 
 #: lib/animina_web/components/moodboard_components.ex:344
-#: lib/animina_web/live/user_live/traits_wizard.ex:336
+#: lib/animina_web/live/user_live/traits_wizard.ex:360
 #, elixir-autogen, elixir-format
 msgid "About Me"
 msgstr "Über mich"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:610
+#: lib/animina_web/live/user_live/traits_wizard.ex:651
 #, elixir-autogen, elixir-format
 msgid "Could not add flag."
 msgstr "Flag konnte nicht hinzugefügt werden."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:139
+#: lib/animina_web/live/user_live/traits_wizard.ex:157
 #, elixir-autogen, elixir-format
 msgid "Finish"
 msgstr "Fertig"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:408
-#, elixir-autogen, elixir-format
-msgid "nice to have — click to change to must have"
-msgstr "Wäre schön — klicken, um zu \"muss sein\" zu wechseln"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:409
-#, elixir-autogen, elixir-format
-msgid "prefer not — click to change to deal breaker"
-msgstr "Lieber nicht — klicken, um zu \"Ausschlusskriterium\" zu wechseln"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:559
+#: lib/animina_web/live/user_live/traits_wizard.ex:600
 #, elixir-autogen, elixir-format
 msgid "All flags have been deleted."
 msgstr "Alle Flags wurden gelöscht."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:670
+#: lib/animina_web/live/user_live/traits_wizard.ex:711
 #, elixir-autogen, elixir-format
 msgid "Are you sure that you want to delete all %{white} white, %{green} green and %{red} red flags of yours?"
 msgstr "Bist du sicher, dass du alle %{white} weißen, %{green} grünen und %{red} roten Flags löschen möchtest?"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:158
+#: lib/animina_web/live/user_live/traits_wizard.ex:176
 #, elixir-autogen, elixir-format
 msgid "Delete all flags"
 msgstr "Alle Flags löschen"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:75
+#: lib/animina_web/live/user_live/traits_wizard.ex:78
 #, elixir-autogen, elixir-format
 msgid "Click to cycle:"
 msgstr "Klicke zum Wechseln:"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:363
+#: lib/animina_web/live/user_live/traits_wizard.ex:387
 #, elixir-autogen, elixir-format
 msgid "Traits that describe who you are"
 msgstr "Eigenschaften, die dich beschreiben"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:372
+#: lib/animina_web/live/user_live/traits_wizard.ex:396
 #, elixir-autogen, elixir-format
 msgid "deal breaker"
 msgstr "Ausschlusskriterium"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:371
+#: lib/animina_web/live/user_live/traits_wizard.ex:395
 #, elixir-autogen, elixir-format
 msgid "must have"
 msgstr "Muss"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:374
+#: lib/animina_web/live/user_live/traits_wizard.ex:398
 #, elixir-autogen, elixir-format
 msgid "nice to have"
 msgstr "Wäre schön"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:91
+#: lib/animina_web/live/user_live/traits_wizard.ex:105
 #, elixir-autogen, elixir-format
 msgid "off"
 msgstr "aus"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:375
+#: lib/animina_web/live/user_live/traits_wizard.ex:399
 #, elixir-autogen, elixir-format
 msgid "prefer not"
 msgstr "Lieber nicht"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:403
-#, elixir-autogen, elixir-format
-msgid "click to set as nice to have"
-msgstr "Klicken, um als Wäre schön zu setzen"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:404
-#, elixir-autogen, elixir-format
-msgid "click to set as prefer not"
-msgstr "Klicken, um als Lieber nicht zu setzen"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:414
-#, elixir-autogen, elixir-format
-msgid "deal breaker — click to remove"
-msgstr "Ausschlusskriterium — klicken, um zu entfernen"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:413
-#, elixir-autogen, elixir-format
-msgid "must have — click to remove"
-msgstr "Muss — klicken, um zu entfernen"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:576
+#: lib/animina_web/live/user_live/traits_wizard.ex:617
 #, elixir-autogen, elixir-format
 msgid "Could not update flag."
 msgstr "Flag konnte nicht aktualisiert werden."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:170
+#: lib/animina_web/live/user_live/traits_wizard.ex:188
 #, elixir-autogen, elixir-format
 msgid "Optional Categories"
 msgstr "Optionale Kategorien"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:292
+#: lib/animina_web/live/user_live/traits_wizard.ex:316
 #, elixir-autogen, elixir-format
 msgid "Going Out & Travels"
 msgstr "Ausgehen & Reisen"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:291
+#: lib/animina_web/live/user_live/traits_wizard.ex:315
 #, elixir-autogen, elixir-format
 msgid "Interests"
 msgstr "Interessen"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:290
+#: lib/animina_web/live/user_live/traits_wizard.ex:314
 #, elixir-autogen, elixir-format
 msgid "Lifestyle"
 msgstr "Lebensstil"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:293
+#: lib/animina_web/live/user_live/traits_wizard.ex:317
 #, elixir-autogen, elixir-format
 msgid "Sensitive"
 msgstr "Sensibel"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:337
+#: lib/animina_web/live/user_live/traits_wizard.ex:361
 #, elixir-autogen, elixir-format
 msgid "I Like in a Partner"
 msgstr "Mag ich beim Partner"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:338
+#: lib/animina_web/live/user_live/traits_wizard.ex:362
 #, elixir-autogen, elixir-format
 msgid "Partner Deal Breakers"
 msgstr "Partner-Ausschlusskriterien"
@@ -1520,12 +1490,12 @@ msgstr "Partner-Vorlieben"
 msgid "Partner No-Go"
 msgstr "Partner-No-Go"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:369
+#: lib/animina_web/live/user_live/traits_wizard.ex:393
 #, elixir-autogen, elixir-format
 msgid "Traits that are deal-breakers in a partner"
 msgstr "Eigenschaften, die bei einem Partner Ausschlusskriterien sind"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:366
+#: lib/animina_web/live/user_live/traits_wizard.ex:390
 #, elixir-autogen, elixir-format
 msgid "Traits you'd like your partner to have"
 msgstr "Eigenschaften, die dein Partner haben sollte"
@@ -1537,17 +1507,17 @@ msgstr "Eigenschaften, die dein Partner haben sollte"
 msgid "My Flags"
 msgstr "Meine Flags"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:340
+#: lib/animina_web/live/user_live/traits_wizard.ex:364
 #, elixir-autogen, elixir-format
 msgid "My Flags — About Me"
 msgstr "Meine Flags — Über mich"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:341
+#: lib/animina_web/live/user_live/traits_wizard.ex:365
 #, elixir-autogen, elixir-format
 msgid "My Flags — I Like in a Partner"
 msgstr "Meine Flags — Partnerwünsche"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:342
+#: lib/animina_web/live/user_live/traits_wizard.ex:366
 #, elixir-autogen, elixir-format
 msgid "My Flags — Partner Deal Breakers"
 msgstr "Meine Flags — Partner-Ausschlusskriterien"
@@ -3837,7 +3807,7 @@ msgstr "Von:"
 msgid "Could not delete entry."
 msgstr "Eintrag konnte nicht gelöscht werden."
 
-#: lib/animina_web/components/chat_panel_component.ex:385
+#: lib/animina_web/components/chat_panel_component.ex:340
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
 #: lib/animina_web/live/messages_live.ex:302
 #: lib/animina_web/live/user_live/moodboard_editor.ex:594
@@ -4609,7 +4579,7 @@ msgstr "Alle löschen"
 msgid "Clear all debug entries?"
 msgstr "Alle Debug-Einträge löschen?"
 
-#: lib/animina_web/components/chat_panel_component.ex:189
+#: lib/animina_web/components/chat_panel_component.ex:144
 #: lib/animina_web/live/admin/ollama_debug_live.ex:620
 #: lib/animina_web/live/admin/ollama_debug_live.ex:729
 #, elixir-autogen, elixir-format
@@ -4865,22 +4835,12 @@ msgstr "In Prüfung"
 msgid "Admin Flags"
 msgstr "Admin-Flags"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:261
+#: lib/animina_web/live/user_live/traits_wizard.ex:279
 #, elixir-autogen, elixir-format
 msgid "Private"
 msgstr "Privat"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:358
-#, elixir-autogen, elixir-format
-msgid "Select traits you don't want in a partner. Click once for prefer not, again for deal breaker. These flags are always private and only used for matching."
-msgstr "Wähle Eigenschaften, die du bei einem Partner nicht möchtest. Einmal klicken für Lieber nicht, nochmal für Ausschlusskriterium. Diese Flags sind immer privat und werden nur für das Matching verwendet."
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:352
-#, elixir-autogen, elixir-format
-msgid "Select traits you'd like your partner to have. Click once for nice to have, again for must have. These flags are always private and only used for matching."
-msgstr "Wähle Eigenschaften, die dein Partner haben sollte. Einmal klicken für Wäre schön, nochmal für Muss. Diese Flags sind immer privat und werden nur für das Matching verwendet."
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:260
+#: lib/animina_web/live/user_live/traits_wizard.ex:278
 #, elixir-autogen, elixir-format
 msgid "Visible"
 msgstr "Sichtbar"
@@ -4895,7 +4855,7 @@ msgstr "Geschieden"
 msgid "Separated"
 msgstr "Getrennt"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:346
+#: lib/animina_web/live/user_live/traits_wizard.ex:370
 #, elixir-autogen, elixir-format
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
 msgstr "Wähle Eigenschaften, die dich beschreiben. Einige Kategorien sind standardmäßig in deinem Profil sichtbar, andere sind privat. Klicke, um die Sichtbarkeit zu ändern."
@@ -5033,7 +4993,7 @@ msgstr "Noch keine Unterhaltungen"
 msgid "No messages yet"
 msgstr "Noch keine Nachrichten"
 
-#: lib/animina_web/components/chat_panel_component.ex:241
+#: lib/animina_web/components/chat_panel_component.ex:196
 #: lib/animina_web/live/messages_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Send a message to start the conversation"
@@ -5050,14 +5010,14 @@ msgstr "Nachricht senden"
 msgid "Start a conversation from a user's profile"
 msgstr "Starte eine Unterhaltung vom Profil eines Nutzers"
 
-#: lib/animina_web/components/chat_panel_component.ex:273
+#: lib/animina_web/components/chat_panel_component.ex:228
 #: lib/animina_web/live/messages_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Type a message..."
 msgstr "Nachricht eingeben..."
 
-#: lib/animina_web/components/chat_panel_component.ex:590
-#: lib/animina_web/components/chat_panel_component.ex:604
+#: lib/animina_web/components/chat_panel_component.ex:631
+#: lib/animina_web/components/chat_panel_component.ex:645
 #: lib/animina_web/live/messages_live.ex:373
 #: lib/animina_web/live/messages_live.ex:391
 #: lib/animina_web/live/messages_live.ex:488
@@ -5065,20 +5025,20 @@ msgstr "Nachricht eingeben..."
 msgid "Yesterday"
 msgstr "Gestern"
 
-#: lib/animina_web/components/chat_panel_component.ex:259
+#: lib/animina_web/components/chat_panel_component.ex:214
 #: lib/animina_web/live/messages_live.ex:85
 #: lib/animina_web/live/messages_live.ex:632
 #, elixir-autogen, elixir-format
 msgid "You cannot send messages in this conversation"
 msgstr "Du kannst keine Nachrichten in dieser Unterhaltung senden"
 
-#: lib/animina_web/components/chat_panel_component.ex:358
+#: lib/animina_web/components/chat_panel_component.ex:313
 #: lib/animina_web/live/messages_live.ex:272
 #, elixir-autogen, elixir-format
 msgid "edited"
 msgstr "bearbeitet"
 
-#: lib/animina_web/components/chat_panel_component.ex:215
+#: lib/animina_web/components/chat_panel_component.ex:170
 #: lib/animina_web/live/messages_live.ex:44
 #, elixir-autogen, elixir-format
 msgid "typing..."
@@ -5089,7 +5049,7 @@ msgstr "schreibt..."
 msgid "Cannot delete a message that has been read"
 msgstr "Eine bereits gelesene Nachricht kann nicht gelöscht werden"
 
-#: lib/animina_web/components/chat_panel_component.ex:383
+#: lib/animina_web/components/chat_panel_component.ex:338
 #: lib/animina_web/live/messages_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "Delete this message?"
@@ -5105,13 +5065,13 @@ msgstr "Nachricht konnte nicht gelöscht werden"
 msgid "Read"
 msgstr "Gelesen"
 
-#: lib/animina_web/components/chat_panel_component.ex:589
+#: lib/animina_web/components/chat_panel_component.ex:630
 #: lib/animina_web/live/messages_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr "Heute"
 
-#: lib/animina_web/components/chat_panel_component.ex:602
+#: lib/animina_web/components/chat_panel_component.ex:643
 #: lib/animina_web/live/messages_live.ex:486
 #, elixir-autogen, elixir-format
 msgid "just now"
@@ -5154,7 +5114,7 @@ msgstr "Besucht"
 msgid "Read %{time}"
 msgstr "Gelesen %{time}"
 
-#: lib/animina_web/components/chat_panel_component.ex:369
+#: lib/animina_web/components/chat_panel_component.ex:324
 #: lib/animina_web/live/messages_live.ex:286
 #, elixir-autogen, elixir-format
 msgid "Sent"
@@ -5165,7 +5125,7 @@ msgstr "Gesendet"
 msgid "Message"
 msgstr "Nachricht"
 
-#: lib/animina_web/components/chat_panel_component.ex:226
+#: lib/animina_web/components/chat_panel_component.ex:181
 #, elixir-autogen, elixir-format
 msgid "Open full chat"
 msgstr "Vollständigen Chat öffnen"
@@ -5214,3 +5174,68 @@ msgstr "Wildcard-Vorschlag"
 #, elixir-autogen, elixir-format
 msgid "Draft:"
 msgstr "Entwurf:"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:401
+#, elixir-autogen, elixir-format
+msgid "+10 pts"
+msgstr "+10 Pkt."
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:403
+#, elixir-autogen, elixir-format
+msgid "-50 pts"
+msgstr "-50 Pkt."
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:432
+#, elixir-autogen, elixir-format
+msgid "click to set as nice to have (+10 pts)"
+msgstr "Klicken, um als Wäre schön (+10 Pkt.) zu setzen"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:433
+#, elixir-autogen, elixir-format
+msgid "click to set as prefer not (-50 pts)"
+msgstr "Klicken, um als Lieber nicht (-50 Pkt.) zu setzen"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:108
+#, elixir-autogen, elixir-format
+msgid "0 pts"
+msgstr "0 Pkt."
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:404
+#, elixir-autogen, elixir-format
+msgid "Excluded"
+msgstr "Ausgeschlossen"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:402
+#, elixir-autogen, elixir-format
+msgid "Required"
+msgstr "Pflicht"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:382
+#, elixir-autogen, elixir-format
+msgid "Select traits you don't want in a partner. Click once for prefer not (-50 pts, still visible), again for deal breaker (excluded — hides profiles with this trait). These flags are always private."
+msgstr "Wähle Eigenschaften, die du bei einem Partner nicht möchtest. Einmal klicken für Lieber nicht (-50 Pkt., weiterhin sichtbar), nochmal für Ausschlusskriterium (ausgeschlossen — blendet Profile mit dieser Eigenschaft aus). Diese Flags sind immer privat."
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:376
+#, elixir-autogen, elixir-format
+msgid "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
+msgstr "Wähle Eigenschaften, die dein Partner haben sollte. Einmal klicken für Wäre schön (+10 Pkt.), nochmal für Muss (Pflicht — zeigt nur Profile mit dieser Eigenschaft). Diese Flags sind immer privat."
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:443
+#, elixir-autogen, elixir-format
+msgid "deal breaker (excluded) — click to remove"
+msgstr "Ausschlusskriterium (ausgeschlossen) — klicken zum Entfernen"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:442
+#, elixir-autogen, elixir-format
+msgid "must have (required) — click to remove"
+msgstr "Muss (Pflicht) — klicken zum Entfernen"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:437
+#, elixir-autogen, elixir-format
+msgid "nice to have (+10 pts) — click to change to must have (required)"
+msgstr "Wäre schön (+10 Pkt.) — klicken, um zu Muss (Pflicht) zu wechseln"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:438
+#, elixir-autogen, elixir-format
+msgid "prefer not (-50 pts) — click to change to deal breaker (excluded)"
+msgstr "Lieber nicht (-50 Pkt.) — klicken, um zu Ausschlusskriterium (ausgeschlossen) zu wechseln"

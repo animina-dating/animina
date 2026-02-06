@@ -353,6 +353,18 @@ defmodule Animina.Traits do
     {:ok, length(flags)}
   end
 
+  @doc """
+  Lists user flags for a color with flag and category preloaded.
+  """
+  def list_user_flags_with_category(user, color) do
+    from(uf in UserFlag,
+      where: uf.user_id == ^user.id and uf.color == ^color and uf.inherited == false,
+      order_by: uf.position,
+      preload: [flag: :category]
+    )
+    |> Repo.all()
+  end
+
   # --- Opt-ins ---
 
   def opt_into_category(user, category, opts \\ []) do

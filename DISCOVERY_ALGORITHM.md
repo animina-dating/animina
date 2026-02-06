@@ -20,8 +20,10 @@ Each colored flag also has an **intensity**:
 
 | Intensity | Meaning |
 |-----------|---------|
-| **Hard** (default) | Non-negotiable — hard reds are absolute dealbreakers, hard greens are strong desires |
-| **Soft** | Preference — soft reds are concerns (penalized but not excluded from Combined list), soft greens are nice-to-haves |
+| **Hard** (default) | Non-negotiable filter — hard reds **exclude** candidates with that trait, hard greens **require** candidates to have that trait |
+| **Soft** | Weighted preference — soft reds are scored penalties (penalized but not excluded from Combined list), soft greens are scored bonuses (nice-to-haves) |
+
+The system is symmetric: hard flags of both colors are absolute filters, soft flags of both colors are tunable score adjustments.
 
 ### Sensitive Categories
 
@@ -45,11 +47,10 @@ Before any scoring happens, the filter stage removes candidates who can't possib
 
 **Bidirectional** means both sides must fit. If Alice (28) sets her age range to 25–35, she'll see Bob (31). But if Bob sets *his* range to 28–33, he'd also see Alice. If Bob had set his range to 20–27, neither would see the other — the filter is mutual.
 
-### Relaxed Filter (for Wildcards)
+### Relaxed Filter
 
-The relaxed filter loosens constraints to broaden the pool:
+An alternative filter module selectable via feature flags. All checks remain **bidirectional** (both sides must satisfy the other's preferences). The only relaxations compared to the Standard Filter are:
 
-- Gender, age, and height are **one-way** (only viewer's preferences apply)
 - Distance radius is **doubled**
 - Incomplete profiles are always included
 
@@ -69,29 +70,36 @@ The overlap identifies where one user's white flags intersect with the other's g
 
 Green-white and red-white overlaps are **bidirectional**: if Alice has "Plays guitar" as green and Bob has it as white, that's a match. If Bob has "Loves hiking" as green and Alice has it as white, that's *also* a match. Both are included.
 
-### Post-Filter Red Flag Rejection
+### Post-Filter Flag Rejection
 
-After computing overlap, candidates are rejected in-memory based on the list type:
+After computing overlap, candidates are rejected in-memory based on hard flags:
 
+**Red-hard (deal breaker) filtering:**
 - **Combined / Attracted lists**: Reject candidates with any `red_white_hard` overlap
 - **Safe list**: Reject candidates with *any* red overlap (hard or soft)
+
+**Green-hard (required) filtering** — applied to all three lists:
+- For each of the viewer's non-inherited green-hard flags, the candidate must have at least one white flag matching the requirement
+- When a parent flag is green-hard, its inherited children form a group — the candidate needs at least one match within each group (OR within group, AND across groups)
+- Example: If Alice marks parent "Music" as green-hard, and this expands to children (Plays guitar, Plays piano, etc.), Bob satisfies the requirement if he has *any one* of those children as white
 
 Soft-red candidates remain in Combined and Attracted lists but receive scoring penalties.
 
 ## Step 3: Scoring
 
-Each surviving candidate gets a numeric score. The default **Weighted Scorer** computes:
+Each surviving candidate gets a numeric score. Hard flags (both green and red) are handled by filters before scoring — they never contribute points. Only soft flags contribute scoring points using fixed system defaults. The default **Weighted Scorer** computes:
 
 ```
 score = 0
-  + (each green_white_hard flag) × 20 × category_multiplier
-  + (each green_white_soft flag) × 10 × category_multiplier
-  + (each white_white flag)      ×  5 × category_multiplier
-  + (each red_white_soft flag)   × -50 × category_multiplier   [Combined only]
+  + (each green_white_soft flag) ×  10   × category_multiplier
+  + (each white_white flag)      ×   5   × category_multiplier
+  + (each red_white_soft flag)   × -50   × category_multiplier   [Combined only]
   + new_user_boost      (100 if registered within 14 days, else 0)
   + incomplete_penalty   (-30 if missing photo/height/gender, else 0)
   + popularity_adjustment
 ```
+
+Green soft flags use a fixed weight of +10, red soft flags use -50. Hard flags have no weight — they are absolute filters.
 
 ### Category Multipliers
 
@@ -103,7 +111,7 @@ Not all flag categories are equally important. The scoring multiplier per catego
 | What I'm Looking For (Relationship Goals) | 2× |
 | All others | 1× |
 
-This means a green-hard match on "Speaks French" (Languages, 3×) is worth `20 × 3 = 60` points, while a green-hard match on "Loves hiking" (default, 1×) is worth `20 × 1 = 20` points.
+This means a green-soft match on "Speaks French" (Languages, 3×) is worth `10 × 3 = 30` points, while a green-soft match on "Loves hiking" (default, 1×) is worth `10 × 1 = 10` points. Green-hard flags are not scored — they act as required filters.
 
 ### Popularity Adjustment
 
@@ -119,15 +127,16 @@ Based on the candidate's 7-day rolling average of daily inquiries received:
 
 | Component | Combined | Safe | Attracted |
 |-----------|----------|------|-----------|
-| Green hard bonus | 20 × multiplier | 20 × multiplier | **40** × multiplier (doubled) |
+| Green hard filter | Required (all lists) | Required (all lists) | Required (all lists) |
 | Green soft bonus | 10 × multiplier | 10 × multiplier | **20** × multiplier (doubled) |
 | White-white bonus | 5 × multiplier | 5 × multiplier | — |
+| Red hard filter | Excluded | Excluded (with soft) | Excluded |
 | Soft red penalty | -50 × multiplier | — | — |
 | New user boost | 100 | 100 | 100 |
 | Incomplete penalty | -30 | -30 | -30 |
 | Popularity adj. | yes | yes | yes |
 
-The **Attracted** list doubles green flag bonuses and ignores white-white and red penalties — it's purely about attraction signal.
+The **Attracted** list doubles green soft bonuses and ignores white-white and red penalties — it's purely about attraction signal.
 
 ## The Three Lists
 
@@ -149,13 +158,15 @@ Prioritizes attraction over caution. Green flag bonuses are doubled. White-white
 
 When a user has exhausted or wants to go beyond the main lists, **wildcards** provide a random selection from a broader pool.
 
-Wildcards use the **Relaxed Filter** with parameters widened by 20%:
+Wildcards use the same **bidirectional** filter as the main lists (Standard Filter by default). The difference is that the **viewer's** preferences are widened to cast a wider net. The **candidate's** own preferences remain unchanged — a candidate who wouldn't accept the viewer is still excluded.
+
+The viewer's parameters are widened as follows:
 
 - Age offsets: expanded by 20% (minimum +1 year each direction)
 - Height range: expanded by 10% each direction (clamped to 50–250 cm)
 - Search radius: expanded by 20% (minimum +5 km)
 
-Default wildcard count: 2 per request. Already-suggested users are excluded.
+No flag scoring or filtering is applied — wildcards are random picks from the wider pool. Default wildcard count: 2 per request. Already-suggested users are excluded.
 
 ## Popularity Protection
 
@@ -195,7 +206,7 @@ All settings are controlled via feature flags at `/admin/feature-flags`:
 | Default search radius (km) | `discovery_default_search_radius` | 60 | 10–500 |
 | Wildcard count | `discovery_wildcard_count` | 2 | 0–10 |
 | Soft red penalty | `discovery_soft_red_penalty` | -50 | -200–0 |
-| Green hard bonus | `discovery_green_hard_bonus` | 20 | 1–100 |
+| Green hard bonus (unused) | `discovery_green_hard_bonus` | 20 | 1–100 |
 | Green soft bonus | `discovery_green_soft_bonus` | 10 | 1–50 |
 | White-white bonus | `discovery_white_white_bonus` | 5 | 1–25 |
 | New user boost | `discovery_new_user_boost` | 100 | 0–500 |
@@ -245,29 +256,31 @@ Bob passes all filters.
 
 No red overlaps — Bob is eligible for all three lists.
 
+### Green-Hard Filter Check
+
+Alice has "Plays guitar" as green-hard (required). Bob has "Plays guitar" as white. Requirement satisfied — Bob passes the green-hard filter.
+
 ### Scoring (Combined List, Weighted Scorer)
 
-Assuming default category multipliers (1×) for all flags in this example:
+Assuming default category multipliers (1×) for all flags in this example. Green-hard matches are not scored (they're already pre-filtered):
 
 ```
-green_white_hard:  1 × 20 × 1 =  20
+green_white_hard:  (filtered, not scored)
 green_white_soft:  1 × 10 × 1 =  10
 white_white:       2 ×  5 × 1 =  10
 red_white_soft:    0 × -50     =   0
 new_user_boost:    Bob registered 2 months ago = 0
 incomplete_penalty: Bob has photo + height + gender = 0
 popularity_adj:    Bob's 7-day avg is 1.5 = 0
-                              TOTAL = 40
+                              TOTAL = 20
 ```
-
-If "Plays guitar" were in the Languages category (3× multiplier), the green-hard match alone would be worth `20 × 3 = 60` instead of 20.
 
 ### Result
 
 Bob appears in Alice's:
-- **Combined** list with score 40
+- **Combined** list with score 20
 - **Safe** list (no red overlap at all)
-- **Attracted** list with score 50 (green bonuses doubled: `1×40 + 1×20 = 60`, no white-white bonus)
+- **Attracted** list with score 20 (green soft bonus doubled: `1×20 = 20`, no white-white bonus)
 
 ## Code Map
 
