@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr "%{age} Jahre alt"
 
-#: lib/animina_web/live/user_live/waitlist.ex:104
+#: lib/animina_web/live/user_live/waitlist.ex:169
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -53,7 +53,7 @@ msgstr "Account"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lib/animina_web/live/user_live/waitlist.ex:112
+#: lib/animina_web/live/user_live/waitlist.ex:177
 #, elixir-autogen, elixir-format
 msgid "Activated!"
 msgstr "Aktiviert!"
@@ -116,11 +116,6 @@ msgstr "Zurück"
 msgid "Back to login"
 msgstr "Zurück zum Login"
 
-#: lib/animina_web/live/user_live/waitlist.ex:127
-#, elixir-autogen, elixir-format
-msgid "Best regards"
-msgstr "Beste Grüße"
-
 #: lib/animina_web/live/user_live/registration.ex:212
 #, elixir-autogen, elixir-format
 msgid "Birthday (min. 18 years)"
@@ -172,7 +167,7 @@ msgstr "Bestätigung fehlgeschlagen. Bitte registrieren Sie sich erneut."
 msgid "Connect"
 msgstr "Verbinden"
 
-#: lib/animina_web/live/user_live/waitlist.ex:97
+#: lib/animina_web/live/user_live/waitlist.ex:162
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr "Code kopieren"
@@ -275,11 +270,6 @@ msgstr "Jedes Profil wird verifiziert, damit du dich mit echten Menschen verbind
 msgid "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
 msgstr "Jeder hat Ausschlusskriterien. Sei ehrlich darüber, was für dich nicht funktioniert. Das spart Zeit und Enttäuschung auf beiden Seiten."
 
-#: lib/animina_web/live/user_live/waitlist.ex:46
-#, elixir-autogen, elixir-format
-msgid "Expected waiting time:"
-msgstr "Voraussichtliche Wartezeit:"
-
 #: lib/animina_web/live/user_live/registration.ex:248
 #: lib/animina_web/live/user_live/registration.ex:387
 #: lib/animina_web/live/user_live/settings_hub.ex:287
@@ -332,11 +322,6 @@ msgstr "Geschlecht"
 msgid "Gender(s)"
 msgstr "Geschlecht(er)"
 
-#: lib/animina_web/live/user_live/waitlist.ex:73
-#, elixir-autogen, elixir-format
-msgid "Get activated faster"
-msgstr "Schneller freigeschaltet werden"
-
 #: lib/animina_web/live/demo_live.ex:42
 #, elixir-autogen, elixir-format
 msgid "Get started"
@@ -351,11 +336,6 @@ msgstr "Grüne Flaggen"
 #, elixir-autogen, elixir-format
 msgid "Height in cm (80-225)"
 msgstr "Größe in cm (80-225)"
-
-#: lib/animina_web/live/user_live/waitlist.ex:20
-#, elixir-autogen, elixir-format
-msgid "Hello"
-msgstr "Hallo"
 
 #: lib/animina_web/live/demo_live.ex:149
 #, elixir-autogen, elixir-format
@@ -647,13 +627,6 @@ msgstr "Echte Menschen"
 msgid "Red Flags"
 msgstr "Rote Flaggen"
 
-#: lib/animina_web/live/user_live/waitlist.ex:76
-#, elixir-autogen, elixir-format
-msgid "Refer ANIMINA! After %{count} confirmed referral you will be activated automatically."
-msgid_plural "Refer ANIMINA! After %{count} confirmed referrals you will be activated automatically."
-msgstr[0] "Empfiehl ANIMINA! Nach %{count} bestätigten Empfehlung wirst du automatisch freigeschaltet."
-msgstr[1] "Empfiehl ANIMINA! Nach %{count} bestätigten Empfehlungen wirst du automatisch freigeschaltet."
-
 #: lib/animina_web/live/user_live/registration.ex:223
 #, elixir-autogen, elixir-format
 msgid "Referral code (optional)"
@@ -765,30 +738,10 @@ msgstr "Etwas ist schiefgelaufen!"
 msgid "Stories instead of swipes"
 msgstr "Geschichten statt Swipes"
 
-#: lib/animina_web/live/user_live/waitlist.ex:23
-#, elixir-autogen, elixir-format
-msgid "Thank you for registering with ANIMINA!"
-msgstr "Danke für deine Registrierung bei ANIMINA!"
-
 #: lib/animina_web/live/demo_index2_live.ex:214
 #, elixir-autogen, elixir-format
 msgid "That's a no-go"
 msgstr "Das geht gar nicht"
-
-#: lib/animina_web/live/user_live/waitlist.ex:29
-#, elixir-autogen, elixir-format
-msgid "There are not enough users in %{cities} yet."
-msgstr "Es gibt noch nicht genug Nutzer in %{cities}."
-
-#: lib/animina_web/live/user_live/waitlist.ex:37
-#, elixir-autogen, elixir-format
-msgid "There are too many new registrations overall and we need to upgrade our server hardware hosted in Germany."
-msgstr "Es gibt insgesamt zu viele neue Registrierungen und wir müssen unsere Server-Hardware in Deutschland aufrüsten."
-
-#: lib/animina_web/live/user_live/waitlist.ex:31
-#, elixir-autogen, elixir-format
-msgid "There have been too many new registrations in %{cities} in the last 7 days."
-msgstr "Es gab zu viele neue Registrierungen in %{cities} in den letzten 7 Tagen."
 
 #: lib/animina_web/live/user_live/pin_confirmation.ex:133
 #: lib/animina_web/live/user_live/pin_confirmation.ex:140
@@ -841,15 +794,10 @@ msgstr "Wird überprüft..."
 msgid "View code on GitHub"
 msgstr "Code auf GitHub ansehen"
 
-#: lib/animina_web/live/user_live/waitlist.ex:15
+#: lib/animina_web/live/user_live/waitlist.ex:16
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
 msgstr "Warteliste"
-
-#: lib/animina_web/live/user_live/waitlist.ex:42
-#, elixir-autogen, elixir-format
-msgid "We are working on new features and need some breathing room."
-msgstr "Wir arbeiten an neuen Funktionen und brauchen etwas Luft."
 
 #: lib/animina_web/components/layouts.ex:687
 #, elixir-autogen, elixir-format
@@ -860,11 +808,6 @@ msgstr "Keine Internetverbindung gefunden"
 #, elixir-autogen, elixir-format
 msgid "We sent a 6-digit code to"
 msgstr "Wir haben einen 6-stelligen Code gesendet an"
-
-#: lib/animina_web/live/user_live/waitlist.ex:65
-#, elixir-autogen, elixir-format
-msgid "We will send you an email once your account has been activated. You can also log in to animina.de from time to time to check."
-msgstr "Wir werden dir eine E-Mail senden, sobald dein Konto aktiviert wurde. Du kannst dich auch ab und zu bei animina.de einloggen, um nachzusehen."
 
 #: lib/animina_web/live/demo_live.ex:14
 #, elixir-autogen, elixir-format
@@ -921,11 +864,6 @@ msgid_plural "Wrong code. %{count} attempts remaining."
 msgstr[0] "Falscher Code. Noch %{count} Versuch übrig."
 msgstr[1] "Falscher Code. Noch %{count} Versuche übrig."
 
-#: lib/animina_web/live/user_live/waitlist.ex:26
-#, elixir-autogen, elixir-format
-msgid "You are on our waitlist. Possible reasons:"
-msgstr "Du stehst auf unserer Warteliste. Mögliche Gründe:"
-
 #: lib/animina_web/user_auth.ex:246
 #: lib/animina_web/user_auth.ex:260
 #: lib/animina_web/user_auth.ex:456
@@ -950,7 +888,7 @@ msgstr "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
 msgid "Your profile"
 msgstr "Dein Profil"
 
-#: lib/animina_web/live/user_live/waitlist.ex:84
+#: lib/animina_web/live/user_live/waitlist.ex:149
 #, elixir-autogen, elixir-format
 msgid "Your referral code"
 msgstr "Dein Empfehlungscode"
@@ -960,8 +898,8 @@ msgstr "Dein Empfehlungscode"
 msgid "Zip code (5 digits)"
 msgstr "PLZ (5 Stellen)"
 
-#: lib/animina_web/live/user_live/waitlist.ex:55
-#: lib/animina_web/live/user_live/waitlist.ex:61
+#: lib/animina_web/live/user_live/waitlist.ex:58
+#: lib/animina_web/live/user_live/waitlist.ex:66
 #, elixir-autogen, elixir-format
 msgid "approximately 4 weeks"
 msgstr "ca. 4 Wochen"
@@ -4490,6 +4428,7 @@ msgstr "Füge Fotos und Texte zu deinem Moodboard hinzu, um sie mit anderen zu t
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
 #: lib/animina_web/live/user_live/moodboard_editor.ex:622
 #: lib/animina_web/live/user_live/profile_moodboard.ex:121
+#: lib/animina_web/live/user_live/waitlist.ex:104
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Moodboard bearbeiten"
@@ -5454,8 +5393,60 @@ msgstr "Neue Wildcards werden täglich generiert — schau morgen wieder vorbei.
 msgid "Try adjusting your preferences to expand your search."
 msgstr "Passe deine Einstellungen an, um deine Suche zu erweitern."
 
-#: lib/animina_web/live/user_live/waitlist.ex:53
-#: lib/animina_web/live/user_live/waitlist.ex:58
+#: lib/animina_web/live/user_live/waitlist.ex:56
+#: lib/animina_web/live/user_live/waitlist.ex:63
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
 msgstr "Deine Aktivierung wird bearbeitet"
+
+#: lib/animina_web/live/user_live/waitlist.ex:106
+#, elixir-autogen, elixir-format
+msgid "Add photos and stories to make a great first impression."
+msgstr "Füge Fotos und Geschichten hinzu, um einen tollen ersten Eindruck zu machen."
+
+#: lib/animina_web/live/user_live/waitlist.ex:128
+#, elixir-autogen, elixir-format
+msgid "Define what you're about and what you're looking for."
+msgstr "Beschreibe, was dich ausmacht und wonach du suchst."
+
+#: lib/animina_web/live/user_live/waitlist.ex:43
+#, elixir-autogen, elixir-format
+msgid "Estimated activation"
+msgstr "Voraussichtliche Aktivierung"
+
+#: lib/animina_web/live/user_live/waitlist.ex:19
+#, elixir-autogen, elixir-format
+msgid "Hi %{name}, your account is on the waitlist and will be activated soon."
+msgstr "Hallo %{name}, dein Account steht auf der Warteliste und wird bald aktiviert."
+
+#: lib/animina_web/live/user_live/waitlist.ex:78
+#, elixir-autogen, elixir-format
+msgid "Prepare your profile"
+msgstr "Bereite dein Profil vor"
+
+#: lib/animina_web/live/user_live/waitlist.ex:141
+#, elixir-autogen, elixir-format
+msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
+msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
+msgstr[0] "Empfiehl ANIMINA weiter. Nach %{count} bestätigter Empfehlung wird dein Account sofort aktiviert."
+msgstr[1] "Empfiehl ANIMINA weiter. Nach %{count} bestätigten Empfehlungen wird dein Account sofort aktiviert."
+
+#: lib/animina_web/live/user_live/waitlist.ex:126
+#, elixir-autogen, elixir-format
+msgid "Set up your flags"
+msgstr "Richte deine Flags ein"
+
+#: lib/animina_web/live/user_live/waitlist.ex:138
+#, elixir-autogen, elixir-format
+msgid "Skip the waitlist"
+msgstr "Warteliste überspringen"
+
+#: lib/animina_web/live/user_live/waitlist.ex:81
+#, elixir-autogen, elixir-format
+msgid "Use the waiting time to make your profile stand out."
+msgstr "Nutze die Wartezeit, um dein Profil ansprechend zu gestalten."
+
+#: lib/animina_web/live/user_live/waitlist.ex:71
+#, elixir-autogen, elixir-format
+msgid "We'll notify you by email when your account is ready."
+msgstr "Wir benachrichtigen dich per E-Mail, sobald dein Account bereit ist."

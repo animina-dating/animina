@@ -5,7 +5,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
   import Animina.AccountsFixtures
 
   describe "Waitlist page" do
-    test "renders waitlist message for authenticated user", %{conn: conn} do
+    test "renders waitlist page with welcome message", %{conn: conn} do
       user = user_fixture(language: "en")
 
       {:ok, _lv, html} =
@@ -15,9 +15,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       assert html =~ "Waitlist"
       assert html =~ user.display_name
-      assert html =~ "not enough users"
-      assert html =~ "too many new registrations"
-      assert html =~ "server hardware"
+      assert html =~ "on the waitlist"
     end
 
     test "renders countdown hook with data attributes", %{conn: conn} do
@@ -80,7 +78,20 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       # Default threshold is 3 (from system settings)
       assert html =~ "0/3 referrals"
-      assert html =~ "Get activated faster"
+      assert html =~ "Skip the waitlist"
+    end
+
+    test "shows links to moodboard editor and flag wizard", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      assert html =~ "Prepare your profile"
+      assert html =~ ~r"/users/settings/moodboard"
+      assert html =~ ~r"/users/settings/traits"
     end
   end
 end
