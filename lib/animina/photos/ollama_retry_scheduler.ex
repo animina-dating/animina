@@ -13,12 +13,12 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   use GenServer
   require Logger
 
-  alias Animina.Accounts
   alias Animina.Accounts.UserNotifier
   alias Animina.FeatureFlags
   alias Animina.Photos
   alias Animina.Photos.OllamaClient
   alias Animina.Photos.OllamaHealthTracker
+  alias Animina.Photos.OllamaSemaphore
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoFeedback
   alias Animina.Photos.PhotoProcessor
@@ -54,10 +54,12 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   def init(opts) do
     poll_interval = Keyword.get(opts, :poll_interval_ms, @poll_interval_ms)
     alert_threshold = Keyword.get(opts, :alert_threshold, @alert_threshold)
+    batch_size = Keyword.get_lazy(opts, :batch_size, fn -> read_batch_size() end)
 
     state = %{
       poll_interval: poll_interval,
       alert_threshold: alert_threshold,
+      batch_size: batch_size,
       last_alert_at: nil,
       total_processed: 0,
       total_succeeded: 0,
@@ -108,8 +110,8 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   # --- Private Functions ---
 
   defp do_poll(state) do
-    # Get photos due for retry (one at a time to avoid overwhelming Ollama)
-    photos = Photos.list_photos_due_for_ollama_retry(1)
+    # Get photos due for retry (batch_size per poll cycle, default 5)
+    photos = Photos.list_photos_due_for_ollama_retry(state.batch_size)
 
     state =
       Enum.reduce(photos, state, fn photo, acc ->
@@ -168,18 +170,33 @@ defmodule Animina.Photos.OllamaRetryScheduler do
   end
 
   defp run_ollama_classification(%Photo{} = photo) do
+    # Retries are lower priority — use shorter semaphore timeout (10s)
+    case OllamaSemaphore.acquire(10_000) do
+      :ok ->
+        try do
+          do_run_ollama_classification(photo)
+        after
+          OllamaSemaphore.release()
+        end
+
+      {:error, :timeout} ->
+        Logger.debug("Ollama semaphore busy, requeueing retry for photo #{photo.id}")
+        {:error, :ollama_unavailable}
+    end
+  end
+
+  defp do_run_ollama_classification(%Photo{} = photo) do
     # Apply configured delay for UX testing
     FeatureFlags.apply_delay(:photo_ollama_check)
 
-    ollama_model = Photos.ollama_model()
+    ollama_model = Photos.select_ollama_model()
     thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
     prompt = PhotoProcessor.ollama_prompt()
 
-    # Look up user info for debug logging
-    {user_email, user_display_name} = get_owner_info(photo)
+    owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
 
     {duration_us, result} =
       :timer.tc(fn ->
@@ -188,8 +205,7 @@ defmodule Animina.Photos.OllamaRetryScheduler do
           prompt: prompt,
           images: [image_data],
           photo_id: photo.id,
-          user_email: user_email,
-          user_display_name: user_display_name
+          owner_id: owner_id
         )
       end)
 
@@ -361,14 +377,9 @@ defmodule Animina.Photos.OllamaRetryScheduler do
     _ -> "unknown"
   end
 
-  # Look up owner info for debug logging
-  # Only returns user info for User-owned photos
-  defp get_owner_info(%Photo{owner_type: "User", owner_id: owner_id}) when not is_nil(owner_id) do
-    case Accounts.get_user(owner_id) do
-      nil -> {nil, nil}
-      user -> {user.email, user.display_name}
-    end
+  defp read_batch_size do
+    FeatureFlags.ollama_retry_batch_size()
+  rescue
+    _ -> 5
   end
-
-  defp get_owner_info(_photo), do: {nil, nil}
 end

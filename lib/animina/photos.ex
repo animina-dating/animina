@@ -30,9 +30,43 @@ defmodule Animina.Photos do
   def max_dimension, do: config(:max_dimension, 1400)
   def webp_quality, do: config(:webp_quality, 80)
   def blacklist_hamming_threshold, do: config(:blacklist_hamming_threshold, 10)
-  def thumbnail_dimension, do: config(:thumbnail_dimension, 500)
+  def thumbnail_dimension, do: config(:thumbnail_dimension, 768)
   def ollama_timeout, do: config(:ollama_timeout, 120_000)
   def ollama_model, do: Animina.FeatureFlags.ollama_model()
+
+  @doc """
+  Selects the Ollama model to use based on current queue pressure.
+
+  When adaptive model selection is enabled, uses a three-tier system
+  that steps through 8b → 4b → 2b as queue pressure increases, with
+  hysteresis to prevent flapping near boundaries.
+
+  With defaults (downgrade_tier2=10, downgrade_tier3=20, upgrade=5):
+  - Queue 0–5:  Tier 1 (8b) — at or below upgrade threshold
+  - Queue 6–10: Tier 2 (4b) — hysteresis zone
+  - Queue 11–20: Tier 2 (4b) — above tier2 downgrade
+  - Queue 21+:  Tier 3 (2b) — above tier3 downgrade
+  """
+  def select_ollama_model do
+    alias Animina.FeatureFlags
+
+    if FeatureFlags.enabled?(:ollama_adaptive_model) do
+      queue_count = count_ollama_queue()
+      downgrade_tier3 = FeatureFlags.ollama_downgrade_tier3_threshold()
+      downgrade_tier2 = FeatureFlags.ollama_downgrade_tier2_threshold()
+      upgrade = FeatureFlags.ollama_upgrade_threshold()
+
+      cond do
+        queue_count > downgrade_tier3 -> FeatureFlags.ollama_model_tier3()
+        queue_count > downgrade_tier2 -> FeatureFlags.ollama_model_tier2()
+        queue_count <= upgrade -> FeatureFlags.ollama_model_tier1()
+        true -> FeatureFlags.ollama_model_tier2()
+      end
+    else
+      ollama_model()
+    end
+  end
+
   def ollama_total_timeout, do: config(:ollama_total_timeout, 300_000)
   def ollama_circuit_breaker_threshold, do: config(:ollama_circuit_breaker_threshold, 3)
   def ollama_circuit_breaker_reset_ms, do: config(:ollama_circuit_breaker_reset_ms, 60_000)
@@ -326,6 +360,98 @@ defmodule Animina.Photos do
 
   defdelegate retry_from_manual_review(photo, reviewer), to: Animina.Photos.OllamaQueue
   defdelegate get_oldest_ollama_queue_photo(), to: Animina.Photos.OllamaQueue
+
+  # --- OllamaLog functions ---
+
+  alias Animina.Photos.OllamaLog
+
+  @doc """
+  Creates a new Ollama log entry.
+  """
+  def create_ollama_log(attrs) do
+    %OllamaLog{}
+    |> OllamaLog.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates an existing Ollama log entry.
+  """
+  def update_ollama_log(%OllamaLog{} = log, attrs) do
+    log
+    |> OllamaLog.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Gets a single Ollama log entry with preloaded associations.
+  """
+  def get_ollama_log(id) do
+    OllamaLog
+    |> Repo.get(id)
+    |> Repo.preload([:photo, :owner, :requester])
+  end
+
+  @doc """
+  Lists Ollama log entries with pagination, sorting, and filtering.
+
+  Options:
+    - `:page` - page number (default 1)
+    - `:per_page` - items per page (default 50)
+    - `:sort_by` - column to sort by (default :inserted_at)
+    - `:sort_dir` - sort direction :asc or :desc (default :desc)
+    - `:filter_model` - filter by model name
+    - `:filter_status` - filter by status ("success" or "error")
+  """
+  def list_ollama_logs(opts \\ []) do
+    page = max(opts[:page] || 1, 1)
+    per_page = min(max(opts[:per_page] || 50, 1), 500)
+    sort_by = opts[:sort_by] || :inserted_at
+    sort_dir = if opts[:sort_dir] == :asc, do: :asc, else: :desc
+
+    query =
+      OllamaLog
+      |> maybe_filter_model(opts[:filter_model])
+      |> maybe_filter_status(opts[:filter_status])
+
+    total_count = Repo.aggregate(query, :count)
+
+    entries =
+      query
+      |> order_by([l], [{^sort_dir, ^sort_by}])
+      |> limit(^per_page)
+      |> offset(^((page - 1) * per_page))
+      |> Repo.all()
+      |> Repo.preload([:photo, :owner, :requester])
+
+    %{
+      entries: entries,
+      page: page,
+      per_page: per_page,
+      total_count: total_count,
+      total_pages: max(ceil(total_count / per_page), 1)
+    }
+  end
+
+  @doc """
+  Returns a list of distinct model names used in Ollama logs.
+  """
+  def distinct_ollama_models do
+    OllamaLog
+    |> where([l], not is_nil(l.model))
+    |> distinct([l], l.model)
+    |> select([l], l.model)
+    |> order_by([l], asc: l.model)
+    |> Repo.all()
+  end
+
+  defp maybe_filter_model(query, nil), do: query
+  defp maybe_filter_model(query, ""), do: query
+  defp maybe_filter_model(query, model), do: where(query, [l], l.model == ^model)
+
+  defp maybe_filter_status(query, nil), do: query
+  defp maybe_filter_status(query, ""), do: query
+  defp maybe_filter_status(query, status), do: where(query, [l], l.status == ^status)
 
   # --- Seeding helpers ---
 

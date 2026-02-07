@@ -1,5 +1,5 @@
 defmodule AniminaTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   describe "version/0" do
     test "returns a semver string" do

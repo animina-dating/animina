@@ -22,8 +22,6 @@ defmodule Animina.Application do
         {DNSCluster, query: Application.get_env(:animina, :dns_cluster_query) || :ignore},
         {Phoenix.PubSub, name: Animina.PubSub},
         AniminaWeb.Presence,
-        # Debug store for Ollama calls (always started, but only logs when flag enabled)
-        Animina.FeatureFlags.OllamaDebugStore,
         # Start to serve requests, typically the last entry
         AniminaWeb.Endpoint
       ] ++
@@ -133,7 +131,11 @@ defmodule Animina.Application do
 
   defp maybe_start_photo_processor do
     if Application.get_env(:animina, :start_photo_processor, true) do
-      [Animina.Photos.PhotoProcessor]
+      [
+        {Task.Supervisor, name: Animina.Photos.TaskSupervisor},
+        Animina.Photos.OllamaSemaphore,
+        Animina.Photos.PhotoProcessor
+      ]
     else
       []
     end

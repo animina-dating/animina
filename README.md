@@ -78,7 +78,7 @@ user = Animina.Accounts.get_user_by_email("admin@example.com")
 Animina.Accounts.assign_role(user, "admin")
 ```
 
-After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/ollama-queue`, `/admin/ollama-debug`.
+After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/ollama-logs`.
 
 ## Photo System
 
@@ -86,7 +86,7 @@ Polymorphic photo upload and processing system. Any schema (User, Event, Group) 
 
 ### Features
 
-- **Background processing**: Resize to max 1200px, convert to WebP, strip EXIF metadata, generate pixelated variant and 400px thumbnail (for AI analysis and UX)
+- **Background processing**: Resize to max 1200px, convert to WebP, strip EXIF metadata, generate pixelated variant and 768px thumbnail (for AI analysis and UX)
 - **Content moderation**: Ollama vision model checks photos for family-friendly content and face detection (for avatars)
 - **Face detection** (avatars only): Ensures profile photos contain exactly one person facing the camera
 - **Hotlink protection**: Daily-rotating HMAC-signed URLs — old URLs expire at midnight UTC
@@ -95,7 +95,7 @@ Polymorphic photo upload and processing system. Any schema (User, Event, Group) 
 - **Blacklist**: Perceptual hashing (dhash) blocks re-uploads of rejected content; NSFW photos auto-blacklisted
 - **Image cropping**: Mobile-friendly Cropper.js integration. Avatar photos require mandatory square cropping; gallery photos offer optional square cropping
 - **Audit logging**: Complete history of all photo events (AI decisions, appeals, moderator actions) at `/admin/photos/:id/history`
-- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing. Also includes system settings for referral threshold (default: 3) and soft delete grace period (default: 28 days). Enable "Ollama Debug Display" to capture API calls, viewable at `/admin/ollama-debug`
+- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing. Also includes system settings for referral threshold (default: 3) and soft delete grace period (default: 28 days). Every Ollama API call is logged to the database and viewable at `/admin/ollama-logs`
 - **Cold deploy resilience**: Photos stuck in intermediate processing states are automatically recovered and re-processed on server restart
 
 ### Usage
@@ -130,7 +130,7 @@ config :animina, Animina.Photos,
   upload_dir: "uploads",           # Base directory for uploads
   max_upload_size: 10_000_000,     # 10 MB
   max_dimension: 1200,             # Longest edge in pixels
-  thumbnail_dimension: 400,        # Thumbnail for AI analysis and UX
+  thumbnail_dimension: 768,        # Thumbnail for AI analysis and UX (768px optimal for qwen3-vl 32px patches)
   webp_quality: 80,                # WebP compression quality
   nsfw_threshold_high: 0.85,       # Above = definitely NSFW
   nsfw_threshold_low: 0.3,         # Below = definitely SFW
@@ -167,7 +167,7 @@ uploads/
   processed/                       # Served via signed URLs
     {owner_type}/{owner_id}/
       {photo_id}.webp              # Main processed photo (1200px max)
-      {photo_id}_thumb.webp        # Thumbnail (400px max, used for AI analysis)
+      {photo_id}_thumb.webp        # Thumbnail (768px max, used for AI analysis)
 ```
 
 ### Dependencies

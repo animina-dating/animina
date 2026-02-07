@@ -200,7 +200,6 @@ defmodule Animina.FeatureFlagsTest do
     test "returns all ollama settings with their states and values" do
       # Set specific states for testing
       FunWithFlags.enable(:photo_ollama_check)
-      FunWithFlags.enable(:ollama_debug_display)
 
       # Update the existing setting with custom values
       setting = FeatureFlags.get_flag_setting(:photo_ollama_check)
@@ -228,17 +227,42 @@ defmodule Animina.FeatureFlagsTest do
       # Check string type setting
       ollama_model = Enum.find(settings, fn s -> s.name == :ollama_model end)
       assert ollama_model.type == :string
-      assert ollama_model.default_value == "qwen3-vl:8b"
+      assert ollama_model.default_value == "qwen3-vl:4b"
 
       # Check integer type setting
-      debug_entries = Enum.find(settings, fn s -> s.name == :ollama_debug_max_entries end)
-      assert debug_entries.type == :integer
-      assert debug_entries.default_value == 100
+      max_concurrent = Enum.find(settings, fn s -> s.name == :ollama_max_concurrent end)
+      assert max_concurrent.type == :integer
+      assert max_concurrent.default_value == 2
 
       # Check another flag type
-      debug_display = Enum.find(settings, fn s -> s.name == :ollama_debug_display end)
-      assert debug_display.type == :flag
-      assert debug_display.enabled == true
+      adaptive = Enum.find(settings, fn s -> s.name == :ollama_adaptive_model end)
+      assert adaptive.type == :flag
+    end
+  end
+
+  describe "ollama tier getters" do
+    test "ollama_model_tier1/0 returns default when not configured" do
+      assert FeatureFlags.ollama_model_tier1() == "qwen3-vl:8b"
+    end
+
+    test "ollama_model_tier2/0 returns default when not configured" do
+      assert FeatureFlags.ollama_model_tier2() == "qwen3-vl:4b"
+    end
+
+    test "ollama_model_tier3/0 returns default when not configured" do
+      assert FeatureFlags.ollama_model_tier3() == "qwen3-vl:2b"
+    end
+
+    test "ollama_downgrade_tier2_threshold/0 returns default when not configured" do
+      assert FeatureFlags.ollama_downgrade_tier2_threshold() == 10
+    end
+
+    test "ollama_downgrade_tier3_threshold/0 returns default when not configured" do
+      assert FeatureFlags.ollama_downgrade_tier3_threshold() == 20
+    end
+
+    test "ollama_upgrade_threshold/0 returns default when not configured" do
+      assert FeatureFlags.ollama_upgrade_threshold() == 5
     end
   end
 

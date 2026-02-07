@@ -23,6 +23,9 @@ defmodule Animina.Photos.PhotoAuditLog do
     nsfw_escalated_ollama
     face_checked
     face_escalated_ollama
+    ollama_checked
+    ollama_retry_queued
+    ollama_retries_exhausted
     photo_approved
     photo_rejected
     appeal_created
@@ -31,6 +34,9 @@ defmodule Animina.Photos.PhotoAuditLog do
     blacklist_added
     blacklist_removed
     recovery_after_restart
+    manual_review_approved
+    manual_review_rejected
+    manual_review_retry
   )
 
   @valid_actor_types ~w(system ai user moderator admin)

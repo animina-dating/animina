@@ -471,6 +471,32 @@ defmodule AniminaWeb.Layouts do
                           {gettext("Photo Blacklist")}
                         </a>
 
+                        <%!-- AI / Ollama --%>
+                        <div class="px-4 py-1.5 pt-2">
+                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                            {gettext("AI / Ollama")}
+                          </p>
+                        </div>
+                        <% ollama_queue_count = Photos.count_ollama_queue() %>
+                        <a
+                          href="/admin/ollama-logs"
+                          class={[
+                            "flex items-center justify-between px-4 py-2 text-sm transition-colors",
+                            if(ollama_queue_count > 0,
+                              do: "text-base-content/70 hover:bg-base-200 hover:text-primary",
+                              else:
+                                "text-base-content/40 hover:bg-base-200 hover:text-base-content/60"
+                            )
+                          ]}
+                        >
+                          <span>{gettext("Ollama Logs")}</span>
+                          <%= if ollama_queue_count > 0 do %>
+                            <span class="badge badge-sm badge-warning">
+                              {format_count(ollama_queue_count)}
+                            </span>
+                          <% end %>
+                        </a>
+
                         <%!-- Users --%>
                         <div class="px-4 py-1.5 pt-2">
                           <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
@@ -495,31 +521,6 @@ defmodule AniminaWeb.Layouts do
                           class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                         >
                           {gettext("Feature Flags")}
-                        </a>
-                        <% ollama_queue_count = Photos.count_ollama_queue() %>
-                        <a
-                          href="/admin/ollama-queue"
-                          class={[
-                            "flex items-center justify-between px-4 py-2 text-sm transition-colors",
-                            if(ollama_queue_count > 0,
-                              do: "text-base-content/70 hover:bg-base-200 hover:text-primary",
-                              else:
-                                "text-base-content/40 hover:bg-base-200 hover:text-base-content/60"
-                            )
-                          ]}
-                        >
-                          <span>{gettext("Ollama Queue")}</span>
-                          <%= if ollama_queue_count > 0 do %>
-                            <span class="badge badge-sm badge-warning">
-                              {format_count(ollama_queue_count)}
-                            </span>
-                          <% end %>
-                        </a>
-                        <a
-                          href="/admin/ollama-debug"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Ollama Debug")}
                         </a>
                       </div>
                     <% end %>

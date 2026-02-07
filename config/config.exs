@@ -108,7 +108,7 @@ config :animina, Animina.Photos,
   upload_dir: "uploads",
   max_upload_size: 10_000_000,
   max_dimension: 1200,
-  thumbnail_dimension: 400,
+  thumbnail_dimension: 768,
   webp_quality: 80,
   # Ollama configuration - supports multiple instances with failover
   # If ollama_instances is not set, ollama_url is used as a single instance

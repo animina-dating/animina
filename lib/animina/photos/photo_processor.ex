@@ -15,10 +15,10 @@ defmodule Animina.Photos.PhotoProcessor do
   use GenServer
   require Logger
 
-  alias Animina.Accounts
   alias Animina.FeatureFlags
   alias Animina.Photos
   alias Animina.Photos.OllamaClient
+  alias Animina.Photos.OllamaSemaphore
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoFeedback
 
@@ -91,7 +91,10 @@ defmodule Animina.Photos.PhotoProcessor do
 
   @impl true
   def handle_cast({:process, photo_id}, state) do
-    Task.start(fn -> process_photo(photo_id) end)
+    Task.Supervisor.start_child(Animina.Photos.TaskSupervisor, fn ->
+      process_photo(photo_id)
+    end)
+
     {:noreply, state}
   end
 
@@ -151,19 +154,33 @@ defmodule Animina.Photos.PhotoProcessor do
     # Photo is already in ollama_checking state (transitioned by process_image)
     # Apply configured delay for UX testing
     FeatureFlags.apply_delay(:photo_ollama_check)
-    run_ollama_classification(photo)
+
+    timeout = FeatureFlags.ollama_semaphore_timeout()
+
+    case OllamaSemaphore.acquire(timeout) do
+      :ok ->
+        try do
+          run_ollama_classification(photo)
+        after
+          OllamaSemaphore.release()
+        end
+
+      {:error, :timeout} ->
+        Logger.warning("Ollama semaphore timeout for photo #{photo.id}, queuing for retry")
+        Photos.queue_for_ollama_retry(photo)
+        {:error, :ollama_busy}
+    end
   end
 
   defp run_ollama_classification(photo) do
-    ollama_model = Photos.ollama_model()
+    ollama_model = Photos.select_ollama_model()
     thumbnail_path = Photos.processed_path(photo, :thumbnail)
 
     image_data = File.read!(thumbnail_path) |> Base.encode64()
 
     prompt = ollama_prompt()
 
-    # Look up user info for debug logging
-    {user_email, user_display_name} = get_owner_info(photo)
+    owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
 
     {duration_us, result} =
       :timer.tc(fn ->
@@ -172,8 +189,7 @@ defmodule Animina.Photos.PhotoProcessor do
           prompt: prompt,
           images: [image_data],
           photo_id: photo.id,
-          user_email: user_email,
-          user_display_name: user_display_name
+          owner_id: owner_id
         )
       end)
 
@@ -681,17 +697,6 @@ defmodule Animina.Photos.PhotoProcessor do
       {:ok, image}
     end
   end
-
-  # Look up owner info for debug logging
-  # Only returns user info for User-owned photos
-  defp get_owner_info(%Photo{owner_type: "User", owner_id: owner_id}) when not is_nil(owner_id) do
-    case Accounts.get_user(owner_id) do
-      nil -> {nil, nil}
-      user -> {user.email, user.display_name}
-    end
-  end
-
-  defp get_owner_info(_photo), do: {nil, nil}
 
   defp broadcast_approved(%Photo{} = photo) do
     Phoenix.PubSub.broadcast(

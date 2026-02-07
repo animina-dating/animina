@@ -52,23 +52,92 @@ defmodule Animina.FeatureFlags do
       label: "Ollama Model",
       description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
       type: :string,
+      default_value: "qwen3-vl:4b"
+    },
+    # Concurrency settings
+    %{
+      name: :ollama_max_concurrent,
+      label: "Max Concurrent Requests",
+      description: "Maximum concurrent Ollama requests (fresh uploads + retries)",
+      type: :integer,
+      default_value: 2,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :ollama_semaphore_timeout,
+      label: "Semaphore Timeout (ms)",
+      description: "How long a photo waits for an Ollama slot before queuing for retry",
+      type: :integer,
+      default_value: 30_000,
+      min_value: 5_000,
+      max_value: 300_000
+    },
+    %{
+      name: :ollama_retry_batch_size,
+      label: "Retry Batch Size",
+      description: "Photos to process per retry poll cycle (every 60s)",
+      type: :integer,
+      default_value: 5,
+      min_value: 1,
+      max_value: 20
+    },
+    # Adaptive model settings — three-tier: 8b → 4b → 2b
+    %{
+      name: :ollama_adaptive_model,
+      label: "Adaptive Model Selection",
+      description:
+        "Automatically step down to smaller models under queue pressure (8b → 4b → 2b)",
+      type: :flag
+    },
+    %{
+      name: :ollama_model_tier1,
+      label: "Tier 1 Model (Best Quality)",
+      description: "Used when queue is small (default operation)",
+      type: :string,
       default_value: "qwen3-vl:8b"
     },
     %{
-      name: :ollama_debug_max_entries,
-      label: "Ollama Debug Max Entries",
-      description: "Maximum number of Ollama debug entries to store and display",
-      type: :integer,
-      default_value: 100,
-      min_value: 10,
-      max_value: 1000
+      name: :ollama_model_tier2,
+      label: "Tier 2 Model (Medium)",
+      description: "Used when queue exceeds downgrade threshold",
+      type: :string,
+      default_value: "qwen3-vl:4b"
     },
     %{
-      name: :ollama_debug_display,
-      label: "Ollama Debug Display",
+      name: :ollama_model_tier3,
+      label: "Tier 3 Model (Fast)",
+      description: "Used when queue exceeds second downgrade threshold",
+      type: :string,
+      default_value: "qwen3-vl:2b"
+    },
+    %{
+      name: :ollama_downgrade_tier2_threshold,
+      label: "Downgrade to Tier 2 Threshold",
+      description: "Queue size above which Tier 2 model is used instead of Tier 1",
+      type: :integer,
+      default_value: 10,
+      min_value: 1,
+      max_value: 100
+    },
+    %{
+      name: :ollama_downgrade_tier3_threshold,
+      label: "Downgrade to Tier 3 Threshold",
+      description: "Queue size above which Tier 3 model is used instead of Tier 2",
+      type: :integer,
+      default_value: 20,
+      min_value: 1,
+      max_value: 200
+    },
+    %{
+      name: :ollama_upgrade_threshold,
+      label: "Upgrade Threshold",
       description:
-        "Show Ollama API calls at the bottom of pages for admins (useful for debugging)",
-      type: :flag
+        "Queue size at or below which the system upgrades back to the next better model",
+      type: :integer,
+      default_value: 5,
+      min_value: 0,
+      max_value: 50
     }
   ]
 
@@ -502,14 +571,6 @@ defmodule Animina.FeatureFlags do
   end
 
   @doc """
-  Returns whether Ollama debug display is enabled.
-  When enabled, admins can see Ollama API calls at the bottom of pages.
-  """
-  def ollama_debug_enabled? do
-    enabled?(:ollama_debug_display)
-  end
-
-  @doc """
   Returns whether admins can view any user's moodboard.
   Disabled by default for privacy.
   """
@@ -778,18 +839,82 @@ defmodule Animina.FeatureFlags do
 
   @doc """
   Returns the configured Ollama model for photo classification.
-  Default: "qwen3-vl:8b"
+  Default: "qwen3-vl:4b"
   """
   def ollama_model do
-    get_system_setting_value(:ollama_model, "qwen3-vl:8b")
+    get_system_setting_value(:ollama_model, "qwen3-vl:4b")
   end
 
   @doc """
-  Returns the configured maximum number of Ollama debug entries to store.
-  Default: 100
+  Returns the maximum number of concurrent Ollama requests.
+  Default: 2
   """
-  def ollama_debug_max_entries do
-    get_system_setting_value(:ollama_debug_max_entries, 100)
+  def ollama_max_concurrent do
+    get_system_setting_value(:ollama_max_concurrent, 2)
+  end
+
+  @doc """
+  Returns the semaphore timeout in milliseconds.
+  Default: 30_000
+  """
+  def ollama_semaphore_timeout do
+    get_system_setting_value(:ollama_semaphore_timeout, 30_000)
+  end
+
+  @doc """
+  Returns the retry batch size per poll cycle.
+  Default: 5
+  """
+  def ollama_retry_batch_size do
+    get_system_setting_value(:ollama_retry_batch_size, 5)
+  end
+
+  @doc """
+  Returns the Tier 1 model name (best quality, used under low load).
+  Default: "qwen3-vl:8b"
+  """
+  def ollama_model_tier1 do
+    get_system_setting_value(:ollama_model_tier1, "qwen3-vl:8b")
+  end
+
+  @doc """
+  Returns the Tier 2 model name (medium, used under moderate load).
+  Default: "qwen3-vl:4b"
+  """
+  def ollama_model_tier2 do
+    get_system_setting_value(:ollama_model_tier2, "qwen3-vl:4b")
+  end
+
+  @doc """
+  Returns the Tier 3 model name (fast, used under heavy load).
+  Default: "qwen3-vl:2b"
+  """
+  def ollama_model_tier3 do
+    get_system_setting_value(:ollama_model_tier3, "qwen3-vl:2b")
+  end
+
+  @doc """
+  Returns the queue size threshold for downgrading from Tier 1 to Tier 2.
+  Default: 10
+  """
+  def ollama_downgrade_tier2_threshold do
+    get_system_setting_value(:ollama_downgrade_tier2_threshold, 10)
+  end
+
+  @doc """
+  Returns the queue size threshold for downgrading from Tier 2 to Tier 3.
+  Default: 20
+  """
+  def ollama_downgrade_tier3_threshold do
+    get_system_setting_value(:ollama_downgrade_tier3_threshold, 20)
+  end
+
+  @doc """
+  Returns the queue size at or below which the system upgrades to a better model.
+  Default: 5
+  """
+  def ollama_upgrade_threshold do
+    get_system_setting_value(:ollama_upgrade_threshold, 5)
   end
 
   # --- Discovery Settings ---

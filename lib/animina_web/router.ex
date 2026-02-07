@@ -116,8 +116,7 @@ defmodule AniminaWeb.Router do
       live "/admin/photos/:id/history", Admin.PhotoHistoryLive
       live "/admin/feature-flags", Admin.FeatureFlagsLive
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
-      live "/admin/ollama-queue", Admin.OllamaQueueLive
-      live "/admin/ollama-debug", Admin.OllamaDebugLive
+      live "/admin/ollama-logs", Admin.OllamaLogsLive
     end
 
     post "/role/switch", RoleController, :switch

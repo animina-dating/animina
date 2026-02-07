@@ -27,8 +27,6 @@ defmodule Animina.Photos.OllamaClient do
 
   require Logger
 
-  alias Animina.FeatureFlags
-  alias Animina.FeatureFlags.OllamaDebugStore
   alias Animina.Photos
   alias Animina.Photos.OllamaHealthTracker
 
@@ -37,8 +35,9 @@ defmodule Animina.Photos.OllamaClient do
           prompt: String.t(),
           images: [String.t()],
           photo_id: String.t(),
-          user_email: String.t(),
-          user_display_name: String.t()
+          owner_id: String.t(),
+          requester_id: String.t(),
+          target_server: String.t()
         ]
 
   @failover_eligible_errors [
@@ -76,66 +75,64 @@ defmodule Animina.Photos.OllamaClient do
     prompt = Keyword.fetch!(opts, :prompt)
     images = Keyword.get(opts, :images, [])
     photo_id = Keyword.get(opts, :photo_id)
-    user_email = Keyword.get(opts, :user_email)
-    user_display_name = Keyword.get(opts, :user_display_name)
+    owner_id = Keyword.get(opts, :owner_id)
+    requester_id = Keyword.get(opts, :requester_id)
+    target_server = Keyword.get(opts, :target_server)
+
+    # Create log entry with "in_progress" status BEFORE the call
+    {:ok, log_entry} =
+      Photos.create_ollama_log(%{
+        photo_id: photo_id,
+        owner_id: owner_id,
+        requester_id: requester_id,
+        prompt: prompt,
+        model: model,
+        status: "in_progress"
+      })
 
     instances = Photos.ollama_instances()
     total_timeout = Photos.ollama_total_timeout()
     deadline = System.monotonic_time(:millisecond) + total_timeout
 
-    instances_to_try = get_instances_to_try(instances, OllamaHealthTracker)
+    instances_to_try = resolve_instances(instances, target_server)
 
     start_time = System.monotonic_time(:millisecond)
     result = try_instances(instances_to_try, model, prompt, images, deadline, [])
     duration_ms = System.monotonic_time(:millisecond) - start_time
 
-    # Store debug info if feature flag is enabled
-    maybe_store_debug(
-      model,
-      prompt,
-      images,
-      result,
-      duration_ms,
-      photo_id,
-      user_email,
-      user_display_name
-    )
+    finalize_log_entry(log_entry, result, duration_ms)
 
     result
   end
 
-  defp maybe_store_debug(
-         model,
-         prompt,
-         images,
-         result,
-         duration_ms,
-         photo_id,
-         user_email,
-         user_display_name
-       ) do
-    if FeatureFlags.ollama_debug_enabled?() do
-      {status, response, server_url, error} =
-        case result do
-          {:ok, resp, url} -> {:success, resp, url, nil}
-          {:error, reason} -> {:error, nil, nil, inspect(reason)}
-        end
+  defp resolve_instances(instances, nil),
+    do: get_instances_to_try(instances, OllamaHealthTracker)
 
-      OllamaDebugStore.store_call(%{
-        timestamp: DateTime.utc_now(),
-        model: model,
-        prompt: prompt,
-        images: images,
-        response: response,
-        server_url: server_url,
-        duration_ms: duration_ms,
-        photo_id: photo_id,
-        status: status,
-        error: error,
-        user_email: user_email,
-        user_display_name: user_display_name
-      })
+  defp resolve_instances(instances, target_server) do
+    case Enum.find(instances, fn inst -> inst.url == target_server end) do
+      nil -> [%{url: target_server, timeout: Photos.ollama_timeout(), priority: 1}]
+      inst -> [inst]
     end
+  end
+
+  defp finalize_log_entry(log_entry, result, duration_ms) do
+    {status, response, server_url, error} =
+      case result do
+        {:ok, %{"response" => resp}, url} -> {"success", resp, url, nil}
+        {:ok, resp, url} -> {"success", inspect(resp), url, nil}
+        {:error, reason} -> {"error", nil, nil, inspect(reason)}
+      end
+
+    # Fire-and-forget — don't block the pipeline on logging
+    Task.start(fn ->
+      Photos.update_ollama_log(log_entry, %{
+        result: response,
+        duration_ms: duration_ms,
+        server_url: server_url,
+        status: status,
+        error: error
+      })
+    end)
   end
 
   @doc """
