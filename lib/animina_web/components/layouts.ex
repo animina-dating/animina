@@ -5,6 +5,7 @@ defmodule AniminaWeb.Layouts do
   """
   use AniminaWeb, :html
 
+  alias Animina.Accounts.ProfileCompleteness
   alias Animina.Accounts.Scope
   alias Animina.FeatureFlags
   alias Animina.Photos
@@ -55,9 +56,15 @@ defmodule AniminaWeb.Layouts do
         Photos.get_user_avatar_url(assigns.current_scope.user.id)
       end
 
+    profile_completeness =
+      if assigns[:current_scope] && assigns.current_scope.user do
+        ProfileCompleteness.compute(assigns.current_scope.user)
+      end
+
     assigns =
       assigns
       |> assign(:avatar_url, avatar_url)
+      |> assign(:profile_completeness, profile_completeness)
       |> assign(:languages, Languages.all())
       |> assign(:dev, @dev)
 
@@ -257,36 +264,174 @@ defmodule AniminaWeb.Layouts do
                         </div>
                       </a>
                     <% end %>
-                    <!-- Account Section -->
-                    <div class="px-4 py-1.5">
-                      <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                        {gettext("Account")}
-                      </p>
+                    <%= if @current_scope.user.state == "waitlisted" do %>
+                      <!-- Profile Completeness Bar (waitlisted users) -->
+                      <%= if @profile_completeness && @profile_completeness.completed_count < @profile_completeness.total_count do %>
+                        <div class="px-4 py-2 border-b border-base-300">
+                          <div class="flex justify-between text-xs text-base-content/60 mb-1">
+                            <span>{gettext("Profile completeness")}</span>
+                            <span class="font-medium">
+                              {@profile_completeness.completed_count}/{@profile_completeness.total_count}
+                            </span>
+                          </div>
+                          <div class="w-full bg-base-300 rounded-full h-1.5">
+                            <div
+                              class="bg-primary h-1.5 rounded-full transition-all"
+                              style={"width: #{@profile_completeness.completed_count / @profile_completeness.total_count * 100}%"}
+                            />
+                          </div>
+                        </div>
+                      <% end %>
+                      <!-- My Profile Section (expanded for waitlisted users) -->
+                      <div class="px-4 py-1.5">
+                        <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                          {gettext("My Profile")}
+                        </p>
+                      </div>
+                      <% show_checks =
+                        @profile_completeness &&
+                          @profile_completeness.completed_count < @profile_completeness.total_count %>
+                      <% items = @profile_completeness && @profile_completeness.items %>
+                      <a
+                        href="/users/settings/avatar"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.profile_photo do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("Profile Photo")}
+                      </a>
+                      <a
+                        href="/users/settings/profile"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.profile_info do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("Profile Info")}
+                      </a>
+                      <a
+                        href="/users/settings/moodboard"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.moodboard do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("My Moodboard")}
+                      </a>
+                      <a
+                        href="/users/settings/traits"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.flags do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("My Flags")}
+                      </a>
+                      <a
+                        href="/users/settings/preferences"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.partner_preferences do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("Partner Preferences")}
+                      </a>
+                      <a
+                        href="/users/settings/locations"
+                        class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span :if={show_checks} class="shrink-0">
+                          <%= if items.location do %>
+                            <.icon name="hero-check-circle-micro" class="size-4 text-success" />
+                          <% else %>
+                            <span class="inline-block size-4 rounded-full border-2 border-base-content/20">
+                            </span>
+                          <% end %>
+                        </span>
+                        {gettext("Locations")}
+                      </a>
+                    <% else %>
+                      <!-- Condensed My Profile link (non-waitlisted users) -->
+                      <div class="px-4 py-1.5">
+                        <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                          {gettext("My Profile")}
+                        </p>
+                      </div>
+                      <a
+                        href="/my-profile"
+                        class="flex items-center justify-between px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        <span>{gettext("My Profile")}</span>
+                        <%= if @profile_completeness && @profile_completeness.completed_count < @profile_completeness.total_count do %>
+                          <span class="text-xs text-base-content/50 font-medium">
+                            {@profile_completeness.completed_count}/{@profile_completeness.total_count}
+                          </span>
+                        <% end %>
+                      </a>
+                    <% end %>
+                    <!-- App Section (hidden while on waitlist) -->
+                    <div
+                      :if={@current_scope.user.state != "waitlisted"}
+                      class="border-t border-base-300 mt-1"
+                    >
+                      <div class="px-4 py-1.5 pt-2">
+                        <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                          {gettext("App")}
+                        </p>
+                      </div>
+                      <a
+                        href="/discover"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Discover")}
+                      </a>
+                      <a
+                        href="/messages"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Messages")}
+                      </a>
                     </div>
-                    <a
-                      href="/discover"
-                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                    >
-                      {gettext("Discover")}
-                    </a>
-                    <a
-                      href="/messages"
-                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                    >
-                      {gettext("Messages")}
-                    </a>
-                    <a
-                      href="/users/settings"
-                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                    >
-                      {gettext("Settings")}
-                    </a>
-                    <a
-                      href="/users/settings/moodboard"
-                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                    >
-                      {gettext("My Moodboard")}
-                    </a>
+                    <!-- Account Section -->
+                    <div class="border-t border-base-300 mt-1">
+                      <div class="px-4 py-1.5 pt-2">
+                        <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
+                          {gettext("Account")}
+                        </p>
+                      </div>
+                      <a
+                        href="/users/settings"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Settings")}
+                      </a>
+                    </div>
                     <!-- Moderation Section (only in moderator role) -->
                     <%= if @current_scope.current_role == "moderator" do %>
                       <div class="border-t border-base-300 mt-1">

@@ -81,7 +81,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       assert html =~ "Skip the waitlist"
     end
 
-    test "shows links to moodboard editor and flag wizard", %{conn: conn} do
+    test "shows links to avatar, moodboard editor and flag wizard", %{conn: conn} do
       user = user_fixture(language: "en")
 
       {:ok, _lv, html} =
@@ -90,11 +90,24 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> live(~p"/users/waitlist")
 
       assert html =~ "Prepare your profile"
+      assert html =~ ~r"/users/settings/avatar"
       assert html =~ ~r"/users/settings/moodboard"
       assert html =~ ~r"/users/settings/traits"
     end
 
-    test "shows passkey setup link when user has no passkeys", %{conn: conn} do
+    test "shows completion checkmarks on profile preparation cards", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      # Fresh user has incomplete items — should show empty circle indicators
+      assert html =~ "border-base-content/20"
+    end
+
+    test "shows passkey card as optional when user has no passkeys", %{conn: conn} do
       user = user_fixture(language: "en")
 
       {:ok, _lv, html} =
@@ -104,9 +117,10 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       assert html =~ ~r"/users/settings/passkeys"
       assert html =~ "Set up a passkey"
+      assert html =~ "Optional"
     end
 
-    test "hides passkey setup link when user has passkeys", %{conn: conn} do
+    test "shows passkey card with checkmark when user has passkeys", %{conn: conn} do
       user = user_fixture(language: "en")
 
       # Create a passkey for the user
@@ -128,7 +142,8 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      refute html =~ "Set up a passkey"
+      assert html =~ "Set up a passkey"
+      assert html =~ "hero-check-circle-solid"
     end
   end
 end

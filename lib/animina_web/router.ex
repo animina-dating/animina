@@ -86,6 +86,7 @@ defmodule AniminaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
+      live "/my-profile", UserLive.ProfileHub, :index
       live "/users/settings", UserLive.SettingsHub, :index
       live "/users/settings/account", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email

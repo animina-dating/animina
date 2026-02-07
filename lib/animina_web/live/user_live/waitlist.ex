@@ -2,6 +2,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.ProfileCompleteness
   alias Animina.FeatureFlags
   alias Animina.GeoData
 
@@ -80,36 +81,62 @@ defmodule AniminaWeb.UserLive.Waitlist do
           </p>
 
           <div class="grid gap-3 sm:grid-cols-2">
-            <.link
-              navigate={~p"/users/settings/traits"}
-              class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
+            <.waitlist_card
+              navigate={~p"/users/settings/avatar"}
+              icon_bg="bg-secondary/10"
+              icon_color="text-secondary"
+              complete={@profile_completeness.items.profile_photo}
             >
-              <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+              <:icon>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-success"
+                  class="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </:icon>
+              <:title>{gettext("Profile Photo")}</:title>
+              <:description>{gettext("Upload your main profile photo.")}</:description>
+            </.waitlist_card>
+
+            <.waitlist_card
+              navigate={~p"/users/settings/traits"}
+              icon_bg="bg-success/10"
+              icon_color="text-success"
+              complete={@profile_completeness.items.flags}
+            >
+              <:icon>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
-              </div>
-              <div>
-                <p class="font-medium text-base-content">{gettext("Set up your flags")}</p>
-                <p class="text-xs text-base-content/60">
-                  {gettext("Define what you're about and what you're looking for.")}
-                </p>
-              </div>
-            </.link>
+              </:icon>
+              <:title>{gettext("Set up your flags")}</:title>
+              <:description>
+                {gettext("Define what you're about and what you're looking for.")}
+              </:description>
+            </.waitlist_card>
 
-            <.link
+            <.waitlist_card
               navigate={~p"/users/settings/moodboard"}
-              class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
+              icon_bg="bg-primary/10"
+              icon_color="text-primary"
+              complete={@profile_completeness.items.moodboard}
             >
-              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <:icon>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-primary"
+                  class="w-5 h-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -119,23 +146,24 @@ defmodule AniminaWeb.UserLive.Waitlist do
                     clip-rule="evenodd"
                   />
                 </svg>
-              </div>
-              <div>
-                <p class="font-medium text-base-content">{gettext("Edit Moodboard")}</p>
-                <p class="text-xs text-base-content/60">
-                  {gettext("Add photos and stories to make a great first impression.")}
-                </p>
-              </div>
-            </.link>
-            <.link
-              :if={@has_passkeys == false}
+              </:icon>
+              <:title>{gettext("Edit Moodboard")}</:title>
+              <:description>
+                {gettext("Add photos and stories to make a great first impression.")}
+              </:description>
+            </.waitlist_card>
+
+            <.waitlist_card
               navigate={~p"/users/settings/passkeys"}
-              class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
+              icon_bg="bg-info/10"
+              icon_color="text-info"
+              complete={@has_passkeys}
+              optional={true}
             >
-              <div class="w-10 h-10 rounded-full bg-info/10 flex items-center justify-center shrink-0">
+              <:icon>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-info"
+                  class="w-5 h-5"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -145,14 +173,12 @@ defmodule AniminaWeb.UserLive.Waitlist do
                     clip-rule="evenodd"
                   />
                 </svg>
-              </div>
-              <div>
-                <p class="font-medium text-base-content">{gettext("Set up a passkey")}</p>
-                <p class="text-xs text-base-content/60">
-                  {gettext("Sign in faster and more securely with a passkey.")}
-                </p>
-              </div>
-            </.link>
+              </:icon>
+              <:title>{gettext("Set up a passkey")}</:title>
+              <:description>
+                {gettext("Sign in faster and more securely with a passkey.")}
+              </:description>
+            </.waitlist_card>
           </div>
         </div>
 
@@ -215,6 +241,46 @@ defmodule AniminaWeb.UserLive.Waitlist do
     """
   end
 
+  attr :navigate, :string, required: true
+  attr :icon_bg, :string, required: true
+  attr :icon_color, :string, required: true
+  attr :complete, :boolean, required: true
+  attr :optional, :boolean, default: false
+
+  slot :icon, required: true
+  slot :title, required: true
+  slot :description, required: true
+
+  defp waitlist_card(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors relative"
+    >
+      <div class={"w-10 h-10 rounded-full #{@icon_bg} flex items-center justify-center shrink-0 #{@icon_color}"}>
+        {render_slot(@icon)}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-medium text-base-content">{render_slot(@title)}</p>
+        <p class="text-xs text-base-content/60">
+          {render_slot(@description)}
+        </p>
+      </div>
+      <span class="shrink-0">
+        <%= if @complete do %>
+          <.icon name="hero-check-circle-solid" class="size-5 text-success" />
+        <% else %>
+          <%= if @optional do %>
+            <span class="text-xs text-base-content/40 font-medium">{gettext("Optional")}</span>
+          <% else %>
+            <span class="inline-block size-5 rounded-full border-2 border-base-content/20" />
+          <% end %>
+        <% end %>
+      </span>
+    </.link>
+    """
+  end
+
   @impl true
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
@@ -233,6 +299,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
     referral_count = Accounts.count_confirmed_referrals(user)
     referral_threshold = FeatureFlags.referral_threshold()
     has_passkeys = Accounts.list_user_passkeys(user) != []
+    profile_completeness = ProfileCompleteness.compute(user)
 
     {:ok,
      socket
@@ -241,6 +308,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:referral_count, referral_count)
      |> assign(:referral_threshold, referral_threshold)
      |> assign(:end_waitlist_at, user.end_waitlist_at)
-     |> assign(:has_passkeys, has_passkeys)}
+     |> assign(:has_passkeys, has_passkeys)
+     |> assign(:profile_completeness, profile_completeness)}
   end
 end
