@@ -246,8 +246,7 @@ defmodule Animina.FeatureFlagsTest do
     test "system_setting_definitions/0 returns all setting definitions" do
       definitions = FeatureFlags.system_setting_definitions()
 
-      # After reorganization, only referral_threshold and soft_delete_grace_days remain
-      assert length(definitions) == 2
+      assert length(definitions) == 3
 
       referral_def = Enum.find(definitions, &(&1.name == :referral_threshold))
       assert referral_def.label == "Referral Threshold"
@@ -260,6 +259,12 @@ defmodule Animina.FeatureFlagsTest do
       assert grace_def.default_value == 28
       assert grace_def.min_value == 1
       assert grace_def.max_value == 365
+
+      waitlist_def = Enum.find(definitions, &(&1.name == :waitlist_duration_days))
+      assert waitlist_def.label == "Waitlist Duration"
+      assert waitlist_def.default_value == 28
+      assert waitlist_def.min_value == 1
+      assert waitlist_def.max_value == 365
     end
 
     test "referral_threshold/0 returns default value when not configured" do
@@ -292,8 +297,7 @@ defmodule Animina.FeatureFlagsTest do
     test "get_all_system_settings/0 returns all settings with current values" do
       settings = FeatureFlags.get_all_system_settings()
 
-      # After reorganization, only referral_threshold and soft_delete_grace_days remain
-      assert length(settings) == 2
+      assert length(settings) == 3
 
       referral = Enum.find(settings, &(&1.name == :referral_threshold))
       assert referral.current_value == 3

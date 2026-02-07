@@ -111,22 +111,22 @@ msgstr ""
 msgid "must be equal to %{number}"
 msgstr ""
 
-#: lib/animina/accounts.ex:199
+#: lib/animina/accounts.ex:212
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:257
+#: lib/animina/accounts/user.ex:258
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:159
+#: lib/animina/accounts/user.ex:160
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:252
+#: lib/animina/accounts/user.ex:253
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr ""

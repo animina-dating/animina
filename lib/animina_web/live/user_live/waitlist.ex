@@ -43,7 +43,27 @@ defmodule AniminaWeb.UserLive.Waitlist do
               </li>
             </ul>
             <p>
-              {gettext("Expected waiting time:")} <strong>{gettext("approximately 4 weeks")}</strong>.
+              {gettext("Expected waiting time:")}
+              <strong
+                :if={
+                  @end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt
+                }
+                id="waitlist-countdown"
+                phx-hook="WaitlistCountdown"
+                data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
+                data-locale={@current_scope.user.language}
+                data-expired-text={gettext("Your activation is being processed")}
+              >
+                {gettext("approximately 4 weeks")}
+              </strong>
+              <strong :if={
+                @end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) != :gt
+              }>
+                {gettext("Your activation is being processed")}
+              </strong>
+              <strong :if={is_nil(@end_waitlist_at)}>
+                {gettext("approximately 4 weeks")}
+              </strong>
             </p>
             <p>
               {gettext(
@@ -146,6 +166,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:city_names, city_names)
      |> assign(:referral_code, user.referral_code)
      |> assign(:referral_count, referral_count)
-     |> assign(:referral_threshold, referral_threshold)}
+     |> assign(:referral_threshold, referral_threshold)
+     |> assign(:end_waitlist_at, user.end_waitlist_at)}
   end
 end

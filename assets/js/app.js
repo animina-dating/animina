@@ -19,14 +19,15 @@ import {
   ImageCropper,
   ScrollToBottom,
   MessageInput,
-  ChatPanel
+  ChatPanel,
+  WaitlistCountdown
 } from "./hooks"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, AutoDismissFlash, ShiftSelect, SortableList, MarkdownEditor, DeviceType, ImageCropper, ScrollToBottom, MessageInput, ChatPanel},
+  hooks: {...colocatedHooks, AutoDismissFlash, ShiftSelect, SortableList, MarkdownEditor, DeviceType, ImageCropper, ScrollToBottom, MessageInput, ChatPanel, WaitlistCountdown},
 })
 
 // Show progress bar on live navigation and form submits

@@ -52,6 +52,7 @@ defmodule Animina.Accounts.User do
     field :occupation, :string
     field :language, :string, default: "de"
     field :state, :string, default: "waitlisted"
+    field :end_waitlist_at, :utc_datetime
     field :deleted_at, :utc_datetime
 
     # Referral fields

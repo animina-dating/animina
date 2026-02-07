@@ -90,6 +90,15 @@ defmodule Animina.FeatureFlags do
       default_value: 28,
       min_value: 1,
       max_value: 365
+    },
+    %{
+      name: :waitlist_duration_days,
+      label: "Waitlist Duration",
+      description: "Default number of days new users spend on the waitlist",
+      type: :integer,
+      default_value: 28,
+      min_value: 1,
+      max_value: 365
     }
   ]
 
@@ -757,6 +766,14 @@ defmodule Animina.FeatureFlags do
   """
   def soft_delete_grace_days do
     get_system_setting_value(:soft_delete_grace_days, 28)
+  end
+
+  @doc """
+  Returns the configured waitlist duration in days.
+  Default: 28
+  """
+  def waitlist_duration_days do
+    get_system_setting_value(:waitlist_duration_days, 28)
   end
 
   @doc """

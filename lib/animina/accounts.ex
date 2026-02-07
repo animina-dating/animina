@@ -137,7 +137,9 @@ defmodule Animina.Accounts do
     pt_opts = PT.opts(opts)
 
     Repo.transact(fn ->
-      changeset = User.registration_changeset(%User{}, attrs)
+      changeset =
+        User.registration_changeset(%User{}, attrs)
+        |> set_end_waitlist_at()
 
       changeset = resolve_referral_code(changeset, referral_code_input)
 
@@ -155,6 +157,17 @@ defmodule Animina.Accounts do
 
   defp default_intro_prompt("de"), do: gettext("Erzähl uns etwas über dich...")
   defp default_intro_prompt(_), do: gettext("Tell us about yourself...")
+
+  defp set_end_waitlist_at(changeset) do
+    duration_days = Animina.FeatureFlags.waitlist_duration_days()
+
+    end_at =
+      TimeMachine.utc_now()
+      |> DateTime.add(duration_days, :day)
+      |> DateTime.truncate(:second)
+
+    Ecto.Changeset.put_change(changeset, :end_waitlist_at, end_at)
+  end
 
   @doc """
   Returns `true` if the changeset contains an email uniqueness error.
