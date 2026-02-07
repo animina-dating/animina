@@ -640,6 +640,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
         max_entries: 1,
         max_file_size: 6_000_000
       )
+      |> maybe_auto_open_about_me(user, items)
 
     {:ok, socket}
   end
@@ -1092,6 +1093,23 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
         has_photo? and has_custom_text?
     end
   end
+
+  defp maybe_auto_open_about_me(socket, %{state: "waitlisted"}, items) do
+    pinned_item = Enum.find(items, &Map.get(&1, :pinned, false))
+
+    if pinned_item && length(items) == 1 && !has_custom_about_me_text?(pinned_item) do
+      item = Moodboard.get_item_with_preloads(pinned_item.id)
+      content = (item.moodboard_story && item.moodboard_story.content) || ""
+
+      socket
+      |> assign(:editing_item, item)
+      |> assign(:edit_content, content)
+    else
+      socket
+    end
+  end
+
+  defp maybe_auto_open_about_me(socket, _user, _items), do: socket
 
   # Check if the story content is not a default placeholder
   defp has_custom_about_me_text?(%{moodboard_story: nil}), do: false
