@@ -141,7 +141,21 @@ const ImageCropper = {
         // Generate preview thumbnail (maintaining aspect ratio)
         const previewSize = 200
         let previewWidth, previewHeight
-        if (this.numericRatio === null || this.numericRatio === 1) {
+        const imageRatio = width / height
+
+        if (this.numericRatio === null) {
+          // Original: use actual image aspect ratio
+          if (imageRatio > 1) {
+            previewWidth = previewSize
+            previewHeight = Math.round(previewSize / imageRatio)
+          } else if (imageRatio < 1) {
+            previewWidth = Math.round(previewSize * imageRatio)
+            previewHeight = previewSize
+          } else {
+            previewWidth = previewSize
+            previewHeight = previewSize
+          }
+        } else if (this.numericRatio === 1) {
           previewWidth = previewSize
           previewHeight = previewSize
         } else if (this.numericRatio > 1) {
@@ -207,7 +221,21 @@ const ImageCropper = {
           // Generate preview (maintaining aspect ratio)
           const previewSize = 200
           let previewWidth, previewHeight
-          if (this.numericRatio === null || this.numericRatio === 1) {
+          const imgRatio = width / height
+
+          if (this.numericRatio === null) {
+            // Original: use actual image aspect ratio
+            if (imgRatio > 1) {
+              previewWidth = previewSize
+              previewHeight = Math.round(previewSize / imgRatio)
+            } else if (imgRatio < 1) {
+              previewWidth = Math.round(previewSize * imgRatio)
+              previewHeight = previewSize
+            } else {
+              previewWidth = previewSize
+              previewHeight = previewSize
+            }
+          } else if (this.numericRatio === 1) {
             previewWidth = previewSize
             previewHeight = previewSize
           } else if (this.numericRatio > 1) {
