@@ -5,12 +5,14 @@ defmodule AniminaWeb.UserLive.Registration do
   alias Animina.Accounts.User
   alias Animina.GeoData
 
+  @step_params %{1 => "account", 2 => "profile", 3 => "location", 4 => "partner"}
+
   defp step_titles do
     %{
       1 => gettext("Account"),
       2 => gettext("Profile"),
       3 => gettext("Location"),
-      4 => gettext("Partner")
+      4 => gettext("Ideal Partner")
     }
   end
 
@@ -526,6 +528,18 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   @impl true
+  def handle_params(params, _uri, socket) do
+    # Only apply URL step param on initial load or when navigating back via browser
+    # Don't override step during next_step/prev_step events (those use push_patch)
+    step = step_from_param(params["step"])
+
+    {:noreply,
+     socket
+     |> assign(current_step: step)
+     |> recalc_step_ready()}
+  end
+
+  @impl true
   def handle_event("next_step", _params, socket) do
     current = socket.assigns.current_step
     params = socket.assigns.last_params
@@ -544,12 +558,11 @@ defmodule AniminaWeb.UserLive.Registration do
 
       {:noreply,
        socket
-       |> assign(current_step: next)
        |> assign(step_direction: :forward)
        |> assign(last_params: params)
        |> assign(age: age)
        |> assign_form(changeset)
-       |> recalc_step_ready()}
+       |> push_patch(to: registration_path(next))}
     else
       changeset =
         Accounts.change_user_registration(%User{}, params)
@@ -572,10 +585,9 @@ defmodule AniminaWeb.UserLive.Registration do
 
     {:noreply,
      socket
-     |> assign(current_step: prev)
      |> assign(step_direction: :backward)
      |> assign_form(changeset)
-     |> recalc_step_ready()}
+     |> push_patch(to: registration_path(prev))}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
@@ -628,9 +640,9 @@ defmodule AniminaWeb.UserLive.Registration do
 
           {:noreply,
            socket
-           |> assign(current_step: error_step)
            |> assign(step_direction: :backward)
-           |> assign_form(cleaned_changeset)}
+           |> assign_form(cleaned_changeset)
+           |> push_patch(to: registration_path(error_step))}
         end
     end
   end
@@ -955,6 +967,15 @@ defmodule AniminaWeb.UserLive.Registration do
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, form: to_form(changeset, as: "user"))
   end
+
+  defp registration_path(step) do
+    ~p"/users/register?step=#{@step_params[step]}"
+  end
+
+  defp step_from_param("profile"), do: 2
+  defp step_from_param("location"), do: 3
+  defp step_from_param("partner"), do: 4
+  defp step_from_param(_), do: 1
 
   defp strip_email_uniqueness_error(changeset) do
     if Accounts.email_uniqueness_error?(changeset) do
