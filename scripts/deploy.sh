@@ -26,6 +26,7 @@ SERVICE_NAME="animina2"
 DEPLOY_DIR="${DEPLOY_DIR:-/var/www/animina.de}"
 CURRENT_LINK="${DEPLOY_DIR}/current"
 SHARED_DIR="${DEPLOY_DIR}/shared"
+UPLOADS_DIR="${SHARED_DIR}/uploads"
 BACKUP_DIR="${SHARED_DIR}/backups"
 HOT_UPGRADES_DIR="${SHARED_DIR}/hot-upgrades"
 RELEASES_DIR="${DEPLOY_DIR}/releases"
@@ -169,6 +170,9 @@ main() {
 
   log "Extracting release tarball: $TARBALL"
   tar -xzf "$TARBALL" -C "$RELEASE_DIR"
+
+  # Ensure shared uploads directory exists
+  mkdir -p "$UPLOADS_DIR"
 
   # Source environment
   if [ -f "$SHARED_DIR/.env" ]; then

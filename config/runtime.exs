@@ -44,6 +44,11 @@ if ollama_urls = System.get_env("OLLAMA_URLS") do
 end
 
 if config_env() == :prod do
+  # Use a shared uploads directory that persists across releases
+  upload_dir = System.get_env("UPLOAD_DIR", "/var/www/animina.de/shared/uploads")
+
+  config :animina, Animina.Photos, upload_dir: upload_dir
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
