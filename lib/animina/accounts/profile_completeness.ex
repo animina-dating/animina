@@ -26,10 +26,12 @@ defmodule Animina.Accounts.ProfileCompleteness do
   Returns `%{completed_count: N, total_count: 6, items: %{...}}`.
   """
   def compute(user) do
+    location_count = count_locations(user.id)
+
     items = %{
       profile_photo: has_approved_avatar?(user.id),
       profile_info: user.height != nil,
-      location: has_location?(user),
+      location: location_count > 0,
       partner_preferences:
         user.preferred_partner_gender != nil and user.preferred_partner_gender != [],
       flags: has_flags?(user.id),
@@ -38,7 +40,12 @@ defmodule Animina.Accounts.ProfileCompleteness do
 
     completed_count = items |> Map.values() |> Enum.count(& &1)
 
-    %{completed_count: completed_count, total_count: @total_count, items: items}
+    %{
+      completed_count: completed_count,
+      total_count: @total_count,
+      items: items,
+      location_count: location_count
+    }
   end
 
   defp has_approved_avatar?(user_id) do
@@ -52,13 +59,10 @@ defmodule Animina.Accounts.ProfileCompleteness do
     |> Repo.exists?()
   end
 
-  defp has_location?(user) do
-    # user_fixture preloads locations via Accounts.list_user_locations,
-    # but we check the DB to avoid requiring preloads
+  defp count_locations(user_id) do
     Animina.Accounts.UserLocation
-    |> where([l], l.user_id == ^user.id)
-    |> limit(1)
-    |> Repo.exists?()
+    |> where([l], l.user_id == ^user_id)
+    |> Repo.aggregate(:count)
   end
 
   defp has_flags?(user_id) do

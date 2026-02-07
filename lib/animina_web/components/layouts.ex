@@ -374,7 +374,7 @@ defmodule AniminaWeb.Layouts do
                             </span>
                           <% end %>
                         </span>
-                        {gettext("Locations")}
+                        {ngettext("Location", "Locations", @profile_completeness.location_count)}
                       </a>
                     <% else %>
                       <!-- Condensed My Profile link (non-waitlisted users) -->

@@ -22,6 +22,7 @@ defmodule Animina.Accounts.ProfileCompletenessTest do
       assert result.items.profile_photo == false
       assert result.items.flags == false
       assert result.completed_count == 3
+      assert result.location_count == 1
     end
 
     test "profile_photo is true when approved avatar exists" do
@@ -52,6 +53,7 @@ defmodule Animina.Accounts.ProfileCompletenessTest do
 
       result = ProfileCompleteness.compute(user)
       assert result.items.location == false
+      assert result.location_count == 0
     end
 
     test "partner_preferences is false when preferred_partner_gender is empty" do

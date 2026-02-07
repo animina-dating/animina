@@ -13,7 +13,11 @@ defmodule AniminaWeb.DemoIndex2Live do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: gettext("Welcome to ANIMINA"))}
+    if match?(%{current_scope: %{user: %{state: "waitlisted"}}}, socket.assigns) do
+      {:ok, Phoenix.LiveView.redirect(socket, to: ~p"/users/waitlist")}
+    else
+      {:ok, assign(socket, page_title: gettext("Welcome to ANIMINA"))}
+    end
   end
 
   @impl true

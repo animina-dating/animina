@@ -24,8 +24,8 @@ msgstr[0] "%{count}/%{threshold} polecenie"
 msgstr[1] "%{count}/%{threshold} polecenia"
 msgstr[2] "%{count}/%{threshold} poleceń"
 
-#: lib/animina_web/live/demo_index2_live.ex:70
-#: lib/animina_web/live/demo_index2_live.ex:238
+#: lib/animina_web/live/demo_index2_live.ex:74
+#: lib/animina_web/live/demo_index2_live.ex:242
 #, elixir-autogen, elixir-format
 msgid "100% Free"
 msgstr "100% za darmo"
@@ -60,7 +60,7 @@ msgstr "Akcje"
 msgid "Activated!"
 msgstr "Aktywowany!"
 
-#: lib/animina_web/live/demo_index2_live.ex:71
+#: lib/animina_web/live/demo_index2_live.ex:75
 #, elixir-autogen, elixir-format
 msgid "Ad-supported – no premium traps, no secret algorithms."
 msgstr "Finansowane z reklam – bez pułapek premium, bez tajnych algorytmów."
@@ -70,7 +70,7 @@ msgstr "Finansowane z reklam – bez pułapek premium, bez tajnych algorytmów."
 msgid "Add location %{number}"
 msgstr "Dodaj lokalizację %{number}"
 
-#: lib/animina_web/live/demo_index2_live.ex:240
+#: lib/animina_web/live/demo_index2_live.ex:244
 #, elixir-autogen, elixir-format
 msgid "All features are free for everyone. No premium subscriptions, no hidden costs, no pay-to-win mechanics. We are financed through advertising."
 msgstr "Wszystkie funkcje są bezpłatne dla każdego. Bez subskrypcji premium, bez ukrytych kosztów, bez mechanik pay-to-win. Finansujemy się z reklam."
@@ -90,7 +90,7 @@ msgstr "Animina łączy ludzi, którzy cenią autentyczność. Bez gier, bez uda
 msgid "Animina is designed for those seeking genuine relationships, not endless swiping."
 msgstr "Animina jest zaprojektowana dla tych, którzy szukają prawdziwych relacji, a nie niekończącego się przesuwania."
 
-#: lib/animina_web/live/demo_index2_live.ex:316
+#: lib/animina_web/live/demo_index2_live.ex:320
 #, elixir-autogen, elixir-format
 msgid "At ANIMINA everything is different."
 msgstr "W ANIMINA wszystko jest inne."
@@ -123,7 +123,7 @@ msgstr "Powrót do logowania"
 msgid "Birthday (min. 18 years)"
 msgstr "Data urodzenia (min. 18 lat)"
 
-#: lib/animina_web/live/demo_index2_live.ex:91
+#: lib/animina_web/live/demo_index2_live.ex:95
 #, elixir-autogen, elixir-format
 msgid "Blacklist for unwanted contacts. Those who cross boundaries will be excluded."
 msgstr "Czarna lista niechcianych kontaktów. Ci, którzy przekraczają granice, zostaną wykluczeni."
@@ -198,17 +198,17 @@ msgstr "Utwórz swój profil"
 msgid "Creating account..."
 msgstr "Tworzenie konta..."
 
-#: lib/animina_web/live/demo_index2_live.ex:290
+#: lib/animina_web/live/demo_index2_live.ex:294
 #, elixir-autogen, elixir-format
 msgid "Dating should be fun – but not addictive. We deliberately avoid manipulative designs like endless swiping or push notifications that keep pulling you back."
 msgstr "Randki powinny być zabawą – ale nie uzależnieniem. Świadomie unikamy manipulacyjnych projektów, takich jak nieskończone przesuwanie czy powiadomienia push, które ciągną Cię z powrotem."
 
-#: lib/animina_web/live/demo_index2_live.ex:100
+#: lib/animina_web/live/demo_index2_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Dating should be joyful, not addictive – quality over sensory overload."
 msgstr "Randki powinny być radosne, nie uzależniające – jakość zamiast przebodźcowania."
 
-#: lib/animina_web/live/demo_index2_live.ex:192
+#: lib/animina_web/live/demo_index2_live.ex:196
 #, elixir-autogen, elixir-format
 msgid "Describe yourself: Your traits, hobbies, values and lifestyle. From humor to creativity to your favorite cuisines."
 msgstr "Opisz siebie: Twoje cechy, hobby, wartości i styl życia. Od humoru po kreatywność i ulubione kuchnie."
@@ -266,7 +266,7 @@ msgstr "Wpisz swój adres e-mail, a wyślemy Ci link do resetowania hasła."
 msgid "Every profile is verified to ensure you're connecting with real people who share your values."
 msgstr "Każdy profil jest weryfikowany, aby upewnić się, że łączysz się z prawdziwymi ludźmi, którzy podzielają Twoje wartości."
 
-#: lib/animina_web/live/demo_index2_live.ex:216
+#: lib/animina_web/live/demo_index2_live.ex:220
 #, elixir-autogen, elixir-format
 msgid "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
 msgstr "Każdy ma swoje granice. Bądź szczery/a co do tego, co Ci nie odpowiada. To oszczędza czas i rozczarowanie po obu stronach."
@@ -282,12 +282,12 @@ msgstr "Kobieta"
 msgid "Find meaningful"
 msgstr "Znajdź wartościowe"
 
-#: lib/animina_web/live/demo_index2_live.ex:179
+#: lib/animina_web/live/demo_index2_live.ex:183
 #, elixir-autogen, elixir-format
 msgid "Find people who match you"
 msgstr "Znajdź ludzi, którzy do Ciebie pasują"
 
-#: lib/animina_web/live/demo_index2_live.ex:80
+#: lib/animina_web/live/demo_index2_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Flag system"
 msgstr "System flag"
@@ -302,12 +302,12 @@ msgstr "Zapomniałeś/aś hasła"
 msgid "Forgot your password?"
 msgstr "Zapomniałeś/aś hasła?"
 
-#: lib/animina_web/live/demo_index2_live.ex:360
+#: lib/animina_web/live/demo_index2_live.ex:364
 #, elixir-autogen, elixir-format
 msgid "Free. Forever. For everyone."
 msgstr "Za darmo. Na zawsze. Dla każdego."
 
-#: lib/animina_web/live/demo_index2_live.ex:288
+#: lib/animina_web/live/demo_index2_live.ex:292
 #, elixir-autogen, elixir-format
 msgid "Fun without addiction"
 msgstr "Zabawa bez uzależnienia"
@@ -327,7 +327,7 @@ msgstr "Płeć/Płci"
 msgid "Get started"
 msgstr "Rozpocznij"
 
-#: lib/animina_web/live/demo_index2_live.ex:201
+#: lib/animina_web/live/demo_index2_live.ex:205
 #, elixir-autogen, elixir-format
 msgid "Green Flags"
 msgstr "Zielone flagi"
@@ -362,7 +362,7 @@ msgstr "Nieprawidłowy e-mail lub hasło"
 msgid "Join thousands of people who chose authenticity over algorithms."
 msgstr "Dołącz do tysięcy osób, które wybrały autentyczność zamiast algorytmów."
 
-#: lib/animina_web/live/demo_index2_live.ex:98
+#: lib/animina_web/live/demo_index2_live.ex:102
 #, elixir-autogen, elixir-format
 msgid "Joy instead of addiction"
 msgstr "Radość zamiast uzależnienia"
@@ -383,12 +383,15 @@ msgstr "Język"
 msgid "Learn more"
 msgstr "Dowiedz się więcej"
 
+#: lib/animina_web/components/layouts.ex:377
 #: lib/animina_web/live/user_live/registration.ex:14
 #, elixir-autogen, elixir-format
 msgid "Location"
-msgstr "Lokalizacja"
+msgid_plural "Locations"
+msgstr[0] "Lokalizacja"
+msgstr[1] ""
+msgstr[2] ""
 
-#: lib/animina_web/components/layouts.ex:377
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:160
@@ -479,12 +482,12 @@ msgstr "Nowe hasło"
 msgid "Next"
 msgstr "Dalej"
 
-#: lib/animina_web/live/demo_index2_live.ex:348
+#: lib/animina_web/live/demo_index2_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "No tricks, no hidden costs. Simply meet people who match you."
 msgstr "Bez sztuczek, bez ukrytych kosztów. Po prostu poznaj ludzi, którzy do Ciebie pasują."
 
-#: lib/animina_web/live/demo_index2_live.ex:248
+#: lib/animina_web/live/demo_index2_live.ex:252
 #, elixir-autogen, elixir-format
 msgid "Not unlimited requests"
 msgstr "Nie nieograniczone zapytania"
@@ -495,7 +498,7 @@ msgstr "Nie nieograniczone zapytania"
 msgid "Occupation"
 msgstr "Zawód"
 
-#: lib/animina_web/live/demo_index2_live.ex:250
+#: lib/animina_web/live/demo_index2_live.ex:254
 #, elixir-autogen, elixir-format
 msgid "On traditional platforms both sides struggle: Attractive people drown in requests, less popular ones barely get any. With us, the number of requests per day is limited. In real life, you can't talk to 10 potential partners at the same time either. This makes dating fairer for everyone."
 msgstr "Na tradycyjnych platformach obie strony mają problem: atrakcyjni ludzie toną w zapytaniach, mniej popularni prawie ich nie dostają. U nas liczba zapytań dziennie jest ograniczona. W prawdziwym życiu też nie możesz rozmawiać z 10 potencjalnymi partnerami jednocześnie. To sprawia, że randki są sprawiedliwsze dla wszystkich."
@@ -507,7 +510,7 @@ msgstr "Na tradycyjnych platformach obie strony mają problem: atrakcyjni ludzie
 msgid "Open dev mailbox"
 msgstr "Otwórz skrzynkę deweloperską"
 
-#: lib/animina_web/live/demo_index2_live.ex:318
+#: lib/animina_web/live/demo_index2_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "Our code is fully available on GitHub. Anyone can verify how our matching works. The algorithm treats everyone equally – no exceptions."
 msgstr "Nasz kod jest w pełni dostępny na GitHub. Każdy może sprawdzić, jak działa nasze dopasowywanie. Algorytm traktuje wszystkich równo – bez wyjątków."
@@ -517,17 +520,17 @@ msgstr "Nasz kod jest w pełni dostępny na GitHub. Każdy może sprawdzić, jak
 msgid "Our matching focuses on compatibility and shared interests, not just appearances."
 msgstr "Nasze dopasowywanie koncentruje się na kompatybilności i wspólnych zainteresowaniach, nie tylko na wyglądzie."
 
-#: lib/animina_web/live/demo_index2_live.ex:182
+#: lib/animina_web/live/demo_index2_live.ex:186
 #, elixir-autogen, elixir-format
 msgid "Our three-color system makes matching personal and honest"
 msgstr "Nasz trójkolorowy system sprawia, że dopasowywanie jest osobiste i uczciwe"
 
-#: lib/animina_web/live/demo_index2_live.ex:260
+#: lib/animina_web/live/demo_index2_live.ex:264
 #, elixir-autogen, elixir-format
 msgid "Our unique three-color system: White flags show who you are. Green ones what you're looking for. Red ones what's a no-go. This helps you find people who truly match you."
 msgstr "Nasz unikalny trójkolorowy system: białe flagi pokazują, kim jesteś. Zielone czego szukasz. Czerwone co jest nie do przyjęcia. To pomaga znaleźć ludzi, którzy naprawdę do Ciebie pasują."
 
-#: lib/animina_web/live/demo_index2_live.ex:76
+#: lib/animina_web/live/demo_index2_live.ex:80
 #, elixir-autogen, elixir-format
 msgid "Partnership, affair or a good conversation – we don't judge."
 msgstr "Związek, przygoda czy dobra rozmowa – nie oceniamy."
@@ -557,7 +560,7 @@ msgstr "Link do resetowania hasła jest nieprawidłowy lub wygasł."
 msgid "Password updated successfully!"
 msgstr "Hasło zaktualizowane pomyślnie!"
 
-#: lib/animina_web/live/demo_index2_live.ex:131
+#: lib/animina_web/live/demo_index2_live.ex:135
 #, elixir-autogen, elixir-format
 msgid "People looking for real connections"
 msgstr "Ludzie szukający prawdziwych więzi"
@@ -567,7 +570,7 @@ msgstr "Ludzie szukający prawdziwych więzi"
 msgid "People you might like"
 msgstr "Osoby, które mogą Ci się spodobać"
 
-#: lib/animina_web/live/demo_index2_live.ex:258
+#: lib/animina_web/live/demo_index2_live.ex:262
 #, elixir-autogen, elixir-format
 msgid "Personality counts"
 msgstr "Osobowość się liczy"
@@ -592,12 +595,12 @@ msgstr "Prywatność"
 msgid "Profile"
 msgstr "Profil"
 
-#: lib/animina_web/live/demo_index2_live.ex:270
+#: lib/animina_web/live/demo_index2_live.ex:274
 #, elixir-autogen, elixir-format
 msgid "Profiles with depth: Present yourself however you want – with photos only, text only, or both. Get to know people before contacting them – instead of just swiping pictures left or right."
 msgstr "Profile z głębią: przedstaw się jak chcesz – tylko ze zdjęciami, tylko z tekstem, lub jedno i drugie. Poznaj ludzi przed nawiązaniem kontaktu – zamiast po prostu przesuwać zdjęcia w lewo lub w prawo."
 
-#: lib/animina_web/live/demo_index2_live.ex:345
+#: lib/animina_web/live/demo_index2_live.ex:349
 #, elixir-autogen, elixir-format
 msgid "Ready for real dating?"
 msgstr "Gotowy/a na prawdziwe randki?"
@@ -612,12 +615,12 @@ msgstr "Gotowy/a znaleźć swoją osobę?"
 msgid "Real connections"
 msgstr "Prawdziwe więzi"
 
-#: lib/animina_web/live/demo_index2_live.ex:278
+#: lib/animina_web/live/demo_index2_live.ex:282
 #, elixir-autogen, elixir-format
 msgid "Real people"
 msgstr "Prawdziwi ludzie"
 
-#: lib/animina_web/live/demo_index2_live.ex:213
+#: lib/animina_web/live/demo_index2_live.ex:217
 #, elixir-autogen, elixir-format
 msgid "Red Flags"
 msgstr "Czerwone flagi"
@@ -632,13 +635,13 @@ msgstr "Kod polecenia (opcjonalny)"
 msgid "Register"
 msgstr "Zarejestruj się"
 
-#: lib/animina_web/live/demo_index2_live.ex:355
+#: lib/animina_web/live/demo_index2_live.ex:359
 #: lib/animina_web/live/user_live/login.ex:25
 #, elixir-autogen, elixir-format
 msgid "Register now"
 msgstr "Zarejestruj się teraz"
 
-#: lib/animina_web/live/demo_index2_live.ex:119
+#: lib/animina_web/live/demo_index2_live.ex:123
 #, elixir-autogen, elixir-format
 msgid "Register now – free"
 msgstr "Zarejestruj się teraz – za darmo"
@@ -663,7 +666,7 @@ msgstr "Usuń lokalizację"
 msgid "Reset password"
 msgstr "Zresetuj hasło"
 
-#: lib/animina_web/live/demo_index2_live.ex:89
+#: lib/animina_web/live/demo_index2_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Respect first"
 msgstr "Szacunek na pierwszym miejscu"
@@ -717,7 +720,7 @@ msgstr "Ustaw nowe hasło"
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: lib/animina_web/live/demo_index2_live.ex:82
+#: lib/animina_web/live/demo_index2_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Pokaż, kim jesteś, określ, czego szukasz i gdzie są Twoje granice."
@@ -727,12 +730,12 @@ msgstr "Pokaż, kim jesteś, określ, czego szukasz i gdzie są Twoje granice."
 msgid "Something went wrong!"
 msgstr "Coś poszło nie tak!"
 
-#: lib/animina_web/live/demo_index2_live.ex:268
+#: lib/animina_web/live/demo_index2_live.ex:272
 #, elixir-autogen, elixir-format
 msgid "Stories instead of swipes"
 msgstr "Historie zamiast przesunięć"
 
-#: lib/animina_web/live/demo_index2_live.ex:214
+#: lib/animina_web/live/demo_index2_live.ex:218
 #, elixir-autogen, elixir-format
 msgid "That's a no-go"
 msgstr "To nie do przyjęcia"
@@ -743,12 +746,12 @@ msgstr "To nie do przyjęcia"
 msgid "This confirmation link is invalid or expired."
 msgstr "Ten link potwierdzający jest nieprawidłowy lub wygasł."
 
-#: lib/animina_web/live/demo_index2_live.ex:190
+#: lib/animina_web/live/demo_index2_live.ex:194
 #, elixir-autogen, elixir-format
 msgid "This is me"
 msgstr "To ja"
 
-#: lib/animina_web/live/demo_index2_live.ex:202
+#: lib/animina_web/live/demo_index2_live.ex:206
 #, elixir-autogen, elixir-format
 msgid "This is what I'm looking for"
 msgstr "Tego szukam"
@@ -763,7 +766,7 @@ msgstr "Ta lokalizacja została już dodana"
 msgid "Together since 2023"
 msgstr "Razem od 2023"
 
-#: lib/animina_web/live/demo_index2_live.ex:307
+#: lib/animina_web/live/demo_index2_live.ex:311
 #, elixir-autogen, elixir-format
 msgid "Transparency through Open Source"
 msgstr "Przejrzystość dzięki otwartemu źródłu"
@@ -773,7 +776,7 @@ msgstr "Przejrzystość dzięki otwartemu źródłu"
 msgid "Verified profiles"
 msgstr "Zweryfikowane profile"
 
-#: lib/animina_web/live/demo_index2_live.ex:280
+#: lib/animina_web/live/demo_index2_live.ex:284
 #, elixir-autogen, elixir-format
 msgid "Verified profiles and active moderation ensure a safe community. Fake profiles and bots barely stand a chance with us."
 msgstr "Zweryfikowane profile i aktywna moderacja zapewniają bezpieczną społeczność. Fałszywe profile i boty prawie nie mają u nas szans."
@@ -783,7 +786,7 @@ msgstr "Zweryfikowane profile i aktywna moderacja zapewniają bezpieczną społe
 msgid "Verifying..."
 msgstr "Weryfikacja..."
 
-#: lib/animina_web/live/demo_index2_live.ex:335
+#: lib/animina_web/live/demo_index2_live.ex:339
 #, elixir-autogen, elixir-format
 msgid "View code on GitHub"
 msgstr "Zobacz kod na GitHub"
@@ -814,22 +817,22 @@ msgstr "Witamy"
 msgid "Welcome back!"
 msgstr "Witamy ponownie!"
 
-#: lib/animina_web/live/demo_index2_live.ex:16
+#: lib/animina_web/live/demo_index2_live.ex:19
 #, elixir-autogen, elixir-format
 msgid "Welcome to ANIMINA"
 msgstr "Witamy w ANIMINA"
 
-#: lib/animina_web/live/demo_index2_live.ex:204
+#: lib/animina_web/live/demo_index2_live.ex:208
 #, elixir-autogen, elixir-format
 msgid "What do you want in a partner? Which traits do you find attractive? The order shows what matters most to you."
 msgstr "Czego szukasz u partnera? Jakie cechy uważasz za atrakcyjne? Kolejność pokazuje, co jest dla Ciebie najważniejsze."
 
-#: lib/animina_web/live/demo_index2_live.ex:231
+#: lib/animina_web/live/demo_index2_live.ex:235
 #, elixir-autogen, elixir-format
 msgid "What makes ANIMINA different"
 msgstr "Co wyróżnia ANIMINA"
 
-#: lib/animina_web/live/demo_index2_live.ex:189
+#: lib/animina_web/live/demo_index2_live.ex:193
 #: lib/animina_web/live/user_live/traits_wizard.ex:38
 #, elixir-autogen, elixir-format
 msgid "White Flags"
@@ -840,12 +843,12 @@ msgstr "Białe flagi"
 msgid "Why Animina?"
 msgstr "Dlaczego Animina?"
 
-#: lib/animina_web/live/demo_index2_live.ex:310
+#: lib/animina_web/live/demo_index2_live.ex:314
 #, elixir-autogen, elixir-format
 msgid "With other dating platforms you never know why certain people are shown to you. Does the algorithm favor paying customers? Are profiles hidden to force you to upgrade?"
 msgstr "Na innych platformach randkowych nigdy nie wiesz, dlaczego pokazywane są Ci pewne osoby. Czy algorytm faworyzuje płacących klientów? Czy profile są ukrywane, żeby zmusić Cię do ulepszenia?"
 
-#: lib/animina_web/live/demo_index2_live.ex:75
+#: lib/animina_web/live/demo_index2_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "Without labels"
 msgstr "Bez etykiet"
@@ -1202,12 +1205,12 @@ msgstr "Akceptuję"
 msgid "Privacy Policy"
 msgstr "Politykę prywatności"
 
-#: lib/animina_web/live/demo_index2_live.ex:105
+#: lib/animina_web/live/demo_index2_live.ex:109
 #, elixir-autogen, elixir-format
 msgid "Self-hosted in Germany"
 msgstr "Własny serwer w Niemczech"
 
-#: lib/animina_web/live/demo_index2_live.ex:107
+#: lib/animina_web/live/demo_index2_live.ex:111
 #, elixir-autogen, elixir-format
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Nasze serwery nie są w chmurze – działają na własnym fizycznym sprzęcie w Niemczech."
@@ -3204,7 +3207,7 @@ msgid "Upload a photo that shows your face clearly"
 msgstr ""
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:571
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1001
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1002
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr ""
@@ -3872,7 +3875,7 @@ msgid "This usually takes 40 seconds"
 msgstr ""
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:568
-#: lib/animina_web/live/user_live/moodboard_editor.ex:998
+#: lib/animina_web/live/user_live/moodboard_editor.ex:999
 #, elixir-autogen, elixir-format, fuzzy
 msgid "File is too large (max 6MB)"
 msgstr ""
@@ -3902,7 +3905,7 @@ msgstr ""
 
 #: lib/animina_web/components/moodboard_components.ex:392
 #: lib/animina_web/live/user_live/moodboard_editor.ex:90
-#: lib/animina_web/live/user_live/moodboard_editor.ex:978
+#: lib/animina_web/live/user_live/moodboard_editor.ex:979
 #, elixir-autogen, elixir-format
 msgid "Add Photo"
 msgstr ""
@@ -3938,12 +3941,12 @@ msgstr ""
 msgid "Drag and drop or click to upload"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:789
+#: lib/animina_web/live/user_live/moodboard_editor.ex:790
 #, elixir-autogen, elixir-format
 msgid "Failed to add item"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:920
+#: lib/animina_web/live/user_live/moodboard_editor.ex:921
 #, elixir-autogen, elixir-format
 msgid "Failed to delete item"
 msgstr ""
@@ -3956,12 +3959,12 @@ msgstr ""
 msgid "Hidden"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:999
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1000
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Invalid file type"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:914
+#: lib/animina_web/live/user_live/moodboard_editor.ex:915
 #, elixir-autogen, elixir-format
 msgid "Item deleted"
 msgstr ""
@@ -3971,7 +3974,7 @@ msgstr ""
 msgid "JPG, PNG, WebP, HEIC up to 6MB"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1000
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1001
 #, elixir-autogen, elixir-format
 msgid "Too many files"
 msgstr ""
@@ -4008,13 +4011,13 @@ msgstr ""
 msgid "Delete item"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:980
+#: lib/animina_web/live/user_live/moodboard_editor.ex:981
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Add Photo + Text"
 msgstr ""
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:113
-#: lib/animina_web/live/user_live/moodboard_editor.ex:979
+#: lib/animina_web/live/user_live/moodboard_editor.ex:980
 #, elixir-autogen, elixir-format
 msgid "Add Text"
 msgstr ""
@@ -4027,8 +4030,8 @@ msgstr ""
 msgid "Edit text"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:860
-#: lib/animina_web/live/user_live/moodboard_editor.ex:886
+#: lib/animina_web/live/user_live/moodboard_editor.ex:861
+#: lib/animina_web/live/user_live/moodboard_editor.ex:887
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to update text"
 msgstr ""
@@ -4043,8 +4046,8 @@ msgstr ""
 msgid "Text"
 msgstr "Dalej"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:857
-#: lib/animina_web/live/user_live/moodboard_editor.ex:883
+#: lib/animina_web/live/user_live/moodboard_editor.ex:858
+#: lib/animina_web/live/user_live/moodboard_editor.ex:884
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Text updated"
 msgstr ""
@@ -4072,7 +4075,7 @@ msgstr ""
 msgid "Crop Photo"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1076
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1077
 #, elixir-autogen, elixir-format
 msgid "Crop to Square"
 msgstr ""
@@ -4083,7 +4086,7 @@ msgstr ""
 msgid "Cropped preview"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1053
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1054
 #, elixir-autogen, elixir-format
 msgid "Cropped to square"
 msgstr ""
@@ -4105,7 +4108,7 @@ msgstr ""
 msgid "Ready to upload"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1079
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1080
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Apply"
 msgstr ""
@@ -4115,42 +4118,42 @@ msgstr ""
 msgid "Aspect Ratio"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1077
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1078
 #, elixir-autogen, elixir-format
 msgid "Crop to 16:9"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1078
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1079
 #, elixir-autogen, elixir-format
 msgid "Crop to 4:3"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1074
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Crop your photo or skip to use the full image."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1067
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1068
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 16:9 format, or skip to use the full image."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1071
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 4:3 format, or skip to use the full image."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1063
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1064
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to a square, or skip to use the full image."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1054
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1055
 #, elixir-autogen, elixir-format
 msgid "Cropped to 16:9"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1055
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1056
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Cropped to 4:3"
 msgstr ""
@@ -4170,8 +4173,8 @@ msgstr ""
 msgid "Original"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1052
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1056
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1053
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1057
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Photo ready"
 msgstr ""
@@ -4186,7 +4189,7 @@ msgstr ""
 msgid "Square"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1059
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1060
 #, elixir-autogen, elixir-format
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
 msgstr ""
@@ -4224,7 +4227,7 @@ msgstr ""
 msgid "Edit Moodboard"
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:786
+#: lib/animina_web/live/user_live/moodboard_editor.ex:787
 #, elixir-autogen, elixir-format
 msgid "Item added to moodboard"
 msgstr ""
