@@ -94,8 +94,8 @@ msgstr "Animina создана для тех, кто ищет настоящие
 msgid "At ANIMINA everything is different."
 msgstr "В ANIMINA всё по-другому."
 
-#: lib/animina_web/components/layouts.ex:692
-#: lib/animina_web/components/layouts.ex:704
+#: lib/animina_web/components/layouts.ex:701
+#: lib/animina_web/components/layouts.ex:713
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Попытка переподключения"
@@ -730,7 +730,7 @@ msgstr "Настройки"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Покажите, кто вы, определите, что вы ищете и где ваши границы."
 
-#: lib/animina_web/components/layouts.ex:699
+#: lib/animina_web/components/layouts.ex:708
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Что-то пошло не так!"
@@ -801,7 +801,7 @@ msgstr "Посмотреть код на GitHub"
 msgid "Waitlist"
 msgstr "Список ожидания"
 
-#: lib/animina_web/components/layouts.ex:687
+#: lib/animina_web/components/layouts.ex:696
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Не удаётся найти подключение к интернету"
@@ -937,12 +937,12 @@ msgstr "из"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Создать аккаунт"
 
-#: lib/animina_web/components/layouts.ex:711
+#: lib/animina_web/components/layouts.ex:720
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Обновление ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:718
+#: lib/animina_web/components/layouts.ex:727
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "На сервер устанавливается новая версия программного обеспечения. Это займёт всего мгновение..."
@@ -1231,7 +1231,7 @@ msgid "Add Role"
 msgstr "Добавить роль"
 
 #: lib/animina_web/components/layouts.ex:198
-#: lib/animina_web/components/layouts.ex:641
+#: lib/animina_web/components/layouts.ex:650
 #: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -1260,7 +1260,7 @@ msgid "Manage Roles"
 msgstr "Управление ролями"
 
 #: lib/animina_web/components/layouts.ex:203
-#: lib/animina_web/components/layouts.ex:642
+#: lib/animina_web/components/layouts.ex:651
 #: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
@@ -1291,7 +1291,7 @@ msgstr "Сменить роль"
 msgid "The user role cannot be removed."
 msgstr "Роль пользователя не может быть удалена."
 
-#: lib/animina_web/components/layouts.ex:643
+#: lib/animina_web/components/layouts.ex:652
 #: lib/animina_web/live/admin/ollama_debug_live.ex:334
 #: lib/animina_web/live/admin/photo_history_live.ex:177
 #: lib/animina_web/live/admin/photo_reviews_live.ex:601
@@ -5584,4 +5584,9 @@ msgstr ""
 #: lib/animina_web/live/user_live/waitlist.ex:152
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
+msgstr ""
+
+#: lib/animina_web/components/layouts.ex:616
+#, elixir-autogen, elixir-format
+msgid "Report bug"
 msgstr ""
