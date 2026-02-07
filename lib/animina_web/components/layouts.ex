@@ -50,8 +50,14 @@ defmodule AniminaWeb.Layouts do
   slot :inner_block, required: true
 
   def app(assigns) do
+    avatar_url =
+      if assigns[:current_scope] && assigns.current_scope.user do
+        Photos.get_user_avatar_url(assigns.current_scope.user.id)
+      end
+
     assigns =
       assigns
+      |> assign(:avatar_url, avatar_url)
       |> assign(:languages, Languages.all())
       |> assign(:dev, @dev)
 
@@ -162,10 +168,20 @@ defmodule AniminaWeb.Layouts do
                     }
                   >
                     <div class="relative">
-                      <div class="w-9 h-9 rounded-full border-2 flex items-center justify-center bg-primary border-primary">
-                        <span class="text-sm font-semibold text-primary-content">
-                          {String.first(@current_scope.user.display_name || @current_scope.user.email)}
-                        </span>
+                      <div class="w-9 h-9 rounded-full border-2 border-primary overflow-hidden flex items-center justify-center bg-primary">
+                        <%= if @avatar_url do %>
+                          <img
+                            src={@avatar_url}
+                            alt=""
+                            class="w-full h-full object-cover"
+                          />
+                        <% else %>
+                          <span class="text-sm font-semibold text-primary-content">
+                            {String.first(
+                              @current_scope.user.display_name || @current_scope.user.email
+                            )}
+                          </span>
+                        <% end %>
                       </div>
                       <%= if @current_scope.user.state == "waitlisted" do %>
                         <span
