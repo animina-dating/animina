@@ -1,6 +1,8 @@
 defmodule AniminaWeb.UserLive.Login do
   use AniminaWeb, :live_view
 
+  import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1]
+
   @dev_routes Application.compile_env(:animina, :dev_routes)
   @dev_password "password12345"
 
@@ -130,10 +132,6 @@ defmodule AniminaWeb.UserLive.Login do
     </span>
     """
   end
-
-  defp gender_icon("male"), do: raw("&#9794;")
-  defp gender_icon("female"), do: raw("&#9792;")
-  defp gender_icon(_), do: raw("&#9898;")
 
   defp dev_password, do: @dev_password
 

@@ -22,6 +22,7 @@ defmodule AniminaWeb.MessagesLive do
 
   alias Animina.Messaging
   alias Animina.Photos
+  alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
   def render(%{live_action: :show} = assigns) do
@@ -519,7 +520,7 @@ defmodule AniminaWeb.MessagesLive do
       conversation_data: nil,
       messages: [],
       grouped_messages: [],
-      avatar_photos: load_avatar_photos(conversations),
+      avatar_photos: AvatarHelpers.load_from_conversations(conversations),
       other_last_read_at: nil,
       last_read_message_id: nil
     )
@@ -820,15 +821,6 @@ defmodule AniminaWeb.MessagesLive do
     if conversation_data do
       user = socket.assigns.current_scope.user
       Messaging.save_draft(conversation_data.conversation.id, user.id, content)
-    end
-  end
-
-  defp load_avatar_photos(conversations) do
-    for conv <- conversations,
-        photo = Photos.get_user_avatar(conv.other_user.id),
-        photo != nil,
-        into: %{} do
-      {conv.other_user.id, photo}
     end
   end
 end

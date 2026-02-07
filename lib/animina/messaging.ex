@@ -55,7 +55,8 @@ defmodule Animina.Messaging do
 
   Returns the conversation or nil.
   """
-  def find_existing_conversation(user1_id, user2_id), do: find_conversation(user1_id, user2_id)
+  def get_conversation_by_participants(user1_id, user2_id),
+    do: find_conversation(user1_id, user2_id)
 
   defp find_conversation(user1_id, user2_id) do
     Conversation

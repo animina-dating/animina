@@ -13,12 +13,15 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
   use AniminaWeb, :live_view
 
+  import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1, gender_symbol: 1]
+
   alias Animina.Accounts
   alias Animina.Discovery
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
   alias Animina.Traits
+  alias AniminaWeb.ColumnToggle
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
 
@@ -171,65 +174,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         
     <!-- Editorial moodboard with real-time updates -->
         <div :if={!Enum.empty?(@items)}>
-          <!-- Column toggle -->
-          <div class="flex justify-end mb-4">
-            <div class="btn-group">
-              <button
-                type="button"
-                phx-click="change_columns"
-                phx-value-columns="1"
-                class={["btn btn-sm", @columns == 1 && "btn-active"]}
-                aria-label={gettext("Single column")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <rect x="6" y="3" width="12" height="18" rx="1" stroke-width="2" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                phx-click="change_columns"
-                phx-value-columns="2"
-                class={["btn btn-sm", @columns == 2 && "btn-active"]}
-                aria-label={gettext("Two columns")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <rect x="3" y="3" width="7" height="18" rx="1" stroke-width="2" />
-                  <rect x="14" y="3" width="7" height="18" rx="1" stroke-width="2" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                phx-click="change_columns"
-                phx-value-columns="3"
-                class={["btn btn-sm", @columns == 3 && "btn-active"]}
-                aria-label={gettext("Three columns")}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2" />
-                  <rect x="9.5" y="3" width="5" height="18" rx="1" stroke-width="2" />
-                  <rect x="17" y="3" width="5" height="18" rx="1" stroke-width="2" />
-                </svg>
-              </button>
-            </div>
-          </div>
+          <ColumnToggle.column_toggle columns={@columns} />
           
     <!-- Moodboard grid using Flexbox columns -->
           <div class={[
@@ -270,16 +215,6 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   # Return the column count (validated to 1, 2, or 3)
   defp column_count(columns) when columns in [1, 2, 3], do: columns
   defp column_count(_), do: 2
-
-  # Gender icon helper
-  defp gender_icon("male"), do: raw("&#9794;")
-  defp gender_icon("female"), do: raw("&#9792;")
-  defp gender_icon(_), do: raw("&#9898;")
-
-  # Gender symbol for page title (plain text, not HTML)
-  defp gender_symbol("male"), do: "♂"
-  defp gender_symbol("female"), do: "♀"
-  defp gender_symbol(_), do: "○"
 
   # Build page title with profile info: Display Name · ♀ 32 Jahre · 1,72 m · 56068 Koblenz
   defp build_page_title(user, age, city, zip_code) do
@@ -379,7 +314,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
     chat_conversation_id =
       if show_chat_toggle do
-        case Messaging.find_existing_conversation(current_user.id, profile_user.id) do
+        case Messaging.get_conversation_by_participants(current_user.id, profile_user.id) do
           nil -> nil
           conversation -> conversation.id
         end

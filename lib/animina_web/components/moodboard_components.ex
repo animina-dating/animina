@@ -9,6 +9,7 @@ defmodule AniminaWeb.MoodboardComponents do
   import Phoenix.HTML, only: [raw: 1]
 
   alias Animina.Photos
+  alias AniminaWeb.ColumnToggle
 
   # Default intro prompts for the "About Me" pinned item
   @default_intro_prompts [
@@ -64,12 +65,6 @@ defmodule AniminaWeb.MoodboardComponents do
     """
   end
 
-  # States where the processed .webp file exists and can be served
-  @servable_states ~w(approved ollama_checking pending_ollama needs_manual_review no_face_error error appeal_pending appeal_rejected)
-
-  # States where AI analysis is actively in progress
-  @analyzing_states ~w(ollama_checking pending_ollama)
-
   @doc """
   Renders a moodboard photo with signed URL.
 
@@ -81,8 +76,8 @@ defmodule AniminaWeb.MoodboardComponents do
   attr :class, :string, default: "w-full h-auto"
 
   def moodboard_photo(assigns) do
-    servable? = assigns.photo.state in @servable_states
-    analyzing? = assigns.photo.state in @analyzing_states
+    servable? = assigns.photo.state in Photos.servable_states()
+    analyzing? = assigns.photo.state in Photos.analyzing_states()
     url = if servable?, do: Photos.signed_url(assigns.photo, assigns.variant), else: nil
     assigns = assign(assigns, url: url, servable?: servable?, analyzing?: analyzing?)
 
@@ -127,65 +122,7 @@ defmodule AniminaWeb.MoodboardComponents do
   def editorial_moodboard(assigns) do
     ~H"""
     <div>
-      <!-- Column toggle (visible on all screens) -->
-      <div class="flex justify-end mb-4">
-        <div class="btn-group">
-          <button
-            type="button"
-            phx-click="change_columns"
-            phx-value-columns="1"
-            class={["btn btn-sm", @columns == 1 && "btn-active"]}
-            aria-label={gettext("Single column")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <rect x="6" y="3" width="12" height="18" rx="1" stroke-width="2" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            phx-click="change_columns"
-            phx-value-columns="2"
-            class={["btn btn-sm", @columns == 2 && "btn-active"]}
-            aria-label={gettext("Two columns")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <rect x="3" y="3" width="7" height="18" rx="1" stroke-width="2" />
-              <rect x="14" y="3" width="7" height="18" rx="1" stroke-width="2" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            phx-click="change_columns"
-            phx-value-columns="3"
-            class={["btn btn-sm", @columns == 3 && "btn-active"]}
-            aria-label={gettext("Three columns")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <rect x="2" y="3" width="5" height="18" rx="1" stroke-width="2" />
-              <rect x="9.5" y="3" width="5" height="18" rx="1" stroke-width="2" />
-              <rect x="17" y="3" width="5" height="18" rx="1" stroke-width="2" />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <ColumnToggle.column_toggle columns={@columns} />
       
     <!-- Moodboard grid using Flexbox columns for consistent alignment -->
       <div class={[
@@ -626,28 +563,7 @@ defmodule AniminaWeb.MoodboardComponents do
   defp column_count(columns) when columns in [1, 2, 3], do: columns
   defp column_count(_), do: 2
 
-  @doc """
-  Renders Markdown content to HTML with heading downgrade.
-
-  Headings are reduced by one level (h1 -> h2, etc.) to maintain
-  proper document structure within cards.
-  """
-  def render_markdown(nil), do: ""
-
-  def render_markdown(content) do
-    content
-    |> Earmark.as_html!(escape: true, smartypants: true, breaks: true)
-    |> downgrade_headings()
-  end
-
-  # Reduce heading levels by one (h1 -> h2, h2 -> h3, etc.)
-  # Process in reverse order to avoid double-replacement
-  defp downgrade_headings(html) do
-    html
-    |> String.replace(~r/<(\/?)h5>/i, "<\\1h6>")
-    |> String.replace(~r/<(\/?)h4>/i, "<\\1h5>")
-    |> String.replace(~r/<(\/?)h3>/i, "<\\1h4>")
-    |> String.replace(~r/<(\/?)h2>/i, "<\\1h3>")
-    |> String.replace(~r/<(\/?)h1>/i, "<\\1h2>")
-  end
+  defdelegate render_markdown(content),
+    to: AniminaWeb.Helpers.MarkdownHelpers,
+    as: :render_story_markdown
 end

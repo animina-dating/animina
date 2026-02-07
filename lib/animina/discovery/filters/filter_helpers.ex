@@ -3,8 +3,8 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   Shared helper functions for discovery filter strategies.
   """
 
+  alias Animina.Accounts
   alias Animina.GeoData
-  alias Animina.TimeMachine
 
   @doc """
   Extracts the viewer's primary location coordinates (lat/lon).
@@ -21,19 +21,7 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
     end
   end
 
-  @doc """
-  Computes a user's age in years from their birthday.
-  """
-  def compute_age(nil), do: nil
-
-  def compute_age(birthday) do
-    today = TimeMachine.utc_today()
-    age = today.year - birthday.year
-
-    if {today.month, today.day} < {birthday.month, birthday.day},
-      do: age - 1,
-      else: age
-  end
+  defdelegate compute_age(birthday), to: Accounts
 
   defp primary_zip_code(%{locations: [%{position: 1, zip_code: zip} | _]}), do: zip
 

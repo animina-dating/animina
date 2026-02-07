@@ -901,10 +901,8 @@ defmodule AniminaWeb.UserLive.Registration do
   defp compute_age(birthday) when is_binary(birthday) do
     case Date.from_iso8601(birthday) do
       {:ok, date} ->
-        today = Date.utc_today()
-        age = today.year - date.year
-        age = if {today.month, today.day} < {date.month, date.day}, do: age - 1, else: age
-        if age >= 0, do: age, else: nil
+        age = Animina.Accounts.compute_age(date)
+        if age && age >= 0, do: age, else: nil
 
       _ ->
         nil

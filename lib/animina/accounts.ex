@@ -507,6 +507,8 @@ defmodule Animina.Accounts do
   @doc """
   Computes the age from a birthday.
   """
+  def compute_age(nil), do: nil
+
   def compute_age(birthday) do
     today = TimeMachine.utc_today()
     age = today.year - birthday.year

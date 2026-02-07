@@ -111,7 +111,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       visitor = user_fixture(language: "en")
 
       # Verify no conversation exists
-      assert is_nil(Messaging.find_existing_conversation(visitor.id, owner.id))
+      assert is_nil(Messaging.get_conversation_by_participants(visitor.id, owner.id))
 
       {:ok, lv, _html} =
         conn
@@ -127,7 +127,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       |> render_submit()
 
       # Conversation should now exist
-      conversation = Messaging.find_existing_conversation(visitor.id, owner.id)
+      conversation = Messaging.get_conversation_by_participants(visitor.id, owner.id)
       assert conversation != nil
     end
 

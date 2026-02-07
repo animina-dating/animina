@@ -103,31 +103,9 @@ defmodule AniminaWeb.MessageComponents do
   defp blocked_class(:default), do: "text-center text-base-content/50 py-4"
   defp blocked_class(:sm), do: "text-center text-base-content/50 py-2 text-sm"
 
-  @doc """
-  Renders markdown content safely for chat messages.
+  defdelegate render_markdown(content),
+    to: AniminaWeb.Helpers.MarkdownHelpers,
+    as: :render_message_markdown
 
-  Prefixes HTML-only lines with a zero-width space to prevent Earmark from
-  treating them as raw HTML blocks (bypassing `escape: true`).
-  """
-  def render_markdown(content) do
-    safe_content =
-      content
-      |> String.split("\n")
-      |> Enum.map_join("\n", fn line ->
-        if Regex.match?(~r/^\s*</, line), do: "\u200B" <> line, else: line
-      end)
-
-    safe_content
-    |> Earmark.as_html!(escape: true, smartypants: true, breaks: true)
-    |> Phoenix.HTML.raw()
-  end
-
-  @doc """
-  Strips markdown formatting for plain-text previews (e.g. conversation list).
-  """
-  def strip_markdown(content) do
-    content
-    |> String.replace(~r/[*_`~#\[\]()]/, "")
-    |> String.replace(~r/\n+/, " ")
-  end
+  defdelegate strip_markdown(content), to: AniminaWeb.Helpers.MarkdownHelpers
 end

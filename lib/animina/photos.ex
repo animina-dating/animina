@@ -40,6 +40,9 @@ defmodule Animina.Photos do
   # States where the processed .webp file should exist and can be served
   @servable_states ~w(approved ollama_checking pending_ollama needs_manual_review no_face_error error appeal_pending appeal_rejected)
 
+  # States where AI analysis is actively in progress
+  @analyzing_states ~w(ollama_checking pending_ollama)
+
   # States for Ollama retry queue
   @ollama_pending_states ~w(pending_ollama)
   @ollama_queue_states @ollama_pending_states ++ ["needs_manual_review"]
@@ -48,6 +51,7 @@ defmodule Animina.Photos do
   @max_ollama_retries 20
 
   def servable_states, do: @servable_states
+  def analyzing_states, do: @analyzing_states
   def ollama_pending_states, do: @ollama_pending_states
   def ollama_queue_states, do: @ollama_queue_states
   def max_ollama_retries, do: @max_ollama_retries

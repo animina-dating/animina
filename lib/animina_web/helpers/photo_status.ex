@@ -7,29 +7,22 @@ defmodule AniminaWeb.PhotoStatus do
 
   use Gettext, backend: AniminaWeb.Gettext
 
-  # States where the processed .webp file exists and can be served
-  @servable_states ~w(approved ollama_checking pending_ollama needs_manual_review no_face_error error appeal_pending appeal_rejected)
-
-  # States where AI analysis is actively in progress
-  @analyzing_states ~w(ollama_checking pending_ollama)
-
-  # States that indicate processing/uploading
-  @processing_states ~w(pending processing)
+  alias Animina.Photos
 
   @doc """
   Returns true if the photo's processed .webp file can be served.
   """
-  def servable?(photo), do: photo.state in @servable_states
+  def servable?(photo), do: photo.state in Photos.servable_states()
 
   @doc """
   Returns true if the photo is currently being analyzed by AI.
   """
-  def analyzing?(photo), do: photo.state in @analyzing_states
+  def analyzing?(photo), do: photo.state in Photos.analyzing_states()
 
   @doc """
   Returns true if the photo is still being processed/uploaded.
   """
-  def processing?(photo), do: photo.state in @processing_states
+  def processing?(photo), do: photo.state in ~w(pending processing)
 
   @doc """
   Returns true if the photo is approved and ready for public display.
