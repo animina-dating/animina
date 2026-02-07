@@ -37,8 +37,80 @@ defmodule AniminaWeb.DiscoverLive do
           </.header>
         </div>
 
+        <%!-- Info Panel --%>
+        <div class="bg-base-200/50 rounded-lg p-4 mb-6 text-sm text-base-content/70">
+          <div class="flex items-start gap-3">
+            <.icon name="hero-information-circle" class="h-5 w-5 text-info flex-shrink-0 mt-0.5" />
+            <div>
+              <p class="font-medium text-base-content mb-1">{gettext("How Discovery Works")}</p>
+              <ul class="space-y-1 text-xs">
+                <li>
+                  {gettext(
+                    "You can have up to %{max} active conversations. Each day, you can start up to %{daily} new ones.",
+                    max: @slot_status.max,
+                    daily: @slot_status.daily_max
+                  )}
+                </li>
+                <li>{gettext("Take your time — choose who you really want to talk to.")}</li>
+                <li>
+                  {gettext("You can \"Let go\" of a conversation in your messages to free a slot.")}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Slot Status Bar --%>
+        <div :if={@slot_status} class="flex flex-wrap gap-3 mb-6 justify-center">
+          <div class="badge badge-lg badge-outline gap-2">
+            <.icon name="hero-chat-bubble-left-right-mini" class="h-4 w-4" />
+            {gettext("%{active}/%{max} active chats",
+              active: @slot_status.active,
+              max: @slot_status.max
+            )}
+          </div>
+          <div class="badge badge-lg badge-outline gap-2">
+            <.icon name="hero-plus-circle-mini" class="h-4 w-4" />
+            {gettext("%{remaining} new chats remaining today",
+              remaining: max(@slot_status.daily_max - @slot_status.daily_started, 0)
+            )}
+          </div>
+        </div>
+
+        <%!-- Limit Warnings --%>
+        <%= if @slots_full do %>
+          <div class="alert alert-warning mb-6">
+            <.icon name="hero-exclamation-triangle" class="h-5 w-5" />
+            <div>
+              <p class="font-medium">
+                {gettext("All chat slots are full")}
+              </p>
+              <p class="text-sm mt-1">
+                {gettext("\"Let go\" of a conversation in your messages to see new discoveries.")}
+              </p>
+              <.link navigate={~p"/messages"} class="btn btn-sm btn-ghost mt-2">
+                {gettext("Go to Messages")}
+              </.link>
+            </div>
+          </div>
+        <% end %>
+
+        <%= if @daily_limit_reached && !@slots_full do %>
+          <div class="alert alert-info mb-6">
+            <.icon name="hero-clock" class="h-5 w-5" />
+            <div>
+              <p class="font-medium">
+                {gettext("You've reached today's limit")}
+              </p>
+              <p class="text-sm mt-1">
+                {gettext("New discoveries will be available tomorrow.")}
+              </p>
+            </div>
+          </div>
+        <% end %>
+
         <%!-- Your Matches Section --%>
-        <div class="mb-8">
+        <div :if={!@slots_full && !@daily_limit_reached} class="mb-8">
           <div class="flex items-center gap-2 mb-2">
             <.icon name="hero-sparkles" class="h-5 w-5 text-primary" />
             <h2 class="text-lg font-semibold">{gettext("Your Matches")}</h2>
@@ -66,13 +138,6 @@ defmodule AniminaWeb.DiscoverLive do
                 <p class="text-sm mt-2">
                   {gettext("Check back later or adjust your preferences")}
                 </p>
-                <button
-                  phx-click="refresh"
-                  class="btn btn-primary btn-sm mt-4"
-                >
-                  <.icon name="hero-arrow-path" class="h-4 w-4" />
-                  {gettext("Refresh")}
-                </button>
               </div>
             <% else %>
               <.profile_card
@@ -83,13 +148,14 @@ defmodule AniminaWeb.DiscoverLive do
                 avatar_photos={@avatar_photos}
                 visited={MapSet.member?(@visited_ids, suggestion.user.id)}
                 has_chat={MapSet.member?(@chat_user_ids, suggestion.user.id)}
+                can_message={!@slots_full}
               />
             <% end %>
           </div>
         </div>
 
         <%!-- Wildcards Section --%>
-        <div class="mt-10">
+        <div :if={!@slots_full && !@daily_limit_reached} class="mt-10">
           <div class="divider"></div>
 
           <div class="flex items-center gap-2 mb-2">
@@ -122,6 +188,7 @@ defmodule AniminaWeb.DiscoverLive do
                 avatar_photos={@avatar_photos}
                 visited={MapSet.member?(@visited_ids, suggestion.user.id)}
                 has_chat={MapSet.member?(@chat_user_ids, suggestion.user.id)}
+                can_message={!@slots_full}
               />
             </div>
           <% end %>
@@ -144,6 +211,7 @@ defmodule AniminaWeb.DiscoverLive do
   attr :avatar_photos, :map, required: true
   attr :visited, :boolean, default: false
   attr :has_chat, :boolean, default: false
+  attr :can_message, :boolean, default: true
 
   defp profile_card(assigns) do
     user = assigns.suggestion.user
@@ -277,13 +345,22 @@ defmodule AniminaWeb.DiscoverLive do
           >
             {gettext("View Profile")}
           </.link>
-          <.link
-            navigate={~p"/messages?start_with=#{@user.id}"}
-            class="btn btn-ghost btn-sm"
-            title={gettext("Send message")}
-          >
-            <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
-          </.link>
+          <%= if @can_message do %>
+            <.link
+              navigate={~p"/messages?start_with=#{@user.id}"}
+              class="btn btn-ghost btn-sm"
+              title={gettext("Send message")}
+            >
+              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
+            </.link>
+          <% else %>
+            <span
+              class="btn btn-ghost btn-sm btn-disabled opacity-50"
+              title={gettext("No free chat slots")}
+            >
+              <.icon name="hero-chat-bubble-left-right" class="h-4 w-4" />
+            </span>
+          <% end %>
           <button
             phx-click="dismiss"
             phx-value-user-id={@user.id}
@@ -300,6 +377,8 @@ defmodule AniminaWeb.DiscoverLive do
 
   @impl true
   def mount(_params, _session, socket) do
+    default_slot_status = %{active: 0, max: 6, daily_started: 0, daily_max: 2}
+
     socket =
       socket
       |> assign(:page_title, gettext("Discover"))
@@ -312,6 +391,9 @@ defmodule AniminaWeb.DiscoverLive do
       |> assign(:dismissed_count, 0)
       |> assign(:visited_ids, MapSet.new())
       |> assign(:chat_user_ids, MapSet.new())
+      |> assign(:slot_status, default_slot_status)
+      |> assign(:slots_full, false)
+      |> assign(:daily_limit_reached, false)
 
     if connected?(socket) do
       send(self(), :load_suggestions)
@@ -324,12 +406,6 @@ defmodule AniminaWeb.DiscoverLive do
   def handle_event("change_columns", %{"columns" => columns_str}, socket) do
     columns = String.to_integer(columns_str)
     {:noreply, assign(socket, :columns, columns)}
-  end
-
-  @impl true
-  def handle_event("refresh", _params, socket) do
-    send(self(), :load_suggestions)
-    {:noreply, assign(socket, :loading, true)}
   end
 
   @impl true
@@ -356,43 +432,62 @@ defmodule AniminaWeb.DiscoverLive do
   def handle_info(:load_suggestions, socket) do
     viewer = socket.assigns.current_scope.user
 
-    # Generate combined suggestions (the only curated list now)
-    combined = Discovery.generate_combined_suggestions(viewer)
-
-    # Generate wildcards, excluding users already in the combined list
-    combined_user_ids = Enum.map(combined, & &1.user.id)
-    wildcards = Discovery.generate_wildcards(viewer, combined_user_ids)
-
-    # Collect all unique users and their data
-    all_suggestions = combined ++ wildcards
-    all_users = all_suggestions |> Enum.map(& &1.user) |> Enum.uniq_by(& &1.id)
-    user_ids = Enum.map(all_users, & &1.id)
-    city_names = load_city_names(all_users)
-    avatar_photos = AvatarHelpers.load_from_users(all_users)
-    dismissed_count = Discovery.dismissal_count(viewer.id)
-
-    # Load visited and chat indicators
-    visited_ids = Discovery.visited_profile_ids(viewer.id, user_ids)
-    chat_user_ids = Messaging.conversation_user_ids(viewer.id, user_ids)
-
-    # Enrich combined suggestions with published white flags, drop soft-red conflicts
-    enriched_combined =
-      combined
-      |> enrich_with_published_white_flags(viewer, all_users)
-      |> Enum.reject(& &1.has_soft_red)
+    # Fetch slot status
+    slot_status = Messaging.chat_slot_status(viewer.id)
+    slots_full = slot_status.active >= slot_status.max
+    daily_limit_reached = !Messaging.can_start_new_chat_today?(viewer.id)
 
     socket =
       socket
-      |> assign(:loading, false)
-      |> assign(:matches, enriched_combined)
-      |> assign(:wildcards, wildcards)
-      |> assign(:city_names, city_names)
-      |> assign(:avatar_photos, avatar_photos)
-      |> assign(:dismissed_count, dismissed_count)
-      |> assign(:visited_ids, visited_ids)
-      |> assign(:chat_user_ids, chat_user_ids)
+      |> assign(:slot_status, slot_status)
+      |> assign(:slots_full, slots_full)
+      |> assign(:daily_limit_reached, daily_limit_reached)
 
-    {:noreply, socket}
+    # If slots full or daily limit reached, don't load suggestions
+    if slots_full || daily_limit_reached do
+      dismissed_count = Discovery.dismissal_count(viewer.id)
+
+      {:noreply,
+       socket
+       |> assign(:loading, false)
+       |> assign(:matches, [])
+       |> assign(:wildcards, [])
+       |> assign(:dismissed_count, dismissed_count)}
+    else
+      # Use daily discovery set (static per day)
+      all_suggestions = Discovery.get_or_generate_daily_set(viewer)
+
+      # Split into matches and wildcards
+      {wildcards, matches} = Enum.split_with(all_suggestions, &(&1.list_type == "wildcard"))
+
+      # Collect all unique users and their data
+      all_users = all_suggestions |> Enum.map(& &1.user) |> Enum.uniq_by(& &1.id)
+      user_ids = Enum.map(all_users, & &1.id)
+      city_names = load_city_names(all_users)
+      avatar_photos = AvatarHelpers.load_from_users(all_users)
+      dismissed_count = Discovery.dismissal_count(viewer.id)
+
+      # Load visited and chat indicators
+      visited_ids = Discovery.visited_profile_ids(viewer.id, user_ids)
+      chat_user_ids = Messaging.conversation_user_ids(viewer.id, user_ids)
+
+      # Enrich combined suggestions with published white flags, drop soft-red conflicts
+      enriched_matches =
+        matches
+        |> enrich_with_published_white_flags(viewer, all_users)
+        |> Enum.reject(& &1.has_soft_red)
+
+      {:noreply,
+       socket
+       |> assign(:loading, false)
+       |> assign(:matches, enriched_matches)
+       |> assign(:wildcards, wildcards)
+       |> assign(:city_names, city_names)
+       |> assign(:avatar_photos, avatar_photos)
+       |> assign(:dismissed_count, dismissed_count)
+       |> assign(:visited_ids, visited_ids)
+       |> assign(:chat_user_ids, chat_user_ids)}
+    end
   end
 
   # --- Private Functions ---

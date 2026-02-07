@@ -261,6 +261,43 @@ defmodule Animina.FeatureFlags do
       min_value: 0,
       max_value: 10
     },
+    # Chat slot settings
+    %{
+      name: :chat_max_active_slots,
+      label: "Max Active Chat Slots",
+      description: "Maximum number of active conversations a user can have at once",
+      type: :integer,
+      default_value: 6,
+      min_value: 1,
+      max_value: 20
+    },
+    %{
+      name: :chat_daily_new_limit,
+      label: "Daily New Chat Limit",
+      description: "Maximum number of new conversations a user can start per day",
+      type: :integer,
+      default_value: 2,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :chat_love_emergency_cost,
+      label: "Love Emergency Cost",
+      description: "Number of conversations that must be closed to reopen one via Love Emergency",
+      type: :integer,
+      default_value: 4,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :discovery_daily_set_size,
+      label: "Daily Discovery Set Size",
+      description: "Number of scored suggestions shown per day on the discover page",
+      type: :integer,
+      default_value: 6,
+      min_value: 1,
+      max_value: 20
+    },
     # Popularity protection settings
     %{
       name: :discovery_popularity_enabled,
@@ -986,5 +1023,39 @@ defmodule Animina.FeatureFlags do
   """
   def discovery_popularity_score_penalty do
     get_system_setting_value(:discovery_popularity_score_penalty, -15)
+  end
+
+  # --- Chat Slot Settings ---
+
+  @doc """
+  Returns the maximum number of active conversations a user can have.
+  Default: 6
+  """
+  def chat_max_active_slots do
+    get_system_setting_value(:chat_max_active_slots, 6)
+  end
+
+  @doc """
+  Returns the maximum number of new conversations a user can start per day.
+  Default: 2
+  """
+  def chat_daily_new_limit do
+    get_system_setting_value(:chat_daily_new_limit, 2)
+  end
+
+  @doc """
+  Returns the number of conversations that must be closed to reopen one via Love Emergency.
+  Default: 4
+  """
+  def chat_love_emergency_cost do
+    get_system_setting_value(:chat_love_emergency_cost, 4)
+  end
+
+  @doc """
+  Returns the number of scored suggestions shown per day on the discover page.
+  Default: 6
+  """
+  def discovery_daily_set_size do
+    get_system_setting_value(:discovery_daily_set_size, 6)
   end
 end

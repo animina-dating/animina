@@ -26,13 +26,15 @@ defmodule Animina.Messaging.Schemas.ConversationParticipant do
     field :blocked_at, :utc_datetime
     field :draft_content, :string
     field :draft_updated_at, :utc_datetime
+    field :closed_at, :utc_datetime
+    field :initiator, :boolean, default: false
 
     timestamps(type: :utc_datetime)
   end
 
   def changeset(participant, attrs) do
     participant
-    |> cast(attrs, [:conversation_id, :user_id, :last_read_at, :blocked_at])
+    |> cast(attrs, [:conversation_id, :user_id, :last_read_at, :blocked_at, :initiator])
     |> validate_required([:conversation_id, :user_id])
     |> foreign_key_constraint(:conversation_id)
     |> foreign_key_constraint(:user_id)
@@ -57,5 +59,17 @@ defmodule Animina.Messaging.Schemas.ConversationParticipant do
     else
       change(participant, draft_content: content, draft_updated_at: TimeMachine.utc_now(:second))
     end
+  end
+
+  def close_changeset(participant) do
+    change(participant, closed_at: TimeMachine.utc_now(:second))
+  end
+
+  def reopen_changeset(participant) do
+    change(participant, closed_at: nil)
+  end
+
+  def initiator_changeset(participant) do
+    change(participant, initiator: true)
   end
 end

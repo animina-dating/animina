@@ -459,4 +459,280 @@ defmodule Animina.MessagingTest do
       assert Messaging.blocked_in_conversation?(conversation.id, user1.id) == false
     end
   end
+
+  # --- Chat Slot System Tests ---
+
+  describe "active_conversation_count/1" do
+    test "counts open (non-closed) conversations" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+
+      assert Messaging.active_conversation_count(user1.id) == 2
+    end
+
+    test "does not count closed conversations" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.close_conversation(conv1.id, user1.id)
+
+      assert Messaging.active_conversation_count(user1.id) == 1
+    end
+
+    test "returns 0 when user has no conversations" do
+      user1 = AccountsFixtures.user_fixture()
+      assert Messaging.active_conversation_count(user1.id) == 0
+    end
+  end
+
+  describe "has_available_chat_slot?/1" do
+    test "returns true when under limit" do
+      user1 = AccountsFixtures.user_fixture()
+      assert Messaging.has_available_chat_slot?(user1.id) == true
+    end
+  end
+
+  describe "daily_new_chat_count/1" do
+    test "counts conversations initiated today by the user" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      assert Messaging.daily_new_chat_count(user1.id) == 1
+    end
+
+    test "does not count conversations initiated by others" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+
+      # user2 initiates, so user1's count should be 0
+      {:ok, _} = Messaging.get_or_create_conversation(user2.id, user1.id)
+
+      assert Messaging.daily_new_chat_count(user1.id) == 0
+    end
+  end
+
+  describe "can_start_new_chat_today?/1" do
+    test "returns true when under daily limit" do
+      user1 = AccountsFixtures.user_fixture()
+      assert Messaging.can_start_new_chat_today?(user1.id) == true
+    end
+  end
+
+  describe "close_conversation/2" do
+    test "closes a conversation for both participants" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      assert {:ok, _} = Messaging.close_conversation(conversation.id, user1.id)
+
+      # Both participants should have closed_at set
+      conversations = Messaging.list_conversations(user1.id)
+      assert conversations == []
+
+      conversations = Messaging.list_conversations(user2.id)
+      assert conversations == []
+    end
+
+    test "creates closure records" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      assert {:ok, _} = Messaging.close_conversation(conversation.id, user1.id)
+
+      # Should be able to list closed conversations
+      closed = Messaging.list_closed_conversations(user1.id)
+      assert length(closed) == 1
+    end
+
+    test "creates bidirectional dismissal records" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      {:ok, _} = Messaging.close_conversation(conversation.id, user1.id)
+
+      # Both directions should be dismissed
+      assert Animina.Discovery.dismissed?(user1.id, user2.id)
+      assert Animina.Discovery.dismissed?(user2.id, user1.id)
+    end
+  end
+
+  describe "list_closed_conversations/1" do
+    test "returns closed conversations for a user" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.close_conversation(conversation.id, user1.id)
+
+      closed = Messaging.list_closed_conversations(user1.id)
+      assert length(closed) == 1
+      assert hd(closed).conversation_id == conversation.id
+    end
+
+    test "does not return reopened conversations" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+      user4 = AccountsFixtures.user_fixture()
+      user5 = AccountsFixtures.user_fixture()
+      user6 = AccountsFixtures.user_fixture()
+
+      {:ok, conv_reopen} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv_close1} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, conv_close2} = Messaging.get_or_create_conversation(user1.id, user4.id)
+      {:ok, conv_close3} = Messaging.get_or_create_conversation(user1.id, user5.id)
+      {:ok, conv_close4} = Messaging.get_or_create_conversation(user1.id, user6.id)
+
+      {:ok, _} = Messaging.close_conversation(conv_reopen.id, user1.id)
+
+      {:ok, _} =
+        Messaging.love_emergency_reopen(user1.id, conv_reopen.id, [
+          conv_close1.id,
+          conv_close2.id,
+          conv_close3.id,
+          conv_close4.id
+        ])
+
+      closed = Messaging.list_closed_conversations(user1.id)
+      conv_ids = Enum.map(closed, & &1.conversation_id)
+      refute conv_reopen.id in conv_ids
+    end
+  end
+
+  describe "chat_slot_status/1" do
+    test "returns slot status map" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      status = Messaging.chat_slot_status(user1.id)
+      assert status.active == 1
+      assert status.max >= 1
+      assert status.daily_started == 1
+      assert status.daily_max >= 1
+    end
+  end
+
+  describe "can_initiate_conversation?/2" do
+    test "returns :ok when user can initiate" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+
+      assert :ok = Messaging.can_initiate_conversation?(user1.id, user2.id)
+    end
+
+    test "returns error for self-messaging" do
+      user1 = AccountsFixtures.user_fixture()
+
+      assert {:error, :cannot_message_self} =
+               Messaging.can_initiate_conversation?(user1.id, user1.id)
+    end
+
+    test "returns error when conversation was previously closed" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.close_conversation(conversation.id, user1.id)
+
+      assert {:error, :previously_closed} =
+               Messaging.can_initiate_conversation?(user1.id, user2.id)
+    end
+  end
+
+  describe "list_conversations/1 excludes closed" do
+    test "closed conversations are excluded from the list" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.close_conversation(conv1.id, user1.id)
+
+      conversations = Messaging.list_conversations(user1.id)
+      assert length(conversations) == 1
+      assert hd(conversations).conversation.id != conv1.id
+    end
+  end
+
+  describe "conversation_user_ids/2 excludes closed" do
+    test "closed conversation partners are excluded" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.close_conversation(conv1.id, user1.id)
+
+      result = Messaging.conversation_user_ids(user1.id, [user2.id, user3.id])
+      refute MapSet.member?(result, user2.id)
+      assert MapSet.member?(result, user3.id)
+    end
+  end
+
+  describe "love_emergency_reopen/3" do
+    test "reopens a closed conversation and closes others" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+      user4 = AccountsFixtures.user_fixture()
+      user5 = AccountsFixtures.user_fixture()
+      user6 = AccountsFixtures.user_fixture()
+
+      {:ok, conv_reopen} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv_close1} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, conv_close2} = Messaging.get_or_create_conversation(user1.id, user4.id)
+      {:ok, conv_close3} = Messaging.get_or_create_conversation(user1.id, user5.id)
+      {:ok, conv_close4} = Messaging.get_or_create_conversation(user1.id, user6.id)
+
+      {:ok, _} = Messaging.close_conversation(conv_reopen.id, user1.id)
+
+      assert {:ok, _} =
+               Messaging.love_emergency_reopen(user1.id, conv_reopen.id, [
+                 conv_close1.id,
+                 conv_close2.id,
+                 conv_close3.id,
+                 conv_close4.id
+               ])
+
+      # Reopened conversation should be active
+      conversations = Messaging.list_conversations(user1.id)
+      conv_ids = Enum.map(conversations, & &1.conversation.id)
+      assert conv_reopen.id in conv_ids
+
+      # Closed conversations should not be active
+      refute conv_close1.id in conv_ids
+      refute conv_close2.id in conv_ids
+      refute conv_close3.id in conv_ids
+      refute conv_close4.id in conv_ids
+    end
+
+    test "fails with wrong number of conversations to close" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, conv_reopen} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv_close1} = Messaging.get_or_create_conversation(user1.id, user3.id)
+
+      {:ok, _} = Messaging.close_conversation(conv_reopen.id, user1.id)
+
+      assert {:error, :wrong_cost} =
+               Messaging.love_emergency_reopen(user1.id, conv_reopen.id, [conv_close1.id])
+    end
+  end
 end

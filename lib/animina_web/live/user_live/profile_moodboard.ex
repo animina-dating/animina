@@ -71,14 +71,33 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
           </div>
 
           <div class="flex items-center gap-2">
-            <button
-              :if={@show_chat_toggle}
-              phx-click="toggle_chat"
-              class={["btn", if(@chat_open, do: "btn-primary", else: "btn-outline btn-primary")]}
-            >
-              <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 mr-2" />
-              {gettext("Message")}
-            </button>
+            <%= if @show_chat_toggle && @chat_blocked_reason == nil do %>
+              <button
+                phx-click="toggle_chat"
+                class={["btn", if(@chat_open, do: "btn-primary", else: "btn-outline btn-primary")]}
+              >
+                <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 mr-2" />
+                {gettext("Message")}
+              </button>
+            <% end %>
+            <%= if @show_chat_toggle && @chat_blocked_reason == :chat_slots_full do %>
+              <span
+                class="btn btn-outline btn-disabled opacity-50"
+                title={gettext("No free chat slots")}
+              >
+                <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 mr-2" />
+                {gettext("No free slots")}
+              </span>
+            <% end %>
+            <%= if @show_chat_toggle && @chat_blocked_reason == :previously_closed do %>
+              <button
+                phx-click="love_emergency_from_profile"
+                class="btn btn-outline btn-error"
+              >
+                <.icon name="hero-heart" class="h-5 w-5 mr-2" />
+                {gettext("Reopen")}
+              </button>
+            <% end %>
 
             <.link
               :if={@owner?}
@@ -312,12 +331,21 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     # Chat panel assigns
     show_chat_toggle = !owner? && current_user != nil
 
-    chat_conversation_id =
+    {chat_conversation_id, chat_blocked_reason} =
       if show_chat_toggle do
         case Messaging.get_conversation_by_participants(current_user.id, profile_user.id) do
-          nil -> nil
-          conversation -> conversation.id
+          nil ->
+            # No existing conversation — check if we can start one
+            case Messaging.can_initiate_conversation?(current_user.id, profile_user.id) do
+              :ok -> {nil, nil}
+              {:error, reason} -> {nil, reason}
+            end
+
+          conversation ->
+            {conversation.id, nil}
         end
+      else
+        {nil, nil}
       end
 
     assign(socket,
@@ -334,6 +362,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       white_flags: white_flags,
       private_white_flags_count: private_white_flags_count,
       show_chat_toggle: show_chat_toggle,
+      chat_blocked_reason: chat_blocked_reason,
       chat_open: false,
       chat_conversation_id: chat_conversation_id,
       chat_subscribed: false,
@@ -398,6 +427,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     end
 
     {:noreply, assign(socket, :columns, columns)}
+  end
+
+  @impl true
+  def handle_event("love_emergency_from_profile", _params, socket) do
+    profile_user = socket.assigns.profile_user
+    {:noreply, push_navigate(socket, to: ~p"/messages?love_emergency_for=#{profile_user.id}")}
   end
 
   defp get_columns_for_device(socket, device_type) do
@@ -541,6 +576,11 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     )
 
     {:noreply, assign(socket, :chat_typing_timer, nil)}
+  end
+
+  @impl true
+  def handle_info({:chat_panel_error, msg}, socket) do
+    {:noreply, put_flash(socket, :error, msg)}
   end
 
   @impl true

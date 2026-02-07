@@ -240,4 +240,38 @@ defmodule Animina.Discovery.Settings do
   def popularity_score_penalty do
     FeatureFlags.discovery_popularity_score_penalty()
   end
+
+  # --- Chat Slot Settings ---
+
+  @doc """
+  Returns the maximum number of active conversations a user can have.
+  Default: 6
+  """
+  def max_active_slots do
+    FeatureFlags.chat_max_active_slots()
+  end
+
+  @doc """
+  Returns the maximum number of new conversations per day.
+  Default: 2
+  """
+  def daily_new_limit do
+    FeatureFlags.chat_daily_new_limit()
+  end
+
+  @doc """
+  Returns the Love Emergency cost (conversations to close to reopen one).
+  Default: 4
+  """
+  def love_emergency_cost do
+    FeatureFlags.chat_love_emergency_cost()
+  end
+
+  @doc """
+  Returns the number of scored suggestions per day on the discover page.
+  Default: 6
+  """
+  def daily_set_size do
+    FeatureFlags.discovery_daily_set_size()
+  end
 end

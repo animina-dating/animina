@@ -202,6 +202,10 @@ Real-time 1:1 messaging between users at `/messages`.
 
 ### Features
 
+- **Chat slot system**: Max 6 active conversations (configurable), max 2 new conversations per day (configurable)
+- **"Let Go"**: Permanently close a conversation to free a slot — mutual closure with dismissal records
+- **"Love Emergency"**: Reopen a closed conversation at the cost of closing 4 others (configurable)
+- **Closed conversation archive**: Last 10 closed conversations shown at bottom of messages page with profile cards
 - **Real-time messages** via PubSub with typing indicators (auto-timeout after 3s)
 - **Read receipts** with double-check icon on the last read message
 - **Markdown rendering** — bold, italic, links rendered via Earmark with XSS protection
@@ -215,25 +219,30 @@ Real-time 1:1 messaging between users at `/messages`.
 
 ## Discovery System
 
-The partner discovery system suggests compatible matches across three lists:
+The partner discovery system suggests compatible matches with a daily set model:
 
-- **Combined**: Smart scoring balancing red flag avoidance with green flag attraction
-- **Safe**: Only users with zero red flag matches
-- **Attracted**: Prioritizes users matching the viewer's green flags
+- **Daily discovery sets**: A fixed set of suggestions generated once per day (Berlin time), no refresh
+- **Slot-aware gating**: Discovery hides suggestions when chat slots are full or daily new-chat limit is reached
 
 ### Features
 
 - **Bidirectional matching**: Both users must fit each other's criteria
+- **Static daily sets**: Suggestions persist across page reloads (generated once per Berlin calendar day)
 - **Profile visit tracking**: "Visited" badge on discover cards for profiles you've viewed
 - **Active chat indicator**: "Chat" badge on discover cards for users you have conversations with
 - **Privacy-safe conflict warnings**: Generic "Potential conflicts" without counts to prevent flag reverse-engineering
 - **Cooldown period**: Users reappear after 30 days (configurable)
 - **Popular user protection**: Users receiving 6+ daily inquiries are temporarily hidden
 - **Scoring adjustments**: Low-popularity users get visibility boosts; high-popularity users get balanced exposure
+- **Closed conversation exclusion**: Users from closed conversations are permanently excluded from discovery
 
 ### Configuration
 
-Enable popularity protection via feature flags at `/admin/feature-flags`:
+Configure via feature flags at `/admin/feature-flags`:
+- `chat_max_active_slots` — max active conversations per user (default: 6)
+- `chat_daily_new_limit` — max new conversations per day (default: 2)
+- `chat_love_emergency_cost` — conversations to close to reopen one (default: 4)
+- `discovery_daily_set_size` — scored suggestions per daily set (default: 6)
 - `discovery_popularity_enabled` — master toggle (default: off)
 - `discovery_daily_inquiry_limit` — threshold before hiding (default: 6)
 - `discovery_popularity_score_bonus` — boost for low-popularity users (default: +10)

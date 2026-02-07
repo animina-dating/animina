@@ -41,9 +41,8 @@ defmodule Animina.Discovery do
 
   import Ecto.Query
 
-  alias Animina.Discovery.Popularity
+  alias Animina.Discovery.{DailySetGenerator, Popularity, Settings, SuggestionGenerator}
   alias Animina.Discovery.Schemas.{Dismissal, ProfileVisit, SuggestionView}
-  alias Animina.Discovery.{Settings, SuggestionGenerator}
   alias Animina.Repo
   alias Animina.TimeMachine
 
@@ -279,4 +278,13 @@ defmodule Animina.Discovery do
     |> where([pv], pv.visitor_id == ^visitor_id and pv.visited_id == ^visited_id)
     |> Repo.exists?()
   end
+
+  # --- Daily Discovery Sets ---
+
+  @doc """
+  Returns the daily discovery set for the viewer.
+
+  If a set already exists for today, returns it. Otherwise generates and stores it.
+  """
+  defdelegate get_or_generate_daily_set(viewer), to: DailySetGenerator, as: :get_or_generate
 end

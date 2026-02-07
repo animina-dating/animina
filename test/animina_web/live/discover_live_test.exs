@@ -63,13 +63,23 @@ defmodule AniminaWeb.DiscoverLiveTest do
       assert html =~ "No suggestions available"
     end
 
-    test "shows refresh button in empty state", %{conn: conn} do
+    test "shows slot status bar", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
-      assert html =~ "Refresh"
+      assert html =~ "active chats"
+      assert html =~ "new chats remaining today"
+    end
+
+    test "shows info panel explaining how discovery works", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/discover")
+
+      assert html =~ "How Discovery Works"
     end
 
     test "does not show conflict count (security fix)", %{conn: conn} do

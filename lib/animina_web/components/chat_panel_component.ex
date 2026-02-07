@@ -424,13 +424,32 @@ defmodule AniminaWeb.ChatPanelComponent do
     if socket.assigns.conversation_id do
       {socket.assigns.conversation_id, socket}
     else
-      case Messaging.get_or_create_conversation(
-             socket.assigns.current_user_id,
-             socket.assigns.profile_user.id
-           ) do
-        {:ok, conversation} ->
-          send(self(), {:chat_panel_subscribe, conversation.id})
-          {conversation.id, assign(socket, :conversation_id, conversation.id)}
+      current_user_id = socket.assigns.current_user_id
+      profile_user_id = socket.assigns.profile_user.id
+
+      case Messaging.can_initiate_conversation?(current_user_id, profile_user_id) do
+        :ok ->
+          case Messaging.get_or_create_conversation(current_user_id, profile_user_id) do
+            {:ok, conversation} ->
+              send(self(), {:chat_panel_subscribe, conversation.id})
+              {conversation.id, assign(socket, :conversation_id, conversation.id)}
+
+            {:error, _reason} ->
+              {nil, socket}
+          end
+
+        {:error, :chat_slots_full} ->
+          send(
+            self(),
+            {:chat_panel_error,
+             gettext("You have no free chat slots. Let go of a conversation first.")}
+          )
+
+          {nil, socket}
+
+        {:error, :previously_closed} ->
+          send(self(), {:chat_panel_error, gettext("This conversation was previously closed.")})
+          {nil, socket}
 
         {:error, _reason} ->
           {nil, socket}

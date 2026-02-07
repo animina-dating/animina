@@ -82,6 +82,8 @@ defmodule Animina.Application do
     Animina.FeatureFlags.initialize_ollama_settings()
     # Initialize admin flags (disabled by default)
     Animina.FeatureFlags.initialize_admin_flags()
+    # Initialize discovery settings (includes chat slot settings)
+    Animina.FeatureFlags.initialize_discovery_settings()
   rescue
     # Don't crash on startup if this fails (e.g., during migrations)
     _ -> :ok

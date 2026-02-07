@@ -2,7 +2,7 @@
 
 How ANIMINA decides which profiles to show to whom.
 
-The discovery engine is a three-stage pipeline: **filter** candidates by hard constraints (distance, age, gender, height — all bidirectional), **score** the remaining candidates by flag compatibility, then **present** the top results across three distinct lists. A worked example traces two users through the entire pipeline at the end.
+The discovery engine is a three-stage pipeline: **filter** candidates by hard constraints (distance, age, gender, height — all bidirectional), **score** the remaining candidates by flag compatibility, then **present** the top results across three distinct lists. Results are presented as **daily discovery sets** — a fixed set generated once per Berlin calendar day that persists across page reloads. A worked example traces two users through the entire pipeline at the end.
 
 ## The Flag System
 
@@ -41,9 +41,10 @@ Before any scoring happens, the filter stage removes candidates who can't possib
 6. **Bidirectional age range** — viewer's age range must include candidate's age AND candidate's age range must include viewer's age (default offsets: -6 / +2 years)
 7. **Bidirectional height range** — same principle (defaults: 80–225 cm)
 8. **Exclude dismissed users** — users the viewer clicked "Not interested" on
-9. **Exclude recently shown** — users shown within the cooldown period (default: 30 days)
-10. **Exclude incomplete profiles** — if enabled, users without a photo, height, or gender (default: disabled)
-11. **Exclude users at daily inquiry limit** — if popularity protection is enabled, users who received 6+ inquiries today
+9. **Exclude closed conversation partners** — users from conversations the viewer "let go" of (permanent exclusion via `ConversationClosure` records)
+10. **Exclude recently shown** — users shown within the cooldown period (default: 30 days)
+11. **Exclude incomplete profiles** — if enabled, users without a photo, height, or gender (default: disabled)
+12. **Exclude users at daily inquiry limit** — if popularity protection is enabled, users who received 6+ inquiries today
 
 **Bidirectional** means both sides must fit. If Alice (28) sets her age range to 25–35, she'll see Bob (31). But if Bob sets *his* range to 28–33, he'd also see Alice. If Bob had set his range to 20–27, neither would see the other — the filter is mutual.
 
@@ -194,12 +195,44 @@ After a user is shown in a suggestion list, they won't appear again for the cool
 
 When a user clicks "Not interested", a permanent `Dismissal` record is created. Dismissed users never appear again in any list for that viewer.
 
+## Daily Discovery Sets
+
+Instead of regenerating suggestions on every page load, the discovery system generates a **fixed daily set** once per Berlin calendar day. The set persists across page reloads and browser sessions.
+
+### How It Works
+
+1. User visits `/discover`
+2. System computes today's Berlin date (`TimeMachine.utc_now()` shifted to Europe/Berlin)
+3. Checks `daily_discovery_sets` table for existing entries for `[user_id, today]`
+4. If entries exist → hydrate (load user records, recompute flag overlap for display) → return
+5. If no entries → run the full pipeline (`SuggestionGenerator.generate_combined/1`), take the top `discovery_daily_set_size` (default: 6) results + wildcards, persist to DB, record views, return
+
+### Chat Slot Gating
+
+Before showing the daily set, the system checks the user's chat slot status:
+
+- **Slots full** (`active >= max_active_slots`): Shows a warning instead of suggestions — "Let go of a conversation to see new discoveries"
+- **Daily limit reached** (`daily_started >= daily_new_limit`): Shows a warning — "You've reached today's limit. New discoveries tomorrow."
+- **Otherwise**: Shows the daily set with message buttons enabled
+
+### Implementation
+
+| Component | File |
+|-----------|------|
+| Generator + persistence | `lib/animina/discovery/daily_set_generator.ex` |
+| Schema | `lib/animina/discovery/schemas/daily_discovery_set.ex` |
+| Context API | `Discovery.get_or_generate_daily_set/1` |
+
 ## Configuration
 
 All settings are controlled via feature flags at `/admin/feature-flags`:
 
 | Setting | Feature Flag | Default | Range |
 |---------|-------------|---------|-------|
+| Daily set size | `discovery_daily_set_size` | 6 | 1–20 |
+| Max active chat slots | `chat_max_active_slots` | 6 | 1–20 |
+| Daily new chat limit | `chat_daily_new_limit` | 2 | 1–10 |
+| Love emergency cost | `chat_love_emergency_cost` | 4 | 1–10 |
 | Suggestions per list | `discovery_suggestions_per_list` | 8 | 1–50 |
 | Cooldown period (days) | `discovery_cooldown_days` | 30 | 1–365 |
 | New user boost period (days) | `discovery_new_user_boost_days` | 14 | 1–90 |
@@ -301,5 +334,6 @@ Bob appears in Alice's:
 | Flag overlap | `lib/animina/traits/matching.ex` |
 | Popularity tracking | `lib/animina/discovery/popularity.ex` |
 | Nightly aggregation | `lib/animina/discovery/popularity_aggregator.ex` |
-| Schemas | `lib/animina/discovery/schemas/` (SuggestionView, Dismissal, Inquiry, PopularityStat, ProfileVisit) |
+| Daily set generator | `lib/animina/discovery/daily_set_generator.ex` |
+| Schemas | `lib/animina/discovery/schemas/` (SuggestionView, Dismissal, Inquiry, PopularityStat, ProfileVisit, DailyDiscoverySet) |
 | Trait schemas | `lib/animina/traits/` (Category, Flag, UserFlag, UserCategoryOptIn, UserWhiteFlagCategoryPublish) |

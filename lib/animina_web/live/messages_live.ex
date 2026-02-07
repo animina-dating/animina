@@ -54,6 +54,15 @@ defmodule AniminaWeb.MessagesLive do
             <%= if @conversation_data.blocked do %>
               <span class="badge badge-error badge-sm">{gettext("Blocked")}</span>
             <% end %>
+
+            <button
+              phx-click="let_go"
+              phx-value-conversation-id={@conversation_data.conversation.id}
+              class="btn btn-ghost btn-sm text-base-content/50 hover:text-warning"
+              title={gettext("Let go")}
+            >
+              <.icon name="hero-hand-raised" class="h-4 w-4" />
+            </button>
           <% end %>
         </div>
 
@@ -103,6 +112,17 @@ defmodule AniminaWeb.MessagesLive do
           {gettext("Messages")}
         </.header>
 
+        <%!-- Slot Status Bar --%>
+        <div :if={@slot_status} class="flex flex-wrap gap-3 mt-4 mb-2 justify-center">
+          <div class="badge badge-lg badge-outline gap-2">
+            <.icon name="hero-chat-bubble-left-right-mini" class="h-4 w-4" />
+            {gettext("%{active}/%{max} active chats",
+              active: @slot_status.active,
+              max: @slot_status.max
+            )}
+          </div>
+        </div>
+
         <div class="mt-6">
           <%= if Enum.empty?(@conversations) do %>
             <div class="text-center py-12 text-base-content/50">
@@ -126,6 +146,67 @@ defmodule AniminaWeb.MessagesLive do
             </div>
           <% end %>
         </div>
+
+        <%!-- Let Go Archive Section --%>
+        <div :if={@closed_conversations != []} class="mt-10">
+          <div class="divider"></div>
+          <div class="flex items-center gap-2 mb-4">
+            <.icon name="hero-archive-box" class="h-5 w-5 text-base-content/50" />
+            <h2 class="text-lg font-semibold text-base-content/70">
+              {gettext("Let Go Archive")}
+            </h2>
+          </div>
+          <p class="text-sm text-base-content/50 mb-4">
+            {gettext("Conversations you've let go of. You can reopen one via Love Emergency.")}
+          </p>
+          <div class="space-y-3">
+            <.closed_conversation_card
+              :for={closure <- @closed_conversations}
+              closure={closure}
+              avatar_photos={@closed_avatar_photos}
+              love_emergency_cost={@love_emergency_cost}
+            />
+          </div>
+        </div>
+
+        <%!-- Love Emergency Component --%>
+        <.live_component
+          :if={@show_love_emergency}
+          module={AniminaWeb.LoveEmergencyComponent}
+          id="love-emergency"
+          conversation_id_to_reopen={@love_emergency_conv_id}
+          current_user_id={@current_scope.user.id}
+          active_conversations={@love_emergency_active_conversations}
+          cost={@love_emergency_cost}
+        />
+
+        <%!-- Let Go Confirmation --%>
+        <div
+          :if={@confirm_let_go_conv_id}
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          phx-click="cancel_let_go"
+        >
+          <div
+            class="bg-base-100 rounded-lg p-6 max-w-sm mx-4 shadow-xl"
+            phx-click-away="cancel_let_go"
+          >
+            <h3 class="text-lg font-semibold">
+              {gettext("Let go of this conversation?")}
+            </h3>
+            <p class="text-base-content/70 mt-2 text-sm">
+              {gettext("This is permanent. Both of you will no longer see each other in discovery.")}
+            </p>
+            <div class="mt-6 flex gap-3 justify-end">
+              <button phx-click="cancel_let_go" class="btn btn-ghost btn-sm">
+                {gettext("Cancel")}
+              </button>
+              <button phx-click="confirm_let_go" class="btn btn-error btn-sm">
+                <.icon name="hero-hand-raised" class="h-4 w-4" />
+                {gettext("Let Go")}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </Layouts.app>
     """
@@ -138,47 +219,99 @@ defmodule AniminaWeb.MessagesLive do
 
   defp conversation_row(assigns) do
     ~H"""
-    <.link
-      navigate={~p"/messages/#{@conversation.conversation.id}"}
-      class={[
-        "flex items-center gap-3 p-4 hover:bg-base-200 transition-colors -mx-4",
-        @conversation.unread && "bg-primary/5"
-      ]}
-    >
-      <.avatar user={@conversation.other_user} photos={@avatar_photos} size={:md} />
+    <div class={[
+      "flex items-center gap-3 p-4 -mx-4",
+      @conversation.unread && "bg-primary/5"
+    ]}>
+      <.link
+        navigate={~p"/messages/#{@conversation.conversation.id}"}
+        class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
+      >
+        <.avatar user={@conversation.other_user} photos={@avatar_photos} size={:md} />
 
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <span class={["font-medium truncate", @conversation.unread && "font-semibold"]}>
-            {@conversation.other_user.display_name}
-          </span>
-          <%= if @conversation.unread do %>
-            <span class="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2">
+            <span class={["font-medium truncate", @conversation.unread && "font-semibold"]}>
+              {@conversation.other_user.display_name}
+            </span>
+            <%= if @conversation.unread do %>
+              <span class="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+            <% end %>
+          </div>
+          <%= if @conversation.draft_content do %>
+            <p class="text-sm truncate mt-0.5 text-error">
+              <span class="font-medium">{gettext("Draft:")}</span>
+              {strip_markdown(@conversation.draft_content)}
+            </p>
+          <% else %>
+            <%= if @conversation.latest_message do %>
+              <p class={[
+                "text-sm truncate mt-0.5",
+                if(@conversation.unread, do: "text-base-content", else: "text-base-content/60")
+              ]}>
+                {strip_markdown(@conversation.latest_message.content)}
+              </p>
+            <% end %>
           <% end %>
         </div>
-        <%= if @conversation.draft_content do %>
-          <p class="text-sm truncate mt-0.5 text-error">
-            <span class="font-medium">{gettext("Draft:")}</span>
-            {strip_markdown(@conversation.draft_content)}
-          </p>
-        <% else %>
-          <%= if @conversation.latest_message do %>
-            <p class={[
-              "text-sm truncate mt-0.5",
-              if(@conversation.unread, do: "text-base-content", else: "text-base-content/60")
-            ]}>
-              {strip_markdown(@conversation.latest_message.content)}
-            </p>
-          <% end %>
-        <% end %>
-      </div>
 
-      <%= if @conversation.latest_message do %>
-        <span class="text-xs text-base-content/40 flex-shrink-0">
-          {format_time(@conversation.latest_message.inserted_at)}
-        </span>
-      <% end %>
-    </.link>
+        <%= if @conversation.latest_message do %>
+          <span class="text-xs text-base-content/40 flex-shrink-0">
+            {format_time(@conversation.latest_message.inserted_at)}
+          </span>
+        <% end %>
+      </.link>
+
+      <button
+        phx-click="let_go"
+        phx-value-conversation-id={@conversation.conversation.id}
+        class="btn btn-ghost btn-xs text-base-content/30 hover:text-warning flex-shrink-0"
+        title={gettext("Let go")}
+      >
+        <.icon name="hero-hand-raised" class="h-3.5 w-3.5" />
+      </button>
+    </div>
+    """
+  end
+
+  # --- Closed conversation card component ---
+
+  attr :closure, :map, required: true
+  attr :avatar_photos, :map, required: true
+  attr :love_emergency_cost, :integer, required: true
+
+  defp closed_conversation_card(assigns) do
+    other_user = assigns.closure.other_user
+
+    assigns =
+      assigns
+      |> assign(:other_user, other_user)
+      |> assign(:age, if(other_user, do: Animina.Accounts.compute_age(other_user.birthday)))
+
+    ~H"""
+    <div
+      :if={@other_user}
+      class="flex items-center gap-3 p-3 rounded-lg border border-base-300/50 bg-base-100/50"
+    >
+      <.avatar user={@other_user} photos={@avatar_photos} size={:md} />
+      <div class="flex-1 min-w-0">
+        <div class="font-medium truncate">{@other_user.display_name}</div>
+        <div class="text-xs text-base-content/50">
+          <span :if={@age}>{gettext("%{age} years", age: @age)}</span>
+          <span :if={@other_user.height} class="mx-1">&bull;</span>
+          <span :if={@other_user.height}>{@other_user.height} cm</span>
+        </div>
+      </div>
+      <button
+        phx-click="love_emergency"
+        phx-value-conversation-id={@closure.conversation_id}
+        class="btn btn-sm btn-outline btn-error"
+        title={gettext("Reopen by closing %{cost} other conversations", cost: @love_emergency_cost)}
+      >
+        <.icon name="hero-heart" class="h-4 w-4" />
+        {gettext("Reopen")}
+      </button>
+    </div>
     """
   end
 
@@ -479,6 +612,13 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def mount(params, _session, socket) do
+    user = socket.assigns.current_scope.user
+
+    # Subscribe to user topic for real-time conversation updates
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.user_topic(user.id))
+    end
+
     socket =
       assign(socket,
         page_title: gettext("Messages"),
@@ -492,7 +632,16 @@ defmodule AniminaWeb.MessagesLive do
         draft_save_timer: nil,
         other_last_read_at: nil,
         last_read_message_id: nil,
-        form: to_form(%{"content" => ""}, as: :message)
+        form: to_form(%{"content" => ""}, as: :message),
+        slot_status: Messaging.chat_slot_status(user.id),
+        closed_conversations: [],
+        closed_avatar_photos: %{},
+        love_emergency_cost: Animina.Discovery.Settings.love_emergency_cost(),
+        confirm_let_go_conv_id: nil,
+        show_love_emergency: false,
+        love_emergency_conv_id: nil,
+        love_emergency_active_conversations: [],
+        love_emergency_selected: MapSet.new()
       )
 
     # Handle start_with param to create/open a conversation
@@ -513,6 +662,11 @@ defmodule AniminaWeb.MessagesLive do
   defp apply_action(socket, :index, _params) do
     user = socket.assigns.current_scope.user
     conversations = Messaging.list_conversations(user.id)
+    closed = Messaging.list_closed_conversations(user.id)
+
+    # Load avatar photos for closed conversation users
+    closed_users = closed |> Enum.map(& &1.other_user) |> Enum.reject(&is_nil/1)
+    closed_avatar_photos = AvatarHelpers.load_from_users(closed_users)
 
     assign(socket,
       page_title: gettext("Messages"),
@@ -522,7 +676,10 @@ defmodule AniminaWeb.MessagesLive do
       grouped_messages: [],
       avatar_photos: AvatarHelpers.load_from_conversations(conversations),
       other_last_read_at: nil,
-      last_read_message_id: nil
+      last_read_message_id: nil,
+      slot_status: Messaging.chat_slot_status(user.id),
+      closed_conversations: closed,
+      closed_avatar_photos: closed_avatar_photos
     )
   end
 
@@ -582,12 +739,36 @@ defmodule AniminaWeb.MessagesLive do
   defp handle_start_with(socket, target_id) do
     user = socket.assigns.current_scope.user
 
-    case Messaging.get_or_create_conversation(user.id, target_id) do
-      {:ok, conversation} ->
-        push_navigate(socket, to: ~p"/messages/#{conversation.id}")
+    # Check if conversation already exists (existing conversations are always accessible)
+    case Messaging.get_conversation_by_participants(user.id, target_id) do
+      %{id: conv_id} ->
+        push_navigate(socket, to: ~p"/messages/#{conv_id}")
 
-      {:error, _reason} ->
-        put_flash(socket, :error, gettext("Could not start conversation"))
+      nil ->
+        # New conversation — check slot limits
+        case Messaging.can_initiate_conversation?(user.id, target_id) do
+          :ok ->
+            case Messaging.get_or_create_conversation(user.id, target_id) do
+              {:ok, conversation} ->
+                push_navigate(socket, to: ~p"/messages/#{conversation.id}")
+
+              {:error, _reason} ->
+                put_flash(socket, :error, gettext("Could not start conversation"))
+            end
+
+          {:error, :chat_slots_full} ->
+            put_flash(
+              socket,
+              :error,
+              gettext("You have no free chat slots. Let go of a conversation first.")
+            )
+
+          {:error, :previously_closed} ->
+            put_flash(socket, :error, gettext("This conversation was previously closed."))
+
+          {:error, _reason} ->
+            put_flash(socket, :error, gettext("Could not start conversation"))
+        end
     end
   end
 
@@ -661,6 +842,62 @@ defmodule AniminaWeb.MessagesLive do
       {:error, _reason} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to delete message"))}
     end
+  end
+
+  @impl true
+  def handle_event("let_go", %{"conversation-id" => conv_id}, socket) do
+    {:noreply, assign(socket, :confirm_let_go_conv_id, conv_id)}
+  end
+
+  @impl true
+  def handle_event("cancel_let_go", _params, socket) do
+    {:noreply, assign(socket, :confirm_let_go_conv_id, nil)}
+  end
+
+  @impl true
+  def handle_event("confirm_let_go", _params, socket) do
+    conv_id = socket.assigns.confirm_let_go_conv_id
+    user = socket.assigns.current_scope.user
+
+    case Messaging.close_conversation(conv_id, user.id) do
+      {:ok, _} ->
+        socket =
+          socket
+          |> assign(:confirm_let_go_conv_id, nil)
+          |> put_flash(:info, gettext("Conversation closed"))
+
+        # Redirect to index if we were in the show view
+        if socket.assigns.live_action == :show do
+          {:noreply, push_navigate(socket, to: ~p"/messages")}
+        else
+          # Refresh the conversation list
+          {:noreply, apply_action(socket, :index, %{})}
+        end
+
+      {:error, _reason} ->
+        {:noreply,
+         socket
+         |> assign(:confirm_let_go_conv_id, nil)
+         |> put_flash(:error, gettext("Failed to close conversation"))}
+    end
+  end
+
+  @impl true
+  def handle_event("love_emergency", %{"conversation-id" => conv_id}, socket) do
+    user = socket.assigns.current_scope.user
+    active_conversations = Messaging.list_conversations(user.id)
+    cost = Animina.Discovery.Settings.love_emergency_cost()
+
+    socket =
+      assign(socket,
+        show_love_emergency: true,
+        love_emergency_conv_id: conv_id,
+        love_emergency_active_conversations: active_conversations,
+        love_emergency_selected: MapSet.new(),
+        love_emergency_cost: cost
+      )
+
+    {:noreply, socket}
   end
 
   # --- PubSub handlers ---
@@ -801,6 +1038,52 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_info({:unread_count_changed, _count}, socket) do
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:conversation_closed, _conversation_id}, socket) do
+    # Refresh conversation list if on index
+    if socket.assigns.live_action == :index do
+      {:noreply, apply_action(socket, :index, %{})}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({:conversation_reopened, _conversation_id}, socket) do
+    if socket.assigns.live_action == :index do
+      {:noreply, apply_action(socket, :index, %{})}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({:love_emergency_complete, conv_id}, socket) do
+    socket =
+      socket
+      |> assign(:show_love_emergency, false)
+      |> assign(:love_emergency_conv_id, nil)
+      |> put_flash(:info, gettext("Conversation reopened!"))
+
+    {:noreply, push_navigate(socket, to: ~p"/messages/#{conv_id}")}
+  end
+
+  @impl true
+  def handle_info({:love_emergency_error, _reason}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_love_emergency, false)
+     |> put_flash(:error, gettext("Failed to reopen conversation"))}
+  end
+
+  @impl true
+  def handle_info(:love_emergency_cancelled, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_love_emergency, false)
+     |> assign(:love_emergency_conv_id, nil)}
   end
 
   defp schedule_draft_save(socket, content) do

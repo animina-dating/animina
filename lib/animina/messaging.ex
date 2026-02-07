@@ -12,8 +12,18 @@ defmodule Animina.Messaging do
 
   import Ecto.Query
 
-  alias Animina.Messaging.Schemas.{Conversation, ConversationParticipant, Message}
+  alias Animina.Discovery
+  alias Animina.Discovery.Settings
+
+  alias Animina.Messaging.Schemas.{
+    Conversation,
+    ConversationClosure,
+    ConversationParticipant,
+    Message
+  }
+
   alias Animina.Repo
+  alias Animina.Utils.Timezone
 
   # --- PubSub Topics ---
 
@@ -80,7 +90,8 @@ defmodule Animina.Messaging do
         %ConversationParticipant{}
         |> ConversationParticipant.changeset(%{
           conversation_id: conversation.id,
-          user_id: user1_id
+          user_id: user1_id,
+          initiator: true
         })
         |> Repo.insert()
 
@@ -115,6 +126,7 @@ defmodule Animina.Messaging do
     |> join(:inner, [c], p in ConversationParticipant,
       on: p.conversation_id == c.id and p.user_id == ^user_id
     )
+    |> where([_c, p], is_nil(p.closed_at))
     |> join(:left, [c, _p], latest in subquery(subquery), on: latest.conversation_id == c.id)
     |> order_by([c, _p, latest], desc_nulls_last: latest.last_message_at, desc: c.inserted_at)
     |> preload([c, _p, _latest], [:participants])
@@ -567,13 +579,27 @@ defmodule Animina.Messaging do
   @doc """
   Checks if a user can initiate a conversation with another user.
 
-  This integrates with the discovery system - only users who appear
-  in each other's discovery lists can initiate conversations.
+  Returns `:ok` or `{:error, reason}`.
+
+  Checks:
+  - Not self
+  - Has available chat slot
+  - No previously closed conversation between them
   """
   def can_initiate_conversation?(initiator_id, target_id) do
-    # For now, allow all conversations between different users.
-    # Future: integrate with Discovery.generate_suggestions to check mutual visibility.
-    initiator_id != target_id
+    cond do
+      initiator_id == target_id ->
+        {:error, :cannot_message_self}
+
+      !has_available_chat_slot?(initiator_id) ->
+        {:error, :chat_slots_full}
+
+      has_closed_conversation?(initiator_id, target_id) ->
+        {:error, :previously_closed}
+
+      true ->
+        :ok
+    end
   end
 
   @doc """
@@ -586,9 +612,208 @@ defmodule Animina.Messaging do
       on: p1.conversation_id == p2.conversation_id and p2.user_id == ^user_id
     )
     |> where([p1, _p2], p1.user_id in ^candidate_ids)
+    |> where([p1, _p2], is_nil(p1.closed_at))
     |> select([p1, _p2], p1.user_id)
     |> distinct(true)
     |> Repo.all()
     |> MapSet.new()
+  end
+
+  # --- Chat Slot System ---
+
+  @doc """
+  Returns the number of active (non-closed) conversations for a user.
+  """
+  def active_conversation_count(user_id) do
+    ConversationParticipant
+    |> where([p], p.user_id == ^user_id)
+    |> where([p], is_nil(p.closed_at))
+    |> select([p], count(p.id))
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns whether the user has a free chat slot.
+  """
+  def has_available_chat_slot?(user_id) do
+    active_conversation_count(user_id) < Settings.max_active_slots()
+  end
+
+  @doc """
+  Returns the number of new conversations initiated by the user today (Berlin time).
+  """
+  def daily_new_chat_count(user_id) do
+    {start_utc, end_utc} = Timezone.berlin_today_utc_range()
+
+    ConversationParticipant
+    |> where([p], p.user_id == ^user_id)
+    |> where([p], p.initiator == true)
+    |> where([p], p.inserted_at >= ^start_utc and p.inserted_at < ^end_utc)
+    |> select([p], count(p.id))
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns whether the user can start a new chat today.
+  """
+  def can_start_new_chat_today?(user_id) do
+    daily_new_chat_count(user_id) < Settings.daily_new_limit()
+  end
+
+  @doc """
+  Closes a conversation ("Let go"). Both participants' records are updated,
+  closure records are created, and bidirectional dismissals are recorded.
+  """
+  def close_conversation(conversation_id, closed_by_id) do
+    Repo.transaction(fn ->
+      participants =
+        ConversationParticipant
+        |> where([p], p.conversation_id == ^conversation_id)
+        |> Repo.all()
+
+      other_participant = Enum.find(participants, fn p -> p.user_id != closed_by_id end)
+      my_participant = Enum.find(participants, fn p -> p.user_id == closed_by_id end)
+
+      unless my_participant && other_participant do
+        Repo.rollback(:not_participant)
+      end
+
+      # Close both participants
+      {:ok, _} = my_participant |> ConversationParticipant.close_changeset() |> Repo.update()
+      {:ok, _} = other_participant |> ConversationParticipant.close_changeset() |> Repo.update()
+
+      # Create closure record (from the perspective of the closer)
+      {:ok, _} =
+        %ConversationClosure{}
+        |> ConversationClosure.changeset(%{
+          conversation_id: conversation_id,
+          closed_by_id: closed_by_id,
+          other_user_id: other_participant.user_id
+        })
+        |> Repo.insert()
+
+      # Create bidirectional dismissals so they don't appear in each other's discovery
+      Discovery.dismiss_user_by_id(closed_by_id, other_participant.user_id)
+      Discovery.dismiss_user_by_id(other_participant.user_id, closed_by_id)
+
+      # Broadcast closure to both users
+      broadcast_conversation_closed(conversation_id, closed_by_id, other_participant.user_id)
+
+      :ok
+    end)
+  end
+
+  @doc """
+  Lists the last N closed conversations for a user (where reopened_at IS NULL).
+  Returns closure records with the other user preloaded.
+  """
+  def list_closed_conversations(user_id, limit \\ 10) do
+    ConversationClosure
+    |> where([cc], cc.closed_by_id == ^user_id and is_nil(cc.reopened_at))
+    |> order_by([cc], desc: cc.inserted_at)
+    |> limit(^limit)
+    |> Repo.all()
+    |> Repo.preload(:other_user)
+  end
+
+  @doc """
+  Reopens a closed conversation via Love Emergency.
+
+  The user must close exactly `love_emergency_cost` active conversations to reopen one.
+  """
+  def love_emergency_reopen(user_id, reopen_conv_id, close_conv_ids) do
+    cost = Settings.love_emergency_cost()
+
+    if length(close_conv_ids) != cost do
+      {:error, :wrong_cost}
+    else
+      Repo.transaction(fn ->
+        # Close the conversations being sacrificed
+        Enum.each(close_conv_ids, fn conv_id ->
+          case close_conversation(conv_id, user_id) do
+            {:ok, _} -> :ok
+            {:error, reason} -> Repo.rollback(reason)
+          end
+        end)
+
+        # Reopen the target conversation: clear closed_at on both participants
+        participants =
+          ConversationParticipant
+          |> where([p], p.conversation_id == ^reopen_conv_id)
+          |> Repo.all()
+
+        Enum.each(participants, fn p ->
+          {:ok, _} = p |> ConversationParticipant.reopen_changeset() |> Repo.update()
+        end)
+
+        # Mark the closure as reopened
+        closure =
+          ConversationClosure
+          |> where([cc], cc.conversation_id == ^reopen_conv_id and cc.closed_by_id == ^user_id)
+          |> where([cc], is_nil(cc.reopened_at))
+          |> Repo.one()
+
+        if closure do
+          {:ok, _} = closure |> ConversationClosure.reopen_changeset(user_id) |> Repo.update()
+        end
+
+        # Broadcast reopening to both users
+        other = Enum.find(participants, fn p -> p.user_id != user_id end)
+
+        if other do
+          broadcast_conversation_reopened(reopen_conv_id, user_id, other.user_id)
+        end
+
+        :ok
+      end)
+    end
+  end
+
+  @doc """
+  Returns a map with the user's current chat slot status.
+  """
+  def chat_slot_status(user_id) do
+    %{
+      active: active_conversation_count(user_id),
+      max: Settings.max_active_slots(),
+      daily_started: daily_new_chat_count(user_id),
+      daily_max: Settings.daily_new_limit()
+    }
+  end
+
+  @doc """
+  Returns whether a closed conversation exists between two users.
+  """
+  def has_closed_conversation?(user1_id, user2_id) do
+    ConversationClosure
+    |> where(
+      [cc],
+      (cc.closed_by_id == ^user1_id and cc.other_user_id == ^user2_id) or
+        (cc.closed_by_id == ^user2_id and cc.other_user_id == ^user1_id)
+    )
+    |> where([cc], is_nil(cc.reopened_at))
+    |> Repo.exists?()
+  end
+
+  # --- Chat Slot PubSub ---
+
+  defp broadcast_conversation_closed(conversation_id, closed_by_id, other_user_id) do
+    Enum.each([closed_by_id, other_user_id], fn uid ->
+      Phoenix.PubSub.broadcast(
+        Animina.PubSub,
+        user_topic(uid),
+        {:conversation_closed, conversation_id}
+      )
+    end)
+  end
+
+  defp broadcast_conversation_reopened(conversation_id, reopened_by_id, other_user_id) do
+    Enum.each([reopened_by_id, other_user_id], fn uid ->
+      Phoenix.PubSub.broadcast(
+        Animina.PubSub,
+        user_topic(uid),
+        {:conversation_reopened, conversation_id}
+      )
+    end)
   end
 end

@@ -23,6 +23,7 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
   alias Animina.Discovery.Popularity
   alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
   alias Animina.Discovery.Settings
+  alias Animina.Messaging.Schemas.{ConversationClosure}
   alias Animina.TimeMachine
 
   @impl true
@@ -38,6 +39,7 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
     |> filter_by_bidirectional_age(viewer)
     |> filter_by_bidirectional_height(viewer)
     |> exclude_dismissed(viewer)
+    |> exclude_closed_conversations(viewer)
     |> exclude_recently_shown(viewer, list_type)
     |> maybe_exclude_at_daily_limit()
   end
@@ -176,6 +178,25 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
       )
 
     where(query, [u], u.id not in subquery(dismissed_subquery))
+  end
+
+  defp exclude_closed_conversations(query, viewer) do
+    closed_subquery =
+      from(cc in ConversationClosure,
+        where:
+          (cc.closed_by_id == ^viewer.id or cc.other_user_id == ^viewer.id) and
+            is_nil(cc.reopened_at),
+        select:
+          fragment(
+            "CASE WHEN ? = ? THEN ? ELSE ? END",
+            cc.closed_by_id,
+            ^viewer.id,
+            cc.other_user_id,
+            cc.closed_by_id
+          )
+      )
+
+    where(query, [u], u.id not in subquery(closed_subquery))
   end
 
   defp exclude_recently_shown(query, viewer, list_type) do
