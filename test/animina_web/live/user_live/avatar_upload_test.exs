@@ -314,7 +314,11 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
     end
 
     test "processing indicator disappears when receiving photo_approved message", %{conn: conn} do
-      user = user_fixture(language: "en")
+      user =
+        user_fixture(language: "en")
+        |> Ecto.Changeset.change(%{state: "normal"})
+        |> Animina.Repo.update!()
+
       photo = photo_fixture(%{owner_type: "User", owner_id: user.id, type: "avatar"})
 
       {:ok, lv, _html} =

@@ -153,7 +153,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
                 {gettext("Next")}
               </button>
             <% else %>
-              <.link navigate={~p"/users/settings"} class="btn btn-sm btn-primary">
+              <.link navigate={@finish_path} class="btn btn-sm btn-primary">
                 {gettext("Finish")}
               </.link>
             <% end %>
@@ -503,8 +503,12 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
     user_flags = load_all_user_flags(user)
 
+    finish_path =
+      if user.state == "waitlisted", do: ~p"/users/waitlist", else: ~p"/users/settings"
+
     {:ok,
      socket
+     |> assign(:finish_path, finish_path)
      |> assign(:core_categories, core_categories)
      |> assign(:optin_categories, optin_categories)
      |> assign(:selected_optin_ids, selected_optin_ids)

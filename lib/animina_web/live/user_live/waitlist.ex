@@ -77,7 +77,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             {gettext("Prepare your profile")}
           </h2>
           <p class="text-sm text-base-content/60 mb-4">
-            {gettext("Use the waiting time to make your profile stand out.")}
+            {gettext("Use the waiting time to set up your profile so you can get started right away.")}
           </p>
 
           <div class="grid gap-3 sm:grid-cols-2">

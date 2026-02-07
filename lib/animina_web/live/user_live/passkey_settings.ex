@@ -132,7 +132,11 @@ defmodule AniminaWeb.UserLive.PasskeySettings do
       |> assign(:registering, false)
       |> put_flash(:info, gettext("Passkey added successfully!"))
 
-    {:noreply, socket}
+    if user.state == "waitlisted" do
+      {:noreply, push_navigate(socket, to: ~p"/users/waitlist")}
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_event("passkey_register_error", %{"error" => "cancelled"}, socket) do

@@ -427,8 +427,27 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   end
 
   @impl true
-  def handle_info({event, photo}, socket)
-      when event in [:photo_approved, :photo_state_changed] do
+  def handle_info({:photo_approved, photo}, socket) do
+    if photo.type == "avatar" do
+      user = socket.assigns.user
+
+      if user.state == "waitlisted" do
+        socket =
+          socket
+          |> put_flash(:info, gettext("Your profile photo has been approved!"))
+          |> push_navigate(to: ~p"/users/waitlist")
+
+        {:noreply, socket}
+      else
+        {:noreply, assign(socket, :avatar, photo)}
+      end
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({:photo_state_changed, photo}, socket) do
     if photo.type == "avatar" do
       {:noreply, assign(socket, :avatar, photo)}
     else
@@ -448,6 +467,9 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   defp status_label("no_face_error", photo) when not is_nil(photo) do
     # Use short label for badge; full message shown separately
     cond do
+      photo.error_message && String.contains?(photo.error_message, "animal") ->
+        gettext("Animal photo detected")
+
       photo.error_message && String.contains?(photo.error_message, "multiple") ->
         gettext("Multiple people detected")
 

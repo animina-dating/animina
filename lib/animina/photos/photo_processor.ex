@@ -214,6 +214,7 @@ defmodule Animina.Photos.PhotoProcessor do
             person_detection: parsed.person_detection,
             content_safety: parsed.content_safety,
             attire_assessment: parsed.attire_assessment,
+            animal_detection: parsed.animal_detection,
             sex_scene: parsed.sex_scene,
             raw_response: response
           },
@@ -281,6 +282,11 @@ defmodule Animina.Photos.PhotoProcessor do
           "outdoor_context": true/false,
           "beach_context": true/false
         },
+        "animal_detection": {
+          "is_an_animal": true/false,
+          "is_a_dog": true/false,
+          "is_a_cat": true/false
+        },
         "sex_scene": true/false
       }
     }
@@ -294,6 +300,9 @@ defmodule Animina.Photos.PhotoProcessor do
     - appropriate_attire: false if underwear visible or inappropriate for context
     - swimwear_detected: true if wearing swimsuit/bikini
     - beach_context: true if clearly at beach, pool, or similar outdoor water setting
+    - is_an_animal: true if the main subject is an animal (not a human)
+    - is_a_dog: true if a dog is the main subject of the photo
+    - is_a_cat: true if a cat is the main subject of the photo
     """
   end
 
@@ -330,6 +339,7 @@ defmodule Animina.Photos.PhotoProcessor do
     person = Map.get(photo_analysis, "person_detection", %{})
     content = Map.get(photo_analysis, "content_safety", %{})
     attire = Map.get(photo_analysis, "attire_assessment", %{})
+    animal = Map.get(photo_analysis, "animal_detection", %{})
 
     %{
       person_detection: %{
@@ -363,6 +373,11 @@ defmodule Animina.Photos.PhotoProcessor do
         shirtless: get_bool(attire, "shirtless", false),
         outdoor_context: get_bool(attire, "outdoor_context", false),
         beach_context: get_bool(attire, "beach_context", false)
+      },
+      animal_detection: %{
+        is_an_animal: get_bool(animal, "is_an_animal", false),
+        is_a_dog: get_bool(animal, "is_a_dog", false),
+        is_a_cat: get_bool(animal, "is_a_cat", false)
       },
       sex_scene: get_bool(photo_analysis, "sex_scene", false)
     }
@@ -416,6 +431,11 @@ defmodule Animina.Photos.PhotoProcessor do
         shirtless: false,
         outdoor_context: false,
         beach_context: false
+      },
+      animal_detection: %{
+        is_an_animal: false,
+        is_a_dog: false,
+        is_a_cat: false
       },
       sex_scene: false
     }

@@ -17,6 +17,7 @@ defmodule Animina.Photos.PhotoFeedback do
   """
   def analyze_avatar(parsed) do
     with :ok <- check_content_safety(parsed),
+         :ok <- check_animal_detection(parsed),
          :ok <- check_attire(parsed),
          :ok <- check_avatar_attire_context(parsed),
          :ok <- check_face_detection(parsed) do
@@ -94,6 +95,17 @@ defmodule Animina.Photos.PhotoFeedback do
     end
   end
 
+  defp check_animal_detection(parsed) do
+    ad = Map.get(parsed, :animal_detection, %{})
+
+    cond do
+      ad[:is_a_dog] -> {:error, :animal, dog_message()}
+      ad[:is_a_cat] -> {:error, :animal, cat_message()}
+      ad[:is_an_animal] -> {:error, :animal, animal_message()}
+      true -> :ok
+    end
+  end
+
   defp check_face_detection(parsed) do
     pd = parsed.person_detection
 
@@ -125,6 +137,7 @@ defmodule Animina.Photos.PhotoFeedback do
   def violation_to_state(:no_face), do: "no_face_error"
   def violation_to_state(:multiple_faces), do: "no_face_error"
   def violation_to_state(:child_only), do: "no_face_error"
+  def violation_to_state(:animal), do: "no_face_error"
   def violation_to_state(_), do: "error"
 
   @doc """
@@ -134,6 +147,7 @@ defmodule Animina.Photos.PhotoFeedback do
   def should_blacklist?(:not_family_friendly), do: true
   def should_blacklist?(:sex_scene), do: true
   def should_blacklist?(:illegal_content), do: true
+  def should_blacklist?(:animal), do: false
   def should_blacklist?(_), do: false
 
   # User-friendly error messages
@@ -219,6 +233,27 @@ defmodule Animina.Photos.PhotoFeedback do
     dgettext(
       "errors",
       "Shirtless photos are only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
+    )
+  end
+
+  defp dog_message do
+    dgettext(
+      "errors",
+      "This is a dog. Your profile photo must show your face. You can use animal photos in your moodboard instead."
+    )
+  end
+
+  defp cat_message do
+    dgettext(
+      "errors",
+      "This is a cat. Your profile photo must show your face. You can use animal photos in your moodboard instead."
+    )
+  end
+
+  defp animal_message do
+    dgettext(
+      "errors",
+      "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
     )
   end
 end

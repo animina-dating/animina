@@ -3022,7 +3022,7 @@ msgstr "Tercihleri Kaydet"
 msgid "Shared Activities"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:851
+#: lib/animina_web/live/admin/ollama_logs_live.ex:826
 #: lib/animina_web/trait_translations.ex:52
 #, elixir-autogen, elixir-format
 msgid "Single"
@@ -3153,17 +3153,17 @@ msgstr ""
 msgid "Drag and drop your photo here, or"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:547
+#: lib/animina_web/live/user_live/avatar_upload.ex:569
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:548
+#: lib/animina_web/live/user_live/avatar_upload.ex:570
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:444
+#: lib/animina_web/live/user_live/avatar_upload.ex:463
 #, elixir-autogen, elixir-format
 msgid "Pending review"
 msgstr ""
@@ -3173,14 +3173,14 @@ msgstr ""
 msgid "Photo uploaded"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:524
-#: lib/animina_web/live/user_live/avatar_upload.ex:533
+#: lib/animina_web/live/user_live/avatar_upload.ex:546
+#: lib/animina_web/live/user_live/avatar_upload.ex:555
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:445
-#: lib/animina_web/live/user_live/avatar_upload.ex:471
+#: lib/animina_web/live/user_live/avatar_upload.ex:464
+#: lib/animina_web/live/user_live/avatar_upload.ex:493
 #, elixir-autogen, elixir-format
 msgid "Processing"
 msgstr ""
@@ -3206,20 +3206,20 @@ msgstr ""
 msgid "Upload a photo that shows your face clearly"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:549
+#: lib/animina_web/live/user_live/avatar_upload.ex:571
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1001
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:468
-#: lib/animina_web/live/user_live/avatar_upload.ex:473
-#: lib/animina_web/live/user_live/avatar_upload.ex:486
+#: lib/animina_web/live/user_live/avatar_upload.ex:490
+#: lib/animina_web/live/user_live/avatar_upload.ex:495
+#: lib/animina_web/live/user_live/avatar_upload.ex:508
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:539
+#: lib/animina_web/live/user_live/avatar_upload.ex:561
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
 msgstr ""
@@ -3240,8 +3240,8 @@ msgid "Referral progress"
 msgstr ""
 
 #: lib/animina_web/helpers/photo_status.ex:55
-#: lib/animina_web/live/user_live/avatar_upload.ex:458
-#: lib/animina_web/live/user_live/avatar_upload.ex:462
+#: lib/animina_web/live/user_live/avatar_upload.ex:480
+#: lib/animina_web/live/user_live/avatar_upload.ex:484
 #, elixir-autogen, elixir-format
 msgid "No face detected"
 msgstr ""
@@ -3273,7 +3273,7 @@ msgstr ""
 
 #: lib/animina_web/helpers/photo_status.ex:68
 #: lib/animina_web/live/admin/photo_history_live.ex:170
-#: lib/animina_web/live/user_live/avatar_upload.ex:470
+#: lib/animina_web/live/user_live/avatar_upload.ex:492
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
 msgstr ""
@@ -3363,12 +3363,12 @@ msgstr ""
 msgid "No pending appeals."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:469
+#: lib/animina_web/live/user_live/avatar_upload.ex:491
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Pending moderator review"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:550
+#: lib/animina_web/live/admin/ollama_logs_live.ex:531
 #: lib/animina_web/live/admin/photo_history_live.ex:41
 #: lib/animina_web/live/user_live/moodboard_editor.ex:379
 #, elixir-autogen, elixir-format, fuzzy
@@ -3656,7 +3656,7 @@ msgstr ""
 msgid "Value returned when auto-approve is enabled"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:412
+#: lib/animina_web/live/admin/ollama_logs_live.ex:393
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:144
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} entry"
@@ -3868,7 +3868,7 @@ msgstr ""
 msgid "This usually takes 40 seconds"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:546
+#: lib/animina_web/live/user_live/avatar_upload.ex:568
 #: lib/animina_web/live/user_live/moodboard_editor.ex:998
 #, elixir-autogen, elixir-format, fuzzy
 msgid "File is too large (max 6MB)"
@@ -3879,8 +3879,8 @@ msgstr ""
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:555
-#: lib/animina_web/live/admin/ollama_logs_live.ex:691
+#: lib/animina_web/live/admin/ollama_logs_live.ex:536
+#: lib/animina_web/live/admin/ollama_logs_live.ex:672
 #: lib/animina_web/live/admin/photo_reviews_live.ex:644
 #, elixir-autogen, elixir-format
 msgid "Server"
@@ -3891,8 +3891,8 @@ msgstr ""
 msgid "Age detection"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:477
-#: lib/animina_web/live/admin/ollama_logs_live.ex:493
+#: lib/animina_web/live/admin/ollama_logs_live.ex:458
+#: lib/animina_web/live/admin/ollama_logs_live.ex:474
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr ""
@@ -3905,7 +3905,7 @@ msgid "Add Photo"
 msgstr ""
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:90
-#: lib/animina_web/live/user_live/avatar_upload.ex:446
+#: lib/animina_web/live/user_live/avatar_upload.ex:465
 #, elixir-autogen, elixir-format
 msgid "Analyzing photo"
 msgstr ""
@@ -4226,8 +4226,8 @@ msgstr ""
 msgid "Item added to moodboard"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:581
-#: lib/animina_web/live/admin/ollama_logs_live.ex:694
+#: lib/animina_web/live/admin/ollama_logs_live.ex:562
+#: lib/animina_web/live/admin/ollama_logs_live.ex:675
 #: lib/animina_web/live/user_live/moodboard_editor.ex:33
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
@@ -4296,38 +4296,38 @@ msgstr ""
 msgid "Close"
 msgstr "kapat"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:569
-#: lib/animina_web/live/admin/ollama_logs_live.ex:690
+#: lib/animina_web/live/admin/ollama_logs_live.ex:550
+#: lib/animina_web/live/admin/ollama_logs_live.ex:671
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:497
+#: lib/animina_web/live/admin/ollama_logs_live.ex:478
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:434
-#: lib/animina_web/live/admin/ollama_logs_live.ex:474
-#: lib/animina_web/live/admin/ollama_logs_live.ex:552
-#: lib/animina_web/live/admin/ollama_logs_live.ex:689
+#: lib/animina_web/live/admin/ollama_logs_live.ex:415
+#: lib/animina_web/live/admin/ollama_logs_live.ex:455
+#: lib/animina_web/live/admin/ollama_logs_live.ex:533
+#: lib/animina_web/live/admin/ollama_logs_live.ex:670
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:486
-#: lib/animina_web/live/admin/ollama_logs_live.ex:561
-#: lib/animina_web/live/admin/ollama_logs_live.ex:692
+#: lib/animina_web/live/admin/ollama_logs_live.ex:467
+#: lib/animina_web/live/admin/ollama_logs_live.ex:542
+#: lib/animina_web/live/admin/ollama_logs_live.ex:673
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Status"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:577
+#: lib/animina_web/live/admin/ollama_logs_live.ex:558
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:495
+#: lib/animina_web/live/admin/ollama_logs_live.ex:476
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Success"
 msgstr ""
@@ -4347,22 +4347,22 @@ msgstr ""
 msgid "Control feature flags and system settings."
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:483
+#: lib/animina_web/live/user_live/avatar_upload.ex:505
 #, elixir-autogen, elixir-format
 msgid "Attire violation"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:480
+#: lib/animina_web/live/user_live/avatar_upload.ex:502
 #, elixir-autogen, elixir-format
 msgid "Content violation"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:452
+#: lib/animina_web/live/user_live/avatar_upload.ex:474
 #, elixir-autogen, elixir-format
 msgid "Multiple people detected"
 msgstr ""
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:455
+#: lib/animina_web/live/user_live/avatar_upload.ex:477
 #, elixir-autogen, elixir-format
 msgid "Photo not allowed"
 msgstr ""
@@ -5064,11 +5064,6 @@ msgstr ""
 msgid "Skip the waitlist"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:80
-#, elixir-autogen, elixir-format
-msgid "Use the waiting time to make your profile stand out."
-msgstr ""
-
 #: lib/animina_web/live/user_live/waitlist.ex:70
 #, elixir-autogen, elixir-format
 msgid "We'll notify you by email when your account is ready."
@@ -5104,12 +5099,12 @@ msgstr ""
 msgid "Are you sure you want to remove this passkey?"
 msgstr ""
 
-#: lib/animina_web/live/user_live/passkey_settings.ex:146
+#: lib/animina_web/live/user_live/passkey_settings.ex:150
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not add passkey: %{reason}"
 msgstr ""
 
-#: lib/animina_web/live/user_live/passkey_settings.ex:166
+#: lib/animina_web/live/user_live/passkey_settings.ex:170
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not remove passkey."
 msgstr "Konum kaldırılamadı."
@@ -5144,7 +5139,7 @@ msgstr "Şifre başarıyla güncellendi!"
 msgid "Passkey not recognized. Please try again or use password."
 msgstr ""
 
-#: lib/animina_web/live/user_live/passkey_settings.ex:161
+#: lib/animina_web/live/user_live/passkey_settings.ex:165
 #, elixir-autogen, elixir-format
 msgid "Passkey removed."
 msgstr ""
@@ -5274,134 +5269,149 @@ msgstr ""
 msgid "Optional"
 msgstr "İsteğe Bağlı Kategoriler"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:677
+#: lib/animina_web/live/admin/ollama_logs_live.ex:658
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} run"
 msgid_plural "%{count} runs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:389
+#: lib/animina_web/live/admin/ollama_logs_live.ex:370
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count}d ago"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:388
+#: lib/animina_web/live/admin/ollama_logs_live.ex:369
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count}h ago"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:387
+#: lib/animina_web/live/admin/ollama_logs_live.ex:368
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count}m ago"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:386
+#: lib/animina_web/live/admin/ollama_logs_live.ex:367
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count}s ago"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:847
+#: lib/animina_web/live/admin/ollama_logs_live.ex:822
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Agree"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:459
+#: lib/animina_web/live/admin/ollama_logs_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "All Logs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:466
+#: lib/animina_web/live/admin/ollama_logs_live.ex:447
 #, elixir-autogen, elixir-format, fuzzy
 msgid "By Photo"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:849
+#: lib/animina_web/live/admin/ollama_logs_live.ex:824
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Disagree"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:176
-#: lib/animina_web/live/admin/ollama_logs_live.ex:223
+#: lib/animina_web/live/admin/ollama_logs_live.ex:150
+#: lib/animina_web/live/admin/ollama_logs_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Log entry or photo not found."
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:615
+#: lib/animina_web/live/admin/ollama_logs_live.ex:596
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Manual re-run"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:652
+#: lib/animina_web/live/admin/ollama_logs_live.ex:633
 #, elixir-autogen, elixir-format
 msgid "No grouped log entries found."
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:492
 #: lib/animina_web/live/admin/ollama_logs_live.ex:21
-#: lib/animina_web/live/admin/ollama_logs_live.ex:410
+#: lib/animina_web/live/admin/ollama_logs_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Ollama Logs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:506
+#: lib/animina_web/live/admin/ollama_logs_live.ex:487
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Per page"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:670
+#: lib/animina_web/live/admin/ollama_logs_live.ex:651
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Photo deleted"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:582
-#: lib/animina_web/live/admin/ollama_logs_live.ex:695
+#: lib/animina_web/live/admin/ollama_logs_live.ex:563
+#: lib/animina_web/live/admin/ollama_logs_live.ex:676
 #, elixir-autogen, elixir-format
 msgid "Re-run"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:251
+#: lib/animina_web/live/admin/ollama_logs_live.ex:199
 #, elixir-autogen, elixir-format
 msgid "Re-run failed: %{reason}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:811
+#: lib/animina_web/live/admin/ollama_logs_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "Re-run with %{model}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:499
+#: lib/animina_web/live/admin/ollama_logs_live.ex:480
 #, elixir-autogen, elixir-format
 msgid "In Progress"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:830
+#: lib/animina_web/live/admin/ollama_logs_live.ex:805
 #, elixir-autogen, elixir-format
 msgid "Re-run on %{server}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:424
+#: lib/animina_web/live/admin/ollama_logs_live.ex:405
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Queue"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:437
+#: lib/animina_web/live/admin/ollama_logs_live.ex:418
 #, elixir-autogen, elixir-format, fuzzy
 msgid "adaptive"
 msgstr "aktif"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:442
+#: lib/animina_web/live/admin/ollama_logs_live.ex:423
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Auto-reload"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:772
+#: lib/animina_web/live/admin/ollama_logs_live.ex:753
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Approved"
 msgstr ""
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:580
-#: lib/animina_web/live/admin/ollama_logs_live.ex:693
+#: lib/animina_web/live/admin/ollama_logs_live.ex:561
+#: lib/animina_web/live/admin/ollama_logs_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Avatar"
+msgstr ""
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:471
+#, elixir-autogen, elixir-format
+msgid "Animal photo detected"
+msgstr ""
+
+#: lib/animina_web/live/user_live/waitlist.ex:80
+#, elixir-autogen, elixir-format
+msgid "Use the waiting time to set up your profile so you can get started right away."
+msgstr ""
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:437
+#, elixir-autogen, elixir-format
+msgid "Your profile photo has been approved!"
 msgstr ""

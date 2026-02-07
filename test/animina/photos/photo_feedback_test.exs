@@ -31,6 +31,11 @@ defmodule Animina.Photos.PhotoFeedbackTest do
         outdoor_context: false,
         beach_context: false
       },
+      animal_detection: %{
+        is_an_animal: false,
+        is_a_dog: false,
+        is_a_cat: false
+      },
       sex_scene: false
     }
   end
@@ -141,6 +146,24 @@ defmodule Animina.Photos.PhotoFeedbackTest do
 
       assert {:ok, :approved} = PhotoFeedback.analyze_avatar(parsed)
     end
+
+    test "rejects photo with animal detected" do
+      parsed = put_in(valid_parsed(), [:animal_detection, :is_an_animal], true)
+      assert {:error, :animal, message} = PhotoFeedback.analyze_avatar(parsed)
+      assert message =~ "an animal"
+    end
+
+    test "rejects photo with dog detected" do
+      parsed = put_in(valid_parsed(), [:animal_detection, :is_a_dog], true)
+      assert {:error, :animal, message} = PhotoFeedback.analyze_avatar(parsed)
+      assert message =~ "a dog"
+    end
+
+    test "rejects photo with cat detected" do
+      parsed = put_in(valid_parsed(), [:animal_detection, :is_a_cat], true)
+      assert {:error, :animal, message} = PhotoFeedback.analyze_avatar(parsed)
+      assert message =~ "a cat"
+    end
   end
 
   describe "analyze_moodboard/1" do
@@ -178,6 +201,11 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       parsed = put_in(valid_parsed(), [:content_safety, :hunting_scene], true)
       assert {:error, :hunting, _message} = PhotoFeedback.analyze_moodboard(parsed)
     end
+
+    test "approves moodboard with animal photo" do
+      parsed = put_in(valid_parsed(), [:animal_detection, :is_an_animal], true)
+      assert {:ok, :approved} = PhotoFeedback.analyze_moodboard(parsed)
+    end
   end
 
   describe "violation_to_state/1" do
@@ -185,6 +213,7 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       assert PhotoFeedback.violation_to_state(:no_face) == "no_face_error"
       assert PhotoFeedback.violation_to_state(:multiple_faces) == "no_face_error"
       assert PhotoFeedback.violation_to_state(:child_only) == "no_face_error"
+      assert PhotoFeedback.violation_to_state(:animal) == "no_face_error"
     end
 
     test "returns error for content violations" do
@@ -207,6 +236,7 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       assert PhotoFeedback.should_blacklist?(:no_face) == false
       assert PhotoFeedback.should_blacklist?(:multiple_faces) == false
       assert PhotoFeedback.should_blacklist?(:child_only) == false
+      assert PhotoFeedback.should_blacklist?(:animal) == false
     end
 
     test "returns false for attire violations" do

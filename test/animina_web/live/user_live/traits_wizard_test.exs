@@ -345,7 +345,9 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
       assert has_element?(view, "button.btn-outline[phx-value-flag-id=\"#{flag1.id}\"]")
     end
 
-    test "finish link on step 3 navigates to settings", %{conn: conn} do
+    test "finish link on step 3 navigates to settings", %{conn: conn, user: user} do
+      user |> Ecto.Changeset.change(%{state: "normal"}) |> Animina.Repo.update!()
+
       {:ok, view, _html} = live(conn, ~p"/users/settings/traits")
 
       # Navigate to step 3
@@ -356,6 +358,19 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
              |> element("a", "Finish")
              |> render_click()
              |> follow_redirect(conn, ~p"/users/settings")
+    end
+
+    test "finish link on step 3 navigates to waitlist for waitlisted user", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/users/settings/traits")
+
+      # Navigate to step 3
+      view |> element("[phx-click=next_step]") |> render_click()
+      view |> element("[phx-click=next_step]") |> render_click()
+
+      assert view
+             |> element("a", "Finish")
+             |> render_click()
+             |> follow_redirect(conn, ~p"/users/waitlist")
     end
 
     test "clicking step dot navigates directly to that step", %{conn: conn} do
