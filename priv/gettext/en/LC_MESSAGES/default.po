@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:194
+#: lib/animina_web/live/user_live/waitlist.ex:193
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -53,7 +53,7 @@ msgstr "Account"
 msgid "Actions"
 msgstr "Actions"
 
-#: lib/animina_web/live/user_live/waitlist.ex:202
+#: lib/animina_web/live/user_live/waitlist.ex:201
 #, elixir-autogen, elixir-format
 msgid "Activated!"
 msgstr ""
@@ -167,7 +167,7 @@ msgstr ""
 msgid "Connect"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:187
+#: lib/animina_web/live/user_live/waitlist.ex:186
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr ""
@@ -889,7 +889,7 @@ msgstr ""
 msgid "Your profile"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:174
+#: lib/animina_web/live/user_live/waitlist.ex:173
 #, elixir-autogen, elixir-format
 msgid "Your referral code"
 msgstr ""
@@ -4429,7 +4429,7 @@ msgstr "Add photos and text to your moodboard to share with others."
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
 #: lib/animina_web/live/user_live/moodboard_editor.ex:622
 #: lib/animina_web/live/user_live/profile_moodboard.ex:121
-#: lib/animina_web/live/user_live/waitlist.ex:151
+#: lib/animina_web/live/user_live/waitlist.ex:124
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Edit Moodboard"
@@ -5400,12 +5400,12 @@ msgstr "Try adjusting your preferences to expand your search."
 msgid "Your activation is being processed"
 msgstr "Your activation is being processed"
 
-#: lib/animina_web/live/user_live/waitlist.ex:153
+#: lib/animina_web/live/user_live/waitlist.ex:126
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr "Add photos and stories to make a great first impression."
 
-#: lib/animina_web/live/user_live/waitlist.ex:127
+#: lib/animina_web/live/user_live/waitlist.ex:100
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr "Define what you're about and what you're looking for."
@@ -5425,19 +5425,19 @@ msgstr "Hi %{name}, your account is on the waitlist and will be activated soon."
 msgid "Prepare your profile"
 msgstr "Prepare your profile"
 
-#: lib/animina_web/live/user_live/waitlist.ex:166
+#: lib/animina_web/live/user_live/waitlist.ex:165
 #, elixir-autogen, elixir-format
 msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
 msgstr[0] "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgstr[1] "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
 
-#: lib/animina_web/live/user_live/waitlist.ex:125
+#: lib/animina_web/live/user_live/waitlist.ex:98
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr "Set up your flags"
 
-#: lib/animina_web/live/user_live/waitlist.ex:163
+#: lib/animina_web/live/user_live/waitlist.ex:162
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr "Skip the waitlist"
@@ -5566,12 +5566,12 @@ msgstr "Your passkeys"
 msgid "or"
 msgstr "or"
 
-#: lib/animina_web/live/user_live/waitlist.ex:103
+#: lib/animina_web/live/user_live/waitlist.ex:150
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr "Set up a passkey"
 
-#: lib/animina_web/live/user_live/waitlist.ex:105
+#: lib/animina_web/live/user_live/waitlist.ex:152
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Sign in faster and more securely with a passkey."

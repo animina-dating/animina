@@ -54,7 +54,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           pin: "654321"
         )
 
-      assert subject == "Ihr Bestätigungscode für ANIMINA"
+      assert subject == "Dein Bestätigungscode für ANIMINA"
       assert body =~ "Max"
       assert body =~ "654321"
     end
@@ -135,7 +135,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           pin: "000000"
         )
 
-      assert subject == "Ihr Bestätigungscode für ANIMINA"
+      assert subject == "Dein Bestätigungscode für ANIMINA"
     end
 
     test "falls back to German for nil locale" do
@@ -146,7 +146,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           pin: "000000"
         )
 
-      assert subject == "Ihr Bestätigungscode für ANIMINA"
+      assert subject == "Dein Bestätigungscode für ANIMINA"
     end
 
     test "Turkish confirmation_pin has correct subject" do
@@ -203,7 +203,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           pin: "123456"
         )
 
-      assert body =~ "Viele Grüße\n  Ihr ANIMINA Team"
+      assert body =~ "Viele Grüße\n  Dein ANIMINA Team"
     end
 
     test "English email ends with closing greeting before footer" do

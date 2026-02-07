@@ -3,10 +3,10 @@ E-Mail-Änderungsanleitung – ANIMINA
 
 Hallo <%= @display_name %>,
 
-Sie können Ihre E-Mail ändern, indem Sie die folgende
-URL besuchen:
+Du kannst deine E-Mail ändern, indem du die folgende
+URL besuchst:
 
 <%= @url %>
 
-Falls Sie diese Änderung nicht angefordert haben,
-ignorieren Sie bitte diese Nachricht.
+Falls du diese Änderung nicht angefordert hast,
+ignoriere bitte diese Nachricht.

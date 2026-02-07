@@ -1,18 +1,18 @@
-Ihr Bestätigungscode für ANIMINA
+Dein Bestätigungscode für ANIMINA
 ---
 
 Hallo <%= @display_name %>,
 
-Ihr Bestätigungscode lautet:
+Dein Bestätigungscode lautet:
 
     <%= @pin %>
 
-Bitte geben Sie diesen Code innerhalb von 30 Minuten ein,
-um Ihre E-Mail-Adresse zu bestätigen.
+Bitte gib diesen Code innerhalb von 30 Minuten ein,
+um deine E-Mail-Adresse zu bestätigen.
 
-Sie haben maximal 3 Versuche. Nach 3 Fehleingaben oder
-nach 30 Minuten wird Ihr Konto gelöscht und Sie müssen
-sich erneut registrieren.
+Du hast maximal 3 Versuche. Nach 3 Fehleingaben oder
+nach 30 Minuten wird dein Konto gelöscht und du musst
+dich erneut registrieren.
 
-Falls Sie kein Konto bei ANIMINA erstellt haben,
-ignorieren Sie bitte diese E-Mail.
+Falls du kein Konto bei ANIMINA erstellt hast,
+ignoriere bitte diese E-Mail.

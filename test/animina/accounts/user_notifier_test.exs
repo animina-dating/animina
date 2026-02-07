@@ -123,7 +123,7 @@ defmodule Animina.Accounts.UserNotifierTest do
       user = user_fixture(%{language: "de"})
       {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
 
-      assert email.subject == "Ihr Bestätigungscode für ANIMINA"
+      assert email.subject == "Dein Bestätigungscode für ANIMINA"
     end
 
     test "uses English subject when user language is en" do

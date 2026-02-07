@@ -10,7 +10,7 @@ Status der Warteschlange:
 - Ältestes Foto: <%= @oldest_photo_age_hours %> Stunden alt
 - Ollama-Status: <%= @ollama_status %>
 
-Bitte überprüfen Sie die Admin-Seite, um Maßnahmen zu ergreifen:
+Bitte überprüfe die Admin-Seite, um Maßnahmen zu ergreifen:
 https://animina.de/admin/ollama-queue
 
 Diese Warnung wird nur einmal pro Stunde gesendet.

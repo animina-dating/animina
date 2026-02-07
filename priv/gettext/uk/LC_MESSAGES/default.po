@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr "%{age} років"
 
-#: lib/animina_web/live/user_live/waitlist.ex:194
+#: lib/animina_web/live/user_live/waitlist.ex:193
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -54,7 +54,7 @@ msgstr "Акаунт"
 msgid "Actions"
 msgstr "Дії"
 
-#: lib/animina_web/live/user_live/waitlist.ex:202
+#: lib/animina_web/live/user_live/waitlist.ex:201
 #, elixir-autogen, elixir-format
 msgid "Activated!"
 msgstr "Активовано!"
@@ -168,7 +168,7 @@ msgstr "Підтвердження не вдалося. Будь ласка, з�
 msgid "Connect"
 msgstr "Зв'язатися"
 
-#: lib/animina_web/live/user_live/waitlist.ex:187
+#: lib/animina_web/live/user_live/waitlist.ex:186
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr "Копіювати код"
@@ -891,7 +891,7 @@ msgstr "Ваш акаунт було видалено. Будь ласка, за
 msgid "Your profile"
 msgstr "Ваш профіль"
 
-#: lib/animina_web/live/user_live/waitlist.ex:174
+#: lib/animina_web/live/user_live/waitlist.ex:173
 #, elixir-autogen, elixir-format
 msgid "Your referral code"
 msgstr "Ваш код запрошення"
@@ -4438,7 +4438,7 @@ msgstr ""
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
 #: lib/animina_web/live/user_live/moodboard_editor.ex:622
 #: lib/animina_web/live/user_live/profile_moodboard.ex:121
-#: lib/animina_web/live/user_live/waitlist.ex:151
+#: lib/animina_web/live/user_live/waitlist.ex:124
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr ""
@@ -5409,12 +5409,12 @@ msgstr ""
 msgid "Your activation is being processed"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:153
+#: lib/animina_web/live/user_live/waitlist.ex:126
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:127
+#: lib/animina_web/live/user_live/waitlist.ex:100
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr ""
@@ -5434,7 +5434,7 @@ msgstr ""
 msgid "Prepare your profile"
 msgstr "Створіть свій профіль"
 
-#: lib/animina_web/live/user_live/waitlist.ex:166
+#: lib/animina_web/live/user_live/waitlist.ex:165
 #, elixir-autogen, elixir-format
 msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
@@ -5442,12 +5442,12 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:125
+#: lib/animina_web/live/user_live/waitlist.ex:98
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:163
+#: lib/animina_web/live/user_live/waitlist.ex:162
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr ""
@@ -5576,12 +5576,12 @@ msgstr ""
 msgid "or"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:103
+#: lib/animina_web/live/user_live/waitlist.ex:150
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:105
+#: lib/animina_web/live/user_live/waitlist.ex:152
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr ""

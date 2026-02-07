@@ -4,13 +4,13 @@ Sicherheitshinweis – ANIMINA
 Hallo<%= if @display_name do %> <%= @display_name %><% end %>,
 
 Jemand hat am <%= @attempted_at %> versucht, ein neues
-ANIMINA-Konto mit Ihrer E-Mail-Adresse (<%= @email %>)
+ANIMINA-Konto mit deiner E-Mail-Adresse (<%= @email %>)
 zu erstellen.
 
-Falls Sie das nicht waren, empfehlen wir Ihnen, Ihr
-Passwort zu ändern, um Ihr Konto zu schützen.
+Falls du das nicht warst, empfehlen wir dir, dein
+Passwort zu ändern, um dein Konto zu schützen.
 
-Falls Sie versucht haben, sich selbst zu registrieren:
-Sie haben bereits ein Konto. Bitte melden Sie sich mit
-Ihrem bestehenden Passwort an oder nutzen Sie die
+Falls du versucht hast, dich selbst zu registrieren:
+Du hast bereits ein Konto. Bitte melde dich mit
+deinem bestehenden Passwort an oder nutze die
 Passwort-vergessen-Funktion.
