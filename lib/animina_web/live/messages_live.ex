@@ -113,17 +113,6 @@ defmodule AniminaWeb.MessagesLive do
           {gettext("Messages")}
         </.header>
 
-        <%!-- Slot Status Bar --%>
-        <div :if={@slot_status} class="flex flex-wrap gap-3 mt-4 mb-2 justify-center">
-          <div class="badge badge-lg badge-outline gap-2">
-            <.icon name="hero-chat-bubble-left-right-mini" class="h-4 w-4" />
-            {gettext("%{active}/%{max} active chats",
-              active: @slot_status.active,
-              max: @slot_status.max
-            )}
-          </div>
-        </div>
-
         <div class="mt-6">
           <%= if Enum.empty?(@conversations) do %>
             <div class="text-center py-12 text-base-content/50">

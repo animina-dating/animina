@@ -1,10 +1,9 @@
 defmodule AniminaWeb.LiveUnreadBadgeComponent do
   @moduledoc """
-  Live component that displays a real-time unread message badge.
+  Live component that displays a real-time unread message badge and chat slot status.
 
-  This component fetches the unread count on each update. For real-time updates,
-  the parent LiveView should subscribe to the user's message topic and send
-  updates to this component.
+  Shows the chat icon with unread badge, plus slot status (X/Y · ⊕ Z) on desktop.
+  Updates on each page navigation (no PubSub).
   """
 
   use AniminaWeb, :live_component
@@ -13,23 +12,27 @@ defmodule AniminaWeb.LiveUnreadBadgeComponent do
 
   @impl true
   def mount(socket) do
-    {:ok, assign(socket, :unread_count, 0)}
+    {:ok, assign(socket, unread_count: 0, slot_status: nil, daily_remaining: 0)}
   end
 
   @impl true
   def update(%{user_id: user_id} = assigns, socket) do
     unread_count = Messaging.unread_count(user_id)
+    slot_status = Messaging.chat_slot_status(user_id)
+    daily_remaining = max(slot_status.daily_max - slot_status.daily_started, 0)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:unread_count, unread_count)}
+     |> assign(:unread_count, unread_count)
+     |> assign(:slot_status, slot_status)
+     |> assign(:daily_remaining, daily_remaining)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="inline-block">
+    <div class="inline-flex items-center gap-1.5">
       <.link
         navigate={~p"/messages"}
         class="relative p-2 hover:bg-base-300 rounded-lg transition-colors inline-flex"
@@ -41,6 +44,14 @@ defmodule AniminaWeb.LiveUnreadBadgeComponent do
           </span>
         <% end %>
       </.link>
+      <span
+        :if={@slot_status}
+        class="inline-flex items-center gap-1 text-sm text-base-content/50"
+      >
+        <span>{@slot_status.active}/{@slot_status.max}</span>
+        <span class="text-base-content/30">&middot;</span>
+        <span title={gettext("New chats available today")}>⊕{@daily_remaining}</span>
+      </span>
     </div>
     """
   end

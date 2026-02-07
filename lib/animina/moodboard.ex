@@ -44,6 +44,7 @@ defmodule Animina.Moodboard do
   # Query helpers
   defdelegate list_moodboard_photos(user_id), to: Animina.Moodboard.Items
   defdelegate list_moodboard_stories(user_id), to: Animina.Moodboard.Items
+  defdelegate first_story_content_per_users(user_ids), to: Animina.Moodboard.Items
 
   # Pinned item operations
   defdelegate create_pinned_intro_item(user, story_content), to: Animina.Moodboard.Items

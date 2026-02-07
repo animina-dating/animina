@@ -448,6 +448,33 @@ defmodule Animina.Moodboard.Items do
   end
 
   @doc """
+  Returns the first moodboard story content for each of the given user IDs.
+
+  "First" means the story attached to the active moodboard item with the lowest
+  position for that user. Returns `%{user_id => content_string}`.
+  """
+  def first_story_content_per_users([]), do: %{}
+
+  def first_story_content_per_users(user_ids) do
+    ranked =
+      from(s in MoodboardStory,
+        join: i in MoodboardItem,
+        on: s.moodboard_item_id == i.id,
+        where: i.user_id in ^user_ids and i.state == "active",
+        where: i.item_type in ["story", "combined"],
+        select: %{
+          user_id: i.user_id,
+          content: s.content,
+          row: row_number() |> over(partition_by: i.user_id, order_by: [asc: i.position])
+        }
+      )
+
+    from(r in subquery(ranked), where: r.row == 1, select: {r.user_id, r.content})
+    |> Repo.all()
+    |> Map.new()
+  end
+
+  @doc """
   Lists all moodboard stories for a user.
   """
   def list_moodboard_stories(user_id) do

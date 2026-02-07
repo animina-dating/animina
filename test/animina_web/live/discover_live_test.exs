@@ -14,10 +14,13 @@ defmodule AniminaWeb.DiscoverLiveTest do
     end
 
     test "renders discover page without tabs", %{conn: conn} do
-      {:ok, _lv, html} =
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
+
+      # Wait for async load
+      html = render(lv)
 
       assert html =~ "Discover"
       # No tab buttons should be present
@@ -35,70 +38,82 @@ defmodule AniminaWeb.DiscoverLiveTest do
     end
 
     test "shows Your Matches section", %{conn: conn} do
-      {:ok, _lv, html} =
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
+      # Wait for async load to complete
+      html = render(lv)
       assert html =~ "Your Matches"
-      assert html =~ "Smart suggestions based on your preferences and compatibility"
     end
 
     test "shows Wildcards section", %{conn: conn} do
-      {:ok, _lv, html} =
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
+      # Wait for async load to complete
+      html = render(lv)
       assert html =~ "Wildcards"
       assert html =~ "Random picks"
     end
 
-    test "shows empty state when no suggestions", %{conn: conn} do
-      {:ok, _lv, html} =
+    test "shows empty state with adjust preferences link", %{conn: conn} do
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
+      # Wait for async load to complete
+      html = render(lv)
       assert html =~ "No suggestions available"
+      assert html =~ "Adjust Preferences"
     end
 
-    test "shows slot status bar", %{conn: conn} do
+    test "shows info panel inside a details element", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
-      assert html =~ "active chats"
-      assert html =~ "new chats remaining today"
-    end
-
-    test "shows info panel explaining how discovery works", %{conn: conn} do
-      {:ok, _lv, html} =
-        conn
-        |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/discover")
-
+      assert html =~ "<details"
       assert html =~ "How Discovery Works"
     end
 
     test "does not show conflict count (security fix)", %{conn: conn} do
-      {:ok, _lv, html} =
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
+      html = render(lv)
       # The page should NOT show specific conflict counts
       refute html =~ "potential conflict"
     end
 
-    test "shows dismissed count", %{conn: conn} do
-      {:ok, _lv, html} =
+    test "profile cards have no chat icon button", %{conn: conn} do
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
-      assert html =~ "0 dismissed"
+      html = render(lv)
+      # Chat icon and related text should not appear on discover cards
+      refute html =~ "Send message"
+      refute html =~ "No free chat slots"
+    end
+
+    test "shows loading skeletons in disconnected render", %{conn: conn} do
+      conn =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+
+      html = conn |> get(~p"/discover") |> html_response(200)
+
+      assert html =~ "skeleton-card"
+      assert html =~ "animate-pulse"
     end
   end
 end

@@ -174,7 +174,7 @@ defmodule AniminaWeb.Layouts do
                         />
                       <% end %>
                     </div>
-                    <span class="text-sm font-medium text-base-content truncate max-w-32">
+                    <span class="text-sm font-medium text-base-content truncate max-w-20 sm:max-w-32">
                       {@current_scope.user.display_name || @current_scope.user.email}
                     </span>
                     <%= if Scope.admin?(@current_scope) do %>
