@@ -62,12 +62,13 @@ defmodule AniminaWeb.Layouts do
       |> assign(:dev, @dev)
 
     ~H"""
-    <div class={[
-      "min-h-screen flex flex-col bg-base-100",
-      @current_scope && Scope.admin?(@current_scope) && "ring-4 ring-inset ring-red-500",
-      @current_scope && !Scope.admin?(@current_scope) && Scope.moderator?(@current_scope) &&
-        "ring-4 ring-inset ring-yellow-400"
-    ]}>
+    <div class="min-h-screen flex flex-col bg-base-100">
+      <%= if @current_scope && Scope.admin?(@current_scope) do %>
+        <div class="fixed inset-0 z-[100] border-4 border-red-500 pointer-events-none" />
+      <% end %>
+      <%= if @current_scope && !Scope.admin?(@current_scope) && Scope.moderator?(@current_scope) do %>
+        <div class="fixed inset-0 z-[100] border-4 border-yellow-400 pointer-events-none" />
+      <% end %>
       <!-- Navigation -->
       <header class="fixed top-0 inset-x-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
         <nav aria-label="Main" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
