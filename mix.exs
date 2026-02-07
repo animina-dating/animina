@@ -4,7 +4,7 @@ defmodule Animina.MixProject do
   def project do
     [
       app: :animina,
-      version: "2.3.16",
+      version: "2.3.17",
       elixir: "~> 1.19",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -77,7 +77,8 @@ defmodule Animina.MixProject do
       {:image, "~> 0.62"},
       {:ollama, "~> 0.9"},
       {:fun_with_flags, "~> 1.12"},
-      {:earmark, "~> 1.4"}
+      {:earmark, "~> 1.4"},
+      {:wax_, "~> 0.7"}
     ]
   end
 

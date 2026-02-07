@@ -32,6 +32,7 @@ defmodule Animina.Accounts.User do
     has_many :user_roles, Animina.Accounts.UserRole
     has_many :user_flags, Animina.Traits.UserFlag
     has_many :user_category_opt_ins, Animina.Traits.UserCategoryOptIn
+    has_many :user_passkeys, Animina.Accounts.UserPasskey
 
     # Partner preferences
     field :preferred_partner_gender, {:array, :string}, default: []

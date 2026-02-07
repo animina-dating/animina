@@ -109,6 +109,12 @@ defmodule AniminaWeb.UserLive.SettingsHub do
             preview={@user.email}
           />
           <.settings_card
+            navigate={~p"/users/settings/passkeys"}
+            icon="hero-finger-print"
+            title={gettext("Passkeys")}
+            preview={@passkeys_preview}
+          />
+          <.settings_card
             navigate={~p"/users/settings/delete-account"}
             icon="hero-trash"
             title={gettext("Delete Account")}
@@ -205,6 +211,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       )
       |> assign(:flags_preview, build_flags_preview(flag_counts))
       |> assign(:language_preview, Languages.display_name(current_locale))
+      |> assign(:passkeys_preview, build_passkeys_preview(user))
 
     {:ok, socket}
   end
@@ -287,6 +294,16 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   defp gender_label("female"), do: gettext("Female")
   defp gender_label("diverse"), do: gettext("Diverse")
   defp gender_label(_), do: nil
+
+  defp build_passkeys_preview(user) do
+    count = length(Accounts.list_user_passkeys(user))
+
+    case count do
+      0 -> gettext("No passkeys")
+      1 -> gettext("1 passkey")
+      n -> gettext("%{count} passkeys", count: n)
+    end
+  end
 
   # Handle photo state changes for real-time avatar updates
   @impl true

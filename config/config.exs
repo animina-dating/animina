@@ -138,6 +138,12 @@ config :fun_with_flags, :cache,
 
 config :fun_with_flags, :cache_bust_notifications, enabled: false
 
+# WebAuthn / Passkey authentication (wax_ library)
+# Environment-specific origin and rp_id are set in dev.exs, test.exs, and runtime.exs
+config :wax_,
+  rp_id: "animina.de",
+  origin: "https://animina.de"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

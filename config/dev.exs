@@ -62,3 +62,8 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# WebAuthn / Passkey config for development
+config :wax_,
+  origin: "http://localhost:4000",
+  rp_id: "localhost"

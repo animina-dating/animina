@@ -60,6 +60,20 @@ defmodule AniminaWeb.UserLive.Login do
             </.button>
           </.form>
 
+          <div :if={!@current_scope} id="passkey-login" phx-hook="PasskeyLogin">
+            <div class="divider text-xs text-base-content/50 my-4">{gettext("or")}</div>
+            <button
+              phx-click="passkey_login"
+              class="btn btn-outline w-full gap-2"
+              disabled={@passkey_loading}
+            >
+              <.icon name="hero-finger-print" class="h-5 w-5" />
+              {if @passkey_loading,
+                do: gettext("Waiting for device..."),
+                else: gettext("Sign in with passkey")}
+            </button>
+          </div>
+
           <div :if={!@current_scope} class="mt-4 text-center">
             <.link
               navigate={~p"/users/forgot-password"}
@@ -155,13 +169,36 @@ defmodule AniminaWeb.UserLive.Login do
        form: form,
        trigger_submit: false,
        dev_routes: @dev_routes,
-       dev_users: dev_users
+       dev_users: dev_users,
+       passkey_loading: false
      )}
   end
 
   @impl true
   def handle_event("submit_password", _params, socket) do
     {:noreply, assign(socket, :trigger_submit, true)}
+  end
+
+  def handle_event("passkey_login", _params, socket) do
+    socket =
+      socket
+      |> assign(:passkey_loading, true)
+      |> push_event("passkey:auth_begin", %{})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("passkey_auth_error", %{"error" => "cancelled"}, socket) do
+    {:noreply, assign(socket, :passkey_loading, false)}
+  end
+
+  def handle_event("passkey_auth_error", %{"error" => error}, socket) do
+    socket =
+      socket
+      |> assign(:passkey_loading, false)
+      |> put_flash(:error, error)
+
+    {:noreply, socket}
   end
 
   defp load_dev_users do

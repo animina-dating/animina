@@ -94,6 +94,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/language", UserLive.LanguageSettings, :edit
       live "/users/settings/locations", UserLive.EditLocations, :edit
       live "/users/settings/traits", UserLive.TraitsWizard, :index
+      live "/users/settings/passkeys", UserLive.PasskeySettings, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/settings/avatar", UserLive.AvatarUpload, :edit
       live "/users/settings/moodboard", UserLive.MoodboardEditor
@@ -120,6 +121,10 @@ defmodule AniminaWeb.Router do
 
     post "/role/switch", RoleController, :switch
     post "/users/update-password", UserSessionController, :update_password
+
+    # WebAuthn passkey registration (requires authentication)
+    post "/webauthn/register/begin", WebAuthnController, :register_begin
+    post "/webauthn/register/complete", WebAuthnController, :register_complete
   end
 
   scope "/", AniminaWeb do
@@ -138,5 +143,9 @@ defmodule AniminaWeb.Router do
     post "/users/log-in", UserSessionController, :create
     post "/users/log-in/pin-confirmed", UserSessionController, :create_from_pin
     delete "/users/log-out", UserSessionController, :delete
+
+    # WebAuthn passkey authentication (public — no authentication required)
+    post "/webauthn/auth/begin", WebAuthnController, :auth_begin
+    post "/webauthn/auth/complete", WebAuthnController, :auth_complete
   end
 end

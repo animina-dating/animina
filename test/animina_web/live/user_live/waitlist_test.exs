@@ -93,5 +93,42 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       assert html =~ ~r"/users/settings/moodboard"
       assert html =~ ~r"/users/settings/traits"
     end
+
+    test "shows passkey setup link when user has no passkeys", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      assert html =~ ~r"/users/settings/passkeys"
+      assert html =~ "Set up a passkey"
+    end
+
+    test "hides passkey setup link when user has passkeys", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      # Create a passkey for the user
+      Animina.Accounts.create_user_passkey(user, %{
+        credential_id: :crypto.strong_rand_bytes(32),
+        public_key: %{
+          1 => 2,
+          3 => -7,
+          -1 => 1,
+          -2 => :crypto.strong_rand_bytes(32),
+          -3 => :crypto.strong_rand_bytes(32)
+        },
+        sign_count: 0,
+        label: "Test passkey"
+      })
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      refute html =~ "Set up a passkey"
+    end
   end
 end

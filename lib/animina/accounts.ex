@@ -12,7 +12,7 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
-  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserToken}
+  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserPasskey, UserToken}
   alias Animina.Moodboard
   alias Animina.Repo
   alias Animina.TimeMachine
@@ -615,6 +615,73 @@ defmodule Animina.Accounts do
         {:ok, {user, tokens_to_expire}}
       end
     end)
+  end
+
+  ## Passkeys (WebAuthn)
+
+  @doc """
+  Lists all passkeys for a user.
+  """
+  def list_user_passkeys(%User{id: user_id}) do
+    from(p in UserPasskey, where: p.user_id == ^user_id, order_by: [asc: p.inserted_at])
+    |> Repo.all()
+  end
+
+  @doc """
+  Gets a single passkey. Returns nil if not found.
+  """
+  def get_user_passkey(%User{id: user_id}, passkey_id) do
+    Repo.get_by(UserPasskey, id: passkey_id, user_id: user_id)
+  end
+
+  @doc """
+  Creates a passkey for a user from a verified WebAuthn registration.
+  """
+  def create_user_passkey(%User{} = user, attrs) do
+    %UserPasskey{user_id: user.id}
+    |> UserPasskey.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Deletes a passkey belonging to a user.
+  """
+  def delete_user_passkey(%User{id: user_id}, passkey_id) do
+    case Repo.get_by(UserPasskey, id: passkey_id, user_id: user_id) do
+      nil -> {:error, :not_found}
+      passkey -> Repo.delete(passkey)
+    end
+  end
+
+  @doc """
+  Finds a user by a credential_id (for discoverable credential login).
+  Returns {user, passkey} or nil.
+  """
+  def get_user_by_passkey_credential_id(credential_id) when is_binary(credential_id) do
+    query =
+      from(p in UserPasskey,
+        where: p.credential_id == ^credential_id,
+        join: u in assoc(p, :user),
+        where: is_nil(u.deleted_at),
+        preload: [user: u]
+      )
+
+    case Repo.one(query) do
+      %UserPasskey{user: user} = passkey -> {user, passkey}
+      nil -> nil
+    end
+  end
+
+  @doc """
+  Updates the sign count and last_used_at for a passkey after successful authentication.
+  """
+  def update_passkey_after_auth(%UserPasskey{} = passkey, sign_count) do
+    passkey
+    |> Ecto.Changeset.change(%{
+      sign_count: sign_count,
+      last_used_at: DateTime.utc_now()
+    })
+    |> Repo.update()
   end
 
   # --- Delegations to Statistics ---

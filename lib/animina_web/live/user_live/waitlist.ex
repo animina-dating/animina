@@ -81,6 +81,28 @@ defmodule AniminaWeb.UserLive.Waitlist do
 
           <div class="grid gap-3 sm:grid-cols-2">
             <.link
+              navigate={~p"/users/settings/traits"}
+              class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
+            >
+              <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 text-success"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <div>
+                <p class="font-medium text-base-content">{gettext("Set up your flags")}</p>
+                <p class="text-xs text-base-content/60">
+                  {gettext("Define what you're about and what you're looking for.")}
+                </p>
+              </div>
+            </.link>
+
+            <.link
               navigate={~p"/users/settings/moodboard"}
               class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
             >
@@ -105,25 +127,29 @@ defmodule AniminaWeb.UserLive.Waitlist do
                 </p>
               </div>
             </.link>
-
             <.link
-              navigate={~p"/users/settings/traits"}
+              :if={@has_passkeys == false}
+              navigate={~p"/users/settings/passkeys"}
               class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors"
             >
-              <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center shrink-0">
+              <div class="w-10 h-10 rounded-full bg-info/10 flex items-center justify-center shrink-0">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 text-success"
+                  class="w-5 h-5 text-info"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               </div>
               <div>
-                <p class="font-medium text-base-content">{gettext("Set up your flags")}</p>
+                <p class="font-medium text-base-content">{gettext("Set up a passkey")}</p>
                 <p class="text-xs text-base-content/60">
-                  {gettext("Define what you're about and what you're looking for.")}
+                  {gettext("Sign in faster and more securely with a passkey.")}
                 </p>
               </div>
             </.link>
@@ -206,6 +232,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
 
     referral_count = Accounts.count_confirmed_referrals(user)
     referral_threshold = FeatureFlags.referral_threshold()
+    has_passkeys = Accounts.list_user_passkeys(user) != []
 
     {:ok,
      socket
@@ -213,6 +240,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:referral_code, user.referral_code)
      |> assign(:referral_count, referral_count)
      |> assign(:referral_threshold, referral_threshold)
-     |> assign(:end_waitlist_at, user.end_waitlist_at)}
+     |> assign(:end_waitlist_at, user.end_waitlist_at)
+     |> assign(:has_passkeys, has_passkeys)}
   end
 end
