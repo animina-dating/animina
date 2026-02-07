@@ -23,7 +23,7 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
   alias Animina.Discovery.Popularity
   alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
   alias Animina.Discovery.Settings
-  alias Animina.Messaging.Schemas.{ConversationClosure}
+  alias Animina.Messaging.Schemas.ConversationClosure
   alias Animina.TimeMachine
 
   @impl true

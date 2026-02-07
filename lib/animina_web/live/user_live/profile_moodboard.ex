@@ -236,6 +236,19 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   defp column_count(_), do: 2
 
   # Build page title with profile info: Display Name · ♀ 32 Jahre · 1,72 m · 56068 Koblenz
+  defp resolve_chat_state(current_user_id, profile_user_id) do
+    case Messaging.get_conversation_by_participants(current_user_id, profile_user_id) do
+      nil ->
+        case Messaging.can_initiate_conversation?(current_user_id, profile_user_id) do
+          :ok -> {nil, nil}
+          {:error, reason} -> {nil, reason}
+        end
+
+      conversation ->
+        {conversation.id, nil}
+    end
+  end
+
   defp build_page_title(user, age, city, zip_code) do
     parts = [
       user.display_name,
@@ -333,17 +346,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
     {chat_conversation_id, chat_blocked_reason} =
       if show_chat_toggle do
-        case Messaging.get_conversation_by_participants(current_user.id, profile_user.id) do
-          nil ->
-            # No existing conversation — check if we can start one
-            case Messaging.can_initiate_conversation?(current_user.id, profile_user.id) do
-              :ok -> {nil, nil}
-              {:error, reason} -> {nil, reason}
-            end
-
-          conversation ->
-            {conversation.id, nil}
-        end
+        resolve_chat_state(current_user.id, profile_user.id)
       else
         {nil, nil}
       end

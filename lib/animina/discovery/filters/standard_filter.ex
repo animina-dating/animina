@@ -24,7 +24,7 @@ defmodule Animina.Discovery.Filters.StandardFilter do
   alias Animina.Discovery.Popularity
   alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
   alias Animina.Discovery.Settings
-  alias Animina.Messaging.Schemas.{ConversationClosure}
+  alias Animina.Messaging.Schemas.ConversationClosure
   alias Animina.TimeMachine
 
   @impl true
@@ -207,7 +207,7 @@ defmodule Animina.Discovery.Filters.StandardFilter do
           fragment(
             "CASE WHEN ? = ? THEN ? ELSE ? END",
             cc.closed_by_id,
-            ^viewer.id,
+            type(^viewer.id, :binary_id),
             cc.other_user_id,
             cc.closed_by_id
           )

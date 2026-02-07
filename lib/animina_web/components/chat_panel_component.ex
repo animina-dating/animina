@@ -424,36 +424,44 @@ defmodule AniminaWeb.ChatPanelComponent do
     if socket.assigns.conversation_id do
       {socket.assigns.conversation_id, socket}
     else
-      current_user_id = socket.assigns.current_user_id
-      profile_user_id = socket.assigns.profile_user.id
+      create_or_deny_conversation(socket)
+    end
+  end
 
-      case Messaging.can_initiate_conversation?(current_user_id, profile_user_id) do
-        :ok ->
-          case Messaging.get_or_create_conversation(current_user_id, profile_user_id) do
-            {:ok, conversation} ->
-              send(self(), {:chat_panel_subscribe, conversation.id})
-              {conversation.id, assign(socket, :conversation_id, conversation.id)}
+  defp create_or_deny_conversation(socket) do
+    current_user_id = socket.assigns.current_user_id
+    profile_user_id = socket.assigns.profile_user.id
 
-            {:error, _reason} ->
-              {nil, socket}
-          end
+    case Messaging.can_initiate_conversation?(current_user_id, profile_user_id) do
+      :ok ->
+        do_create_conversation(socket, current_user_id, profile_user_id)
 
-        {:error, :chat_slots_full} ->
-          send(
-            self(),
-            {:chat_panel_error,
-             gettext("You have no free chat slots. Let go of a conversation first.")}
-          )
+      {:error, :chat_slots_full} ->
+        send(
+          self(),
+          {:chat_panel_error,
+           gettext("You have no free chat slots. Let go of a conversation first.")}
+        )
 
-          {nil, socket}
+        {nil, socket}
 
-        {:error, :previously_closed} ->
-          send(self(), {:chat_panel_error, gettext("This conversation was previously closed.")})
-          {nil, socket}
+      {:error, :previously_closed} ->
+        send(self(), {:chat_panel_error, gettext("This conversation was previously closed.")})
+        {nil, socket}
 
-        {:error, _reason} ->
-          {nil, socket}
-      end
+      {:error, _reason} ->
+        {nil, socket}
+    end
+  end
+
+  defp do_create_conversation(socket, current_user_id, profile_user_id) do
+    case Messaging.get_or_create_conversation(current_user_id, profile_user_id) do
+      {:ok, conversation} ->
+        send(self(), {:chat_panel_subscribe, conversation.id})
+        {conversation.id, assign(socket, :conversation_id, conversation.id)}
+
+      {:error, _reason} ->
+        {nil, socket}
     end
   end
 

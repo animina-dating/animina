@@ -728,44 +728,55 @@ defmodule Animina.Messaging do
       {:error, :wrong_cost}
     else
       Repo.transaction(fn ->
-        # Close the conversations being sacrificed
-        Enum.each(close_conv_ids, fn conv_id ->
-          case close_conversation(conv_id, user_id) do
-            {:ok, _} -> :ok
-            {:error, reason} -> Repo.rollback(reason)
-          end
-        end)
-
-        # Reopen the target conversation: clear closed_at on both participants
-        participants =
-          ConversationParticipant
-          |> where([p], p.conversation_id == ^reopen_conv_id)
-          |> Repo.all()
-
-        Enum.each(participants, fn p ->
-          {:ok, _} = p |> ConversationParticipant.reopen_changeset() |> Repo.update()
-        end)
-
-        # Mark the closure as reopened
-        closure =
-          ConversationClosure
-          |> where([cc], cc.conversation_id == ^reopen_conv_id and cc.closed_by_id == ^user_id)
-          |> where([cc], is_nil(cc.reopened_at))
-          |> Repo.one()
-
-        if closure do
-          {:ok, _} = closure |> ConversationClosure.reopen_changeset(user_id) |> Repo.update()
-        end
-
-        # Broadcast reopening to both users
-        other = Enum.find(participants, fn p -> p.user_id != user_id end)
-
-        if other do
-          broadcast_conversation_reopened(reopen_conv_id, user_id, other.user_id)
-        end
-
+        close_sacrificed_conversations(close_conv_ids, user_id)
+        reopen_conversation_participants(reopen_conv_id)
+        mark_closure_reopened(reopen_conv_id, user_id)
+        broadcast_reopen(reopen_conv_id, user_id)
         :ok
       end)
+    end
+  end
+
+  defp close_sacrificed_conversations(close_conv_ids, user_id) do
+    Enum.each(close_conv_ids, fn conv_id ->
+      case close_conversation(conv_id, user_id) do
+        {:ok, _} -> :ok
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
+  end
+
+  defp reopen_conversation_participants(conv_id) do
+    ConversationParticipant
+    |> where([p], p.conversation_id == ^conv_id)
+    |> Repo.all()
+    |> Enum.each(fn p ->
+      {:ok, _} = p |> ConversationParticipant.reopen_changeset() |> Repo.update()
+    end)
+  end
+
+  defp mark_closure_reopened(conv_id, user_id) do
+    closure =
+      ConversationClosure
+      |> where([cc], cc.conversation_id == ^conv_id and cc.closed_by_id == ^user_id)
+      |> where([cc], is_nil(cc.reopened_at))
+      |> Repo.one()
+
+    if closure do
+      {:ok, _} = closure |> ConversationClosure.reopen_changeset(user_id) |> Repo.update()
+    end
+  end
+
+  defp broadcast_reopen(conv_id, user_id) do
+    participants =
+      ConversationParticipant
+      |> where([p], p.conversation_id == ^conv_id)
+      |> Repo.all()
+
+    other = Enum.find(participants, fn p -> p.user_id != user_id end)
+
+    if other do
+      broadcast_conversation_reopened(conv_id, user_id, other.user_id)
     end
   end
 

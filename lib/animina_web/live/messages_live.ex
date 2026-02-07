@@ -20,6 +20,7 @@ defmodule AniminaWeb.MessagesLive do
 
   import AniminaWeb.MessageComponents
 
+  alias Animina.Discovery.Settings
   alias Animina.Messaging
   alias Animina.Photos
   alias AniminaWeb.Helpers.AvatarHelpers
@@ -636,7 +637,7 @@ defmodule AniminaWeb.MessagesLive do
         slot_status: Messaging.chat_slot_status(user.id),
         closed_conversations: [],
         closed_avatar_photos: %{},
-        love_emergency_cost: Animina.Discovery.Settings.love_emergency_cost(),
+        love_emergency_cost: Settings.love_emergency_cost(),
         confirm_let_go_conv_id: nil,
         show_love_emergency: false,
         love_emergency_conv_id: nil,
@@ -745,30 +746,37 @@ defmodule AniminaWeb.MessagesLive do
         push_navigate(socket, to: ~p"/messages/#{conv_id}")
 
       nil ->
-        # New conversation — check slot limits
-        case Messaging.can_initiate_conversation?(user.id, target_id) do
-          :ok ->
-            case Messaging.get_or_create_conversation(user.id, target_id) do
-              {:ok, conversation} ->
-                push_navigate(socket, to: ~p"/messages/#{conversation.id}")
+        initiate_new_conversation(socket, user.id, target_id)
+    end
+  end
 
-              {:error, _reason} ->
-                put_flash(socket, :error, gettext("Could not start conversation"))
-            end
+  defp initiate_new_conversation(socket, user_id, target_id) do
+    case Messaging.can_initiate_conversation?(user_id, target_id) do
+      :ok ->
+        create_and_navigate(socket, user_id, target_id)
 
-          {:error, :chat_slots_full} ->
-            put_flash(
-              socket,
-              :error,
-              gettext("You have no free chat slots. Let go of a conversation first.")
-            )
+      {:error, :chat_slots_full} ->
+        put_flash(
+          socket,
+          :error,
+          gettext("You have no free chat slots. Let go of a conversation first.")
+        )
 
-          {:error, :previously_closed} ->
-            put_flash(socket, :error, gettext("This conversation was previously closed."))
+      {:error, :previously_closed} ->
+        put_flash(socket, :error, gettext("This conversation was previously closed."))
 
-          {:error, _reason} ->
-            put_flash(socket, :error, gettext("Could not start conversation"))
-        end
+      {:error, _reason} ->
+        put_flash(socket, :error, gettext("Could not start conversation"))
+    end
+  end
+
+  defp create_and_navigate(socket, user_id, target_id) do
+    case Messaging.get_or_create_conversation(user_id, target_id) do
+      {:ok, conversation} ->
+        push_navigate(socket, to: ~p"/messages/#{conversation.id}")
+
+      {:error, _reason} ->
+        put_flash(socket, :error, gettext("Could not start conversation"))
     end
   end
 
@@ -886,7 +894,7 @@ defmodule AniminaWeb.MessagesLive do
   def handle_event("love_emergency", %{"conversation-id" => conv_id}, socket) do
     user = socket.assigns.current_scope.user
     active_conversations = Messaging.list_conversations(user.id)
-    cost = Animina.Discovery.Settings.love_emergency_cost()
+    cost = Settings.love_emergency_cost()
 
     socket =
       assign(socket,
