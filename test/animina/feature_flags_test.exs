@@ -300,7 +300,13 @@ defmodule Animina.FeatureFlagsTest do
     end
 
     test "ollama_model/0 returns default value when not configured" do
-      assert FeatureFlags.ollama_model() == "qwen3-vl:8b"
+      # Delete any existing setting so we test the true fallback default
+      case FeatureFlags.get_flag_setting("system:ollama_model") do
+        %{} = setting -> Animina.Repo.delete(setting)
+        nil -> :ok
+      end
+
+      assert FeatureFlags.ollama_model() == "qwen3-vl:4b"
     end
 
     test "get_system_setting_value/2 returns configured value" do
