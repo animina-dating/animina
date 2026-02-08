@@ -173,6 +173,17 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
                   {gettext("Choose file")}
                   <.live_file_input upload={@uploads.avatar} class="hidden" />
                 </label>
+                <button
+                  type="button"
+                  id="take-selfie-btn"
+                  class="btn btn-secondary btn-sm"
+                  phx-hook="CameraCapture"
+                  data-input-name="avatar"
+                  data-capture="user"
+                >
+                  <.icon name="hero-camera" class="h-4 w-4" />
+                  {gettext("Take Selfie")}
+                </button>
                 <p class="text-xs text-base-content/50 mt-3">
                   {gettext("JPG, PNG, WEBP or HEIC. Max 6MB.")}
                 </p>

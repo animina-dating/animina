@@ -450,9 +450,22 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
                     <p class="text-sm text-base-content/40">
                       {gettext("JPG, PNG, WebP, HEIC up to 6MB")}
                     </p>
-                    <label for="photo-upload-input" class="btn btn-primary btn-sm mt-4 cursor-pointer">
-                      {gettext("Choose File")}
-                    </label>
+                    <div class="flex flex-wrap gap-2 justify-center mt-4">
+                      <label for="photo-upload-input" class="btn btn-primary btn-sm cursor-pointer">
+                        {gettext("Choose File")}
+                      </label>
+                      <label
+                        for="photo-upload-input"
+                        id="take-photo-btn"
+                        class="btn btn-secondary btn-sm cursor-pointer"
+                        phx-hook="CameraCapture"
+                        data-input-id="photo-upload-input"
+                        data-capture="environment"
+                      >
+                        <.icon name="hero-camera" class="h-4 w-4" />
+                        {gettext("Take Photo")}
+                      </label>
+                    </div>
                   </div>
                 </div>
 

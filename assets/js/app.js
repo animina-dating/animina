@@ -22,14 +22,15 @@ import {
   ChatPanel,
   WaitlistCountdown,
   PasskeyRegister,
-  PasskeyLogin
+  PasskeyLogin,
+  CameraCapture
 } from "./hooks"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, AutoDismissFlash, ShiftSelect, SortableList, MarkdownEditor, DeviceType, ImageCropper, ScrollToBottom, MessageInput, ChatPanel, WaitlistCountdown, PasskeyRegister, PasskeyLogin},
+  hooks: {...colocatedHooks, AutoDismissFlash, ShiftSelect, SortableList, MarkdownEditor, DeviceType, ImageCropper, ScrollToBottom, MessageInput, ChatPanel, WaitlistCountdown, PasskeyRegister, PasskeyLogin, CameraCapture},
 })
 
 // Show progress bar on live navigation and form submits

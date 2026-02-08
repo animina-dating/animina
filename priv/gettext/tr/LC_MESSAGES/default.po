@@ -958,7 +958,7 @@ msgstr "Profil başarıyla güncellendi."
 
 #: lib/animina_web/live/user_live/edit_locations.ex:95
 #: lib/animina_web/live/user_live/edit_locations.ex:98
-#: lib/animina_web/live/user_live/moodboard_editor.ex:422
+#: lib/animina_web/live/user_live/moodboard_editor.ex:427
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Kaldır"
@@ -1365,11 +1365,11 @@ msgstr "Hesabını kalıcı olarak sil"
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:211
 #: lib/animina_web/live/admin/photo_reviews_live.ex:736
 #: lib/animina_web/live/messages_live.ex:191
-#: lib/animina_web/live/user_live/avatar_upload.ex:267
+#: lib/animina_web/live/user_live/avatar_upload.ex:278
 #: lib/animina_web/live/user_live/edit_locations.ex:65
-#: lib/animina_web/live/user_live/moodboard_editor.ex:483
-#: lib/animina_web/live/user_live/moodboard_editor.ex:544
-#: lib/animina_web/live/user_live/moodboard_editor.ex:593
+#: lib/animina_web/live/user_live/moodboard_editor.ex:501
+#: lib/animina_web/live/user_live/moodboard_editor.ex:562
+#: lib/animina_web/live/user_live/moodboard_editor.ex:611
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "İptal"
@@ -1396,8 +1396,8 @@ msgstr "Konum güncellendi."
 #: lib/animina_web/live/admin/feature_flags_live.ex:1085
 #: lib/animina_web/live/admin/feature_flags_live.ex:1169
 #: lib/animina_web/live/user_live/edit_locations.ex:58
-#: lib/animina_web/live/user_live/moodboard_editor.ex:490
-#: lib/animina_web/live/user_live/moodboard_editor.ex:602
+#: lib/animina_web/live/user_live/moodboard_editor.ex:508
+#: lib/animina_web/live/user_live/moodboard_editor.ex:620
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Kaydet"
@@ -3040,17 +3040,17 @@ msgstr "Dosya seç"
 msgid "Drag and drop your photo here, or"
 msgstr "Fotoğrafınızı buraya sürükleyip bırakın veya"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:569
+#: lib/animina_web/live/user_live/avatar_upload.ex:580
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
 msgstr "Geçersiz dosya türü. Lütfen bir resim yükleyin."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:570
+#: lib/animina_web/live/user_live/avatar_upload.ex:581
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
 msgstr "Aynı anda yalnızca bir dosya"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:463
+#: lib/animina_web/live/user_live/avatar_upload.ex:474
 #, elixir-autogen, elixir-format
 msgid "Pending review"
 msgstr "İnceleme bekliyor"
@@ -3060,14 +3060,14 @@ msgstr "İnceleme bekliyor"
 msgid "Photo uploaded"
 msgstr "Fotoğraf yüklendi"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:546
-#: lib/animina_web/live/user_live/avatar_upload.ex:555
+#: lib/animina_web/live/user_live/avatar_upload.ex:557
+#: lib/animina_web/live/user_live/avatar_upload.ex:566
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
 msgstr "Fotoğraf yüklendi! Kısa süre içinde incelenecek."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:464
-#: lib/animina_web/live/user_live/avatar_upload.ex:493
+#: lib/animina_web/live/user_live/avatar_upload.ex:475
+#: lib/animina_web/live/user_live/avatar_upload.ex:504
 #, elixir-autogen, elixir-format
 msgid "Processing"
 msgstr "İşleniyor"
@@ -3076,14 +3076,14 @@ msgstr "İşleniyor"
 #: lib/animina_web/live/user_live/avatar_upload.ex:23
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:40
-#: lib/animina_web/live/user_live/avatar_upload.ex:298
+#: lib/animina_web/live/user_live/avatar_upload.ex:309
 #: lib/animina_web/live/user_live/profile_hub.ex:48
 #: lib/animina_web/live/user_live/waitlist.ex:104
 #, elixir-autogen, elixir-format
 msgid "Profile Photo"
 msgstr "Profil Fotoğrafı"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:242
+#: lib/animina_web/live/user_live/avatar_upload.ex:253
 #, elixir-autogen, elixir-format
 msgid "Upload Photo"
 msgstr "Fotoğraf Yükle"
@@ -3093,20 +3093,20 @@ msgstr "Fotoğraf Yükle"
 msgid "Upload a photo that shows your face clearly"
 msgstr "Yüzünüzü net gösteren bir fotoğraf yükleyin"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:571
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1020
+#: lib/animina_web/live/user_live/avatar_upload.ex:582
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1038
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr "Yükleme hatası"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:490
-#: lib/animina_web/live/user_live/avatar_upload.ex:495
-#: lib/animina_web/live/user_live/avatar_upload.ex:508
+#: lib/animina_web/live/user_live/avatar_upload.ex:501
+#: lib/animina_web/live/user_live/avatar_upload.ex:506
+#: lib/animina_web/live/user_live/avatar_upload.ex:519
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
 msgstr "Yükleme başarısız"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:561
+#: lib/animina_web/live/user_live/avatar_upload.ex:572
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
 msgstr "Yükleme başarısız oldu. Lütfen tekrar deneyin."
@@ -3127,8 +3127,8 @@ msgid "Referral progress"
 msgstr "Davet ilerlemesi"
 
 #: lib/animina_web/helpers/photo_status.ex:55
-#: lib/animina_web/live/user_live/avatar_upload.ex:480
-#: lib/animina_web/live/user_live/avatar_upload.ex:484
+#: lib/animina_web/live/user_live/avatar_upload.ex:491
+#: lib/animina_web/live/user_live/avatar_upload.ex:495
 #, elixir-autogen, elixir-format
 msgid "No face detected"
 msgstr "Yüz algılanmadı"
@@ -3160,7 +3160,7 @@ msgstr "İtiraz onaylandı"
 
 #: lib/animina_web/helpers/photo_status.ex:68
 #: lib/animina_web/live/admin/photo_history_live.ex:170
-#: lib/animina_web/live/user_live/avatar_upload.ex:492
+#: lib/animina_web/live/user_live/avatar_upload.ex:503
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
 msgstr "İtiraz reddedildi"
@@ -3200,7 +3200,7 @@ msgstr "Onaylanamadı: %{reason}"
 msgid "Could not reject: %{reason}"
 msgstr "Reddedilemedi: %{reason}"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:408
+#: lib/animina_web/live/user_live/avatar_upload.ex:419
 #, elixir-autogen, elixir-format
 msgid "Could not submit appeal. Please try again."
 msgstr "İtiraz gönderilemedi. Lütfen tekrar deneyin."
@@ -3250,14 +3250,14 @@ msgstr "Bu fotoğraf için geçmiş kaydı yok."
 msgid "No pending appeals."
 msgstr "Bekleyen itiraz yok."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:491
+#: lib/animina_web/live/user_live/avatar_upload.ex:502
 #, elixir-autogen, elixir-format
 msgid "Pending moderator review"
 msgstr "Moderatör incelemesi bekleniyor"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:531
 #: lib/animina_web/live/admin/photo_history_live.ex:41
-#: lib/animina_web/live/user_live/moodboard_editor.ex:389
+#: lib/animina_web/live/user_live/moodboard_editor.ex:394
 #, elixir-autogen, elixir-format
 msgid "Photo"
 msgstr "Fotoğraf"
@@ -3430,7 +3430,7 @@ msgstr "Reddedildi"
 msgid "Are you sure you want to delete your profile photo?"
 msgstr "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:425
+#: lib/animina_web/live/user_live/avatar_upload.ex:436
 #, elixir-autogen, elixir-format
 msgid "Could not delete photo. Please try again."
 msgstr "Fotoğraf silinemedi. Lütfen tekrar deneyin."
@@ -3440,7 +3440,7 @@ msgstr "Fotoğraf silinemedi. Lütfen tekrar deneyin."
 msgid "Delete Photo"
 msgstr "Fotoğrafı Sil"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:419
+#: lib/animina_web/live/user_live/avatar_upload.ex:430
 #, elixir-autogen, elixir-format
 msgid "Photo deleted."
 msgstr "Fotoğraf silindi."
@@ -3579,7 +3579,7 @@ msgstr "Kayıt silinemedi."
 #: lib/animina_web/components/chat_panel_component.ex:320
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
 #: lib/animina_web/live/messages_live.ex:409
-#: lib/animina_web/live/user_live/moodboard_editor.ex:547
+#: lib/animina_web/live/user_live/moodboard_editor.ex:565
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Sil"
@@ -3755,13 +3755,13 @@ msgstr "Görsel işleniyor"
 msgid "This usually takes 40 seconds"
 msgstr "Bu genellikle 40 saniye sürer"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:568
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1017
+#: lib/animina_web/live/user_live/avatar_upload.ex:579
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1035
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 6MB)"
 msgstr "Dosya çok büyük (maks 6MB)"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:177
+#: lib/animina_web/live/user_live/avatar_upload.ex:188
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr "JPG, PNG, WEBP veya HEIC. Maks 6MB."
@@ -3786,23 +3786,23 @@ msgstr "Tümü"
 
 #: lib/animina_web/components/moodboard_components.ex:398
 #: lib/animina_web/live/user_live/moodboard_editor.ex:90
-#: lib/animina_web/live/user_live/moodboard_editor.ex:997
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1015
 #, elixir-autogen, elixir-format
 msgid "Add Photo"
 msgstr "Fotoğraf Ekle"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:90
-#: lib/animina_web/live/user_live/avatar_upload.ex:465
+#: lib/animina_web/live/user_live/avatar_upload.ex:476
 #, elixir-autogen, elixir-format
 msgid "Analyzing photo"
 msgstr "Fotoğraf analiz ediliyor"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:539
+#: lib/animina_web/live/user_live/moodboard_editor.ex:557
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this item? This cannot be undone."
 msgstr "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:449
+#: lib/animina_web/live/user_live/moodboard_editor.ex:455
 #, elixir-autogen, elixir-format
 msgid "Choose File"
 msgstr "Dosya Seç"
@@ -3812,22 +3812,22 @@ msgstr "Dosya Seç"
 msgid "Click a button above to add your first item."
 msgstr "İlk öğenizi eklemek için yukarıdaki bir düğmeye tıklayın."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:537
+#: lib/animina_web/live/user_live/moodboard_editor.ex:555
 #, elixir-autogen, elixir-format
 msgid "Delete Item"
 msgstr "Öğeyi Sil"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:443
+#: lib/animina_web/live/user_live/moodboard_editor.ex:448
 #, elixir-autogen, elixir-format
 msgid "Drag and drop or click to upload"
 msgstr "Yüklemek için sürükleyip bırakın veya tıklayın"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:801
+#: lib/animina_web/live/user_live/moodboard_editor.ex:819
 #, elixir-autogen, elixir-format
 msgid "Failed to add item"
 msgstr "Öğe eklenemedi"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:935
+#: lib/animina_web/live/user_live/moodboard_editor.ex:953
 #, elixir-autogen, elixir-format
 msgid "Failed to delete item"
 msgstr "Öğe silinemedi"
@@ -3840,22 +3840,22 @@ msgstr "Öğe silinemedi"
 msgid "Hidden"
 msgstr "Gizli"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1018
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1036
 #, elixir-autogen, elixir-format
 msgid "Invalid file type"
 msgstr "Geçersiz dosya türü"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:929
+#: lib/animina_web/live/user_live/moodboard_editor.ex:947
 #, elixir-autogen, elixir-format
 msgid "Item deleted"
 msgstr "Öğe silindi"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:446
+#: lib/animina_web/live/user_live/moodboard_editor.ex:451
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WebP, HEIC up to 6MB"
 msgstr "JPG, PNG, WebP, HEIC - 6MB'a kadar"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1019
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1037
 #, elixir-autogen, elixir-format
 msgid "Too many files"
 msgstr "Çok fazla dosya"
@@ -3892,13 +3892,13 @@ msgstr "Üç sütun"
 msgid "Delete item"
 msgstr "Öğeyi sil"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:999
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1017
 #, elixir-autogen, elixir-format
 msgid "Add Photo + Text"
 msgstr "Fotoğraf + Metin Ekle"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:113
-#: lib/animina_web/live/user_live/moodboard_editor.ex:998
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1016
 #, elixir-autogen, elixir-format
 msgid "Add Text"
 msgstr "Metin Ekle"
@@ -3911,8 +3911,8 @@ msgstr "Metin Ekle"
 msgid "Edit text"
 msgstr "Metni düzenle"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:875
-#: lib/animina_web/live/user_live/moodboard_editor.ex:901
+#: lib/animina_web/live/user_live/moodboard_editor.ex:893
+#: lib/animina_web/live/user_live/moodboard_editor.ex:919
 #, elixir-autogen, elixir-format
 msgid "Failed to update text"
 msgstr "Metin güncellenemedi"
@@ -3922,162 +3922,162 @@ msgstr "Metin güncellenemedi"
 msgid "Photo + Text"
 msgstr "Fotoğraf + Metin"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:462
+#: lib/animina_web/live/user_live/moodboard_editor.ex:480
 #, elixir-autogen, elixir-format
 msgid "Text"
 msgstr "Metin"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:872
-#: lib/animina_web/live/user_live/moodboard_editor.ex:898
+#: lib/animina_web/live/user_live/moodboard_editor.ex:890
+#: lib/animina_web/live/user_live/moodboard_editor.ex:916
 #, elixir-autogen, elixir-format
 msgid "Text updated"
 msgstr "Metin güncellendi"
 
 #: lib/animina_web/components/moodboard_components.ex:546
-#: lib/animina_web/live/user_live/moodboard_editor.ex:472
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1125
+#: lib/animina_web/live/user_live/moodboard_editor.ex:490
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1143
 #, elixir-autogen, elixir-format
 msgid "Write your text here..."
 msgstr "Metninizi buraya yazın..."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:254
+#: lib/animina_web/live/user_live/avatar_upload.ex:265
 #, elixir-autogen, elixir-format
 msgid "Adjust the square to select the area for your profile photo."
 msgstr "Profil fotoğrafınız için alanı seçmek üzere kareyi ayarlayın."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:274
+#: lib/animina_web/live/user_live/avatar_upload.ex:285
 #, elixir-autogen, elixir-format
 msgid "Apply Crop"
 msgstr "Kırpmayı Uygula"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:252
-#: lib/animina_web/live/user_live/moodboard_editor.ex:498
+#: lib/animina_web/live/user_live/avatar_upload.ex:263
+#: lib/animina_web/live/user_live/moodboard_editor.ex:516
 #, elixir-autogen, elixir-format
 msgid "Crop Photo"
 msgstr "Fotoğrafı Kırp"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1071
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1089
 #, elixir-autogen, elixir-format
 msgid "Crop to Square"
 msgstr "Kare Kırp"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:187
-#: lib/animina_web/live/user_live/moodboard_editor.ex:403
+#: lib/animina_web/live/user_live/avatar_upload.ex:198
+#: lib/animina_web/live/user_live/moodboard_editor.ex:408
 #, elixir-autogen, elixir-format
 msgid "Cropped preview"
 msgstr "Kırpılmış önizleme"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1048
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1066
 #, elixir-autogen, elixir-format
 msgid "Cropped to square"
 msgstr "Kare olarak kırpıldı"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:513
+#: lib/animina_web/live/user_live/moodboard_editor.ex:531
 #, elixir-autogen, elixir-format
 msgid "Use Full Image"
 msgstr "Tam Görseli Kullan"
 
 #: lib/animina_web/helpers/photo_status.ex:40
 #: lib/animina_web/helpers/photo_status.ex:43
-#: lib/animina_web/live/user_live/avatar_upload.ex:203
+#: lib/animina_web/live/user_live/avatar_upload.ex:214
 #, elixir-autogen, elixir-format
 msgid "Processing..."
 msgstr "İşleniyor..."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:198
+#: lib/animina_web/live/user_live/avatar_upload.ex:209
 #, elixir-autogen, elixir-format
 msgid "Ready to upload"
 msgstr "Yüklemeye hazır"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1074
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1092
 #, elixir-autogen, elixir-format
 msgid "Apply"
 msgstr "Uygula"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:261
+#: lib/animina_web/live/user_live/moodboard_editor.ex:266
 #, elixir-autogen, elixir-format
 msgid "Aspect Ratio"
 msgstr "En-Boy Oranı"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1090
 #, elixir-autogen, elixir-format
 msgid "Crop to 16:9"
 msgstr "16:9 Kırp"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1073
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1091
 #, elixir-autogen, elixir-format
 msgid "Crop to 4:3"
 msgstr "4:3 Kırp"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1069
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1087
 #, elixir-autogen, elixir-format
 msgid "Crop your photo or skip to use the full image."
 msgstr "Fotoğrafınızı kırpın veya tam görseli kullanmak için atlayın."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1062
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1080
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 16:9 format, or skip to use the full image."
 msgstr "Fotoğrafınızı 16:9 formatına kırpın veya tam görseli kullanmak için atlayın."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1066
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1084
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 4:3 format, or skip to use the full image."
 msgstr "Fotoğrafınızı 4:3 formatına kırpın veya tam görseli kullanmak için atlayın."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1058
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1076
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to a square, or skip to use the full image."
 msgstr "Fotoğrafınızı kare olarak kırpın veya tam görseli kullanmak için atlayın."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1049
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1067
 #, elixir-autogen, elixir-format
 msgid "Cropped to 16:9"
 msgstr "16:9 olarak kırpıldı"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1050
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1068
 #, elixir-autogen, elixir-format
 msgid "Cropped to 4:3"
 msgstr "4:3 olarak kırpıldı"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:358
+#: lib/animina_web/live/user_live/moodboard_editor.ex:363
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Yatay"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:332
+#: lib/animina_web/live/user_live/moodboard_editor.ex:337
 #, elixir-autogen, elixir-format
 msgid "Orientation"
 msgstr "Yön"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:278
+#: lib/animina_web/live/user_live/moodboard_editor.ex:283
 #, elixir-autogen, elixir-format
 msgid "Original"
 msgstr "Orijinal"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1047
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1051
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1065
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1069
 #, elixir-autogen, elixir-format
 msgid "Photo ready"
 msgstr "Fotoğraf hazır"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:383
+#: lib/animina_web/live/user_live/moodboard_editor.ex:388
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr "Dikey"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:324
+#: lib/animina_web/live/user_live/moodboard_editor.ex:329
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Kare"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1054
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
 #, elixir-autogen, elixir-format
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
 msgstr "Fotoğrafınızın kırpılmasına gerek yok. Devam etmek için 'Tam Görseli Kullan'a tıklayın."
 
 #: lib/animina_web/components/moodboard_components.ex:411
 #: lib/animina_web/components/moodboard_components.ex:452
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1124
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1142
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself..."
 msgstr "Bize kendinizden bahsedin..."
@@ -4087,7 +4087,7 @@ msgstr "Bize kendinizden bahsedin..."
 msgid "Upload a profile photo to complete your About Me"
 msgstr "Hakkımda bölümünü tamamlamak için bir profil fotoğrafı yükleyin"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:560
+#: lib/animina_web/live/user_live/moodboard_editor.ex:578
 #, elixir-autogen, elixir-format
 msgid "Edit Text"
 msgstr "Metni Düzenle"
@@ -4098,14 +4098,14 @@ msgid "Add photos and text to your moodboard to share with others."
 msgstr "Başkalarıyla paylaşmak için moodboard'unuza fotoğraf ve metin ekleyin."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
-#: lib/animina_web/live/user_live/moodboard_editor.ex:634
+#: lib/animina_web/live/user_live/moodboard_editor.ex:652
 #: lib/animina_web/live/user_live/profile_moodboard.ex:122
 #: lib/animina_web/live/user_live/waitlist.ex:150
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Moodboard'u Düzenle"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:798
+#: lib/animina_web/live/user_live/moodboard_editor.ex:816
 #, elixir-autogen, elixir-format
 msgid "Item added to moodboard"
 msgstr "Öğe moodboard'a eklendi"
@@ -4231,22 +4231,22 @@ msgstr "Varsayılan: %{default}"
 msgid "Control feature flags and system settings."
 msgstr "Özellik bayraklarını ve sistem ayarlarını kontrol edin."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:505
+#: lib/animina_web/live/user_live/avatar_upload.ex:516
 #, elixir-autogen, elixir-format
 msgid "Attire violation"
 msgstr "Kıyafet ihlali"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:502
+#: lib/animina_web/live/user_live/avatar_upload.ex:513
 #, elixir-autogen, elixir-format
 msgid "Content violation"
 msgstr "İçerik ihlali"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:474
+#: lib/animina_web/live/user_live/avatar_upload.ex:485
 #, elixir-autogen, elixir-format
 msgid "Multiple people detected"
 msgstr "Birden fazla kişi algılandı"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:477
+#: lib/animina_web/live/user_live/avatar_upload.ex:488
 #, elixir-autogen, elixir-format
 msgid "Photo not allowed"
 msgstr "Fotoğrafa izin verilmiyor"
@@ -5285,7 +5285,7 @@ msgstr "Onaylandı"
 msgid "Avatar"
 msgstr "Avatar"
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:471
+#: lib/animina_web/live/user_live/avatar_upload.ex:482
 #, elixir-autogen, elixir-format
 msgid "Animal photo detected"
 msgstr "Hayvan fotoğrafı algılandı"
@@ -5295,7 +5295,7 @@ msgstr "Hayvan fotoğrafı algılandı"
 msgid "Use the waiting time to set up your profile so you can get started right away."
 msgstr "Bekleme süresini profilinizi kurmak için kullanın, böylece hemen başlayabilirsiniz."
 
-#: lib/animina_web/live/user_live/avatar_upload.ex:437
+#: lib/animina_web/live/user_live/avatar_upload.ex:448
 #, elixir-autogen, elixir-format
 msgid "Your profile photo has been approved!"
 msgstr "Profil fotoğrafınız onaylandı!"
@@ -5305,12 +5305,22 @@ msgstr "Profil fotoğrafınız onaylandı!"
 msgid "Ideal Partner"
 msgstr "İdeal Partner"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:167
+#: lib/animina_web/live/user_live/moodboard_editor.ex:170
 #, elixir-autogen, elixir-format
 msgid "Profiles with more than one moodboard item are a lot more popular."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:170
+#: lib/animina_web/live/user_live/moodboard_editor.ex:173
 #, elixir-autogen, elixir-format
 msgid "Write about your last trip or a hobby. Share a cooking recipe or a photo of your dog."
+msgstr ""
+
+#: lib/animina_web/live/user_live/moodboard_editor.ex:466
+#, elixir-autogen, elixir-format
+msgid "Take Photo"
+msgstr ""
+
+#: lib/animina_web/live/user_live/avatar_upload.ex:185
+#, elixir-autogen, elixir-format
+msgid "Take Selfie"
 msgstr ""
