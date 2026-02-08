@@ -5,6 +5,9 @@ defmodule AniminaWeb.UserLive.Waitlist do
   alias Animina.Accounts.ProfileCompleteness
   alias Animina.FeatureFlags
   alias Animina.GeoData
+  alias Animina.Moodboard
+  alias Animina.Photos
+  alias Animina.Traits
 
   @impl true
   def render(assigns) do
@@ -86,6 +89,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
               icon_bg="bg-secondary/10"
               icon_color="text-secondary"
               complete={@profile_completeness.items.profile_photo}
+              avatar_url={if @avatar_photo, do: Photos.signed_url(@avatar_photo, :thumbnail)}
             >
               <:icon>
                 <svg
@@ -125,6 +129,9 @@ defmodule AniminaWeb.UserLive.Waitlist do
               <:description>
                 {gettext("Define what you're about and what you're looking for.")}
               </:description>
+              <:completed_description>
+                {ngettext("%{count} flag set", "%{count} flags set", @flag_count, count: @flag_count)}
+              </:completed_description>
             </.waitlist_card>
 
             <.waitlist_card
@@ -151,6 +158,11 @@ defmodule AniminaWeb.UserLive.Waitlist do
               <:description>
                 {gettext("Add photos and stories to make a great first impression.")}
               </:description>
+              <:completed_description>
+                {ngettext("%{count} item", "%{count} items", @moodboard_count,
+                  count: @moodboard_count
+                )}
+              </:completed_description>
             </.waitlist_card>
 
             <.waitlist_card
@@ -205,6 +217,14 @@ defmodule AniminaWeb.UserLive.Waitlist do
               <:description>
                 {gettext("Prevent ex-partners or acquaintances from seeing your profile.")}
               </:description>
+              <:completed_description>
+                {ngettext(
+                  "%{count} contact blocked",
+                  "%{count} contacts blocked",
+                  @blocked_contacts_count,
+                  count: @blocked_contacts_count
+                )}
+              </:completed_description>
             </.waitlist_card>
           </div>
         </div>
@@ -273,10 +293,12 @@ defmodule AniminaWeb.UserLive.Waitlist do
   attr :icon_color, :string, required: true
   attr :complete, :boolean, required: true
   attr :optional, :boolean, default: false
+  attr :avatar_url, :string, default: nil
 
   slot :icon, required: true
   slot :title, required: true
   slot :description, required: true
+  slot :completed_description
 
   defp waitlist_card(assigns) do
     ~H"""
@@ -284,13 +306,25 @@ defmodule AniminaWeb.UserLive.Waitlist do
       navigate={@navigate}
       class="flex items-center gap-3 rounded-lg border border-base-300 p-4 hover:bg-base-200 transition-colors relative"
     >
-      <div class={"w-10 h-10 rounded-full #{@icon_bg} flex items-center justify-center shrink-0 #{@icon_color}"}>
-        {render_slot(@icon)}
-      </div>
+      <%= if @avatar_url && @complete do %>
+        <img
+          id="waitlist-avatar"
+          src={@avatar_url}
+          class="w-10 h-10 rounded-full object-cover shrink-0"
+        />
+      <% else %>
+        <div class={"w-10 h-10 rounded-full #{@icon_bg} flex items-center justify-center shrink-0 #{@icon_color}"}>
+          {render_slot(@icon)}
+        </div>
+      <% end %>
       <div class="flex-1 min-w-0">
         <p class="font-medium text-base-content">{render_slot(@title)}</p>
         <p class="text-xs text-base-content/60">
-          {render_slot(@description)}
+          <%= if @complete && @completed_description != [] do %>
+            {render_slot(@completed_description)}
+          <% else %>
+            {render_slot(@description)}
+          <% end %>
         </p>
       </div>
       <span class="shrink-0">
@@ -326,8 +360,12 @@ defmodule AniminaWeb.UserLive.Waitlist do
     referral_count = Accounts.count_confirmed_referrals(user)
     referral_threshold = FeatureFlags.referral_threshold()
     has_passkeys = Accounts.list_user_passkeys(user) != []
-    has_blocked_contacts = Accounts.count_contact_blacklist_entries(user) > 0
+    blocked_contacts_count = Accounts.count_contact_blacklist_entries(user)
     profile_completeness = ProfileCompleteness.compute(user)
+
+    avatar_photo = Photos.get_user_avatar(user.id)
+    flag_count = Traits.count_user_flags(user)
+    moodboard_count = Moodboard.count_items(user.id)
 
     {:ok,
      socket
@@ -337,7 +375,11 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:referral_threshold, referral_threshold)
      |> assign(:end_waitlist_at, user.end_waitlist_at)
      |> assign(:has_passkeys, has_passkeys)
-     |> assign(:has_blocked_contacts, has_blocked_contacts)
+     |> assign(:has_blocked_contacts, blocked_contacts_count > 0)
+     |> assign(:blocked_contacts_count, blocked_contacts_count)
+     |> assign(:avatar_photo, avatar_photo)
+     |> assign(:flag_count, flag_count)
+     |> assign(:moodboard_count, moodboard_count)
      |> assign(:profile_completeness, profile_completeness)}
   end
 end

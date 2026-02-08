@@ -109,7 +109,7 @@ defmodule AniminaWeb.UserLive.BlockedContacts do
                 {entry.label || display_value(entry)}
               </div>
               <div class="text-xs text-base-content/60 mt-0.5">
-                <span :if={entry.label}>{display_value(entry)}    · </span>
+                <span :if={entry.label}>{display_value(entry)}     · </span>
                 {gettext("Added %{date}", date: format_date(entry.inserted_at))}
               </div>
             </div>

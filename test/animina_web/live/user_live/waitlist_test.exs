@@ -3,6 +3,9 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
+  import Animina.PhotosFixtures
+  import Animina.TraitsFixtures
+  import Animina.MoodboardFixtures
 
   describe "Waitlist page" do
     test "renders waitlist page with welcome message", %{conn: conn} do
@@ -144,6 +147,97 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       assert html =~ "Set up a passkey"
       assert html =~ "hero-check-circle-solid"
+    end
+
+    test "shows avatar thumbnail when user has approved avatar photo", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      approved_photo_fixture(%{
+        owner_type: "User",
+        owner_id: user.id,
+        type: "avatar"
+      })
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      # Should show the avatar thumbnail image instead of the icon
+      assert html =~ "waitlist-avatar"
+      assert html =~ "/photos/"
+    end
+
+    test "shows flag count when user has flags set", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      flag1 = flag_fixture()
+      flag2 = flag_fixture()
+
+      Animina.Traits.add_user_flag(%{
+        user_id: user.id,
+        flag_id: flag1.id,
+        color: "white",
+        position: 1
+      })
+
+      Animina.Traits.add_user_flag(%{
+        user_id: user.id,
+        flag_id: flag2.id,
+        color: "green",
+        position: 2
+      })
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      assert html =~ "2 flags set"
+    end
+
+    test "shows moodboard item count when user has moodboard items", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      story_moodboard_item_fixture(user, "My story")
+      story_moodboard_item_fixture(user, "Another story", %{position: 1})
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      # Should show count with "items" (at least 2 items created)
+      assert html =~ ~r/\d+ items/
+    end
+
+    test "shows blocked contacts count when user has blocked contacts", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      Animina.Accounts.add_contact_blacklist_entry(user, %{
+        value: "+4915112345678",
+        label: "Test"
+      })
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      assert html =~ "1 contact blocked"
+    end
+
+    test "shows original descriptions for incomplete cards", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      assert html =~ "Upload your main profile photo."
+      assert html =~ "Define what you&#39;re about and what you&#39;re looking for."
+      assert html =~ "Add photos and stories to make a great first impression."
     end
   end
 end
