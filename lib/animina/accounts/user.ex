@@ -61,10 +61,8 @@ defmodule Animina.Accounts.User do
     field :waitlist_priority, :integer, default: 0
     belongs_to :referred_by, __MODULE__, foreign_key: :referred_by_id
 
-    # Moodboard preferences
-    field :moodboard_columns_mobile, :integer, default: 2
-    field :moodboard_columns_tablet, :integer, default: 2
-    field :moodboard_columns_desktop, :integer, default: 3
+    # Grid column preferences (shared across moodboard and discover pages)
+    field :grid_columns, :integer, default: 2
 
     # Messaging
     field :last_message_notified_at, :utc_datetime
@@ -542,17 +540,11 @@ defmodule Animina.Accounts.User do
   end
 
   @doc """
-  A changeset for updating moodboard column preferences.
+  A changeset for updating grid column preferences.
   """
-  def moodboard_columns_changeset(user, attrs) do
+  def grid_columns_changeset(user, attrs) do
     user
-    |> cast(attrs, [
-      :moodboard_columns_mobile,
-      :moodboard_columns_tablet,
-      :moodboard_columns_desktop
-    ])
-    |> validate_inclusion(:moodboard_columns_mobile, [1, 2, 3])
-    |> validate_inclusion(:moodboard_columns_tablet, [1, 2, 3])
-    |> validate_inclusion(:moodboard_columns_desktop, [1, 2, 3])
+    |> cast(attrs, [:grid_columns])
+    |> validate_inclusion(:grid_columns, [1, 2, 3])
   end
 end

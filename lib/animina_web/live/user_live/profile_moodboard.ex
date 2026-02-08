@@ -22,6 +22,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias Animina.Moodboard
   alias Animina.Traits
   alias AniminaWeb.ColumnToggle
+  alias AniminaWeb.Helpers.ColumnPreferences
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
 
@@ -200,7 +201,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
             "flex gap-4 md:gap-5 lg:gap-6 pt-6",
             if(@columns == 1, do: "flex-col", else: "flex-row")
           ]}>
-            <%= for {column_items, col_idx} <- distribute_to_columns(@items, column_count(@columns)) do %>
+            <%= for {column_items, col_idx} <- distribute_to_columns(@items, @columns) do %>
               <div class="flex-1 flex flex-col gap-4 md:gap-5 lg:gap-6">
                 <%= for item <- column_items do %>
                   <div>
@@ -230,10 +231,6 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     </Layouts.app>
     """
   end
-
-  # Return the column count (validated to 1, 2, or 3)
-  defp column_count(columns) when columns in [1, 2, 3], do: columns
-  defp column_count(_), do: 2
 
   # Build page title with profile info: Display Name · ♀ 32 Jahre · 1,72 m · 56068 Koblenz
   defp resolve_chat_state(current_user_id, profile_user_id) do
@@ -351,14 +348,18 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         {nil, nil}
       end
 
+    initial_columns =
+      if owner?,
+        do: ColumnPreferences.get_columns_for_user(current_user),
+        else: ColumnPreferences.default_columns()
+
     assign(socket,
       page_title: page_title,
       profile_user: profile_user,
       owner?: owner?,
       items: items,
       current_user_id: current_user.id,
-      device_type: "desktop",
-      columns: 3,
+      columns: initial_columns,
       age: age,
       city: city,
       zip_code: zip_code,
@@ -380,10 +381,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   end
 
   @impl true
-  def handle_event("device_type_detected", %{"device_type" => device_type}, socket) do
-    # Load column preference for this device type from user's preferences
-    columns = get_columns_for_device(socket, device_type)
-    {:noreply, assign(socket, device_type: device_type, columns: columns)}
+  def handle_event("device_type_detected", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
@@ -420,48 +419,26 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
   @impl true
   def handle_event("change_columns", %{"columns" => columns_str}, socket) do
-    columns = String.to_integer(columns_str)
-
-    # Save preference if owner is logged in
     if socket.assigns.owner? do
-      user = socket.assigns.current_scope.user
-      device_type = socket.assigns.device_type
-      Accounts.update_moodboard_columns(user, device_type, columns)
-    end
+      {columns, updated_user} =
+        ColumnPreferences.persist_columns(
+          socket.assigns.current_scope.user,
+          columns_str
+        )
 
-    {:noreply, assign(socket, :columns, columns)}
+      {:noreply,
+       socket
+       |> assign(:columns, columns)
+       |> ColumnPreferences.update_scope_user(updated_user)}
+    else
+      {:noreply, assign(socket, :columns, String.to_integer(columns_str))}
+    end
   end
 
   @impl true
   def handle_event("love_emergency_from_profile", _params, socket) do
     profile_user = socket.assigns.profile_user
     {:noreply, push_navigate(socket, to: ~p"/messages?love_emergency_for=#{profile_user.id}")}
-  end
-
-  defp get_columns_for_device(socket, device_type) do
-    if socket.assigns.owner? do
-      get_user_columns(socket.assigns.current_scope.user, device_type)
-    else
-      get_default_columns(device_type)
-    end
-  end
-
-  defp get_user_columns(user, device_type) do
-    case device_type do
-      "mobile" -> user.moodboard_columns_mobile || 2
-      "tablet" -> user.moodboard_columns_tablet || 2
-      "desktop" -> user.moodboard_columns_desktop || 3
-      _ -> 2
-    end
-  end
-
-  defp get_default_columns(device_type) do
-    case device_type do
-      "mobile" -> 2
-      "tablet" -> 2
-      "desktop" -> 3
-      _ -> 2
-    end
   end
 
   # Handle moodboard PubSub messages - all trigger a reload

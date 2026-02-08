@@ -12,9 +12,9 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
 
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
   alias Animina.Moodboard
   alias AniminaWeb.ColumnToggle
+  alias AniminaWeb.Helpers.ColumnPreferences
 
   import AniminaWeb.MoodboardComponents
 
@@ -631,8 +631,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
       |> assign(:editing_item, nil)
       |> assign(:edit_content, "")
       |> assign(:deleting_item, nil)
-      |> assign(:device_type, "desktop")
-      |> assign(:columns, user.moodboard_columns_desktop || 3)
+      |> assign(:columns, ColumnPreferences.get_columns_for_user(user))
       |> assign(:crop_data, nil)
       |> assign(:crop_preview, nil)
       |> assign(:aspect_ratio, "original")
@@ -928,18 +927,22 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
   end
 
   @impl true
-  def handle_event("device_type_detected", %{"device_type" => device_type}, socket) do
-    columns = get_columns_for_device(socket.assigns.user, device_type)
-    {:noreply, assign(socket, device_type: device_type, columns: columns)}
+  def handle_event("device_type_detected", _params, socket) do
+    {:noreply, socket}
   end
 
   @impl true
-  def handle_event("change_columns", %{"columns" => columns}, socket) do
-    columns = String.to_integer(columns)
-    user = socket.assigns.user
-    device_type = socket.assigns.device_type
-    Accounts.update_moodboard_columns(user, device_type, columns)
-    {:noreply, assign(socket, :columns, columns)}
+  def handle_event("change_columns", %{"columns" => columns_str}, socket) do
+    {columns, updated_user} =
+      ColumnPreferences.persist_columns(
+        socket.assigns.user,
+        columns_str
+      )
+
+    {:noreply,
+     socket
+     |> assign(columns: columns, user: updated_user)
+     |> ColumnPreferences.update_scope_user(updated_user)}
   end
 
   # Handle moodboard_item_created - need to subscribe to photo updates for new item
@@ -1014,27 +1017,12 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
     item_count = length(items)
     needs_placeholders? = item_count > 0 and item_count < 3
 
-    # First distribute items normally
-    columns = distribute_to_columns(items, num_columns)
-
-    # Ensure we have all columns (even empty ones)
-    all_columns =
-      Enum.map(0..(num_columns - 1), fn col_idx ->
-        find_column_items(columns, col_idx)
-      end)
-
-    # Add placeholders to columns that need them
-    Enum.map(all_columns, fn {column_items, col_idx} ->
+    # distribute_to_columns already returns all columns (including empty ones)
+    distribute_to_columns(items, num_columns)
+    |> Enum.map(fn {column_items, col_idx} ->
       placeholders = get_placeholders(needs_placeholders?, column_items, col_idx)
       {column_items, placeholders, col_idx}
     end)
-  end
-
-  defp find_column_items(columns, col_idx) do
-    case Enum.find(columns, fn {_, idx} -> idx == col_idx end) do
-      {items, _} -> {items, col_idx}
-      nil -> {[], col_idx}
-    end
   end
 
   defp get_placeholders(needs_placeholders?, column_items, col_idx) do
@@ -1043,15 +1031,6 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
       if rem(col_idx, 2) == 0, do: [:photo], else: [:text]
     else
       []
-    end
-  end
-
-  defp get_columns_for_device(user, device_type) do
-    case device_type do
-      "mobile" -> user.moodboard_columns_mobile || 2
-      "tablet" -> user.moodboard_columns_tablet || 2
-      "desktop" -> user.moodboard_columns_desktop || 3
-      _ -> 2
     end
   end
 

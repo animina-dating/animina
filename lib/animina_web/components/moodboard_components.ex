@@ -10,6 +10,7 @@ defmodule AniminaWeb.MoodboardComponents do
 
   alias Animina.Photos
   alias AniminaWeb.ColumnToggle
+  alias AniminaWeb.Helpers.ColumnPreferences
 
   # Default intro prompts for the "About Me" pinned item
   @default_intro_prompts [
@@ -129,7 +130,7 @@ defmodule AniminaWeb.MoodboardComponents do
         "flex gap-4 md:gap-5 lg:gap-6 pt-6",
         if(@columns == 1, do: "flex-col", else: "flex-row")
       ]}>
-        <%= for {column_items, col_idx} <- distribute_to_columns(@items, column_count(@columns)) do %>
+        <%= for {column_items, col_idx} <- distribute_to_columns(@items, @columns) do %>
           <div class="flex-1 flex flex-col gap-4 md:gap-5 lg:gap-6">
             <%= for item <- column_items do %>
               <div>
@@ -567,18 +568,23 @@ defmodule AniminaWeb.MoodboardComponents do
   Returns a list of `{column_items, col_idx}` tuples.
   """
   def distribute_to_columns(items, num_columns) do
-    items
-    |> Enum.with_index()
-    |> Enum.group_by(fn {_item, idx} -> rem(idx, num_columns) end)
-    |> Enum.sort_by(fn {col_idx, _} -> col_idx end)
-    |> Enum.map(fn {col_idx, indexed_items} ->
-      {Enum.map(indexed_items, fn {item, _} -> item end), col_idx}
+    num_columns = ColumnPreferences.validate_columns(num_columns)
+
+    grouped =
+      items
+      |> Enum.with_index()
+      |> Enum.group_by(fn {_item, idx} -> rem(idx, num_columns) end)
+
+    Enum.map(0..(num_columns - 1), fn col_idx ->
+      col_items =
+        case Map.get(grouped, col_idx) do
+          nil -> []
+          indexed_items -> Enum.map(indexed_items, fn {item, _} -> item end)
+        end
+
+      {col_items, col_idx}
     end)
   end
-
-  # Return the column count (validated to 1, 2, or 3)
-  defp column_count(columns) when columns in [1, 2, 3], do: columns
-  defp column_count(_), do: 2
 
   defdelegate render_markdown(content),
     to: AniminaWeb.Helpers.MarkdownHelpers,

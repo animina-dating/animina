@@ -570,14 +570,11 @@ defmodule Animina.Accounts do
   end
 
   @doc """
-  Updates moodboard column preference for a specific device type.
+  Updates the grid column preference.
   """
-  def update_moodboard_columns(%User{} = user, device_type, columns)
-      when device_type in ["mobile", "tablet", "desktop"] and columns in [1, 2, 3] do
-    field = String.to_existing_atom("moodboard_columns_#{device_type}")
-
+  def update_grid_columns(%User{} = user, columns) when columns in [1, 2, 3] do
     user
-    |> User.moodboard_columns_changeset(%{field => columns})
+    |> User.grid_columns_changeset(%{grid_columns: columns})
     |> Repo.update()
   end
 

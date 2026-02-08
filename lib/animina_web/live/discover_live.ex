@@ -26,12 +26,13 @@ defmodule AniminaWeb.DiscoverLive do
   alias Animina.Traits
   alias AniminaWeb.ColumnToggle
   alias AniminaWeb.Helpers.AvatarHelpers
+  alias AniminaWeb.Helpers.ColumnPreferences
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-4xl mx-auto">
+      <div id="discover-container" phx-hook="DeviceType" class="max-w-4xl mx-auto">
         <h1 class="text-2xl font-bold mb-4">{gettext("Discover")}</h1>
 
         <%!-- Collapsible Info Panel --%>
@@ -63,14 +64,7 @@ defmodule AniminaWeb.DiscoverLive do
 
         <%!-- Loading Skeleton --%>
         <div :if={@loading}>
-          <div class={[
-            "grid gap-4",
-            case @columns do
-              1 -> "grid-cols-1"
-              2 -> "grid-cols-1 sm:grid-cols-2"
-              3 -> "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            end
-          ]}>
+          <div class={["grid gap-4", ColumnPreferences.grid_class(@columns)]}>
             <.skeleton_card :for={_ <- 1..4} />
           </div>
         </div>
@@ -118,14 +112,7 @@ defmodule AniminaWeb.DiscoverLive do
           <ColumnToggle.column_toggle columns={@columns} />
 
           <%!-- Matches Grid --%>
-          <div class={[
-            "grid gap-4",
-            case @columns do
-              1 -> "grid-cols-1"
-              2 -> "grid-cols-1 sm:grid-cols-2"
-              3 -> "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            end
-          ]}>
+          <div class={["grid gap-4", ColumnPreferences.grid_class(@columns)]}>
             <%= if Enum.empty?(@matches) do %>
               <div class="col-span-full text-center py-12 text-base-content/50">
                 <div class="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
@@ -180,14 +167,7 @@ defmodule AniminaWeb.DiscoverLive do
               </p>
             </div>
           <% else %>
-            <div class={[
-              "grid gap-4",
-              case @columns do
-                1 -> "grid-cols-1"
-                2 -> "grid-cols-1 sm:grid-cols-2"
-                3 -> "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-              end
-            ]}>
+            <div class={["grid gap-4", ColumnPreferences.grid_class(@columns)]}>
               <.profile_card
                 :for={suggestion <- @wildcards}
                 suggestion={suggestion}
@@ -400,11 +380,12 @@ defmodule AniminaWeb.DiscoverLive do
   @impl true
   def mount(_params, _session, socket) do
     default_slot_status = %{active: 0, max: 6, daily_started: 0, daily_max: 2}
+    user = socket.assigns.current_scope.user
 
     socket =
       socket
       |> assign(:page_title, gettext("Discover"))
-      |> assign(:columns, 2)
+      |> assign(:columns, ColumnPreferences.get_columns_for_user(user))
       |> assign(:loading, true)
       |> assign(:matches, [])
       |> assign(:wildcards, [])
@@ -426,9 +407,22 @@ defmodule AniminaWeb.DiscoverLive do
   end
 
   @impl true
+  def handle_event("device_type_detected", _params, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("change_columns", %{"columns" => columns_str}, socket) do
-    columns = String.to_integer(columns_str)
-    {:noreply, assign(socket, :columns, columns)}
+    {columns, updated_user} =
+      ColumnPreferences.persist_columns(
+        socket.assigns.current_scope.user,
+        columns_str
+      )
+
+    {:noreply,
+     socket
+     |> assign(:columns, columns)
+     |> ColumnPreferences.update_scope_user(updated_user)}
   end
 
   @impl true
