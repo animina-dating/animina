@@ -1,0 +1,18 @@
+Pic d'inscriptions ANIMINA : <%= @today_count %> aujourd'hui (moyenne : <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Bonjour,
+
+Un nombre d'inscriptions inhabituellement élevé a été détecté sur ANIMINA.
+
+Résumé :
+  Confirmées aujourd'hui :    <%= @today_count %>
+  Moyenne quotidienne 30j :   <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Seuil (1,5x) :             <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Facteur de pic :            <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Hier :                      <%= @yesterday_count %>
+
+Répartition horaire (Europe/Berlin) :
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "inscription", else: "inscriptions" %>
+<% end %>
+Aperçu debug : https://animina.de/debug

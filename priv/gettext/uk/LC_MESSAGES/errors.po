@@ -133,74 +133,74 @@ msgstr "повинен бути мобільним номером (не стац
 #: lib/animina/photos/photo_feedback.ex:198
 #, elixir-autogen, elixir-format
 msgid "Hunting photos aren't allowed on our platform. Please upload a different photo."
-msgstr ""
+msgstr "Мисливські фото не дозволені на нашій платформі. Будь ласка, завантажте інше фото."
 
 #: lib/animina/photos/photo_feedback.ex:191
 #, elixir-autogen, elixir-format
 msgid "Photos showing firearms aren't allowed on our platform. Please upload a different photo."
-msgstr ""
+msgstr "Фото зі зброєю не дозволені на нашій платформі. Будь ласка, завантажте інше фото."
 
 #: lib/animina/photos/photo_feedback.ex:170
 #, elixir-autogen, elixir-format
 msgid "Profile photos of children alone aren't allowed for safety reasons. If you'd like to include children in your photos, please ensure you (an adult) are also clearly visible in the photo."
-msgstr ""
+msgstr "Фото профілю лише з дітьми не дозволені з міркувань безпеки. Якщо ви хочете додати дітей на фото, переконайтеся, що ви (дорослий) також чітко видимі на фото."
 
 #: lib/animina/photos/photo_feedback.ex:233
 #, elixir-autogen, elixir-format
 msgid "Shirtless photos are only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
-msgstr ""
+msgstr "Фото без сорочки доречні лише на відкритому пляжі або біля басейну. Будь ласка, завантажте інше фото або фото з пляжу/басейну."
 
 #: lib/animina/photos/photo_feedback.ex:226
 #, elixir-autogen, elixir-format
 msgid "Swimwear is only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
-msgstr ""
+msgstr "Купальний одяг доречний лише на відкритому пляжі або біля басейну. Будь ласка, завантажте інше фото або фото з пляжу/басейну."
 
 #: lib/animina/photos/photo_feedback.ex:219
 #, elixir-autogen, elixir-format
 msgid "The attire in this photo doesn't meet our guidelines. Please upload a photo where you're appropriately dressed."
-msgstr ""
+msgstr "Одяг на цьому фото не відповідає нашим правилам. Будь ласка, завантажте фото, де ви належно одягнені."
 
 #: lib/animina/photos/photo_feedback.ex:212
 #, elixir-autogen, elixir-format
 msgid "This photo contains content depicting illegal activities, drugs, or violence. Please upload a different photo."
-msgstr ""
+msgstr "Це фото містить контент із зображенням незаконної діяльності, наркотиків або насильства. Будь ласка, завантажте інше фото."
 
 #: lib/animina/photos/photo_feedback.ex:184
 #, elixir-autogen, elixir-format
 msgid "This photo contains content that isn't appropriate for our platform. Please upload a family-friendly photo."
-msgstr ""
+msgstr "Це фото містить контент, який не підходить для нашої платформи. Будь ласка, завантажте фото, прийнятне для всіх."
 
 #: lib/animina/photos/photo_feedback.ex:205
 #, elixir-autogen, elixir-format
 msgid "This photo contains sexual content that isn't allowed on our platform. Please upload a different photo."
-msgstr ""
+msgstr "Це фото містить сексуальний контент, який не дозволений на нашій платформі. Будь ласка, завантажте інше фото."
 
 #: lib/animina/photos/photo_feedback.ex:163
 #, elixir-autogen, elixir-format
 msgid "We couldn't detect a clear face in your photo. Please upload a photo where you're looking at the camera with your face clearly visible."
-msgstr ""
+msgstr "Ми не змогли розпізнати обличчя на вашому фото. Будь ласка, завантажте фото, де ви дивитесь в камеру, і ваше обличчя чітко видно."
 
 #: lib/animina/photos/photo_feedback.ex:177
 #, elixir-autogen, elixir-format
 msgid "We detected nudity in this photo. Please upload a photo where you're appropriately dressed."
-msgstr ""
+msgstr "Ми виявили оголеність на цьому фото. Будь ласка, завантажте фото, де ви належно одягнені."
 
 #: lib/animina/photos/photo_feedback.ex:156
 #, elixir-autogen, elixir-format
 msgid "Your profile photo should show only you. We detected multiple people facing the camera. Please upload a photo where you're the only one visible, or use a group photo for your moodboard instead."
-msgstr ""
+msgstr "На фото профілю повинні бути тільки ви. Ми виявили кілька людей, які дивляться в камеру. Будь ласка, завантажте фото, де видно тільки вас, або використайте групове фото для мудборду."
 
 #: lib/animina/photos/photo_feedback.ex:247
 #, elixir-autogen, elixir-format
 msgid "This is a cat. Your profile photo must show your face. You can use animal photos in your moodboard instead."
-msgstr ""
+msgstr "Це кіт. Ваше фото профілю повинно показувати ваше обличчя. Ви можете використовувати фото тварин у мудборді."
 
 #: lib/animina/photos/photo_feedback.ex:240
 #, elixir-autogen, elixir-format
 msgid "This is a dog. Your profile photo must show your face. You can use animal photos in your moodboard instead."
-msgstr ""
+msgstr "Це собака. Ваше фото профілю повинно показувати ваше обличчя. Ви можете використовувати фото тварин у мудборді."
 
 #: lib/animina/photos/photo_feedback.ex:254
 #, elixir-autogen, elixir-format
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
-msgstr ""
+msgstr "Це тварина. Ваше фото профілю повинно показувати ваше обличчя. Ви можете використовувати фото тварин у мудборді."

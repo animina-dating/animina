@@ -1,0 +1,16 @@
+[ANIMINA] Alerte file d'attente Ollama : <%= @queue_count %> photos en attente
+---
+
+Bonjour,
+
+La file d'attente de vérification des photos Ollama a dépassé le seuil.
+
+État de la file d'attente :
+- Photos en attente : <%= @queue_count %>
+- Âge de la plus ancienne photo : <%= @oldest_photo_age_hours %> heures
+- État d'Ollama : <%= @ollama_status %>
+
+Veuillez consulter la page d'administration pour examiner la situation et agir :
+https://animina.de/admin/ollama-queue
+
+Cette alerte ne sera envoyée qu'une fois par heure.

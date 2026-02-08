@@ -388,7 +388,7 @@ msgstr "Daha fazla bilgi"
 msgid "Location"
 msgid_plural "Locations"
 msgstr[0] "Konum"
-msgstr[1] ""
+msgstr[1] "Konumlar"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:17
 #: lib/animina_web/live/user_live/edit_locations.ex:23
@@ -1459,12 +1459,12 @@ msgstr "Bayraklarım — Partner Kabul Edilemezleri"
 #: lib/animina_web/live/user_live/settings_hub.ex:39
 #, elixir-autogen, elixir-format
 msgid "App"
-msgstr ""
+msgstr "Uygulama"
 
 #: lib/animina_web/live/user_live/settings_hub.ex:70
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Permanently delete your account"
-msgstr "Hesabını ve tüm ilişkili verileri kalıcı olarak sil"
+msgstr "Hesabını kalıcı olarak sil"
 
 #: lib/animina_web/components/love_emergency_component.ex:69
 #: lib/animina_web/components/moodboard_components.ex:538
@@ -1482,23 +1482,23 @@ msgstr "Hesabını ve tüm ilişkili verileri kalıcı olarak sil"
 #: lib/animina_web/live/user_live/moodboard_editor.ex:583
 #, elixir-autogen, elixir-format
 msgid "Cancel"
-msgstr ""
+msgstr "İptal"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:84
 #: lib/animina_web/live/user_live/edit_locations.ex:87
 #, elixir-autogen, elixir-format
 msgid "Edit"
-msgstr ""
+msgstr "Düzenle"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:267
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Location not found."
-msgstr "Konum"
+msgstr "Konum bulunamadı."
 
 #: lib/animina_web/live/user_live/edit_locations.ex:263
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Location updated."
-msgstr "Konum eklendi."
+msgstr "Konum güncellendi."
 
 #: lib/animina_web/components/moodboard_components.ex:541
 #: lib/animina_web/live/admin/feature_flags_live.ex:843
@@ -1510,1677 +1510,1677 @@ msgstr "Konum eklendi."
 #: lib/animina_web/live/user_live/moodboard_editor.ex:590
 #, elixir-autogen, elixir-format
 msgid "Save"
-msgstr ""
+msgstr "Kaydet"
 
 #: lib/animina_web/live/messages_live.ex:290
 #: lib/animina_web/live/user_live/profile_moodboard.ex:60
 #: lib/animina_web/live/user_live/profile_moodboard.ex:255
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{age} years"
-msgstr "%{age} yaşında"
+msgstr "%{age} yaş"
 
 #: lib/animina_web/live/user_live/edit_profile.ex:52
 #, elixir-autogen, elixir-format
 msgid "Birthday"
-msgstr ""
+msgstr "Doğum Tarihi"
 
 #: lib/animina_web/live/user_live/edit_profile.ex:61
 #, elixir-autogen, elixir-format
 msgid "This field cannot be changed."
-msgstr ""
+msgstr "Bu alan değiştirilemez."
 
 #: lib/animina_web/trait_translations.ex:254
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Acting"
-msgstr "İşlemler"
+msgstr "Oyunculuk"
 
 #: lib/animina_web/trait_translations.ex:81
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Active"
-msgstr "aktif"
+msgstr "Aktif"
 
 #: lib/animina_web/trait_translations.ex:278
 #, elixir-autogen, elixir-format
 msgid "Active and Sports Vacation"
-msgstr ""
+msgstr "Aktif ve Spor Tatili"
 
 #: lib/animina_web/trait_translations.ex:217
 #, elixir-autogen, elixir-format
 msgid "Adventure"
-msgstr ""
+msgstr "Macera"
 
 #: lib/animina_web/trait_translations.ex:315
 #, elixir-autogen, elixir-format
 msgid "AfD"
-msgstr ""
+msgstr "AfD"
 
 #: lib/animina_web/trait_translations.ex:285
 #, elixir-autogen, elixir-format
 msgid "Africa"
-msgstr ""
+msgstr "Afrika"
 
 #: lib/animina_web/trait_translations.ex:327
 #, elixir-autogen, elixir-format
 msgid "Agnosticism"
-msgstr ""
+msgstr "Agnostisizm"
 
 #: lib/animina_web/trait_translations.ex:34
 #, elixir-autogen, elixir-format
 msgid "Alcohol"
-msgstr ""
+msgstr "Alkol"
 
 #: lib/animina_web/trait_translations.ex:200
 #, elixir-autogen, elixir-format
 msgid "Alternative"
-msgstr ""
+msgstr "Alternatif"
 
 #: lib/animina_web/trait_translations.ex:130
 #, elixir-autogen, elixir-format
 msgid "American"
-msgstr ""
+msgstr "Amerikan"
 
 #: lib/animina_web/trait_translations.ex:289
 #, elixir-autogen, elixir-format
 msgid "Antarctica"
-msgstr ""
+msgstr "Antarktika"
 
 #: lib/animina_web/trait_translations.ex:246
 #, elixir-autogen, elixir-format
 msgid "Art"
-msgstr ""
+msgstr "Sanat"
 
 #: lib/animina_web/trait_translations.ex:284
 #, elixir-autogen, elixir-format
 msgid "Asia"
-msgstr ""
+msgstr "Asya"
 
 #: lib/animina_web/trait_translations.ex:42
 #, elixir-autogen, elixir-format
 msgid "At Home"
-msgstr ""
+msgstr "Evde"
 
 #: lib/animina_web/trait_translations.ex:326
 #, elixir-autogen, elixir-format
 msgid "Atheism"
-msgstr ""
+msgstr "Ateizm"
 
 #: lib/animina_web/trait_translations.ex:149
 #, elixir-autogen, elixir-format
 msgid "Athletics"
-msgstr ""
+msgstr "Atletizm"
 
 #: lib/animina_web/trait_translations.ex:240
 #, elixir-autogen, elixir-format
 msgid "Audiobooks"
-msgstr ""
+msgstr "Sesli Kitaplar"
 
 #: lib/animina_web/trait_translations.ex:288
 #, elixir-autogen, elixir-format
 msgid "Australia"
-msgstr ""
+msgstr "Avustralya"
 
 #: lib/animina_web/trait_translations.ex:293
 #, elixir-autogen, elixir-format
 msgid "Austria"
-msgstr ""
+msgstr "Avusturya"
 
 #: lib/animina_web/trait_translations.ex:140
 #, elixir-autogen, elixir-format
 msgid "BBQ"
-msgstr ""
+msgstr "Barbekü"
 
 #: lib/animina_web/trait_translations.ex:158
 #, elixir-autogen, elixir-format
 msgid "Badminton"
-msgstr ""
+msgstr "Badminton"
 
 #: lib/animina_web/trait_translations.ex:224
 #, elixir-autogen, elixir-format
 msgid "Baking"
-msgstr ""
+msgstr "Fırıncılık"
 
 #: lib/animina_web/trait_translations.ex:306
 #, elixir-autogen, elixir-format
 msgid "Bali"
-msgstr ""
+msgstr "Bali"
 
 #: lib/animina_web/trait_translations.ex:260
 #, elixir-autogen, elixir-format
 msgid "Bars"
-msgstr ""
+msgstr "Barlar"
 
 #: lib/animina_web/trait_translations.ex:155
 #, elixir-autogen, elixir-format
 msgid "Basketball"
-msgstr ""
+msgstr "Basketbol"
 
 #: lib/animina_web/trait_translations.ex:272
 #, elixir-autogen, elixir-format
 msgid "Beach"
-msgstr ""
+msgstr "Plaj"
 
 #: lib/animina_web/trait_translations.ex:85
 #, elixir-autogen, elixir-format
 msgid "Being Romantic"
-msgstr ""
+msgstr "Romantik Olma"
 
 #: lib/animina_web/trait_translations.ex:276
 #, elixir-autogen, elixir-format
 msgid "Bike Tours"
-msgstr ""
+msgstr "Bisiklet Turları"
 
 #: lib/animina_web/trait_translations.ex:209
 #, elixir-autogen, elixir-format
 msgid "Biographies"
-msgstr ""
+msgstr "Biyografiler"
 
 #: lib/animina_web/trait_translations.ex:115
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Bird"
-msgstr ""
+msgstr "Kuş"
 
 #: lib/animina_web/trait_translations.ex:190
 #, elixir-autogen, elixir-format
 msgid "Blues"
-msgstr ""
+msgstr "Blues"
 
 #: lib/animina_web/trait_translations.ex:235
 #, elixir-autogen, elixir-format
 msgid "Board Games"
-msgstr ""
+msgstr "Masa Oyunları"
 
 #: lib/animina_web/trait_translations.ex:164
 #, elixir-autogen, elixir-format
 msgid "Boxing"
-msgstr ""
+msgstr "Boks"
 
 #: lib/animina_web/trait_translations.ex:324
 #, elixir-autogen, elixir-format
 msgid "Buddhism"
-msgstr ""
+msgstr "Budizm"
 
 #: lib/animina_web/trait_translations.ex:311
 #, elixir-autogen, elixir-format
 msgid "CDU"
-msgstr ""
+msgstr "CDU"
 
 #: lib/animina_web/trait_translations.ex:317
 #, elixir-autogen, elixir-format
 msgid "CSU"
-msgstr ""
+msgstr "CSU"
 
 #: lib/animina_web/trait_translations.ex:261
 #, elixir-autogen, elixir-format
 msgid "Cafes"
-msgstr ""
+msgstr "Kafeler"
 
 #: lib/animina_web/trait_translations.ex:279
 #, elixir-autogen, elixir-format
 msgid "Camping"
-msgstr ""
+msgstr "Kamp"
 
 #: lib/animina_web/trait_translations.ex:308
 #, elixir-autogen, elixir-format
 msgid "Canada"
-msgstr ""
+msgstr "Kanada"
 
 #: lib/animina_web/trait_translations.ex:304
 #, elixir-autogen, elixir-format
 msgid "Canary Islands"
-msgstr ""
+msgstr "Kanarya Adaları"
 
 #: lib/animina_web/trait_translations.ex:75
 #, elixir-autogen, elixir-format
 msgid "Caring"
-msgstr ""
+msgstr "Sevecenlik"
 
 #: lib/animina_web/trait_translations.ex:110
 #, elixir-autogen, elixir-format
 msgid "Cat"
-msgstr ""
+msgstr "Kedi"
 
 #: lib/animina_web/trait_translations.ex:28
 #, elixir-autogen, elixir-format
 msgid "Character"
-msgstr ""
+msgstr "Karakter"
 
 #: lib/animina_web/trait_translations.ex:31
 #, elixir-autogen, elixir-format
 msgid "Children in Household"
-msgstr ""
+msgstr "Evdeki Çocuklar"
 
 #: lib/animina_web/trait_translations.ex:211
 #, elixir-autogen, elixir-format
 msgid "Children's and Young Adult"
-msgstr ""
+msgstr "Çocuk ve Gençlik"
 
 #: lib/animina_web/trait_translations.ex:121
 #, elixir-autogen, elixir-format
 msgid "Chinese"
-msgstr ""
+msgstr "Çin"
 
 #: lib/animina_web/trait_translations.ex:273
 #, elixir-autogen, elixir-format
 msgid "City Trips"
-msgstr ""
+msgstr "Şehir Gezileri"
 
 #: lib/animina_web/trait_translations.ex:184
 #, elixir-autogen, elixir-format
 msgid "Classical"
-msgstr ""
+msgstr "Klasik"
 
 #: lib/animina_web/trait_translations.ex:213
 #, elixir-autogen, elixir-format
 msgid "Classics"
-msgstr ""
+msgstr "Klasikler"
 
 #: lib/animina_web/trait_translations.ex:147
 #, elixir-autogen, elixir-format
 msgid "Climbing"
-msgstr ""
+msgstr "Tırmanma"
 
 #: lib/animina_web/trait_translations.ex:262
 #, elixir-autogen, elixir-format
 msgid "Clubbing"
-msgstr ""
+msgstr "Gece Kulüpleri"
 
 #: lib/animina_web/trait_translations.ex:266
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Concerts"
-msgstr "Bağlan"
+msgstr "Konserler"
 
 #: lib/animina_web/trait_translations.ex:223
 #, elixir-autogen, elixir-format
 msgid "Cooking"
-msgstr ""
+msgstr "Yemek Yapma"
 
 #: lib/animina_web/trait_translations.ex:174
 #, elixir-autogen, elixir-format
 msgid "Counseling"
-msgstr ""
+msgstr "Danışmanlık"
 
 #: lib/animina_web/trait_translations.ex:71
 #, elixir-autogen, elixir-format
 msgid "Courage"
-msgstr ""
+msgstr "Cesaret"
 
 #: lib/animina_web/trait_translations.ex:245
 #, elixir-autogen, elixir-format
 msgid "Crafting"
-msgstr ""
+msgstr "El İşi"
 
 #: lib/animina_web/trait_translations.ex:43
 #, elixir-autogen, elixir-format
 msgid "Creativity"
-msgstr ""
+msgstr "Yaratıcılık"
 
 #: lib/animina_web/trait_translations.ex:202
 #, elixir-autogen, elixir-format
 msgid "Crime"
-msgstr ""
+msgstr "Polisiye"
 
 #: lib/animina_web/trait_translations.ex:296
 #, elixir-autogen, elixir-format
 msgid "Croatia"
-msgstr ""
+msgstr "Hırvatistan"
 
 #: lib/animina_web/trait_translations.ex:256
 #, elixir-autogen, elixir-format
 msgid "Crocheting"
-msgstr ""
+msgstr "Tığ İşi"
 
 #: lib/animina_web/trait_translations.ex:275
 #, elixir-autogen, elixir-format
 msgid "Cruises"
-msgstr ""
+msgstr "Kruvaziyer"
 
 #: lib/animina_web/trait_translations.ex:280
 #, elixir-autogen, elixir-format
 msgid "Cultural Trips"
-msgstr ""
+msgstr "Kültür Gezileri"
 
 #: lib/animina_web/trait_translations.ex:165
 #, elixir-autogen, elixir-format
 msgid "Cycling"
-msgstr ""
+msgstr "Bisiklet"
 
 #: lib/animina_web/trait_translations.ex:237
 #, elixir-autogen, elixir-format
 msgid "DIY Projects"
-msgstr ""
+msgstr "Kendin Yap Projeleri"
 
 #: lib/animina_web/trait_translations.ex:197
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Dance"
-msgstr ""
+msgstr "Dans"
 
 #: lib/animina_web/trait_translations.ex:250
 #, elixir-autogen, elixir-format
 msgid "Dancing"
-msgstr ""
+msgstr "Dans Etme"
 
 #: lib/animina_web/trait_translations.ex:172
 #, elixir-autogen, elixir-format
 msgid "Deep Conversations"
-msgstr ""
+msgstr "Derin Konuşmalar"
 
 #: lib/animina_web/trait_translations.ex:244
 #, elixir-autogen, elixir-format
 msgid "Design"
-msgstr ""
+msgstr "Tasarım"
 
 #: lib/animina_web/trait_translations.ex:138
 #, elixir-autogen, elixir-format
 msgid "Desserts"
-msgstr ""
+msgstr "Tatlılar"
 
 #: lib/animina_web/trait_translations.ex:313
 #, elixir-autogen, elixir-format
 msgid "Die Grünen"
-msgstr ""
+msgstr "Yeşiller"
 
 #: lib/animina_web/trait_translations.ex:32
 #, elixir-autogen, elixir-format
 msgid "Diet"
-msgstr ""
+msgstr "Beslenme"
 
 #: lib/animina_web/trait_translations.ex:160
 #, elixir-autogen, elixir-format
 msgid "Diving"
-msgstr ""
+msgstr "Dalış"
 
 #: lib/animina_web/trait_translations.ex:109
 #, elixir-autogen, elixir-format
 msgid "Dog"
-msgstr ""
+msgstr "Köpek"
 
 #: lib/animina_web/trait_translations.ex:263
 #, elixir-autogen, elixir-format
 msgid "Drag Shows"
-msgstr ""
+msgstr "Drag Gösterileri"
 
 #: lib/animina_web/trait_translations.ex:232
 #, elixir-autogen, elixir-format
 msgid "Drawing"
-msgstr ""
+msgstr "Çizim"
 
 #: lib/animina_web/trait_translations.ex:303
 #, elixir-autogen, elixir-format
 msgid "Egypt"
-msgstr ""
+msgstr "Mısır"
 
 #: lib/animina_web/trait_translations.ex:195
 #, elixir-autogen, elixir-format
 msgid "Electronic"
-msgstr ""
+msgstr "Elektronik"
 
 #: lib/animina_web/trait_translations.ex:82
 #, elixir-autogen, elixir-format
 msgid "Empathy"
-msgstr ""
+msgstr "Empati"
 
 #: lib/animina_web/trait_translations.ex:210
 #, elixir-autogen, elixir-format
 msgid "Erotica"
-msgstr ""
+msgstr "Erotik"
 
 #: lib/animina_web/trait_translations.ex:283
 #, elixir-autogen, elixir-format
 msgid "Europe"
-msgstr ""
+msgstr "Avrupa"
 
 #: lib/animina_web/trait_translations.ex:314
 #, elixir-autogen, elixir-format
 msgid "FDP"
-msgstr ""
+msgstr "FDP"
 
 #: lib/animina_web/trait_translations.ex:78
 #, elixir-autogen, elixir-format
 msgid "Family-Oriented"
-msgstr ""
+msgstr "Aileye Bağlı"
 
 #: lib/animina_web/trait_translations.ex:206
 #, elixir-autogen, elixir-format
 msgid "Fantasy"
-msgstr ""
+msgstr "Fantastik"
 
 #: lib/animina_web/trait_translations.ex:135
 #, elixir-autogen, elixir-format
 msgid "Fast Food"
-msgstr ""
+msgstr "Fast Food"
 
 #: lib/animina_web/trait_translations.ex:46
 #, elixir-autogen, elixir-format
 msgid "Favorite Destinations"
-msgstr ""
+msgstr "Favori Destinasyonlar"
 
 #: lib/animina_web/trait_translations.ex:264
 #, elixir-autogen, elixir-format
 msgid "Festivals"
-msgstr ""
+msgstr "Festivaller"
 
 #: lib/animina_web/trait_translations.ex:116
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Fish"
-msgstr "Bitir"
+msgstr "Balık"
 
 #: lib/animina_web/trait_translations.ex:229
 #, elixir-autogen, elixir-format
 msgid "Fitness Exercises"
-msgstr ""
+msgstr "Fitness Egzersizleri"
 
 #: lib/animina_web/trait_translations.ex:99
 #, elixir-autogen, elixir-format
 msgid "Flexitarian"
-msgstr ""
+msgstr "Fleksitaryen"
 
 #: lib/animina_web/trait_translations.ex:188
 #, elixir-autogen, elixir-format
 msgid "Folk"
-msgstr ""
+msgstr "Folk"
 
 #: lib/animina_web/trait_translations.ex:189
 #, elixir-autogen, elixir-format
 msgid "Folk Music"
-msgstr ""
+msgstr "Halk Müziği"
 
 #: lib/animina_web/trait_translations.ex:37
 #, elixir-autogen, elixir-format
 msgid "Food"
-msgstr ""
+msgstr "Yemek"
 
 #: lib/animina_web/trait_translations.ex:295
 #, elixir-autogen, elixir-format
 msgid "France"
-msgstr ""
+msgstr "Fransa"
 
 #: lib/animina_web/trait_translations.ex:123
 #, elixir-autogen, elixir-format
 msgid "French"
-msgstr ""
+msgstr "Fransız"
 
 #: lib/animina_web/trait_translations.ex:230
 #, elixir-autogen, elixir-format
 msgid "Gardening"
-msgstr ""
+msgstr "Bahçecilik"
 
 #: lib/animina_web/trait_translations.ex:76
 #, elixir-autogen, elixir-format
 msgid "Generosity"
-msgstr ""
+msgstr "Cömertlik"
 
 #: lib/animina_web/trait_translations.ex:133
 #, elixir-autogen, elixir-format
 msgid "German"
-msgstr ""
+msgstr "Alman"
 
 #: lib/animina_web/trait_translations.ex:297
 #, elixir-autogen, elixir-format
 msgid "Germany"
-msgstr ""
+msgstr "Almanya"
 
 #: lib/animina_web/trait_translations.ex:176
 #, elixir-autogen, elixir-format
 msgid "Going Offline"
-msgstr ""
+msgstr "Çevrimdışı Olma"
 
 #: lib/animina_web/trait_translations.ex:44
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Going Out"
-msgstr "Dışarı Çıkma & Seyahat"
+msgstr "Dışarı Çıkma"
 
 #: lib/animina_web/trait_translations.ex:152
 #, elixir-autogen, elixir-format
 msgid "Golf"
-msgstr ""
+msgstr "Golf"
 
 #: lib/animina_web/trait_translations.ex:171
 #, elixir-autogen, elixir-format
 msgid "Good Sleep"
-msgstr ""
+msgstr "İyi Uyku"
 
 #: lib/animina_web/trait_translations.ex:294
 #, elixir-autogen, elixir-format
 msgid "Greece"
-msgstr ""
+msgstr "Yunanistan"
 
 #: lib/animina_web/trait_translations.ex:129
 #, elixir-autogen, elixir-format
 msgid "Greek"
-msgstr ""
+msgstr "Yunan"
 
 #: lib/animina_web/trait_translations.ex:215
 #, elixir-autogen, elixir-format
 msgid "Guidebooks"
-msgstr ""
+msgstr "Rehber Kitaplar"
 
 #: lib/animina_web/trait_translations.ex:113
 #, elixir-autogen, elixir-format
 msgid "Guinea Pig"
-msgstr ""
+msgstr "Kobay"
 
 #: lib/animina_web/trait_translations.ex:168
 #, elixir-autogen, elixir-format
 msgid "Gym"
-msgstr ""
+msgstr "Spor Salonu"
 
 #: lib/animina_web/trait_translations.ex:144
 #, elixir-autogen, elixir-format
 msgid "Gymnastics"
-msgstr ""
+msgstr "Jimnastik"
 
 #: lib/animina_web/trait_translations.ex:114
 #, elixir-autogen, elixir-format
 msgid "Hamster"
-msgstr ""
+msgstr "Hamster"
 
 #: lib/animina_web/trait_translations.ex:150
 #, elixir-autogen, elixir-format
 msgid "Handball"
-msgstr ""
+msgstr "Hentbol"
 
 #: lib/animina_web/trait_translations.ex:231
 #, elixir-autogen, elixir-format
 msgid "Handicrafts"
-msgstr ""
+msgstr "El Sanatları"
 
 #: lib/animina_web/trait_translations.ex:29
 #, elixir-autogen, elixir-format
 msgid "Have Children"
-msgstr ""
+msgstr "Çocuk Sahibi"
 
 #: lib/animina_web/trait_translations.ex:137
 #, elixir-autogen, elixir-format
 msgid "Healthy Food"
-msgstr ""
+msgstr "Sağlıklı Yemek"
 
 #: lib/animina_web/trait_translations.ex:186
 #, elixir-autogen, elixir-format
 msgid "Heavy Metal"
-msgstr ""
+msgstr "Heavy Metal"
 
 #: lib/animina_web/trait_translations.ex:146
 #, elixir-autogen, elixir-format
 msgid "Hiking"
-msgstr ""
+msgstr "Yürüyüş"
 
 #: lib/animina_web/trait_translations.ex:274
 #, elixir-autogen, elixir-format
 msgid "Hiking Vacation"
-msgstr ""
+msgstr "Yürüyüş Tatili"
 
 #: lib/animina_web/trait_translations.ex:325
 #, elixir-autogen, elixir-format
 msgid "Hinduism"
-msgstr ""
+msgstr "Hinduizm"
 
 #: lib/animina_web/trait_translations.ex:180
 #, elixir-autogen, elixir-format
 msgid "Hip-Hop"
-msgstr ""
+msgstr "Hip-Hop"
 
 #: lib/animina_web/trait_translations.ex:205
 #, elixir-autogen, elixir-format
 msgid "Historical Novels"
-msgstr ""
+msgstr "Tarihi Romanlar"
 
 #: lib/animina_web/trait_translations.ex:70
 #, elixir-autogen, elixir-format
 msgid "Honesty"
-msgstr ""
+msgstr "Dürüstlük"
 
 #: lib/animina_web/trait_translations.ex:214
 #, elixir-autogen, elixir-format
 msgid "Horror"
-msgstr ""
+msgstr "Korku"
 
 #: lib/animina_web/trait_translations.ex:118
 #, elixir-autogen, elixir-format
 msgid "Horse"
-msgstr ""
+msgstr "At"
 
 #: lib/animina_web/trait_translations.ex:151
 #, elixir-autogen, elixir-format
 msgid "Horse Riding"
-msgstr ""
+msgstr "Binicilik"
 
 #: lib/animina_web/trait_translations.ex:196
 #, elixir-autogen, elixir-format
 msgid "House"
-msgstr ""
+msgstr "House"
 
 #: lib/animina_web/trait_translations.ex:74
 #, elixir-autogen, elixir-format
 msgid "Humor"
-msgstr ""
+msgstr "Mizah"
 
 #: lib/animina_web/trait_translations.ex:90
 #, elixir-autogen, elixir-format
 msgid "I Don't Have Children"
-msgstr ""
+msgstr "Çocuğum Yok"
 
 #: lib/animina_web/trait_translations.ex:93
 #, elixir-autogen, elixir-format
 msgid "I Don't Want (More) Children"
-msgstr ""
+msgstr "(Daha Fazla) Çocuk İstemiyorum"
 
 #: lib/animina_web/trait_translations.ex:89
 #, elixir-autogen, elixir-format
 msgid "I Have Children"
-msgstr ""
+msgstr "Çocuklarım Var"
 
 #: lib/animina_web/trait_translations.ex:92
 #, elixir-autogen, elixir-format
 msgid "I Want (More) Children"
-msgstr ""
+msgstr "(Daha Fazla) Çocuk İstiyorum"
 
 #: lib/animina_web/trait_translations.ex:156
 #, elixir-autogen, elixir-format
 msgid "Ice Hockey"
-msgstr ""
+msgstr "Buz Hokeyi"
 
 #: lib/animina_web/trait_translations.ex:122
 #, elixir-autogen, elixir-format
 msgid "Indian"
-msgstr ""
+msgstr "Hint"
 
 #: lib/animina_web/trait_translations.ex:187
 #, elixir-autogen, elixir-format
 msgid "Indie"
-msgstr ""
+msgstr "Indie"
 
 #: lib/animina_web/trait_translations.ex:79
 #, elixir-autogen, elixir-format
 msgid "Intelligence"
-msgstr ""
+msgstr "Zeka"
 
 #: lib/animina_web/trait_translations.ex:322
 #, elixir-autogen, elixir-format
 msgid "Islam"
-msgstr ""
+msgstr "İslam"
 
 #: lib/animina_web/trait_translations.ex:120
 #, elixir-autogen, elixir-format
 msgid "Italian"
-msgstr ""
+msgstr "İtalyan"
 
 #: lib/animina_web/trait_translations.ex:291
 #, elixir-autogen, elixir-format
 msgid "Italy"
-msgstr ""
+msgstr "İtalya"
 
 #: lib/animina_web/trait_translations.ex:126
 #, elixir-autogen, elixir-format
 msgid "Japanese"
-msgstr ""
+msgstr "Japon"
 
 #: lib/animina_web/trait_translations.ex:185
 #, elixir-autogen, elixir-format
 msgid "Jazz"
-msgstr ""
+msgstr "Caz"
 
 #: lib/animina_web/trait_translations.ex:166
 #, elixir-autogen, elixir-format
 msgid "Jogging"
-msgstr ""
+msgstr "Koşu"
 
 #: lib/animina_web/trait_translations.ex:238
 #, elixir-autogen, elixir-format
 msgid "Journaling"
-msgstr ""
+msgstr "Günlük Yazma"
 
 #: lib/animina_web/trait_translations.ex:323
 #, elixir-autogen, elixir-format
 msgid "Judaism"
-msgstr ""
+msgstr "Yahudilik"
 
 #: lib/animina_web/trait_translations.ex:265
 #, elixir-autogen, elixir-format
 msgid "Karaoke"
-msgstr ""
+msgstr "Karaoke"
 
 #: lib/animina_web/trait_translations.ex:257
 #, elixir-autogen, elixir-format
 msgid "Knitting"
-msgstr ""
+msgstr "Örgü"
 
 #: lib/animina_web/trait_translations.ex:132
 #, elixir-autogen, elixir-format
 msgid "Korean"
-msgstr ""
+msgstr "Kore"
 
 #: lib/animina_web/trait_translations.ex:267
 #, elixir-autogen, elixir-format
 msgid "LGBTQ+ Nightlife"
-msgstr ""
+msgstr "LGBTQ+ Gece Hayatı"
 
 #: lib/animina_web/trait_translations.ex:198
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Latin"
-msgstr "Konum"
+msgstr "Latin"
 
 #: lib/animina_web/trait_translations.ex:41
 #, elixir-autogen, elixir-format
 msgid "Literature"
-msgstr ""
+msgstr "Edebiyat"
 
 #: lib/animina_web/trait_translations.ex:80
 #, elixir-autogen, elixir-format
 msgid "Love of Adventure"
-msgstr ""
+msgstr "Macera Sevgisi"
 
 #: lib/animina_web/trait_translations.ex:247
 #, elixir-autogen, elixir-format
 msgid "Make-up"
-msgstr ""
+msgstr "Makyaj"
 
 #: lib/animina_web/trait_translations.ex:253
 #, elixir-autogen, elixir-format
 msgid "Making Music"
-msgstr ""
+msgstr "Müzik Yapma"
 
 #: lib/animina_web/trait_translations.ex:305
 #, elixir-autogen, elixir-format
 msgid "Mallorca"
-msgstr ""
+msgstr "Mallorca"
 
 #: lib/animina_web/trait_translations.ex:35
 #, elixir-autogen, elixir-format
 msgid "Marijuana"
-msgstr ""
+msgstr "Esrar"
 
 #: lib/animina_web/trait_translations.ex:169
 #, elixir-autogen, elixir-format
 msgid "Martial Arts"
-msgstr ""
+msgstr "Dövüş Sanatları"
 
 #: lib/animina_web/trait_translations.ex:236
 #, elixir-autogen, elixir-format
 msgid "Meditation"
-msgstr ""
+msgstr "Meditasyon"
 
 #: lib/animina_web/trait_translations.ex:134
 #, elixir-autogen, elixir-format
 msgid "Mediterranean"
-msgstr ""
+msgstr "Akdeniz"
 
 #: lib/animina_web/trait_translations.ex:125
 #, elixir-autogen, elixir-format
 msgid "Mexican"
-msgstr ""
+msgstr "Meksika"
 
 #: lib/animina_web/trait_translations.ex:173
 #, elixir-autogen, elixir-format
 msgid "Mindfulness"
-msgstr ""
+msgstr "Farkındalık"
 
 #: lib/animina_web/trait_translations.ex:68
 #, elixir-autogen, elixir-format
 msgid "Modesty"
-msgstr ""
+msgstr "Alçakgönüllülük"
 
 #: lib/animina_web/trait_translations.ex:111
 #, elixir-autogen, elixir-format
 msgid "Mouse"
-msgstr ""
+msgstr "Fare"
 
 #: lib/animina_web/trait_translations.ex:226
 #, elixir-autogen, elixir-format
 msgid "Movies"
-msgstr ""
+msgstr "Filmler"
 
 #: lib/animina_web/trait_translations.ex:268
 #, elixir-autogen, elixir-format
 msgid "Museums & Galleries"
-msgstr ""
+msgstr "Müzeler ve Galeriler"
 
 #: lib/animina_web/trait_translations.ex:40
 #, elixir-autogen, elixir-format
 msgid "Music"
-msgstr ""
+msgstr "Müzik"
 
 #: lib/animina_web/trait_translations.ex:96
 #, elixir-autogen, elixir-format
 msgid "My Children Don't Live With Me"
-msgstr ""
+msgstr "Çocuklarım Benimle Yaşamıyor"
 
 #: lib/animina_web/trait_translations.ex:95
 #, elixir-autogen, elixir-format
 msgid "My Children Live With Me"
-msgstr ""
+msgstr "Çocuklarım Benimle Yaşıyor"
 
 #: lib/animina_web/trait_translations.ex:302
 #, elixir-autogen, elixir-format
 msgid "Netherlands"
-msgstr ""
+msgstr "Hollanda"
 
 #: lib/animina_web/trait_translations.ex:208
 #, elixir-autogen, elixir-format
 msgid "Non-Fiction"
-msgstr ""
+msgstr "Kurgu Dışı"
 
 #: lib/animina_web/trait_translations.ex:286
 #, elixir-autogen, elixir-format
 msgid "North America"
-msgstr ""
+msgstr "Kuzey Amerika"
 
 #: lib/animina_web/trait_translations.ex:307
 #, elixir-autogen, elixir-format
 msgid "Norway"
-msgstr ""
+msgstr "Norveç"
 
 #: lib/animina_web/trait_translations.ex:203
 #, elixir-autogen, elixir-format
 msgid "Novels"
-msgstr ""
+msgstr "Romanlar"
 
 #: lib/animina_web/trait_translations.ex:175
 #, elixir-autogen, elixir-format
 msgid "Nutrition"
-msgstr ""
+msgstr "Beslenme"
 
 #: lib/animina_web/trait_translations.ex:98
 #, elixir-autogen, elixir-format
 msgid "Omnivore"
-msgstr ""
+msgstr "Her Şeyi Yiyen"
 
 #: lib/animina_web/trait_translations.ex:228
 #, elixir-autogen, elixir-format
 msgid "Online Courses"
-msgstr ""
+msgstr "Online Kurslar"
 
 #: lib/animina_web/trait_translations.ex:84
 #, elixir-autogen, elixir-format
 msgid "Optimism"
-msgstr ""
+msgstr "İyimserlik"
 
 #: lib/animina_web/trait_translations.ex:321
 #, elixir-autogen, elixir-format
 msgid "Orthodox Christianity"
-msgstr ""
+msgstr "Ortodoks Hristiyanlık"
 
 #: lib/animina_web/trait_translations.ex:255
 #, elixir-autogen, elixir-format
 msgid "Painting"
-msgstr ""
+msgstr "Resim Yapma"
 
 #: lib/animina_web/trait_translations.ex:139
 #, elixir-autogen, elixir-format
 msgid "Pastries"
-msgstr ""
+msgstr "Hamur İşleri"
 
 #: lib/animina_web/trait_translations.ex:100
 #, elixir-autogen, elixir-format
 msgid "Pescatarian"
-msgstr ""
+msgstr "Pesketaryen"
 
 #: lib/animina_web/trait_translations.ex:218
 #, elixir-autogen, elixir-format
 msgid "Philosophy"
-msgstr ""
+msgstr "Felsefe"
 
 #: lib/animina_web/trait_translations.ex:243
 #, elixir-autogen, elixir-format
 msgid "Photography"
-msgstr ""
+msgstr "Fotoğrafçılık"
 
 #: lib/animina_web/trait_translations.ex:167
 #, elixir-autogen, elixir-format
 msgid "Pilates"
-msgstr ""
+msgstr "Pilates"
 
 #: lib/animina_web/trait_translations.ex:239
 #, elixir-autogen, elixir-format
 msgid "Podcasts"
-msgstr ""
+msgstr "Podcastler"
 
 #: lib/animina_web/trait_translations.ex:216
 #, elixir-autogen, elixir-format
 msgid "Poetry"
-msgstr ""
+msgstr "Şiir"
 
 #: lib/animina_web/trait_translations.ex:178
 #, elixir-autogen, elixir-format
 msgid "Pop"
-msgstr ""
+msgstr "Pop"
 
 #: lib/animina_web/trait_translations.ex:300
 #, elixir-autogen, elixir-format
 msgid "Portugal"
-msgstr ""
+msgstr "Portekiz"
 
 #: lib/animina_web/trait_translations.ex:320
 #, elixir-autogen, elixir-format
 msgid "Protestant"
-msgstr ""
+msgstr "Protestan"
 
 #: lib/animina_web/trait_translations.ex:220
 #, elixir-autogen, elixir-format
 msgid "Psychology"
-msgstr ""
+msgstr "Psikoloji"
 
 #: lib/animina_web/trait_translations.ex:199
 #, elixir-autogen, elixir-format
 msgid "Punk"
-msgstr ""
+msgstr "Punk"
 
 #: lib/animina_web/trait_translations.ex:234
 #, elixir-autogen, elixir-format
 msgid "Puzzles"
-msgstr ""
+msgstr "Bulmacalar"
 
 #: lib/animina_web/trait_translations.ex:194
 #, elixir-autogen, elixir-format
 msgid "R&B"
-msgstr ""
+msgstr "R&B"
 
 #: lib/animina_web/trait_translations.ex:112
 #, elixir-autogen, elixir-format
 msgid "Rabbit"
-msgstr ""
+msgstr "Tavşan"
 
 #: lib/animina_web/trait_translations.ex:181
 #, elixir-autogen, elixir-format
 msgid "Rap"
-msgstr ""
+msgstr "Rap"
 
 #: lib/animina_web/trait_translations.ex:225
 #, elixir-autogen, elixir-format
 msgid "Reading"
-msgstr ""
+msgstr "Okuma"
 
 #: lib/animina_web/trait_translations.ex:191
 #, elixir-autogen, elixir-format
 msgid "Reggae"
-msgstr ""
+msgstr "Reggae"
 
 #: lib/animina_web/trait_translations.ex:48
 #, elixir-autogen, elixir-format
 msgid "Religion"
-msgstr ""
+msgstr "Din"
 
 #: lib/animina_web/trait_translations.ex:117
 #, elixir-autogen, elixir-format
 msgid "Reptile"
-msgstr ""
+msgstr "Sürüngen"
 
 #: lib/animina_web/trait_translations.ex:72
 #, elixir-autogen, elixir-format
 msgid "Resilience"
-msgstr ""
+msgstr "Dayanıklılık"
 
 #: lib/animina_web/trait_translations.ex:179
 #, elixir-autogen, elixir-format
 msgid "Rock"
-msgstr ""
+msgstr "Rock"
 
 #: lib/animina_web/trait_translations.ex:319
 #, elixir-autogen, elixir-format
 msgid "Roman Catholic"
-msgstr ""
+msgstr "Roma Katolik"
 
 #: lib/animina_web/trait_translations.ex:204
 #, elixir-autogen, elixir-format
 msgid "Romance Novels"
-msgstr ""
+msgstr "Aşk Romanları"
 
 #: lib/animina_web/trait_translations.ex:163
 #, elixir-autogen, elixir-format
 msgid "Rowing"
-msgstr ""
+msgstr "Kürek"
 
 #: lib/animina_web/trait_translations.ex:312
 #, elixir-autogen, elixir-format
 msgid "SPD"
-msgstr ""
+msgstr "SPD"
 
 #: lib/animina_web/trait_translations.ex:162
 #, elixir-autogen, elixir-format
 msgid "Sailing"
-msgstr ""
+msgstr "Yelkencilik"
 
 #: lib/animina_web/trait_translations.ex:183
 #, elixir-autogen, elixir-format
 msgid "Schlager"
-msgstr ""
+msgstr "Schlager"
 
 #: lib/animina_web/trait_translations.ex:221
 #, elixir-autogen, elixir-format
 msgid "Science"
-msgstr ""
+msgstr "Bilim"
 
 #: lib/animina_web/trait_translations.ex:207
 #, elixir-autogen, elixir-format
 msgid "Science Fiction"
-msgstr ""
+msgstr "Bilim Kurgu"
 
 #: lib/animina_web/trait_translations.ex:39
 #, elixir-autogen, elixir-format
 msgid "Self Care"
-msgstr ""
+msgstr "Kişisel Bakım"
 
 #: lib/animina_web/trait_translations.ex:77
 #, elixir-autogen, elixir-format
 msgid "Self-Acceptance"
-msgstr ""
+msgstr "Öz Kabul"
 
 #: lib/animina_web/trait_translations.ex:86
 #, elixir-autogen, elixir-format
 msgid "Self-Confidence"
-msgstr ""
+msgstr "Özgüven"
 
 #: lib/animina_web/trait_translations.ex:69
 #, elixir-autogen, elixir-format
 msgid "Sense of Justice"
-msgstr ""
+msgstr "Adalet Duygusu"
 
 #: lib/animina_web/trait_translations.ex:73
 #, elixir-autogen, elixir-format
 msgid "Sense of Responsibility"
-msgstr ""
+msgstr "Sorumluluk Duygusu"
 
 #: lib/animina_web/trait_translations.ex:227
 #, elixir-autogen, elixir-format
 msgid "Series"
-msgstr ""
+msgstr "Diziler"
 
 #: lib/animina_web/trait_translations.ex:258
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sewing"
-msgstr "Ayarlar"
+msgstr "Dikiş"
 
 #: lib/animina_web/trait_translations.ex:249
 #, elixir-autogen, elixir-format
 msgid "Singing"
-msgstr ""
+msgstr "Şarkı Söyleme"
 
 #: lib/animina_web/trait_translations.ex:148
 #, elixir-autogen, elixir-format
 msgid "Skiing"
-msgstr ""
+msgstr "Kayak"
 
 #: lib/animina_web/trait_translations.ex:33
 #, elixir-autogen, elixir-format
 msgid "Smoking"
-msgstr ""
+msgstr "Sigara"
 
 #: lib/animina_web/trait_translations.ex:141
 #, elixir-autogen, elixir-format
 msgid "Snacks"
-msgstr ""
+msgstr "Atıştırmalıklar"
 
 #: lib/animina_web/trait_translations.ex:143
 #, elixir-autogen, elixir-format
 msgid "Soccer"
-msgstr ""
+msgstr "Futbol"
 
 #: lib/animina_web/trait_translations.ex:87
 #, elixir-autogen, elixir-format
 msgid "Social Awareness"
-msgstr ""
+msgstr "Sosyal Farkındalık"
 
 #: lib/animina_web/trait_translations.ex:252
 #, elixir-autogen, elixir-format
 msgid "Social Media"
-msgstr ""
+msgstr "Sosyal Medya"
 
 #: lib/animina_web/trait_translations.ex:192
 #, elixir-autogen, elixir-format
 msgid "Soul"
-msgstr ""
+msgstr "Soul"
 
 #: lib/animina_web/trait_translations.ex:287
 #, elixir-autogen, elixir-format
 msgid "South America"
-msgstr ""
+msgstr "Güney Amerika"
 
 #: lib/animina_web/trait_translations.ex:290
 #, elixir-autogen, elixir-format
 msgid "Spain"
-msgstr ""
+msgstr "İspanya"
 
 #: lib/animina_web/trait_translations.ex:124
 #, elixir-autogen, elixir-format
 msgid "Spanish"
-msgstr ""
+msgstr "İspanyol"
 
 #: lib/animina_web/trait_translations.ex:328
 #, elixir-autogen, elixir-format
 msgid "Spirituality"
-msgstr ""
+msgstr "Maneviyat"
 
 #: lib/animina_web/trait_translations.ex:38
 #, elixir-autogen, elixir-format
 msgid "Sports"
-msgstr ""
+msgstr "Spor"
 
 #: lib/animina_web/trait_translations.ex:269
 #, elixir-autogen, elixir-format
 msgid "Stand-Up Comedy"
-msgstr ""
+msgstr "Stand-Up Komedi"
 
 #: lib/animina_web/trait_translations.ex:136
 #, elixir-autogen, elixir-format
 msgid "Street Food"
-msgstr ""
+msgstr "Sokak Yemeği"
 
 #: lib/animina_web/trait_translations.ex:161
 #, elixir-autogen, elixir-format
 msgid "Surfing"
-msgstr ""
+msgstr "Sörf"
 
 #: lib/animina_web/trait_translations.ex:153
 #, elixir-autogen, elixir-format
 msgid "Swimming"
-msgstr ""
+msgstr "Yüzme"
 
 #: lib/animina_web/trait_translations.ex:301
 #, elixir-autogen, elixir-format
 msgid "Switzerland"
-msgstr ""
+msgstr "İsviçre"
 
 #: lib/animina_web/trait_translations.ex:157
 #, elixir-autogen, elixir-format
 msgid "Table Tennis"
-msgstr ""
+msgstr "Masa Tenisi"
 
 #: lib/animina_web/trait_translations.ex:182
 #, elixir-autogen, elixir-format
 msgid "Techno"
-msgstr ""
+msgstr "Tekno"
 
 #: lib/animina_web/trait_translations.ex:145
 #, elixir-autogen, elixir-format
 msgid "Tennis"
-msgstr ""
+msgstr "Tenis"
 
 #: lib/animina_web/trait_translations.ex:128
 #, elixir-autogen, elixir-format
 msgid "Thai"
-msgstr ""
+msgstr "Tayland"
 
 #: lib/animina_web/trait_translations.ex:298
 #, elixir-autogen, elixir-format
 msgid "Thailand"
-msgstr ""
+msgstr "Tayland"
 
 #: lib/animina_web/trait_translations.ex:316
 #, elixir-autogen, elixir-format
 msgid "The Left"
-msgstr ""
+msgstr "Sol Parti"
 
 #: lib/animina_web/trait_translations.ex:270
 #, elixir-autogen, elixir-format
 msgid "Theater"
-msgstr ""
+msgstr "Tiyatro"
 
 #: lib/animina_web/trait_translations.ex:219
 #, elixir-autogen, elixir-format
 msgid "Thriller"
-msgstr ""
+msgstr "Gerilim"
 
 #: lib/animina_web/trait_translations.ex:45
 #, elixir-autogen, elixir-format
 msgid "Travels"
-msgstr ""
+msgstr "Seyahat"
 
 #: lib/animina_web/trait_translations.ex:292
 #, elixir-autogen, elixir-format
 msgid "Turkey"
-msgstr ""
+msgstr "Türkiye"
 
 #: lib/animina_web/trait_translations.ex:127
 #, elixir-autogen, elixir-format
 msgid "Turkish"
-msgstr ""
+msgstr "Türk"
 
 #: lib/animina_web/trait_translations.ex:299
 #, elixir-autogen, elixir-format
 msgid "USA"
-msgstr ""
+msgstr "ABD"
 
 #: lib/animina_web/trait_translations.ex:309
 #, elixir-autogen, elixir-format
 msgid "United Kingdom"
-msgstr ""
+msgstr "Birleşik Krallık"
 
 #: lib/animina_web/trait_translations.ex:102
 #, elixir-autogen, elixir-format
 msgid "Vegan"
-msgstr ""
+msgstr "Vegan"
 
 #: lib/animina_web/trait_translations.ex:101
 #, elixir-autogen, elixir-format
 msgid "Vegetarian"
-msgstr ""
+msgstr "Vejetaryen"
 
 #: lib/animina_web/trait_translations.ex:241
 #, elixir-autogen, elixir-format
 msgid "Video Games"
-msgstr ""
+msgstr "Video Oyunları"
 
 #: lib/animina_web/trait_translations.ex:251
 #, elixir-autogen, elixir-format
 msgid "Video Production"
-msgstr ""
+msgstr "Video Prodüksiyon"
 
 #: lib/animina_web/trait_translations.ex:131
 #, elixir-autogen, elixir-format
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnam"
 
 #: lib/animina_web/trait_translations.ex:154
 #, elixir-autogen, elixir-format
 msgid "Volleyball"
-msgstr ""
+msgstr "Voleybol"
 
 #: lib/animina_web/trait_translations.ex:30
 #, elixir-autogen, elixir-format
 msgid "Want Children"
-msgstr ""
+msgstr "Çocuk İstiyorum"
 
 #: lib/animina_web/trait_translations.ex:277
 #, elixir-autogen, elixir-format
 msgid "Wellness"
-msgstr ""
+msgstr "Wellness"
 
 #: lib/animina_web/trait_translations.ex:281
 #, elixir-autogen, elixir-format
 msgid "Winter Sports"
-msgstr ""
+msgstr "Kış Sporları"
 
 #: lib/animina_web/trait_translations.ex:248
 #, elixir-autogen, elixir-format
 msgid "Writing"
-msgstr ""
+msgstr "Yazarlık"
 
 #: lib/animina_web/trait_translations.ex:159
 #, elixir-autogen, elixir-format
 msgid "Yoga"
-msgstr ""
+msgstr "Yoga"
 
 #: lib/animina_web/trait_translations.ex:375
 #, elixir-autogen, elixir-format
 msgid "69"
-msgstr ""
+msgstr "69"
 
 #: lib/animina_web/trait_translations.ex:377
 #, elixir-autogen, elixir-format
 msgid "Against the Wall"
-msgstr ""
+msgstr "Duvara Karşı"
 
 #: lib/animina_web/trait_translations.ex:358
 #, elixir-autogen, elixir-format
 msgid "Anal Sex: Giving"
-msgstr ""
+msgstr "Anal Seks: Yapma"
 
 #: lib/animina_web/trait_translations.ex:359
 #, elixir-autogen, elixir-format
 msgid "Anal Sex: Receiving"
-msgstr ""
+msgstr "Anal Seks: Alma"
 
 #: lib/animina_web/trait_translations.ex:334
 #, elixir-autogen, elixir-format
 msgid "Bondage"
-msgstr ""
+msgstr "Esaret"
 
 #: lib/animina_web/trait_translations.ex:373
 #, elixir-autogen, elixir-format
 msgid "Cowgirl"
-msgstr ""
+msgstr "Cowgirl"
 
 #: lib/animina_web/trait_translations.ex:64
 #, elixir-autogen, elixir-format
 msgid "Dates"
-msgstr ""
+msgstr "Buluşmalar"
 
 #: lib/animina_web/trait_translations.ex:368
 #, elixir-autogen, elixir-format
 msgid "Dirty Talk"
-msgstr ""
+msgstr "Erotik Konuşma"
 
 #: lib/animina_web/trait_translations.ex:372
 #, elixir-autogen, elixir-format
 msgid "Doggy Style"
-msgstr ""
+msgstr "Arka Pozisyon"
 
 #: lib/animina_web/trait_translations.ex:331
 #, elixir-autogen, elixir-format
 msgid "Dominant"
-msgstr ""
+msgstr "Dominant"
 
 #: lib/animina_web/trait_translations.ex:63
 #, elixir-autogen, elixir-format
 msgid "Don't Know Yet"
-msgstr ""
+msgstr "Henüz Bilmiyorum"
 
 #: lib/animina_web/trait_translations.ex:339
 #, elixir-autogen, elixir-format
 msgid "Exhibitionism"
-msgstr ""
+msgstr "Teşhircilik"
 
 #: lib/animina_web/trait_translations.ex:338
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Fetish"
-msgstr "Bitir"
+msgstr "Fetiş"
 
 #: lib/animina_web/trait_translations.ex:360
 #, elixir-autogen, elixir-format
 msgid "Fingering: Giving"
-msgstr ""
+msgstr "Parmakla Uyarma: Yapma"
 
 #: lib/animina_web/trait_translations.ex:361
 #, elixir-autogen, elixir-format
 msgid "Fingering: Receiving"
-msgstr ""
+msgstr "Parmakla Uyarma: Alma"
 
 #: lib/animina_web/trait_translations.ex:62
 #, elixir-autogen, elixir-format
 msgid "Friendship"
-msgstr ""
+msgstr "Arkadaşlık"
 
 #: lib/animina_web/trait_translations.ex:341
 #, elixir-autogen, elixir-format
 msgid "Group Play"
-msgstr ""
+msgstr "Grup Oyunu"
 
 #: lib/animina_web/trait_translations.ex:53
 #, elixir-autogen, elixir-format
 msgid "In a Relationship"
-msgstr ""
+msgstr "İlişkide"
 
 #: lib/animina_web/trait_translations.ex:57
 #, elixir-autogen, elixir-format
 msgid "It's Complicated"
-msgstr ""
+msgstr "Karmaşık"
 
 #: lib/animina_web/trait_translations.ex:367
 #, elixir-autogen, elixir-format
 msgid "Kissing"
-msgstr ""
+msgstr "Öpüşme"
 
 #: lib/animina_web/trait_translations.ex:59
 #, elixir-autogen, elixir-format
 msgid "Long-term Relationship"
-msgstr ""
+msgstr "Uzun Süreli İlişki"
 
 #: lib/animina_web/trait_translations.ex:60
 #, elixir-autogen, elixir-format
 msgid "Marriage"
-msgstr ""
+msgstr "Evlilik"
 
 #: lib/animina_web/trait_translations.ex:54
 #, elixir-autogen, elixir-format
 msgid "Married"
-msgstr ""
+msgstr "Evli"
 
 #: lib/animina_web/trait_translations.ex:364
 #, elixir-autogen, elixir-format
 msgid "Massage: Giving"
-msgstr ""
+msgstr "Masaj: Yapma"
 
 #: lib/animina_web/trait_translations.ex:365
 #, elixir-autogen, elixir-format
 msgid "Massage: Receiving"
-msgstr ""
+msgstr "Masaj: Alma"
 
 #: lib/animina_web/trait_translations.ex:371
 #, elixir-autogen, elixir-format
 msgid "Missionary"
-msgstr ""
+msgstr "Misyoner"
 
 #: lib/animina_web/trait_translations.ex:104
 #, elixir-autogen, elixir-format
 msgid "None at All"
-msgstr ""
+msgstr "Hiç"
 
 #: lib/animina_web/trait_translations.ex:107
 #, elixir-autogen, elixir-format
 msgid "Often"
-msgstr ""
+msgstr "Sık Sık"
 
 #: lib/animina_web/trait_translations.ex:66
 #, elixir-autogen, elixir-format
 msgid "Open Relationship"
-msgstr ""
+msgstr "Açık İlişki"
 
 #: lib/animina_web/trait_translations.ex:356
 #, elixir-autogen, elixir-format
 msgid "Oral Sex: Giving"
-msgstr ""
+msgstr "Oral Seks: Yapma"
 
 #: lib/animina_web/trait_translations.ex:357
 #, elixir-autogen, elixir-format
 msgid "Oral Sex: Receiving"
-msgstr ""
+msgstr "Oral Seks: Alma"
 
 #: lib/animina_web/trait_translations.ex:36
 #, elixir-autogen, elixir-format
 msgid "Pets"
-msgstr ""
+msgstr "Evcil Hayvanlar"
 
 #: lib/animina_web/trait_translations.ex:370
 #, elixir-autogen, elixir-format
 msgid "Phone Sex"
-msgstr ""
+msgstr "Telefon Seksi"
 
 #: lib/animina_web/trait_translations.ex:47
 #, elixir-autogen, elixir-format
 msgid "Political Parties"
-msgstr ""
+msgstr "Siyasi Partiler"
 
 #: lib/animina_web/trait_translations.ex:105
 #, elixir-autogen, elixir-format
 msgid "Rarely"
-msgstr ""
+msgstr "Nadiren"
 
 #: lib/animina_web/trait_translations.ex:26
 #, elixir-autogen, elixir-format
 msgid "Relationship Status"
-msgstr ""
+msgstr "İlişki Durumu"
 
 #: lib/animina_web/trait_translations.ex:362
 #, elixir-autogen, elixir-format
 msgid "Rimming: Giving"
-msgstr ""
+msgstr "Rimming: Yapma"
 
 #: lib/animina_web/trait_translations.ex:363
 #, elixir-autogen, elixir-format
 msgid "Rimming: Receiving"
-msgstr ""
+msgstr "Rimming: Alma"
 
 #: lib/animina_web/trait_translations.ex:336
 #, elixir-autogen, elixir-format
 msgid "Role Play"
-msgstr ""
+msgstr "Rol Yapma"
 
 #: lib/animina_web/trait_translations.ex:335
 #, elixir-autogen, elixir-format
 msgid "S&M"
-msgstr ""
+msgstr "S&M"
 
 #: lib/animina_web/trait_translations.ex:369
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sexting"
-msgstr "Ayarlar"
+msgstr "Sexting"
 
 #: lib/animina_web/trait_translations.ex:50
 #, elixir-autogen, elixir-format
 msgid "Sexual Practices"
-msgstr ""
+msgstr "Cinsel Pratikler"
 
 #: lib/animina_web/trait_translations.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sexual Preferences"
-msgstr "Tercihleri Kaydet"
+msgstr "Cinsel Tercihler"
 
 #: lib/animina_web/trait_translations.ex:65
 #, elixir-autogen, elixir-format
 msgid "Shared Activities"
-msgstr ""
+msgstr "Ortak Aktiviteler"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:826
 #: lib/animina_web/trait_translations.ex:52
 #, elixir-autogen, elixir-format
 msgid "Single"
-msgstr ""
+msgstr "Bekar"
 
 #: lib/animina_web/trait_translations.ex:61
 #, elixir-autogen, elixir-format
 msgid "Something Casual"
-msgstr ""
+msgstr "Ciddi Olmayan İlişki"
 
 #: lib/animina_web/trait_translations.ex:106
 #, elixir-autogen, elixir-format
 msgid "Sometimes"
-msgstr ""
+msgstr "Bazen"
 
 #: lib/animina_web/trait_translations.ex:374
 #, elixir-autogen, elixir-format
 msgid "Spooning"
-msgstr ""
+msgstr "Kaşık Pozisyonu"
 
 #: lib/animina_web/trait_translations.ex:376
 #, elixir-autogen, elixir-format
 msgid "Standing"
-msgstr ""
+msgstr "Ayakta"
 
 #: lib/animina_web/trait_translations.ex:332
 #, elixir-autogen, elixir-format
 msgid "Submissive"
-msgstr ""
+msgstr "Boyun Eğen"
 
 #: lib/animina_web/trait_translations.ex:343
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Swinging"
-msgstr ""
+msgstr "Swinger"
 
 #: lib/animina_web/trait_translations.ex:333
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Switch"
-msgstr "Rol Değiştir"
+msgstr "Switch"
 
 #: lib/animina_web/trait_translations.ex:337
 #, elixir-autogen, elixir-format
 msgid "Tantra"
-msgstr ""
+msgstr "Tantra"
 
 #: lib/animina_web/trait_translations.ex:342
 #, elixir-autogen, elixir-format
 msgid "Toys"
-msgstr ""
+msgstr "Oyuncaklar"
 
 #: lib/animina_web/trait_translations.ex:366
 #, elixir-autogen, elixir-format
 msgid "Vaginal Sex"
-msgstr ""
+msgstr "Vajinal Seks"
 
 #: lib/animina_web/trait_translations.ex:330
 #, elixir-autogen, elixir-format
 msgid "Vanilla"
-msgstr ""
+msgstr "Vanilya"
 
 #: lib/animina_web/trait_translations.ex:340
 #, elixir-autogen, elixir-format
 msgid "Voyeurism"
-msgstr ""
+msgstr "Röntgencilik"
 
 #: lib/animina_web/trait_translations.ex:27
 #, elixir-autogen, elixir-format
 msgid "What I'm Looking For"
-msgstr ""
+msgstr "Ne Arıyorum"
 
 #: lib/animina_web/trait_translations.ex:346
 #, elixir-autogen, elixir-format
 msgid "Deutsch"
-msgstr ""
+msgstr "Almanca"
 
 #: lib/animina_web/trait_translations.ex:352
 #, elixir-autogen, elixir-format
 msgid "Español"
-msgstr ""
+msgstr "İspanyolca"
 
 #: lib/animina_web/trait_translations.ex:351
 #, elixir-autogen, elixir-format
 msgid "Français"
-msgstr ""
+msgstr "Fransızca"
 
 #: lib/animina_web/trait_translations.ex:345
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Languages"
-msgstr "Dil"
+msgstr "Diller"
 
 #: lib/animina_web/trait_translations.ex:350
 #, elixir-autogen, elixir-format
 msgid "Polski"
-msgstr ""
+msgstr "Lehçe"
 
 #: lib/animina_web/trait_translations.ex:347
 #, elixir-autogen, elixir-format
 msgid "Türkçe"
-msgstr ""
+msgstr "Türkçe"
 
 #: lib/animina_web/live/user_live/settings.ex:34
 #, elixir-autogen, elixir-format
 msgid "Your current email is %{current_email}. A confirmation link has been sent to %{new_email}."
-msgstr ""
+msgstr "Mevcut e-postanız %{current_email}. %{new_email} adresine bir onay bağlantısı gönderildi."
 
 #: lib/animina_web/trait_translations.ex:348
 #, elixir-autogen, elixir-format
 msgid "Русский"
-msgstr ""
+msgstr "Rusça"
 
 #: lib/animina_web/trait_translations.ex:353
 #, elixir-autogen, elixir-format
 msgid "Українська"
-msgstr ""
+msgstr "Ukraynaca"
 
 #: lib/animina_web/trait_translations.ex:349
 #, elixir-autogen, elixir-format
 msgid "العربية"
-msgstr ""
+msgstr "Arapça"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:173
 #, elixir-autogen, elixir-format
 msgid "Choose file"
-msgstr ""
+msgstr "Dosya seç"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:170
 #, elixir-autogen, elixir-format
 msgid "Drag and drop your photo here, or"
-msgstr ""
+msgstr "Fotoğrafınızı buraya sürükleyip bırakın veya"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:569
 #, elixir-autogen, elixir-format
 msgid "Invalid file type. Please upload an image."
-msgstr ""
+msgstr "Geçersiz dosya türü. Lütfen bir resim yükleyin."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:570
 #, elixir-autogen, elixir-format
 msgid "Only one file at a time"
-msgstr ""
+msgstr "Aynı anda yalnızca bir dosya"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:463
 #, elixir-autogen, elixir-format
 msgid "Pending review"
-msgstr ""
+msgstr "İnceleme bekliyor"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:157
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded"
-msgstr ""
+msgstr "Fotoğraf yüklendi"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:546
 #: lib/animina_web/live/user_live/avatar_upload.ex:555
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded! It will be reviewed shortly."
-msgstr ""
+msgstr "Fotoğraf yüklendi! Kısa süre içinde incelenecek."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:464
 #: lib/animina_web/live/user_live/avatar_upload.ex:493
 #, elixir-autogen, elixir-format
 msgid "Processing"
-msgstr ""
+msgstr "İşleniyor"
 
 #: lib/animina_web/components/layouts.ex:307
 #: lib/animina_web/live/user_live/avatar_upload.ex:23
@@ -3189,199 +3189,199 @@ msgstr ""
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
 #: lib/animina_web/live/user_live/profile_hub.ex:48
 #: lib/animina_web/live/user_live/waitlist.ex:104
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Profile Photo"
-msgstr "Profil"
+msgstr "Profil Fotoğrafı"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:242
 #, elixir-autogen, elixir-format
 msgid "Upload Photo"
-msgstr ""
+msgstr "Fotoğraf Yükle"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:30
 #, elixir-autogen, elixir-format
 msgid "Upload a photo that shows your face clearly"
-msgstr ""
+msgstr "Yüzünüzü net gösteren bir fotoğraf yükleyin"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:571
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1002
 #, elixir-autogen, elixir-format
 msgid "Upload error"
-msgstr ""
+msgstr "Yükleme hatası"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:490
 #: lib/animina_web/live/user_live/avatar_upload.ex:495
 #: lib/animina_web/live/user_live/avatar_upload.ex:508
 #, elixir-autogen, elixir-format
 msgid "Upload failed"
-msgstr ""
+msgstr "Yükleme başarısız"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:561
 #, elixir-autogen, elixir-format
 msgid "Upload failed. Please try again."
-msgstr ""
+msgstr "Yükleme başarısız oldu. Lütfen tekrar deneyin."
 
 #: lib/animina_web/components/layouts.ex:249
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "On Waitlist"
-msgstr "Bekleme listesi"
+msgstr "Bekleme Listesinde"
 
 #: lib/animina_web/components/layouts.ex:197
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "On waitlist"
-msgstr "Bekleme listesi"
+msgstr "Bekleme listesinde"
 
 #: lib/animina_web/components/layouts.ex:255
 #, elixir-autogen, elixir-format
 msgid "Referral progress"
-msgstr ""
+msgstr "Davet ilerlemesi"
 
 #: lib/animina_web/helpers/photo_status.ex:55
 #: lib/animina_web/live/user_live/avatar_upload.ex:480
 #: lib/animina_web/live/user_live/avatar_upload.ex:484
 #, elixir-autogen, elixir-format
 msgid "No face detected"
-msgstr ""
+msgstr "Yüz algılanmadı"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:176
 #, elixir-autogen, elixir-format
 msgid "AI"
-msgstr ""
+msgstr "Yapay Zeka"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:689
 #, elixir-autogen, elixir-format
 msgid "Add notes about your decision..."
-msgstr ""
+msgstr "Kararınız hakkında notlar ekleyin..."
 
 #: lib/animina_web/live/admin/photo_history_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Added to blacklist"
-msgstr ""
+msgstr "Kara listeye eklendi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:656
 #, elixir-autogen, elixir-format
 msgid "Appeal Reason"
-msgstr ""
+msgstr "İtiraz Nedeni"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Appeal approved"
-msgstr ""
+msgstr "İtiraz onaylandı"
 
 #: lib/animina_web/helpers/photo_status.ex:68
 #: lib/animina_web/live/admin/photo_history_live.ex:170
 #: lib/animina_web/live/user_live/avatar_upload.ex:492
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
-msgstr ""
+msgstr "İtiraz reddedildi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:145
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected."
-msgstr ""
+msgstr "İtiraz reddedildi."
 
 #: lib/animina_web/live/admin/photo_history_live.ex:168
 #, elixir-autogen, elixir-format
 msgid "Appeal submitted"
-msgstr ""
+msgstr "İtiraz gönderildi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:744
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Approve"
-msgstr ""
+msgstr "Onayla"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:160
 #, elixir-autogen, elixir-format
 msgid "Blacklist checked"
-msgstr ""
+msgstr "Kara liste kontrol edildi"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Blacklist match found"
-msgstr ""
+msgstr "Kara liste eşleşmesi bulundu"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:123
 #, elixir-autogen, elixir-format
 msgid "Could not approve: %{reason}"
-msgstr ""
+msgstr "Onaylanamadı: %{reason}"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:154
 #, elixir-autogen, elixir-format
 msgid "Could not reject: %{reason}"
-msgstr ""
+msgstr "Reddedilemedi: %{reason}"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:408
 #, elixir-autogen, elixir-format
 msgid "Could not submit appeal. Please try again."
-msgstr ""
+msgstr "İtiraz gönderilemedi. Lütfen tekrar deneyin."
 
 #: lib/animina_web/live/admin/photo_history_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Escalated to Ollama (Face)"
-msgstr ""
+msgstr "Ollama'ya iletildi (Yüz)"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:163
 #, elixir-autogen, elixir-format
 msgid "Escalated to Ollama (NSFW)"
-msgstr ""
+msgstr "Ollama'ya iletildi (NSFW)"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Face detection completed"
-msgstr ""
+msgstr "Yüz algılama tamamlandı"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:32
 #, elixir-autogen, elixir-format
 msgid "History"
-msgstr ""
+msgstr "Geçmiş"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:57
 #, elixir-autogen, elixir-format
 msgid "NSFW"
-msgstr ""
+msgstr "NSFW"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "NSFW check completed"
-msgstr ""
+msgstr "NSFW kontrolü tamamlandı"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "No Face"
-msgstr ""
+msgstr "Yüz Yok"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:148
 #, elixir-autogen, elixir-format
 msgid "No history recorded for this photo."
-msgstr ""
+msgstr "Bu fotoğraf için geçmiş kaydı yok."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:448
 #, elixir-autogen, elixir-format
 msgid "No pending appeals."
-msgstr ""
+msgstr "Bekleyen itiraz yok."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:491
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Pending moderator review"
-msgstr ""
+msgstr "Moderatör incelemesi bekleniyor"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:531
 #: lib/animina_web/live/admin/photo_history_live.ex:41
 #: lib/animina_web/live/user_live/moodboard_editor.ex:379
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo"
-msgstr ""
+msgstr "Fotoğraf"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:16
 #: lib/animina_web/live/admin/photo_history_live.ex:48
 #, elixir-autogen, elixir-format
 msgid "Photo History"
-msgstr ""
+msgstr "Fotoğraf Geçmişi"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:64
 #, elixir-autogen, elixir-format
 msgid "Photo ID: %{id}"
-msgstr ""
+msgstr "Fotoğraf ID: %{id}"
 
 #: lib/animina_web/components/layouts.ex:449
 #: lib/animina_web/live/admin/photo_history_live.ex:30
@@ -3389,558 +3389,558 @@ msgstr ""
 #: lib/animina_web/live/admin/photo_reviews_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Photo Reviews"
-msgstr ""
+msgstr "Fotoğraf İncelemeleri"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:166
 #, elixir-autogen, elixir-format
 msgid "Photo approved"
-msgstr ""
+msgstr "Fotoğraf onaylandı"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Photo approved."
-msgstr ""
+msgstr "Fotoğraf onaylandı."
 
 #: lib/animina_web/helpers/photo_status.ex:60
 #: lib/animina_web/live/admin/photo_history_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Photo rejected"
-msgstr ""
+msgstr "Fotoğraf reddedildi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:472
 #: lib/animina_web/live/admin/photo_reviews_live.ex:592
 #, elixir-autogen, elixir-format
 msgid "Photo under review"
-msgstr ""
+msgstr "Fotoğraf inceleniyor"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:159
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Processing completed"
-msgstr ""
+msgstr "İşlem tamamlandı"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:158
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Processing started"
-msgstr ""
+msgstr "İşlem başladı"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:740
 #, elixir-autogen, elixir-format
 msgid "Reject"
-msgstr ""
+msgstr "Reddet"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:230
 #: lib/animina_web/live/admin/photo_reviews_live.ex:708
 #, elixir-autogen, elixir-format
 msgid "Remove from blacklist"
-msgstr ""
+msgstr "Kara listeden kaldır"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "Removed from blacklist"
-msgstr ""
+msgstr "Kara listeden kaldırıldı"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:123
 #, elixir-autogen, elixir-format
 msgid "Request Human Review"
-msgstr ""
+msgstr "İnsan İncelemesi İste"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "Review Appeal"
-msgstr ""
+msgstr "İtirazı İncele"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:685
 #, elixir-autogen, elixir-format
 msgid "Reviewer Notes (optional)"
-msgstr ""
+msgstr "İnceleyici Notları (isteğe bağlı)"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:725
 #, elixir-autogen, elixir-format
 msgid "Similar images will be auto-rejected"
-msgstr ""
+msgstr "Benzer görseller otomatik olarak reddedilecek"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:663
 #, elixir-autogen, elixir-format
 msgid "Submitted"
-msgstr ""
+msgstr "Gönderildi"
 
 #: lib/animina_web/components/layouts.ex:516
 #: lib/animina_web/live/admin/photo_history_live.ex:175
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "System"
-msgstr ""
+msgstr "Sistem"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:114
 #, elixir-autogen, elixir-format
 msgid "Think this was a mistake? You can request a human review."
-msgstr ""
+msgstr "Bunun bir hata olduğunu mu düşünüyorsunuz? İnsan incelemesi talep edebilirsiniz."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:710
 #, elixir-autogen, elixir-format
 msgid "This photo is currently blacklisted"
-msgstr ""
+msgstr "Bu fotoğraf şu anda kara listede"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:675
 #, elixir-autogen, elixir-format
 msgid "View full history"
-msgstr ""
+msgstr "Tam geçmişi görüntüle"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:133
 #, elixir-autogen, elixir-format
 msgid "Your appeal was rejected. Please upload a different photo."
-msgstr ""
+msgstr "İtirazınız reddedildi. Lütfen farklı bir fotoğraf yükleyin."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:614
 #, elixir-autogen, elixir-format
 msgid "AI Analysis"
-msgstr ""
+msgstr "Yapay Zeka Analizi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:723
 #, elixir-autogen, elixir-format
 msgid "Add rejected photo to blacklist automatically"
-msgstr ""
+msgstr "Reddedilen fotoğrafı otomatik olarak kara listeye ekle"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:759
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Blacklist check"
-msgstr ""
+msgstr "Kara liste kontrolü"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:760
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Blacklist match"
-msgstr ""
+msgstr "Kara liste eşleşmesi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:757
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Face detection"
-msgstr ""
+msgstr "Yüz algılama"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:763
 #, elixir-autogen, elixir-format
 msgid "Face escalated to Ollama"
-msgstr ""
+msgstr "Yüz Ollama'ya iletildi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:756
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "NSFW check"
-msgstr ""
+msgstr "NSFW kontrolü"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:762
 #, elixir-autogen, elixir-format
 msgid "NSFW escalated to Ollama"
-msgstr ""
+msgstr "NSFW Ollama'ya iletildi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:761
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Rejected"
-msgstr ""
+msgstr "Reddedildi"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:144
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete your profile photo?"
-msgstr ""
+msgstr "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:425
 #, elixir-autogen, elixir-format
 msgid "Could not delete photo. Please try again."
-msgstr ""
+msgstr "Fotoğraf silinemedi. Lütfen tekrar deneyin."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:149
 #, elixir-autogen, elixir-format
 msgid "Delete Photo"
-msgstr ""
+msgstr "Fotoğrafı Sil"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:419
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo deleted."
-msgstr ""
+msgstr "Fotoğraf silindi."
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:833
 #: lib/animina_web/live/admin/feature_flags_live.ex:1035
 #, elixir-autogen, elixir-format
 msgid "Artificial delay in milliseconds (0 = no delay)"
-msgstr ""
+msgstr "Milisaniye cinsinden yapay gecikme (0 = gecikme yok)"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:452
 #: lib/animina_web/live/admin/feature_flags_live.ex:540
 #, elixir-autogen, elixir-format
 msgid "Auto"
-msgstr ""
+msgstr "Otomatik"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:788
 #: lib/animina_web/live/admin/feature_flags_live.ex:981
 #, elixir-autogen, elixir-format
 msgid "Auto-approve"
-msgstr ""
+msgstr "Otomatik onay"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:748
 #, elixir-autogen, elixir-format
 msgid "Auto-approve skips the check and returns a preset value"
-msgstr ""
+msgstr "Otomatik onay kontrolü atlar ve önceden ayarlanmış bir değer döndürür"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:799
 #: lib/animina_web/live/admin/feature_flags_live.ex:992
 #, elixir-autogen, elixir-format
 msgid "Auto-approve value"
-msgstr ""
+msgstr "Otomatik onay değeri"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:115
 #: lib/animina_web/live/admin/feature_flags_live.ex:221
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not save settings."
-msgstr "Konum kaldırılamadı."
+msgstr "Ayarlar kaydedilemedi."
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:819
 #: lib/animina_web/live/admin/feature_flags_live.ex:1021
 #, elixir-autogen, elixir-format
 msgid "Delay (ms)"
-msgstr ""
+msgstr "Gecikme (ms)"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:749
 #, elixir-autogen, elixir-format
 msgid "Delays simulate slow processing for UX testing"
-msgstr ""
+msgstr "Gecikmeler, UX testi için yavaş işlemeyi simüle eder"
 
 #: lib/animina_web/components/layouts.ex:523
 #: lib/animina_web/live/admin/feature_flags_live.ex:18
 #: lib/animina_web/live/admin/feature_flags_live.ex:379
 #, elixir-autogen, elixir-format
 msgid "Feature Flags"
-msgstr ""
+msgstr "Özellik Bayrakları"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:745
 #, elixir-autogen, elixir-format
 msgid "How it works"
-msgstr ""
+msgstr "Nasıl çalışır"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:354
 #: lib/animina_web/live/admin/feature_flags_live.ex:696
 #, elixir-autogen, elixir-format
 msgid "Off"
-msgstr ""
+msgstr "Kapalı"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:347
 #: lib/animina_web/live/admin/feature_flags_live.ex:696
 #, elixir-autogen, elixir-format
 msgid "On"
-msgstr ""
+msgstr "Açık"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:519
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo Processing"
-msgstr ""
+msgstr "Fotoğraf İşleme"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:110
 #: lib/animina_web/live/admin/feature_flags_live.ex:216
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Settings saved."
-msgstr "Ayarlar"
+msgstr "Ayarlar kaydedildi."
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:790
 #: lib/animina_web/live/admin/feature_flags_live.ex:983
 #, elixir-autogen, elixir-format
 msgid "Skip this check and return a preset value"
-msgstr ""
+msgstr "Bu kontrolü atla ve önceden ayarlanmış bir değer döndür"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:747
 #, elixir-autogen, elixir-format
 msgid "Toggle switches enable/disable processing steps"
-msgstr ""
+msgstr "Anahtarlar işlem adımlarını etkinleştirir/devre dışı bırakır"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:811
 #: lib/animina_web/live/admin/feature_flags_live.ex:1013
 #, elixir-autogen, elixir-format
 msgid "Value returned when auto-approve is enabled"
-msgstr ""
+msgstr "Otomatik onay etkinleştirildiğinde döndürülen değer"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:393
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:144
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} entry"
 msgid_plural "%{count} entries"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} kayıt"
+msgstr[1] "%{count} kayıt"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:182
 #, elixir-autogen, elixir-format
 msgid "Added:"
-msgstr ""
+msgstr "Eklendi:"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "Blacklist entry deleted."
-msgstr ""
+msgstr "Kara liste kaydı silindi."
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:156
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Blacklisted photo"
-msgstr ""
+msgstr "Kara listedeki fotoğraf"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:187
 #, elixir-autogen, elixir-format
 msgid "By:"
-msgstr ""
+msgstr "Ekleyen:"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:70
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not delete entry."
-msgstr "Rol eklenemedi."
+msgstr "Kayıt silinemedi."
 
 #: lib/animina_web/components/chat_panel_component.ex:320
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
 #: lib/animina_web/live/messages_live.ex:409
 #: lib/animina_web/live/user_live/moodboard_editor.ex:537
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete"
-msgstr ""
+msgstr "Sil"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:204
 #, elixir-autogen, elixir-format
 msgid "Delete this entry?"
-msgstr ""
+msgstr "Bu kaydı silmek istiyor musunuz?"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:56
 #, elixir-autogen, elixir-format
 msgid "Entry not found."
-msgstr ""
+msgstr "Kayıt bulunamadı."
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:130
 #, elixir-autogen, elixir-format
 msgid "Manage blacklisted photo hashes. Photos matching these hashes are automatically rejected."
-msgstr ""
+msgstr "Kara listedeki fotoğraf özetlerini yönetin. Bu özetlerle eşleşen fotoğraflar otomatik olarak reddedilir."
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:139
 #, elixir-autogen, elixir-format
 msgid "No blacklist entries yet."
-msgstr ""
+msgstr "Henüz kara liste kaydı yok."
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "No thumbnail"
-msgstr ""
+msgstr "Küçük resim yok"
 
 #: lib/animina_web/components/layouts.ex:471
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:14
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:128
 #, elixir-autogen, elixir-format
 msgid "Photo Blacklist"
-msgstr ""
+msgstr "Fotoğraf Kara Listesi"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:193
 #, elixir-autogen, elixir-format
 msgid "Source user:"
-msgstr ""
+msgstr "Kaynak kullanıcı:"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:392
 #, elixir-autogen, elixir-format
 msgid "%{count} pending appeal"
 msgid_plural "%{count} pending appeals"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} bekleyen itiraz"
+msgstr[1] "%{count} bekleyen itiraz"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:405
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} selected"
 msgid_plural "%{count} selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} seçili"
+msgstr[1] "%{count} seçili"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:287
 #: lib/animina_web/live/admin/photo_reviews_live.ex:551
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} total"
 msgid_plural "%{count} total"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} toplam"
+msgstr[1] "%{count} toplam"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:432
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Add to blacklist"
-msgstr ""
+msgstr "Kara listeye ekle"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "Clear selection"
-msgstr ""
+msgstr "Seçimi temizle"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:567
 #, elixir-autogen, elixir-format
 msgid "Click"
-msgstr ""
+msgstr "Tıkla"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:560
 #, elixir-autogen, elixir-format
 msgid "Close / Deselect"
-msgstr ""
+msgstr "Kapat / Seçimi kaldır"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:562
 #, elixir-autogen, elixir-format
 msgid "Navigate pages"
-msgstr ""
+msgstr "Sayfalarda gezin"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:223
 #: lib/animina_web/live/admin/photo_reviews_live.ex:263
 #, elixir-autogen, elixir-format
 msgid "No appeals selected."
-msgstr ""
+msgstr "İtiraz seçilmedi."
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:253
 #: lib/animina_web/live/admin/photo_reviews_live.ex:517
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{total}"
-msgstr ""
+msgstr "Sayfa %{page} / %{total}"
 
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:268
 #: lib/animina_web/live/admin/photo_reviews_live.ex:532
 #, elixir-autogen, elixir-format
 msgid "Per page:"
-msgstr ""
+msgstr "Sayfa başına:"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:567
 #, elixir-autogen, elixir-format
 msgid "Range select"
-msgstr ""
+msgstr "Aralık seçimi"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:421
 #, elixir-autogen, elixir-format
 msgid "Reject Selected"
-msgstr ""
+msgstr "Seçilenleri Reddet"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:559
 #, elixir-autogen, elixir-format
 msgid "Reject selected"
-msgstr ""
+msgstr "Seçilenleri reddet"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:246
 #, elixir-autogen, elixir-format
 msgid "Rejected %{count} appeal."
 msgid_plural "Rejected %{count} appeals."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} itiraz reddedildi."
+msgstr[1] "%{count} itiraz reddedildi."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Rejected %{resolved} appeals. %{failed} already resolved."
-msgstr ""
+msgstr "%{resolved} itiraz reddedildi. %{failed} zaten çözülmüş."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:557
 #, elixir-autogen, elixir-format
 msgid "Select all"
-msgstr ""
+msgstr "Tümünü seç"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:415
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Approve Selected"
-msgstr ""
+msgstr "Seçilenleri Onayla"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:558
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Approve selected"
-msgstr ""
+msgstr "Seçilenleri onayla"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Approved %{count} appeal."
 msgid_plural "Approved %{count} appeals."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} itiraz onaylandı."
+msgstr[1] "%{count} itiraz onaylandı."
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:274
 #, elixir-autogen, elixir-format
 msgid "Approved %{resolved} appeals. %{failed} already resolved."
-msgstr ""
+msgstr "%{resolved} itiraz onaylandı. %{failed} zaten çözülmüş."
 
 #: lib/animina_web/components/layouts.ex:440
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Moderation"
-msgstr "Moderatör"
+msgstr "Moderasyon"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:82
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Processing image"
-msgstr ""
+msgstr "Görsel işleniyor"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:95
 #, elixir-autogen, elixir-format
 msgid "This usually takes 40 seconds"
-msgstr ""
+msgstr "Bu genellikle 40 saniye sürer"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:568
 #: lib/animina_web/live/user_live/moodboard_editor.ex:999
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "File is too large (max 6MB)"
-msgstr ""
+msgstr "Dosya çok büyük (maks 6MB)"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:177
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
-msgstr ""
+msgstr "JPG, PNG, WEBP veya HEIC. Maks 6MB."
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:536
 #: lib/animina_web/live/admin/ollama_logs_live.ex:672
 #: lib/animina_web/live/admin/photo_reviews_live.ex:644
 #, elixir-autogen, elixir-format
 msgid "Server"
-msgstr ""
+msgstr "Sunucu"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:758
 #, elixir-autogen, elixir-format
 msgid "Age detection"
-msgstr ""
+msgstr "Yaş algılama"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:458
 #: lib/animina_web/live/admin/ollama_logs_live.ex:474
 #, elixir-autogen, elixir-format
 msgid "All"
-msgstr ""
+msgstr "Tümü"
 
 #: lib/animina_web/components/moodboard_components.ex:392
 #: lib/animina_web/live/user_live/moodboard_editor.ex:90
 #: lib/animina_web/live/user_live/moodboard_editor.ex:979
 #, elixir-autogen, elixir-format
 msgid "Add Photo"
-msgstr ""
+msgstr "Fotoğraf Ekle"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:90
 #: lib/animina_web/live/user_live/avatar_upload.ex:465
 #, elixir-autogen, elixir-format
 msgid "Analyzing photo"
-msgstr ""
+msgstr "Fotoğraf analiz ediliyor"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:529
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this item? This cannot be undone."
-msgstr ""
+msgstr "Bu öğeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:439
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Choose File"
-msgstr ""
+msgstr "Dosya Seç"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:160
 #, elixir-autogen, elixir-format
 msgid "Click a button above to add your first item."
-msgstr ""
+msgstr "İlk öğenizi eklemek için yukarıdaki bir düğmeye tıklayın."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:527
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete Item"
-msgstr ""
+msgstr "Öğeyi Sil"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:433
 #, elixir-autogen, elixir-format
 msgid "Drag and drop or click to upload"
-msgstr ""
+msgstr "Yüklemek için sürükleyip bırakın veya tıklayın"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:790
 #, elixir-autogen, elixir-format
 msgid "Failed to add item"
-msgstr ""
+msgstr "Öğe eklenemedi"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:921
 #, elixir-autogen, elixir-format
 msgid "Failed to delete item"
-msgstr ""
+msgstr "Öğe silinemedi"
 
 #: lib/animina_web/components/moodboard_components.ex:42
 #: lib/animina_web/components/moodboard_components.ex:180
@@ -3948,257 +3948,257 @@ msgstr ""
 #: lib/animina_web/live/components/live_moodboard_item_component.ex:64
 #, elixir-autogen, elixir-format
 msgid "Hidden"
-msgstr ""
+msgstr "Gizli"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1000
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Invalid file type"
-msgstr ""
+msgstr "Geçersiz dosya türü"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:915
 #, elixir-autogen, elixir-format
 msgid "Item deleted"
-msgstr ""
+msgstr "Öğe silindi"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:436
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WebP, HEIC up to 6MB"
-msgstr ""
+msgstr "JPG, PNG, WebP, HEIC - 6MB'a kadar"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1001
 #, elixir-autogen, elixir-format
 msgid "Too many files"
-msgstr ""
+msgstr "Çok fazla dosya"
 
 #: lib/animina_web/components/moodboard_components.ex:103
 #, elixir-autogen, elixir-format
 msgid "AI review in progress"
-msgstr ""
+msgstr "Yapay zeka incelemesi devam ediyor"
 
 #: lib/animina_web/components/moodboard_components.ex:93
 #: lib/animina_web/helpers/photo_status.ex:46
 #: lib/animina_web/helpers/photo_status.ex:49
 #, elixir-autogen, elixir-format
 msgid "Analyzing..."
-msgstr ""
+msgstr "Analiz ediliyor..."
 
 #: lib/animina_web/components/column_toggle.ex:21
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Single column"
-msgstr ""
+msgstr "Tek sütun"
 
 #: lib/animina_web/components/column_toggle.ex:38
 #, elixir-autogen, elixir-format
 msgid "Two columns"
-msgstr ""
+msgstr "İki sütun"
 
 #: lib/animina_web/components/column_toggle.ex:56
 #, elixir-autogen, elixir-format
 msgid "Three columns"
-msgstr ""
+msgstr "Üç sütun"
 
 #: lib/animina_web/components/moodboard_components.ex:318
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete item"
-msgstr ""
+msgstr "Öğeyi sil"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:981
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Add Photo + Text"
-msgstr ""
+msgstr "Fotoğraf + Metin Ekle"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:113
 #: lib/animina_web/live/user_live/moodboard_editor.ex:980
 #, elixir-autogen, elixir-format
 msgid "Add Text"
-msgstr ""
+msgstr "Metin Ekle"
 
 #: lib/animina_web/components/moodboard_components.ex:293
 #: lib/animina_web/components/moodboard_components.ex:360
 #: lib/animina_web/components/moodboard_components.ex:402
 #: lib/animina_web/components/moodboard_components.ex:437
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Edit text"
-msgstr ""
+msgstr "Metni düzenle"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:861
 #: lib/animina_web/live/user_live/moodboard_editor.ex:887
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to update text"
-msgstr ""
+msgstr "Metin güncellenemedi"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:136
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo + Text"
-msgstr ""
+msgstr "Fotoğraf + Metin"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:452
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Text"
-msgstr "İleri"
+msgstr "Metin"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:858
 #: lib/animina_web/live/user_live/moodboard_editor.ex:884
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Text updated"
-msgstr ""
+msgstr "Metin güncellendi"
 
 #: lib/animina_web/components/moodboard_components.ex:528
 #: lib/animina_web/live/user_live/moodboard_editor.ex:462
 #: lib/animina_web/live/user_live/moodboard_editor.ex:572
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Write your text here..."
-msgstr ""
+msgstr "Metninizi buraya yazın..."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:254
 #, elixir-autogen, elixir-format
 msgid "Adjust the square to select the area for your profile photo."
-msgstr ""
+msgstr "Profil fotoğrafınız için alanı seçmek üzere kareyi ayarlayın."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:274
 #, elixir-autogen, elixir-format
 msgid "Apply Crop"
-msgstr ""
+msgstr "Kırpmayı Uygula"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:252
 #: lib/animina_web/live/user_live/moodboard_editor.ex:488
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Crop Photo"
-msgstr ""
+msgstr "Fotoğrafı Kırp"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1077
 #, elixir-autogen, elixir-format
 msgid "Crop to Square"
-msgstr ""
+msgstr "Kare Kırp"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:187
 #: lib/animina_web/live/user_live/moodboard_editor.ex:393
 #, elixir-autogen, elixir-format
 msgid "Cropped preview"
-msgstr ""
+msgstr "Kırpılmış önizleme"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1054
 #, elixir-autogen, elixir-format
 msgid "Cropped to square"
-msgstr ""
+msgstr "Kare olarak kırpıldı"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:503
 #, elixir-autogen, elixir-format
 msgid "Use Full Image"
-msgstr ""
+msgstr "Tam Görseli Kullan"
 
 #: lib/animina_web/helpers/photo_status.ex:40
 #: lib/animina_web/helpers/photo_status.ex:43
 #: lib/animina_web/live/user_live/avatar_upload.ex:203
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Processing..."
-msgstr ""
+msgstr "İşleniyor..."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:198
 #, elixir-autogen, elixir-format
 msgid "Ready to upload"
-msgstr ""
+msgstr "Yüklemeye hazır"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1080
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Apply"
-msgstr ""
+msgstr "Uygula"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:251
 #, elixir-autogen, elixir-format
 msgid "Aspect Ratio"
-msgstr ""
+msgstr "En-Boy Oranı"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1078
 #, elixir-autogen, elixir-format
 msgid "Crop to 16:9"
-msgstr ""
+msgstr "16:9 Kırp"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1079
 #, elixir-autogen, elixir-format
 msgid "Crop to 4:3"
-msgstr ""
+msgstr "4:3 Kırp"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Crop your photo or skip to use the full image."
-msgstr ""
+msgstr "Fotoğrafınızı kırpın veya tam görseli kullanmak için atlayın."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1068
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 16:9 format, or skip to use the full image."
-msgstr ""
+msgstr "Fotoğrafınızı 16:9 formatına kırpın veya tam görseli kullanmak için atlayın."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1072
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 4:3 format, or skip to use the full image."
-msgstr ""
+msgstr "Fotoğrafınızı 4:3 formatına kırpın veya tam görseli kullanmak için atlayın."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1064
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to a square, or skip to use the full image."
-msgstr ""
+msgstr "Fotoğrafınızı kare olarak kırpın veya tam görseli kullanmak için atlayın."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1055
 #, elixir-autogen, elixir-format
 msgid "Cropped to 16:9"
-msgstr ""
+msgstr "16:9 olarak kırpıldı"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1056
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Cropped to 4:3"
-msgstr ""
+msgstr "4:3 olarak kırpıldı"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:348
 #, elixir-autogen, elixir-format
 msgid "Landscape"
-msgstr ""
+msgstr "Yatay"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:322
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Orientation"
-msgstr ""
+msgstr "Yön"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:268
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Original"
-msgstr ""
+msgstr "Orijinal"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1053
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1057
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo ready"
-msgstr ""
+msgstr "Fotoğraf hazır"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:373
 #, elixir-autogen, elixir-format
 msgid "Portrait"
-msgstr ""
+msgstr "Dikey"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:314
 #, elixir-autogen, elixir-format
 msgid "Square"
-msgstr ""
+msgstr "Kare"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:1060
 #, elixir-autogen, elixir-format
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
-msgstr ""
+msgstr "Fotoğrafınızın kırpılmasına gerek yok. Devam etmek için 'Tam Görseli Kullan'a tıklayın."
 
 #: lib/animina/accounts.ex:158
 #, elixir-autogen, elixir-format
 msgid "Erzähl uns etwas über dich..."
-msgstr ""
+msgstr "Bize kendinden bahset..."
 
 #: lib/animina/accounts.ex:159
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself..."
-msgstr ""
+msgstr "Bize kendinizden bahsedin..."
 
 #: lib/animina_web/components/moodboard_components.ex:389
 #, elixir-autogen, elixir-format
 msgid "Upload a profile photo to complete your About Me"
-msgstr ""
+msgstr "Hakkımda bölümünü tamamlamak için bir profil fotoğrafı yükleyin"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:550
 #, elixir-autogen, elixir-format
@@ -4206,9 +4206,9 @@ msgid "Edit Text"
 msgstr "Metni Düzenle"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:190
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Add photos and text to your moodboard to share with others."
-msgstr ""
+msgstr "Başkalarıyla paylaşmak için moodboard'unuza fotoğraf ve metin ekleyin."
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
 #: lib/animina_web/live/user_live/moodboard_editor.ex:622
@@ -4216,45 +4216,45 @@ msgstr ""
 #: lib/animina_web/live/user_live/waitlist.ex:150
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
-msgstr ""
+msgstr "Moodboard'u Düzenle"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:787
 #, elixir-autogen, elixir-format
 msgid "Item added to moodboard"
-msgstr ""
+msgstr "Öğe moodboard'a eklendi"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:562
 #: lib/animina_web/live/admin/ollama_logs_live.ex:675
 #: lib/animina_web/live/user_live/moodboard_editor.ex:33
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
-msgstr ""
+msgstr "Moodboard"
 
 #: lib/animina_web/components/layouts.ex:335
 #: lib/animina_web/live/user_live/profile_hub.ex:62
 #, elixir-autogen, elixir-format
 msgid "My Moodboard"
-msgstr ""
+msgstr "Moodboard'um"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:187
 #, elixir-autogen, elixir-format
 msgid "No moodboard items yet"
-msgstr ""
+msgstr "Henüz moodboard öğesi yok"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:58
 #, elixir-autogen, elixir-format
 msgid "View Moodboard"
-msgstr ""
+msgstr "Moodboard'u Görüntüle"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:157
 #, elixir-autogen, elixir-format
 msgid "Your moodboard is empty"
-msgstr ""
+msgstr "Moodboard'unuz boş"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:284
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not save setting."
-msgstr "Konum kaldırılamadı."
+msgstr "Ayar kaydedilemedi."
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:461
 #: lib/animina_web/live/admin/feature_flags_live.ex:601
@@ -4264,45 +4264,45 @@ msgstr "Konum kaldırılamadı."
 #: lib/animina_web/live/admin/feature_flags_live.ex:1154
 #, elixir-autogen, elixir-format
 msgid "Default: %{default}, Range: %{min}-%{max}"
-msgstr ""
+msgstr "Varsayılan: %{default}, Aralık: %{min}-%{max}"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:279
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Setting saved."
-msgstr "Ayarlar"
+msgstr "Ayar kaydedildi."
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:577
 #, elixir-autogen, elixir-format
 msgid "System Settings"
-msgstr ""
+msgstr "Sistem Ayarları"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:885
 #: lib/animina_web/live/admin/feature_flags_live.ex:1042
 #: lib/animina_web/live/admin/feature_flags_live.ex:1127
 #, elixir-autogen, elixir-format
 msgid "Value"
-msgstr ""
+msgstr "Değer"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:64
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Add photos and text to present yourself. Drag to reorder."
-msgstr ""
+msgstr "Kendinizi tanıtmak için fotoğraf ve metin ekleyin. Sıralamak için sürükleyin."
 
 #: lib/animina_web/components/chat_panel_component.ex:146
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Close"
-msgstr "kapat"
+msgstr "Kapat"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:550
 #: lib/animina_web/live/admin/ollama_logs_live.ex:671
 #, elixir-autogen, elixir-format
 msgid "Duration"
-msgstr ""
+msgstr "Süre"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:478
 #, elixir-autogen, elixir-format
 msgid "Error"
-msgstr ""
+msgstr "Hata"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:415
 #: lib/animina_web/live/admin/ollama_logs_live.ex:455
@@ -4310,24 +4310,24 @@ msgstr ""
 #: lib/animina_web/live/admin/ollama_logs_live.ex:670
 #, elixir-autogen, elixir-format
 msgid "Model"
-msgstr ""
+msgstr "Model"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:467
 #: lib/animina_web/live/admin/ollama_logs_live.ex:542
 #: lib/animina_web/live/admin/ollama_logs_live.ex:673
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Status"
-msgstr ""
+msgstr "Durum"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:558
 #, elixir-autogen, elixir-format
 msgid "Time"
-msgstr ""
+msgstr "Zaman"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:476
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Success"
-msgstr ""
+msgstr "Başarılı"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:470
 #: lib/animina_web/live/admin/feature_flags_live.ex:597
@@ -4335,190 +4335,190 @@ msgstr ""
 #: lib/animina_web/live/admin/feature_flags_live.ex:896
 #: lib/animina_web/live/admin/feature_flags_live.ex:1053
 #: lib/animina_web/live/admin/feature_flags_live.ex:1138
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Default: %{default}"
-msgstr ""
+msgstr "Varsayılan: %{default}"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:381
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Control feature flags and system settings."
-msgstr ""
+msgstr "Özellik bayraklarını ve sistem ayarlarını kontrol edin."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:505
 #, elixir-autogen, elixir-format
 msgid "Attire violation"
-msgstr ""
+msgstr "Kıyafet ihlali"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:502
 #, elixir-autogen, elixir-format
 msgid "Content violation"
-msgstr ""
+msgstr "İçerik ihlali"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:474
 #, elixir-autogen, elixir-format
 msgid "Multiple people detected"
-msgstr ""
+msgstr "Birden fazla kişi algılandı"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:477
 #, elixir-autogen, elixir-format
 msgid "Photo not allowed"
-msgstr ""
+msgstr "Fotoğrafa izin verilmiyor"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:300
 #, elixir-autogen, elixir-format
 msgid "This page doesn't exist or you don't have access."
-msgstr ""
+msgstr "Bu sayfa mevcut değil veya erişiminiz yok."
 
 #: lib/animina_web/helpers/photo_status.ex:65
 #, elixir-autogen, elixir-format
 msgid "Appeal pending"
-msgstr ""
+msgstr "İtiraz beklemede"
 
 #: lib/animina_web/live/components/live_moodboard_item_component.ex:262
 #: lib/animina_web/live/components/live_photo_component.ex:158
 #, elixir-autogen, elixir-format
 msgid "In review"
-msgstr ""
+msgstr "İnceleniyor"
 
 #: lib/animina_web/helpers/photo_status.ex:52
 #, elixir-autogen, elixir-format
 msgid "Under review"
-msgstr ""
+msgstr "İnceleme altında"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:634
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Admin Flags"
-msgstr "Yönetici"
+msgstr "Yönetici Bayrakları"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:279
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Private"
-msgstr ""
+msgstr "Gizli"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:278
 #, elixir-autogen, elixir-format
 msgid "Visible"
-msgstr ""
+msgstr "Görünür"
 
 #: lib/animina_web/trait_translations.ex:56
 #, elixir-autogen, elixir-format
 msgid "Divorced"
-msgstr ""
+msgstr "Boşanmış"
 
 #: lib/animina_web/trait_translations.ex:55
 #, elixir-autogen, elixir-format
 msgid "Separated"
-msgstr ""
+msgstr "Ayrılmış"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:370
 #, elixir-autogen, elixir-format
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
-msgstr ""
+msgstr "Seni tanımlayan özellikleri seç. Bazı kategoriler profilinde varsayılan olarak görünür, diğerleri gizlidir. Görünürlüğü değiştirmek için tıkla."
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:149
 #, elixir-autogen, elixir-format
 msgid "Private flags not shown on profile"
-msgstr ""
+msgstr "Gizli bayraklar profilde gösterilmez"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:165
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "private"
-msgstr ""
+msgstr "gizli"
 
 #: lib/animina_web/components/layouts.ex:477
 #: lib/animina_web/live/admin/feature_flags_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "AI / Ollama"
-msgstr ""
+msgstr "Yapay Zeka / Ollama"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:635
 #, elixir-autogen, elixir-format
 msgid "Administrative capabilities"
-msgstr ""
+msgstr "Yönetim yetenekleri"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:579
 #, elixir-autogen, elixir-format
 msgid "Application configuration"
-msgstr ""
+msgstr "Uygulama yapılandırması"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:521
 #, elixir-autogen, elixir-format
 msgid "Image validation and checks"
-msgstr ""
+msgstr "Görsel doğrulama ve kontroller"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:417
 #, elixir-autogen, elixir-format
 msgid "No results found for \"%{query}\""
-msgstr ""
+msgstr "\"%{query}\" için sonuç bulunamadı"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Photo analysis and debug settings"
-msgstr ""
+msgstr "Fotoğraf analizi ve hata ayıklama ayarları"
 
 #: lib/animina_web/components/layouts.ex:464
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photos"
-msgstr ""
+msgstr "Fotoğraflar"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:394
 #, elixir-autogen, elixir-format
 msgid "Search flags and settings..."
-msgstr ""
+msgstr "Bayrakları ve ayarları ara..."
 
 #: lib/animina_web/components/layouts.ex:503
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Users"
-msgstr "Kullanıcı"
+msgstr "Kullanıcılar"
 
 #: lib/animina_web/components/layouts.ex:412
 #: lib/animina_web/live/discover_live.ex:35
 #: lib/animina_web/live/discover_live.ex:406
 #: lib/animina_web/live/messages_live.ex:126
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Discover"
-msgstr ""
+msgstr "Keşfet"
 
 #: lib/animina_web/live/discover_live.ex:450
 #, elixir-autogen, elixir-format
 msgid "Failed to dismiss user"
-msgstr ""
+msgstr "Kullanıcı reddedilemedi"
 
 #: lib/animina_web/live/discover_live.ex:134
 #, elixir-autogen, elixir-format
 msgid "No suggestions available"
-msgstr ""
+msgstr "Öneri mevcut değil"
 
 #: lib/animina_web/live/discover_live.ex:390
 #, elixir-autogen, elixir-format
 msgid "Not interested"
-msgstr ""
+msgstr "İlgimi çekmiyor"
 
 #: lib/animina_web/live/discover_live.ex:384
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "View Profile"
-msgstr "Profili Kaydet"
+msgstr "Profili Görüntüle"
 
 #: lib/animina_web/live/messages_live.ex:56
 #, elixir-autogen, elixir-format
 msgid "Blocked"
-msgstr ""
+msgstr "Engellendi"
 
 #: lib/animina_web/live/messages_live.ex:682
 #, elixir-autogen, elixir-format
 msgid "Conversation not found"
-msgstr ""
+msgstr "Konuşma bulunamadı"
 
 #: lib/animina_web/live/messages_live.ex:758
 #: lib/animina_web/live/messages_live.ex:768
 #, elixir-autogen, elixir-format
 msgid "Could not start conversation"
-msgstr ""
+msgstr "Konuşma başlatılamadı"
 
 #: lib/animina_web/live/messages_live.ex:797
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to send message"
-msgstr ""
+msgstr "Mesaj gönderilemedi"
 
 #: lib/animina_web/components/layouts.ex:418
 #: lib/animina_web/live/messages_live.ex:113
@@ -4526,33 +4526,33 @@ msgstr ""
 #: lib/animina_web/live/messages_live.ex:662
 #, elixir-autogen, elixir-format
 msgid "Messages"
-msgstr ""
+msgstr "Mesajlar"
 
 #: lib/animina_web/live/messages_live.ex:120
 #, elixir-autogen, elixir-format
 msgid "No conversations yet"
-msgstr ""
+msgstr "Henüz konuşma yok"
 
 #: lib/animina_web/live/messages_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "No messages yet"
-msgstr ""
+msgstr "Henüz mesaj yok"
 
 #: lib/animina_web/components/chat_panel_component.ex:198
 #: lib/animina_web/live/messages_live.ex:80
 #, elixir-autogen, elixir-format
 msgid "Send a message to start the conversation"
-msgstr ""
+msgstr "Konuşmayı başlatmak için bir mesaj gönderin"
 
 #: lib/animina_web/live/messages_live.ex:122
 #, elixir-autogen, elixir-format
 msgid "Start a conversation from a user's profile"
-msgstr ""
+msgstr "Bir kullanıcının profilinden konuşma başlatın"
 
 #: lib/animina_web/components/message_components.ex:62
 #, elixir-autogen, elixir-format
 msgid "Type a message..."
-msgstr ""
+msgstr "Bir mesaj yazın..."
 
 #: lib/animina_web/components/chat_panel_component.ex:638
 #: lib/animina_web/components/chat_panel_component.ex:652
@@ -4561,249 +4561,249 @@ msgstr ""
 #: lib/animina_web/live/messages_live.ex:595
 #, elixir-autogen, elixir-format
 msgid "Yesterday"
-msgstr ""
+msgstr "Dün"
 
 #: lib/animina_web/components/message_components.ex:48
 #: lib/animina_web/live/messages_live.ex:794
 #, elixir-autogen, elixir-format
 msgid "You cannot send messages in this conversation"
-msgstr ""
+msgstr "Bu konuşmada mesaj gönderemezsiniz"
 
 #: lib/animina_web/components/chat_panel_component.ex:293
 #: lib/animina_web/live/messages_live.ex:379
 #, elixir-autogen, elixir-format
 msgid "edited"
-msgstr ""
+msgstr "düzenlendi"
 
 #: lib/animina_web/components/chat_panel_component.ex:172
 #: lib/animina_web/live/messages_live.ex:48
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "typing..."
-msgstr "Siliniyor..."
+msgstr "yazıyor..."
 
 #: lib/animina_web/live/messages_live.ex:837
 #, elixir-autogen, elixir-format
 msgid "Cannot delete a message that has been read"
-msgstr ""
+msgstr "Okunmuş bir mesaj silinemez"
 
 #: lib/animina_web/components/chat_panel_component.ex:318
 #: lib/animina_web/live/messages_live.ex:407
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Delete this message?"
-msgstr ""
+msgstr "Bu mesajı silmek istiyor musunuz?"
 
 #: lib/animina_web/live/messages_live.ex:840
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Failed to delete message"
-msgstr ""
+msgstr "Mesaj silinemedi"
 
 #: lib/animina_web/live/messages_live.ex:582
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Read"
-msgstr ""
+msgstr "Okundu"
 
 #: lib/animina_web/components/chat_panel_component.ex:637
 #: lib/animina_web/live/messages_live.ex:497
 #, elixir-autogen, elixir-format
 msgid "Today"
-msgstr ""
+msgstr "Bugün"
 
 #: lib/animina_web/components/chat_panel_component.ex:650
 #: lib/animina_web/live/messages_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "just now"
-msgstr ""
+msgstr "az önce"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Discovery / Matching"
-msgstr ""
+msgstr "Keşif / Eşleştirme"
 
 #: lib/animina_web/live/admin/feature_flags_live.ex:677
 #, elixir-autogen, elixir-format
 msgid "Partner suggestion algorithm tuning"
-msgstr ""
+msgstr "Partner önerisi algoritma ayarı"
 
 #: lib/animina_web/live/discover_live.ex:336
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Chat"
-msgstr ""
+msgstr "Sohbet"
 
 #: lib/animina_web/live/discover_live.ex:329
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Visited"
-msgstr ""
+msgstr "Ziyaret Edildi"
 
 #: lib/animina_web/live/messages_live.ex:585
 #, elixir-autogen, elixir-format
 msgid "Read %{time}"
-msgstr ""
+msgstr "Okundu %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:304
 #: lib/animina_web/live/messages_live.ex:393
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sent"
-msgstr "Hassas"
+msgstr "Gönderildi"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:80
 #, elixir-autogen, elixir-format
 msgid "Message"
-msgstr ""
+msgstr "Mesaj"
 
 #: lib/animina_web/components/chat_panel_component.ex:183
 #, elixir-autogen, elixir-format
 msgid "Open full chat"
-msgstr ""
+msgstr "Tam sohbeti aç"
 
 #: lib/animina_web/live/discover_live.ex:322
 #, elixir-autogen, elixir-format
 msgid "Wildcard"
-msgstr ""
+msgstr "Joker"
 
 #: lib/animina_web/live/discover_live.ex:166
 #, elixir-autogen, elixir-format
 msgid "Wildcards"
-msgstr ""
+msgstr "Jokerler"
 
 #: lib/animina_web/live/discover_live.ex:114
 #, elixir-autogen, elixir-format
 msgid "Your Matches"
-msgstr ""
+msgstr "Eşleşmeleriniz"
 
 #: lib/animina_web/live/discover_live.ex:177
 #, elixir-autogen, elixir-format
 msgid "No wildcards available right now"
-msgstr ""
+msgstr "Şu anda joker mevcut değil"
 
 #: lib/animina_web/live/discover_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Random picks from your area — no flag matching applied."
-msgstr ""
+msgstr "Bölgenizden rastgele seçimler — bayrak eşleştirmesi uygulanmadı."
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:50
 #, elixir-autogen, elixir-format
 msgid "This profile was suggested randomly and may not match your preferences."
-msgstr ""
+msgstr "Bu profil rastgele önerildi ve tercihlerinizle eşleşmeyebilir."
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:49
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Wildcard pick"
-msgstr ""
+msgstr "Joker seçimi"
 
 #: lib/animina_web/live/messages_live.ex:233
 #, elixir-autogen, elixir-format
 msgid "Draft:"
-msgstr ""
+msgstr "Taslak:"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:401
 #, elixir-autogen, elixir-format
 msgid "+10 pts"
-msgstr ""
+msgstr "+10 puan"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:403
 #, elixir-autogen, elixir-format
 msgid "-50 pts"
-msgstr ""
+msgstr "-50 puan"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:432
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "click to set as nice to have (+10 pts)"
-msgstr "olsa iyi olur olarak ayarlamak için tıkla"
+msgstr "olsa iyi olur (+10 puan) olarak ayarlamak için tıkla"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:433
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "click to set as prefer not (-50 pts)"
-msgstr "tercih etmem olarak ayarlamak için tıkla"
+msgstr "tercih etmem (-50 puan) olarak ayarlamak için tıkla"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:108
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "0 pts"
-msgstr ""
+msgstr "0 puan"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:404
 #, elixir-autogen, elixir-format
 msgid "Excluded"
-msgstr ""
+msgstr "Hariç Tutulmuş"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:402
 #, elixir-autogen, elixir-format
 msgid "Required"
-msgstr ""
+msgstr "Zorunlu"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:382
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Select traits you don't want in a partner. Click once for prefer not (-50 pts, still visible), again for deal breaker (excluded — hides profiles with this trait). These flags are always private."
-msgstr "Bir partnerde istemediğin özellikleri seç. Bir kez tıkla tercih etmem, tekrar tıkla kabul edilemez."
+msgstr "Bir partnerde istemediğin özellikleri seç. Bir kez tıkla tercih etmem (-50 puan, yine de görünür), tekrar tıkla kabul edilemez (hariç tutulmuş — bu özelliğe sahip profilleri gizler). Bu bayraklar her zaman gizlidir."
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:376
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
-msgstr "Partnerinin sahip olmasını istediğin özellikleri seç. Bir kez tıkla olsa iyi olur, tekrar tıkla olmazsa olmaz."
+msgstr "Partnerinin sahip olmasını istediğin özellikleri seç. Bir kez tıkla olsa iyi olur (+10 puan), tekrar tıkla olmazsa olmaz (zorunlu — sadece bu özelliğe sahip profilleri gösterir). Bu bayraklar her zaman gizlidir."
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:443
 #, elixir-autogen, elixir-format
 msgid "deal breaker (excluded) — click to remove"
-msgstr ""
+msgstr "kabul edilemez (hariç tutulmuş) — kaldırmak için tıkla"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:442
 #, elixir-autogen, elixir-format
 msgid "must have (required) — click to remove"
-msgstr ""
+msgstr "olmazsa olmaz (zorunlu) — kaldırmak için tıkla"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:437
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "nice to have (+10 pts) — click to change to must have (required)"
-msgstr ""
+msgstr "olsa iyi olur (+10 puan) — olmazsa olmaz (zorunlu) olarak değiştirmek için tıkla"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:438
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "prefer not (-50 pts) — click to change to deal breaker (excluded)"
-msgstr "tercih etmem — kabul edilemez olarak değiştirmek için tıkla"
+msgstr "tercih etmem (-50 puan) — kabul edilemez (hariç tutulmuş) olarak değiştirmek için tıkla"
 
 #: lib/animina_web/components/message_components.ex:75
 #, elixir-autogen, elixir-format
 msgid "**bold** *italic* `code` — Enter to send, Shift+Enter for new line"
-msgstr ""
+msgstr "**kalın** *italik* `kod` — Göndermek için Enter, yeni satır için Shift+Enter"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:8
 #, elixir-autogen, elixir-format
 msgid "Accept Terms of Service"
-msgstr ""
+msgstr "Kullanım Şartlarını Kabul Et"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:70
 #, elixir-autogen, elixir-format
 msgid "Accept and continue"
-msgstr ""
+msgstr "Kabul et ve devam et"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:34
 #, elixir-autogen, elixir-format
 msgid "Account suspension and deletion policies"
-msgstr ""
+msgstr "Hesap askıya alma ve silme politikaları"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:33
 #, elixir-autogen, elixir-format
 msgid "Content moderation by administrators and moderators"
-msgstr ""
+msgstr "Yöneticiler ve moderatörler tarafından içerik denetimi"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:73
 #, elixir-autogen, elixir-format
 msgid "Decline and log out"
-msgstr ""
+msgstr "Reddet ve çıkış yap"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:22
 #, elixir-autogen, elixir-format
 msgid "Please accept our updated Terms of Service to continue using ANIMINA."
-msgstr ""
+msgstr "ANIMINA'yı kullanmaya devam etmek için lütfen güncellenmiş Kullanım Şartlarımızı kabul edin."
 
 #: lib/animina_web/live/user_live/accept_terms.ex:32
 #, elixir-autogen, elixir-format
 msgid "Rules for using the platform"
-msgstr ""
+msgstr "Platform kullanım kuralları"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:95
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Something went wrong. Please try again."
-msgstr "Bir şeyler ters gitti!"
+msgstr "Bir şeyler ters gitti. Lütfen tekrar deneyin."
 
 #: lib/animina_web/components/layouts.ex:743
 #: lib/animina_web/live/user_live/accept_terms.ex:40
@@ -4811,335 +4811,335 @@ msgstr "Bir şeyler ters gitti!"
 #: lib/animina_web/live/user_live/registration.ex:458
 #, elixir-autogen, elixir-format
 msgid "Terms of Service"
-msgstr ""
+msgstr "Kullanım Şartları"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:91
 #, elixir-autogen, elixir-format
 msgid "Terms of Service accepted. Welcome back!"
-msgstr ""
+msgstr "Kullanım Şartları kabul edildi. Tekrar hoş geldiniz!"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:19
 #, elixir-autogen, elixir-format
 msgid "Updated Terms of Service"
-msgstr ""
+msgstr "Güncellenmiş Kullanım Şartları"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:29
 #, elixir-autogen, elixir-format
 msgid "We have introduced Terms of Service (AGB) that cover:"
-msgstr ""
+msgstr "Aşağıdakileri kapsayan Kullanım Şartları (AGB) getirdik:"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:104
 #, elixir-autogen, elixir-format
 msgid "You can accept the Terms of Service the next time you log in."
-msgstr ""
+msgstr "Kullanım Şartlarını bir sonraki girişinizde kabul edebilirsiniz."
 
 #: lib/animina_web/live/user_live/accept_terms.ex:35
 #, elixir-autogen, elixir-format
 msgid "Your right to delete your account at any time"
-msgstr ""
+msgstr "Hesabınızı istediğiniz zaman silme hakkınız"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:63
 #: lib/animina_web/live/user_live/registration.ex:457
 #, elixir-autogen, elixir-format
 msgid "and the"
-msgstr ""
+msgstr "ve"
 
 #: lib/animina_web/live/discover_live.ex:87
 #, elixir-autogen, elixir-format
 msgid "\"Let go\" of a conversation in your messages to see new discoveries."
-msgstr ""
+msgstr "Yeni keşifler görmek için mesajlarınızdaki bir konuşmayı \"Bırakın\"."
 
 #: lib/animina_web/components/love_emergency_component.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{selected}/%{cost} selected"
-msgstr ""
+msgstr "%{selected}/%{cost} seçildi"
 
 #: lib/animina_web/live/discover_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "All chat slots are full"
-msgstr ""
+msgstr "Tüm sohbet slotları dolu"
 
 #: lib/animina_web/live/messages_live.ex:864
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Conversation closed"
-msgstr ""
+msgstr "Konuşma kapatıldı"
 
 #: lib/animina_web/live/messages_live.ex:1065
 #, elixir-autogen, elixir-format
 msgid "Conversation reopened!"
-msgstr ""
+msgstr "Konuşma yeniden açıldı!"
 
 #: lib/animina_web/live/messages_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Conversations you've let go of. You can reopen one via Love Emergency."
-msgstr ""
+msgstr "Bıraktığınız konuşmalar. Aşk Acil Durumu ile birini yeniden açabilirsiniz."
 
 #: lib/animina_web/live/messages_live.ex:878
 #, elixir-autogen, elixir-format
 msgid "Failed to close conversation"
-msgstr ""
+msgstr "Konuşma kapatılamadı"
 
 #: lib/animina_web/live/messages_live.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Failed to reopen conversation"
-msgstr ""
+msgstr "Konuşma yeniden açılamadı"
 
 #: lib/animina_web/live/discover_live.ex:90
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Go to Messages"
-msgstr ""
+msgstr "Mesajlara Git"
 
 #: lib/animina_web/live/discover_live.ex:41
 #, elixir-autogen, elixir-format
 msgid "How Discovery Works"
-msgstr ""
+msgstr "Keşif Nasıl Çalışır"
 
 #: lib/animina_web/live/messages_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "Let Go"
-msgstr ""
+msgstr "Bırak"
 
 #: lib/animina_web/live/messages_live.ex:146
 #, elixir-autogen, elixir-format
 msgid "Let Go Archive"
-msgstr ""
+msgstr "Bırakılanlar Arşivi"
 
 #: lib/animina_web/live/messages_live.ex:63
 #: lib/animina_web/live/messages_live.ex:259
 #, elixir-autogen, elixir-format
 msgid "Let go"
-msgstr ""
+msgstr "Bırak"
 
 #: lib/animina_web/live/messages_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Let go of this conversation?"
-msgstr ""
+msgstr "Bu konuşmayı bırakmak istiyor musunuz?"
 
 #: lib/animina_web/components/love_emergency_component.ex:22
 #, elixir-autogen, elixir-format
 msgid "Love Emergency"
-msgstr ""
+msgstr "Aşk Acil Durumu"
 
 #: lib/animina_web/live/discover_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "New discoveries will be available tomorrow."
-msgstr ""
+msgstr "Yeni keşifler yarın mevcut olacak."
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:86
 #, elixir-autogen, elixir-format
 msgid "No free chat slots"
-msgstr ""
+msgstr "Boş sohbet slotu yok"
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:89
 #, elixir-autogen, elixir-format
 msgid "No free slots"
-msgstr ""
+msgstr "Boş slot yok"
 
 #: lib/animina_web/live/messages_live.ex:302
 #: lib/animina_web/live/user_live/profile_moodboard.ex:98
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Reopen"
-msgstr ""
+msgstr "Yeniden Aç"
 
 #: lib/animina_web/components/love_emergency_component.ex:81
 #, elixir-autogen, elixir-format
 msgid "Reopen Conversation"
-msgstr ""
+msgstr "Konuşmayı Yeniden Aç"
 
 #: lib/animina_web/live/messages_live.ex:299
 #, elixir-autogen, elixir-format
 msgid "Reopen by closing %{cost} other conversations"
-msgstr ""
+msgstr "%{cost} başka konuşmayı kapatarak yeniden aç"
 
 #: lib/animina_web/live/discover_live.ex:56
 #, elixir-autogen, elixir-format
 msgid "Take your time — choose who you really want to talk to."
-msgstr ""
+msgstr "Acele etmeyin — gerçekten kiminle konuşmak istediğinizi seçin."
 
 #: lib/animina_web/components/chat_panel_component.ex:449
 #: lib/animina_web/live/messages_live.ex:755
 #, elixir-autogen, elixir-format
 msgid "This conversation was previously closed."
-msgstr ""
+msgstr "Bu konuşma daha önce kapatılmıştı."
 
 #: lib/animina_web/live/messages_live.ex:187
 #, elixir-autogen, elixir-format
 msgid "This is permanent. Both of you will no longer see each other in discovery."
-msgstr ""
+msgstr "Bu kalıcıdır. İkiniz de artık keşifte birbirinizi görmeyeceksiniz."
 
 #: lib/animina_web/components/love_emergency_component.ex:26
 #, elixir-autogen, elixir-format
 msgid "To reopen this conversation, you must let go of %{cost} active conversations. Select exactly %{cost} below."
-msgstr ""
+msgstr "Bu konuşmayı yeniden açmak için %{cost} aktif konuşmayı bırakmalısınız. Aşağıdan tam olarak %{cost} seçin."
 
 #: lib/animina_web/live/discover_live.ex:58
 #, elixir-autogen, elixir-format
 msgid "You can \"Let go\" of a conversation in your messages to free a slot."
-msgstr ""
+msgstr "Bir slot boşaltmak için mesajlarınızdaki bir konuşmayı \"Bırakabilirsiniz\"."
 
 #: lib/animina_web/live/discover_live.ex:50
 #, elixir-autogen, elixir-format
 msgid "You can have up to %{max} active conversations. Each day, you can start up to %{daily} new ones."
-msgstr ""
+msgstr "En fazla %{max} aktif konuşmanız olabilir. Her gün en fazla %{daily} yeni konuşma başlatabilirsiniz."
 
 #: lib/animina_web/components/chat_panel_component.ex:443
 #: lib/animina_web/live/messages_live.ex:751
 #, elixir-autogen, elixir-format
 msgid "You have no free chat slots. Let go of a conversation first."
-msgstr ""
+msgstr "Boş sohbet slotunuz yok. Önce bir konuşmayı bırakın."
 
 #: lib/animina_web/live/discover_live.ex:101
 #, elixir-autogen, elixir-format
 msgid "You've reached today's limit"
-msgstr ""
+msgstr "Bugünün limitine ulaştınız"
 
 #: lib/animina_web/live/discover_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Adjust Preferences"
-msgstr ""
+msgstr "Tercihleri Ayarla"
 
 #: lib/animina_web/components/live_unread_badge_component.ex:53
 #, elixir-autogen, elixir-format
 msgid "New chats available today"
-msgstr ""
+msgstr "Bugün yeni sohbetler mevcut"
 
 #: lib/animina_web/live/discover_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "New wildcards are generated daily — check back tomorrow."
-msgstr ""
+msgstr "Yeni jokerler her gün oluşturulur — yarın tekrar kontrol edin."
 
 #: lib/animina_web/live/discover_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Try adjusting your preferences to expand your search."
-msgstr ""
+msgstr "Aramanızı genişletmek için tercihlerinizi ayarlamayı deneyin."
 
 #: lib/animina_web/live/user_live/waitlist.ex:55
 #: lib/animina_web/live/user_live/waitlist.ex:62
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
-msgstr ""
+msgstr "Aktivasyonunuz işleniyor"
 
 #: lib/animina_web/live/user_live/waitlist.ex:152
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
-msgstr ""
+msgstr "Harika bir ilk izlenim bırakmak için fotoğraf ve hikayeler ekleyin."
 
 #: lib/animina_web/live/user_live/waitlist.ex:126
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
-msgstr ""
+msgstr "Kendiniz ve ne aradığınız hakkında bilgi verin."
 
 #: lib/animina_web/live/user_live/waitlist.ex:44
 #, elixir-autogen, elixir-format
 msgid "Estimated activation"
-msgstr ""
+msgstr "Tahmini aktivasyon"
 
 #: lib/animina_web/live/user_live/waitlist.ex:20
 #, elixir-autogen, elixir-format
 msgid "Hi %{name}, your account is on the waitlist and will be activated soon."
-msgstr ""
+msgstr "Merhaba %{name}, hesabınız bekleme listesinde ve yakında aktifleştirilecek."
 
 #: lib/animina_web/live/user_live/waitlist.ex:77
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Prepare your profile"
-msgstr "Profilinizi oluşturun"
+msgstr "Profilinizi hazırlayın"
 
 #: lib/animina_web/live/user_live/waitlist.ex:191
 #, elixir-autogen, elixir-format
 msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ANIMINA'ya bir arkadaşını davet et. %{count} onaylı davetten sonra hesabın anında aktifleştirilir."
+msgstr[1] "ANIMINA'ya arkadaşlarını davet et. %{count} onaylı davetten sonra hesabın anında aktifleştirilir."
 
 #: lib/animina_web/live/user_live/waitlist.ex:124
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
-msgstr ""
+msgstr "Bayraklarınızı ayarlayın"
 
 #: lib/animina_web/live/user_live/waitlist.ex:188
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
-msgstr ""
+msgstr "Bekleme listesini atla"
 
 #: lib/animina_web/live/user_live/waitlist.ex:70
 #, elixir-autogen, elixir-format
 msgid "We'll notify you by email when your account is ready."
-msgstr ""
+msgstr "Hesabınız hazır olduğunda sizi e-posta ile bilgilendireceğiz."
 
 #: lib/animina_web/live/user_live/settings_hub.ex:152
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} passkeys"
-msgstr ""
+msgstr "%{count} geçiş anahtarı"
 
 #: lib/animina_web/live/user_live/settings_hub.ex:151
 #, elixir-autogen, elixir-format
 msgid "1 passkey"
-msgstr ""
+msgstr "1 geçiş anahtarı"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:49
 #, elixir-autogen, elixir-format
 msgid "Add a passkey"
-msgstr ""
+msgstr "Geçiş anahtarı ekle"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:93
 #, elixir-autogen, elixir-format
 msgid "Add a passkey to sign in without a password."
-msgstr ""
+msgstr "Şifresiz giriş yapmak için bir geçiş anahtarı ekleyin."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:72
 #, elixir-autogen, elixir-format
 msgid "Added %{date}"
-msgstr ""
+msgstr "Eklendi %{date}"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:81
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Are you sure you want to remove this passkey?"
-msgstr ""
+msgstr "Bu geçiş anahtarını kaldırmak istediğinizden emin misiniz?"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:150
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not add passkey: %{reason}"
-msgstr ""
+msgstr "Geçiş anahtarı eklenemedi: %{reason}"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:170
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Could not remove passkey."
-msgstr "Konum kaldırılamadı."
+msgstr "Geçiş anahtarı kaldırılamadı."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:74
 #, elixir-autogen, elixir-format
 msgid "Last used %{date}"
-msgstr ""
+msgstr "Son kullanım %{date}"
 
 #: lib/animina_web/live/user_live/settings_hub.ex:150
 #, elixir-autogen, elixir-format
 msgid "No passkeys"
-msgstr ""
+msgstr "Geçiş anahtarı yok"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:91
 #, elixir-autogen, elixir-format
 msgid "No passkeys registered yet."
-msgstr ""
+msgstr "Henüz geçiş anahtarı kaydedilmedi."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:69
 #, elixir-autogen, elixir-format
 msgid "Passkey"
-msgstr ""
+msgstr "Geçiş Anahtarı"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:133
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Passkey added successfully!"
-msgstr "Şifre başarıyla güncellendi!"
+msgstr "Geçiş anahtarı başarıyla eklendi!"
 
 #: lib/animina_web/controllers/webauthn_controller.ex:147
 #, elixir-autogen, elixir-format
 msgid "Passkey not recognized. Please try again or use password."
-msgstr ""
+msgstr "Geçiş anahtarı tanınmadı. Lütfen tekrar deneyin veya şifre kullanın."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:165
 #, elixir-autogen, elixir-format
 msgid "Passkey removed."
-msgstr ""
+msgstr "Geçiş anahtarı kaldırıldı."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:16
 #: lib/animina_web/live/user_live/passkey_settings.ex:22
@@ -5147,119 +5147,119 @@ msgstr ""
 #: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
-msgstr ""
+msgstr "Geçiş Anahtarları"
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:24
 #, elixir-autogen, elixir-format
 msgid "Sign in with Face ID, Touch ID, or a security key — faster and more secure than passwords."
-msgstr ""
+msgstr "Face ID, Touch ID veya güvenlik anahtarı ile giriş yapın — şifrelerden daha hızlı ve daha güvenli."
 
 #: lib/animina_web/live/user_live/login.ex:73
 #, elixir-autogen, elixir-format
 msgid "Sign in with passkey"
-msgstr ""
+msgstr "Geçiş anahtarı ile giriş yap"
 
 #: lib/animina_web/live/user_live/login.ex:72
 #: lib/animina_web/live/user_live/passkey_settings.ex:48
 #, elixir-autogen, elixir-format
 msgid "Waiting for device..."
-msgstr ""
+msgstr "Cihaz bekleniyor..."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:36
 #, elixir-autogen, elixir-format
 msgid "Your browser does not support passkeys."
-msgstr ""
+msgstr "Tarayıcınız geçiş anahtarlarını desteklemiyor."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:57
 #, elixir-autogen, elixir-format
 msgid "Your passkeys"
-msgstr ""
+msgstr "Geçiş anahtarlarınız"
 
 #: lib/animina_web/live/user_live/login.ex:64
 #, elixir-autogen, elixir-format
 msgid "or"
-msgstr ""
+msgstr "veya"
 
 #: lib/animina_web/live/user_live/waitlist.ex:177
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
-msgstr ""
+msgstr "Geçiş anahtarı kur"
 
 #: lib/animina_web/live/user_live/waitlist.ex:179
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
-msgstr ""
+msgstr "Geçiş anahtarı ile daha hızlı ve güvenli giriş yapın."
 
 #: lib/animina_web/components/layouts.ex:763
 #, elixir-autogen, elixir-format
 msgid "Report bug"
-msgstr ""
+msgstr "Hata bildir"
 
 #: lib/animina_web/live/user_live/settings_hub.ex:23
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Manage your account settings"
-msgstr "Hesabını ve profilini yönet"
+msgstr "Hesap ayarlarını yönet"
 
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/components/layouts.ex:383
 #: lib/animina_web/components/layouts.ex:390
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/profile_hub.ex:134
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "My Profile"
-msgstr "Profil"
+msgstr "Profilim"
 
 #: lib/animina_web/components/layouts.ex:272
 #: lib/animina_web/live/user_live/profile_hub.ex:29
 #, elixir-autogen, elixir-format
 msgid "Profile completeness"
-msgstr ""
+msgstr "Profil tamamlanma durumu"
 
 #: lib/animina_web/components/layouts.ex:321
 #: lib/animina_web/live/user_live/profile_hub.ex:55
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Profile Info"
-msgstr "Profil"
+msgstr "Profil Bilgileri"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:56
 #, elixir-autogen, elixir-format
 msgid "Add your basic information"
-msgstr ""
+msgstr "Temel bilgilerinizi ekleyin"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:21
 #, elixir-autogen, elixir-format
 msgid "Build and complete your dating profile"
-msgstr ""
+msgstr "Tanışma profilinizi oluşturun ve tamamlayın"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:63
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Create your visual profile"
-msgstr "Profilinizi oluşturun"
+msgstr "Görsel profilinizi oluşturun"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:77
 #, elixir-autogen, elixir-format
 msgid "Define what you're looking for"
-msgstr ""
+msgstr "Ne aradığınızı belirleyin"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:84
 #, elixir-autogen, elixir-format
 msgid "Set your location"
-msgstr ""
+msgstr "Konumunuzu ayarlayın"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:70
 #, elixir-autogen, elixir-format
 msgid "Set your personality flags"
-msgstr ""
+msgstr "Kişilik bayraklarınızı ayarlayın"
 
 #: lib/animina_web/live/user_live/profile_hub.ex:49
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo"
-msgstr ""
+msgstr "Ana profil fotoğrafınızı yükleyin"
 
 #: lib/animina_web/live/user_live/waitlist.ex:105
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo."
-msgstr ""
+msgstr "Ana profil fotoğrafınızı yükleyin."
 
 #: lib/animina_web/live/user_live/waitlist.ex:274
 #, elixir-autogen, elixir-format
@@ -5267,153 +5267,153 @@ msgid "Optional"
 msgstr "İsteğe Bağlı Kategoriler"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:658
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count} run"
 msgid_plural "%{count} runs"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%{count} çalıştırma"
+msgstr[1] "%{count} çalıştırma"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:370
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count}d ago"
-msgstr ""
+msgstr "%{count}g önce"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:369
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count}h ago"
-msgstr ""
+msgstr "%{count}sa önce"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:368
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count}m ago"
-msgstr ""
+msgstr "%{count}dk önce"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:367
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "%{count}s ago"
-msgstr ""
+msgstr "%{count}sn önce"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:822
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Agree"
-msgstr ""
+msgstr "Katılıyorum"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "All Logs"
-msgstr ""
+msgstr "Tüm Kayıtlar"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:447
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "By Photo"
-msgstr ""
+msgstr "Fotoğrafa Göre"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:824
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Disagree"
-msgstr ""
+msgstr "Katılmıyorum"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:150
 #: lib/animina_web/live/admin/ollama_logs_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Log entry or photo not found."
-msgstr ""
+msgstr "Günlük kaydı veya fotoğraf bulunamadı."
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:596
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Manual re-run"
-msgstr ""
+msgstr "Manuel yeniden çalıştırma"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:633
 #, elixir-autogen, elixir-format
 msgid "No grouped log entries found."
-msgstr ""
+msgstr "Gruplandırılmış günlük kaydı bulunamadı."
 
 #: lib/animina_web/components/layouts.ex:492
 #: lib/animina_web/live/admin/ollama_logs_live.ex:21
 #: lib/animina_web/live/admin/ollama_logs_live.ex:391
 #, elixir-autogen, elixir-format
 msgid "Ollama Logs"
-msgstr ""
+msgstr "Ollama Kayıtları"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:487
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Per page"
-msgstr ""
+msgstr "Sayfa başına"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:651
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Photo deleted"
-msgstr ""
+msgstr "Fotoğraf silindi"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:563
 #: lib/animina_web/live/admin/ollama_logs_live.ex:676
 #, elixir-autogen, elixir-format
 msgid "Re-run"
-msgstr ""
+msgstr "Yeniden Çalıştır"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:199
 #, elixir-autogen, elixir-format
 msgid "Re-run failed: %{reason}"
-msgstr ""
+msgstr "Yeniden çalıştırma başarısız: %{reason}"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "Re-run with %{model}"
-msgstr ""
+msgstr "%{model} ile yeniden çalıştır"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:480
 #, elixir-autogen, elixir-format
 msgid "In Progress"
-msgstr ""
+msgstr "Devam Ediyor"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:805
 #, elixir-autogen, elixir-format
 msgid "Re-run on %{server}"
-msgstr ""
+msgstr "%{server} üzerinde yeniden çalıştır"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:405
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Queue"
-msgstr ""
+msgstr "Kuyruk"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:418
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "adaptive"
-msgstr "aktif"
+msgstr "uyarlanabilir"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:423
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Auto-reload"
-msgstr ""
+msgstr "Otomatik yenileme"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:753
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Approved"
-msgstr ""
+msgstr "Onaylandı"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:561
 #: lib/animina_web/live/admin/ollama_logs_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:471
 #, elixir-autogen, elixir-format
 msgid "Animal photo detected"
-msgstr ""
+msgstr "Hayvan fotoğrafı algılandı"
 
 #: lib/animina_web/live/user_live/waitlist.ex:80
 #, elixir-autogen, elixir-format
 msgid "Use the waiting time to set up your profile so you can get started right away."
-msgstr ""
+msgstr "Bekleme süresini profilinizi kurmak için kullanın, böylece hemen başlayabilirsiniz."
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:437
 #, elixir-autogen, elixir-format
 msgid "Your profile photo has been approved!"
-msgstr ""
+msgstr "Profil fotoğrafınız onaylandı!"
 
 #: lib/animina_web/live/user_live/registration.ex:15
 #, elixir-autogen, elixir-format
 msgid "Ideal Partner"
-msgstr ""
+msgstr "İdeal Partner"

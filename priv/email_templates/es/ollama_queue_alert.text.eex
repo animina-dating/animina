@@ -1,0 +1,16 @@
+[ANIMINA] Alerta de cola de Ollama: <%= @queue_count %> fotos en espera
+---
+
+Hola,
+
+La cola de verificación de fotos de Ollama ha superado el umbral.
+
+Estado de la cola:
+- Fotos en espera: <%= @queue_count %>
+- Antigüedad de la foto más antigua: <%= @oldest_photo_age_hours %> horas
+- Estado de Ollama: <%= @ollama_status %>
+
+Por favor, revisa la página de administración para tomar medidas:
+https://animina.de/admin/ollama-queue
+
+Esta alerta solo se enviará una vez por hora.

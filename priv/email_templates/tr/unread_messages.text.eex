@@ -1,0 +1,10 @@
+ANIMINA'da okunmamış mesajlarınız var
+---
+Merhaba<%= if @display_name do %> <%= @display_name %><% end %>,
+
+ANIMINA'da sizi bekleyen <%= @unread_count %> okunmamış mesajınız var.
+
+Biri sizi tanımak istiyor! Onu bekletmeyin.
+
+Mesajlarınızı okumak için şimdi giriş yapın:
+https://animina.de/messages

@@ -1,0 +1,18 @@
+Всплеск регистраций на ANIMINA: <%= @today_count %> сегодня (среднее: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Здравствуйте,
+
+На ANIMINA обнаружено необычно высокое количество регистраций.
+
+Сводка:
+  Подтверждено сегодня:       <%= @today_count %>
+  Среднее за 30 дней:         <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Порог (1,5x):               <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Фактор всплеска:            <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Вчера:                      <%= @yesterday_count %>
+
+Почасовая разбивка (Europe/Berlin):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "регистрация", else: "регистраций" %>
+<% end %>
+Обзор отладки: https://animina.de/debug

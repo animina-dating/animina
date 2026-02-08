@@ -1,0 +1,18 @@
+ارتفاع مفاجئ في التسجيل على ANIMINA: <%= @today_count %> اليوم (المتوسط: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+مرحباً،
+
+تم اكتشاف عدد تسجيلات مرتفع بشكل غير عادي على ANIMINA.
+
+الملخص:
+  المؤكدون اليوم:       <%= @today_count %>
+  متوسط 30 يوماً:      <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  الحد (1.5 ضعف):      <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  عامل الارتفاع:       <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  أمس:                 <%= @yesterday_count %>
+
+التوزيع بالساعة (أوروبا/برلين):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "تسجيل", else: "تسجيلات" %>
+<% end %>
+نظرة عامة للتصحيح: https://animina.de/debug

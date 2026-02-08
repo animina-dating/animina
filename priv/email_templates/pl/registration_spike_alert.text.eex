@@ -1,0 +1,18 @@
+Skok rejestracji ANIMINA: <%= @today_count %> dzisiaj (średnia: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Witaj,
+
+Wykryto niezwykle wysoką liczbę rejestracji w ANIMINA.
+
+Podsumowanie:
+  Potwierdzone dzisiaj:      <%= @today_count %>
+  Średnia dzienna (30 dni):  <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Próg (1,5x):               <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Współczynnik skoku:        <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Wczoraj:                   <%= @yesterday_count %>
+
+Podział godzinowy (Europe/Berlin):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "rejestracja", else: "rejestracji" %>
+<% end %>
+Panel debugowania: https://animina.de/debug

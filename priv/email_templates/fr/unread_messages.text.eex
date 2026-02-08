@@ -1,0 +1,10 @@
+Vous avez des messages non lus sur ANIMINA
+---
+Bonjour<%= if @display_name do %> <%= @display_name %><% end %>,
+
+Vous avez <%= @unread_count %> message<%= if @unread_count > 1, do: "s" %> non lu<%= if @unread_count > 1, do: "s" %> qui vous attend<%= if @unread_count > 1, do: "ent" %> sur ANIMINA.
+
+Quelqu'un souhaite faire votre connaissance ! Ne le faites pas attendre.
+
+Connectez-vous maintenant pour lire vos messages :
+https://animina.de/messages

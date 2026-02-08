@@ -1,0 +1,18 @@
+Pico de registros en ANIMINA: <%= @today_count %> hoy (promedio: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Hola,
+
+Se ha detectado un número inusualmente alto de registros en ANIMINA.
+
+Resumen:
+  Confirmados hoy:          <%= @today_count %>
+  Promedio diario (30 días): <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Umbral (1.5x):            <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Factor de pico:           <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Ayer:                     <%= @yesterday_count %>
+
+Desglose por hora (Europa/Berlín):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "registro", else: "registros" %>
+<% end %>
+Vista general de depuración: https://animina.de/debug

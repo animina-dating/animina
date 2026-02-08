@@ -5396,7 +5396,7 @@ msgstr "Genehmigt"
 #: lib/animina_web/live/admin/ollama_logs_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Avatar"
-msgstr ""
+msgstr "Avatar"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:471
 #, elixir-autogen, elixir-format

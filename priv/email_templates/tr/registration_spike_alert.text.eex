@@ -1,0 +1,18 @@
+ANIMINA Kayıt Artışı: Bugün <%= @today_count %> (ortalama: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>)
+---
+
+Merhaba,
+
+ANIMINA'da olağandışı yüksek bir kayıt sayısı tespit edildi.
+
+Özet:
+  Bugün onaylanan:       <%= @today_count %>
+  30 günlük günlük ort.: <%= :erlang.float_to_binary(@daily_average, decimals: 1) %>
+  Eşik değeri (1,5x):   <%= :erlang.float_to_binary(@threshold, decimals: 1) %>
+  Artış faktörü:         <%= :erlang.float_to_binary(@spike_factor, decimals: 1) %>x
+  Dün:                   <%= @yesterday_count %>
+
+Saatlik dağılım (Avrupa/Berlin):
+<%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "kayıt", else: "kayıt" %>
+<% end %>
+Hata ayıklama genel bakış: https://animina.de/debug

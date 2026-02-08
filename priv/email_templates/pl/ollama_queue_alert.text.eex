@@ -1,0 +1,16 @@
+[ANIMINA] Alert kolejki Ollama: <%= @queue_count %> zdjęć oczekuje
+---
+
+Witaj,
+
+Kolejka weryfikacji zdjęć Ollama przekroczyła próg.
+
+Status kolejki:
+- Oczekujące zdjęcia: <%= @queue_count %>
+- Wiek najstarszego zdjęcia: <%= @oldest_photo_age_hours %> godzin
+- Stan Ollama: <%= @ollama_status %>
+
+Sprawdź stronę administracyjną, aby przejrzeć i podjąć działania:
+https://animina.de/admin/ollama-queue
+
+Ten alert zostanie wysłany tylko raz na godzinę.

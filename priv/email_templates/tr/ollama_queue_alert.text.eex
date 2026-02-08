@@ -1,0 +1,16 @@
+[ANIMINA] Ollama kuyruk uyarısı: <%= @queue_count %> fotoğraf bekliyor
+---
+
+Merhaba,
+
+Ollama fotoğraf doğrulama kuyruğu eşik değerini aştı.
+
+Kuyruk durumu:
+- Bekleyen fotoğraflar: <%= @queue_count %>
+- En eski fotoğraf yaşı: <%= @oldest_photo_age_hours %> saat
+- Ollama durumu: <%= @ollama_status %>
+
+Lütfen incelemek ve gerekli adımları atmak için yönetim sayfasını kontrol edin:
+https://animina.de/admin/ollama-queue
+
+Bu uyarı saatte yalnızca bir kez gönderilir.

@@ -1,0 +1,10 @@
+Masz nieprzeczytane wiadomości na ANIMINA
+---
+Cześć<%= if @display_name do %> <%= @display_name %><% end %>,
+
+Masz <%= @unread_count %> nieprzeczytanych wiadomości czekających na Ciebie na ANIMINA.
+
+Ktoś jest zainteresowany poznaniem Ciebie! Nie każ im czekać.
+
+Zaloguj się teraz, aby przeczytać swoje wiadomości:
+https://animina.de/messages
