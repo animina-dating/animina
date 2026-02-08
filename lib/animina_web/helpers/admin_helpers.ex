@@ -7,9 +7,9 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   """
 
   @doc """
-  Parses a string value as a positive integer (> 0), returning a default if parsing fails.
+  Parses a string or integer value, returning a default if parsing fails.
 
-  Used for pagination where page numbers must be positive.
+  Supports a `:min` option to enforce a minimum value.
 
   ## Examples
 
@@ -24,46 +24,45 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
 
       iex> parse_int("invalid", 5)
       5
-  """
-  def parse_int(nil, default), do: default
 
-  def parse_int(val, default) when is_binary(val) do
+      iex> parse_int("0", 0, min: 0)
+      0
+
+      iex> parse_int("-5", 0, min: 0)
+      0
+
+      iex> parse_int("-15", 0, min: nil)
+      -15
+  """
+  def parse_int(val, default, opts \\ [])
+
+  def parse_int(nil, default, _opts), do: default
+
+  def parse_int(val, default, opts) when is_binary(val) do
+    min = Keyword.get(opts, :min, 1)
+
     case Integer.parse(val) do
-      {n, _} when n > 0 -> n
-      _ -> default
+      {n, _} -> if min == nil or n >= min, do: n, else: default
+      :error -> default
     end
   end
 
-  def parse_int(val, _default) when is_integer(val) and val > 0, do: val
-  def parse_int(_, default), do: default
+  def parse_int(val, default, opts) when is_integer(val) do
+    min = Keyword.get(opts, :min, 1)
+    if min == nil or val >= min, do: val, else: default
+  end
+
+  def parse_int(_, default, _opts), do: default
 
   @doc """
-  Parses a string value as a non-negative integer (>= 0), returning a default if parsing fails.
-
-  Used for values like delay_ms where 0 is a valid value.
-
-  ## Examples
-
-      iex> parse_non_negative_int("10", 0)
-      10
-
-      iex> parse_non_negative_int("0", 5)
-      0
-
-      iex> parse_non_negative_int("-5", 0)
-      0
+  Parses a non-negative integer (>= 0). Shorthand for `parse_int(val, default, min: 0)`.
   """
-  def parse_non_negative_int(nil, default), do: default
+  def parse_non_negative_int(val, default), do: parse_int(val, default, min: 0)
 
-  def parse_non_negative_int(val, default) when is_binary(val) do
-    case Integer.parse(val) do
-      {n, _} when n >= 0 -> n
-      _ -> default
-    end
-  end
-
-  def parse_non_negative_int(val, _default) when is_integer(val) and val >= 0, do: val
-  def parse_non_negative_int(_, default), do: default
+  @doc """
+  Parses any integer including negative. Shorthand for `parse_int(val, default, min: nil)`.
+  """
+  def parse_integer(val, default), do: parse_int(val, default, min: nil)
 
   @doc """
   Converts a snake_case key to a human-readable format.
@@ -135,33 +134,4 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_datetime_full(datetime) do
     Calendar.strftime(datetime, "%Y-%m-%d %H:%M:%S")
   end
-
-  @doc """
-  Parses a string value as an integer (including negative values), returning a default if parsing fails.
-
-  Unlike `parse_int/2` and `parse_non_negative_int/2`, this allows negative values.
-  Used for settings like discovery score penalties.
-
-  ## Examples
-
-      iex> parse_integer("10", 0)
-      10
-
-      iex> parse_integer("-15", 0)
-      -15
-
-      iex> parse_integer("invalid", 5)
-      5
-  """
-  def parse_integer(nil, default), do: default
-
-  def parse_integer(val, default) when is_binary(val) do
-    case Integer.parse(val) do
-      {n, _} -> n
-      :error -> default
-    end
-  end
-
-  def parse_integer(val, _default) when is_integer(val), do: val
-  def parse_integer(_, default), do: default
 end

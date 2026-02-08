@@ -9,21 +9,10 @@ defmodule AniminaWeb.UserLive.EditLocations do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Locations")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Locations")}
-            <:subtitle>{gettext("Manage your locations")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Locations")}
+          subtitle={gettext("Manage your locations")}
+        />
 
         <%= if @locations == [] do %>
           <p class="text-sm text-base-content/70 mb-4">{gettext("No locations added yet.")}</p>

@@ -9,21 +9,10 @@ defmodule AniminaWeb.UserLive.DeleteAccount do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Delete Account")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Delete Account")}
-            <:subtitle>{gettext("This action cannot be easily undone")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Delete Account")}
+          subtitle={gettext("This action cannot be easily undone")}
+        />
 
         <div class="alert alert-warning mb-6">
           <p>

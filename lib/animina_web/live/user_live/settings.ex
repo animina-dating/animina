@@ -12,22 +12,10 @@ defmodule AniminaWeb.UserLive.Settings do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Account Security")}</li>
-          </ul>
-        </div>
-        <div class="text-center">
-          <.header>
-            {gettext("Account Security")}
-            <:subtitle>
-              {gettext("Manage your account email address and password settings")}
-            </:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Account Security")}
+          subtitle={gettext("Manage your account email address and password settings")}
+        />
 
         <div :if={@pending_email} class="alert alert-info mb-4" role="alert">
           <p>

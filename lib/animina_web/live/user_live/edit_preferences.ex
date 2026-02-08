@@ -14,21 +14,10 @@ defmodule AniminaWeb.UserLive.EditPreferences do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Partner Preferences")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Partner Preferences")}
-            <:subtitle>{gettext("Update your partner preferences")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Partner Preferences")}
+          subtitle={gettext("Update your partner preferences")}
+        />
 
         <.form
           for={@preferences_form}

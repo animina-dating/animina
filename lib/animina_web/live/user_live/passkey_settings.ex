@@ -8,25 +8,14 @@ defmodule AniminaWeb.UserLive.PasskeySettings do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Passkeys")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Passkeys")}
-            <:subtitle>
-              {gettext(
-                "Sign in with Face ID, Touch ID, or a security key — faster and more secure than passwords."
-              )}
-            </:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Passkeys")}
+          subtitle={
+            gettext(
+              "Sign in with Face ID, Touch ID, or a security key — faster and more secure than passwords."
+            )
+          }
+        />
 
         <%!-- Single hook element: handles browser support check + registration --%>
         <div id="passkey-register" phx-hook="PasskeyRegister" class="mb-8">

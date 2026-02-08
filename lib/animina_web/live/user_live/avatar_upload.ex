@@ -15,21 +15,10 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
         data-mandatory="true"
         data-aspect-ratio="1:1"
       >
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Profile Photo")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Profile Photo")}
-            <:subtitle>{gettext("Upload a photo that shows your face clearly")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Profile Photo")}
+          subtitle={gettext("Upload a photo that shows your face clearly")}
+        />
 
         <%!-- Current Avatar Display --%>
         <div class="flex flex-col items-center mb-8">

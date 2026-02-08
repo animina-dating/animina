@@ -8,21 +8,10 @@ defmodule AniminaWeb.UserLive.EditProfile do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Edit Profile")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Edit Profile")}
-            <:subtitle>{gettext("Update your profile information")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Edit Profile")}
+          subtitle={gettext("Update your profile information")}
+        />
 
         <.form for={@form} id="profile_form" phx-submit="save" phx-change="validate">
           <div class="grid grid-cols-2 gap-4">

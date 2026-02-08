@@ -29,6 +29,11 @@ defmodule AniminaWeb.CoreComponents do
   use Phoenix.Component
   use Gettext, backend: AniminaWeb.Gettext
 
+  use Phoenix.VerifiedRoutes,
+    endpoint: AniminaWeb.Endpoint,
+    router: AniminaWeb.Router,
+    statics: AniminaWeb.static_paths()
+
   alias Phoenix.HTML.Form, as: HtmlForm
   alias Phoenix.LiveView.JS
 
@@ -350,6 +355,36 @@ defmodule AniminaWeb.CoreComponents do
       </div>
       <div class="flex-none">{render_slot(@actions)}</div>
     </header>
+    """
+  end
+
+  @doc """
+  Renders a settings page header with breadcrumb and title.
+
+  ## Examples
+
+      <.settings_header title={gettext("Edit Profile")} subtitle={gettext("Update your profile info")} />
+  """
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+
+  def settings_header(assigns) do
+    ~H"""
+    <div class="breadcrumbs text-sm mb-6">
+      <ul>
+        <li>
+          <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
+        </li>
+        <li>{@title}</li>
+      </ul>
+    </div>
+
+    <div class="text-center mb-8">
+      <.header>
+        {@title}
+        <:subtitle :if={@subtitle}>{@subtitle}</:subtitle>
+      </.header>
+    </div>
     """
   end
 

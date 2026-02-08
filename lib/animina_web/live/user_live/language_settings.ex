@@ -10,21 +10,10 @@ defmodule AniminaWeb.UserLive.LanguageSettings do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Language")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Language")}
-            <:subtitle>{gettext("Choose your preferred language")}</:subtitle>
-          </.header>
-        </div>
+        <.settings_header
+          title={gettext("Language")}
+          subtitle={gettext("Choose your preferred language")}
+        />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <%= for {code, _abbr, flag, name} <- @languages do %>

@@ -113,7 +113,7 @@ defmodule Animina.Messaging do
   Each conversation includes the other participant and the latest message.
   """
   def list_conversations(user_id) do
-    subquery =
+    last_message_subquery =
       from m in Message,
         where: is_nil(m.deleted_at),
         group_by: m.conversation_id,
@@ -122,16 +122,101 @@ defmodule Animina.Messaging do
           last_message_at: max(m.inserted_at)
         }
 
-    Conversation
-    |> join(:inner, [c], p in ConversationParticipant,
-      on: p.conversation_id == c.id and p.user_id == ^user_id
-    )
-    |> where([_c, p], is_nil(p.closed_at))
-    |> join(:left, [c, _p], latest in subquery(subquery), on: latest.conversation_id == c.id)
-    |> order_by([c, _p, latest], desc_nulls_last: latest.last_message_at, desc: c.inserted_at)
-    |> preload([c, _p, _latest], [:participants])
+    conversations =
+      Conversation
+      |> join(:inner, [c], p in ConversationParticipant,
+        on: p.conversation_id == c.id and p.user_id == ^user_id
+      )
+      |> where([_c, p], is_nil(p.closed_at))
+      |> join(:left, [c, _p], latest in subquery(last_message_subquery),
+        on: latest.conversation_id == c.id
+      )
+      |> order_by([c, _p, latest], desc_nulls_last: latest.last_message_at, desc: c.inserted_at)
+      |> preload([c, _p, _latest], [:participants])
+      |> Repo.all()
+
+    if conversations == [] do
+      []
+    else
+      conversation_ids = Enum.map(conversations, & &1.id)
+
+      # Batch-load latest messages for all conversations (one query instead of N)
+      latest_messages = batch_load_latest_messages(conversation_ids)
+
+      # Batch-load other users (one query instead of N)
+      other_user_ids =
+        conversations
+        |> Enum.flat_map(fn c ->
+          c.participants
+          |> Enum.filter(&(&1.user_id != user_id))
+          |> Enum.map(& &1.user_id)
+        end)
+        |> Enum.uniq()
+
+      users_by_id = batch_load_users(other_user_ids)
+
+      Enum.map(conversations, fn conversation ->
+        assemble_conversation_details(conversation, user_id, latest_messages, users_by_id)
+      end)
+    end
+  end
+
+  defp batch_load_latest_messages(conversation_ids) do
+    # Use a window function to get the latest message per conversation
+    ranked =
+      from(m in Message,
+        where: m.conversation_id in ^conversation_ids and is_nil(m.deleted_at),
+        select: %{
+          id: m.id,
+          conversation_id: m.conversation_id,
+          sender_id: m.sender_id,
+          content: m.content,
+          inserted_at: m.inserted_at,
+          row_num:
+            row_number()
+            |> over(partition_by: m.conversation_id, order_by: [desc: m.inserted_at])
+        }
+      )
+
+    from(r in subquery(ranked), where: r.row_num == 1)
     |> Repo.all()
-    |> Enum.map(&load_conversation_details(&1, user_id))
+    |> Map.new(&{&1.conversation_id, &1})
+  end
+
+  defp batch_load_users(user_ids) do
+    Animina.Accounts.User
+    |> where([u], u.id in ^user_ids)
+    |> Repo.all()
+    |> Map.new(&{&1.id, &1})
+  end
+
+  defp assemble_conversation_details(conversation, user_id, latest_messages, users_by_id) do
+    other_participant =
+      Enum.find(conversation.participants, fn p -> p.user_id != user_id end)
+
+    other_user =
+      if other_participant, do: Map.get(users_by_id, other_participant.user_id)
+
+    latest_message = Map.get(latest_messages, conversation.id)
+
+    my_participant = Enum.find(conversation.participants, fn p -> p.user_id == user_id end)
+
+    unread =
+      if my_participant && latest_message && latest_message.sender_id != user_id do
+        is_nil(my_participant.last_read_at) ||
+          DateTime.compare(my_participant.last_read_at, latest_message.inserted_at) == :lt
+      else
+        false
+      end
+
+    %{
+      conversation: conversation,
+      other_user: other_user,
+      latest_message: latest_message,
+      unread: unread,
+      blocked: other_participant && other_participant.blocked_at != nil,
+      draft_content: my_participant && my_participant.draft_content
+    }
   end
 
   defp load_conversation_details(conversation, user_id) do
