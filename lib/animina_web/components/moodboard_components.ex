@@ -576,14 +576,16 @@ defmodule AniminaWeb.MoodboardComponents do
       |> Enum.group_by(fn {_item, idx} -> rem(idx, num_columns) end)
 
     Enum.map(0..(num_columns - 1), fn col_idx ->
-      col_items =
-        case Map.get(grouped, col_idx) do
-          nil -> []
-          indexed_items -> Enum.map(indexed_items, fn {item, _} -> item end)
-        end
-
+      col_items = extract_column_items(grouped, col_idx)
       {col_items, col_idx}
     end)
+  end
+
+  defp extract_column_items(grouped, col_idx) do
+    case Map.get(grouped, col_idx) do
+      nil -> []
+      indexed_items -> Enum.map(indexed_items, fn {item, _} -> item end)
+    end
   end
 
   defdelegate render_markdown(content),

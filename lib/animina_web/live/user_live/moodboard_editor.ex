@@ -161,6 +161,21 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           </p>
         </div>
         
+    <!-- Hint: encourage adding more items -->
+        <div
+          :if={length(@items) == 1}
+          class="bg-info/10 border border-info/30 rounded-xl p-5 text-center mb-8"
+        >
+          <p class="text-base-content font-medium">
+            {gettext("Profiles with more than one moodboard item are a lot more popular.")}
+          </p>
+          <p class="text-base-content/70 mt-1 text-sm">
+            {gettext(
+              "Write about your last trip or a hobby. Share a cooking recipe or a photo of your dog."
+            )}
+          </p>
+        </div>
+        
     <!-- Moodboard items (sortable) - Editorial card layout -->
         <div :if={!Enum.empty?(@items)}>
           <ColumnToggle.column_toggle columns={@columns} />
