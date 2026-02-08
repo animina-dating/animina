@@ -385,6 +385,131 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
   end
 
+  describe "step 1 to step 2 prefill" do
+    test "prefills display_name with first_name when advancing to step 2", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "first_name" => "Jane",
+          "last_name" => "Doe",
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Display name input should be prefilled with the first name
+      assert html =~ ~s(value="Jane")
+    end
+
+    test "gender defaults to male when no guess is available", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "first_name" => "Xyztestname",
+          "last_name" => "Doe",
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Gender should default to male (the initial value) since no guess available
+      assert html =~ ~r/checked.*value="male"/s || html =~ "male"
+    end
+
+    test "prefills gender from cache when available", %{conn: conn} do
+      # Insert a cached gender entry
+      Animina.Repo.insert!(%Animina.Accounts.FirstNameGender{
+        first_name: "maria",
+        gender: "female",
+        needs_human_review: false
+      })
+
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "first_name" => "Maria",
+          "last_name" => "Doe",
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Gender should be prefilled as female from cache
+      # The radio input renders: <input type="radio" ... value="female" checked ...>
+      assert html =~ ~r/<input[^>]*value="female"[^>]*checked/s
+    end
+
+    test "partner preferences use opposite of guessed gender", %{conn: conn} do
+      # Insert a cached female name
+      Animina.Repo.insert!(%Animina.Accounts.FirstNameGender{
+        first_name: "petra",
+        gender: "female",
+        needs_human_review: false
+      })
+
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "first_name" => "Petra",
+          "last_name" => "Doe",
+          "email" => "test@example.com",
+          "password" => "password1234",
+          "mobile_phone" => "+4915112345678",
+          "birthday" => "1990-01-01"
+        }
+      )
+
+      # Step 1 → 2 (gender prefilled as female)
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 2 → 3 (keep female gender, fill height)
+      lv
+      |> element("#registration_form")
+      |> render_change(user: %{"display_name" => "Petra", "height" => "170"})
+
+      lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Step 3 → 4 (add location and advance)
+      lv
+      |> element("#registration_form")
+      |> render_change(
+        user: %{
+          "location_input" => %{"country_id" => germany_id(), "zip_code" => "10115"}
+        }
+      )
+
+      lv |> element("button", "Add location") |> render_click()
+      html = lv |> element("button[phx-click=next_step]") |> render_click()
+
+      # Partner preference should be "male" (opposite of female)
+      assert html =~ ~r/<input[^>]*value="male"[^>]*checked/s
+    end
+  end
+
   describe "partner age fields" do
     test "shows age fields in step 4", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")

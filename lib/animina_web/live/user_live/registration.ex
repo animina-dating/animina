@@ -2,6 +2,7 @@ defmodule AniminaWeb.UserLive.Registration do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.GenderGuesser
   alias Animina.Accounts.User
   alias Animina.GeoData
 
@@ -193,6 +194,7 @@ defmodule AniminaWeb.UserLive.Registration do
           label={gettext("First name")}
           autocomplete="given-name"
           required
+          phx-blur="guess_gender"
         />
         <.input
           field={@form[:last_name]}
@@ -529,6 +531,8 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(page_title: gettext("ANIMINA – Create Account"))
       |> assign(country_options: country_options)
       |> assign(preferences_auto_filled: false)
+      |> assign(guessed_gender: nil)
+      |> assign(guessed_first_name: nil)
       |> assign(current_step: 1)
       |> assign(step_direction: :forward)
       |> assign(last_params: initial_attrs)
@@ -565,6 +569,7 @@ defmodule AniminaWeb.UserLive.Registration do
 
     if step_valid?(current, params, socket.assigns.locations) do
       next = current + 1
+      {params, socket} = maybe_prefill_step_2(params, socket, current, next)
       {params, socket} = maybe_auto_fill_preferences(params, socket, next)
       age = compute_age(params["birthday"])
 
@@ -684,6 +689,17 @@ defmodule AniminaWeb.UserLive.Registration do
     end
   end
 
+  def handle_event("guess_gender", %{"value" => name}, socket) do
+    name = String.trim(name)
+
+    if name != "" and name != socket.assigns.guessed_first_name do
+      GenderGuesser.guess_async(name, self())
+      {:noreply, assign(socket, guessed_first_name: name)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   def handle_event("add_location", _params, socket) do
     locations = socket.assigns.locations
     input = socket.assigns.location_input
@@ -768,6 +784,11 @@ defmodule AniminaWeb.UserLive.Registration do
      |> recalc_step_ready()}
   end
 
+  @impl true
+  def handle_info({:gender_guess_result, gender}, socket) do
+    {:noreply, assign(socket, guessed_gender: gender)}
+  end
+
   defp update_location_input_from_params(socket, user_params) do
     case user_params["location_input"] do
       nil ->
@@ -850,6 +871,50 @@ defmodule AniminaWeb.UserLive.Registration do
         loc.country_id == input.country_id and loc.zip_code == input.zip_code
       end)
   end
+
+  defp maybe_prefill_step_2(params, socket, 1, 2) do
+    first_name = params["first_name"]
+    params = prefill_display_name(params, first_name)
+    gender = resolve_guessed_gender(socket.assigns.guessed_gender, first_name)
+    apply_guessed_gender(params, socket, gender)
+  end
+
+  defp maybe_prefill_step_2(params, socket, _from, _to), do: {params, socket}
+
+  defp prefill_display_name(params, first_name) do
+    if is_nil(params["display_name"]) or params["display_name"] == "" do
+      Map.put(params, "display_name", first_name)
+    else
+      params
+    end
+  end
+
+  defp resolve_guessed_gender(guessed, _first_name) when not is_nil(guessed), do: guessed
+
+  defp resolve_guessed_gender(nil, first_name) when is_binary(first_name) and first_name != "" do
+    case GenderGuesser.guess_from_cache(first_name) do
+      {:ok, g} -> g
+      :miss -> nil
+    end
+  end
+
+  defp resolve_guessed_gender(nil, _first_name), do: nil
+
+  defp apply_guessed_gender(params, socket, gender)
+       when not is_nil(gender) do
+    if gender != params["gender"] do
+      params =
+        params
+        |> Map.put("gender", gender)
+        |> Map.put("preferred_partner_gender", [""])
+
+      {params, assign(socket, preferences_auto_filled: false)}
+    else
+      {params, socket}
+    end
+  end
+
+  defp apply_guessed_gender(params, socket, nil), do: {params, socket}
 
   defp maybe_auto_fill_preferences(params, socket, next_step) do
     if socket.assigns.preferences_auto_filled or next_step != 4 do
