@@ -24,7 +24,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings")
 
-      assert page_title(lv) == "Account"
+      assert page_title(lv) == "Account - ANIMINA"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do

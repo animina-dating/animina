@@ -24,7 +24,7 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings/delete-account")
 
-      assert page_title(lv) == "Delete Account"
+      assert page_title(lv) == "Delete Account - ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

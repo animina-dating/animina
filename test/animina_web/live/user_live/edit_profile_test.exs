@@ -25,7 +25,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings/profile")
 
-      assert page_title(lv) == "Edit Profile"
+      assert page_title(lv) == "Edit Profile - ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

@@ -34,7 +34,7 @@ defmodule AniminaWeb.DiscoverLiveTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/discover")
 
-      assert page_title(lv) == "Discover"
+      assert page_title(lv) == "Discover - ANIMINA"
     end
 
     test "shows Your Matches section", %{conn: conn} do

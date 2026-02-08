@@ -25,8 +25,7 @@ defmodule AniminaWeb.Router do
 
     live_session :public,
       on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}] do
-      live "/", DemoIndex2Live
-      live "/demo", DemoLive
+      live "/", IndexLive
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
       live "/agb", TermsOfServiceLive

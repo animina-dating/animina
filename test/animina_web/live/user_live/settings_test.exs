@@ -22,7 +22,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings/account")
 
-      assert page_title(lv) == "Account Security"
+      assert page_title(lv) == "Account Security - ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

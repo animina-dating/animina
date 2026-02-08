@@ -1,4 +1,4 @@
-defmodule AniminaWeb.DemoIndex2LiveTest do
+defmodule AniminaWeb.IndexLiveTest do
   use AniminaWeb.ConnCase, async: true
 
   import Animina.AccountsFixtures
@@ -15,12 +15,6 @@ defmodule AniminaWeb.DemoIndex2LiveTest do
       # The old mission statement link should be gone
       refute html =~ "/demo/mission_statement"
       refute html =~ "Our Mission Statement"
-    end
-
-    test "mission statement page no longer exists", %{conn: conn} do
-      assert_raise FunctionClauseError, fn ->
-        live(conn, "/demo/mission_statement")
-      end
     end
 
     test "redirects waitlisted user to /users/waitlist", %{conn: conn} do

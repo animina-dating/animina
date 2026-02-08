@@ -1,6 +1,6 @@
-defmodule AniminaWeb.DemoIndex2Live do
+defmodule AniminaWeb.IndexLive do
   @moduledoc """
-  German landing page for ANIMINA - showcasing what makes the platform different.
+  Landing page for ANIMINA - showcasing what makes the platform different.
 
   Key differentiators highlighted:
   - 100% free (ad-supported)

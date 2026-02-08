@@ -5,7 +5,7 @@ defmodule AniminaWeb.LayoutsTest do
 
   describe "navigation language picker" do
     test "renders globe icon in nav bar", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       assert html =~ "hero-globe-alt"
       assert html =~ "language-menu-button"
@@ -13,7 +13,7 @@ defmodule AniminaWeb.LayoutsTest do
     end
 
     test "language dropdown contains all 9 locales", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       for locale <- ~w(de en tr ru ar pl fr es uk) do
         assert html =~ ~s(name="locale" value="#{locale}")
@@ -21,7 +21,7 @@ defmodule AniminaWeb.LayoutsTest do
     end
 
     test "language dropdown shows native language names", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       assert html =~ "Deutsch"
       assert html =~ "English"
@@ -31,7 +31,7 @@ defmodule AniminaWeb.LayoutsTest do
 
   describe "footer language picker" do
     test "renders language buttons in footer", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       # Footer should contain locale forms with abbreviations
       assert html =~ "footer-lang-de"
@@ -44,21 +44,21 @@ defmodule AniminaWeb.LayoutsTest do
     setup :register_and_log_in_user
 
     test "user dropdown contains settings link", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/datenschutz")
 
       assert html =~ "user-dropdown"
       assert html =~ "/users/settings"
     end
 
     test "globe icon is hidden for authenticated users", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/datenschutz")
 
       refute html =~ "language-menu-button"
       refute html =~ "language-dropdown"
     end
 
     test "shows waitlist badge for waitlisted user", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/datenschutz")
 
       assert html =~ "waitlist-badge"
       assert html =~ "Waitlist"
@@ -70,7 +70,7 @@ defmodule AniminaWeb.LayoutsTest do
       |> Ecto.Changeset.change(state: "normal")
       |> Animina.Repo.update!()
 
-      {:ok, _view, html} = live(conn, ~p"/demo")
+      {:ok, _view, html} = live(conn, ~p"/")
 
       refute html =~ "waitlist-badge"
     end

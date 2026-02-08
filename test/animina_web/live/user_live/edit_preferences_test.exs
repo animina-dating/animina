@@ -28,7 +28,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/users/settings/preferences")
 
-      assert page_title(lv) == "Partner Preferences"
+      assert page_title(lv) == "Partner Preferences - ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do
