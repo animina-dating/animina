@@ -7,12 +7,14 @@ Tu código de confirmación es:
 
     <%= @pin %>
 
+Este correo fue enviado a las <%= @sent_at %>.
 Por favor introduce este código en un plazo de 30 minutos
 para confirmar tu dirección de correo electrónico.
 
 Tienes un máximo de 3 intentos. Después de 3 entradas
-incorrectas o después de 30 minutos, tu cuenta será
-eliminada y tendrás que registrarte de nuevo.
+incorrectas o después de 30 minutos (a las <%= @expires_at %>),
+tu cuenta será eliminada automáticamente y tendrás que
+registrarte de nuevo.
 
 Si no creaste una cuenta en ANIMINA, por favor ignora
 este correo electrónico.

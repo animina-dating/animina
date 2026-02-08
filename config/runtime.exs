@@ -95,4 +95,7 @@ if config_env() == :prod do
     cmd_path: "/usr/sbin/sendmail",
     cmd_args: "-N delay,failure,success",
     qmail: false
+
+  # Monitor Postfix mail queue for delivery failures
+  config :animina, start_mail_queue_checker: true
 end

@@ -80,11 +80,16 @@ defmodule Animina.Accounts.UserNotifier do
   Deliver a 6-digit confirmation PIN to the user's email.
   """
   def deliver_confirmation_pin(user, pin) do
+    now_berlin = berlin_now()
+    expires_berlin = DateTime.add(now_berlin, 30, :minute)
+
     {subject, body} =
       EmailTemplates.render(user_locale(user), :confirmation_pin,
         email: user.email,
         greeting_name: greeting_name(user),
-        pin: pin
+        pin: pin,
+        sent_at: format_berlin_time(now_berlin),
+        expires_at: format_berlin_time(expires_berlin)
       )
 
     deliver(user_recipient(user), subject, body)
@@ -212,12 +217,20 @@ defmodule Animina.Accounts.UserNotifier do
   }
 
   defp format_german_time do
-    now =
-      DateTime.utc_now()
-      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+    now = berlin_now()
 
     Calendar.strftime(now, "%d. %B %Y um %H:%M Uhr",
       month_names: fn month -> @german_months[month] end
     )
+  end
+
+  defp berlin_now do
+    DateTime.utc_now()
+    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+  end
+
+  defp format_berlin_time(%DateTime{} = dt) do
+    zone_abbr = if dt.std_offset > 0, do: "CEST", else: "CET"
+    Calendar.strftime(dt, "%H:%M #{zone_abbr}")
   end
 end

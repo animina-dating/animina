@@ -7,12 +7,14 @@ Votre code de confirmation est :
 
     <%= @pin %>
 
+Cet e-mail a été envoyé à <%= @sent_at %>.
 Veuillez saisir ce code dans les 30 minutes pour
 confirmer votre adresse e-mail.
 
 Vous disposez d'un maximum de 3 tentatives. Après
-3 saisies erronées ou après 30 minutes, votre compte
-sera supprimé et vous devrez vous réinscrire.
+3 saisies erronées ou après 30 minutes (à <%= @expires_at %>),
+votre compte sera automatiquement supprimé et vous
+devrez vous réinscrire.
 
 Si vous n'avez pas créé de compte sur ANIMINA, veuillez
 ignorer cet e-mail.

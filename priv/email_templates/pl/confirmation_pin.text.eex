@@ -7,12 +7,14 @@ Twój kod potwierdzenia to:
 
     <%= @pin %>
 
+Ta wiadomość została wysłana o <%= @sent_at %>.
 Proszę wprowadzić ten kod w ciągu 30 minut, aby
 potwierdzić swój adres e-mail.
 
 Masz maksymalnie 3 próby. Po 3 błędnych wpisach lub
-po 30 minutach Twoje konto zostanie usunięte i będziesz
-musiał/a zarejestrować się ponownie.
+po 30 minutach (o <%= @expires_at %>) Twoje konto
+zostanie automatycznie usunięte i będziesz musiał/a
+zarejestrować się ponownie.
 
 Jeśli nie zakładałeś/aś konta na ANIMINA, prosimy o
 zignorowanie tego e-maila.
