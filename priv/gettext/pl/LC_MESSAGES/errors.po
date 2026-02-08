@@ -110,7 +110,7 @@ msgstr "musi być większe lub równe %{number}"
 msgid "must be equal to %{number}"
 msgstr "musi być równe %{number}"
 
-#: lib/animina/accounts.ex:212
+#: lib/animina/accounts.ex:209
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Nie znaleziono kodu polecenia"
@@ -204,3 +204,13 @@ msgstr "To jest pies. Twoje zdjęcie profilowe musi pokazywać Twoją twarz. Zdj
 #, elixir-autogen, elixir-format
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "To jest zwierzę. Twoje zdjęcie profilowe musi pokazywać Twoją twarz. Zdjęcia zwierząt możesz umieścić na swoim moodboardzie."
+
+#: lib/animina/accounts/user.ex:406
+#, elixir-autogen, elixir-format
+msgid "does not match password"
+msgstr "nie pasuje do hasła"
+
+#: lib/animina/accounts/user.ex:342
+#, elixir-autogen, elixir-format
+msgid "must have the @ sign and no spaces"
+msgstr "musi zawierać znak @ i nie może zawierać spacji"

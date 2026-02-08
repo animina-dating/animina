@@ -252,7 +252,6 @@ defmodule Animina.MoodboardTest do
       errors = errors_on(changeset)
 
       assert "can't be blank" in errors.moodboard_item_id
-      assert "can't be blank" in errors.content
     end
 
     test "create_changeset validates content length" do

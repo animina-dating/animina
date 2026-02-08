@@ -108,7 +108,7 @@ msgstr ""
 msgid "must be equal to %{number}"
 msgstr ""
 
-#: lib/animina/accounts.ex:212
+#: lib/animina/accounts.ex:209
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr ""
@@ -201,4 +201,14 @@ msgstr ""
 #: lib/animina/photos/photo_feedback.ex:254
 #, elixir-autogen, elixir-format
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
+msgstr ""
+
+#: lib/animina/accounts/user.ex:406
+#, elixir-autogen, elixir-format
+msgid "does not match password"
+msgstr ""
+
+#: lib/animina/accounts/user.ex:342
+#, elixir-autogen, elixir-format
+msgid "must have the @ sign and no spaces"
 msgstr ""

@@ -339,7 +339,7 @@ defmodule Animina.Accounts.User do
       changeset
       |> validate_required([:email])
       |> validate_format(:email, ~r/^[^@,;\s]+@[^@,;\s]+$/,
-        message: "must have the @ sign and no spaces"
+        message: dgettext("errors", "must have the @ sign and no spaces")
       )
       |> validate_length(:email, max: 160)
 
@@ -403,7 +403,7 @@ defmodule Animina.Accounts.User do
   def password_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:password])
-    |> validate_confirmation(:password, message: "does not match password")
+    |> validate_confirmation(:password, message: dgettext("errors", "does not match password"))
     |> validate_password(opts)
   end
 

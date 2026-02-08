@@ -1208,7 +1208,7 @@ msgstr "نشط"
 msgid "Cannot remove the last admin. Assign another admin first."
 msgstr "لا يمكن إزالة آخر مشرف. قم بتعيين مشرف آخر أولاً."
 
-#: lib/animina_web/components/moodboard_components.ex:281
+#: lib/animina_web/components/moodboard_components.ex:286
 #: lib/animina_web/live/user_live/traits_wizard.ex:360
 #, elixir-autogen, elixir-format
 msgid "About Me"
@@ -1369,7 +1369,7 @@ msgid "Permanently delete your account"
 msgstr "حذف حسابك نهائياً"
 
 #: lib/animina_web/components/love_emergency_component.ex:69
-#: lib/animina_web/components/moodboard_components.ex:538
+#: lib/animina_web/components/moodboard_components.ex:549
 #: lib/animina_web/live/admin/feature_flags_live.ex:840
 #: lib/animina_web/live/admin/feature_flags_live.ex:924
 #: lib/animina_web/live/admin/feature_flags_live.ex:1082
@@ -1402,7 +1402,7 @@ msgstr "لم يتم العثور على الموقع."
 msgid "Location updated."
 msgstr "تم تحديث الموقع."
 
-#: lib/animina_web/components/moodboard_components.ex:541
+#: lib/animina_web/components/moodboard_components.ex:552
 #: lib/animina_web/live/admin/feature_flags_live.ex:843
 #: lib/animina_web/live/admin/feature_flags_live.ex:927
 #: lib/animina_web/live/admin/feature_flags_live.ex:1085
@@ -3106,7 +3106,7 @@ msgid "Upload a photo that shows your face clearly"
 msgstr "ارفع صورة تُظهر وجهك بوضوح"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:571
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1002
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1005
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr "خطأ في الرفع"
@@ -3792,7 +3792,7 @@ msgid "This usually takes 40 seconds"
 msgstr "هذا يستغرق عادة 40 ثانية"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:568
-#: lib/animina_web/live/user_live/moodboard_editor.ex:999
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1002
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 6MB)"
 msgstr "الملف كبير جداً (الحد الأقصى 6 ميغابايت)"
@@ -3820,9 +3820,9 @@ msgstr "اكتشاف العمر"
 msgid "All"
 msgstr "الكل"
 
-#: lib/animina_web/components/moodboard_components.ex:392
+#: lib/animina_web/components/moodboard_components.ex:397
 #: lib/animina_web/live/user_live/moodboard_editor.ex:90
-#: lib/animina_web/live/user_live/moodboard_editor.ex:979
+#: lib/animina_web/live/user_live/moodboard_editor.ex:982
 #, elixir-autogen, elixir-format
 msgid "Add Photo"
 msgstr "إضافة صورة"
@@ -3863,25 +3863,25 @@ msgstr "اسحب وأفلت أو انقر للرفع"
 msgid "Failed to add item"
 msgstr "فشل إضافة العنصر"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:921
+#: lib/animina_web/live/user_live/moodboard_editor.ex:924
 #, elixir-autogen, elixir-format
 msgid "Failed to delete item"
 msgstr "فشل حذف العنصر"
 
 #: lib/animina_web/components/moodboard_components.ex:42
-#: lib/animina_web/components/moodboard_components.ex:180
-#: lib/animina_web/components/moodboard_components.ex:343
+#: lib/animina_web/components/moodboard_components.ex:184
+#: lib/animina_web/components/moodboard_components.ex:348
 #: lib/animina_web/live/components/live_moodboard_item_component.ex:64
 #, elixir-autogen, elixir-format
 msgid "Hidden"
 msgstr "مخفي"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1000
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1003
 #, elixir-autogen, elixir-format
 msgid "Invalid file type"
 msgstr "نوع ملف غير صالح"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:915
+#: lib/animina_web/live/user_live/moodboard_editor.ex:918
 #, elixir-autogen, elixir-format
 msgid "Item deleted"
 msgstr "تم حذف العنصر"
@@ -3891,7 +3891,7 @@ msgstr "تم حذف العنصر"
 msgid "JPG, PNG, WebP, HEIC up to 6MB"
 msgstr "JPG أو PNG أو WebP أو HEIC حتى 6 ميغابايت"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1001
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1004
 #, elixir-autogen, elixir-format
 msgid "Too many files"
 msgstr "ملفات كثيرة جداً"
@@ -3923,32 +3923,32 @@ msgstr "عمودان"
 msgid "Three columns"
 msgstr "ثلاثة أعمدة"
 
-#: lib/animina_web/components/moodboard_components.ex:318
+#: lib/animina_web/components/moodboard_components.ex:323
 #, elixir-autogen, elixir-format
 msgid "Delete item"
 msgstr "حذف العنصر"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:981
+#: lib/animina_web/live/user_live/moodboard_editor.ex:984
 #, elixir-autogen, elixir-format
 msgid "Add Photo + Text"
 msgstr "إضافة صورة + نص"
 
 #: lib/animina_web/live/user_live/moodboard_editor.ex:113
-#: lib/animina_web/live/user_live/moodboard_editor.ex:980
+#: lib/animina_web/live/user_live/moodboard_editor.ex:983
 #, elixir-autogen, elixir-format
 msgid "Add Text"
 msgstr "إضافة نص"
 
-#: lib/animina_web/components/moodboard_components.ex:293
-#: lib/animina_web/components/moodboard_components.ex:360
-#: lib/animina_web/components/moodboard_components.ex:402
-#: lib/animina_web/components/moodboard_components.ex:437
+#: lib/animina_web/components/moodboard_components.ex:298
+#: lib/animina_web/components/moodboard_components.ex:365
+#: lib/animina_web/components/moodboard_components.ex:407
+#: lib/animina_web/components/moodboard_components.ex:445
 #, elixir-autogen, elixir-format
 msgid "Edit text"
 msgstr "تعديل النص"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:861
-#: lib/animina_web/live/user_live/moodboard_editor.ex:887
+#: lib/animina_web/live/user_live/moodboard_editor.ex:864
+#: lib/animina_web/live/user_live/moodboard_editor.ex:890
 #, elixir-autogen, elixir-format
 msgid "Failed to update text"
 msgstr "فشل تحديث النص"
@@ -3963,15 +3963,15 @@ msgstr "صورة + نص"
 msgid "Text"
 msgstr "نص"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:858
-#: lib/animina_web/live/user_live/moodboard_editor.ex:884
+#: lib/animina_web/live/user_live/moodboard_editor.ex:861
+#: lib/animina_web/live/user_live/moodboard_editor.ex:887
 #, elixir-autogen, elixir-format
 msgid "Text updated"
 msgstr "تم تحديث النص"
 
-#: lib/animina_web/components/moodboard_components.ex:528
+#: lib/animina_web/components/moodboard_components.ex:539
 #: lib/animina_web/live/user_live/moodboard_editor.ex:462
-#: lib/animina_web/live/user_live/moodboard_editor.ex:572
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1134
 #, elixir-autogen, elixir-format
 msgid "Write your text here..."
 msgstr "اكتب نصك هنا..."
@@ -3992,7 +3992,7 @@ msgstr "تطبيق القص"
 msgid "Crop Photo"
 msgstr "قص الصورة"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1077
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1080
 #, elixir-autogen, elixir-format
 msgid "Crop to Square"
 msgstr "قص مربّع"
@@ -4003,7 +4003,7 @@ msgstr "قص مربّع"
 msgid "Cropped preview"
 msgstr "معاينة مقصوصة"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1054
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1057
 #, elixir-autogen, elixir-format
 msgid "Cropped to square"
 msgstr "تم القص إلى مربّع"
@@ -4025,7 +4025,7 @@ msgstr "جارٍ المعالجة..."
 msgid "Ready to upload"
 msgstr "جاهز للرفع"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1080
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1083
 #, elixir-autogen, elixir-format
 msgid "Apply"
 msgstr "تطبيق"
@@ -4035,42 +4035,42 @@ msgstr "تطبيق"
 msgid "Aspect Ratio"
 msgstr "نسبة العرض للارتفاع"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1078
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1081
 #, elixir-autogen, elixir-format
 msgid "Crop to 16:9"
 msgstr "قص إلى 16:9"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1079
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1082
 #, elixir-autogen, elixir-format
 msgid "Crop to 4:3"
 msgstr "قص إلى 4:3"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1075
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1078
 #, elixir-autogen, elixir-format
 msgid "Crop your photo or skip to use the full image."
 msgstr "قص صورتك أو تخطَّ لاستخدام الصورة الكاملة."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1068
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1071
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 16:9 format, or skip to use the full image."
 msgstr "قص صورتك بتنسيق 16:9، أو تخطَّ لاستخدام الصورة الكاملة."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 4:3 format, or skip to use the full image."
 msgstr "قص صورتك بتنسيق 4:3، أو تخطَّ لاستخدام الصورة الكاملة."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1064
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1067
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to a square, or skip to use the full image."
 msgstr "قص صورتك إلى مربّع، أو تخطَّ لاستخدام الصورة الكاملة."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1055
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1058
 #, elixir-autogen, elixir-format
 msgid "Cropped to 16:9"
 msgstr "تم القص إلى 16:9"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1056
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1059
 #, elixir-autogen, elixir-format
 msgid "Cropped to 4:3"
 msgstr "تم القص إلى 4:3"
@@ -4090,8 +4090,8 @@ msgstr "الاتجاه"
 msgid "Original"
 msgstr "أصلي"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1053
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1057
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1056
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1060
 #, elixir-autogen, elixir-format
 msgid "Photo ready"
 msgstr "الصورة جاهزة"
@@ -4106,22 +4106,19 @@ msgstr "عمودي"
 msgid "Square"
 msgstr "مربّع"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1060
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1063
 #, elixir-autogen, elixir-format
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
 msgstr "صورتك لا تحتاج قصاً. انقر على 'استخدم الصورة الكاملة' للمتابعة."
 
-#: lib/animina/accounts.ex:158
-#, elixir-autogen, elixir-format
-msgid "Erzähl uns etwas über dich..."
-msgstr "أخبرنا عن نفسك..."
-
-#: lib/animina/accounts.ex:159
+#: lib/animina_web/components/moodboard_components.ex:410
+#: lib/animina_web/components/moodboard_components.ex:448
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1133
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself..."
 msgstr "أخبرنا عن نفسك..."
 
-#: lib/animina_web/components/moodboard_components.ex:389
+#: lib/animina_web/components/moodboard_components.ex:394
 #, elixir-autogen, elixir-format
 msgid "Upload a profile photo to complete your About Me"
 msgstr "ارفع صورة شخصية لإكمال قسم عنّي"

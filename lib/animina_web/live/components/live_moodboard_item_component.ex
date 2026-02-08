@@ -150,6 +150,11 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     """
   end
 
+  @default_intro_prompts [
+    "Tell us about yourself...",
+    "Erzähl uns etwas über dich..."
+  ]
+
   defp combined_card(assigns) do
     photo = assigns.item.moodboard_photo.photo
     content = assigns.item.moodboard_story.content
@@ -158,7 +163,11 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     analyzing? = PhotoStatus.analyzing?(photo)
     approved? = PhotoStatus.approved?(photo)
     url = if servable?, do: Photos.signed_url(photo, :main), else: nil
-    rendered = MoodboardComponents.render_markdown(content)
+
+    has_custom_content =
+      content != nil && String.trim(content) != "" && content not in @default_intro_prompts
+
+    rendered = if has_custom_content, do: MoodboardComponents.render_markdown(content), else: ""
 
     assigns =
       assigns
@@ -168,6 +177,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       |> assign(:approved?, approved?)
       |> assign(:url, url)
       |> assign(:rendered_content, rendered)
+      |> assign(:has_custom_content, has_custom_content)
 
     ~H"""
     <div class="editorial-combined-card">
@@ -186,8 +196,8 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
           />
         <% end %>
         
-    <!-- Caption below photo -->
-        <div class="p-5 sm:p-6">
+    <!-- Caption below photo (only if user wrote custom content) -->
+        <div :if={@has_custom_content} class="p-5 sm:p-6">
           <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0">
             {raw(@rendered_content)}
           </div>

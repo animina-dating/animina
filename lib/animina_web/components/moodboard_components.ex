@@ -162,10 +162,14 @@ defmodule AniminaWeb.MoodboardComponents do
     has_story =
       assigns.item.item_type in ["story", "combined"] && assigns.item.moodboard_story != nil
 
+    has_custom_story =
+      has_story && has_custom_content?(assigns.item.moodboard_story.content)
+
     assigns =
       assigns
       |> assign(:has_photo, has_photo)
       |> assign(:has_story, has_story)
+      |> assign(:has_custom_story, has_custom_story)
 
     ~H"""
     <div class={[
@@ -188,7 +192,7 @@ defmodule AniminaWeb.MoodboardComponents do
       </div>
       
     <!-- Quote card (story only) -->
-      <div :if={!@has_photo && @has_story} class="editorial-quote-card">
+      <div :if={!@has_photo && @has_custom_story} class="editorial-quote-card">
         <div class="bg-gradient-to-br from-base-100 to-base-200/50 rounded-2xl p-6 sm:p-8 shadow-[0_6px_16px_-4px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_24px_-4px_rgba(0,0,0,0.15)] transition-shadow duration-300">
           <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-headings:text-base-content">
             {raw(render_markdown(@item.moodboard_story.content))}
@@ -201,8 +205,8 @@ defmodule AniminaWeb.MoodboardComponents do
         <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300 bg-base-100">
           <.moodboard_photo photo={@item.moodboard_photo.photo} class="w-full h-auto block" />
           
-    <!-- Caption below photo -->
-          <div class="p-5 sm:p-6">
+    <!-- Caption below photo (only if user wrote custom content) -->
+          <div :if={@has_custom_story} class="p-5 sm:p-6">
             <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0">
               {raw(render_markdown(@item.moodboard_story.content))}
             </div>
@@ -232,10 +236,11 @@ defmodule AniminaWeb.MoodboardComponents do
 
     is_editing = assigns.editing_item_id == assigns.item.id
 
-    # Show inline edit hint only for the pinned "About Me" item when it still has default content
+    # Show inline edit hint for the pinned "About Me" item when it has default/empty content
     show_edit_hint =
       is_pinned && has_story &&
-        assigns.item.moodboard_story.content in @default_intro_prompts
+        (String.trim(assigns.item.moodboard_story.content || "") == "" ||
+           assigns.item.moodboard_story.content in @default_intro_prompts)
 
     assigns =
       assigns
@@ -401,7 +406,13 @@ defmodule AniminaWeb.MoodboardComponents do
               phx-value-id={@item.id}
               title={gettext("Edit text")}
             >
-              <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0 flex-1">
+              <div :if={@show_edit_hint} class="flex-1 text-base-content/40 italic">
+                {gettext("Tell us about yourself...")}
+              </div>
+              <div
+                :if={!@show_edit_hint}
+                class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0 flex-1"
+              >
                 {raw(render_markdown(@item.moodboard_story.content))}
               </div>
               <svg
@@ -436,7 +447,13 @@ defmodule AniminaWeb.MoodboardComponents do
               phx-value-id={@item.id}
               title={gettext("Edit text")}
             >
-              <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0 flex-1">
+              <div :if={@show_edit_hint} class="flex-1 text-base-content/40 italic">
+                {gettext("Tell us about yourself...")}
+              </div>
+              <div
+                :if={!@show_edit_hint}
+                class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0 flex-1"
+              >
                 {raw(render_markdown(@item.moodboard_story.content))}
               </div>
               <svg
@@ -566,4 +583,9 @@ defmodule AniminaWeb.MoodboardComponents do
   defdelegate render_markdown(content),
     to: AniminaWeb.Helpers.MarkdownHelpers,
     as: :render_story_markdown
+
+  # Check if story content is custom (not empty or a default prompt)
+  defp has_custom_content?(nil), do: false
+  defp has_custom_content?(content) when content in @default_intro_prompts, do: false
+  defp has_custom_content?(content), do: String.trim(content) != ""
 end

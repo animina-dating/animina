@@ -152,11 +152,8 @@ defmodule Animina.Accounts do
   end
 
   defp create_pinned_intro_item(user) do
-    Moodboard.create_pinned_intro_item(user, default_intro_prompt(user.language))
+    Moodboard.create_pinned_intro_item(user, "")
   end
-
-  defp default_intro_prompt("de"), do: gettext("Erzähl uns etwas über dich...")
-  defp default_intro_prompt(_), do: gettext("Tell us about yourself...")
 
   defp set_end_waitlist_at(changeset) do
     duration_days = Animina.FeatureFlags.waitlist_duration_days()

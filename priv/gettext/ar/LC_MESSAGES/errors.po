@@ -137,7 +137,7 @@ msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
 msgid "must be equal to %{number}"
 msgstr "يجب أن يساوي %{number}"
 
-#: lib/animina/accounts.ex:212
+#: lib/animina/accounts.ex:209
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"
@@ -231,3 +231,13 @@ msgstr "هذا كلب. يجب أن تُظهر صورة ملفك الشخصي و�
 #, elixir-autogen, elixir-format
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "هذا حيوان. يجب أن تُظهر صورة ملفك الشخصي وجهك. يمكنك استخدام صور الحيوانات في لوحة المزاج بدلاً من ذلك."
+
+#: lib/animina/accounts/user.ex:406
+#, elixir-autogen, elixir-format
+msgid "does not match password"
+msgstr "لا يتطابق مع كلمة المرور"
+
+#: lib/animina/accounts/user.ex:342
+#, elixir-autogen, elixir-format
+msgid "must have the @ sign and no spaces"
+msgstr "يجب أن يحتوي على علامة @ وبدون مسافات"

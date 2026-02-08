@@ -28,8 +28,8 @@ defmodule Animina.Moodboard.MoodboardStory do
   """
   def create_changeset(story, attrs) do
     story
-    |> cast(attrs, [:moodboard_item_id, :content])
-    |> validate_required([:moodboard_item_id, :content])
+    |> cast(attrs, [:moodboard_item_id, :content], empty_values: [])
+    |> validate_required([:moodboard_item_id])
     |> validate_length(:content, max: @max_content_length)
     |> foreign_key_constraint(:moodboard_item_id)
     |> unique_constraint(:moodboard_item_id)
@@ -40,8 +40,7 @@ defmodule Animina.Moodboard.MoodboardStory do
   """
   def update_changeset(story, attrs) do
     story
-    |> cast(attrs, [:content])
-    |> validate_required([:content])
+    |> cast(attrs, [:content], empty_values: [])
     |> validate_length(:content, max: @max_content_length)
   end
 

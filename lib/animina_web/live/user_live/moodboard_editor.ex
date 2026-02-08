@@ -569,7 +569,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
                   data-initial-value={@edit_content}
                   data-max-length="2000"
                   data-input-name="content"
-                  data-placeholder={gettext("Write your text here...")}
+                  data-placeholder={edit_placeholder(@editing_item)}
                 >
                   <input type="hidden" name="content" value={@edit_content} />
                   <p class="text-xs text-base-content/50 mt-2">
@@ -585,7 +585,9 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
                 <button
                   type="submit"
                   class="btn btn-primary"
-                  disabled={String.trim(@edit_content || "") == ""}
+                  disabled={
+                    !Map.get(@editing_item, :pinned, false) && String.trim(@edit_content || "") == ""
+                  }
                 >
                   {gettext("Save")}
                 </button>
@@ -818,6 +820,9 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
   def handle_event("edit-story", %{"id" => id}, socket) do
     item = Moodboard.get_item_with_preloads(id)
     content = (item.moodboard_story && item.moodboard_story.content) || ""
+
+    # Clear default prompts so the editor placeholder shows instead
+    content = clear_default_prompt(content)
 
     {:noreply,
      socket
@@ -1100,6 +1105,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
     if pinned_item && length(items) == 1 && !has_custom_about_me_text?(pinned_item) do
       item = Moodboard.get_item_with_preloads(pinned_item.id)
       content = (item.moodboard_story && item.moodboard_story.content) || ""
+      content = clear_default_prompt(content)
 
       socket
       |> assign(:editing_item, item)
@@ -1124,4 +1130,13 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
 
     trimmed != "" and trimmed not in default_prompts
   end
+
+  # Return the appropriate placeholder text for the edit story editor
+  defp edit_placeholder(%{pinned: true}), do: gettext("Tell us about yourself...")
+  defp edit_placeholder(_item), do: gettext("Write your text here...")
+
+  # Clear known default prompts so the editor placeholder shows instead
+  @default_prompts ["Tell us about yourself...", "Erzähl uns etwas über dich..."]
+  defp clear_default_prompt(content) when content in @default_prompts, do: ""
+  defp clear_default_prompt(content), do: content
 end
