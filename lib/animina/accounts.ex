@@ -729,4 +729,22 @@ defmodule Animina.Accounts do
   defdelegate hard_delete_user(user, opts \\ []), to: Animina.Accounts.SoftDelete
   defdelegate within_grace_period?(user), to: Animina.Accounts.SoftDelete
   defdelegate purge_deleted_users(), to: Animina.Accounts.SoftDelete
+
+  # --- Delegations to ContactBlacklist ---
+
+  defdelegate list_contact_blacklist_entries(user),
+    to: Animina.Accounts.ContactBlacklist,
+    as: :list_entries
+
+  defdelegate count_contact_blacklist_entries(user),
+    to: Animina.Accounts.ContactBlacklist,
+    as: :count_entries
+
+  defdelegate add_contact_blacklist_entry(user, attrs),
+    to: Animina.Accounts.ContactBlacklist,
+    as: :add_entry
+
+  defdelegate remove_contact_blacklist_entry(user, entry_id),
+    to: Animina.Accounts.ContactBlacklist,
+    as: :remove_entry
 end

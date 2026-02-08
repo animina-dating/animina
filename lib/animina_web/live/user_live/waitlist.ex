@@ -179,6 +179,33 @@ defmodule AniminaWeb.UserLive.Waitlist do
                 {gettext("Sign in faster and more securely with a passkey.")}
               </:description>
             </.waitlist_card>
+
+            <.waitlist_card
+              navigate={~p"/users/settings/blocked-contacts"}
+              icon_bg="bg-warning/10"
+              icon_color="text-warning"
+              complete={@has_blocked_contacts}
+              optional={true}
+            >
+              <:icon>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </:icon>
+              <:title>{gettext("Block contacts")}</:title>
+              <:description>
+                {gettext("Prevent ex-partners or acquaintances from seeing your profile.")}
+              </:description>
+            </.waitlist_card>
           </div>
         </div>
 
@@ -299,6 +326,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
     referral_count = Accounts.count_confirmed_referrals(user)
     referral_threshold = FeatureFlags.referral_threshold()
     has_passkeys = Accounts.list_user_passkeys(user) != []
+    has_blocked_contacts = Accounts.count_contact_blacklist_entries(user) > 0
     profile_completeness = ProfileCompleteness.compute(user)
 
     {:ok,
@@ -309,6 +337,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:referral_threshold, referral_threshold)
      |> assign(:end_waitlist_at, user.end_waitlist_at)
      |> assign(:has_passkeys, has_passkeys)
+     |> assign(:has_blocked_contacts, has_blocked_contacts)
      |> assign(:profile_completeness, profile_completeness)}
   end
 end

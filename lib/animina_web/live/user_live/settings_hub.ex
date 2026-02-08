@@ -47,6 +47,18 @@ defmodule AniminaWeb.UserLive.SettingsHub do
           />
         </div>
 
+        <%!-- Section: Privacy --%>
+        <.section_heading title={gettext("Privacy")} />
+
+        <div class="grid gap-3 mb-8">
+          <.settings_card
+            navigate={~p"/users/settings/blocked-contacts"}
+            icon="hero-shield-check"
+            title={gettext("Blocked Contacts")}
+            preview={@blocked_contacts_preview}
+          />
+        </div>
+
         <%!-- Section: Account --%>
         <.section_heading title={gettext("Account")} />
 
@@ -139,8 +151,19 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       |> assign(:user, user)
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:passkeys_preview, build_passkeys_preview(user))
+      |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))
 
     {:ok, socket}
+  end
+
+  defp build_blocked_contacts_preview(user) do
+    count = Accounts.count_contact_blacklist_entries(user)
+
+    case count do
+      0 -> gettext("No contacts blocked")
+      1 -> gettext("1 contact blocked")
+      n -> gettext("%{count} contacts blocked", count: n)
+    end
   end
 
   defp build_passkeys_preview(user) do

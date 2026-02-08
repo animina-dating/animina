@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr "%{age} Jahre alt"
 
-#: lib/animina_web/live/user_live/waitlist.ex:219
+#: lib/animina_web/live/user_live/waitlist.ex:246
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -43,8 +43,8 @@ msgstr "Ein Link zur Bestätigung deiner E-Mail-Änderung wurde an die neue Adre
 #: lib/animina_web/components/layouts.ex:425
 #: lib/animina_web/live/user_live/registration.ex:13
 #: lib/animina_web/live/user_live/settings_hub.ex:22
-#: lib/animina_web/live/user_live/settings_hub.ex:51
-#: lib/animina_web/live/user_live/settings_hub.ex:138
+#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:150
 #, elixir-autogen, elixir-format
 msgid "Account"
 msgstr "Account"
@@ -54,7 +54,7 @@ msgstr "Account"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lib/animina_web/live/user_live/waitlist.ex:227
+#: lib/animina_web/live/user_live/waitlist.ex:254
 #, elixir-autogen, elixir-format
 msgid "Activated!"
 msgstr "Aktiviert!"
@@ -142,7 +142,7 @@ msgstr "Bestätigungscode"
 msgid "Confirmation failed. Please register again."
 msgstr "Bestätigung fehlgeschlagen. Bitte registriere dich erneut."
 
-#: lib/animina_web/live/user_live/waitlist.ex:212
+#: lib/animina_web/live/user_live/waitlist.ex:239
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr "Code kopieren"
@@ -506,6 +506,7 @@ msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Bitte authentifiziere dich erneut, um sensible Aktionen durchzuführen."
 
 #: lib/animina_web/components/layouts.ex:740
+#: lib/animina_web/live/user_live/settings_hub.ex:51
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -753,7 +754,7 @@ msgstr "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
 msgid "Your profile"
 msgstr "Dein Profil"
 
-#: lib/animina_web/live/user_live/waitlist.ex:199
+#: lib/animina_web/live/user_live/waitlist.ex:226
 #, elixir-autogen, elixir-format
 msgid "Your referral code"
 msgstr "Dein Empfehlungscode"
@@ -806,7 +807,7 @@ msgstr "Eine neue Software-Version wird auf dem Server installiert. Das dauert n
 
 #: lib/animina_web/live/user_live/settings.ex:16
 #: lib/animina_web/live/user_live/settings.ex:112
-#: lib/animina_web/live/user_live/settings_hub.ex:57
+#: lib/animina_web/live/user_live/settings_hub.ex:69
 #, elixir-autogen, elixir-format
 msgid "Account Security"
 msgstr "Kontosicherheit"
@@ -833,7 +834,7 @@ msgstr "Wohnsitz konnte nicht entfernt werden."
 
 #: lib/animina_web/live/user_live/delete_account.ex:13
 #: lib/animina_web/live/user_live/delete_account.ex:48
-#: lib/animina_web/live/user_live/settings_hub.ex:69
+#: lib/animina_web/live/user_live/settings_hub.ex:81
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Konto löschen"
@@ -1322,7 +1323,7 @@ msgstr "Meine Flags — Partner-Ausschlusskriterien"
 msgid "App"
 msgstr "App"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:70
+#: lib/animina_web/live/user_live/settings_hub.ex:82
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account"
 msgstr "Konto dauerhaft löschen"
@@ -4901,7 +4902,7 @@ msgstr "Hallo %{name}, dein Account steht auf der Warteliste und wird bald aktiv
 msgid "Prepare your profile"
 msgstr "Bereite dein Profil vor"
 
-#: lib/animina_web/live/user_live/waitlist.ex:191
+#: lib/animina_web/live/user_live/waitlist.ex:218
 #, elixir-autogen, elixir-format
 msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
@@ -4913,7 +4914,7 @@ msgstr[1] "Empfiehl ANIMINA weiter. Nach %{count} bestätigten Empfehlungen wird
 msgid "Set up your flags"
 msgstr "Richte deine Flags ein"
 
-#: lib/animina_web/live/user_live/waitlist.ex:188
+#: lib/animina_web/live/user_live/waitlist.ex:215
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr "Warteliste überspringen"
@@ -4923,12 +4924,12 @@ msgstr "Warteliste überspringen"
 msgid "We'll notify you by email when your account is ready."
 msgstr "Wir benachrichtigen dich per E-Mail, sobald dein Account bereit ist."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:152
+#: lib/animina_web/live/user_live/settings_hub.ex:175
 #, elixir-autogen, elixir-format
 msgid "%{count} passkeys"
 msgstr "%{count} Passkeys"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:151
+#: lib/animina_web/live/user_live/settings_hub.ex:174
 #, elixir-autogen, elixir-format
 msgid "1 passkey"
 msgstr "1 Passkey"
@@ -4943,6 +4944,7 @@ msgstr "Passkey hinzufügen"
 msgid "Add a passkey to sign in without a password."
 msgstr "Füge einen Passkey hinzu, um dich ohne Passwort anzumelden."
 
+#: lib/animina_web/live/user_live/blocked_contacts.ex:113
 #: lib/animina_web/live/user_live/passkey_settings.ex:61
 #, elixir-autogen, elixir-format
 msgid "Added %{date}"
@@ -4968,7 +4970,7 @@ msgstr "Passkey konnte nicht entfernt werden."
 msgid "Last used %{date}"
 msgstr "Zuletzt verwendet am %{date}"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:150
+#: lib/animina_web/live/user_live/settings_hub.ex:173
 #, elixir-autogen, elixir-format
 msgid "No passkeys"
 msgstr "Keine Passkeys"
@@ -5000,7 +5002,7 @@ msgstr "Passkey entfernt."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:12
 #: lib/animina_web/live/user_live/passkey_settings.ex:97
-#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:75
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr "Passkeys"
@@ -5117,7 +5119,7 @@ msgstr "Lade dein Profilfoto hoch"
 msgid "Upload your main profile photo."
 msgstr "Lade dein Profilfoto hoch."
 
-#: lib/animina_web/live/user_live/waitlist.ex:274
+#: lib/animina_web/live/user_live/waitlist.ex:301
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "Optional"
@@ -5325,3 +5327,125 @@ msgstr "Dein E-Mail-Anbieter lehnt derzeit E-Mails von unserem Server ab. Der Be
 #, elixir-autogen, elixir-format
 msgid "Your account data will be automatically deleted in 30 minutes."
 msgstr "Deine Kontodaten werden in 30 Minuten automatisch gelöscht."
+
+#: lib/animina_web/live/user_live/settings_hub.ex:165
+#, elixir-autogen, elixir-format
+msgid "%{count} contacts blocked"
+msgstr "%{count} Kontakte blockiert"
+
+#: lib/animina_web/live/user_live/settings_hub.ex:164
+#, elixir-autogen, elixir-format
+msgid "1 contact blocked"
+msgstr "1 Kontakt blockiert"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:47
+#, elixir-autogen, elixir-format
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:143
+#, elixir-autogen, elixir-format
+msgid "Add phone numbers or email addresses of people you want to hide from."
+msgstr "Füge Telefonnummern oder E-Mail-Adressen von Personen hinzu, vor denen du dich verbergen möchtest."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:119
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to unblock this contact?"
+msgstr "Bist du sicher, dass du diesen Kontakt freigeben möchtest?"
+
+#: lib/animina_web/live/user_live/waitlist.ex:204
+#, elixir-autogen, elixir-format
+msgid "Block contacts"
+msgstr "Kontakte blockieren"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:13
+#: lib/animina_web/live/user_live/blocked_contacts.ex:158
+#: lib/animina_web/live/user_live/settings_hub.ex:57
+#, elixir-autogen, elixir-format
+msgid "Blocked Contacts"
+msgstr "Blockierte Kontakte"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:56
+#, elixir-autogen, elixir-format
+msgid "Blocked contacts"
+msgstr "Blockierte Kontakte"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:185
+#, elixir-autogen, elixir-format
+msgid "Contact blocked."
+msgstr "Kontakt blockiert."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:221
+#, elixir-autogen, elixir-format
+msgid "Contact unblocked."
+msgstr "Kontakt freigegeben."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:226
+#, elixir-autogen, elixir-format
+msgid "Could not remove contact."
+msgstr "Kontakt konnte nicht entfernt werden."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:40
+#, elixir-autogen, elixir-format
+msgid "Label (optional)"
+msgstr "Bezeichnung (optional)"
+
+#: lib/animina_web/live/user_live/settings_hub.ex:163
+#, elixir-autogen, elixir-format
+msgid "No contacts blocked"
+msgstr "Keine Kontakte blockiert"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:141
+#, elixir-autogen, elixir-format
+msgid "No contacts blocked yet."
+msgstr "Noch keine Kontakte blockiert."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:29
+#, elixir-autogen, elixir-format
+msgid "Phone number or email"
+msgstr "Telefonnummer oder E-Mail"
+
+#: lib/animina_web/live/user_live/waitlist.ex:206
+#, elixir-autogen, elixir-format
+msgid "Prevent ex-partners or acquaintances from seeing your profile."
+msgstr "Verhindere, dass Ex-Partner oder Bekannte dein Profil sehen."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:15
+#, elixir-autogen, elixir-format
+msgid "Prevent ex-partners, friends, or colleagues from seeing your profile — and you won't see theirs."
+msgstr "Verhindere, dass Ex-Partner, Freunde oder Kollegen dein Profil sehen — und du siehst ihres nicht."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:194
+#, elixir-autogen, elixir-format
+msgid "You have reached the maximum of %{max} blocked contacts."
+msgstr "Du hast die maximale Anzahl von %{max} blockierten Kontakten erreicht."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:85
+#, elixir-autogen, elixir-format
+msgid "A–Z"
+msgstr "A–Z"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:69
+#, elixir-autogen, elixir-format
+msgid "Filter..."
+msgstr "Filtern..."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:79
+#, elixir-autogen, elixir-format
+msgid "Newest first"
+msgstr "Neueste zuerst"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:134
+#, elixir-autogen, elixir-format
+msgid "No contacts match \"%{filter}\"."
+msgstr "Keine Kontakte für \"%{filter}\" gefunden."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:82
+#, elixir-autogen, elixir-format
+msgid "Oldest first"
+msgstr "Älteste zuerst"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:88
+#, elixir-autogen, elixir-format
+msgid "Z–A"
+msgstr "Z–A"

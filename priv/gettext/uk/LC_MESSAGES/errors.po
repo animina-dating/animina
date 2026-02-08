@@ -115,17 +115,19 @@ msgstr "повинно дорівнювати %{number}"
 msgid "Referral code not found"
 msgstr "Код запрошення не знайдено"
 
-#: lib/animina/accounts/user.ex:265
+#: lib/animina/accounts/contact_blacklist_entry.ex:53
+#: lib/animina/accounts/contact_blacklist_entry.ex:57
+#: lib/animina/accounts/user.ex:266
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "не є дійсним номером телефону"
 
-#: lib/animina/accounts/user.ex:163
+#: lib/animina/accounts/user.ex:164
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "повинно містити 6 символів (літери та цифри)"
 
-#: lib/animina/accounts/user.ex:260
+#: lib/animina/accounts/user.ex:261
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "повинен бути мобільним номером (не стаціонарним)"
@@ -205,12 +207,22 @@ msgstr "Це собака. Ваше фото профілю повинно по�
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "Це тварина. Ваше фото профілю повинно показувати ваше обличчя. Ви можете використовувати фото тварин у мудборді."
 
-#: lib/animina/accounts/user.ex:412
+#: lib/animina/accounts/user.ex:413
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "не збігається з паролем"
 
-#: lib/animina/accounts/user.ex:348
+#: lib/animina/accounts/user.ex:349
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "має містити знак @ і не містити пробілів"
+
+#: lib/animina/accounts/contact_blacklist_entry.ex:69
+#, elixir-autogen, elixir-format
+msgid "is not a valid email address"
+msgstr ""
+
+#: lib/animina/accounts/contact_blacklist_entry.ex:34
+#, elixir-autogen, elixir-format
+msgid "is already blocked"
+msgstr ""

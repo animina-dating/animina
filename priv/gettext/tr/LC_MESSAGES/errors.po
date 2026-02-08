@@ -106,17 +106,19 @@ msgstr "%{number} değerine eşit olmalı"
 msgid "Referral code not found"
 msgstr "Davet kodu bulunamadı"
 
-#: lib/animina/accounts/user.ex:265
+#: lib/animina/accounts/contact_blacklist_entry.ex:53
+#: lib/animina/accounts/contact_blacklist_entry.ex:57
+#: lib/animina/accounts/user.ex:266
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "geçerli bir telefon numarası değil"
 
-#: lib/animina/accounts/user.ex:163
+#: lib/animina/accounts/user.ex:164
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "6 karakter olmalı (harf ve rakam)"
 
-#: lib/animina/accounts/user.ex:260
+#: lib/animina/accounts/user.ex:261
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "bir cep telefonu numarası olmalı (sabit hat değil)"
@@ -196,12 +198,22 @@ msgstr "Bu bir köpek. Profil fotoğrafınız yüzünüzü göstermelidir. Hayva
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "Bu bir hayvan. Profil fotoğrafınız yüzünüzü göstermelidir. Hayvan fotoğraflarını moodboard'unuzda kullanabilirsiniz."
 
-#: lib/animina/accounts/user.ex:412
+#: lib/animina/accounts/user.ex:413
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "şifre ile eşleşmiyor"
 
-#: lib/animina/accounts/user.ex:348
+#: lib/animina/accounts/user.ex:349
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "@ işareti içermeli ve boşluk olmamalıdır"
+
+#: lib/animina/accounts/contact_blacklist_entry.ex:69
+#, elixir-autogen, elixir-format
+msgid "is not a valid email address"
+msgstr ""
+
+#: lib/animina/accounts/contact_blacklist_entry.ex:34
+#, elixir-autogen, elixir-format
+msgid "is already blocked"
+msgstr ""

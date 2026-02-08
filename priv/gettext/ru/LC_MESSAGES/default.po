@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr "%{age} лет"
 
-#: lib/animina_web/live/user_live/waitlist.ex:219
+#: lib/animina_web/live/user_live/waitlist.ex:246
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -44,8 +44,8 @@ msgstr "Ссылка для подтверждения смены e-mail отп�
 #: lib/animina_web/components/layouts.ex:425
 #: lib/animina_web/live/user_live/registration.ex:13
 #: lib/animina_web/live/user_live/settings_hub.ex:22
-#: lib/animina_web/live/user_live/settings_hub.ex:51
-#: lib/animina_web/live/user_live/settings_hub.ex:138
+#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:150
 #, elixir-autogen, elixir-format
 msgid "Account"
 msgstr "Аккаунт"
@@ -55,7 +55,7 @@ msgstr "Аккаунт"
 msgid "Actions"
 msgstr "Действия"
 
-#: lib/animina_web/live/user_live/waitlist.ex:227
+#: lib/animina_web/live/user_live/waitlist.ex:254
 #, elixir-autogen, elixir-format
 msgid "Activated!"
 msgstr "Активирован!"
@@ -143,7 +143,7 @@ msgstr "Код подтверждения"
 msgid "Confirmation failed. Please register again."
 msgstr "Подтверждение не удалось. Пожалуйста, зарегистрируйтесь снова."
 
-#: lib/animina_web/live/user_live/waitlist.ex:212
+#: lib/animina_web/live/user_live/waitlist.ex:239
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr "Копировать код"
@@ -508,6 +508,7 @@ msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Пожалуйста, пройдите повторную аутентификацию для выполнения важных действий."
 
 #: lib/animina_web/components/layouts.ex:740
+#: lib/animina_web/live/user_live/settings_hub.ex:51
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Конфиденциальность"
@@ -756,7 +757,7 @@ msgstr "Ваш аккаунт был удалён. Пожалуйста, зар�
 msgid "Your profile"
 msgstr "Ваш профиль"
 
-#: lib/animina_web/live/user_live/waitlist.ex:199
+#: lib/animina_web/live/user_live/waitlist.ex:226
 #, elixir-autogen, elixir-format
 msgid "Your referral code"
 msgstr "Ваш код приглашения"
@@ -809,7 +810,7 @@ msgstr "На сервер устанавливается новая версия
 
 #: lib/animina_web/live/user_live/settings.ex:16
 #: lib/animina_web/live/user_live/settings.ex:112
-#: lib/animina_web/live/user_live/settings_hub.ex:57
+#: lib/animina_web/live/user_live/settings_hub.ex:69
 #, elixir-autogen, elixir-format
 msgid "Account Security"
 msgstr "Безопасность аккаунта"
@@ -836,7 +837,7 @@ msgstr "Не удалось удалить местоположение."
 
 #: lib/animina_web/live/user_live/delete_account.ex:13
 #: lib/animina_web/live/user_live/delete_account.ex:48
-#: lib/animina_web/live/user_live/settings_hub.ex:69
+#: lib/animina_web/live/user_live/settings_hub.ex:81
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Удалить аккаунт"
@@ -1325,7 +1326,7 @@ msgstr "Мои флаги — Неприемлемое в партнёре"
 msgid "App"
 msgstr "Приложение"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:70
+#: lib/animina_web/live/user_live/settings_hub.ex:82
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account"
 msgstr "Удалить ваш аккаунт навсегда"
@@ -4910,7 +4911,7 @@ msgstr "Привет, %{name}! Ваш аккаунт в листе ожидан�
 msgid "Prepare your profile"
 msgstr "Подготовьте свой профиль"
 
-#: lib/animina_web/live/user_live/waitlist.ex:191
+#: lib/animina_web/live/user_live/waitlist.ex:218
 #, elixir-autogen, elixir-format
 msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
 msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
@@ -4923,7 +4924,7 @@ msgstr[2] "Пригласите друзей в ANIMINA. После %{count} п�
 msgid "Set up your flags"
 msgstr "Настройте свои флаги"
 
-#: lib/animina_web/live/user_live/waitlist.ex:188
+#: lib/animina_web/live/user_live/waitlist.ex:215
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr "Пропустить очередь"
@@ -4933,12 +4934,12 @@ msgstr "Пропустить очередь"
 msgid "We'll notify you by email when your account is ready."
 msgstr "Мы уведомим вас по e-mail, когда ваш аккаунт будет готов."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:152
+#: lib/animina_web/live/user_live/settings_hub.ex:175
 #, elixir-autogen, elixir-format
 msgid "%{count} passkeys"
 msgstr "%{count} ключей доступа"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:151
+#: lib/animina_web/live/user_live/settings_hub.ex:174
 #, elixir-autogen, elixir-format
 msgid "1 passkey"
 msgstr "1 ключ доступа"
@@ -4953,6 +4954,7 @@ msgstr "Добавить ключ доступа"
 msgid "Add a passkey to sign in without a password."
 msgstr "Добавьте ключ доступа для входа без пароля."
 
+#: lib/animina_web/live/user_live/blocked_contacts.ex:113
 #: lib/animina_web/live/user_live/passkey_settings.ex:61
 #, elixir-autogen, elixir-format
 msgid "Added %{date}"
@@ -4978,7 +4980,7 @@ msgstr "Не удалось удалить ключ доступа."
 msgid "Last used %{date}"
 msgstr "Последнее использование %{date}"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:150
+#: lib/animina_web/live/user_live/settings_hub.ex:173
 #, elixir-autogen, elixir-format
 msgid "No passkeys"
 msgstr "Нет ключей доступа"
@@ -5010,7 +5012,7 @@ msgstr "Ключ доступа удалён."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:12
 #: lib/animina_web/live/user_live/passkey_settings.ex:97
-#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:75
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr "Ключи доступа"
@@ -5127,7 +5129,7 @@ msgstr "Загрузите основное фото профиля"
 msgid "Upload your main profile photo."
 msgstr "Загрузите основное фото профиля."
 
-#: lib/animina_web/live/user_live/waitlist.ex:274
+#: lib/animina_web/live/user_live/waitlist.ex:301
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "Дополнительные категории"
@@ -5335,4 +5337,126 @@ msgstr ""
 #: lib/animina_web/live/user_live/pin_confirmation.ex:48
 #, elixir-autogen, elixir-format
 msgid "Your account data will be automatically deleted in 30 minutes."
+msgstr ""
+
+#: lib/animina_web/live/user_live/settings_hub.ex:165
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{count} contacts blocked"
+msgstr "%{count} всего"
+
+#: lib/animina_web/live/user_live/settings_hub.ex:164
+#, elixir-autogen, elixir-format
+msgid "1 contact blocked"
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:47
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Add"
+msgstr "Добавлено:"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:143
+#, elixir-autogen, elixir-format
+msgid "Add phone numbers or email addresses of people you want to hide from."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:119
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Are you sure you want to unblock this contact?"
+msgstr "Вы уверены, что хотите удалить этот ключ доступа?"
+
+#: lib/animina_web/live/user_live/waitlist.ex:204
+#, elixir-autogen, elixir-format
+msgid "Block contacts"
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:13
+#: lib/animina_web/live/user_live/blocked_contacts.ex:158
+#: lib/animina_web/live/user_live/settings_hub.ex:57
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Blocked Contacts"
+msgstr "Заблокировано"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:56
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Blocked contacts"
+msgstr "Заблокировано"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:185
+#, elixir-autogen, elixir-format
+msgid "Contact blocked."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:221
+#, elixir-autogen, elixir-format
+msgid "Contact unblocked."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:226
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Could not remove contact."
+msgstr "Не удалось удалить местоположение."
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:40
+#, elixir-autogen, elixir-format
+msgid "Label (optional)"
+msgstr ""
+
+#: lib/animina_web/live/user_live/settings_hub.ex:163
+#, elixir-autogen, elixir-format
+msgid "No contacts blocked"
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:141
+#, elixir-autogen, elixir-format
+msgid "No contacts blocked yet."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:29
+#, elixir-autogen, elixir-format
+msgid "Phone number or email"
+msgstr ""
+
+#: lib/animina_web/live/user_live/waitlist.ex:206
+#, elixir-autogen, elixir-format
+msgid "Prevent ex-partners or acquaintances from seeing your profile."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:15
+#, elixir-autogen, elixir-format
+msgid "Prevent ex-partners, friends, or colleagues from seeing your profile — and you won't see theirs."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:194
+#, elixir-autogen, elixir-format
+msgid "You have reached the maximum of %{max} blocked contacts."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:85
+#, elixir-autogen, elixir-format
+msgid "A–Z"
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:69
+#, elixir-autogen, elixir-format
+msgid "Filter..."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:79
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Newest first"
+msgstr "Сначала уважение"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:134
+#, elixir-autogen, elixir-format
+msgid "No contacts match \"%{filter}\"."
+msgstr ""
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:82
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Oldest first"
+msgstr "Сначала уважение"
+
+#: lib/animina_web/live/user_live/blocked_contacts.ex:88
+#, elixir-autogen, elixir-format
+msgid "Z–A"
 msgstr ""
