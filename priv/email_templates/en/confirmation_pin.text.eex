@@ -1,7 +1,7 @@
 Your confirmation code for ANIMINA
 ---
 
-Hi <%= @display_name %>,
+Hi <%= @greeting_name %>,
 
 Your confirmation code is:
 

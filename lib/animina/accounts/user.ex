@@ -22,6 +22,8 @@ defmodule Animina.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
 
     # Profile fields
+    field :first_name, :string
+    field :last_name, :string
     field :display_name, :string
     field :birthday, :date
     field :gender, :string
@@ -78,6 +80,8 @@ defmodule Animina.Accounts.User do
   end
 
   @registration_fields [
+    :first_name,
+    :last_name,
     :display_name,
     :birthday,
     :gender,
@@ -205,12 +209,16 @@ defmodule Animina.Accounts.User do
   defp validate_profile_fields(changeset) do
     changeset
     |> validate_required([
+      :first_name,
+      :last_name,
       :display_name,
       :birthday,
       :gender,
       :height,
       :mobile_phone
     ])
+    |> validate_length(:first_name, min: 1, max: 50)
+    |> validate_length(:last_name, min: 1, max: 50)
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:gender, @valid_genders)
     |> validate_inclusion(:language, @valid_languages)
@@ -487,8 +495,10 @@ defmodule Animina.Accounts.User do
   """
   def profile_changeset(user, attrs) do
     user
-    |> cast(attrs, [:display_name, :height, :occupation, :language])
-    |> validate_required([:display_name, :height])
+    |> cast(attrs, [:first_name, :last_name, :display_name, :height, :occupation, :language])
+    |> validate_required([:first_name, :last_name, :display_name, :height])
+    |> validate_length(:first_name, min: 1, max: 50)
+    |> validate_length(:last_name, min: 1, max: 50)
     |> validate_length(:display_name, min: 2, max: 50)
     |> validate_inclusion(:language, @valid_languages)
     |> validate_number(:height, greater_than_or_equal_to: 80, less_than_or_equal_to: 225)

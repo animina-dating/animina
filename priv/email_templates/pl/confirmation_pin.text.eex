@@ -1,7 +1,7 @@
 Twój kod potwierdzenia dla ANIMINA
 ---
 
-Witaj <%= @display_name %>,
+Witaj <%= @greeting_name %>,
 
 Twój kod potwierdzenia to:
 

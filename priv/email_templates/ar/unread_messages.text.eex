@@ -1,6 +1,6 @@
 لديك رسائل غير مقروءة على ANIMINA
 ---
-مرحباً<%= if @display_name do %> <%= @display_name %><% end %>،
+مرحباً<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>،
 
 لديك <%= @unread_count %> رسالة غير مقروءة بانتظارك على ANIMINA.
 

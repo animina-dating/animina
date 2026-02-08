@@ -1,7 +1,7 @@
 Güvenlik bildirimi – ANIMINA
 ---
 
-Merhaba<%= if @display_name do %> <%= @display_name %><% end %>,
+Merhaba<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Birisi <%= @attempted_at %> tarihinde e-posta adresinizle
 (<%= @email %>) yeni bir ANIMINA hesabı oluşturmaya çalıştı.

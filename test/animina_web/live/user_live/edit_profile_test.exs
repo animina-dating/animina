@@ -14,6 +14,8 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
         |> live(~p"/users/settings/profile")
 
       assert html =~ "Edit Profile"
+      assert html =~ "First name"
+      assert html =~ "Last name"
       assert html =~ "Display Name"
       assert html =~ "Height"
       assert html =~ "Occupation"
@@ -58,6 +60,8 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       lv
       |> form("#profile_form", %{
         "user" => %{
+          "first_name" => "Stefan",
+          "last_name" => "Wintermeyer",
           "display_name" => "New Name",
           "height" => "175",
           "occupation" => "Developer"
@@ -66,6 +70,8 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       |> render_submit()
 
       updated_user = Accounts.get_user!(user.id)
+      assert updated_user.first_name == "Stefan"
+      assert updated_user.last_name == "Wintermeyer"
       assert updated_user.display_name == "New Name"
       assert updated_user.height == 175
       assert updated_user.occupation == "Developer"

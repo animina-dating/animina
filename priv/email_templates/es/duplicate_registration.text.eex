@@ -1,7 +1,7 @@
 Aviso de seguridad – ANIMINA
 ---
 
-Hola<%= if @display_name do %> <%= @display_name %><% end %>,
+Hola<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Alguien intentó el <%= @attempted_at %> crear una nueva
 cuenta de ANIMINA con tu dirección de correo electrónico

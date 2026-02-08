@@ -112,11 +112,18 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.text_body =~ "654321"
     end
 
-    test "includes user display_name in the body" do
+    test "uses first_name as greeting in the body" do
       user = user_fixture()
       {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
 
-      assert email.text_body =~ user.display_name
+      assert email.text_body =~ user.first_name
+    end
+
+    test "recipient is formatted as {name, email} tuple" do
+      user = user_fixture()
+      {:ok, email} = UserNotifier.deliver_confirmation_pin(user, "123456")
+
+      assert email.to == [{"#{user.first_name} #{user.last_name}", user.email}]
     end
 
     test "uses German subject when user language is de" do
@@ -268,11 +275,18 @@ defmodule Animina.Accounts.UserNotifierTest do
       assert email.subject == "Security notice – ANIMINA"
     end
 
-    test "includes user's display_name in greeting when user exists" do
+    test "includes user's first_name in greeting when user exists" do
       user = user_fixture(%{language: "de"})
       {:ok, email} = UserNotifier.deliver_duplicate_registration_warning(user.email)
 
-      assert email.text_body =~ "Hallo #{user.display_name},"
+      assert email.text_body =~ "Hallo #{user.first_name},"
+    end
+
+    test "recipient is formatted as {name, email} when user exists" do
+      user = user_fixture(%{language: "en"})
+      {:ok, email} = UserNotifier.deliver_duplicate_registration_warning(user.email)
+
+      assert email.to == [{"#{user.first_name} #{user.last_name}", user.email}]
     end
 
     test "includes German-formatted timestamp in body" do

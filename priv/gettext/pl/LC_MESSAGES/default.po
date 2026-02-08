@@ -11,7 +11,7 @@ msgstr ""
 "Language: pl\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10||n%100>=20) ? 1 : 2);\n"
 
-#: lib/animina_web/live/user_live/registration.ex:219
+#: lib/animina_web/live/user_live/registration.ex:235
 #, elixir-autogen, elixir-format
 msgid "%{age} years old"
 msgstr "%{age} lat"
@@ -30,8 +30,8 @@ msgstr[2] "%{count}/%{threshold} poleceń"
 msgid "100% Free"
 msgstr "100% za darmo"
 
-#: lib/animina_web/live/user_live/registration.ex:611
-#: lib/animina_web/live/user_live/registration.ex:632
+#: lib/animina_web/live/user_live/registration.ex:627
+#: lib/animina_web/live/user_live/registration.ex:648
 #, elixir-autogen, elixir-format
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Kod potwierdzenia został wysłany na %{email}."
@@ -65,7 +65,7 @@ msgstr "Aktywowany!"
 msgid "Ad-supported – no premium traps, no secret algorithms."
 msgstr "Finansowane z reklam – bez pułapek premium, bez tajnych algorytmów."
 
-#: lib/animina_web/live/user_live/registration.ex:367
+#: lib/animina_web/live/user_live/registration.ex:383
 #, elixir-autogen, elixir-format
 msgid "Add location %{number}"
 msgstr "Dodaj lokalizację %{number}"
@@ -85,12 +85,6 @@ msgstr "Już zarejestrowany/a?"
 msgid "At ANIMINA everything is different."
 msgstr "W ANIMINA wszystko jest inne."
 
-#: lib/animina_web/components/layouts.ex:848
-#: lib/animina_web/components/layouts.ex:860
-#, elixir-autogen, elixir-format
-msgid "Attempting to reconnect"
-msgstr "Próba ponownego połączenia"
-
 #: lib/animina_web/live/user_live/registration.ex:95
 #: lib/animina_web/live/user_live/traits_wizard.ex:146
 #, elixir-autogen, elixir-format
@@ -103,7 +97,7 @@ msgstr "Wstecz"
 msgid "Back to login"
 msgstr "Powrót do logowania"
 
-#: lib/animina_web/live/user_live/registration.ex:214
+#: lib/animina_web/live/user_live/registration.ex:230
 #, elixir-autogen, elixir-format
 msgid "Birthday (min. 18 years)"
 msgstr "Data urodzenia (min. 18 lat)"
@@ -156,7 +150,7 @@ msgstr "Kopiuj kod"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:46
 #: lib/animina_web/live/user_live/edit_locations.ex:118
-#: lib/animina_web/live/user_live/registration.ex:320
+#: lib/animina_web/live/user_live/registration.ex:336
 #: lib/animina_web/trait_translations.ex:193
 #, elixir-autogen, elixir-format
 msgid "Country"
@@ -188,13 +182,13 @@ msgstr "Randki powinny być radosne, nie uzależniające – jakość zamiast pr
 msgid "Describe yourself: Your traits, hobbies, values and lifestyle. From humor to creativity to your favorite cuisines."
 msgstr "Opisz siebie: Twoje cechy, hobby, wartości i styl życia. Od humoru po kreatywność i ulubione kuchnie."
 
-#: lib/animina_web/live/user_live/registration.ex:240
+#: lib/animina_web/live/user_live/registration.ex:256
 #, elixir-autogen, elixir-format
 msgid "Display name (2-50 characters)"
 msgstr "Nazwa wyświetlana (2-50 znaków)"
 
-#: lib/animina_web/live/user_live/registration.ex:251
-#: lib/animina_web/live/user_live/registration.ex:390
+#: lib/animina_web/live/user_live/registration.ex:267
+#: lib/animina_web/live/user_live/registration.ex:406
 #, elixir-autogen, elixir-format
 msgid "Diverse"
 msgstr "Inna"
@@ -211,7 +205,7 @@ msgstr "E-mail"
 
 #: lib/animina_web/live/user_live/forgot_password.ex:33
 #: lib/animina_web/live/user_live/login.ex:46
-#: lib/animina_web/live/user_live/registration.ex:192
+#: lib/animina_web/live/user_live/registration.ex:208
 #, elixir-autogen, elixir-format
 msgid "Email address"
 msgstr "Adres e-mail"
@@ -241,8 +235,8 @@ msgstr "Wpisz swój adres e-mail, a wyślemy Ci link do resetowania hasła."
 msgid "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
 msgstr "Każdy ma swoje granice. Bądź szczery/a co do tego, co Ci nie odpowiada. To oszczędza czas i rozczarowanie po obu stronach."
 
-#: lib/animina_web/live/user_live/registration.ex:250
-#: lib/animina_web/live/user_live/registration.ex:389
+#: lib/animina_web/live/user_live/registration.ex:266
+#: lib/animina_web/live/user_live/registration.ex:405
 #, elixir-autogen, elixir-format
 msgid "Female"
 msgstr "Kobieta"
@@ -277,12 +271,12 @@ msgstr "Za darmo. Na zawsze. Dla każdego."
 msgid "Fun without addiction"
 msgstr "Zabawa bez uzależnienia"
 
-#: lib/animina_web/live/user_live/registration.ex:247
+#: lib/animina_web/live/user_live/registration.ex:263
 #, elixir-autogen, elixir-format
 msgid "Gender"
 msgstr "Płeć"
 
-#: lib/animina_web/live/user_live/registration.ex:382
+#: lib/animina_web/live/user_live/registration.ex:398
 #, elixir-autogen, elixir-format
 msgid "Gender(s)"
 msgstr "Płeć/Płci"
@@ -292,7 +286,7 @@ msgstr "Płeć/Płci"
 msgid "Green Flags"
 msgstr "Zielone flagi"
 
-#: lib/animina_web/live/user_live/registration.ex:258
+#: lib/animina_web/live/user_live/registration.ex:274
 #, elixir-autogen, elixir-format
 msgid "Height in cm (80-225)"
 msgstr "Wzrost w cm (80-225)"
@@ -322,7 +316,7 @@ msgstr "Radość zamiast uzależnienia"
 #: lib/animina_web/live/user_live/language_settings.ex:18
 #: lib/animina_web/live/user_live/language_settings.ex:24
 #: lib/animina_web/live/user_live/language_settings.ex:62
-#: lib/animina_web/live/user_live/registration.ex:271
+#: lib/animina_web/live/user_live/registration.ex:287
 #: lib/animina_web/live/user_live/settings_hub.ex:45
 #, elixir-autogen, elixir-format
 msgid "Language"
@@ -341,7 +335,7 @@ msgstr[2] "Lokalizacji"
 #: lib/animina_web/live/user_live/edit_locations.ex:23
 #: lib/animina_web/live/user_live/edit_locations.ex:160
 #: lib/animina_web/live/user_live/profile_hub.ex:83
-#: lib/animina_web/live/user_live/registration.ex:465
+#: lib/animina_web/live/user_live/registration.ex:481
 #, elixir-autogen, elixir-format
 msgid "Locations"
 msgstr "Lokalizacje"
@@ -369,8 +363,8 @@ msgstr "Wyloguj się"
 msgid "Logged out successfully."
 msgstr "Wylogowano pomyślnie."
 
-#: lib/animina_web/live/user_live/registration.ex:249
-#: lib/animina_web/live/user_live/registration.ex:388
+#: lib/animina_web/live/user_live/registration.ex:265
+#: lib/animina_web/live/user_live/registration.ex:404
 #, elixir-autogen, elixir-format
 msgid "Male"
 msgstr "Mężczyzna"
@@ -380,32 +374,32 @@ msgstr "Mężczyzna"
 msgid "Manage your account email address and password settings"
 msgstr "Zarządzaj adresem e-mail i ustawieniami hasła swojego konta"
 
-#: lib/animina_web/live/user_live/registration.ex:416
+#: lib/animina_web/live/user_live/registration.ex:432
 #, elixir-autogen, elixir-format
 msgid "Maximum age"
 msgstr "Maksymalny wiek"
 
-#: lib/animina_web/live/user_live/registration.ex:431
+#: lib/animina_web/live/user_live/registration.ex:447
 #, elixir-autogen, elixir-format
 msgid "Maximum height (cm)"
 msgstr "Maksymalny wzrost (cm)"
 
-#: lib/animina_web/live/user_live/registration.ex:372
+#: lib/animina_web/live/user_live/registration.ex:388
 #, elixir-autogen, elixir-format
 msgid "Maximum of 4 locations reached."
 msgstr "Osiągnięto maksymalnie 4 lokalizacje."
 
-#: lib/animina_web/live/user_live/registration.ex:410
+#: lib/animina_web/live/user_live/registration.ex:426
 #, elixir-autogen, elixir-format
 msgid "Minimum age"
 msgstr "Minimalny wiek"
 
-#: lib/animina_web/live/user_live/registration.ex:424
+#: lib/animina_web/live/user_live/registration.ex:440
 #, elixir-autogen, elixir-format
 msgid "Minimum height (cm)"
 msgstr "Minimalny wzrost (cm)"
 
-#: lib/animina_web/live/user_live/registration.ex:206
+#: lib/animina_web/live/user_live/registration.ex:222
 #, elixir-autogen, elixir-format
 msgid "Mobile phone (e.g. +491514567890)"
 msgstr "Telefon komórkowy (np. +491514567890)"
@@ -433,7 +427,7 @@ msgid "Not unlimited requests"
 msgstr "Nie nieograniczone zapytania"
 
 #: lib/animina_web/live/user_live/edit_profile.ex:47
-#: lib/animina_web/live/user_live/registration.ex:266
+#: lib/animina_web/live/user_live/registration.ex:282
 #, elixir-autogen, elixir-format
 msgid "Occupation"
 msgstr "Zawód"
@@ -475,7 +469,7 @@ msgstr "Związek, przygoda czy dobra rozmowa – nie oceniamy."
 msgid "Password"
 msgstr "Hasło"
 
-#: lib/animina_web/live/user_live/registration.ex:199
+#: lib/animina_web/live/user_live/registration.ex:215
 #, elixir-autogen, elixir-format
 msgid "Password (min. 12 characters)"
 msgstr "Hasło (min. 12 znaków)"
@@ -505,7 +499,7 @@ msgstr "Ludzie szukający prawdziwych więzi"
 msgid "Personality counts"
 msgstr "Osobowość się liczy"
 
-#: lib/animina_web/live/user_live/registration.ex:683
+#: lib/animina_web/live/user_live/registration.ex:699
 #, elixir-autogen, elixir-format
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Proszę wpisać prawidłowy 5-cyfrowy kod pocztowy"
@@ -545,7 +539,7 @@ msgstr "Prawdziwi ludzie"
 msgid "Red Flags"
 msgstr "Czerwone flagi"
 
-#: lib/animina_web/live/user_live/registration.ex:225
+#: lib/animina_web/live/user_live/registration.ex:241
 #, elixir-autogen, elixir-format
 msgid "Referral code (optional)"
 msgstr "Kod polecenia (opcjonalny)"
@@ -576,7 +570,7 @@ msgstr "Pozostałe próby:"
 msgid "Remaining time:"
 msgstr "Pozostały czas:"
 
-#: lib/animina_web/live/user_live/registration.ex:310
+#: lib/animina_web/live/user_live/registration.ex:326
 #, elixir-autogen, elixir-format
 msgid "Remove location"
 msgstr "Usuń lokalizację"
@@ -604,7 +598,7 @@ msgstr "Zapisz hasło"
 msgid "Saving..."
 msgstr "Zapisywanie..."
 
-#: lib/animina_web/live/user_live/registration.ex:439
+#: lib/animina_web/live/user_live/registration.ex:455
 #, elixir-autogen, elixir-format
 msgid "Search radius (km)"
 msgstr "Promień wyszukiwania (km)"
@@ -640,11 +634,6 @@ msgstr "Ustawienia"
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Pokaż, kim jesteś, określ, czego szukasz i gdzie są Twoje granice."
 
-#: lib/animina_web/components/layouts.ex:855
-#, elixir-autogen, elixir-format
-msgid "Something went wrong!"
-msgstr "Coś poszło nie tak!"
-
 #: lib/animina_web/live/index_live.ex:272
 #, elixir-autogen, elixir-format
 msgid "Stories instead of swipes"
@@ -671,7 +660,7 @@ msgstr "To ja"
 msgid "This is what I'm looking for"
 msgstr "Tego szukam"
 
-#: lib/animina_web/live/user_live/registration.ex:692
+#: lib/animina_web/live/user_live/registration.ex:708
 #, elixir-autogen, elixir-format
 msgid "This location has already been added"
 msgstr "Ta lokalizacja została już dodana"
@@ -700,11 +689,6 @@ msgstr "Zobacz kod na GitHub"
 #, elixir-autogen, elixir-format
 msgid "Waitlist"
 msgstr "Lista oczekujących"
-
-#: lib/animina_web/components/layouts.ex:843
-#, elixir-autogen, elixir-format
-msgid "We can't find the internet"
-msgstr "Nie można znaleźć połączenia z internetem"
 
 #: lib/animina_web/live/user_live/pin_confirmation.ex:20
 #, elixir-autogen, elixir-format
@@ -786,7 +770,7 @@ msgstr "Twój profil"
 msgid "Your referral code"
 msgstr "Twój kod polecenia"
 
-#: lib/animina_web/live/user_live/registration.ex:338
+#: lib/animina_web/live/user_live/registration.ex:354
 #, elixir-autogen, elixir-format
 msgid "Zip code (5 digits)"
 msgstr "Kod pocztowy (5 cyfr)"
@@ -802,7 +786,7 @@ msgstr "około 4 tygodnie"
 msgid "close"
 msgstr "zamknij"
 
-#: lib/animina_web/live/user_live/registration.ex:226
+#: lib/animina_web/live/user_live/registration.ex:242
 #, elixir-autogen, elixir-format
 msgid "e.g. A7X3K9"
 msgstr "np. A7X3K9"
@@ -817,17 +801,17 @@ msgstr "minut"
 msgid "of"
 msgstr "z"
 
-#: lib/animina_web/live/user_live/registration.ex:513
+#: lib/animina_web/live/user_live/registration.ex:529
 #, elixir-autogen, elixir-format
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Utwórz konto"
 
-#: lib/animina_web/components/layouts.ex:867
+#: lib/animina_web/components/layouts.ex:843
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Aktualizacja ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:874
+#: lib/animina_web/components/layouts.ex:850
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "Na serwerze instalowana jest nowa wersja oprogramowania. To zajmie tylko chwilę..."
@@ -1083,14 +1067,14 @@ msgid "Choose your preferred language"
 msgstr "Wybierz preferowany język"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:59
-#: lib/animina_web/live/user_live/registration.ex:453
+#: lib/animina_web/live/user_live/registration.ex:469
 #, elixir-autogen, elixir-format
 msgid "I accept the"
 msgstr "Akceptuję"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:43
 #: lib/animina_web/live/user_live/accept_terms.ex:64
-#: lib/animina_web/live/user_live/registration.ex:455
+#: lib/animina_web/live/user_live/registration.ex:471
 #, elixir-autogen, elixir-format
 msgid "Privacy Policy"
 msgstr "Politykę prywatności"
@@ -4704,7 +4688,7 @@ msgstr "Coś poszło nie tak. Spróbuj ponownie."
 #: lib/animina_web/components/layouts.ex:743
 #: lib/animina_web/live/user_live/accept_terms.ex:40
 #: lib/animina_web/live/user_live/accept_terms.ex:61
-#: lib/animina_web/live/user_live/registration.ex:458
+#: lib/animina_web/live/user_live/registration.ex:474
 #, elixir-autogen, elixir-format
 msgid "Terms of Service"
 msgstr "Regulamin"
@@ -4735,7 +4719,7 @@ msgid "Your right to delete your account at any time"
 msgstr "Twoje prawo do usunięcia konta w dowolnym momencie"
 
 #: lib/animina_web/live/user_live/accept_terms.ex:63
-#: lib/animina_web/live/user_live/registration.ex:457
+#: lib/animina_web/live/user_live/registration.ex:473
 #, elixir-autogen, elixir-format
 msgid "and the"
 msgstr "oraz"
@@ -5334,4 +5318,14 @@ msgstr ""
 #: lib/animina_web/live/user_live/avatar_upload.ex:185
 #, elixir-autogen, elixir-format
 msgid "Take Selfie"
+msgstr ""
+
+#: lib/animina_web/live/user_live/registration.ex:193
+#, elixir-autogen, elixir-format
+msgid "First name"
+msgstr ""
+
+#: lib/animina_web/live/user_live/registration.ex:200
+#, elixir-autogen, elixir-format
+msgid "Last name"
 msgstr ""

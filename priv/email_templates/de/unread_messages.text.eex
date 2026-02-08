@@ -1,6 +1,6 @@
 Du hast ungelesene Nachrichten auf ANIMINA
 ---
-Hallo<%= if @display_name do %> <%= @display_name %><% end %>,
+Hallo<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Du hast <%= @unread_count %> ungelesene Nachricht<%= if @unread_count > 1, do: "en" %> auf ANIMINA.
 

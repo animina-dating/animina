@@ -1,7 +1,7 @@
 Tu cuenta de ANIMINA ha sido programada para eliminación
 ---
 
-Hola <%= @display_name %>,
+Hola <%= @greeting_name %>,
 
 Tu cuenta de ANIMINA ha sido eliminada. ¡Lamentamos verte partir!
 

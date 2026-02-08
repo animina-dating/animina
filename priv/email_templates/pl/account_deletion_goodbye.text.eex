@@ -1,7 +1,7 @@
 Twoje konto ANIMINA zostało zaplanowane do usunięcia
 ---
 
-Cześć <%= @display_name %>,
+Cześć <%= @greeting_name %>,
 
 Twoje konto ANIMINA zostało usunięte. Przykro nam, że odchodzisz!
 

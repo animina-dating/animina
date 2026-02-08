@@ -29,6 +29,25 @@ defmodule Animina.Accounts.UserNotifier do
   defp user_locale(%{language: lang}) when is_binary(lang), do: lang
   defp user_locale(_), do: "de"
 
+  defp user_recipient(user) do
+    name =
+      [user.first_name, user.last_name]
+      |> Enum.map(&to_string/1)
+      |> Enum.map(&String.trim/1)
+      |> Enum.reject(&(&1 == ""))
+      |> Enum.join(" ")
+
+    name = if name == "", do: user.display_name || "", else: name
+    {name, user.email}
+  end
+
+  defp greeting_name(user) do
+    [Map.get(user, :first_name), Map.get(user, :last_name), Map.get(user, :display_name)]
+    |> Enum.map(&to_string/1)
+    |> Enum.map(&String.trim/1)
+    |> Enum.find("", &(&1 != ""))
+  end
+
   @doc """
   Deliver instructions to update a user email.
   """
@@ -36,11 +55,11 @@ defmodule Animina.Accounts.UserNotifier do
     {subject, body} =
       EmailTemplates.render(user_locale(user), :update_email,
         email: user.email,
-        display_name: user.display_name,
+        greeting_name: greeting_name(user),
         url: url
       )
 
-    deliver(user.email, subject, body)
+    deliver(user_recipient(user), subject, body)
   end
 
   @doc """
@@ -50,11 +69,11 @@ defmodule Animina.Accounts.UserNotifier do
     {subject, body} =
       EmailTemplates.render(user_locale(user), :password_reset,
         email: user.email,
-        display_name: user.display_name,
+        greeting_name: greeting_name(user),
         url: url
       )
 
-    deliver(user.email, subject, body)
+    deliver(user_recipient(user), subject, body)
   end
 
   @doc """
@@ -64,11 +83,11 @@ defmodule Animina.Accounts.UserNotifier do
     {subject, body} =
       EmailTemplates.render(user_locale(user), :confirmation_pin,
         email: user.email,
-        display_name: user.display_name,
+        greeting_name: greeting_name(user),
         pin: pin
       )
 
-    deliver(user.email, subject, body)
+    deliver(user_recipient(user), subject, body)
   end
 
   @doc """
@@ -85,7 +104,7 @@ defmodule Animina.Accounts.UserNotifier do
   Deliver a goodbye email when a user soft-deletes their account.
   Includes the permanent deletion date (deleted_at + 30 days).
   """
-  def deliver_account_deletion_goodbye(%{email: email, deleted_at: deleted_at} = user) do
+  def deliver_account_deletion_goodbye(%{deleted_at: deleted_at} = user) do
     permanent_deletion_date =
       deleted_at
       |> DateTime.add(30, :day)
@@ -93,12 +112,12 @@ defmodule Animina.Accounts.UserNotifier do
 
     {subject, body} =
       EmailTemplates.render(user_locale(user), :account_deletion_goodbye,
-        email: email,
-        display_name: user.display_name,
+        email: user.email,
+        greeting_name: greeting_name(user),
         permanent_deletion_date: permanent_deletion_date
       )
 
-    deliver(email, subject, body)
+    deliver(user_recipient(user), subject, body)
   end
 
   defp format_date_for_locale(datetime, _locale) do
@@ -132,18 +151,17 @@ defmodule Animina.Accounts.UserNotifier do
   def deliver_duplicate_registration_warning(email) when is_binary(email) do
     user = Animina.Accounts.get_user_by_email(email)
 
+    recipient = if user, do: user_recipient(user), else: {"", email}
+
     {subject, body} =
       EmailTemplates.render(user_locale(user), :duplicate_registration,
         email: email,
-        display_name: user_display_name(user),
+        greeting_name: if(user, do: greeting_name(user), else: ""),
         attempted_at: format_german_time()
       )
 
-    deliver(email, subject, body)
+    deliver(recipient, subject, body)
   end
-
-  defp user_display_name(%{display_name: name}) when is_binary(name), do: name
-  defp user_display_name(_), do: nil
 
   @doc """
   Deliver an Ollama queue alert email to the admin.
@@ -171,11 +189,11 @@ defmodule Animina.Accounts.UserNotifier do
     {subject, body} =
       EmailTemplates.render(user_locale(user), :unread_messages,
         email: user.email,
-        display_name: user.display_name,
+        greeting_name: greeting_name(user),
         unread_count: unread_count
       )
 
-    deliver(user.email, subject, body)
+    deliver(user_recipient(user), subject, body)
   end
 
   @german_months %{

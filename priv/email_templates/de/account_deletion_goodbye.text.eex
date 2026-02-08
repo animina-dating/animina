@@ -1,7 +1,7 @@
 Dein ANIMINA-Konto wurde zur Löschung vorgemerkt
 ---
 
-Hallo <%= @display_name %>,
+Hallo <%= @greeting_name %>,
 
 Dein ANIMINA-Konto wurde gelöscht. Es tut uns leid, dass du gehst!
 

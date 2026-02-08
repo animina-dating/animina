@@ -1,7 +1,7 @@
 Sicherheitshinweis – ANIMINA
 ---
 
-Hallo<%= if @display_name do %> <%= @display_name %><% end %>,
+Hallo<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Jemand hat am <%= @attempted_at %> versucht, ein neues
 ANIMINA-Konto mit deiner E-Mail-Adresse (<%= @email %>)

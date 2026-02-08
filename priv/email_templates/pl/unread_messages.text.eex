@@ -1,6 +1,6 @@
 Masz nieprzeczytane wiadomości na ANIMINA
 ---
-Cześć<%= if @display_name do %> <%= @display_name %><% end %>,
+Cześć<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Masz <%= @unread_count %> nieprzeczytanych wiadomości czekających na Ciebie na ANIMINA.
 

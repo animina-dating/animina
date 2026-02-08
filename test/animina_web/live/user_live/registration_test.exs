@@ -9,6 +9,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     |> element("#registration_form")
     |> render_change(
       user: %{
+        "first_name" => "Jane",
+        "last_name" => "Doe",
         "email" => "test@example.com",
         "password" => "password1234",
         "mobile_phone" => "+4915112345678",
@@ -60,6 +62,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     referral = Map.get(attrs, :referral_code_input)
 
     step_1_fields = %{
+      "first_name" => "Jane",
+      "last_name" => "Doe",
       "email" => email,
       "password" => "password1234",
       "mobile_phone" => mobile,
@@ -96,6 +100,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Create account"
       assert html =~ "Log in now"
       # Step 1 fields visible
+      assert html =~ "First name"
+      assert html =~ "Last name"
       assert html =~ "Email address"
       assert html =~ "Password"
       assert html =~ "Mobile phone"
@@ -138,6 +144,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> element("#registration_form")
         |> render_change(
           user: %{
+            "first_name" => "Jane",
+            "last_name" => "Doe",
             "email" => "test@example.com",
             "password" => "password1234",
             "mobile_phone" => "+4930123456",
@@ -156,6 +164,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> element("#registration_form")
         |> render_change(
           user: %{
+            "first_name" => "Jane",
+            "last_name" => "Doe",
             "email" => "test@example.com",
             "password" => "password1234",
             "mobile_phone" => "+4915112345678",
@@ -199,6 +209,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
         |> element("#registration_form")
         |> render_change(
           user: %{
+            "first_name" => "Jane",
+            "last_name" => "Doe",
             "email" => "test@example.com",
             "password" => "password1234",
             "mobile_phone" => "+4915112345678",
@@ -396,6 +408,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       |> element("#registration_form")
       |> render_change(
         user: %{
+          "first_name" => "Jane",
+          "last_name" => "Doe",
           "email" => email,
           "password" => "password1234",
           "mobile_phone" => unique_mobile_phone(),
@@ -658,6 +672,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       |> element("#registration_form")
       |> render_change(
         user: %{
+          "first_name" => "Jane",
+          "last_name" => "Doe",
           "email" => unique_user_email(),
           "password" => "password1234",
           "mobile_phone" => unique_mobile_phone(),

@@ -1,7 +1,7 @@
 إشعار أمان – ANIMINA
 ---
 
-مرحبًا<%= if @display_name do %> <%= @display_name %><% end %>،
+مرحبًا<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>،
 
 حاول شخص ما في <%= @attempted_at %> إنشاء حساب ANIMINA
 جديد باستخدام عنوان بريدك الإلكتروني (<%= @email %>).

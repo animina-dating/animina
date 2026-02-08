@@ -1,6 +1,6 @@
 You have unread messages on ANIMINA
 ---
-Hi<%= if @display_name do %> <%= @display_name %><% end %>,
+Hi<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 You have <%= @unread_count %> unread message<%= if @unread_count > 1, do: "s" %> waiting for you on ANIMINA.
 

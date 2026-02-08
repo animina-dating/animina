@@ -25,6 +25,8 @@ defmodule Animina.AccountsFixtures do
     Enum.into(attrs, %{
       email: unique_user_email(),
       password: valid_user_password(),
+      first_name: "Test",
+      last_name: "User",
       display_name: "Test User",
       birthday: ~D[1990-01-01],
       gender: "male",

@@ -116,17 +116,17 @@ msgstr ""
 msgid "Referral code not found"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:257
+#: lib/animina/accounts/user.ex:265
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:159
+#: lib/animina/accounts/user.ex:163
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:252
+#: lib/animina/accounts/user.ex:260
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr ""
@@ -206,12 +206,12 @@ msgstr "This is a dog. Your profile photo must show your face. You can use anima
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 
-#: lib/animina/accounts/user.ex:404
+#: lib/animina/accounts/user.ex:412
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "does not match password"
 
-#: lib/animina/accounts/user.ex:340
+#: lib/animina/accounts/user.ex:348
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "must have the @ sign and no spaces"

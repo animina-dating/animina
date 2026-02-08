@@ -4,20 +4,20 @@ defmodule Animina.Accounts.EmailTemplatesTest do
   alias Animina.Accounts.EmailTemplates
 
   @assigns_for_type %{
-    confirmation_pin: [email: "test@example.com", display_name: "Test User", pin: "123456"],
+    confirmation_pin: [email: "test@example.com", greeting_name: "Test User", pin: "123456"],
     password_reset: [
       email: "test@example.com",
-      display_name: "Test User",
+      greeting_name: "Test User",
       url: "https://example.com/reset/TOKEN"
     ],
     update_email: [
       email: "test@example.com",
-      display_name: "Test User",
+      greeting_name: "Test User",
       url: "https://example.com/update/TOKEN"
     ],
     duplicate_registration: [
       email: "test@example.com",
-      display_name: "Test User",
+      greeting_name: "Test User",
       attempted_at: "31. Januar 2026 um 14:00 Uhr"
     ],
     daily_report: [count: 3]
@@ -50,7 +50,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("de", :confirmation_pin,
           email: "user@test.de",
-          display_name: "Max",
+          greeting_name: "Max",
           pin: "654321"
         )
 
@@ -63,7 +63,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "user@test.com",
-          display_name: "Jane",
+          greeting_name: "Jane",
           pin: "111222"
         )
 
@@ -76,7 +76,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("de", :password_reset,
           email: "u@t.de",
-          display_name: "Max",
+          greeting_name: "Max",
           url: "https://animina.de/reset/abc"
         )
 
@@ -89,7 +89,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("en", :update_email,
           email: "u@t.com",
-          display_name: "Jane",
+          greeting_name: "Jane",
           url: "https://animina.de/update/xyz"
         )
 
@@ -97,11 +97,11 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       assert body =~ "https://animina.de/update/xyz"
     end
 
-    test "German duplicate_registration contains email and display_name" do
+    test "German duplicate_registration contains email and greeting_name" do
       {subject, body} =
         EmailTemplates.render("de", :duplicate_registration,
           email: "dup@test.de",
-          display_name: "Stefan",
+          greeting_name: "Stefan",
           attempted_at: "31. Januar 2026 um 14:00 Uhr"
         )
 
@@ -131,7 +131,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, _body} =
         EmailTemplates.render("xx", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "000000"
         )
 
@@ -142,7 +142,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, _body} =
         EmailTemplates.render(nil, :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "000000"
         )
 
@@ -153,7 +153,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, body} =
         EmailTemplates.render("tr", :confirmation_pin,
           email: "u@t.tr",
-          display_name: "Ahmet",
+          greeting_name: "Ahmet",
           pin: "999888"
         )
 
@@ -166,7 +166,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, _body} =
         EmailTemplates.render("fr", :password_reset,
           email: "u@t.fr",
-          display_name: "Marie",
+          greeting_name: "Marie",
           url: "https://example.com"
         )
 
@@ -177,7 +177,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {subject, _body} =
         EmailTemplates.render("es", :duplicate_registration,
           email: "u@t.es",
-          display_name: "María",
+          greeting_name: "María",
           attempted_at: "31. Januar 2026 um 14:00 Uhr"
         )
 
@@ -188,7 +188,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -199,7 +199,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -210,7 +210,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -221,7 +221,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -233,7 +233,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -245,7 +245,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 
@@ -257,7 +257,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       {_subject, body} =
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
-          display_name: "Test",
+          greeting_name: "Test",
           pin: "123456"
         )
 

@@ -1,7 +1,7 @@
 ANIMINA hesabınız silinmek üzere planlandı
 ---
 
-Merhaba <%= @display_name %>,
+Merhaba <%= @greeting_name %>,
 
 ANIMINA hesabınız silindi. Gittiğinizi görmek bizi üzüyor!
 

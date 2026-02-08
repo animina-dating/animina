@@ -25,6 +25,21 @@ defmodule AniminaWeb.UserLive.EditProfile do
         </div>
 
         <.form for={@form} id="profile_form" phx-submit="save" phx-change="validate">
+          <div class="grid grid-cols-2 gap-4">
+            <.input
+              field={@form[:first_name]}
+              type="text"
+              label={gettext("First name")}
+              required
+            />
+            <.input
+              field={@form[:last_name]}
+              type="text"
+              label={gettext("Last name")}
+              required
+            />
+          </div>
+
           <.input
             field={@form[:display_name]}
             type="text"

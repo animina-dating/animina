@@ -17,7 +17,7 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   @step_required_fields %{
-    1 => ~w(email password mobile_phone birthday),
+    1 => ~w(first_name last_name email password mobile_phone birthday),
     2 => ~w(display_name gender height),
     3 => :locations,
     4 => []
@@ -186,6 +186,22 @@ defmodule AniminaWeb.UserLive.Registration do
   defp step_fields(%{step: 1} = assigns) do
     ~H"""
     <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-4">
+        <.input
+          field={@form[:first_name]}
+          type="text"
+          label={gettext("First name")}
+          autocomplete="given-name"
+          required
+        />
+        <.input
+          field={@form[:last_name]}
+          type="text"
+          label={gettext("Last name")}
+          autocomplete="family-name"
+          required
+        />
+      </div>
       <.input
         field={@form[:email]}
         type="email"
@@ -776,7 +792,7 @@ defmodule AniminaWeb.UserLive.Registration do
   end
 
   @step_fields %{
-    1 => ~w(email password mobile_phone birthday referral_code_input)a,
+    1 => ~w(first_name last_name email password mobile_phone birthday referral_code_input)a,
     2 => ~w(display_name gender height occupation language)a,
     3 => [],
     4 =>

@@ -1,7 +1,7 @@
 ANIMINA için onay kodunuz
 ---
 
-Merhaba <%= @display_name %>,
+Merhaba <%= @greeting_name %>,
 
 Onay kodunuz:
 

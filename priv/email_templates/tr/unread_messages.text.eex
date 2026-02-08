@@ -1,6 +1,6 @@
 ANIMINA'da okunmamış mesajlarınız var
 ---
-Merhaba<%= if @display_name do %> <%= @display_name %><% end %>,
+Merhaba<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 ANIMINA'da sizi bekleyen <%= @unread_count %> okunmamış mesajınız var.
 

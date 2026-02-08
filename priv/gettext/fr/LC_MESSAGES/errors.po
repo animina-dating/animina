@@ -106,17 +106,17 @@ msgstr "doit être égal à %{number}"
 msgid "Referral code not found"
 msgstr "Code de parrainage non trouvé"
 
-#: lib/animina/accounts/user.ex:257
+#: lib/animina/accounts/user.ex:265
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "n'est pas un numéro de téléphone valide"
 
-#: lib/animina/accounts/user.ex:159
+#: lib/animina/accounts/user.ex:163
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "doit comporter 6 caractères (lettres et chiffres)"
 
-#: lib/animina/accounts/user.ex:252
+#: lib/animina/accounts/user.ex:260
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "doit être un numéro de portable (pas de fixe)"
@@ -196,12 +196,12 @@ msgstr "C'est un chien. Votre photo de profil doit montrer votre visage. Vous po
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "C'est un animal. Votre photo de profil doit montrer votre visage. Vous pouvez utiliser des photos d'animaux dans votre moodboard."
 
-#: lib/animina/accounts/user.ex:404
+#: lib/animina/accounts/user.ex:412
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "ne correspond pas au mot de passe"
 
-#: lib/animina/accounts/user.ex:340
+#: lib/animina/accounts/user.ex:348
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "doit contenir le signe @ et ne pas avoir d'espaces"

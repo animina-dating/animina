@@ -1,6 +1,6 @@
 Tienes mensajes sin leer en ANIMINA
 ---
-Hola<%= if @display_name do %> <%= @display_name %><% end %>,
+Hola<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 Tienes <%= @unread_count %> mensaje<%= if @unread_count > 1, do: "s" %> sin leer esperándote en ANIMINA.
 

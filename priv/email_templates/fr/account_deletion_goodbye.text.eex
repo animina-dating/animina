@@ -1,7 +1,7 @@
 Votre compte ANIMINA a été programmé pour suppression
 ---
 
-Bonjour <%= @display_name %>,
+Bonjour <%= @greeting_name %>,
 
 Votre compte ANIMINA a été supprimé. Nous sommes désolés de vous voir partir !
 

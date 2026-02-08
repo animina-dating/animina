@@ -1,6 +1,6 @@
 У вас есть непрочитанные сообщения на ANIMINA
 ---
-Привет<%= if @display_name do %> <%= @display_name %><% end %>,
+Привет<%= if @greeting_name != "" do %> <%= @greeting_name %><% end %>,
 
 У вас <%= @unread_count %> непрочитанн<%= if @unread_count > 1, do: "ых сообщений", else: "ое сообщение" %> на ANIMINA.
 

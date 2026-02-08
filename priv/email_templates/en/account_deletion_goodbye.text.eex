@@ -1,7 +1,7 @@
 Your ANIMINA account has been scheduled for deletion
 ---
 
-Hello <%= @display_name %>,
+Hello <%= @greeting_name %>,
 
 Your ANIMINA account has been deleted. We're sorry to see you go!
 

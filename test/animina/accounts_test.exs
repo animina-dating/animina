@@ -1047,7 +1047,7 @@ defmodule Animina.AccountsTest do
 
       assert_received {:email, %{text_body: body}}
       assert body =~ "ANIMINA"
-      assert body =~ user.display_name
+      assert body =~ user.first_name
     end
   end
 

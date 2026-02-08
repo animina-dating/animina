@@ -1,7 +1,7 @@
 Уведомление о безопасности – ANIMINA
 ---
 
-Здравствуйте<%= if @display_name do %>, <%= @display_name %><% end %>,
+Здравствуйте<%= if @greeting_name != "" do %>, <%= @greeting_name %><% end %>,
 
 Кто-то попытался <%= @attempted_at %> создать новый
 аккаунт ANIMINA с вашим адресом электронной почты

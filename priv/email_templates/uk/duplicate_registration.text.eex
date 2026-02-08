@@ -1,7 +1,7 @@
 Повідомлення про безпеку – ANIMINA
 ---
 
-Вітаємо<%= if @display_name do %>, <%= @display_name %><% end %>,
+Вітаємо<%= if @greeting_name != "" do %>, <%= @greeting_name %><% end %>,
 
 Хтось намагався <%= @attempted_at %> створити новий
 акаунт ANIMINA з вашою адресою електронної пошти
