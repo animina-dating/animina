@@ -4,7 +4,13 @@ defmodule Animina.Accounts.EmailTemplatesTest do
   alias Animina.Accounts.EmailTemplates
 
   @assigns_for_type %{
-    confirmation_pin: [email: "test@example.com", greeting_name: "Test User", pin: "123456"],
+    confirmation_pin: [
+      email: "test@example.com",
+      greeting_name: "Test User",
+      pin: "123456",
+      sent_at: "14:30 CET",
+      expires_at: "15:00 CET"
+    ],
     password_reset: [
       email: "test@example.com",
       greeting_name: "Test User",
@@ -51,7 +57,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("de", :confirmation_pin,
           email: "user@test.de",
           greeting_name: "Max",
-          pin: "654321"
+          pin: "654321",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert subject == "Dein Bestätigungscode für ANIMINA"
@@ -64,7 +72,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("en", :confirmation_pin,
           email: "user@test.com",
           greeting_name: "Jane",
-          pin: "111222"
+          pin: "111222",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert subject == "Your confirmation code for ANIMINA"
@@ -132,7 +142,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("xx", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "000000"
+          pin: "000000",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert subject == "Dein Bestätigungscode für ANIMINA"
@@ -143,7 +155,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render(nil, :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "000000"
+          pin: "000000",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert subject == "Dein Bestätigungscode für ANIMINA"
@@ -154,7 +168,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("tr", :confirmation_pin,
           email: "u@t.tr",
           greeting_name: "Ahmet",
-          pin: "999888"
+          pin: "999888",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert subject == "ANIMINA için onay kodunuz"
@@ -189,7 +205,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       refute body =~ "=============================="
@@ -200,7 +218,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert body =~ "Viele Grüße\n  Dein ANIMINA Team"
@@ -211,7 +231,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert body =~ "Best regards,\n  Your ANIMINA Team"
@@ -222,7 +244,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       [before_sig, _after_sig] = String.split(body, "\n-- \n", parts: 2)
@@ -234,7 +258,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("de", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert body =~ "ANIMINA ist ein kostenloser Dating-Service"
@@ -246,7 +272,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert body =~ "ANIMINA is a free dating service"
@@ -258,7 +286,9 @@ defmodule Animina.Accounts.EmailTemplatesTest do
         EmailTemplates.render("en", :confirmation_pin,
           email: "a@b.com",
           greeting_name: "Test",
-          pin: "123456"
+          pin: "123456",
+          sent_at: "14:30 CET",
+          expires_at: "15:00 CET"
         )
 
       assert body =~ "\n-- \n"
