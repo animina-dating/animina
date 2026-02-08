@@ -16,8 +16,6 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      assert html =~ "Waitlist"
-      assert html =~ user.display_name
       assert html =~ "on the waitlist"
     end
 
@@ -67,7 +65,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> live(~p"/users/waitlist")
 
       assert html =~ user.referral_code
-      assert html =~ "Your referral code"
+      assert html =~ "Invite friends"
       assert html =~ "Copy code"
     end
 
@@ -81,7 +79,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       # Default threshold is 3 (from system settings)
       assert html =~ "0/3 referrals"
-      assert html =~ "Skip the waitlist"
+      assert html =~ "Invite friends"
     end
 
     test "shows links to avatar, moodboard editor and flag wizard", %{conn: conn} do
@@ -238,6 +236,37 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       assert html =~ "Upload your main profile photo."
       assert html =~ "Define what you&#39;re about and what you&#39;re looking for."
       assert html =~ "Add photos and stories to make a great first impression."
+    end
+
+    test "renders column toggle with default 2 columns", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      # Column toggle should be present
+      assert html =~ "change_columns"
+      # Default is 2 columns — grid should have grid-cols-2
+      assert html =~ "grid-cols-2"
+    end
+
+    test "change_columns event updates the card grid layout", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/waitlist")
+
+      # Switch to 3 columns
+      html = lv |> element(~s|button[phx-value-columns="3"]|) |> render_click()
+      assert html =~ "grid-cols-3"
+
+      # Switch to 1 column
+      html = lv |> element(~s|button[phx-value-columns="1"]|) |> render_click()
+      assert html =~ "grid-cols-1"
     end
   end
 end

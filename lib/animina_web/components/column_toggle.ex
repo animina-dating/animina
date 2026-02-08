@@ -12,7 +12,7 @@ defmodule AniminaWeb.ColumnToggle do
   def column_toggle(assigns) do
     ~H"""
     <div class="flex justify-end mb-4">
-      <div class="btn-group">
+      <div class="flex flex-row gap-1">
         <button
           type="button"
           phx-click={@event}
@@ -52,7 +52,7 @@ defmodule AniminaWeb.ColumnToggle do
           type="button"
           phx-click={@event}
           phx-value-columns="3"
-          class={["btn btn-sm", @columns == 3 && "btn-active"]}
+          class={["btn btn-sm hidden sm:inline-flex", @columns == 3 && "btn-active"]}
           aria-label={gettext("Three columns")}
         >
           <svg

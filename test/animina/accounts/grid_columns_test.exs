@@ -47,8 +47,8 @@ defmodule Animina.Accounts.GridColumnsTest do
       assert ColumnPreferences.get_columns_for_user(user) == 1
     end
 
-    test "default_columns returns 2" do
-      assert ColumnPreferences.default_columns() == 2
+    test "default_columns returns 3" do
+      assert ColumnPreferences.default_columns() == 3
     end
 
     test "grid_class returns correct CSS classes" do
@@ -72,10 +72,10 @@ defmodule Animina.Accounts.GridColumnsTest do
       assert ColumnPreferences.validate_columns(3) == 3
     end
 
-    test "validate_columns defaults invalid values to 2" do
-      assert ColumnPreferences.validate_columns(0) == 2
-      assert ColumnPreferences.validate_columns(4) == 2
-      assert ColumnPreferences.validate_columns(nil) == 2
+    test "validate_columns defaults invalid values to 3" do
+      assert ColumnPreferences.validate_columns(0) == 3
+      assert ColumnPreferences.validate_columns(4) == 3
+      assert ColumnPreferences.validate_columns(nil) == 3
     end
   end
 

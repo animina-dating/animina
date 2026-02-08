@@ -16,7 +16,7 @@ msgstr ""
 msgid "%{age} years old"
 msgstr "%{age} yaşında"
 
-#: lib/animina_web/live/user_live/waitlist.ex:264
+#: lib/animina_web/live/user_live/waitlist.ex:254
 #, elixir-autogen, elixir-format
 msgid "%{count}/%{threshold} referral"
 msgid_plural "%{count}/%{threshold} referrals"
@@ -53,11 +53,6 @@ msgstr "Hesap"
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "İşlemler"
-
-#: lib/animina_web/live/user_live/waitlist.ex:272
-#, elixir-autogen, elixir-format
-msgid "Activated!"
-msgstr "Aktif!"
 
 #: lib/animina_web/live/index_live.ex:75
 #, elixir-autogen, elixir-format
@@ -142,7 +137,7 @@ msgstr "Onay kodu"
 msgid "Confirmation failed. Please register again."
 msgstr "Onay başarısız. Lütfen tekrar kayıt olun."
 
-#: lib/animina_web/live/user_live/waitlist.ex:257
+#: lib/animina_web/live/user_live/waitlist.ex:240
 #, elixir-autogen, elixir-format
 msgid "Copy code"
 msgstr "Kodu kopyala"
@@ -675,11 +670,6 @@ msgstr "Doğrulanıyor..."
 msgid "View code on GitHub"
 msgstr "Kodu GitHub'da görüntüle"
 
-#: lib/animina_web/live/user_live/waitlist.ex:20
-#, elixir-autogen, elixir-format
-msgid "Waitlist"
-msgstr "Bekleme listesi"
-
 #: lib/animina_web/live/user_live/pin_confirmation.ex:21
 #, elixir-autogen, elixir-format
 msgid "We sent a 6-digit code to"
@@ -754,18 +744,13 @@ msgstr "Hesabınız silindi. Lütfen tekrar kayıt olun."
 msgid "Your profile"
 msgstr "Profiliniz"
 
-#: lib/animina_web/live/user_live/waitlist.ex:244
-#, elixir-autogen, elixir-format
-msgid "Your referral code"
-msgstr "Davet kodunuz"
-
 #: lib/animina_web/live/user_live/registration.ex:356
 #, elixir-autogen, elixir-format
 msgid "Zip code (5 digits)"
 msgstr "Posta kodu (5 hane)"
 
-#: lib/animina_web/live/user_live/waitlist.ex:60
-#: lib/animina_web/live/user_live/waitlist.ex:68
+#: lib/animina_web/live/user_live/waitlist.ex:34
+#: lib/animina_web/live/user_live/waitlist.ex:42
 #, elixir-autogen, elixir-format
 msgid "approximately 4 weeks"
 msgstr "yaklaşık 4 hafta"
@@ -3049,7 +3034,7 @@ msgstr "İşleniyor"
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
 #: lib/animina_web/live/user_live/profile_hub.ex:48
-#: lib/animina_web/live/user_live/waitlist.ex:108
+#: lib/animina_web/live/user_live/waitlist.ex:91
 #, elixir-autogen, elixir-format
 msgid "Profile Photo"
 msgstr "Profil Fotoğrafı"
@@ -4071,7 +4056,7 @@ msgstr "Başkalarıyla paylaşmak için moodboard'unuza fotoğraf ve metin ekley
 #: lib/animina_web/live/user_live/moodboard_editor.ex:62
 #: lib/animina_web/live/user_live/moodboard_editor.ex:652
 #: lib/animina_web/live/user_live/profile_moodboard.ex:122
-#: lib/animina_web/live/user_live/waitlist.ex:157
+#: lib/animina_web/live/user_live/waitlist.ex:140
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Moodboard'u Düzenle"
@@ -4871,58 +4856,31 @@ msgstr "Yeni jokerler her gün oluşturulur — yarın tekrar kontrol edin."
 msgid "Try adjusting your preferences to expand your search."
 msgstr "Aramanızı genişletmek için tercihlerinizi ayarlamayı deneyin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:58
-#: lib/animina_web/live/user_live/waitlist.ex:65
+#: lib/animina_web/live/user_live/waitlist.ex:32
+#: lib/animina_web/live/user_live/waitlist.ex:39
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
 msgstr "Aktivasyonunuz işleniyor"
 
-#: lib/animina_web/live/user_live/waitlist.ex:159
+#: lib/animina_web/live/user_live/waitlist.ex:142
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr "Harika bir ilk izlenim bırakmak için fotoğraf ve hikayeler ekleyin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:130
+#: lib/animina_web/live/user_live/waitlist.ex:113
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr "Kendiniz ve ne aradığınız hakkında bilgi verin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:47
-#, elixir-autogen, elixir-format
-msgid "Estimated activation"
-msgstr "Tahmini aktivasyon"
-
-#: lib/animina_web/live/user_live/waitlist.ex:23
-#, elixir-autogen, elixir-format
-msgid "Hi %{name}, your account is on the waitlist and will be activated soon."
-msgstr "Merhaba %{name}, hesabınız bekleme listesinde ve yakında aktifleştirilecek."
-
-#: lib/animina_web/live/user_live/waitlist.ex:80
+#: lib/animina_web/live/user_live/waitlist.ex:52
 #, elixir-autogen, elixir-format
 msgid "Prepare your profile"
 msgstr "Profilinizi hazırlayın"
 
-#: lib/animina_web/live/user_live/waitlist.ex:236
-#, elixir-autogen, elixir-format
-msgid "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly."
-msgid_plural "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly."
-msgstr[0] "ANIMINA'ya bir arkadaşını davet et. %{count} onaylı davetten sonra hesabın anında aktifleştirilir."
-msgstr[1] "ANIMINA'ya arkadaşlarını davet et. %{count} onaylı davetten sonra hesabın anında aktifleştirilir."
-
-#: lib/animina_web/live/user_live/waitlist.ex:128
+#: lib/animina_web/live/user_live/waitlist.ex:111
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr "Bayraklarınızı ayarlayın"
-
-#: lib/animina_web/live/user_live/waitlist.ex:233
-#, elixir-autogen, elixir-format
-msgid "Skip the waitlist"
-msgstr "Bekleme listesini atla"
-
-#: lib/animina_web/live/user_live/waitlist.ex:73
-#, elixir-autogen, elixir-format
-msgid "We'll notify you by email when your account is ready."
-msgstr "Hesabınız hazır olduğunda sizi e-posta ile bilgilendireceğiz."
 
 #: lib/animina_web/live/user_live/settings_hub.ex:175
 #, elixir-autogen, elixir-format
@@ -5038,12 +4996,12 @@ msgstr "Geçiş anahtarlarınız"
 msgid "or"
 msgstr "veya"
 
-#: lib/animina_web/live/user_live/waitlist.ex:187
+#: lib/animina_web/live/user_live/waitlist.ex:172
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr "Geçiş anahtarı kur"
 
-#: lib/animina_web/live/user_live/waitlist.ex:189
+#: lib/animina_web/live/user_live/waitlist.ex:174
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Geçiş anahtarı ile daha hızlı ve güvenli giriş yapın."
@@ -5114,12 +5072,12 @@ msgstr "Kişilik bayraklarınızı ayarlayın"
 msgid "Upload your main profile photo"
 msgstr "Ana profil fotoğrafınızı yükleyin"
 
-#: lib/animina_web/live/user_live/waitlist.ex:109
+#: lib/animina_web/live/user_live/waitlist.ex:92
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo."
 msgstr "Ana profil fotoğrafınızı yükleyin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:333
+#: lib/animina_web/live/user_live/waitlist.ex:313
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "İsteğe Bağlı Kategoriler"
@@ -5261,7 +5219,7 @@ msgstr "Avatar"
 msgid "Animal photo detected"
 msgstr "Hayvan fotoğrafı algılandı"
 
-#: lib/animina_web/live/user_live/waitlist.ex:83
+#: lib/animina_web/live/user_live/waitlist.ex:55
 #, elixir-autogen, elixir-format
 msgid "Use the waiting time to set up your profile so you can get started right away."
 msgstr "Bekleme süresini profilinizi kurmak için kullanın, böylece hemen başlayabilirsiniz."
@@ -5353,7 +5311,7 @@ msgstr ""
 msgid "Are you sure you want to unblock this contact?"
 msgstr "Bu geçiş anahtarını kaldırmak istediğinizden emin misiniz?"
 
-#: lib/animina_web/live/user_live/waitlist.ex:214
+#: lib/animina_web/live/user_live/waitlist.ex:199
 #, elixir-autogen, elixir-format
 msgid "Block contacts"
 msgstr ""
@@ -5405,7 +5363,7 @@ msgstr ""
 msgid "Phone number or email"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:216
+#: lib/animina_web/live/user_live/waitlist.ex:201
 #, elixir-autogen, elixir-format
 msgid "Prevent ex-partners or acquaintances from seeing your profile."
 msgstr ""
@@ -5450,23 +5408,45 @@ msgstr "Önce saygı"
 msgid "Z–A"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:219
+#: lib/animina_web/live/user_live/waitlist.ex:204
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} contact blocked"
 msgid_plural "%{count} contacts blocked"
 msgstr[0] "%{count} toplam"
 msgstr[1] "%{count} toplam"
 
-#: lib/animina_web/live/user_live/waitlist.ex:133
+#: lib/animina_web/live/user_live/waitlist.ex:116
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} flag set"
 msgid_plural "%{count} flags set"
 msgstr[0] "%{count}dk önce"
 msgstr[1] "%{count}dk önce"
 
-#: lib/animina_web/live/user_live/waitlist.ex:162
+#: lib/animina_web/live/user_live/waitlist.ex:145
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} item"
 msgid_plural "%{count} items"
 msgstr[0] "%{count} kayıt"
 msgstr[1] "%{count} kayıt"
+
+#: lib/animina_web/live/user_live/waitlist.ex:219
+#, elixir-autogen, elixir-format
+msgid "Invite friends"
+msgstr ""
+
+#: lib/animina_web/live/user_live/waitlist.ex:221
+#, elixir-autogen, elixir-format
+msgid "Get activated instantly after %{count} confirmed referral."
+msgid_plural "Get activated instantly after %{count} confirmed referrals."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/animina_web/live/user_live/waitlist.ex:22
+#, elixir-autogen, elixir-format
+msgid "Your account is on the waitlist."
+msgstr ""
+
+#: lib/animina_web/live/user_live/waitlist.ex:31
+#, elixir-autogen, elixir-format
+msgid "Estimated wait:"
+msgstr ""

@@ -12,21 +12,21 @@ defmodule AniminaWeb.Helpers.ColumnPreferences do
   Returns the user's saved column preference.
   """
   def get_columns_for_user(user) do
-    user.grid_columns || 2
+    user.grid_columns || 3
   end
 
   @doc """
   Returns default columns when no user preference is available.
   """
   def default_columns do
-    2
+    3
   end
 
   @doc """
-  Validates a column count, returning 1, 2, or 3 (defaults to 2).
+  Validates a column count, returning 1, 2, or 3 (defaults to 3).
   """
   def validate_columns(columns) when columns in [1, 2, 3], do: columns
-  def validate_columns(_), do: 2
+  def validate_columns(_), do: 3
 
   @doc """
   Returns the CSS grid class for the given column count.
@@ -37,6 +37,29 @@ defmodule AniminaWeb.Helpers.ColumnPreferences do
       2 -> "grid-cols-2"
       3 -> "grid-cols-3"
       _ -> "grid-cols-2"
+    end
+  end
+
+  @doc """
+  Returns a responsive CSS grid class that only applies at the `sm:` breakpoint.
+  Caps at 2 columns for tablet-sized screens.
+  """
+  def sm_grid_class(columns) do
+    case min(columns, 2) do
+      1 -> "sm:grid-cols-1"
+      2 -> "sm:grid-cols-2"
+    end
+  end
+
+  @doc """
+  Returns a responsive CSS grid class that only applies at the `lg:` breakpoint.
+  """
+  def lg_grid_class(columns) do
+    case columns do
+      1 -> "lg:grid-cols-1"
+      2 -> "lg:grid-cols-2"
+      3 -> "lg:grid-cols-3"
+      _ -> "lg:grid-cols-3"
     end
   end
 

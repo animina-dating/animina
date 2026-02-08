@@ -8,53 +8,27 @@ defmodule AniminaWeb.UserLive.Waitlist do
   alias Animina.Moodboard
   alias Animina.Photos
   alias Animina.Traits
+  alias AniminaWeb.ColumnToggle
+  alias AniminaWeb.Helpers.ColumnPreferences
 
   @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-2xl mx-auto space-y-6">
-        <%!-- Header --%>
-        <div class="text-center">
-          <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-            {gettext("Waitlist")}
-          </h1>
-          <p class="mt-2 text-base-content/70">
-            {gettext("Hi %{name}, your account is on the waitlist and will be activated soon.",
-              name: @current_scope.user.display_name
-            )}
+      <div class="space-y-6">
+        <%!-- Status banner --%>
+        <div class="max-w-2xl mx-auto text-center">
+          <p class="text-base-content/70">
+            {gettext("Your account is on the waitlist.")}
           </p>
-        </div>
-
-        <%!-- Activation status --%>
-        <div class="bg-surface rounded-xl shadow-md p-6">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-10 h-10 rounded-full bg-warning/20 flex items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-warning"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </div>
-            <h2 class="text-lg font-medium text-base-content">
-              {gettext("Estimated activation")}
-            </h2>
-          </div>
-
-          <p class="text-2xl font-semibold text-base-content mb-2">
+          <p class="text-2xl sm:text-3xl font-semibold text-base-content mt-2">
             <span
               :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
               id="waitlist-countdown"
               phx-hook="WaitlistCountdown"
               data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
               data-locale={@current_scope.user.language}
+              data-prefix={gettext("Estimated wait:")}
               data-expired-text={gettext("Your activation is being processed")}
             >
               {gettext("approximately 4 weeks")}
@@ -68,22 +42,31 @@ defmodule AniminaWeb.UserLive.Waitlist do
               {gettext("approximately 4 weeks")}
             </span>
           </p>
-
-          <p class="text-sm text-base-content/60">
-            {gettext("We'll notify you by email when your account is ready.")}
-          </p>
         </div>
 
         <%!-- Prepare your profile --%>
-        <div class="bg-surface rounded-xl shadow-md p-6">
-          <h2 class="text-lg font-medium text-base-content mb-2">
-            {gettext("Prepare your profile")}
-          </h2>
-          <p class="text-sm text-base-content/60 mb-4">
-            {gettext("Use the waiting time to set up your profile so you can get started right away.")}
-          </p>
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg font-medium text-base-content">
+                {gettext("Prepare your profile")}
+              </h2>
+              <p class="text-sm text-base-content/60">
+                {gettext(
+                  "Use the waiting time to set up your profile so you can get started right away."
+                )}
+              </p>
+            </div>
+            <div class="hidden sm:block">
+              <ColumnToggle.column_toggle columns={@columns} />
+            </div>
+          </div>
 
-          <div class="grid gap-3 sm:grid-cols-2">
+          <div class={[
+            "grid gap-3 grid-cols-1",
+            ColumnPreferences.sm_grid_class(@columns),
+            ColumnPreferences.lg_grid_class(@columns)
+          ]}>
             <.waitlist_card
               navigate={~p"/users/settings/avatar"}
               icon_bg="bg-secondary/10"
@@ -226,43 +209,48 @@ defmodule AniminaWeb.UserLive.Waitlist do
                 )}
               </:completed_description>
             </.waitlist_card>
-          </div>
-        </div>
 
-        <%!-- Skip the waitlist --%>
-        <div class="bg-surface rounded-xl shadow-md p-6">
-          <h2 class="text-lg font-medium text-base-content mb-2">
-            {gettext("Skip the waitlist")}
-          </h2>
-          <p class="text-sm text-base-content/60 mb-4">
-            {ngettext(
-              "Refer a friend to ANIMINA. After %{count} confirmed referral your account is activated instantly.",
-              "Refer friends to ANIMINA. After %{count} confirmed referrals your account is activated instantly.",
-              @referral_threshold
-            )}
-          </p>
-
-          <div class="bg-base-200 rounded-lg p-4 text-center">
-            <p class="text-xs text-base-content/50 mb-2">{gettext("Your referral code")}</p>
-            <p
-              id="referral-code"
-              class="text-3xl font-mono font-bold tracking-widest text-primary select-all"
-              phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
-            >
-              {@referral_code}
-            </p>
-            <button
-              type="button"
-              class="btn btn-primary btn-sm mt-2"
-              phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
-            >
-              {gettext("Copy code")}
-            </button>
-          </div>
-
-          <div class="mt-4">
-            <div class="flex justify-between text-sm text-base-content/70 mb-1">
-              <span>
+            <%!-- Invite friends (referral card) --%>
+            <div class="flex items-center gap-3 rounded-lg border border-base-300 p-4 relative">
+              <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 text-accent">
+                <.icon name="hero-share" class="w-5 h-5" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="font-medium text-base-content">{gettext("Invite friends")}</p>
+                <p class="text-xs text-base-content/60">
+                  {ngettext(
+                    "Get activated instantly after %{count} confirmed referral.",
+                    "Get activated instantly after %{count} confirmed referrals.",
+                    @referral_threshold
+                  )}
+                </p>
+                <div class="flex items-center gap-2 mt-1">
+                  <code
+                    id="referral-code"
+                    class="text-sm font-mono font-bold text-primary select-all"
+                    phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
+                  >
+                    {@referral_code}
+                  </code>
+                  <button
+                    type="button"
+                    class="btn btn-xs btn-ghost"
+                    phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
+                  >
+                    {gettext("Copy code")}
+                  </button>
+                </div>
+                <div class="mt-2">
+                  <div class="w-full bg-base-300 rounded-full h-1.5">
+                    <div
+                      class="bg-primary h-1.5 rounded-full transition-all duration-300"
+                      style={"width: #{min(100, @referral_count / @referral_threshold * 100)}%"}
+                    >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="text-xs text-base-content/60 font-medium shrink-0">
                 {ngettext(
                   "%{count}/%{threshold} referral",
                   "%{count}/%{threshold} referrals",
@@ -270,16 +258,6 @@ defmodule AniminaWeb.UserLive.Waitlist do
                   threshold: @referral_threshold
                 )}
               </span>
-              <span :if={@referral_count >= @referral_threshold} class="text-success font-medium">
-                {gettext("Activated!")}
-              </span>
-            </div>
-            <div class="w-full bg-base-300 rounded-full h-2.5">
-              <div
-                class="bg-primary h-2.5 rounded-full transition-all duration-300"
-                style={"width: #{min(100, @referral_count / @referral_threshold * 100)}%"}
-              >
-              </div>
             </div>
           </div>
         </div>
@@ -380,6 +358,21 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:avatar_photo, avatar_photo)
      |> assign(:flag_count, flag_count)
      |> assign(:moodboard_count, moodboard_count)
+     |> assign(:columns, ColumnPreferences.get_columns_for_user(user))
      |> assign(:profile_completeness, profile_completeness)}
+  end
+
+  @impl true
+  def handle_event("change_columns", %{"columns" => columns_str}, socket) do
+    {columns, updated_user} =
+      ColumnPreferences.persist_columns(
+        socket.assigns.current_scope.user,
+        columns_str
+      )
+
+    {:noreply,
+     socket
+     |> assign(:columns, columns)
+     |> ColumnPreferences.update_scope_user(updated_user)}
   end
 end

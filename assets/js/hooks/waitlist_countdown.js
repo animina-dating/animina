@@ -36,17 +36,21 @@ function formatCountdown(endAt, locale) {
   const minutes = totalMinutes % 60
 
   const labels = getLabels(locale)
-  const parts = []
 
-  if (weeks > 0) parts.push(pluralize(weeks, labels.weeks))
-  if (days > 0) parts.push(pluralize(days, labels.days))
-  if (hours > 0) parts.push(pluralize(hours, labels.hours))
-  parts.push(pluralize(minutes, labels.minutes))
-
-  if (parts.length === 1) return parts[0]
-
-  const last = parts.pop()
-  return parts.join(", ") + " " + labels.and + " " + last
+  // Show only the two most significant units
+  if (weeks > 0) {
+    return days > 0
+      ? pluralize(weeks, labels.weeks) + " " + labels.and + " " + pluralize(days, labels.days)
+      : pluralize(weeks, labels.weeks)
+  }
+  if (days > 0) {
+    return hours > 0
+      ? pluralize(days, labels.days) + " " + labels.and + " " + pluralize(hours, labels.hours)
+      : pluralize(days, labels.days)
+  }
+  return hours > 0
+    ? pluralize(hours, labels.hours) + " " + labels.and + " " + pluralize(minutes, labels.minutes)
+    : pluralize(minutes, labels.minutes)
 }
 
 const WaitlistCountdown = {
@@ -66,6 +70,7 @@ const WaitlistCountdown = {
   _update() {
     const endStr = this.el.dataset.endWaitlistAt
     const locale = this.el.dataset.locale || "en"
+    const prefix = this.el.dataset.prefix || ""
     const expiredText = this.el.dataset.expiredText
 
     if (!endStr) return
@@ -74,7 +79,7 @@ const WaitlistCountdown = {
     const text = formatCountdown(endAt, locale)
 
     if (text) {
-      this.el.textContent = text
+      this.el.textContent = prefix ? prefix + " " + text : text
     } else if (expiredText) {
       this.el.textContent = expiredText
       if (this._timer) clearInterval(this._timer)
