@@ -71,6 +71,30 @@ defmodule AniminaWeb.Admin.ActivityLogsLiveTest do
       assert html =~ "1 entry"
     end
 
+    test "clicking actor name filters by that user", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+
+      user = user_fixture(%{display_name: "FilterTarget"})
+
+      ActivityLog.log("auth", "login_email", "Login by target", actor_id: user.id)
+
+      ActivityLog.log("social", "message_sent", "Message by admin", actor_id: admin.id)
+
+      {:ok, view, html} = live(conn, ~p"/admin/logs/activity")
+
+      assert html =~ "Login by target"
+      assert html =~ "Message by admin"
+
+      # Click the actor name link to filter
+      render_click(view, "filter-by-actor", %{"id" => user.id})
+
+      html = render(view)
+      assert html =~ "Login by target"
+      refute html =~ "Message by admin"
+      # The selected user chip should show
+      assert html =~ "FilterTarget"
+    end
+
     test "per-page selector works", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
 

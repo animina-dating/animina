@@ -143,6 +143,14 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   end
 
   @impl true
+  def handle_event("filter-by-actor", %{"id" => user_id}, socket) do
+    {:noreply,
+     socket
+     |> assign(user_search: "", user_results: [])
+     |> push_patch(to: build_path(socket, page: 1, filter_user_id: user_id))}
+  end
+
+  @impl true
   def handle_event("clear-user", _params, socket) do
     {:noreply,
      socket
@@ -419,24 +427,28 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
                   <td><span class="badge badge-sm badge-ghost">{log.event}</span></td>
                   <td class="text-xs">
                     <%= if log.actor do %>
-                      <.link
-                        navigate={~p"/users/#{log.actor_id}"}
-                        class="link link-hover"
+                      <a
+                        phx-click="filter-by-actor"
+                        phx-value-id={log.actor_id}
+                        class="link link-hover cursor-pointer"
+                        title={gettext("Filter by this user")}
                       >
                         {log.actor.display_name}
-                      </.link>
+                      </a>
                     <% else %>
                       <span class="text-base-content/40">{gettext("System")}</span>
                     <% end %>
                   </td>
                   <td class="text-xs">
                     <%= if log.subject do %>
-                      <.link
-                        navigate={~p"/users/#{log.subject_id}"}
-                        class="link link-hover"
+                      <a
+                        phx-click="filter-by-actor"
+                        phx-value-id={log.subject_id}
+                        class="link link-hover cursor-pointer"
+                        title={gettext("Filter by this user")}
                       >
                         {log.subject.display_name}
-                      </.link>
+                      </a>
                     <% end %>
                   </td>
                   <td class="max-w-md truncate text-sm">{log.summary}</td>
