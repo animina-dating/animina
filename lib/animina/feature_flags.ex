@@ -165,7 +165,7 @@ defmodule Animina.FeatureFlags do
       label: "Waitlist Duration",
       description: "Default number of days new users spend on the waitlist",
       type: :integer,
-      default_value: 28,
+      default_value: 14,
       min_value: 1,
       max_value: 365
     }
@@ -831,10 +831,10 @@ defmodule Animina.FeatureFlags do
 
   @doc """
   Returns the configured waitlist duration in days.
-  Default: 28
+  Default: 14
   """
   def waitlist_duration_days do
-    get_system_setting_value(:waitlist_duration_days, 28)
+    get_system_setting_value(:waitlist_duration_days, 14)
   end
 
   @doc """

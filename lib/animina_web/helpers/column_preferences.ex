@@ -42,7 +42,7 @@ defmodule AniminaWeb.Helpers.ColumnPreferences do
 
   @doc """
   Returns a responsive CSS grid class that only applies at the `sm:` breakpoint.
-  Caps at 2 columns for tablet-sized screens.
+  Caps at 2 columns for large phones (640px+).
   """
   def sm_grid_class(columns) do
     case min(columns, 2) do
@@ -52,14 +52,15 @@ defmodule AniminaWeb.Helpers.ColumnPreferences do
   end
 
   @doc """
-  Returns a responsive CSS grid class that only applies at the `lg:` breakpoint.
+  Returns a responsive CSS grid class that only applies at the `md:` breakpoint.
+  Allows 3 columns for tablets/iPads (768px+).
   """
-  def lg_grid_class(columns) do
+  def md_grid_class(columns) do
     case columns do
-      1 -> "lg:grid-cols-1"
-      2 -> "lg:grid-cols-2"
-      3 -> "lg:grid-cols-3"
-      _ -> "lg:grid-cols-3"
+      1 -> "md:grid-cols-1"
+      2 -> "md:grid-cols-2"
+      3 -> "md:grid-cols-3"
+      _ -> "md:grid-cols-3"
     end
   end
 

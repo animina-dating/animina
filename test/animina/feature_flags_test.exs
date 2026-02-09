@@ -286,7 +286,7 @@ defmodule Animina.FeatureFlagsTest do
 
       waitlist_def = Enum.find(definitions, &(&1.name == :waitlist_duration_days))
       assert waitlist_def.label == "Waitlist Duration"
-      assert waitlist_def.default_value == 28
+      assert waitlist_def.default_value == 14
       assert waitlist_def.min_value == 1
       assert waitlist_def.max_value == 365
     end

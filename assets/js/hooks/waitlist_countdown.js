@@ -1,17 +1,13 @@
 const LABELS = {
   en: {
-    weeks: ["week", "weeks"],
     days: ["day", "days"],
     hours: ["hour", "hours"],
-    minutes: ["minute", "minutes"],
-    and: "and"
+    minutes: ["minute", "minutes"]
   },
   de: {
-    weeks: ["Woche", "Wochen"],
     days: ["Tag", "Tage"],
     hours: ["Stunde", "Stunden"],
-    minutes: ["Minute", "Minuten"],
-    and: "und"
+    minutes: ["Minute", "Minuten"]
   }
 }
 
@@ -30,27 +26,15 @@ function formatCountdown(endAt, locale) {
   if (diff <= 0) return null
 
   const totalMinutes = Math.floor(diff / 60000)
-  const weeks = Math.floor(totalMinutes / (7 * 24 * 60))
-  const days = Math.floor((totalMinutes % (7 * 24 * 60)) / (24 * 60))
+  const totalDays = Math.floor(totalMinutes / (24 * 60))
   const hours = Math.floor((totalMinutes % (24 * 60)) / 60)
   const minutes = totalMinutes % 60
 
   const labels = getLabels(locale)
 
-  // Show only the two most significant units
-  if (weeks > 0) {
-    return days > 0
-      ? pluralize(weeks, labels.weeks) + " " + labels.and + " " + pluralize(days, labels.days)
-      : pluralize(weeks, labels.weeks)
-  }
-  if (days > 0) {
-    return hours > 0
-      ? pluralize(days, labels.days) + " " + labels.and + " " + pluralize(hours, labels.hours)
-      : pluralize(days, labels.days)
-  }
-  return hours > 0
-    ? pluralize(hours, labels.hours) + " " + labels.and + " " + pluralize(minutes, labels.minutes)
-    : pluralize(minutes, labels.minutes)
+  if (totalDays > 0) return pluralize(totalDays, labels.days)
+  if (hours > 0) return pluralize(hours, labels.hours)
+  return pluralize(minutes, labels.minutes)
 }
 
 const WaitlistCountdown = {
@@ -70,7 +54,6 @@ const WaitlistCountdown = {
   _update() {
     const endStr = this.el.dataset.endWaitlistAt
     const locale = this.el.dataset.locale || "en"
-    const prefix = this.el.dataset.prefix || ""
     const expiredText = this.el.dataset.expiredText
 
     if (!endStr) return
@@ -79,9 +62,11 @@ const WaitlistCountdown = {
     const text = formatCountdown(endAt, locale)
 
     if (text) {
-      this.el.textContent = prefix ? prefix + " " + text : text
+      this.el.textContent = text
     } else if (expiredText) {
       this.el.textContent = expiredText
+      const subtext = document.getElementById("waitlist-subtext")
+      if (subtext) subtext.style.display = "none"
       if (this._timer) clearInterval(this._timer)
     }
   }

@@ -21,26 +21,38 @@ defmodule AniminaWeb.UserLive.Waitlist do
           <p class="text-base-content/70">
             {gettext("Your account is on the waitlist.")}
           </p>
-          <p class="text-2xl sm:text-3xl font-semibold text-base-content mt-2">
-            <span
-              :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
-              id="waitlist-countdown"
-              phx-hook="WaitlistCountdown"
-              data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
-              data-locale={@current_scope.user.language}
-              data-prefix={gettext("Estimated wait:")}
-              data-expired-text={gettext("Your activation is being processed")}
-            >
-              {gettext("approximately 4 weeks")}
-            </span>
-            <span :if={
-              @end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) != :gt
-            }>
-              {gettext("Your activation is being processed")}
-            </span>
-            <span :if={is_nil(@end_waitlist_at)}>
-              {gettext("approximately 4 weeks")}
-            </span>
+          <p
+            :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
+            id="waitlist-countdown"
+            phx-hook="WaitlistCountdown"
+            data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
+            data-locale={@current_scope.user.language}
+            data-expired-text={gettext("Your activation is being processed")}
+            class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+          >
+            {gettext("approximately 2 weeks")}
+          </p>
+          <p
+            :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
+            id="waitlist-subtext"
+            class="text-base-content/70 mt-1"
+          >
+            {gettext("until your account is activated")}
+          </p>
+          <p
+            :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) != :gt}
+            class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+          >
+            {gettext("Your activation is being processed")}
+          </p>
+          <p
+            :if={is_nil(@end_waitlist_at)}
+            class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+          >
+            {gettext("approximately 2 weeks")}
+          </p>
+          <p :if={is_nil(@end_waitlist_at)} class="text-base-content/70 mt-1">
+            {gettext("until your account is activated")}
           </p>
         </div>
 
@@ -65,7 +77,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
           <div class={[
             "grid gap-3 grid-cols-1",
             ColumnPreferences.sm_grid_class(@columns),
-            ColumnPreferences.lg_grid_class(@columns)
+            ColumnPreferences.md_grid_class(@columns)
           ]}>
             <.waitlist_card
               navigate={~p"/users/settings/avatar"}
@@ -345,8 +357,27 @@ defmodule AniminaWeb.UserLive.Waitlist do
     flag_count = Traits.count_user_flags(user)
     moodboard_count = Moodboard.count_items(user.id)
 
+    days_remaining = waitlist_days_remaining(user.end_waitlist_at)
+
+    page_title =
+      if days_remaining && days_remaining > 0 do
+        ngettext(
+          "Waitlisted — %{count} day left",
+          "Waitlisted — %{count} days left",
+          days_remaining,
+          count: days_remaining
+        )
+      else
+        gettext("Waitlisted")
+      end
+
     {:ok,
      socket
+     |> assign(:page_title, page_title)
+     |> assign(
+       :page_description,
+       gettext("Your account is on the waitlist. Prepare your profile while you wait.")
+     )
      |> assign(:city_names, city_names)
      |> assign(:referral_code, user.referral_code)
      |> assign(:referral_count, referral_count)
@@ -360,6 +391,13 @@ defmodule AniminaWeb.UserLive.Waitlist do
      |> assign(:moodboard_count, moodboard_count)
      |> assign(:columns, ColumnPreferences.get_columns_for_user(user))
      |> assign(:profile_completeness, profile_completeness)}
+  end
+
+  defp waitlist_days_remaining(nil), do: nil
+
+  defp waitlist_days_remaining(end_at) do
+    diff = DateTime.diff(end_at, DateTime.utc_now(), :second)
+    if diff > 0, do: div(diff, 86_400), else: 0
   end
 
   @impl true

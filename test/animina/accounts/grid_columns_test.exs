@@ -57,6 +57,18 @@ defmodule Animina.Accounts.GridColumnsTest do
       assert ColumnPreferences.grid_class(3) == "grid-cols-3"
     end
 
+    test "sm_grid_class caps at 2 columns" do
+      assert ColumnPreferences.sm_grid_class(1) == "sm:grid-cols-1"
+      assert ColumnPreferences.sm_grid_class(2) == "sm:grid-cols-2"
+      assert ColumnPreferences.sm_grid_class(3) == "sm:grid-cols-2"
+    end
+
+    test "md_grid_class allows 3 columns for tablets" do
+      assert ColumnPreferences.md_grid_class(1) == "md:grid-cols-1"
+      assert ColumnPreferences.md_grid_class(2) == "md:grid-cols-2"
+      assert ColumnPreferences.md_grid_class(3) == "md:grid-cols-3"
+    end
+
     test "persist_columns saves and returns {columns, updated_user}" do
       user = user_fixture()
       assert {1, updated_user} = ColumnPreferences.persist_columns(user, "1")

@@ -52,7 +52,7 @@ defmodule AniminaWeb.ColumnToggle do
           type="button"
           phx-click={@event}
           phx-value-columns="3"
-          class={["btn btn-sm hidden sm:inline-flex", @columns == 3 && "btn-active"]}
+          class={["btn btn-sm hidden md:inline-flex", @columns == 3 && "btn-active"]}
           aria-label={gettext("Three columns")}
         >
           <svg
