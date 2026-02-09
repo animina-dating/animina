@@ -15,7 +15,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
         data-mandatory="true"
         data-aspect-ratio="1:1"
       >
-        <.settings_header
+        <.profile_header
           title={gettext("Profile Photo")}
           subtitle={gettext("Upload a photo that shows your face clearly")}
         />
@@ -165,7 +165,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
                 <button
                   type="button"
                   id="take-selfie-btn"
-                  class="btn btn-secondary btn-sm"
+                  class="btn btn-secondary btn-sm md:hidden"
                   phx-hook="CameraCapture"
                   data-input-name="avatar"
                   data-capture="user"

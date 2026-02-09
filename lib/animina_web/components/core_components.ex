@@ -389,6 +389,41 @@ defmodule AniminaWeb.CoreComponents do
   end
 
   @doc """
+  Renders a profile sub-page header with breadcrumb: Settings > My Profile > title.
+
+  Used by profile sub-pages (avatar, edit profile, preferences, locations).
+
+  ## Examples
+
+      <.profile_header title={gettext("Profile Photo")} subtitle={gettext("Upload your photo")} />
+  """
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+
+  def profile_header(assigns) do
+    ~H"""
+    <div class="breadcrumbs text-sm mb-6">
+      <ul>
+        <li>
+          <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+        </li>
+        <li>
+          <.link navigate={~p"/settings/profile"}>{gettext("My Profile")}</.link>
+        </li>
+        <li>{@title}</li>
+      </ul>
+    </div>
+
+    <div class="text-center mb-8">
+      <.header>
+        {@title}
+        <:subtitle :if={@subtitle}>{@subtitle}</:subtitle>
+      </.header>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a table with generic styling.
 
   ## Examples

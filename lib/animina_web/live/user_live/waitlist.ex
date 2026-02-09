@@ -80,7 +80,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             ColumnPreferences.md_grid_class(@columns)
           ]}>
             <.waitlist_card
-              navigate={~p"/settings/avatar"}
+              navigate={~p"/settings/profile/photo"}
               icon_bg="bg-secondary/10"
               icon_color="text-secondary"
               complete={@profile_completeness.items.profile_photo}
@@ -105,7 +105,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/traits"}
+              navigate={~p"/settings/profile/traits"}
               icon_bg="bg-success/10"
               icon_color="text-success"
               complete={@profile_completeness.items.flags}
@@ -130,7 +130,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/moodboard"}
+              navigate={~p"/settings/profile/moodboard"}
               icon_bg="bg-primary/10"
               icon_color="text-primary"
               complete={@profile_completeness.items.moodboard}
@@ -161,7 +161,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/passkeys"}
+              navigate={~p"/settings/account"}
               icon_bg="bg-info/10"
               icon_color="text-info"
               complete={@has_passkeys}
@@ -223,53 +223,32 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <%!-- Invite friends (referral card) --%>
-            <div class="flex items-center gap-3 rounded-lg border border-base-300 p-4 relative">
-              <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 text-accent">
-                <.icon name="hero-share" class="w-5 h-5" />
-              </div>
-              <div class="flex-1 min-w-0">
-                <p class="font-medium text-base-content">{gettext("Invite friends")}</p>
-                <p class="text-xs text-base-content/60">
-                  {ngettext(
-                    "Get activated instantly after %{count} confirmed referral.",
-                    "Get activated instantly after %{count} confirmed referrals.",
-                    @referral_threshold
-                  )}
-                </p>
-                <div class="flex items-center gap-2 mt-1">
-                  <code
-                    id="referral-code"
-                    class="text-sm font-mono font-bold text-primary select-all"
-                    phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
-                  >
-                    {@referral_code}
-                  </code>
-                  <button
-                    type="button"
-                    class="btn btn-xs btn-ghost"
-                    phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
-                  >
-                    {gettext("Copy code")}
-                  </button>
+            <div class="rounded-lg border border-base-300 p-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 text-accent">
+                  <.icon name="hero-share" class="w-5 h-5" />
                 </div>
-                <div class="mt-2">
-                  <div class="w-full bg-base-300 rounded-full h-1.5">
-                    <div
-                      class="bg-primary h-1.5 rounded-full transition-all duration-300"
-                      style={"width: #{min(100, @referral_count / @referral_threshold * 100)}%"}
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-base-content">{gettext("Skip the waitlist")}</p>
+                  <p class="text-xs text-base-content/60">
+                    {gettext("Share the code")}
+                    <strong
+                      id="referral-code"
+                      class="font-bold text-base-content select-all"
                     >
-                    </div>
-                  </div>
+                      {@referral_code}
+                    </strong>
+                    — {gettext("each confirmed signup halves the waitlist time for both of you.")}
+                    <button
+                      type="button"
+                      class="inline-flex items-center text-base-content/40 hover:text-base-content/60 align-middle ml-0.5"
+                      phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
+                    >
+                      <.icon name="hero-clipboard-document" class="w-3.5 h-3.5" />
+                    </button>
+                  </p>
                 </div>
               </div>
-              <span class="text-xs text-base-content/60 font-medium shrink-0">
-                {ngettext(
-                  "%{count}/%{threshold} referral",
-                  "%{count}/%{threshold} referrals",
-                  @referral_count,
-                  threshold: @referral_threshold
-                )}
-              </span>
             </div>
           </div>
         </div>

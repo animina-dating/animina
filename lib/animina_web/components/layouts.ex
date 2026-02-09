@@ -7,7 +7,6 @@ defmodule AniminaWeb.Layouts do
 
   alias Animina.Accounts.ProfileCompleteness
   alias Animina.Accounts.Scope
-  alias Animina.FeatureFlags
   alias Animina.Photos
   alias Animina.TimeMachine
   alias AniminaWeb.Languages
@@ -244,8 +243,6 @@ defmodule AniminaWeb.Layouts do
                     </div>
                     <!-- Waitlist Banner (only shown in user role) -->
                     <%= if @current_scope.user.state == "waitlisted" && @current_scope.current_role == "user" do %>
-                      <% referral_count =
-                        Animina.Accounts.count_confirmed_referrals(@current_scope.user) %>
                       <a
                         href="/users/waitlist"
                         class="waitlist-badge block px-4 py-2 bg-amber-50 border-b border-base-300 hover:bg-amber-100 transition-colors"
@@ -258,49 +255,14 @@ defmodule AniminaWeb.Layouts do
                             {gettext("On Waitlist")}
                           </span>
                         </div>
-                        <div class="mt-2">
-                          <% threshold = FeatureFlags.referral_threshold() %>
-                          <div class="flex justify-between text-xs text-amber-700 mb-1">
-                            <span>{gettext("Referral progress")}</span>
-                            <span class="font-medium">{referral_count}/{threshold}</span>
-                          </div>
-                          <div class="w-full bg-amber-200 rounded-full h-1.5">
-                            <div
-                              class="bg-amber-500 h-1.5 rounded-full"
-                              style={"width: #{min(100, referral_count / threshold * 100)}%"}
-                            />
-                          </div>
-                        </div>
                       </a>
                     <% end %>
-                    <!-- Profile completeness bar (when incomplete) -->
-                    <%= if @profile_completeness && @profile_completeness.completed_count < @profile_completeness.total_count do %>
-                      <div class="px-4 py-2 border-b border-base-300">
-                        <div class="flex justify-between text-xs text-base-content/60 mb-1">
-                          <span>{gettext("Profile completeness")}</span>
-                          <span class="font-medium">
-                            {@profile_completeness.completed_count}/{@profile_completeness.total_count}
-                          </span>
-                        </div>
-                        <div class="w-full bg-base-300 rounded-full h-1.5">
-                          <div
-                            class="bg-primary h-1.5 rounded-full transition-all"
-                            style={"width: #{@profile_completeness.completed_count / @profile_completeness.total_count * 100}%"}
-                          />
-                        </div>
-                      </div>
-                    <% end %>
-                    <!-- My Profile & Settings -->
+                    <!-- Settings -->
                     <a
                       href="/settings"
-                      class="flex items-center justify-between px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
-                      <span>{gettext("My Profile & Settings")}</span>
-                      <%= if @profile_completeness && @profile_completeness.completed_count < @profile_completeness.total_count do %>
-                        <span class="text-xs text-base-content/50 font-medium">
-                          {@profile_completeness.completed_count}/{@profile_completeness.total_count}
-                        </span>
-                      <% end %>
+                      {gettext("Settings")}
                     </a>
                     <!-- App Section (hidden while on waitlist) -->
                     <div

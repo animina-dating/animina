@@ -65,8 +65,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> live(~p"/users/waitlist")
 
       assert html =~ user.referral_code
-      assert html =~ "Invite friends"
-      assert html =~ "Copy code"
+      assert html =~ "Skip the waitlist"
     end
 
     test "shows referral count and progress", %{conn: conn} do
@@ -77,9 +76,8 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      # Default threshold is 3 (from system settings)
-      assert html =~ "0/3 referrals"
-      assert html =~ "Invite friends"
+      assert html =~ "Skip the waitlist"
+      assert html =~ "Share the code"
     end
 
     test "shows links to avatar, moodboard editor and flag wizard", %{conn: conn} do
@@ -91,9 +89,9 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> live(~p"/users/waitlist")
 
       assert html =~ "Prepare your profile"
-      assert html =~ ~r"/settings/avatar"
-      assert html =~ ~r"/settings/moodboard"
-      assert html =~ ~r"/settings/traits"
+      assert html =~ ~r"/settings/profile/photo"
+      assert html =~ ~r"/settings/profile/moodboard"
+      assert html =~ ~r"/settings/profile/traits"
     end
 
     test "shows completion checkmarks on profile preparation cards", %{conn: conn} do
@@ -116,7 +114,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      assert html =~ ~r"/settings/passkeys"
+      assert html =~ ~r"/settings/account"
       assert html =~ "Set up a passkey"
       assert html =~ "Optional"
     end

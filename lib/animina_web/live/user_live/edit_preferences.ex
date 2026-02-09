@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.EditPreferences do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <.settings_header
+        <.profile_header
           title={gettext("Partner Preferences")}
           subtitle={gettext("Update your partner preferences")}
         />
@@ -137,7 +137,7 @@ defmodule AniminaWeb.UserLive.EditPreferences do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Preferences updated successfully."))
-         |> push_navigate(to: ~p"/settings/preferences")}
+         |> push_navigate(to: ~p"/settings/profile/preferences")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, preferences_form: to_form(changeset, action: :insert))}

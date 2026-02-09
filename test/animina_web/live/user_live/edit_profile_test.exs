@@ -11,7 +11,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       assert html =~ "Edit Profile"
       assert html =~ "First name"
@@ -25,7 +25,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       assert page_title(lv) == "Edit Profile - ANIMINA"
     end
@@ -34,15 +34,15 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings/profile']")
       assert html =~ "Edit Profile"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/settings/profile")
+      assert {:error, redirect} = live(conn, ~p"/settings/profile/info")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -55,7 +55,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       lv
       |> form("#profile_form", %{
@@ -81,7 +81,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       result =
         lv
@@ -97,7 +97,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       result =
         lv
@@ -115,7 +115,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       assert html =~ "Birthday"
       assert html =~ "1990-05-15"
@@ -126,7 +126,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/settings/profile/info")
 
       assert html =~ "This field cannot be changed."
     end

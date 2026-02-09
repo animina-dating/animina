@@ -5,15 +5,16 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
   import Animina.AccountsFixtures
 
   describe "Settings Hub page" do
-    test "renders settings hub with account and profile links", %{conn: conn} do
+    test "renders 4 category cards", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/settings")
 
-      assert html =~ "Account Security"
-      assert html =~ "Delete Account"
-      assert html =~ "Passkeys"
+      assert html =~ "Profile"
+      assert html =~ "Privacy &amp; Blocking"
+      assert html =~ "Account &amp; Security"
+      assert html =~ "Language"
     end
 
     test "has page title", %{conn: conn} do
@@ -22,7 +23,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/settings")
 
-      assert page_title(lv) == "My Profile & Settings - ANIMINA"
+      assert page_title(lv) == "Settings - ANIMINA"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
@@ -33,56 +34,16 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
       assert %{"error" => "You must log in to access this page."} = flash
     end
 
-    test "account and profile navigation links are present", %{conn: conn} do
+    test "settings navigation links are present", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/settings")
 
-      # Account links
-      assert has_element?(lv, "main a[href='/settings/language']")
-      assert has_element?(lv, "main a[href='/settings/account']")
-      assert has_element?(lv, "main a[href='/settings/passkeys']")
-      assert has_element?(lv, "main a[href='/settings/delete-account']")
-      # Profile links should now be in the settings main content
-      assert has_element?(lv, "main a[href='/settings/avatar']")
       assert has_element?(lv, "main a[href='/settings/profile']")
-      assert has_element?(lv, "main a[href='/settings/moodboard']")
-      assert has_element?(lv, "main a[href='/settings/traits']")
-      assert has_element?(lv, "main a[href='/settings/preferences']")
-      assert has_element?(lv, "main a[href='/settings/locations']")
-    end
-
-    test "profile summary shows user display name and email", %{conn: conn} do
-      user = user_fixture(language: "en", display_name: "Maria Schmidt")
-
-      {:ok, _lv, html} =
-        conn
-        |> log_in_user(user)
-        |> live(~p"/settings")
-
-      assert html =~ "Maria Schmidt"
-      assert html =~ user.email
-    end
-
-    test "section headings render", %{conn: conn} do
-      {:ok, lv, _html} =
-        conn
-        |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings")
-
-      assert has_element?(lv, "main h2", "My Profile")
-      assert has_element?(lv, "main h2", "App")
-      assert has_element?(lv, "main h2", "Account")
-    end
-
-    test "shows profile completeness progress bar", %{conn: conn} do
-      {:ok, _lv, html} =
-        conn
-        |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings")
-
-      assert html =~ "Profile completeness"
+      assert has_element?(lv, "main a[href='/settings/privacy']")
+      assert has_element?(lv, "main a[href='/settings/account']")
+      assert has_element?(lv, "main a[href='/settings/language']")
     end
   end
 end

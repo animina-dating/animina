@@ -394,7 +394,7 @@ defmodule AniminaWeb.MoodboardComponents do
             <p class="text-base-content/50 text-center text-sm">
               {gettext("Upload a profile photo to complete your About Me")}
             </p>
-            <a href="/settings/avatar" class="btn btn-primary btn-sm mt-4">
+            <a href="/settings/profile/photo" class="btn btn-primary btn-sm mt-4">
               {gettext("Add Photo")}
             </a>
           </div>

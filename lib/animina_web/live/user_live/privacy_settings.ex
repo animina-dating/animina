@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
         <.settings_header
-          title={gettext("Privacy")}
+          title={gettext("Privacy & Blocking")}
           subtitle={gettext("Manage your privacy settings")}
         />
 
@@ -78,7 +78,7 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Privacy"))
+      |> assign(:page_title, gettext("Privacy & Blocking"))
       |> assign(:user, user)
       |> assign(:hide_online_status, user.hide_online_status)
       |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))

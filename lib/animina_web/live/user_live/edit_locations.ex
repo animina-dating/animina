@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <.settings_header
+        <.profile_header
           title={gettext("Locations")}
           subtitle={gettext("Manage your locations")}
         />
@@ -189,7 +189,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Location added."))
-         |> push_navigate(to: ~p"/settings/locations")}
+         |> push_navigate(to: ~p"/settings/profile/locations")}
 
       {:error, :max_locations_reached} ->
         {:noreply, put_flash(socket, :error, gettext("You can have at most 4 locations."))}
@@ -250,7 +250,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Location updated."))
-         |> push_navigate(to: ~p"/settings/locations")}
+         |> push_navigate(to: ~p"/settings/profile/locations")}
 
       {:error, :not_found} ->
         {:noreply, put_flash(socket, :error, gettext("Location not found."))}
@@ -268,7 +268,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Location removed."))
-         |> push_navigate(to: ~p"/settings/locations")}
+         |> push_navigate(to: ~p"/settings/profile/locations")}
 
       {:error, :last_location} ->
         {:noreply, put_flash(socket, :error, gettext("You must have at least one location."))}

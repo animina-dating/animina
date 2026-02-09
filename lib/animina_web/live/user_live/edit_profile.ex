@@ -8,7 +8,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <.settings_header
+        <.profile_header
           title={gettext("Edit Profile")}
           subtitle={gettext("Update your profile information")}
         />

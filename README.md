@@ -190,11 +190,11 @@ Users express personality and preferences through a three-color flag system:
 - **Green flags**: "I'm attracted to this" — desired traits in a partner
 - **Red flags**: "This is a dealbreaker" — traits to avoid in a partner
 
-Flags are organized into categories. The discovery system uses bidirectional flag matching to score compatibility: a user's white flags are checked against others' green/red flags and vice versa. Users manage their flags at `/settings/traits`.
+Flags are organized into categories. The discovery system uses bidirectional flag matching to score compatibility: a user's white flags are checked against others' green/red flags and vice versa. Users manage their flags at `/settings/profile/traits`.
 
 ## Moodboard
 
-Each user has a public moodboard (`/users/:user_id`) — a visual profile composed of photos, stories (Markdown text), and combined photo+caption cards. Owners edit their moodboard at `/settings/moodboard` with drag-and-drop reordering and inline story editing via TOAST UI Editor.
+Each user has a public moodboard (`/users/:user_id`) — a visual profile composed of photos, stories (Markdown text), and combined photo+caption cards. Owners edit their moodboard at `/settings/profile/moodboard` with drag-and-drop reordering and inline story editing via TOAST UI Editor.
 
 ## Messaging System
 
@@ -275,7 +275,7 @@ German DSGVO/GDPR compliant with:
 - **Privacy Policy** at `/datenschutz` — detailed data processing disclosures including admin/moderator access
 - **Imprint** at `/impressum`
 - **Re-consent flow**: Existing users must accept updated ToS on next login; new users accept during registration
-- **Self-service account deletion** at `/settings/delete-account` with 30-day grace period
+- **Self-service account deletion** at `/settings/account` with 30-day grace period
 
 ## Documentation
 

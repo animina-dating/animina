@@ -13,12 +13,12 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
     end
 
     test "requires authentication", %{conn: conn} do
-      assert {:error, {:redirect, _}} = live(conn, ~p"/settings/emails")
+      assert {:error, {:redirect, _}} = live(conn, ~p"/logs/emails")
     end
 
     test "renders empty state with breadcrumbs", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
-      {:ok, _view, html} = live(conn, ~p"/settings/emails")
+      {:ok, _view, html} = live(conn, ~p"/logs/emails")
 
       assert html =~ "Email History"
       assert html =~ "No emails found"
@@ -51,7 +51,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       })
 
       conn = log_in_user(conn, user)
-      {:ok, _view, html} = live(conn, ~p"/settings/emails")
+      {:ok, _view, html} = live(conn, ~p"/logs/emails")
 
       assert html =~ "1 email"
       assert html =~ "Your PIN"
@@ -70,7 +70,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
         })
 
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/settings/emails")
+      {:ok, view, html} = live(conn, ~p"/logs/emails")
 
       refute html =~ "Your confirmation PIN is 999888"
 
@@ -99,7 +99,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       })
 
       conn = log_in_user(conn, user)
-      {:ok, _view, html} = live(conn, ~p"/settings/emails")
+      {:ok, _view, html} = live(conn, ~p"/logs/emails")
 
       assert html =~ "2 emails"
     end
@@ -125,7 +125,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       })
 
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/settings/emails")
+      {:ok, view, html} = live(conn, ~p"/logs/emails")
 
       # Both shown initially
       assert html =~ "Sent Email"
@@ -161,7 +161,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       })
 
       conn = log_in_user(conn, user)
-      {:ok, view, html} = live(conn, ~p"/settings/emails")
+      {:ok, view, html} = live(conn, ~p"/logs/emails")
 
       assert html =~ "PIN Email"
       assert html =~ "Reset Email"
@@ -178,7 +178,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
 
     test "shows per page selector", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
-      {:ok, _view, html} = live(conn, ~p"/settings/emails")
+      {:ok, _view, html} = live(conn, ~p"/logs/emails")
 
       assert html =~ "Per page"
       assert html =~ "50"

@@ -16,13 +16,6 @@ msgstr ""
 msgid "%{age} years old"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:266
-#, elixir-autogen, elixir-format
-msgid "%{count}/%{threshold} referral"
-msgid_plural "%{count}/%{threshold} referrals"
-msgstr[0] ""
-msgstr[1] ""
-
 #: lib/animina_web/live/index_live.ex:81
 #: lib/animina_web/live/index_live.ex:249
 #, elixir-autogen, elixir-format
@@ -131,11 +124,6 @@ msgstr ""
 #: lib/animina_web/controllers/user_session_controller.ex:90
 #, elixir-autogen, elixir-format
 msgid "Confirmation failed. Please register again."
-msgstr ""
-
-#: lib/animina_web/live/user_live/waitlist.ex:252
-#, elixir-autogen, elixir-format
-msgid "Copy code"
 msgstr ""
 
 #: lib/animina_web/live/user_live/edit_locations.ex:35
@@ -286,7 +274,7 @@ msgstr ""
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:635
+#: lib/animina_web/components/layouts.ex:623
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr ""
@@ -302,7 +290,7 @@ msgid "Joy instead of addiction"
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:133
-#: lib/animina_web/components/layouts.ex:553
+#: lib/animina_web/components/layouts.ex:541
 #: lib/animina_web/live/user_live/language_settings.ex:14
 #: lib/animina_web/live/user_live/language_settings.ex:51
 #: lib/animina_web/live/user_live/registration.ex:289
@@ -326,7 +314,7 @@ msgstr[1] "Locations"
 msgid "Locations"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:591
+#: lib/animina_web/components/layouts.ex:579
 #: lib/animina_web/live/user_live/login.ex:17
 #: lib/animina_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
@@ -338,8 +326,8 @@ msgstr ""
 msgid "Log in now"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:503
-#: lib/animina_web/components/layouts.ex:581
+#: lib/animina_web/components/layouts.ex:491
+#: lib/animina_web/components/layouts.ex:569
 #: lib/animina_web/live/components/account_sessions_component.ex:72
 #, elixir-autogen, elixir-format
 msgid "Log out"
@@ -491,7 +479,7 @@ msgstr ""
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:629
+#: lib/animina_web/components/layouts.ex:617
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Privacy"
@@ -527,7 +515,7 @@ msgstr ""
 msgid "Referral code (optional)"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:597
+#: lib/animina_web/components/layouts.ex:585
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr ""
@@ -598,7 +586,7 @@ msgstr ""
 
 #: lib/animina_web/components/core_components.ex:376
 #: lib/animina_web/components/core_components.ex:408
-#: lib/animina_web/components/layouts.ex:293
+#: lib/animina_web/components/layouts.ex:281
 #: lib/animina_web/live/admin/feature_flags_live.ex:782
 #: lib/animina_web/live/user_live/account_delete.ex:16
 #: lib/animina_web/live/user_live/account_email_password.ex:19
@@ -715,14 +703,14 @@ msgid_plural "Wrong code. %{count} attempts remaining."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/user_auth.ex:265
-#: lib/animina_web/user_auth.ex:279
-#: lib/animina_web/user_auth.ex:489
+#: lib/animina_web/user_auth.ex:270
+#: lib/animina_web/user_auth.ex:284
+#: lib/animina_web/user_auth.ex:494
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr ""
 
-#: lib/animina_web/user_auth.ex:339
+#: lib/animina_web/user_auth.ex:344
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr ""
@@ -734,7 +722,7 @@ msgid "Your account has been deleted. Please register again."
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:177
-#: lib/animina_web/components/layouts.ex:516
+#: lib/animina_web/components/layouts.ex:504
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr ""
@@ -769,12 +757,12 @@ msgstr ""
 msgid "ANIMINA – Create Account"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:732
+#: lib/animina_web/components/layouts.ex:720
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Updating ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:739
+#: lib/animina_web/components/layouts.ex:727
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "A new software version is being installed on the server. This will only take a moment..."
@@ -1043,7 +1031,7 @@ msgid "Add Role"
 msgstr "Add Role"
 
 #: lib/animina_web/components/layouts.ex:215
-#: lib/animina_web/components/layouts.ex:686
+#: lib/animina_web/components/layouts.ex:674
 #: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -1064,7 +1052,7 @@ msgstr "Could not add role."
 msgid "Current Roles"
 msgstr "Current Roles"
 
-#: lib/animina_web/components/layouts.ex:399
+#: lib/animina_web/components/layouts.ex:387
 #: lib/animina_web/live/admin/user_roles_live.ex:11
 #: lib/animina_web/live/admin/user_roles_live.ex:77
 #, elixir-autogen, elixir-format
@@ -1072,7 +1060,7 @@ msgid "Manage Roles"
 msgstr "Manage Roles"
 
 #: lib/animina_web/components/layouts.ex:220
-#: lib/animina_web/components/layouts.ex:687
+#: lib/animina_web/components/layouts.ex:675
 #: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
@@ -1093,7 +1081,7 @@ msgstr "Role not found."
 msgid "Search users by email or name..."
 msgstr "Search users by email or name..."
 
-#: lib/animina_web/components/layouts.ex:421
+#: lib/animina_web/components/layouts.ex:409
 #, elixir-autogen, elixir-format
 msgid "Switch Role"
 msgstr "Switch Role"
@@ -1103,7 +1091,7 @@ msgstr "Switch Role"
 msgid "The user role cannot be removed."
 msgstr "The user role cannot be removed."
 
-#: lib/animina_web/components/layouts.ex:688
+#: lib/animina_web/components/layouts.ex:676
 #: lib/animina_web/live/admin/activity_logs_live.ex:283
 #: lib/animina_web/live/admin/email_logs_live.ex:307
 #: lib/animina_web/live/admin/photo_history_live.ex:177
@@ -1113,8 +1101,8 @@ msgid "User"
 msgstr "User"
 
 #: lib/animina_web/plugs/require_admin_path.ex:25
-#: lib/animina_web/user_auth.ex:303
-#: lib/animina_web/user_auth.ex:321
+#: lib/animina_web/user_auth.ex:308
+#: lib/animina_web/user_auth.ex:326
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page."
 msgstr "You are not authorized to access this page."
@@ -1124,7 +1112,7 @@ msgstr "You are not authorized to access this page."
 msgid "You do not have that role."
 msgstr "You do not have that role."
 
-#: lib/animina_web/components/layouts.ex:429
+#: lib/animina_web/components/layouts.ex:417
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "active"
@@ -1282,7 +1270,7 @@ msgstr "My Flags — I Like in a Partner"
 msgid "My Flags — Partner Deal Breakers"
 msgstr "My Flags — Partner Deal Breakers"
 
-#: lib/animina_web/components/layouts.ex:302
+#: lib/animina_web/components/layouts.ex:290
 #, elixir-autogen, elixir-format
 msgid "App"
 msgstr ""
@@ -3202,7 +3190,7 @@ msgstr "Photo History"
 msgid "Photo ID: %{id}"
 msgstr "Photo ID: %{id}"
 
-#: lib/animina_web/components/layouts.ex:332
+#: lib/animina_web/components/layouts.ex:320
 #: lib/animina_web/live/admin/photo_history_live.ex:30
 #: lib/animina_web/live/admin/photo_reviews_live.ex:16
 #: lib/animina_web/live/admin/photo_reviews_live.ex:403
@@ -3283,7 +3271,7 @@ msgstr "Similar images will be auto-rejected"
 msgid "Submitted"
 msgstr "Submitted"
 
-#: lib/animina_web/components/layouts.ex:405
+#: lib/animina_web/components/layouts.ex:393
 #: lib/animina_web/live/admin/activity_logs_live.ex:443
 #: lib/animina_web/live/admin/photo_history_live.ex:175
 #, elixir-autogen, elixir-format
@@ -3421,7 +3409,7 @@ msgstr "Delay (ms)"
 msgid "Delays simulate slow processing for UX testing"
 msgstr "Delays simulate slow processing for UX testing"
 
-#: lib/animina_web/components/layouts.ex:412
+#: lib/animina_web/components/layouts.ex:400
 #: lib/animina_web/live/admin/feature_flags_live.ex:19
 #: lib/animina_web/live/admin/feature_flags_live.ex:389
 #, elixir-autogen, elixir-format
@@ -3541,7 +3529,7 @@ msgstr "No blacklist entries yet."
 msgid "No thumbnail"
 msgstr "No thumbnail"
 
-#: lib/animina_web/components/layouts.ex:354
+#: lib/animina_web/components/layouts.ex:342
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:14
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:128
 #, elixir-autogen, elixir-format
@@ -3672,7 +3660,7 @@ msgstr[1] ""
 msgid "Approved %{resolved} appeals. %{failed} already resolved."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:323
+#: lib/animina_web/components/layouts.ex:311
 #, elixir-autogen, elixir-format
 msgid "Moderation"
 msgstr "Moderation"
@@ -4290,7 +4278,7 @@ msgstr "No results found for \"%{query}\""
 msgid "Photo analysis and debug settings"
 msgstr "Photo analysis and debug settings"
 
-#: lib/animina_web/components/layouts.ex:347
+#: lib/animina_web/components/layouts.ex:335
 #, elixir-autogen, elixir-format
 msgid "Photos"
 msgstr "Photos"
@@ -4300,12 +4288,12 @@ msgstr "Photos"
 msgid "Search flags and settings..."
 msgstr "Search flags and settings..."
 
-#: lib/animina_web/components/layouts.ex:392
+#: lib/animina_web/components/layouts.ex:380
 #, elixir-autogen, elixir-format
 msgid "Users"
 msgstr "Users"
 
-#: lib/animina_web/components/layouts.ex:309
+#: lib/animina_web/components/layouts.ex:297
 #: lib/animina_web/live/discover_live.ex:36
 #: lib/animina_web/live/discover_live.ex:387
 #: lib/animina_web/live/messages_live.ex:126
@@ -4354,7 +4342,7 @@ msgstr "Could not start conversation"
 msgid "Failed to send message"
 msgstr "Failed to send message"
 
-#: lib/animina_web/components/layouts.ex:315
+#: lib/animina_web/components/layouts.ex:303
 #: lib/animina_web/live/messages_live.ex:113
 #: lib/animina_web/live/messages_live.ex:614
 #: lib/animina_web/live/messages_live.ex:662
@@ -4641,7 +4629,7 @@ msgstr "Rules for using the platform"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
-#: lib/animina_web/components/layouts.ex:632
+#: lib/animina_web/components/layouts.ex:620
 #: lib/animina_web/live/user_live/accept_terms.ex:40
 #: lib/animina_web/live/user_live/accept_terms.ex:61
 #: lib/animina_web/live/user_live/registration.ex:476
@@ -4981,13 +4969,12 @@ msgstr "Set up a passkey"
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Sign in faster and more securely with a passkey."
 
-#: lib/animina_web/components/layouts.ex:652
+#: lib/animina_web/components/layouts.ex:640
 #, elixir-autogen, elixir-format
 msgid "Report bug"
 msgstr "Report bug"
 
 #: lib/animina_web/components/core_components.ex:411
-#: lib/animina_web/components/layouts.ex:281
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/profile_hub.ex:21
 #: lib/animina_web/live/user_live/profile_hub.ex:27
@@ -5043,7 +5030,7 @@ msgstr ""
 msgid "Upload your main profile photo."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:325
+#: lib/animina_web/live/user_live/waitlist.ex:304
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "Optional Categories"
@@ -5123,7 +5110,7 @@ msgstr ""
 msgid "No grouped log entries found."
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:381
+#: lib/animina_web/components/layouts.ex:369
 #: lib/animina_web/live/admin/logs_index_live.ex:55
 #: lib/animina_web/live/admin/ollama_logs_live.ex:21
 #: lib/animina_web/live/admin/ollama_logs_live.ex:391
@@ -5412,18 +5399,6 @@ msgid_plural "%{count} items"
 msgstr[0] "%{count} item"
 msgstr[1] "%{count} items"
 
-#: lib/animina_web/live/user_live/waitlist.ex:231
-#, elixir-autogen, elixir-format
-msgid "Invite friends"
-msgstr "Invite friends"
-
-#: lib/animina_web/live/user_live/waitlist.ex:233
-#, elixir-autogen, elixir-format
-msgid "Get activated instantly after %{count} confirmed referral."
-msgid_plural "Get activated instantly after %{count} confirmed referrals."
-msgstr[0] "Get activated instantly after %{count} confirmed referral."
-msgstr[1] "Get activated instantly after %{count} confirmed referrals."
-
 #: lib/animina_web/live/user_live/waitlist.ex:22
 #, elixir-autogen, elixir-format
 msgid "Your account is on the waitlist."
@@ -5466,7 +5441,7 @@ msgstr "Date"
 msgid "Email History"
 msgstr "Email History"
 
-#: lib/animina_web/components/layouts.ex:367
+#: lib/animina_web/components/layouts.ex:355
 #: lib/animina_web/live/admin/email_logs_live.ex:16
 #: lib/animina_web/live/admin/email_logs_live.ex:206
 #: lib/animina_web/live/admin/logs_index_live.ex:47
@@ -5484,7 +5459,7 @@ msgstr "Log of Ollama AI photo analysis runs"
 msgid "Log of all emails sent by the system"
 msgstr "Log of all emails sent by the system"
 
-#: lib/animina_web/components/layouts.ex:360
+#: lib/animina_web/components/layouts.ex:348
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:31
 #: lib/animina_web/live/user_live/email_logs.ex:174
@@ -5621,19 +5596,19 @@ msgstr ""
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:371
+#: lib/animina_web/live/user_live/waitlist.ex:350
 #, elixir-autogen, elixir-format
 msgid "Waitlisted"
 msgstr "Waitlisted"
 
-#: lib/animina_web/live/user_live/waitlist.ex:364
+#: lib/animina_web/live/user_live/waitlist.ex:343
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
 msgstr[0] "Waitlisted — %{count} day left"
 msgstr[1] "Waitlisted — %{count} days left"
 
-#: lib/animina_web/live/user_live/waitlist.ex:379
+#: lib/animina_web/live/user_live/waitlist.ex:358
 #, elixir-autogen, elixir-format
 msgid "Your account is on the waitlist. Prepare your profile while you wait."
 msgstr "Your account is on the waitlist. Prepare your profile while you wait."
@@ -5952,3 +5927,18 @@ msgstr "Permanently delete your account and data"
 #, elixir-autogen, elixir-format
 msgid "Sign in with Face ID, Touch ID, or a security key"
 msgstr "Sign in with Face ID, Touch ID, or a security key"
+
+#: lib/animina_web/live/user_live/waitlist.ex:232
+#, elixir-autogen, elixir-format
+msgid "Skip the waitlist"
+msgstr "Skip the waitlist"
+
+#: lib/animina_web/live/user_live/waitlist.ex:234
+#, elixir-autogen, elixir-format
+msgid "Share the code"
+msgstr "Share the code"
+
+#: lib/animina_web/live/user_live/waitlist.ex:241
+#, elixir-autogen, elixir-format
+msgid "each confirmed signup halves the waitlist time for both of you."
+msgstr "each confirmed signup halves the waitlist time for both of you."

@@ -123,7 +123,7 @@ defmodule AniminaWeb.DiscoverLive do
                   {gettext("Try adjusting your preferences to expand your search.")}
                 </p>
                 <.link
-                  navigate={~p"/settings/preferences"}
+                  navigate={~p"/settings/profile/preferences"}
                   class="btn btn-primary btn-sm mt-4"
                 >
                   {gettext("Adjust Preferences")}
