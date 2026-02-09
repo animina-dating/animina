@@ -7,4 +7,4 @@ Masz <%= @unread_count %> nieprzeczytanych wiadomości czekających na Ciebie na
 Ktoś jest zainteresowany poznaniem Ciebie! Nie każ im czekać.
 
 Zaloguj się teraz, aby przeczytać swoje wiadomości:
-https://animina.de/messages
+https://animina.de/my/messages

@@ -64,7 +64,7 @@ defmodule AniminaWeb.UserSessionController do
         )
 
         conn
-        |> put_session(:user_return_to, ~p"/settings/account/email-password")
+        |> put_session(:user_return_to, ~p"/my/settings/account/email-password")
         |> create(params, gettext("Password updated successfully!"))
 
       {:error, :cooldown_active} ->
@@ -73,7 +73,7 @@ defmodule AniminaWeb.UserSessionController do
           :error,
           gettext("Cannot change password while a recent account change is being reviewed.")
         )
-        |> redirect(to: ~p"/settings/account/email-password")
+        |> redirect(to: ~p"/my/settings/account/email-password")
     end
   end
 
@@ -82,7 +82,7 @@ defmodule AniminaWeb.UserSessionController do
       %Accounts.User{confirmed_at: confirmed_at} = user when not is_nil(confirmed_at) ->
         conn
         |> put_flash(:info, gettext("Email address confirmed successfully."))
-        |> put_session(:user_return_to, ~p"/users/waitlist")
+        |> put_session(:user_return_to, ~p"/my/waitlist")
         |> UserAuth.log_in_user(user, user_params)
 
       _ ->

@@ -137,7 +137,7 @@ defmodule AniminaWeb.UserLive.EditPreferences do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Preferences updated successfully."))
-         |> push_navigate(to: ~p"/settings/profile/preferences")}
+         |> push_navigate(to: ~p"/my/settings/profile/preferences")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, preferences_form: to_form(changeset, action: :insert))}

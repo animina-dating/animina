@@ -16,10 +16,10 @@ defmodule AniminaWeb.UserLive.AccountEmailPassword do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>
-              <.link navigate={~p"/settings/account"}>{gettext("Account & Security")}</.link>
+              <.link navigate={~p"/my/settings/account"}>{gettext("Account & Security")}</.link>
             </li>
             <li>{gettext("Email & Password")}</li>
           </ul>
@@ -79,7 +79,7 @@ defmodule AniminaWeb.UserLive.AccountEmailPassword do
           put_flash(socket, :error, gettext("Email change link is invalid or it has expired."))
       end
 
-    {:ok, push_navigate(socket, to: ~p"/settings/account/email-password")}
+    {:ok, push_navigate(socket, to: ~p"/my/settings/account/email-password")}
   end
 
   def mount(_params, _session, socket) do
@@ -134,7 +134,7 @@ defmodule AniminaWeb.UserLive.AccountEmailPassword do
         Accounts.deliver_user_update_email_instructions(
           applied_user,
           user.email,
-          &url(~p"/settings/confirm-email/#{&1}")
+          &url(~p"/my/settings/confirm-email/#{&1}")
         )
 
         info = gettext("A link to confirm your email change has been sent to the new address.")

@@ -28,7 +28,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           <div class="breadcrumbs text-sm">
             <ul>
               <li>
-                <.link navigate={~p"/settings/profile"}>{gettext("My Profile")}</.link>
+                <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
               </li>
               <li>{gettext("Moodboard")}</li>
             </ul>

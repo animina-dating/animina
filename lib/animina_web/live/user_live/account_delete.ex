@@ -13,10 +13,10 @@ defmodule AniminaWeb.UserLive.AccountDelete do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>
-              <.link navigate={~p"/settings/account"}>{gettext("Account & Security")}</.link>
+              <.link navigate={~p"/my/settings/account"}>{gettext("Account & Security")}</.link>
             </li>
             <li>{gettext("Delete Account")}</li>
           </ul>

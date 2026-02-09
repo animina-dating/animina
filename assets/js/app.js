@@ -62,27 +62,6 @@ window.addEventListener("phx:page-loading-stop", () => {
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 
-// Open user dropdown menu if ?menu=open is in the URL (used after role switch)
-// We need to wait for LiveView to fully mount before manipulating the DOM
-function openMenuIfRequested() {
-  const urlParams = new URLSearchParams(window.location.search)
-  if (urlParams.get("menu") === "open") {
-    const dropdown = document.getElementById("user-dropdown")
-    if (dropdown) {
-      dropdown.classList.remove("hidden")
-    }
-    // Clean up the URL parameter
-    urlParams.delete("menu")
-    const newUrl = urlParams.toString()
-      ? `${window.location.pathname}?${urlParams.toString()}`
-      : window.location.pathname
-    window.history.replaceState({}, "", newUrl)
-  }
-}
-
-// Run after LiveView finishes loading (fires after initial mount and navigation)
-window.addEventListener("phx:page-loading-stop", openMenuIfRequested, { once: true })
-
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session

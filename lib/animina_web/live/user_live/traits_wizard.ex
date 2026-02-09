@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings/profile"}>{gettext("My Profile")}</.link>
+              <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
             </li>
             <li>
               <.link patch={traits_path(1)}>{gettext("My Flags")}</.link>
@@ -504,7 +504,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     user_flags = load_all_user_flags(user)
 
     finish_path =
-      if user.state == "waitlisted", do: ~p"/users/waitlist", else: ~p"/settings/profile"
+      if user.state == "waitlisted", do: ~p"/my/waitlist", else: ~p"/my/settings/profile"
 
     {:ok,
      socket
@@ -700,7 +700,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   end
 
   defp traits_path(step) do
-    ~p"/settings/profile/traits?step=#{@step_params[step]}"
+    ~p"/my/settings/profile/traits?step=#{@step_params[step]}"
   end
 
   defp step_from_param("green"), do: 2

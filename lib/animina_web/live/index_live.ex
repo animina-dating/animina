@@ -14,7 +14,7 @@ defmodule AniminaWeb.IndexLive do
   @impl true
   def mount(_params, _session, socket) do
     if match?(%{current_scope: %{user: %{state: "waitlisted"}}}, socket.assigns) do
-      {:ok, Phoenix.LiveView.redirect(socket, to: ~p"/users/waitlist")}
+      {:ok, Phoenix.LiveView.redirect(socket, to: ~p"/my/waitlist")}
     else
       {:ok,
        assign(socket,

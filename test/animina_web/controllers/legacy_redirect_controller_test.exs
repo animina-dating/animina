@@ -2,24 +2,24 @@ defmodule AniminaWeb.LegacyRedirectControllerTest do
   use AniminaWeb.ConnCase, async: true
 
   describe "settings redirects" do
-    test "GET /users/settings redirects to /settings", %{conn: conn} do
+    test "GET /users/settings redirects to /my/settings", %{conn: conn} do
       conn = get(conn, "/users/settings")
-      assert redirected_to(conn, 301) == "/settings"
+      assert redirected_to(conn, 301) == "/my/settings"
     end
 
-    test "GET /users/settings/account redirects to /settings/account", %{conn: conn} do
+    test "GET /users/settings/account redirects to /my/settings/account", %{conn: conn} do
       conn = get(conn, "/users/settings/account")
-      assert redirected_to(conn, 301) == "/settings/account"
+      assert redirected_to(conn, 301) == "/my/settings/account"
     end
 
     test "GET /users/settings/traits?step=green preserves query string", %{conn: conn} do
       conn = get(conn, "/users/settings/traits?step=green")
-      assert redirected_to(conn, 301) == "/settings/traits?step=green"
+      assert redirected_to(conn, 301) == "/my/settings/traits?step=green"
     end
 
     test "GET /users/settings/deeply/nested redirects correctly", %{conn: conn} do
       conn = get(conn, "/users/settings/deeply/nested")
-      assert redirected_to(conn, 301) == "/settings/deeply/nested"
+      assert redirected_to(conn, 301) == "/my/settings/deeply/nested"
     end
   end
 

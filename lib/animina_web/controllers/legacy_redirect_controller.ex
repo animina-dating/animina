@@ -2,15 +2,15 @@ defmodule AniminaWeb.LegacyRedirectController do
   @moduledoc """
   Handles 301 permanent redirects from legacy URL paths to their new locations.
 
-  - `/users/settings` → `/settings`
-  - `/users/settings/*` → `/settings/*`
+  - `/users/settings` → `/my/settings`
+  - `/users/settings/*` → `/my/settings/*`
   - `/moodboard/:user_id` → `/users/:user_id`
   """
 
   use AniminaWeb, :controller
 
   def settings_root(conn, _params) do
-    url = append_query_string(conn, "/settings")
+    url = append_query_string(conn, "/my/settings")
 
     conn
     |> put_status(301)
@@ -18,7 +18,7 @@ defmodule AniminaWeb.LegacyRedirectController do
   end
 
   def settings(conn, %{"path" => path}) do
-    new_path = "/settings/" <> Enum.join(path, "/")
+    new_path = "/my/settings/" <> Enum.join(path, "/")
     url = append_query_string(conn, new_path)
 
     conn

@@ -52,7 +52,7 @@ defmodule AniminaWeb.UserLive.AcceptTermsTest do
       |> render_submit()
 
       {path, flash} = assert_redirect(lv)
-      assert path == "/settings"
+      assert path == "/my/settings"
       assert flash["info"] =~ "Terms of Service accepted"
 
       updated_user = Animina.Repo.get!(Animina.Accounts.User, user.id)
@@ -85,7 +85,7 @@ defmodule AniminaWeb.UserLive.AcceptTermsTest do
       {:error, {:redirect, %{to: path}}} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings")
+        |> live(~p"/my/settings")
 
       assert path == "/users/accept-terms"
     end
@@ -96,7 +96,7 @@ defmodule AniminaWeb.UserLive.AcceptTermsTest do
       {:ok, _view, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings")
+        |> live(~p"/my/settings")
 
       assert html =~ "Settings"
     end

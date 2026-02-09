@@ -73,7 +73,7 @@ defmodule AniminaWeb.Plugs.RequireAdminPathTest do
     test "does not affect non-admin paths for unauthenticated user", %{conn: conn} do
       conn =
         conn
-        |> Map.put(:request_path, "/settings")
+        |> Map.put(:request_path, "/my/settings")
         |> RequireAdminPath.call([])
 
       refute conn.halted

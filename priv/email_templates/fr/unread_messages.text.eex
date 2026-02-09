@@ -7,4 +7,4 @@ Vous avez <%= @unread_count %> message<%= if @unread_count > 1, do: "s" %> non l
 Quelqu'un souhaite faire votre connaissance ! Ne le faites pas attendre.
 
 Connectez-vous maintenant pour lire vos messages :
-https://animina.de/messages
+https://animina.de/my/messages

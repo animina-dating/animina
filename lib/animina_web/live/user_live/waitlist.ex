@@ -80,7 +80,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             ColumnPreferences.md_grid_class(@columns)
           ]}>
             <.waitlist_card
-              navigate={~p"/settings/profile/photo"}
+              navigate={~p"/my/settings/profile/photo"}
               icon_bg="bg-secondary/10"
               icon_color="text-secondary"
               complete={@profile_completeness.items.profile_photo}
@@ -105,7 +105,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/profile/traits"}
+              navigate={~p"/my/settings/profile/traits"}
               icon_bg="bg-success/10"
               icon_color="text-success"
               complete={@profile_completeness.items.flags}
@@ -130,7 +130,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/profile/moodboard"}
+              navigate={~p"/my/settings/profile/moodboard"}
               icon_bg="bg-primary/10"
               icon_color="text-primary"
               complete={@profile_completeness.items.moodboard}
@@ -161,7 +161,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/account"}
+              navigate={~p"/my/settings/account"}
               icon_bg="bg-info/10"
               icon_color="text-info"
               complete={@has_passkeys}
@@ -188,7 +188,7 @@ defmodule AniminaWeb.UserLive.Waitlist do
             </.waitlist_card>
 
             <.waitlist_card
-              navigate={~p"/settings/blocked-contacts"}
+              navigate={~p"/my/settings/blocked-contacts"}
               icon_bg="bg-warning/10"
               icon_color="text-warning"
               complete={@has_blocked_contacts}

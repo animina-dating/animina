@@ -61,7 +61,7 @@ defmodule AniminaWeb.AccountEmailPasswordComponent do
         <.form
           for={@password_form}
           id="password_form"
-          action={~p"/settings/update-password"}
+          action={~p"/my/settings/update-password"}
           method="post"
           phx-change="validate_password"
           phx-submit="update_password"

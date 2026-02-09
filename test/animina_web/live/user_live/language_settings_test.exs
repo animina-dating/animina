@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.LanguageSettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/language")
+        |> live(~p"/my/settings/language")
 
       assert html =~ "Language"
       assert html =~ "🇩🇪"
@@ -27,7 +27,7 @@ defmodule AniminaWeb.UserLive.LanguageSettingsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/language")
+        |> live(~p"/my/settings/language")
 
       assert page_title(lv) == "Language - ANIMINA"
     end
@@ -36,15 +36,15 @@ defmodule AniminaWeb.UserLive.LanguageSettingsTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/language")
+        |> live(~p"/my/settings/language")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
       assert html =~ "Language"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/settings/language")
+      assert {:error, redirect} = live(conn, ~p"/my/settings/language")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -55,16 +55,16 @@ defmodule AniminaWeb.UserLive.LanguageSettingsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/language")
+        |> live(~p"/my/settings/language")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
     end
 
     test "displays language names with flags", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/language")
+        |> live(~p"/my/settings/language")
 
       assert html =~ "Deutsch"
       assert html =~ "English"

@@ -7,4 +7,4 @@ ANIMINA'da sizi bekleyen <%= @unread_count %> okunmamış mesajınız var.
 Biri sizi tanımak istiyor! Onu bekletmeyin.
 
 Mesajlarınızı okumak için şimdi giriş yapın:
-https://animina.de/messages
+https://animina.de/my/messages

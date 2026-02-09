@@ -32,7 +32,7 @@ defmodule AniminaWeb.MessagesLive do
       <div class="max-w-3xl mx-auto flex flex-col h-[calc(100vh-12rem)]">
         <%!-- Conversation Header --%>
         <div class="flex items-center gap-3 pb-4 border-b border-base-300">
-          <.link navigate={~p"/messages"} class="btn btn-ghost btn-sm btn-circle">
+          <.link navigate={~p"/my/messages"} class="btn btn-ghost btn-sm btn-circle">
             <.icon name="hero-arrow-left" class="h-5 w-5" />
           </.link>
 
@@ -214,7 +214,7 @@ defmodule AniminaWeb.MessagesLive do
       @conversation.unread && "bg-primary/5"
     ]}>
       <.link
-        navigate={~p"/messages/#{@conversation.conversation.id}"}
+        navigate={~p"/my/messages/#{@conversation.conversation.id}"}
         class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
       >
         <.avatar user={@conversation.other_user} photos={@avatar_photos} size={:md} />
@@ -680,7 +680,7 @@ defmodule AniminaWeb.MessagesLive do
       nil ->
         socket
         |> put_flash(:error, gettext("Conversation not found"))
-        |> redirect(to: ~p"/messages")
+        |> redirect(to: ~p"/my/messages")
 
       conversation_data ->
         # Subscribe to conversation updates
@@ -732,7 +732,7 @@ defmodule AniminaWeb.MessagesLive do
     # Check if conversation already exists (existing conversations are always accessible)
     case Messaging.get_conversation_by_participants(user.id, target_id) do
       %{id: conv_id} ->
-        push_navigate(socket, to: ~p"/messages/#{conv_id}")
+        push_navigate(socket, to: ~p"/my/messages/#{conv_id}")
 
       nil ->
         initiate_new_conversation(socket, user.id, target_id)
@@ -762,7 +762,7 @@ defmodule AniminaWeb.MessagesLive do
   defp create_and_navigate(socket, user_id, target_id) do
     case Messaging.get_or_create_conversation(user_id, target_id) do
       {:ok, conversation} ->
-        push_navigate(socket, to: ~p"/messages/#{conversation.id}")
+        push_navigate(socket, to: ~p"/my/messages/#{conversation.id}")
 
       {:error, _reason} ->
         put_flash(socket, :error, gettext("Could not start conversation"))
@@ -865,7 +865,7 @@ defmodule AniminaWeb.MessagesLive do
 
         # Redirect to index if we were in the show view
         if socket.assigns.live_action == :show do
-          {:noreply, push_navigate(socket, to: ~p"/messages")}
+          {:noreply, push_navigate(socket, to: ~p"/my/messages")}
         else
           # Refresh the conversation list
           {:noreply, apply_action(socket, :index, %{})}
@@ -1064,7 +1064,7 @@ defmodule AniminaWeb.MessagesLive do
       |> assign(:love_emergency_conv_id, nil)
       |> put_flash(:info, gettext("Conversation reopened!"))
 
-    {:noreply, push_navigate(socket, to: ~p"/messages/#{conv_id}")}
+    {:noreply, push_navigate(socket, to: ~p"/my/messages/#{conv_id}")}
   end
 
   @impl true

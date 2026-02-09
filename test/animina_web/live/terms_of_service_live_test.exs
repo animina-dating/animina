@@ -36,7 +36,7 @@ defmodule AniminaWeb.TermsOfServiceLiveTest do
     test "links to account deletion page", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/agb")
 
-      assert html =~ ~s(href="/settings/account")
+      assert html =~ ~s(href="/my/settings/account")
     end
   end
 end

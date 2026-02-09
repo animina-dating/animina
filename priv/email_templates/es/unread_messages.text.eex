@@ -7,4 +7,4 @@ Tienes <%= @unread_count %> mensaje<%= if @unread_count > 1, do: "s" %> sin leer
 ¡Alguien está interesado/a en conocerte! No le hagas esperar.
 
 Inicia sesión ahora para leer tus mensajes:
-https://animina.de/messages
+https://animina.de/my/messages

@@ -9,21 +9,21 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
-      assert has_element?(lv, "main a[href='/settings/profile/photo']")
-      assert has_element?(lv, "main a[href='/settings/profile/info']")
-      assert has_element?(lv, "main a[href='/settings/profile/moodboard']")
-      assert has_element?(lv, "main a[href='/settings/profile/traits']")
-      assert has_element?(lv, "main a[href='/settings/profile/preferences']")
-      assert has_element?(lv, "main a[href='/settings/profile/locations']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/photo']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/info']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/moodboard']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/traits']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/preferences']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/locations']")
     end
 
     test "has page title", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
       assert page_title(lv) == "My Profile - ANIMINA"
     end
@@ -34,7 +34,7 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
       assert html =~ "Maria Schmidt"
       assert html =~ user.email
@@ -44,7 +44,7 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
       assert html =~ "Profile completeness"
     end
@@ -53,7 +53,7 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
       assert has_element?(lv, "main h2", "My Profile")
     end
@@ -62,13 +62,13 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile")
+        |> live(~p"/my/settings/profile")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/settings/profile")
+      assert {:error, redirect} = live(conn, ~p"/my/settings/profile")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"

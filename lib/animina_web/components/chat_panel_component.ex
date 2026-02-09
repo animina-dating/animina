@@ -175,8 +175,8 @@ defmodule AniminaWeb.ChatPanelComponent do
           <.link
             navigate={
               if(@conversation_id,
-                do: ~p"/messages/#{@conversation_id}",
-                else: ~p"/messages?start_with=#{@profile_user.id}"
+                do: ~p"/my/messages/#{@conversation_id}",
+                else: ~p"/my/messages?start_with=#{@profile_user.id}"
               )
             }
             class="btn btn-ghost btn-sm btn-circle"

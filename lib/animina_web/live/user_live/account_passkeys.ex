@@ -13,10 +13,10 @@ defmodule AniminaWeb.UserLive.AccountPasskeys do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>
-              <.link navigate={~p"/settings/account"}>{gettext("Account & Security")}</.link>
+              <.link navigate={~p"/my/settings/account"}>{gettext("Account & Security")}</.link>
             </li>
             <li>{gettext("Passkeys")}</li>
           </ul>
@@ -79,7 +79,7 @@ defmodule AniminaWeb.UserLive.AccountPasskeys do
       |> put_flash(:info, gettext("Passkey added successfully!"))
 
     if user.state == "waitlisted" do
-      {:noreply, push_navigate(socket, to: ~p"/users/waitlist")}
+      {:noreply, push_navigate(socket, to: ~p"/my/waitlist")}
     else
       {:noreply, socket}
     end

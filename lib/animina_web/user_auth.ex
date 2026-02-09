@@ -45,7 +45,7 @@ defmodule AniminaWeb.UserAuth do
       cond do
         is_nil(user.tos_accepted_at) -> ~p"/users/accept-terms"
         user_return_to -> user_return_to
-        user.state == "waitlisted" -> ~p"/users/waitlist"
+        user.state == "waitlisted" -> ~p"/my/waitlist"
         true -> signed_in_path(conn)
       end
 
@@ -478,7 +478,7 @@ defmodule AniminaWeb.UserAuth do
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
   def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user: %Accounts.User{}}}}) do
-    ~p"/settings"
+    ~p"/my/settings"
   end
 
   def signed_in_path(_), do: ~p"/"

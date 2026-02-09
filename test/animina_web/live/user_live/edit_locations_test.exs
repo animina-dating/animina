@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       assert html =~ "Locations"
       assert html =~ "10115"
@@ -23,7 +23,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       assert page_title(lv) == "Locations - ANIMINA"
     end
@@ -32,15 +32,15 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/settings/profile']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings/profile']")
       assert html =~ "Locations"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/settings/profile/locations")
+      assert {:error, redirect} = live(conn, ~p"/my/settings/profile/locations")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -53,7 +53,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       # User fixture creates a location with zip code 10115
       assert html =~ "10115"
@@ -66,7 +66,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       lv
       |> form("#location_form", %{
@@ -92,7 +92,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       lv
       |> element("button[phx-click='remove_location'][phx-value-id='#{location.id}']")
@@ -109,7 +109,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       # Remove button should not be rendered when there's only one location
       refute html =~ "phx-click=\"remove_location\""
@@ -122,7 +122,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       # Edit button should be visible
       assert html =~ "edit_location"
@@ -155,7 +155,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       [location] = Accounts.list_user_locations(user)
 
@@ -187,7 +187,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/locations")
+        |> live(~p"/my/settings/profile/locations")
 
       html =
         lv

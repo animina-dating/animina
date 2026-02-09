@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "on the waitlist"
     end
@@ -25,7 +25,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "phx-hook=\"WaitlistCountdown\""
       assert html =~ "data-end-waitlist-at"
@@ -46,13 +46,13 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "being processed"
     end
 
     test "redirects to login if not authenticated", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/waitlist")
+      assert {:error, redirect} = live(conn, ~p"/my/waitlist")
       assert {:redirect, %{to: "/users/log-in"}} = redirect
     end
 
@@ -62,7 +62,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ user.referral_code
       assert html =~ "Skip the waitlist"
@@ -74,7 +74,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "Skip the waitlist"
       assert html =~ "Share the code"
@@ -86,12 +86,12 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "Prepare your profile"
-      assert html =~ ~r"/settings/profile/photo"
-      assert html =~ ~r"/settings/profile/moodboard"
-      assert html =~ ~r"/settings/profile/traits"
+      assert html =~ ~r"/my/settings/profile/photo"
+      assert html =~ ~r"/my/settings/profile/moodboard"
+      assert html =~ ~r"/my/settings/profile/traits"
     end
 
     test "shows completion checkmarks on profile preparation cards", %{conn: conn} do
@@ -100,7 +100,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       # Fresh user has incomplete items — should show empty circle indicators
       assert html =~ "border-base-content/20"
@@ -112,9 +112,9 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
-      assert html =~ ~r"/settings/account"
+      assert html =~ ~r"/my/settings/account"
       assert html =~ "Set up a passkey"
       assert html =~ "Optional"
     end
@@ -139,7 +139,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "Set up a passkey"
       assert html =~ "hero-check-circle-solid"
@@ -157,7 +157,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       # Should show the avatar thumbnail image instead of the icon
       assert html =~ "waitlist-avatar"
@@ -187,7 +187,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "2 flags set"
     end
@@ -201,7 +201,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       # Should show count with "items" (at least 2 items created)
       assert html =~ ~r/\d+ items/
@@ -218,7 +218,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "1 contact blocked"
     end
@@ -229,7 +229,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       assert html =~ "Upload your main profile photo."
       assert html =~ "Define what you&#39;re about and what you&#39;re looking for."
@@ -242,7 +242,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       # Column toggle should be present
       assert html =~ "change_columns"
@@ -256,7 +256,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/waitlist")
+        |> live(~p"/my/waitlist")
 
       # Switch to 3 columns
       html = lv |> element(~s|button[phx-value-columns="3"]|) |> render_click()

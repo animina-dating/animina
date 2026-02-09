@@ -34,7 +34,7 @@ defmodule AniminaWeb.LiveUnreadBadgeComponent do
     ~H"""
     <div class="inline-flex items-center gap-1.5">
       <.link
-        navigate={~p"/messages"}
+        navigate={~p"/my/messages"}
         class="relative p-2 hover:bg-base-300 rounded-lg transition-colors inline-flex"
       >
         <.icon name="hero-chat-bubble-left-right" class="h-5 w-5 text-base-content/70" />

@@ -23,25 +23,25 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <div class="grid gap-3">
           <.settings_card
-            navigate={~p"/settings/profile"}
+            navigate={~p"/my/settings/profile"}
             icon="hero-user"
             title={gettext("Profile")}
             preview={@profile_preview}
           />
           <.settings_card
-            navigate={~p"/settings/privacy"}
+            navigate={~p"/my/settings/privacy"}
             icon="hero-eye-slash"
             title={gettext("Privacy & Blocking")}
             preview={@privacy_preview}
           />
           <.settings_card
-            navigate={~p"/settings/account"}
+            navigate={~p"/my/settings/account"}
             icon="hero-shield-check"
             title={gettext("Account & Security")}
             preview={@user.email}
           />
           <.settings_card
-            navigate={~p"/settings/language"}
+            navigate={~p"/my/settings/language"}
             icon="hero-globe-alt"
             title={gettext("Language")}
             preview={@language_preview}

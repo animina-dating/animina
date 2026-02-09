@@ -15,7 +15,7 @@ defmodule AniminaWeb.UserLive.LogsHub do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>{gettext("Logs")}</li>
           </ul>
@@ -30,7 +30,7 @@ defmodule AniminaWeb.UserLive.LogsHub do
 
         <div class="grid gap-4">
           <.link
-            navigate={~p"/logs/emails"}
+            navigate={~p"/my/logs/emails"}
             class="flex items-center gap-4 p-5 rounded-lg border border-base-300 hover:border-primary transition-colors"
           >
             <span class="flex-shrink-0 text-base-content/60">

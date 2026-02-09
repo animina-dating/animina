@@ -16,7 +16,7 @@ defmodule AniminaWeb.UserLive.ProfileHub do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>{gettext("My Profile")}</li>
           </ul>
@@ -63,42 +63,42 @@ defmodule AniminaWeb.UserLive.ProfileHub do
 
         <div class="grid gap-3 mb-8">
           <.profile_card
-            navigate={~p"/settings/profile/photo"}
+            navigate={~p"/my/settings/profile/photo"}
             icon="hero-camera"
             title={gettext("Profile Photo")}
             description={gettext("Upload your main profile photo")}
             complete={@profile_completeness.items.profile_photo}
           />
           <.profile_card
-            navigate={~p"/settings/profile/info"}
+            navigate={~p"/my/settings/profile/info"}
             icon="hero-user"
             title={gettext("Profile Info")}
             description={gettext("Add your basic information")}
             complete={@profile_completeness.items.profile_info}
           />
           <.profile_card
-            navigate={~p"/settings/profile/moodboard"}
+            navigate={~p"/my/settings/profile/moodboard"}
             icon="hero-squares-2x2"
             title={gettext("My Moodboard")}
             description={gettext("Create your visual profile")}
             complete={@profile_completeness.items.moodboard}
           />
           <.profile_card
-            navigate={~p"/settings/profile/traits"}
+            navigate={~p"/my/settings/profile/traits"}
             icon="hero-flag"
             title={gettext("My Flags")}
             description={gettext("Set your personality flags")}
             complete={@profile_completeness.items.flags}
           />
           <.profile_card
-            navigate={~p"/settings/profile/preferences"}
+            navigate={~p"/my/settings/profile/preferences"}
             icon="hero-heart"
             title={gettext("Partner Preferences")}
             description={gettext("Define what you're looking for")}
             complete={@profile_completeness.items.partner_preferences}
           />
           <.profile_card
-            navigate={~p"/settings/profile/locations"}
+            navigate={~p"/my/settings/profile/locations"}
             icon="hero-map-pin"
             title={gettext("Locations")}
             description={gettext("Set your location")}

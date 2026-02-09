@@ -9,7 +9,7 @@ defmodule AniminaWeb.UserLive.LogsHubTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/logs")
+        |> live(~p"/my/logs")
 
       assert html =~ "Email History"
     end
@@ -18,7 +18,7 @@ defmodule AniminaWeb.UserLive.LogsHubTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/logs")
+        |> live(~p"/my/logs")
 
       assert page_title(lv) == "Logs - ANIMINA"
     end
@@ -27,22 +27,22 @@ defmodule AniminaWeb.UserLive.LogsHubTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/logs")
+        |> live(~p"/my/logs")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
     end
 
     test "has navigation link to email logs", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/logs")
+        |> live(~p"/my/logs")
 
-      assert has_element?(lv, "main a[href='/logs/emails']")
+      assert has_element?(lv, "main a[href='/my/logs/emails']")
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/logs")
+      assert {:error, redirect} = live(conn, ~p"/my/logs")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"

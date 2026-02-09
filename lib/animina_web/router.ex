@@ -86,40 +86,40 @@ defmodule AniminaWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
       # Settings hub
-      live "/settings", UserLive.SettingsHub, :index
+      live "/my/settings", UserLive.SettingsHub, :index
 
       # Profile hub + nested sub-pages
-      live "/settings/profile", UserLive.ProfileHub, :index
-      live "/settings/profile/photo", UserLive.AvatarUpload, :edit
-      live "/settings/profile/info", UserLive.EditProfile, :edit
-      live "/settings/profile/moodboard", UserLive.MoodboardEditor
-      live "/settings/profile/traits", UserLive.TraitsWizard, :index
-      live "/settings/profile/preferences", UserLive.EditPreferences, :edit
-      live "/settings/profile/locations", UserLive.EditLocations, :edit
+      live "/my/settings/profile", UserLive.ProfileHub, :index
+      live "/my/settings/profile/photo", UserLive.AvatarUpload, :edit
+      live "/my/settings/profile/info", UserLive.EditProfile, :edit
+      live "/my/settings/profile/moodboard", UserLive.MoodboardEditor
+      live "/my/settings/profile/traits", UserLive.TraitsWizard, :index
+      live "/my/settings/profile/preferences", UserLive.EditPreferences, :edit
+      live "/my/settings/profile/locations", UserLive.EditLocations, :edit
 
       # Account & Security hub + sub-pages
-      live "/settings/account", UserLive.AccountHub, :index
-      live "/settings/account/email-password", UserLive.AccountEmailPassword, :edit
-      live "/settings/account/passkeys", UserLive.AccountPasskeys, :index
-      live "/settings/account/sessions", UserLive.AccountSessions, :index
-      live "/settings/account/delete", UserLive.AccountDelete, :index
-      live "/settings/confirm-email/:token", UserLive.AccountEmailPassword, :confirm_email
+      live "/my/settings/account", UserLive.AccountHub, :index
+      live "/my/settings/account/email-password", UserLive.AccountEmailPassword, :edit
+      live "/my/settings/account/passkeys", UserLive.AccountPasskeys, :index
+      live "/my/settings/account/sessions", UserLive.AccountSessions, :index
+      live "/my/settings/account/delete", UserLive.AccountDelete, :index
+      live "/my/settings/confirm-email/:token", UserLive.AccountEmailPassword, :confirm_email
 
       # Privacy
-      live "/settings/privacy", UserLive.PrivacySettings, :index
-      live "/settings/blocked-contacts", UserLive.BlockedContacts, :index
+      live "/my/settings/privacy", UserLive.PrivacySettings, :index
+      live "/my/settings/blocked-contacts", UserLive.BlockedContacts, :index
 
       # Language
-      live "/settings/language", UserLive.LanguageSettings, :edit
+      live "/my/settings/language", UserLive.LanguageSettings, :edit
 
       # Logs
-      live "/logs", UserLive.LogsHub, :index
-      live "/logs/emails", UserLive.EmailLogs, :index
+      live "/my/logs", UserLive.LogsHub, :index
+      live "/my/logs/emails", UserLive.EmailLogs, :index
 
-      live "/users/waitlist", UserLive.Waitlist
+      live "/my/waitlist", UserLive.Waitlist
       live "/discover", DiscoverLive
-      live "/messages", MessagesLive, :index
-      live "/messages/:conversation_id", MessagesLive, :show
+      live "/my/messages", MessagesLive, :index
+      live "/my/messages/:conversation_id", MessagesLive, :show
     end
 
     live_session :require_moderator,
@@ -140,7 +140,7 @@ defmodule AniminaWeb.Router do
     end
 
     post "/role/switch", RoleController, :switch
-    post "/settings/update-password", UserSessionController, :update_password
+    post "/my/settings/update-password", UserSessionController, :update_password
 
     # WebAuthn passkey registration (requires authentication)
     post "/webauthn/register/begin", WebAuthnController, :register_begin

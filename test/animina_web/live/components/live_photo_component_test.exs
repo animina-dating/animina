@@ -19,7 +19,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
 
@@ -39,7 +39,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "Processing"
@@ -56,7 +56,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "Analyzing"
@@ -73,7 +73,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       # needs_manual_review shows a status badge on avatar upload page
@@ -96,7 +96,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "Content violation"
@@ -118,7 +118,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "No face detected"
@@ -135,7 +135,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "Pending moderator review"
@@ -152,7 +152,7 @@ defmodule AniminaWeb.LivePhotoComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/settings/profile/photo")
+        |> live(~p"/my/settings/profile/photo")
 
       html = render(view)
       assert html =~ "Appeal rejected"

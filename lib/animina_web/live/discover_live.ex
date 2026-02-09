@@ -80,7 +80,7 @@ defmodule AniminaWeb.DiscoverLive do
               <p class="text-sm mt-1">
                 {gettext("\"Let go\" of a conversation in your messages to see new discoveries.")}
               </p>
-              <.link navigate={~p"/messages"} class="btn btn-sm btn-ghost mt-2">
+              <.link navigate={~p"/my/messages"} class="btn btn-sm btn-ghost mt-2">
                 {gettext("Go to Messages")}
               </.link>
             </div>
@@ -123,7 +123,7 @@ defmodule AniminaWeb.DiscoverLive do
                   {gettext("Try adjusting your preferences to expand your search.")}
                 </p>
                 <.link
-                  navigate={~p"/settings/profile/preferences"}
+                  navigate={~p"/my/settings/profile/preferences"}
                   class="btn btn-primary btn-sm mt-4"
                 >
                   {gettext("Adjust Preferences")}

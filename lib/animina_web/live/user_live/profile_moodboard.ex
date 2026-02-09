@@ -125,7 +125,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
             <.link
               :if={@owner?}
-              navigate={~p"/settings/profile/moodboard"}
+              navigate={~p"/my/settings/profile/moodboard"}
               class="btn btn-primary"
             >
               <svg
@@ -527,7 +527,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   @impl true
   def handle_event("love_emergency_from_profile", _params, socket) do
     profile_user = socket.assigns.profile_user
-    {:noreply, push_navigate(socket, to: ~p"/messages?love_emergency_for=#{profile_user.id}")}
+    {:noreply, push_navigate(socket, to: ~p"/my/messages?love_emergency_for=#{profile_user.id}")}
   end
 
   # Handle moodboard PubSub messages - all trigger a reload

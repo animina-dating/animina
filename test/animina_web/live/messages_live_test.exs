@@ -8,7 +8,7 @@ defmodule AniminaWeb.MessagesLiveTest do
 
   describe "Messages page (unauthenticated)" do
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/messages")
+      assert {:error, redirect} = live(conn, ~p"/my/messages")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -23,7 +23,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       assert html =~ "Messages"
       assert html =~ "No conversations yet"
@@ -35,7 +35,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       assert html =~ ~s|href="/discover"|
       assert html =~ "Discover"
@@ -51,7 +51,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       assert html =~ "Bob"
       assert html =~ "Hello Alice!"
@@ -67,7 +67,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       # Should show some visual indicator of unread (e.g., badge or styling)
       assert html =~ "Bob"
@@ -86,7 +86,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "Hi Bob!"
       assert html =~ "Hello Alice!"
@@ -101,7 +101,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       lv
       |> form("#message-form", %{message: %{content: "New message from Alice"}})
@@ -126,7 +126,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, _html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Verify read after
       assert Messaging.unread_count(user1.id) == 0
@@ -136,10 +136,10 @@ defmodule AniminaWeb.MessagesLiveTest do
       user = user_fixture(language: "en")
       fake_id = Ecto.UUID.generate()
 
-      assert {:error, {:redirect, %{to: "/messages", flash: _flash}}} =
+      assert {:error, {:redirect, %{to: "/my/messages", flash: _flash}}} =
                conn
                |> log_in_user(user)
-               |> live(~p"/messages/#{fake_id}")
+               |> live(~p"/my/messages/#{fake_id}")
     end
 
     test "redirects for conversation user is not part of", %{conn: conn} do
@@ -149,10 +149,10 @@ defmodule AniminaWeb.MessagesLiveTest do
 
       {:ok, conv} = Messaging.get_or_create_conversation(user1.id, user2.id)
 
-      assert {:error, {:redirect, %{to: "/messages", flash: _flash}}} =
+      assert {:error, {:redirect, %{to: "/my/messages", flash: _flash}}} =
                conn
                |> log_in_user(user3)
-               |> live(~p"/messages/#{conv.id}")
+               |> live(~p"/my/messages/#{conv.id}")
     end
 
     test "shows date separators between messages from different days", %{conn: conn} do
@@ -165,7 +165,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Messages sent today should show a "Today" date separator
       assert html =~ "Today"
@@ -181,7 +181,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Own messages that haven't been read should have a delete button
       assert html =~ "delete-message-"
@@ -197,7 +197,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       lv |> element("#delete-message-#{msg.id}") |> render_click()
 
@@ -219,7 +219,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Should show double-check read receipt indicator
       assert html =~ "read-receipt"
@@ -237,7 +237,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Should show single check (sent indicator) but not read-receipt
       assert html =~ "sent-receipt"
@@ -258,7 +258,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Both messages should show read-receipt (double checkmarks)
       # but "Read HH:MM" text only appears once (on the last read message)
@@ -278,7 +278,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "data-draft-key=\"draft:#{user1.id}:#{user2.id}\""
     end
@@ -292,7 +292,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "No messages yet"
       assert html =~ "Send a message to start the conversation"
@@ -310,7 +310,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "<strong>bold</strong>"
     end
@@ -325,7 +325,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "<em>italic</em>"
     end
@@ -340,7 +340,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       # Should escape the script tag in message content
       assert html =~ "&lt;script&gt;"
@@ -359,7 +359,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       # The unread badge component shows a chat icon in the navbar
       assert html =~ "hero-chat-bubble-left-right"
@@ -373,7 +373,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       # Chat icon should be present in the navbar
       assert html =~ "hero-chat-bubble-left-right"
@@ -394,7 +394,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       assert html =~ "Draft:"
       assert html =~ "Unsent reply"
@@ -410,7 +410,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages")
+        |> live(~p"/my/messages")
 
       refute html =~ "Draft:"
       assert html =~ "Hello Alice!"
@@ -426,7 +426,7 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages/#{conv.id}")
+        |> live(~p"/my/messages/#{conv.id}")
 
       assert html =~ "My saved draft"
     end
@@ -441,9 +441,9 @@ defmodule AniminaWeb.MessagesLiveTest do
       {:error, {:live_redirect, %{to: redirect_path}}} =
         conn
         |> log_in_user(user1)
-        |> live(~p"/messages?start_with=#{user2.id}")
+        |> live(~p"/my/messages?start_with=#{user2.id}")
 
-      assert redirect_path =~ "/messages/"
+      assert redirect_path =~ "/my/messages/"
 
       # Follow the redirect
       {:ok, _lv, html} =

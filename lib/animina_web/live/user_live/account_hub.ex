@@ -18,7 +18,7 @@ defmodule AniminaWeb.UserLive.AccountHub do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
             </li>
             <li>{gettext("Account & Security")}</li>
           </ul>
@@ -35,25 +35,25 @@ defmodule AniminaWeb.UserLive.AccountHub do
 
         <div class="grid gap-3">
           <.account_card
-            navigate={~p"/settings/account/email-password"}
+            navigate={~p"/my/settings/account/email-password"}
             icon="hero-envelope"
             title={gettext("Email & Password")}
             preview={@user.email}
           />
           <.account_card
-            navigate={~p"/settings/account/passkeys"}
+            navigate={~p"/my/settings/account/passkeys"}
             icon="hero-finger-print"
             title={gettext("Passkeys")}
             preview={@passkey_preview}
           />
           <.account_card
-            navigate={~p"/settings/account/sessions"}
+            navigate={~p"/my/settings/account/sessions"}
             icon="hero-device-phone-mobile"
             title={gettext("Active Sessions")}
             preview={@session_preview}
           />
           <.account_card
-            navigate={~p"/settings/account/delete"}
+            navigate={~p"/my/settings/account/delete"}
             icon="hero-trash"
             title={gettext("Delete Account")}
             preview={gettext("Permanently delete your account and data")}

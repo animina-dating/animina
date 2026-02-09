@@ -7,4 +7,4 @@ You have <%= @unread_count %> unread message<%= if @unread_count > 1, do: "s" %>
 Someone is interested in getting to know you! Don't keep them waiting.
 
 Log in now to read your messages:
-https://animina.de/messages
+https://animina.de/my/messages

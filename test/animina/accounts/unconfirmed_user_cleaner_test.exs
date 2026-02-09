@@ -17,10 +17,10 @@ defmodule Animina.Accounts.UnconfirmedUserCleanerTest do
       user = unconfirmed_user_fixture()
       {:ok, _pin} = Accounts.send_confirmation_pin(user)
 
-      # Set sent_at to 31 minutes ago
+      # Set sent_at to 61 minutes ago (beyond the default 60-minute pin_validity_minutes)
       Repo.update_all(
         from(u in Accounts.User, where: u.id == ^user.id),
-        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -31, :minute)]
+        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -61, :minute)]
       )
 
       # Trigger cleanup manually
