@@ -244,14 +244,18 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
+        <%!-- Breadcrumb --%>
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
+            </li>
+            <li>{gettext("Activity Logs")}</li>
+          </ul>
+        </div>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-3">
-            <.link navigate={~p"/admin/logs"} class="btn btn-ghost btn-sm">
-              <.icon name="hero-arrow-left-mini" class="h-4 w-4" />
-            </.link>
-            <h1 class="text-2xl font-bold text-base-content">{gettext("Activity Logs")}</h1>
-          </div>
+          <h1 class="text-2xl font-bold text-base-content">{gettext("Activity Logs")}</h1>
           <span class="badge badge-lg badge-outline">
             {ngettext(
               "%{count} entry",

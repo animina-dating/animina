@@ -51,6 +51,7 @@ defmodule AniminaWeb.UserLive.Registration do
           <.form
             for={@form}
             id="registration_form"
+            action={~p"/users/register"}
             phx-submit="save"
             phx-change="validate"
             class="space-y-6"

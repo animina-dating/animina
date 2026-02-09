@@ -386,6 +386,15 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
+        <%!-- Breadcrumb --%>
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
+            </li>
+            <li>{gettext("Ollama Logs")}</li>
+          </ul>
+        </div>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Ollama Logs")}</h1>

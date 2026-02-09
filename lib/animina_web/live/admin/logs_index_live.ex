@@ -26,6 +26,12 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>{gettext("Logs")}</li>
+          </ul>
+        </div>
+
         <div class="text-center mb-8">
           <.header>
             {gettext("Logs")}
