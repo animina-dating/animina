@@ -16,7 +16,14 @@ defmodule AniminaWeb.IndexLive do
     if match?(%{current_scope: %{user: %{state: "waitlisted"}}}, socket.assigns) do
       {:ok, Phoenix.LiveView.redirect(socket, to: ~p"/users/waitlist")}
     else
-      {:ok, assign(socket, page_title: gettext("Welcome to ANIMINA"))}
+      {:ok,
+       assign(socket,
+         page_title: gettext("Online-Dating 👫❤️"),
+         page_description:
+           gettext(
+             "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
+           )
+       )}
     end
   end
 

@@ -24,8 +24,8 @@ msgstr[0] "%{count}/%{threshold} приглашение"
 msgstr[1] "%{count}/%{threshold} приглашения"
 msgstr[2] "%{count}/%{threshold} приглашений"
 
-#: lib/animina_web/live/index_live.ex:74
-#: lib/animina_web/live/index_live.ex:242
+#: lib/animina_web/live/index_live.ex:81
+#: lib/animina_web/live/index_live.ex:249
 #, elixir-autogen, elixir-format
 msgid "100% Free"
 msgstr "100% бесплатно"
@@ -41,7 +41,7 @@ msgstr "Код подтверждения отправлен на %{email}."
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Ссылка для подтверждения смены e-mail отправлена на новый адрес."
 
-#: lib/animina_web/components/layouts.ex:431
+#: lib/animina_web/components/layouts.ex:432
 #: lib/animina_web/live/user_live/registration.ex:13
 #: lib/animina_web/live/user_live/settings_hub.ex:22
 #: lib/animina_web/live/user_live/settings_hub.ex:63
@@ -55,7 +55,7 @@ msgstr "Аккаунт"
 msgid "Actions"
 msgstr "Действия"
 
-#: lib/animina_web/live/index_live.ex:75
+#: lib/animina_web/live/index_live.ex:82
 #, elixir-autogen, elixir-format
 msgid "Ad-supported – no premium traps, no secret algorithms."
 msgstr "С рекламой – без премиум-ловушек, без секретных алгоритмов."
@@ -65,7 +65,7 @@ msgstr "С рекламой – без премиум-ловушек, без с�
 msgid "Add location %{number}"
 msgstr "Добавить место %{number}"
 
-#: lib/animina_web/live/index_live.ex:244
+#: lib/animina_web/live/index_live.ex:251
 #, elixir-autogen, elixir-format
 msgid "All features are free for everyone. No premium subscriptions, no hidden costs, no pay-to-win mechanics. We are financed through advertising."
 msgstr "Все функции бесплатны для всех. Без премиум-подписок, без скрытых расходов, без механик pay-to-win. Мы финансируемся за счёт рекламы."
@@ -75,7 +75,7 @@ msgstr "Все функции бесплатны для всех. Без пре�
 msgid "Already registered?"
 msgstr "Уже зарегистрированы?"
 
-#: lib/animina_web/live/index_live.ex:320
+#: lib/animina_web/live/index_live.ex:327
 #, elixir-autogen, elixir-format
 msgid "At ANIMINA everything is different."
 msgstr "В ANIMINA всё по-другому."
@@ -97,7 +97,7 @@ msgstr "Вернуться к входу"
 msgid "Birthday (min. 18 years)"
 msgstr "Дата рождения (мин. 18 лет)"
 
-#: lib/animina_web/live/index_live.ex:95
+#: lib/animina_web/live/index_live.ex:102
 #, elixir-autogen, elixir-format
 msgid "Blacklist for unwanted contacts. Those who cross boundaries will be excluded."
 msgstr "Чёрный список для нежелательных контактов. Те, кто переходит границы, будут исключены."
@@ -162,17 +162,17 @@ msgstr "Создать аккаунт"
 msgid "Creating account..."
 msgstr "Создание аккаунта..."
 
-#: lib/animina_web/live/index_live.ex:294
+#: lib/animina_web/live/index_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "Dating should be fun – but not addictive. We deliberately avoid manipulative designs like endless swiping or push notifications that keep pulling you back."
 msgstr "Знакомства должны быть увлекательными – но не вызывать зависимость. Мы сознательно избегаем манипулятивных дизайнов, таких как бесконечное листание или push-уведомления, которые постоянно затягивают вас обратно."
 
-#: lib/animina_web/live/index_live.ex:104
+#: lib/animina_web/live/index_live.ex:111
 #, elixir-autogen, elixir-format
 msgid "Dating should be joyful, not addictive – quality over sensory overload."
 msgstr "Знакомства должны быть радостными, а не вызывать зависимость – качество вместо перегрузки."
 
-#: lib/animina_web/live/index_live.ex:196
+#: lib/animina_web/live/index_live.ex:203
 #, elixir-autogen, elixir-format
 msgid "Describe yourself: Your traits, hobbies, values and lifestyle. From humor to creativity to your favorite cuisines."
 msgstr "Опишите себя: ваши качества, хобби, ценности и образ жизни. От юмора до творчества и любимой кухни."
@@ -225,7 +225,7 @@ msgstr "E-mail успешно изменён."
 msgid "Enter your email address and we will send you a password reset link."
 msgstr "Введите ваш адрес электронной почты, и мы отправим вам ссылку для сброса пароля."
 
-#: lib/animina_web/live/index_live.ex:220
+#: lib/animina_web/live/index_live.ex:227
 #, elixir-autogen, elixir-format
 msgid "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
 msgstr "У каждого есть то, что неприемлемо. Будьте честны о том, что вам не подходит. Это экономит время и разочарования с обеих сторон."
@@ -236,12 +236,12 @@ msgstr "У каждого есть то, что неприемлемо. Будь
 msgid "Female"
 msgstr "Женщина"
 
-#: lib/animina_web/live/index_live.ex:183
+#: lib/animina_web/live/index_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Find people who match you"
 msgstr "Найдите людей, которые вам подходят"
 
-#: lib/animina_web/live/index_live.ex:84
+#: lib/animina_web/live/index_live.ex:91
 #, elixir-autogen, elixir-format
 msgid "Flag system"
 msgstr "Система флагов"
@@ -256,12 +256,12 @@ msgstr "Забыли пароль"
 msgid "Forgot your password?"
 msgstr "Забыли пароль?"
 
-#: lib/animina_web/live/index_live.ex:364
+#: lib/animina_web/live/index_live.ex:371
 #, elixir-autogen, elixir-format
 msgid "Free. Forever. For everyone."
 msgstr "Бесплатно. Навсегда. Для всех."
 
-#: lib/animina_web/live/index_live.ex:292
+#: lib/animina_web/live/index_live.ex:299
 #, elixir-autogen, elixir-format
 msgid "Fun without addiction"
 msgstr "Удовольствие без зависимости"
@@ -276,7 +276,7 @@ msgstr "Пол"
 msgid "Gender(s)"
 msgstr "Пол(а)"
 
-#: lib/animina_web/live/index_live.ex:205
+#: lib/animina_web/live/index_live.ex:212
 #, elixir-autogen, elixir-format
 msgid "Green Flags"
 msgstr "Зелёные флаги"
@@ -291,7 +291,7 @@ msgstr "Рост в см (80-225)"
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "Если аккаунт с таким e-mail существует, вы скоро получите инструкции по сбросу пароля."
 
-#: lib/animina_web/components/layouts.ex:752
+#: lib/animina_web/components/layouts.ex:753
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "Реквизиты"
@@ -301,13 +301,13 @@ msgstr "Реквизиты"
 msgid "Invalid email or password"
 msgstr "Неверный e-mail или пароль"
 
-#: lib/animina_web/live/index_live.ex:102
+#: lib/animina_web/live/index_live.ex:109
 #, elixir-autogen, elixir-format
 msgid "Joy instead of addiction"
 msgstr "Радость вместо зависимости"
 
 #: lib/animina_web/components/layouts.ex:133
-#: lib/animina_web/components/layouts.ex:670
+#: lib/animina_web/components/layouts.ex:671
 #: lib/animina_web/live/user_live/language_settings.ex:14
 #: lib/animina_web/live/user_live/language_settings.ex:51
 #: lib/animina_web/live/user_live/registration.ex:289
@@ -316,7 +316,7 @@ msgstr "Радость вместо зависимости"
 msgid "Language"
 msgstr "Язык"
 
-#: lib/animina_web/components/layouts.ex:383
+#: lib/animina_web/components/layouts.ex:384
 #: lib/animina_web/live/user_live/registration.ex:15
 #, elixir-autogen, elixir-format
 msgid "Location"
@@ -333,7 +333,7 @@ msgstr[2] "Местоположений"
 msgid "Locations"
 msgstr "Местоположения"
 
-#: lib/animina_web/components/layouts.ex:708
+#: lib/animina_web/components/layouts.ex:709
 #: lib/animina_web/live/user_live/login.ex:17
 #: lib/animina_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
@@ -345,8 +345,8 @@ msgstr "Войти"
 msgid "Log in now"
 msgstr "Войдите сейчас"
 
-#: lib/animina_web/components/layouts.ex:620
-#: lib/animina_web/components/layouts.ex:698
+#: lib/animina_web/components/layouts.ex:621
+#: lib/animina_web/components/layouts.ex:699
 #, elixir-autogen, elixir-format
 msgid "Log out"
 msgstr "Выйти"
@@ -409,12 +409,12 @@ msgstr "Новый пароль"
 msgid "Next"
 msgstr "Далее"
 
-#: lib/animina_web/live/index_live.ex:352
+#: lib/animina_web/live/index_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "No tricks, no hidden costs. Simply meet people who match you."
 msgstr "Без уловок, без скрытых расходов. Просто знакомьтесь с людьми, которые вам подходят."
 
-#: lib/animina_web/live/index_live.ex:252
+#: lib/animina_web/live/index_live.ex:259
 #, elixir-autogen, elixir-format
 msgid "Not unlimited requests"
 msgstr "Не безлимитные запросы"
@@ -425,7 +425,7 @@ msgstr "Не безлимитные запросы"
 msgid "Occupation"
 msgstr "Профессия"
 
-#: lib/animina_web/live/index_live.ex:254
+#: lib/animina_web/live/index_live.ex:261
 #, elixir-autogen, elixir-format
 msgid "On traditional platforms both sides struggle: Attractive people drown in requests, less popular ones barely get any. With us, the number of requests per day is limited. In real life, you can't talk to 10 potential partners at the same time either. This makes dating fairer for everyone."
 msgstr "На традиционных платформах обе стороны страдают: привлекательные люди тонут в запросах, менее популярные почти ничего не получают. У нас количество запросов в день ограничено. В реальной жизни вы тоже не можете общаться с 10 потенциальными партнёрами одновременно. Это делает знакомства справедливее для всех."
@@ -437,22 +437,22 @@ msgstr "На традиционных платформах обе стороны
 msgid "Open dev mailbox"
 msgstr "Открыть почтовый ящик разработчика"
 
-#: lib/animina_web/live/index_live.ex:322
+#: lib/animina_web/live/index_live.ex:329
 #, elixir-autogen, elixir-format
 msgid "Our code is fully available on GitHub. Anyone can verify how our matching works. The algorithm treats everyone equally – no exceptions."
 msgstr "Наш код полностью доступен на GitHub. Каждый может проверить, как работает наш подбор. Алгоритм относится ко всем одинаково – без исключений."
 
-#: lib/animina_web/live/index_live.ex:186
+#: lib/animina_web/live/index_live.ex:193
 #, elixir-autogen, elixir-format
 msgid "Our three-color system makes matching personal and honest"
 msgstr "Наша трёхцветная система делает подбор личным и честным"
 
-#: lib/animina_web/live/index_live.ex:264
+#: lib/animina_web/live/index_live.ex:271
 #, elixir-autogen, elixir-format
 msgid "Our unique three-color system: White flags show who you are. Green ones what you're looking for. Red ones what's a no-go. This helps you find people who truly match you."
 msgstr "Наша уникальная трёхцветная система: белые флаги показывают, кто вы. Зелёные — что вы ищете. Красные — что неприемлемо. Это помогает найти людей, которые вам действительно подходят."
 
-#: lib/animina_web/live/index_live.ex:80
+#: lib/animina_web/live/index_live.ex:87
 #, elixir-autogen, elixir-format
 msgid "Partnership, affair or a good conversation – we don't judge."
 msgstr "Отношения, интрижка или хорошая беседа – мы не судим."
@@ -482,12 +482,12 @@ msgstr "Ссылка для сброса пароля недействитель
 msgid "Password updated successfully!"
 msgstr "Пароль успешно обновлён!"
 
-#: lib/animina_web/live/index_live.ex:135
+#: lib/animina_web/live/index_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "People looking for real connections"
 msgstr "Люди, ищущие настоящие связи"
 
-#: lib/animina_web/live/index_live.ex:262
+#: lib/animina_web/live/index_live.ex:269
 #, elixir-autogen, elixir-format
 msgid "Personality counts"
 msgstr "Личность имеет значение"
@@ -502,7 +502,7 @@ msgstr "Пожалуйста, введите действительный 5-зн
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Пожалуйста, пройдите повторную аутентификацию для выполнения важных действий."
 
-#: lib/animina_web/components/layouts.ex:746
+#: lib/animina_web/components/layouts.ex:747
 #: lib/animina_web/live/user_live/settings_hub.ex:51
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -513,22 +513,22 @@ msgstr "Конфиденциальность"
 msgid "Profile"
 msgstr "Профиль"
 
-#: lib/animina_web/live/index_live.ex:274
+#: lib/animina_web/live/index_live.ex:281
 #, elixir-autogen, elixir-format
 msgid "Profiles with depth: Present yourself however you want – with photos only, text only, or both. Get to know people before contacting them – instead of just swiping pictures left or right."
 msgstr "Глубокие профили: представляйте себя как хотите – только с фото, только с текстом или и то и другое. Познакомьтесь с людьми до контакта – вместо простого листания фотографий."
 
-#: lib/animina_web/live/index_live.ex:349
+#: lib/animina_web/live/index_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "Ready for real dating?"
 msgstr "Готовы к настоящим знакомствам?"
 
-#: lib/animina_web/live/index_live.ex:282
+#: lib/animina_web/live/index_live.ex:289
 #, elixir-autogen, elixir-format
 msgid "Real people"
 msgstr "Настоящие люди"
 
-#: lib/animina_web/live/index_live.ex:217
+#: lib/animina_web/live/index_live.ex:224
 #, elixir-autogen, elixir-format
 msgid "Red Flags"
 msgstr "Красные флаги"
@@ -538,18 +538,18 @@ msgstr "Красные флаги"
 msgid "Referral code (optional)"
 msgstr "Код приглашения (необязательно)"
 
-#: lib/animina_web/components/layouts.ex:714
+#: lib/animina_web/components/layouts.ex:715
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Регистрация"
 
-#: lib/animina_web/live/index_live.ex:359
+#: lib/animina_web/live/index_live.ex:366
 #: lib/animina_web/live/user_live/login.ex:25
 #, elixir-autogen, elixir-format
 msgid "Register now"
 msgstr "Зарегистрироваться"
 
-#: lib/animina_web/live/index_live.ex:123
+#: lib/animina_web/live/index_live.ex:130
 #, elixir-autogen, elixir-format
 msgid "Register now – free"
 msgstr "Зарегистрироваться – бесплатно"
@@ -574,7 +574,7 @@ msgstr "Удалить место"
 msgid "Reset password"
 msgstr "Сбросить пароль"
 
-#: lib/animina_web/live/index_live.ex:93
+#: lib/animina_web/live/index_live.ex:100
 #, elixir-autogen, elixir-format
 msgid "Respect first"
 msgstr "Сначала уважение"
@@ -608,7 +608,7 @@ msgid "Set new password"
 msgstr "Установить новый пароль"
 
 #: lib/animina_web/components/core_components.ex:376
-#: lib/animina_web/components/layouts.ex:438
+#: lib/animina_web/components/layouts.ex:439
 #: lib/animina_web/live/admin/feature_flags_live.ex:772
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/traits_wizard.ex:17
@@ -616,17 +616,17 @@ msgstr "Установить новый пароль"
 msgid "Settings"
 msgstr "Настройки"
 
-#: lib/animina_web/live/index_live.ex:86
+#: lib/animina_web/live/index_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Show who you are, define what you're looking for and where your boundaries are."
 msgstr "Покажите, кто вы, определите, что вы ищете и где ваши границы."
 
-#: lib/animina_web/live/index_live.ex:272
+#: lib/animina_web/live/index_live.ex:279
 #, elixir-autogen, elixir-format
 msgid "Stories instead of swipes"
 msgstr "Истории вместо свайпов"
 
-#: lib/animina_web/live/index_live.ex:218
+#: lib/animina_web/live/index_live.ex:225
 #, elixir-autogen, elixir-format
 msgid "That's a no-go"
 msgstr "Это неприемлемо"
@@ -637,12 +637,12 @@ msgstr "Это неприемлемо"
 msgid "This confirmation link is invalid or expired."
 msgstr "Эта ссылка для подтверждения недействительна или истекла."
 
-#: lib/animina_web/live/index_live.ex:194
+#: lib/animina_web/live/index_live.ex:201
 #, elixir-autogen, elixir-format
 msgid "This is me"
 msgstr "Это я"
 
-#: lib/animina_web/live/index_live.ex:206
+#: lib/animina_web/live/index_live.ex:213
 #, elixir-autogen, elixir-format
 msgid "This is what I'm looking for"
 msgstr "Это то, что я ищу"
@@ -652,12 +652,12 @@ msgstr "Это то, что я ищу"
 msgid "This location has already been added"
 msgstr "Это место уже добавлено"
 
-#: lib/animina_web/live/index_live.ex:311
+#: lib/animina_web/live/index_live.ex:318
 #, elixir-autogen, elixir-format
 msgid "Transparency through Open Source"
 msgstr "Прозрачность через открытый исходный код"
 
-#: lib/animina_web/live/index_live.ex:284
+#: lib/animina_web/live/index_live.ex:291
 #, elixir-autogen, elixir-format
 msgid "Verified profiles and active moderation ensure a safe community. Fake profiles and bots barely stand a chance with us."
 msgstr "Проверенные профили и активная модерация обеспечивают безопасное сообщество. Фейковые профили и боты почти не имеют шансов у нас."
@@ -667,7 +667,7 @@ msgstr "Проверенные профили и активная модерац
 msgid "Verifying..."
 msgstr "Проверка..."
 
-#: lib/animina_web/live/index_live.ex:339
+#: lib/animina_web/live/index_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "View code on GitHub"
 msgstr "Посмотреть код на GitHub"
@@ -683,33 +683,28 @@ msgstr "Мы отправили 6-значный код на"
 msgid "Welcome back!"
 msgstr "С возвращением!"
 
-#: lib/animina_web/live/index_live.ex:19
-#, elixir-autogen, elixir-format
-msgid "Welcome to ANIMINA"
-msgstr "Добро пожаловать в ANIMINA"
-
-#: lib/animina_web/live/index_live.ex:208
+#: lib/animina_web/live/index_live.ex:215
 #, elixir-autogen, elixir-format
 msgid "What do you want in a partner? Which traits do you find attractive? The order shows what matters most to you."
 msgstr "Что вы хотите от партнёра? Какие качества вы находите привлекательными? Порядок показывает, что для вас важнее всего."
 
-#: lib/animina_web/live/index_live.ex:235
+#: lib/animina_web/live/index_live.ex:242
 #, elixir-autogen, elixir-format
 msgid "What makes ANIMINA different"
 msgstr "Что отличает ANIMINA"
 
-#: lib/animina_web/live/index_live.ex:193
+#: lib/animina_web/live/index_live.ex:200
 #: lib/animina_web/live/user_live/traits_wizard.ex:38
 #, elixir-autogen, elixir-format
 msgid "White Flags"
 msgstr "Белые флаги"
 
-#: lib/animina_web/live/index_live.ex:314
+#: lib/animina_web/live/index_live.ex:321
 #, elixir-autogen, elixir-format
 msgid "With other dating platforms you never know why certain people are shown to you. Does the algorithm favor paying customers? Are profiles hidden to force you to upgrade?"
 msgstr "На других платформах знакомств вы никогда не знаете, почему вам показывают определённых людей. Алгоритм благоприятствует платящим клиентам? Скрываются ли профили, чтобы заставить вас перейти на премиум?"
 
-#: lib/animina_web/live/index_live.ex:79
+#: lib/animina_web/live/index_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Without labels"
 msgstr "Без ярлыков"
@@ -725,7 +720,7 @@ msgstr[2] "Неверный код. Осталось %{count} попыток."
 
 #: lib/animina_web/user_auth.ex:246
 #: lib/animina_web/user_auth.ex:260
-#: lib/animina_web/user_auth.ex:465
+#: lib/animina_web/user_auth.ex:466
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Для доступа к этой странице необходимо войти."
@@ -741,8 +736,8 @@ msgstr "Для доступа к этой странице необходимо 
 msgid "Your account has been deleted. Please register again."
 msgstr "Ваш аккаунт был удалён. Пожалуйста, зарегистрируйтесь снова."
 
-#: lib/animina_web/components/layouts.ex:174
-#: lib/animina_web/components/layouts.ex:633
+#: lib/animina_web/components/layouts.ex:175
+#: lib/animina_web/components/layouts.ex:634
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "Ваш профиль"
@@ -783,12 +778,12 @@ msgstr "из"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Создать аккаунт"
 
-#: lib/animina_web/components/layouts.ex:849
+#: lib/animina_web/components/layouts.ex:850
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "Обновление ANIMINA"
 
-#: lib/animina_web/components/layouts.ex:856
+#: lib/animina_web/components/layouts.ex:857
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "На сервер устанавливается новая версия программного обеспечения. Это займёт всего мгновение..."
@@ -893,7 +888,7 @@ msgstr "Минимальный возраст"
 msgid "No locations added yet."
 msgstr "Местоположения ещё не добавлены."
 
-#: lib/animina_web/components/layouts.ex:369
+#: lib/animina_web/components/layouts.ex:370
 #: lib/animina_web/live/user_live/edit_preferences.ex:18
 #: lib/animina_web/live/user_live/edit_preferences.ex:112
 #: lib/animina_web/live/user_live/profile_hub.ex:76
@@ -1052,12 +1047,12 @@ msgstr "Я принимаю"
 msgid "Privacy Policy"
 msgstr "Политику конфиденциальности"
 
-#: lib/animina_web/live/index_live.ex:109
+#: lib/animina_web/live/index_live.ex:116
 #, elixir-autogen, elixir-format
 msgid "Self-hosted in Germany"
 msgstr "Собственный сервер в Германии"
 
-#: lib/animina_web/live/index_live.ex:111
+#: lib/animina_web/live/index_live.ex:118
 #, elixir-autogen, elixir-format
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Наши серверы не в облаке – они работают на собственном физическом оборудовании в Германии."
@@ -1067,8 +1062,8 @@ msgstr "Наши серверы не в облаке – они работают
 msgid "Add Role"
 msgstr "Добавить роль"
 
-#: lib/animina_web/components/layouts.ex:212
-#: lib/animina_web/components/layouts.ex:803
+#: lib/animina_web/components/layouts.ex:213
+#: lib/animina_web/components/layouts.ex:804
 #: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -1089,15 +1084,15 @@ msgstr "Не удалось добавить роль."
 msgid "Current Roles"
 msgstr "Текущие роли"
 
-#: lib/animina_web/components/layouts.ex:516
+#: lib/animina_web/components/layouts.ex:517
 #: lib/animina_web/live/admin/user_roles_live.ex:11
 #: lib/animina_web/live/admin/user_roles_live.ex:77
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "Управление ролями"
 
-#: lib/animina_web/components/layouts.ex:217
-#: lib/animina_web/components/layouts.ex:804
+#: lib/animina_web/components/layouts.ex:218
+#: lib/animina_web/components/layouts.ex:805
 #: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
@@ -1118,7 +1113,7 @@ msgstr "Роль не найдена."
 msgid "Search users by email or name..."
 msgstr "Поиск пользователей по email или имени..."
 
-#: lib/animina_web/components/layouts.ex:538
+#: lib/animina_web/components/layouts.ex:539
 #, elixir-autogen, elixir-format
 msgid "Switch Role"
 msgstr "Сменить роль"
@@ -1128,7 +1123,7 @@ msgstr "Сменить роль"
 msgid "The user role cannot be removed."
 msgstr "Роль пользователя не может быть удалена."
 
-#: lib/animina_web/components/layouts.ex:805
+#: lib/animina_web/components/layouts.ex:806
 #: lib/animina_web/live/admin/photo_history_live.ex:177
 #: lib/animina_web/live/admin/photo_reviews_live.ex:601
 #, elixir-autogen, elixir-format
@@ -1146,7 +1141,7 @@ msgstr "У вас нет прав для доступа к этой страни
 msgid "You do not have that role."
 msgstr "У вас нет этой роли."
 
-#: lib/animina_web/components/layouts.ex:546
+#: lib/animina_web/components/layouts.ex:547
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "активна"
@@ -1282,7 +1277,7 @@ msgstr "Качества, которые неприемлемы в партнё�
 msgid "Traits you'd like your partner to have"
 msgstr "Качества, которые ты хочешь видеть в партнёре"
 
-#: lib/animina_web/components/layouts.ex:355
+#: lib/animina_web/components/layouts.ex:356
 #: lib/animina_web/live/user_live/profile_hub.ex:69
 #: lib/animina_web/live/user_live/traits_wizard.ex:20
 #: lib/animina_web/live/user_live/traits_wizard.ex:28
@@ -1305,7 +1300,7 @@ msgstr "Мои флаги — Что мне нравится в партнёре
 msgid "My Flags — Partner Deal Breakers"
 msgstr "Мои флаги — Неприемлемое в партнёре"
 
-#: lib/animina_web/components/layouts.ex:411
+#: lib/animina_web/components/layouts.ex:412
 #: lib/animina_web/live/user_live/settings_hub.ex:39
 #, elixir-autogen, elixir-format
 msgid "App"
@@ -3032,7 +3027,7 @@ msgstr "Фото загружено! Скоро оно будет провере
 msgid "Processing"
 msgstr "Обработка"
 
-#: lib/animina_web/components/layouts.ex:313
+#: lib/animina_web/components/layouts.ex:314
 #: lib/animina_web/live/user_live/avatar_upload.ex:19
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
@@ -3070,17 +3065,17 @@ msgstr "Загрузка не удалась"
 msgid "Upload failed. Please try again."
 msgstr "Загрузка не удалась. Пожалуйста, попробуйте ещё раз."
 
-#: lib/animina_web/components/layouts.ex:255
+#: lib/animina_web/components/layouts.ex:256
 #, elixir-autogen, elixir-format
 msgid "On Waitlist"
 msgstr "В списке ожидания"
 
-#: lib/animina_web/components/layouts.ex:203
+#: lib/animina_web/components/layouts.ex:204
 #, elixir-autogen, elixir-format
 msgid "On waitlist"
 msgstr "В списке ожидания"
 
-#: lib/animina_web/components/layouts.ex:261
+#: lib/animina_web/components/layouts.ex:262
 #, elixir-autogen, elixir-format
 msgid "Referral progress"
 msgstr "Прогресс приглашений"
@@ -3232,7 +3227,7 @@ msgstr "История фото"
 msgid "Photo ID: %{id}"
 msgstr "ID фото: %{id}"
 
-#: lib/animina_web/components/layouts.ex:455
+#: lib/animina_web/components/layouts.ex:456
 #: lib/animina_web/live/admin/photo_history_live.ex:30
 #: lib/animina_web/live/admin/photo_reviews_live.ex:15
 #: lib/animina_web/live/admin/photo_reviews_live.ex:390
@@ -3313,7 +3308,7 @@ msgstr "Похожие изображения будут автоматичес�
 msgid "Submitted"
 msgstr "Подано"
 
-#: lib/animina_web/components/layouts.ex:522
+#: lib/animina_web/components/layouts.ex:523
 #: lib/animina_web/live/admin/photo_history_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "System"
@@ -3450,7 +3445,7 @@ msgstr "Задержка (мс)"
 msgid "Delays simulate slow processing for UX testing"
 msgstr "Задержки имитируют медленную обработку для UX-тестирования"
 
-#: lib/animina_web/components/layouts.ex:529
+#: lib/animina_web/components/layouts.ex:530
 #: lib/animina_web/live/admin/feature_flags_live.ex:18
 #: lib/animina_web/live/admin/feature_flags_live.ex:379
 #, elixir-autogen, elixir-format
@@ -3569,7 +3564,7 @@ msgstr "В чёрном списке пока нет записей."
 msgid "No thumbnail"
 msgstr "Нет миниатюры"
 
-#: lib/animina_web/components/layouts.ex:477
+#: lib/animina_web/components/layouts.ex:478
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:14
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:128
 #, elixir-autogen, elixir-format
@@ -3705,7 +3700,7 @@ msgstr[2] "Одобрено %{count} апелляций."
 msgid "Approved %{resolved} appeals. %{failed} already resolved."
 msgstr "Одобрено %{resolved} апелляций. %{failed} уже рассмотрены."
 
-#: lib/animina_web/components/layouts.ex:446
+#: lib/animina_web/components/layouts.ex:447
 #, elixir-autogen, elixir-format
 msgid "Moderation"
 msgstr "Модерация"
@@ -4082,7 +4077,7 @@ msgstr "Элемент добавлен на мудборд"
 msgid "Moodboard"
 msgstr "Мудборд"
 
-#: lib/animina_web/components/layouts.ex:341
+#: lib/animina_web/components/layouts.ex:342
 #: lib/animina_web/live/user_live/profile_hub.ex:62
 #, elixir-autogen, elixir-format
 msgid "My Moodboard"
@@ -4277,7 +4272,7 @@ msgstr "Приватные флаги не отображаются в проф�
 msgid "private"
 msgstr "приватно"
 
-#: lib/animina_web/components/layouts.ex:483
+#: lib/animina_web/components/layouts.ex:484
 #: lib/animina_web/live/admin/feature_flags_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "AI / Ollama"
@@ -4308,7 +4303,7 @@ msgstr "По запросу «%{query}» ничего не найдено"
 msgid "Photo analysis and debug settings"
 msgstr "Настройки анализа фото и отладки"
 
-#: lib/animina_web/components/layouts.ex:470
+#: lib/animina_web/components/layouts.ex:471
 #, elixir-autogen, elixir-format
 msgid "Photos"
 msgstr "Фотографии"
@@ -4318,12 +4313,12 @@ msgstr "Фотографии"
 msgid "Search flags and settings..."
 msgstr "Поиск флагов и настроек..."
 
-#: lib/animina_web/components/layouts.ex:509
+#: lib/animina_web/components/layouts.ex:510
 #, elixir-autogen, elixir-format
 msgid "Users"
 msgstr "Пользователи"
 
-#: lib/animina_web/components/layouts.ex:418
+#: lib/animina_web/components/layouts.ex:419
 #: lib/animina_web/live/discover_live.ex:36
 #: lib/animina_web/live/discover_live.ex:387
 #: lib/animina_web/live/messages_live.ex:126
@@ -4372,7 +4367,7 @@ msgstr "Не удалось начать беседу"
 msgid "Failed to send message"
 msgstr "Не удалось отправить сообщение"
 
-#: lib/animina_web/components/layouts.ex:424
+#: lib/animina_web/components/layouts.ex:425
 #: lib/animina_web/live/messages_live.ex:113
 #: lib/animina_web/live/messages_live.ex:614
 #: lib/animina_web/live/messages_live.ex:662
@@ -4657,7 +4652,7 @@ msgstr "Правила использования платформы"
 msgid "Something went wrong. Please try again."
 msgstr "Что-то пошло не так. Пожалуйста, попробуйте ещё раз."
 
-#: lib/animina_web/components/layouts.ex:749
+#: lib/animina_web/components/layouts.ex:750
 #: lib/animina_web/live/user_live/accept_terms.ex:40
 #: lib/animina_web/live/user_live/accept_terms.ex:61
 #: lib/animina_web/live/user_live/registration.ex:476
@@ -5015,7 +5010,7 @@ msgstr "Настроить ключ доступа"
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Входите быстрее и безопаснее с помощью ключа доступа."
 
-#: lib/animina_web/components/layouts.ex:769
+#: lib/animina_web/components/layouts.ex:770
 #, elixir-autogen, elixir-format
 msgid "Report bug"
 msgstr "Сообщить об ошибке"
@@ -5025,22 +5020,22 @@ msgstr "Сообщить об ошибке"
 msgid "Manage your account settings"
 msgstr "Управляйте настройками вашего аккаунта"
 
-#: lib/animina_web/components/layouts.ex:294
-#: lib/animina_web/components/layouts.ex:389
-#: lib/animina_web/components/layouts.ex:396
+#: lib/animina_web/components/layouts.ex:295
+#: lib/animina_web/components/layouts.ex:390
+#: lib/animina_web/components/layouts.ex:397
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/profile_hub.ex:134
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr "Мой профиль"
 
-#: lib/animina_web/components/layouts.ex:278
+#: lib/animina_web/components/layouts.ex:279
 #: lib/animina_web/live/user_live/profile_hub.ex:29
 #, elixir-autogen, elixir-format
 msgid "Profile completeness"
 msgstr "Заполненность профиля"
 
-#: lib/animina_web/components/layouts.ex:327
+#: lib/animina_web/components/layouts.ex:328
 #: lib/animina_web/live/user_live/profile_hub.ex:55
 #, elixir-autogen, elixir-format
 msgid "Profile Info"
@@ -5155,7 +5150,7 @@ msgstr "Ручной перезапуск"
 msgid "No grouped log entries found."
 msgstr "Сгруппированные записи журнала не найдены."
 
-#: lib/animina_web/components/layouts.ex:498
+#: lib/animina_web/components/layouts.ex:499
 #: lib/animina_web/live/admin/ollama_logs_live.ex:21
 #: lib/animina_web/live/admin/ollama_logs_live.ex:391
 #, elixir-autogen, elixir-format
@@ -5465,8 +5460,19 @@ msgstr ""
 msgid "Estimated wait:"
 msgstr ""
 
-#: lib/animina_web/components/live_online_count_component.ex:34
 #: lib/animina_web/components/live_online_count_component.ex:44
+#: lib/animina_web/components/live_online_count_component.ex:55
 #, elixir-autogen, elixir-format
 msgid "online"
 msgstr ""
+
+#: lib/animina_web/live/index_live.ex:21
+#, elixir-autogen, elixir-format
+msgid "Online-Dating 👫❤️"
+msgstr "Онлайн-знакомства 👫❤️"
+
+#: lib/animina_web/components/layouts/root.html.heex:10
+#: lib/animina_web/live/index_live.ex:23
+#, elixir-autogen, elixir-format
+msgid "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
+msgstr "Бесплатные онлайн-знакомства с подбором по характеру. Открытый код, рекламная модель и справедливость для всех."

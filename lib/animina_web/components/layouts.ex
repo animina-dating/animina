@@ -162,11 +162,13 @@ defmodule AniminaWeb.Layouts do
                     user_id={@current_scope.user.id}
                   />
                 <% end %>
-                <.live_component
-                  module={AniminaWeb.LiveUnreadBadgeComponent}
-                  id="unread-badge"
-                  user_id={@current_scope.user.id}
-                />
+                <div class={if Scope.admin?(@current_scope), do: "hidden sm:block"}>
+                  <.live_component
+                    module={AniminaWeb.LiveUnreadBadgeComponent}
+                    id="unread-badge"
+                    user_id={@current_scope.user.id}
+                  />
+                </div>
                 <div class="relative">
                   <button
                     type="button"

@@ -7,6 +7,15 @@
     <.live_title default="ANIMINA" suffix=" - ANIMINA">
       {assigns[:page_title]}
     </.live_title>
+    <meta
+      name="description"
+      content={
+        assigns[:page_description] ||
+          gettext(
+            "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
+          )
+      }
+    />
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
