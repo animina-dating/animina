@@ -17,6 +17,7 @@ defmodule Animina.Accounts.SoftDelete do
   import Ecto.Query
 
   alias Animina.Accounts.{User, UserNotifier, UserToken}
+  alias Animina.ActivityLog
   alias Animina.Repo
   alias Animina.TimeMachine
   alias Animina.Utils.PaperTrail, as: PT
@@ -43,6 +44,15 @@ defmodule Animina.Accounts.SoftDelete do
              |> PT.unwrap() do
         Repo.delete_all(from(t in UserToken, where: t.user_id == ^user.id))
         UserNotifier.deliver_account_deletion_goodbye(user)
+
+        ActivityLog.log(
+          "profile",
+          "account_deleted",
+          "#{user.display_name} deleted their account",
+          actor_id: user.id,
+          subject_id: user.id
+        )
+
         {:ok, user}
       end
     end)
@@ -75,12 +85,29 @@ defmodule Animina.Accounts.SoftDelete do
   Returns `{:error, changeset}` if the email or phone is now claimed by another active user.
   """
   def reactivate_user(%User{} = user, opts \\ []) do
-    user
-    |> Ecto.Changeset.change(deleted_at: nil)
-    |> Ecto.Changeset.unique_constraint(:email, name: :users_email_active_index)
-    |> Ecto.Changeset.unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
-    |> PaperTrail.update(PT.opts(opts))
-    |> PT.unwrap()
+    result =
+      user
+      |> Ecto.Changeset.change(deleted_at: nil)
+      |> Ecto.Changeset.unique_constraint(:email, name: :users_email_active_index)
+      |> Ecto.Changeset.unique_constraint(:mobile_phone, name: :users_mobile_phone_active_index)
+      |> PaperTrail.update(PT.opts(opts))
+      |> PT.unwrap()
+
+    case result do
+      {:ok, user} ->
+        ActivityLog.log(
+          "profile",
+          "account_reactivated",
+          "#{user.display_name} reactivated their account",
+          actor_id: user.id,
+          subject_id: user.id
+        )
+
+        {:ok, user}
+
+      error ->
+        error
+    end
   end
 
   @doc """

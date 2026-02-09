@@ -8,6 +8,7 @@ defmodule Animina.Photos.Blacklist do
 
   import Ecto.Query
 
+  alias Animina.ActivityLog
   alias Animina.Photos
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoBlacklist
@@ -45,9 +46,23 @@ defmodule Animina.Photos.Blacklist do
       source_user_id: source_photo && source_photo.owner_id
     }
 
-    %PhotoBlacklist{}
-    |> PhotoBlacklist.create_changeset(attrs)
-    |> Repo.insert()
+    result =
+      %PhotoBlacklist{}
+      |> PhotoBlacklist.create_changeset(attrs)
+      |> Repo.insert()
+
+    case result do
+      {:ok, entry} ->
+        ActivityLog.log("admin", "blacklist_entry_added", "Photo added to blacklist: #{reason}",
+          actor_id: added_by && added_by.id,
+          metadata: %{"reason" => reason, "blacklist_id" => entry.id}
+        )
+
+        {:ok, entry}
+
+      error ->
+        error
+    end
   end
 
   defp copy_thumbnail_to_blacklist(nil), do: nil
@@ -79,7 +94,19 @@ defmodule Animina.Photos.Blacklist do
       File.rm(entry.thumbnail_path)
     end
 
-    Repo.delete(entry)
+    result = Repo.delete(entry)
+
+    case result do
+      {:ok, _} ->
+        ActivityLog.log("admin", "blacklist_entry_removed", "Photo removed from blacklist",
+          metadata: %{"blacklist_id" => entry.id}
+        )
+
+      _ ->
+        :ok
+    end
+
+    result
   end
 
   @doc """

@@ -1,6 +1,7 @@
 defmodule AniminaWeb.Admin.FeatureFlagsLive do
   use AniminaWeb, :live_view
 
+  alias Animina.ActivityLog
   alias Animina.FeatureFlags
 
   import AniminaWeb.Helpers.AdminHelpers, only: [parse_non_negative_int: 2, parse_integer: 2]
@@ -38,12 +39,21 @@ defmodule AniminaWeb.Admin.FeatureFlagsLive do
   @impl true
   def handle_event("toggle-" <> _ = event, %{"flag" => flag_name}, socket) do
     flag_atom = String.to_existing_atom(flag_name)
+    new_state = !FeatureFlags.enabled?(flag_atom)
 
-    if FeatureFlags.enabled?(flag_atom) do
-      FeatureFlags.disable(flag_atom)
-    else
+    if new_state do
       FeatureFlags.enable(flag_atom)
+    else
+      FeatureFlags.disable(flag_atom)
     end
+
+    ActivityLog.log(
+      "admin",
+      "feature_flag_toggled",
+      "Feature flag #{flag_name} #{if new_state, do: "enabled", else: "disabled"}",
+      actor_id: socket.assigns.current_scope.user.id,
+      metadata: %{"flag" => flag_name, "enabled" => new_state}
+    )
 
     {:noreply, assign(socket, refresh_after_toggle(event))}
   end

@@ -1,6 +1,7 @@
 defmodule AniminaWeb.Admin.PhotoReviewsLive do
   use AniminaWeb, :live_view
 
+  alias Animina.ActivityLog
   alias Animina.Photos
 
   import AniminaWeb.Helpers.AdminHelpers,
@@ -107,6 +108,12 @@ defmodule AniminaWeb.Admin.PhotoReviewsLive do
 
     case Photos.resolve_appeal(appeal, reviewer, "approved", opts) do
       {:ok, _result} ->
+        ActivityLog.log("admin", "photo_review_approved", "Photo approved by reviewer",
+          actor_id: reviewer.id,
+          subject_id: appeal.user_id,
+          metadata: %{"photo_id" => appeal.photo_id, "appeal_id" => appeal.id}
+        )
+
         socket =
           socket
           |> reload_appeals()
@@ -138,6 +145,12 @@ defmodule AniminaWeb.Admin.PhotoReviewsLive do
 
     case Photos.resolve_appeal(appeal, reviewer, "rejected", opts) do
       {:ok, _result} ->
+        ActivityLog.log("admin", "photo_review_rejected", "Photo rejected by reviewer",
+          actor_id: reviewer.id,
+          subject_id: appeal.user_id,
+          metadata: %{"photo_id" => appeal.photo_id, "appeal_id" => appeal.id}
+        )
+
         socket =
           socket
           |> reload_appeals()

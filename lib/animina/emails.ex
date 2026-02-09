@@ -9,6 +9,7 @@ defmodule Animina.Emails do
 
   import Ecto.Query
 
+  alias Animina.ActivityLog
   alias Animina.Emails.EmailLog
   alias Animina.Mailer
   alias Animina.Repo
@@ -35,6 +36,15 @@ defmodule Animina.Emails do
     case Mailer.deliver(swoosh_email) do
       {:ok, _meta} ->
         create_email_log(Map.put(log_attrs, :status, "sent"))
+
+        ActivityLog.log("system", "email_sent", "Email sent: #{log_attrs.email_type}",
+          subject_id: opts[:user_id],
+          metadata: %{
+            "email_type" => log_attrs.email_type,
+            "recipient" => log_attrs.recipient
+          }
+        )
+
         {:ok, swoosh_email}
 
       {:error, reason} = error ->

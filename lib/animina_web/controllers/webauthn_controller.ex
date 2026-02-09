@@ -10,6 +10,7 @@ defmodule AniminaWeb.WebAuthnController do
   @compile {:no_warn_undefined, Wax}
 
   alias Animina.Accounts
+  alias Animina.ActivityLog
   alias AniminaWeb.UserAuth
 
   # --- Registration (authenticated user adding a passkey) ---
@@ -195,11 +196,19 @@ defmodule AniminaWeb.WebAuthnController do
       {:ok, auth_data} ->
         Accounts.update_passkey_after_auth(passkey, auth_data.sign_count)
 
+        ActivityLog.log("auth", "login_passkey", "#{user.display_name} logged in via passkey",
+          actor_id: user.id
+        )
+
         conn
         |> delete_session(:webauthn_challenge)
         |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
 
       {:error, error} ->
+        ActivityLog.log("auth", "login_failed", "Failed passkey authentication",
+          metadata: %{"error" => Exception.message(error)}
+        )
+
         conn
         |> delete_session(:webauthn_challenge)
         |> put_status(401)

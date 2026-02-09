@@ -1,6 +1,7 @@
 defmodule AniminaWeb.Admin.LogsIndexLive do
   use AniminaWeb, :live_view
 
+  alias Animina.ActivityLog
   alias Animina.Emails
   alias Animina.Photos
   alias AniminaWeb.Layouts
@@ -9,12 +10,14 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
   def mount(_params, _session, socket) do
     email_count = Emails.list_email_logs(per_page: 1).total_count
     ollama_count = Photos.list_ollama_logs(per_page: 1).total_count
+    activity_count = ActivityLog.count()
 
     {:ok,
      assign(socket,
        page_title: gettext("Logs"),
        email_count: email_count,
-       ollama_count: ollama_count
+       ollama_count: ollama_count,
+       activity_count: activity_count
      )}
   end
 
@@ -31,6 +34,14 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
         </div>
 
         <div class="grid gap-4">
+          <.log_card
+            navigate={~p"/admin/logs/activity"}
+            title={gettext("Activity Logs")}
+            description={gettext("Unified activity log for all system events")}
+            count={@activity_count}
+            icon="hero-clipboard-document-list"
+          />
+
           <.log_card
             navigate={~p"/admin/logs/emails"}
             title={gettext("Email Logs")}

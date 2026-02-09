@@ -12,6 +12,8 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
+  alias Animina.ActivityLog
+
   alias Animina.Accounts.{
     AccountSecurityEvent,
     User,
@@ -154,6 +156,11 @@ defmodule Animina.Accounts do
       with {:ok, user} <- insert_with_referral_code_retry(changeset, 3, pt_opts),
            :ok <- insert_locations(user, locations_attrs),
            {:ok, _pinned_item} <- create_pinned_intro_item(user) do
+        ActivityLog.log("profile", "account_registered", "#{user.display_name} registered",
+          actor_id: user.id,
+          subject_id: user.id
+        )
+
         {:ok, user}
       end
     end)
@@ -338,6 +345,12 @@ defmodule Animina.Accounts do
              Repo.delete_all(from(UserToken, where: [user_id: ^user.id, context: ^context])),
            {:ok, security_info} <-
              create_security_event_for_email_change(user, old_email, email) do
+        ActivityLog.log("profile", "email_changed", "#{user.display_name} changed email",
+          actor_id: user.id,
+          subject_id: user.id,
+          metadata: %{"old_email" => old_email, "new_email" => email}
+        )
+
         {:ok, {user, security_info}}
       else
         {:error, :cooldown_active} -> {:error, :cooldown_active}
@@ -369,6 +382,14 @@ defmodule Animina.Accounts do
           {:ok, {user, expired_tokens}} ->
             {:ok, security_info} =
               create_security_event_for_password_change(user, old_hashed_password)
+
+            ActivityLog.log(
+              "profile",
+              "password_changed",
+              "#{user.display_name} changed password",
+              actor_id: user.id,
+              subject_id: user.id
+            )
 
             {:ok, {user, expired_tokens, security_info}}
 
@@ -572,10 +593,27 @@ defmodule Animina.Accounts do
   Updates the user profile.
   """
   def update_user_profile(user, attrs, opts \\ []) do
-    user
-    |> User.profile_changeset(attrs)
-    |> PaperTrail.update(PT.opts(opts))
-    |> PT.unwrap()
+    result =
+      user
+      |> User.profile_changeset(attrs)
+      |> PaperTrail.update(PT.opts(opts))
+      |> PT.unwrap()
+
+    case result do
+      {:ok, updated_user} ->
+        ActivityLog.log(
+          "profile",
+          "profile_updated",
+          "#{updated_user.display_name} updated profile",
+          actor_id: updated_user.id,
+          subject_id: updated_user.id
+        )
+
+        {:ok, updated_user}
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -891,18 +929,56 @@ defmodule Animina.Accounts do
   Creates a passkey for a user from a verified WebAuthn registration.
   """
   def create_user_passkey(%User{} = user, attrs) do
-    %UserPasskey{user_id: user.id}
-    |> UserPasskey.changeset(attrs)
-    |> Repo.insert()
+    result =
+      %UserPasskey{user_id: user.id}
+      |> UserPasskey.changeset(attrs)
+      |> Repo.insert()
+
+    case result do
+      {:ok, passkey} ->
+        ActivityLog.log(
+          "profile",
+          "passkey_registered",
+          "#{user.display_name} registered a passkey",
+          actor_id: user.id,
+          subject_id: user.id,
+          metadata: %{"passkey_id" => passkey.id, "label" => passkey.label}
+        )
+
+        {:ok, passkey}
+
+      error ->
+        error
+    end
   end
 
   @doc """
   Deletes a passkey belonging to a user.
   """
-  def delete_user_passkey(%User{id: user_id}, passkey_id) do
+  def delete_user_passkey(%User{id: user_id} = user, passkey_id) do
     case Repo.get_by(UserPasskey, id: passkey_id, user_id: user_id) do
-      nil -> {:error, :not_found}
-      passkey -> Repo.delete(passkey)
+      nil ->
+        {:error, :not_found}
+
+      passkey ->
+        result = Repo.delete(passkey)
+
+        case result do
+          {:ok, _} ->
+            ActivityLog.log(
+              "profile",
+              "passkey_deleted",
+              "#{user.display_name} deleted a passkey",
+              actor_id: user_id,
+              subject_id: user_id,
+              metadata: %{"passkey_id" => passkey_id, "label" => passkey.label}
+            )
+
+          _ ->
+            :ok
+        end
+
+        result
     end
   end
 

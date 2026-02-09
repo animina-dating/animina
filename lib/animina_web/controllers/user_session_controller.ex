@@ -2,6 +2,7 @@ defmodule AniminaWeb.UserSessionController do
   use AniminaWeb, :controller
 
   alias Animina.Accounts
+  alias Animina.ActivityLog
   alias AniminaWeb.UserAuth
 
   def create(conn, params) do
@@ -14,6 +15,10 @@ defmodule AniminaWeb.UserSessionController do
 
     cond do
       user = Accounts.get_user_by_email_and_password(email, password) ->
+        ActivityLog.log("auth", "login_email", "#{user.display_name} logged in via email",
+          actor_id: user.id
+        )
+
         conn
         |> put_flash(:info, info)
         |> UserAuth.log_in_user(user, user_params)
@@ -27,6 +32,13 @@ defmodule AniminaWeb.UserSessionController do
         |> redirect(to: ~p"/users/reactivate")
 
       true ->
+        ActivityLog.log(
+          "auth",
+          "login_failed",
+          "Failed login attempt for #{String.slice(email, 0, 160)}",
+          metadata: %{"email" => String.slice(email, 0, 160)}
+        )
+
         # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
         conn
         |> put_flash(:error, gettext("Invalid email or password"))
@@ -81,8 +93,16 @@ defmodule AniminaWeb.UserSessionController do
   end
 
   def delete(conn, _params) do
+    log_logout(conn.assigns[:current_scope])
+
     conn
     |> put_flash(:info, gettext("Logged out successfully."))
     |> UserAuth.log_out_user()
   end
+
+  defp log_logout(%{user: %{id: id, display_name: name}}) do
+    ActivityLog.log("auth", "logout", "#{name} logged out", actor_id: id)
+  end
+
+  defp log_logout(_), do: :ok
 end

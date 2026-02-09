@@ -140,6 +140,33 @@ Translation work is split across sessions to avoid context limits.
 
 8. **Reference `TRANSLATING.md`** for full details on file structure, plural rules, and translation workflow.
 
+### Activity Logging Convention
+
+When adding or modifying features that involve user actions, admin actions, or significant system events, add an `ActivityLog.log/4` call at the success path. The unified activity log lives in the `activity_logs` table and is viewable at `/admin/logs/activity`.
+
+**Usage:**
+```elixir
+Animina.ActivityLog.log(category, event, summary,
+  actor_id: who_did_it,
+  subject_id: who_it_happened_to,
+  metadata: %{"optional" => "details"}
+)
+```
+
+**Categories & when to use them:**
+- `"auth"` — login, logout, failed login, session events, sudo mode
+- `"social"` — messages, conversations, profile visits, bookmarks, reactions, dismissals
+- `"profile"` — profile field changes, flag changes, moodboard edits, account lifecycle
+- `"admin"` — role changes, feature flag toggles, photo reviews, blacklist management
+- `"system"` — photo processing, emails sent, AI analysis (bridge from existing domain logs)
+
+**Rules:**
+- `actor_id` = who performed the action (nil for system-initiated events)
+- `subject_id` = which user was affected (nil when no specific user target, same as actor_id for self-actions)
+- `summary` = pre-formatted one-liner readable in the admin log table (e.g. `"User Max sent a message to User Lisa"`)
+- Only log at the success path — don't log failed operations (except `login_failed`)
+- Use existing event names from `ActivityLogEntry.valid_events/0` — add new ones to the schema if needed
+
 ### Discovery Algorithm Documentation
 
 When modifying any code in `lib/animina/discovery/`, `lib/animina/traits/matching.ex`, or the discovery-related feature flags in `lib/animina/feature_flags/`, update `DISCOVERY_ALGORITHM.md` to reflect the changes. This includes changes to filters, scoring weights, category multipliers, popularity protection, or the overall pipeline flow.

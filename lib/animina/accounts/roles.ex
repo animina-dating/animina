@@ -6,6 +6,7 @@ defmodule Animina.Accounts.Roles do
   import Ecto.Query
 
   alias Animina.Accounts.{User, UserRole}
+  alias Animina.ActivityLog
   alias Animina.Repo
   alias Animina.Utils.PaperTrail, as: PT
 
@@ -30,10 +31,24 @@ defmodule Animina.Accounts.Roles do
         {:ok, existing}
 
       nil ->
-        %UserRole{}
-        |> UserRole.changeset(%{user_id: user_id, role: role})
-        |> PaperTrail.insert(PT.opts(opts))
-        |> PT.unwrap()
+        result =
+          %UserRole{}
+          |> UserRole.changeset(%{user_id: user_id, role: role})
+          |> PaperTrail.insert(PT.opts(opts))
+          |> PT.unwrap()
+
+        case result do
+          {:ok, user_role} ->
+            ActivityLog.log("admin", "role_granted", "#{role} role granted to user",
+              subject_id: user_id,
+              metadata: %{"role" => role}
+            )
+
+            {:ok, user_role}
+
+          error ->
+            error
+        end
     end
   end
 
@@ -56,16 +71,36 @@ defmodule Animina.Accounts.Roles do
         if admin_count <= 1 do
           {:error, :last_admin}
         else
-          PaperTrail.delete(user_role, PT.opts(opts)) |> PT.unwrap()
+          delete_role_and_log(user_role, user_id, "admin", opts)
         end
     end
   end
 
   def remove_role(%User{id: user_id}, role, opts) do
     case Repo.get_by(UserRole, user_id: user_id, role: role) do
-      nil -> {:error, :not_found}
-      user_role -> PaperTrail.delete(user_role, PT.opts(opts)) |> PT.unwrap()
+      nil ->
+        {:error, :not_found}
+
+      user_role ->
+        delete_role_and_log(user_role, user_id, role, opts)
     end
+  end
+
+  defp delete_role_and_log(user_role, user_id, role, opts) do
+    result = PaperTrail.delete(user_role, PT.opts(opts)) |> PT.unwrap()
+
+    case result do
+      {:ok, _} ->
+        ActivityLog.log("admin", "role_revoked", "#{role} role revoked from user",
+          subject_id: user_id,
+          metadata: %{"role" => role}
+        )
+
+      _ ->
+        :ok
+    end
+
+    result
   end
 
   @doc """

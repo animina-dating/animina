@@ -12,6 +12,7 @@ defmodule Animina.Messaging do
 
   import Ecto.Query
 
+  alias Animina.ActivityLog
   alias Animina.Discovery
   alias Animina.Discovery.Settings
 
@@ -312,6 +313,15 @@ defmodule Animina.Messaging do
             message = Repo.preload(message, :sender)
             clear_draft(conversation_id, sender_id)
             broadcast_new_message(conversation_id, message)
+
+            recipient_id = get_other_participant_id(conversation_id, sender_id)
+
+            ActivityLog.log("social", "message_sent", "Message sent in conversation",
+              actor_id: sender_id,
+              subject_id: recipient_id,
+              metadata: %{"conversation_id" => conversation_id}
+            )
+
             {:ok, message}
 
           {:error, changeset} ->
@@ -497,9 +507,26 @@ defmodule Animina.Messaging do
         {:error, :not_participant}
 
       participant ->
-        participant
-        |> ConversationParticipant.block_changeset()
-        |> Repo.update()
+        result =
+          participant
+          |> ConversationParticipant.block_changeset()
+          |> Repo.update()
+
+        case result do
+          {:ok, _} ->
+            other_id = get_other_participant_id(conversation_id, blocker_id)
+
+            ActivityLog.log("social", "conversation_blocked", "User blocked in conversation",
+              actor_id: blocker_id,
+              subject_id: other_id,
+              metadata: %{"conversation_id" => conversation_id}
+            )
+
+          _ ->
+            :ok
+        end
+
+        result
     end
   end
 
@@ -784,6 +811,12 @@ defmodule Animina.Messaging do
       # Broadcast closure to both users
       broadcast_conversation_closed(conversation_id, closed_by_id, other_participant.user_id)
 
+      ActivityLog.log("social", "conversation_closed", "Conversation closed",
+        actor_id: closed_by_id,
+        subject_id: other_participant.user_id,
+        metadata: %{"conversation_id" => conversation_id}
+      )
+
       :ok
     end)
   end
@@ -862,6 +895,15 @@ defmodule Animina.Messaging do
 
     if other do
       broadcast_conversation_reopened(conv_id, user_id, other.user_id)
+
+      ActivityLog.log(
+        "social",
+        "conversation_reopened",
+        "Conversation reopened via Love Emergency",
+        actor_id: user_id,
+        subject_id: other.user_id,
+        metadata: %{"conversation_id" => conv_id}
+      )
     end
   end
 

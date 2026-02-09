@@ -78,7 +78,7 @@ user = Animina.Accounts.get_user_by_email("admin@example.com")
 Animina.Accounts.assign_role(user, "admin")
 ```
 
-After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/logs` (email and Ollama logs).
+After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/logs` (email, Ollama, and activity logs).
 
 ## Photo System
 
@@ -95,7 +95,7 @@ Polymorphic photo upload and processing system. Any schema (User, Event, Group) 
 - **Blacklist**: Perceptual hashing (dhash) blocks re-uploads of rejected content; NSFW photos auto-blacklisted
 - **Image cropping**: Mobile-friendly Cropper.js integration. Avatar photos require mandatory square cropping; gallery photos offer optional square cropping
 - **Audit logging**: Complete history of all photo events (AI decisions, appeals, moderator actions) at `/admin/photos/:id/history`
-- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing. Also includes system settings for referral threshold (default: 3) and soft delete grace period (default: 28 days). Every Ollama API call is logged to the database and viewable at `/admin/logs/ollama`. All system emails are logged and viewable at `/admin/logs/emails`
+- **Feature flags**: Admin-controllable toggles at `/admin/feature-flags` to enable/disable processing steps, set auto-approve values, or add artificial delays for UX testing. Also includes system settings for referral threshold (default: 3) and soft delete grace period (default: 28 days). Every Ollama API call is logged to the database and viewable at `/admin/logs/ollama`. All system emails are logged and viewable at `/admin/logs/emails`. A unified activity log at `/admin/logs/activity` captures auth, social, profile, admin, and system events with real-time streaming, filters, and user search
 - **Cold deploy resilience**: Photos stuck in intermediate processing states are automatically recovered and re-processed on server restart
 
 ### Usage

@@ -5,6 +5,7 @@ defmodule Animina.Photos.AuditLog do
 
   import Ecto.Query
 
+  alias Animina.ActivityLog
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoAuditLog
   alias Animina.Repo
@@ -35,9 +36,25 @@ defmodule Animina.Photos.AuditLog do
       ollama_server_url: Keyword.get(opts, :ollama_server_url)
     }
 
-    %PhotoAuditLog{}
-    |> PhotoAuditLog.create_changeset(attrs)
-    |> Repo.insert()
+    result =
+      %PhotoAuditLog{}
+      |> PhotoAuditLog.create_changeset(attrs)
+      |> Repo.insert()
+
+    # Bridge key photo events to the unified activity log (best-effort, never fail the audit log)
+    if event_type in ["photo_uploaded", "photo_approved", "photo_rejected"] do
+      try do
+        ActivityLog.log("system", event_type, "Photo #{event_type}: #{photo.id}",
+          actor_id: actor_id,
+          subject_id: photo.owner_id,
+          metadata: %{"photo_id" => photo.id, "event_type" => event_type}
+        )
+      rescue
+        _ -> :ok
+      end
+    end
+
+    result
   end
 
   @doc """
