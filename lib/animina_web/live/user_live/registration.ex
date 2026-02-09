@@ -210,7 +210,7 @@ defmodule AniminaWeb.UserLive.Registration do
         field={@form[:email]}
         type="email"
         label={gettext("Email address")}
-        autocomplete="username"
+        autocomplete="email"
         required
       />
       <.input
@@ -232,6 +232,7 @@ defmodule AniminaWeb.UserLive.Registration do
           field={@form[:birthday]}
           type="date"
           label={gettext("Birthday (min. 18 years)")}
+          autocomplete="bday"
           max={@max_birthday}
           required
         />

@@ -40,7 +40,7 @@ defmodule AniminaWeb.AccountEmailPasswordComponent do
             field={@email_form[:email]}
             type="email"
             label={gettext("Email")}
-            autocomplete="username"
+            autocomplete="email"
             required
           />
           <.button variant="primary" phx-disable-with={gettext("Changing...")}>
