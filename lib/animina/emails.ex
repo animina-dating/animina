@@ -24,12 +24,10 @@ defmodule Animina.Emails do
   Returns `{:ok, email}` on success or `{:error, reason}` on failure.
   """
   def deliver_and_log(swoosh_email, opts \\ []) do
-    recipient_email = extract_email(swoosh_email.to)
-
     log_attrs = %{
       email_type: to_string(opts[:email_type]),
       user_id: opts[:user_id],
-      recipient: recipient_email,
+      recipient: extract_recipient(swoosh_email.to),
       subject: swoosh_email.subject,
       body: swoosh_email.text_body || ""
     }
@@ -46,10 +44,10 @@ defmodule Animina.Emails do
     end
   end
 
-  defp extract_email([{_name, email}]), do: email
-  defp extract_email([email]) when is_binary(email), do: email
-  defp extract_email(email) when is_binary(email), do: email
-  defp extract_email(_), do: "unknown"
+  defp extract_recipient([{name, email}]), do: "#{name} <#{email}>"
+  defp extract_recipient([email]) when is_binary(email), do: email
+  defp extract_recipient(email) when is_binary(email), do: email
+  defp extract_recipient(_), do: "unknown"
 
   @doc """
   Creates an email log entry.

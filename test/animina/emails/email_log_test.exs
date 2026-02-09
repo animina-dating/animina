@@ -103,7 +103,7 @@ defmodule Animina.Emails.EmailLogTest do
       assert result.total_count == 1
       [log] = result.entries
       assert log.email_type == "confirmation_pin"
-      assert log.recipient == "test@example.com"
+      assert log.recipient == "Test User <test@example.com>"
       assert log.subject == "Test Subject"
       assert log.body == "Test body content"
       assert log.status == "sent"
