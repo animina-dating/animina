@@ -172,7 +172,8 @@ defmodule Animina.FeatureFlags do
     %{
       name: :support_email,
       label: "Support Email",
-      description: "Contact email shown to users in notification emails",
+      description:
+        "Email address used as the sender for all outgoing emails and shown as contact in notification emails",
       type: :string,
       default_value: "sw@wintermeyer-consulting.de"
     },

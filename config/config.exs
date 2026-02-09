@@ -44,10 +44,8 @@ config :animina, AniminaWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :animina, Animina.Mailer, adapter: Swoosh.Adapters.Local
 
-# Central email sender configuration
-config :animina, :email_sender,
-  name: "ANIMINA 👫❤️",
-  address: "noreply@animina.de"
+# Central email sender configuration (address comes from FeatureFlags.support_email())
+config :animina, :email_sender, name: "ANIMINA 👫❤️"
 
 # Configure esbuild (the version is required)
 config :esbuild,

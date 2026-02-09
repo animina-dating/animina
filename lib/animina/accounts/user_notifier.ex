@@ -15,7 +15,7 @@ defmodule Animina.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({config[:name], config[:address]})
+      |> from({config[:name], Animina.FeatureFlags.support_email()})
       |> subject(subject)
       |> text_body(body)
       |> header("Auto-Submitted", "auto-generated")
