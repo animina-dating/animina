@@ -100,7 +100,7 @@ msgstr "E-posta Değiştir"
 msgid "Changing..."
 msgstr "Değiştiriliyor..."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:95
+#: lib/animina_web/live/user_live/pin_confirmation.ex:96
 #, elixir-autogen, elixir-format
 msgid "Confirm"
 msgstr "Onayla"
@@ -111,12 +111,12 @@ msgstr "Onayla"
 msgid "Confirm new password"
 msgstr "Yeni şifreyi onayla"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:19
+#: lib/animina_web/live/user_live/pin_confirmation.ex:20
 #, elixir-autogen, elixir-format
 msgid "Confirm your email"
 msgstr "E-postanızı onaylayın"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:69
+#: lib/animina_web/live/user_live/pin_confirmation.ex:70
 #, elixir-autogen, elixir-format
 msgid "Confirmation code"
 msgstr "Onay kodu"
@@ -409,7 +409,7 @@ msgstr "Geleneksel platformlarda her iki taraf da zorlanır: Çekici insanlar is
 
 #: lib/animina_web/live/components/account_email_password_component.ex:54
 #: lib/animina_web/live/user_live/forgot_password.ex:52
-#: lib/animina_web/live/user_live/pin_confirmation.ex:101
+#: lib/animina_web/live/user_live/pin_confirmation.ex:102
 #, elixir-autogen, elixir-format
 msgid "Open dev mailbox"
 msgstr "Geliştirici posta kutusunu aç"
@@ -531,12 +531,12 @@ msgstr "Şimdi kayıt olun"
 msgid "Register now – free"
 msgstr "Şimdi kayıt olun – ücretsiz"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:82
+#: lib/animina_web/live/user_live/pin_confirmation.ex:83
 #, elixir-autogen, elixir-format
 msgid "Remaining attempts:"
 msgstr "Kalan denemeler:"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:86
+#: lib/animina_web/live/user_live/pin_confirmation.ex:87
 #, elixir-autogen, elixir-format
 msgid "Remaining time:"
 msgstr "Kalan süre:"
@@ -593,7 +593,7 @@ msgstr "Yeni şifre belirle"
 #: lib/animina_web/live/user_live/account_hub.ex:21
 #: lib/animina_web/live/user_live/account_passkeys.ex:16
 #: lib/animina_web/live/user_live/account_sessions.ex:16
-#: lib/animina_web/live/user_live/email_logs.ex:169
+#: lib/animina_web/live/user_live/email_logs.ex:173
 #: lib/animina_web/live/user_live/logs_hub.ex:18
 #: lib/animina_web/live/user_live/profile_hub.ex:19
 #: lib/animina_web/live/user_live/settings_hub.ex:19
@@ -617,8 +617,8 @@ msgstr "Kaydırma yerine hikayeler"
 msgid "That's a no-go"
 msgstr "Bu kabul edilemez"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:174
-#: lib/animina_web/live/user_live/pin_confirmation.ex:181
+#: lib/animina_web/live/user_live/pin_confirmation.ex:175
+#: lib/animina_web/live/user_live/pin_confirmation.ex:182
 #, elixir-autogen, elixir-format
 msgid "This confirmation link is invalid or expired."
 msgstr "Bu onay bağlantısı geçersiz veya süresi dolmuş."
@@ -648,7 +648,7 @@ msgstr "Açık Kaynak ile şeffaflık"
 msgid "Verified profiles and active moderation ensure a safe community. Fake profiles and bots barely stand a chance with us."
 msgstr "Doğrulanmış profiller ve aktif moderasyon güvenli bir topluluk sağlar. Sahte profiller ve botların bizde neredeyse hiç şansı yok."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:92
+#: lib/animina_web/live/user_live/pin_confirmation.ex:93
 #, elixir-autogen, elixir-format
 msgid "Verifying..."
 msgstr "Doğrulanıyor..."
@@ -658,7 +658,7 @@ msgstr "Doğrulanıyor..."
 msgid "View code on GitHub"
 msgstr "Kodu GitHub'da görüntüle"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:22
+#: lib/animina_web/live/user_live/pin_confirmation.ex:23
 #, elixir-autogen, elixir-format
 msgid "We sent a 6-digit code to"
 msgstr "6 haneli bir kod gönderdik:"
@@ -695,28 +695,28 @@ msgstr "Diğer tanışma platformlarında neden belirli kişilerin size gösteri
 msgid "Without labels"
 msgstr "Etiketler olmadan"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:208
-#: lib/animina_web/live/user_live/pin_confirmation.ex:233
+#: lib/animina_web/live/user_live/pin_confirmation.ex:209
+#: lib/animina_web/live/user_live/pin_confirmation.ex:234
 #, elixir-autogen, elixir-format
 msgid "Wrong code. %{count} attempt remaining."
 msgid_plural "Wrong code. %{count} attempts remaining."
 msgstr[0] "Yanlış kod. %{count} deneme kaldı."
 msgstr[1] "Yanlış kod. %{count} deneme kaldı."
 
-#: lib/animina_web/user_auth.ex:270
-#: lib/animina_web/user_auth.ex:284
-#: lib/animina_web/user_auth.ex:494
+#: lib/animina_web/user_auth.ex:289
+#: lib/animina_web/user_auth.ex:303
+#: lib/animina_web/user_auth.ex:531
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Bu sayfaya erişmek için giriş yapmalısınız."
 
-#: lib/animina_web/user_auth.ex:344
+#: lib/animina_web/user_auth.ex:381
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Bu sayfaya erişmek için yeniden kimlik doğrulaması yapmalısınız."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:199
-#: lib/animina_web/live/user_live/pin_confirmation.ex:246
+#: lib/animina_web/live/user_live/pin_confirmation.ex:200
+#: lib/animina_web/live/user_live/pin_confirmation.ex:247
 #, elixir-autogen, elixir-format
 msgid "Your account has been deleted. Please register again."
 msgstr "Hesabınız silindi. Lütfen tekrar kayıt olun."
@@ -742,12 +742,12 @@ msgstr "kapat"
 msgid "e.g. A7X3K9"
 msgstr "ör. A7X3K9"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:87
+#: lib/animina_web/live/user_live/pin_confirmation.ex:88
 #, elixir-autogen, elixir-format
 msgid "minutes"
 msgstr "dakika"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:83
+#: lib/animina_web/live/user_live/pin_confirmation.ex:84
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "/"
@@ -1093,7 +1093,7 @@ msgstr "Kullanıcı rolü kaldırılamaz."
 
 #: lib/animina_web/components/layouts.ex:660
 #: lib/animina_web/live/admin/activity_logs_live.ex:287
-#: lib/animina_web/live/admin/email_logs_live.ex:311
+#: lib/animina_web/live/admin/email_logs_live.ex:318
 #: lib/animina_web/live/admin/photo_history_live.ex:177
 #: lib/animina_web/live/admin/photo_reviews_live.ex:614
 #, elixir-autogen, elixir-format
@@ -1101,8 +1101,8 @@ msgid "User"
 msgstr "Kullanıcı"
 
 #: lib/animina_web/plugs/require_admin_path.ex:25
-#: lib/animina_web/user_auth.ex:308
-#: lib/animina_web/user_auth.ex:326
+#: lib/animina_web/user_auth.ex:334
+#: lib/animina_web/user_auth.ex:363
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page."
 msgstr "Bu sayfaya erişim yetkiniz yok."
@@ -3457,7 +3457,7 @@ msgid "Value returned when auto-approve is enabled"
 msgstr "Otomatik onay etkinleştirildiğinde döndürülen değer"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:260
-#: lib/animina_web/live/admin/email_logs_live.ex:213
+#: lib/animina_web/live/admin/email_logs_live.ex:217
 #: lib/animina_web/live/admin/ollama_logs_live.ex:402
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:144
 #, elixir-autogen, elixir-format
@@ -3695,12 +3695,12 @@ msgstr "Yaş algılama"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:337
 #: lib/animina_web/live/admin/activity_logs_live.ex:354
-#: lib/animina_web/live/admin/email_logs_live.ex:242
-#: lib/animina_web/live/admin/email_logs_live.ex:258
+#: lib/animina_web/live/admin/email_logs_live.ex:246
+#: lib/animina_web/live/admin/email_logs_live.ex:262
 #: lib/animina_web/live/admin/ollama_logs_live.ex:467
 #: lib/animina_web/live/admin/ollama_logs_live.ex:483
-#: lib/animina_web/live/user_live/email_logs.ex:201
-#: lib/animina_web/live/user_live/email_logs.ex:217
+#: lib/animina_web/live/user_live/email_logs.ex:205
+#: lib/animina_web/live/user_live/email_logs.ex:221
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "Tümü"
@@ -4107,10 +4107,10 @@ msgstr "Kapat"
 msgid "Duration"
 msgstr "Süre"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:261
-#: lib/animina_web/live/admin/email_logs_live.ex:310
+#: lib/animina_web/live/admin/email_logs_live.ex:268
+#: lib/animina_web/live/admin/email_logs_live.ex:317
 #: lib/animina_web/live/admin/ollama_logs_live.ex:487
-#: lib/animina_web/live/user_live/email_logs.ex:220
+#: lib/animina_web/live/user_live/email_logs.ex:227
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr "Hata"
@@ -4123,19 +4123,19 @@ msgstr "Hata"
 msgid "Model"
 msgstr "Model"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:251
-#: lib/animina_web/live/admin/email_logs_live.ex:307
+#: lib/animina_web/live/admin/email_logs_live.ex:255
+#: lib/animina_web/live/admin/email_logs_live.ex:314
 #: lib/animina_web/live/admin/ollama_logs_live.ex:476
 #: lib/animina_web/live/admin/ollama_logs_live.ex:551
 #: lib/animina_web/live/admin/ollama_logs_live.ex:682
-#: lib/animina_web/live/user_live/email_logs.ex:210
-#: lib/animina_web/live/user_live/email_logs.ex:258
+#: lib/animina_web/live/user_live/email_logs.ex:214
+#: lib/animina_web/live/user_live/email_logs.ex:265
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Durum"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:416
-#: lib/animina_web/live/admin/email_logs_live.ex:317
+#: lib/animina_web/live/admin/email_logs_live.ex:324
 #: lib/animina_web/live/admin/ollama_logs_live.ex:567
 #, elixir-autogen, elixir-format
 msgid "Time"
@@ -4457,9 +4457,9 @@ msgid "Read %{time}"
 msgstr "Okundu %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:304
-#: lib/animina_web/live/admin/email_logs_live.ex:259
+#: lib/animina_web/live/admin/email_logs_live.ex:263
 #: lib/animina_web/live/messages_live.ex:393
-#: lib/animina_web/live/user_live/email_logs.ex:218
+#: lib/animina_web/live/user_live/email_logs.ex:222
 #, elixir-autogen, elixir-format
 msgid "Sent"
 msgstr "Gönderildi"
@@ -5038,33 +5038,33 @@ msgstr[0] "%{count} çalıştırma"
 msgstr[1] "%{count} çalıştırma"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:229
-#: lib/animina_web/live/admin/email_logs_live.ex:181
+#: lib/animina_web/live/admin/email_logs_live.ex:185
 #: lib/animina_web/live/admin/ollama_logs_live.ex:370
-#: lib/animina_web/live/user_live/email_logs.ex:145
+#: lib/animina_web/live/user_live/email_logs.ex:149
 #, elixir-autogen, elixir-format
 msgid "%{count}d ago"
 msgstr "%{count}g önce"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:228
-#: lib/animina_web/live/admin/email_logs_live.ex:180
+#: lib/animina_web/live/admin/email_logs_live.ex:184
 #: lib/animina_web/live/admin/ollama_logs_live.ex:369
-#: lib/animina_web/live/user_live/email_logs.ex:144
+#: lib/animina_web/live/user_live/email_logs.ex:148
 #, elixir-autogen, elixir-format
 msgid "%{count}h ago"
 msgstr "%{count}sa önce"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:227
-#: lib/animina_web/live/admin/email_logs_live.ex:179
+#: lib/animina_web/live/admin/email_logs_live.ex:183
 #: lib/animina_web/live/admin/ollama_logs_live.ex:368
-#: lib/animina_web/live/user_live/email_logs.ex:143
+#: lib/animina_web/live/user_live/email_logs.ex:147
 #, elixir-autogen, elixir-format
 msgid "%{count}m ago"
 msgstr "%{count}dk önce"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:226
-#: lib/animina_web/live/admin/email_logs_live.ex:178
+#: lib/animina_web/live/admin/email_logs_live.ex:182
 #: lib/animina_web/live/admin/ollama_logs_live.ex:367
-#: lib/animina_web/live/user_live/email_logs.ex:142
+#: lib/animina_web/live/user_live/email_logs.ex:146
 #, elixir-autogen, elixir-format
 msgid "%{count}s ago"
 msgstr "%{count}sn önce"
@@ -5115,9 +5115,9 @@ msgid "Ollama Logs"
 msgstr "Ollama Kayıtları"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:392
-#: lib/animina_web/live/admin/email_logs_live.ex:268
+#: lib/animina_web/live/admin/email_logs_live.ex:275
 #: lib/animina_web/live/admin/ollama_logs_live.ex:496
-#: lib/animina_web/live/user_live/email_logs.ex:227
+#: lib/animina_web/live/user_live/email_logs.ex:234
 #, elixir-autogen, elixir-format
 msgid "Per page"
 msgstr "Sayfa başına"
@@ -5163,7 +5163,7 @@ msgstr "Kuyruk"
 msgid "adaptive"
 msgstr "uyarlanabilir"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:225
+#: lib/animina_web/live/admin/email_logs_live.ex:229
 #: lib/animina_web/live/admin/ollama_logs_live.ex:432
 #, elixir-autogen, elixir-format
 msgid "Auto-reload"
@@ -5232,17 +5232,17 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:41
+#: lib/animina_web/live/user_live/pin_confirmation.ex:42
 #, elixir-autogen, elixir-format
 msgid "Email delivery problem"
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:54
+#: lib/animina_web/live/user_live/pin_confirmation.ex:55
 #, elixir-autogen, elixir-format
 msgid "Please try registering with a different email address, or try again later."
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:43
+#: lib/animina_web/live/user_live/pin_confirmation.ex:44
 #, elixir-autogen, elixir-format
 msgid "Your email provider is currently rejecting emails from our server. The confirmation code could not be delivered to %{email}."
 msgstr ""
@@ -5412,21 +5412,21 @@ msgstr "Online Tanışma 👫❤️"
 msgid "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
 msgstr "Kişilik tabanlı eşleştirme ile ücretsiz online tanışma. Açık kaynak, reklam destekli ve herkes için adil."
 
-#: lib/animina_web/live/user_live/email_logs.ex:185
+#: lib/animina_web/live/user_live/email_logs.ex:189
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} email"
 msgid_plural "%{count} emails"
 msgstr[0] "%{count} kayıt"
 msgstr[1] "%{count} kayıt"
 
-#: lib/animina_web/live/user_live/email_logs.ex:266
+#: lib/animina_web/live/user_live/email_logs.ex:273
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Date"
 msgstr "Buluşmalar"
 
 #: lib/animina_web/live/user_live/email_logs.ex:15
-#: lib/animina_web/live/user_live/email_logs.ex:177
-#: lib/animina_web/live/user_live/email_logs.ex:183
+#: lib/animina_web/live/user_live/email_logs.ex:181
+#: lib/animina_web/live/user_live/email_logs.ex:187
 #: lib/animina_web/live/user_live/logs_hub.ex:40
 #, elixir-autogen, elixir-format
 msgid "Email History"
@@ -5434,8 +5434,8 @@ msgstr ""
 
 #: lib/animina_web/components/layouts.ex:339
 #: lib/animina_web/live/admin/email_logs_live.ex:16
-#: lib/animina_web/live/admin/email_logs_live.ex:206
-#: lib/animina_web/live/admin/email_logs_live.ex:211
+#: lib/animina_web/live/admin/email_logs_live.ex:210
+#: lib/animina_web/live/admin/email_logs_live.ex:215
 #: lib/animina_web/live/admin/logs_index_live.ex:53
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Email Logs"
@@ -5453,12 +5453,12 @@ msgstr ""
 
 #: lib/animina_web/components/layouts.ex:332
 #: lib/animina_web/live/admin/activity_logs_live.ex:251
-#: lib/animina_web/live/admin/email_logs_live.ex:204
+#: lib/animina_web/live/admin/email_logs_live.ex:208
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:31
 #: lib/animina_web/live/admin/logs_index_live.ex:37
 #: lib/animina_web/live/admin/ollama_logs_live.ex:393
-#: lib/animina_web/live/user_live/email_logs.ex:174
+#: lib/animina_web/live/user_live/email_logs.ex:178
 #: lib/animina_web/live/user_live/logs_hub.ex:20
 #: lib/animina_web/live/user_live/logs_hub.ex:26
 #: lib/animina_web/live/user_live/logs_hub.ex:65
@@ -5466,20 +5466,20 @@ msgstr ""
 msgid "Logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/email_logs.ex:275
+#: lib/animina_web/live/user_live/email_logs.ex:282
 #, elixir-autogen, elixir-format
 msgid "No emails found."
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:292
-#: lib/animina_web/live/user_live/email_logs.ex:252
+#: lib/animina_web/live/admin/email_logs_live.ex:299
+#: lib/animina_web/live/user_live/email_logs.ex:259
 #, elixir-autogen, elixir-format
 msgid "Recipient"
 msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:420
-#: lib/animina_web/live/admin/email_logs_live.ex:301
-#: lib/animina_web/live/user_live/email_logs.ex:251
+#: lib/animina_web/live/admin/email_logs_live.ex:308
+#: lib/animina_web/live/user_live/email_logs.ex:258
 #, elixir-autogen, elixir-format
 msgid "Subject"
 msgstr ""
@@ -5489,9 +5489,9 @@ msgstr ""
 msgid "System log viewers"
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:239
-#: lib/animina_web/live/admin/email_logs_live.ex:298
-#: lib/animina_web/live/user_live/email_logs.ex:198
+#: lib/animina_web/live/admin/email_logs_live.ex:243
+#: lib/animina_web/live/admin/email_logs_live.ex:305
+#: lib/animina_web/live/user_live/email_logs.ex:202
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -5940,7 +5940,13 @@ msgstr ""
 msgid "each confirmed signup halves the waitlist time for both of you."
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:49
+#: lib/animina_web/live/user_live/pin_confirmation.ex:50
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Your account data will be automatically deleted in %{minutes} minutes."
 msgstr ""
+
+#: lib/animina_web/live/admin/email_logs_live.ex:265
+#: lib/animina_web/live/user_live/email_logs.ex:224
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Bounced"
+msgstr "Engellendi"

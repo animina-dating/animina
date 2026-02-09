@@ -69,6 +69,37 @@ defmodule Animina.Emails do
   end
 
   @doc """
+  Marks the most recent "sent" email log entry for the given recipient as "bounced".
+
+  Matches both bare email (`user@example.com`) and `"Name <user@example.com>"` formats.
+  Returns `{:ok, email_log}` on success or `{:error, :not_found}` if no matching entry exists.
+  """
+  def mark_as_bounced(email, reason) do
+    bare_email = String.downcase(email)
+    like_pattern = "%<#{bare_email}>%"
+
+    query =
+      from(e in EmailLog,
+        where: e.status == "sent",
+        where:
+          fragment("lower(?)", e.recipient) == ^bare_email or
+            fragment("lower(?) LIKE ?", e.recipient, ^like_pattern),
+        order_by: [desc: e.inserted_at],
+        limit: 1
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, :not_found}
+
+      log ->
+        log
+        |> EmailLog.bounce_changeset(%{status: "bounced", error_message: reason})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
   Lists email logs with filtering, sorting, and pagination.
 
   ## Options

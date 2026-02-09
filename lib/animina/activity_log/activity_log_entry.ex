@@ -25,7 +25,7 @@ defmodule Animina.ActivityLog.ActivityLogEntry do
     "admin" =>
       ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry blacklist_entry_added blacklist_entry_removed),
     "system" =>
-      ~w(photo_uploaded photo_approved photo_rejected photo_processing email_sent ollama_processed account_expired)
+      ~w(photo_uploaded photo_approved photo_rejected photo_processing email_sent email_bounced ollama_processed account_expired)
   }
 
   @valid_events @events_by_category |> Map.values() |> List.flatten()

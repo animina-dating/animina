@@ -3,6 +3,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
 
   alias Animina.Accounts
   alias Animina.FeatureFlags
+  alias Animina.MailLogChecker
   alias Animina.MailQueueChecker
 
   @max_attempts 3
@@ -257,7 +258,9 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   defp check_delivery_failure(socket, email) do
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Animina.PubSub, MailQueueChecker.topic(email))
-      MailQueueChecker.lookup(String.downcase(email))
+
+      MailQueueChecker.lookup(String.downcase(email)) ||
+        MailLogChecker.lookup(String.downcase(email))
     else
       nil
     end

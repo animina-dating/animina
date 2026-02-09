@@ -46,6 +46,8 @@ config :animina, start_session_tracker: false
 
 # Disable mail queue checker in tests (tested with injected cmd_fn)
 config :animina, start_mail_queue_checker: false
+# Disable mail log checker in tests (tested with injected read_fn)
+config :animina, start_mail_log_checker: false
 config :animina, start_photo_serving: false
 config :animina, start_face_serving: false
 

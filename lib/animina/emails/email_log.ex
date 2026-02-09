@@ -43,9 +43,16 @@ defmodule Animina.Emails.EmailLog do
     email_log
     |> cast(attrs, [:user_id, :email_type, :recipient, :subject, :body, :status, :error_message])
     |> validate_required([:email_type, :recipient, :subject, :body, :status])
-    |> validate_inclusion(:status, ["sent", "error"])
+    |> validate_inclusion(:status, ["sent", "error", "bounced"])
     |> validate_inclusion(:email_type, @email_types)
     |> foreign_key_constraint(:user_id)
+  end
+
+  def bounce_changeset(email_log, attrs) do
+    email_log
+    |> cast(attrs, [:status, :error_message])
+    |> validate_required([:status])
+    |> validate_inclusion(:status, ["bounced"])
   end
 
   def email_types, do: @email_types

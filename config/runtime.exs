@@ -98,4 +98,7 @@ if config_env() == :prod do
 
   # Monitor Postfix mail queue for delivery failures
   config :animina, start_mail_queue_checker: true
+
+  # Monitor Postfix mail.log for bounce entries
+  config :animina, start_mail_log_checker: true
 end

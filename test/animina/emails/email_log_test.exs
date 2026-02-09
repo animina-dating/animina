@@ -238,6 +238,90 @@ defmodule Animina.Emails.EmailLogTest do
     end
   end
 
+  describe "bounced status" do
+    test "bounced is a valid status" do
+      attrs = %{
+        email_type: "confirmation_pin",
+        recipient: "test@example.com",
+        subject: "Test",
+        body: "Body",
+        status: "bounced",
+        error_message: "550 unrouteable mail domain"
+      }
+
+      assert {:ok, %EmailLog{} = log} = Emails.create_email_log(attrs)
+      assert log.status == "bounced"
+      assert log.error_message == "550 unrouteable mail domain"
+    end
+  end
+
+  describe "mark_as_bounced/2" do
+    test "updates most recent sent entry to bounced" do
+      user = user_fixture()
+
+      {:ok, _log} =
+        Emails.create_email_log(%{
+          email_type: "confirmation_pin",
+          recipient: user.email,
+          subject: "Your PIN",
+          body: "PIN: 123456",
+          status: "sent",
+          user_id: user.id
+        })
+
+      assert {:ok, updated} = Emails.mark_as_bounced(user.email, "550 no such user")
+      assert updated.status == "bounced"
+      assert updated.error_message == "550 no such user"
+    end
+
+    test "matches Name <email> format recipients" do
+      {:ok, _log} =
+        Emails.create_email_log(%{
+          email_type: "confirmation_pin",
+          recipient: "Test User <test@example.com>",
+          subject: "Your PIN",
+          body: "PIN: 123456",
+          status: "sent"
+        })
+
+      assert {:ok, updated} = Emails.mark_as_bounced("test@example.com", "550 bounce")
+      assert updated.status == "bounced"
+    end
+
+    test "returns {:error, :not_found} when no match" do
+      assert {:error, :not_found} =
+               Emails.mark_as_bounced("nonexistent@example.com", "550 bounce")
+    end
+
+    test "only updates sent entries, not error entries" do
+      {:ok, _log} =
+        Emails.create_email_log(%{
+          email_type: "confirmation_pin",
+          recipient: "test@example.com",
+          subject: "Your PIN",
+          body: "PIN: 123456",
+          status: "error",
+          error_message: "Connection refused"
+        })
+
+      assert {:error, :not_found} = Emails.mark_as_bounced("test@example.com", "550 bounce")
+    end
+
+    test "case-insensitive email matching" do
+      {:ok, _log} =
+        Emails.create_email_log(%{
+          email_type: "confirmation_pin",
+          recipient: "User@Example.COM",
+          subject: "Your PIN",
+          body: "PIN: 123456",
+          status: "sent"
+        })
+
+      assert {:ok, updated} = Emails.mark_as_bounced("user@example.com", "550 bounce")
+      assert updated.status == "bounced"
+    end
+  end
+
   describe "count_email_logs_for_user/1" do
     test "returns count for specific user" do
       user = user_fixture()

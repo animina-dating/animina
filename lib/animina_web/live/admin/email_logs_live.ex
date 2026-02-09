@@ -169,6 +169,10 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   defp maybe_put(params, _key, nil), do: params
   defp maybe_put(params, key, value), do: Map.put(params, key, value)
 
+  defp status_badge_class("sent"), do: "badge-success"
+  defp status_badge_class("bounced"), do: "badge-warning"
+  defp status_badge_class(_), do: "badge-error"
+
   defp relative_time(nil), do: ""
 
   defp relative_time(datetime) do
@@ -257,6 +261,9 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
             >
               <option value="" selected={is_nil(@filter_status)}>{gettext("All")}</option>
               <option value="sent" selected={@filter_status == "sent"}>{gettext("Sent")}</option>
+              <option value="bounced" selected={@filter_status == "bounced"}>
+                {gettext("Bounced")}
+              </option>
               <option value="error" selected={@filter_status == "error"}>
                 {gettext("Error")}
               </option>
@@ -324,7 +331,8 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
                 <tr
                   class={[
                     "cursor-pointer hover:bg-base-200/50",
-                    if(log.status == "error", do: "bg-error/5")
+                    if(log.status == "error", do: "bg-error/5"),
+                    if(log.status == "bounced", do: "bg-warning/5")
                   ]}
                   phx-click="toggle-expand"
                   phx-value-id={log.id}
@@ -335,7 +343,7 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
                   <td>
                     <span class={[
                       "badge badge-sm",
-                      if(log.status == "sent", do: "badge-success", else: "badge-error")
+                      status_badge_class(log.status)
                     ]}>
                       {log.status}
                     </span>
