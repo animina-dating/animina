@@ -9,6 +9,8 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
+  import AniminaWeb.Helpers.PaginationHelpers
+
   @default_per_page 50
 
   @impl true
@@ -188,9 +190,6 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   defp matches_user?(entry, user_id),
     do: entry.actor_id == user_id || entry.subject_id == user_id
 
-  defp parse_sort_dir("asc"), do: :asc
-  defp parse_sort_dir(_), do: :desc
-
   defp build_path(socket, overrides) do
     params =
       %{
@@ -211,23 +210,6 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
       |> maybe_put(:date_to, Keyword.get(overrides, :date_to, socket.assigns.date_to))
 
     ~p"/admin/logs/activity?#{params}"
-  end
-
-  defp maybe_put(params, _key, nil), do: params
-  defp maybe_put(params, _key, ""), do: params
-  defp maybe_put(params, key, value), do: Map.put(params, key, value)
-
-  defp relative_time(nil), do: ""
-
-  defp relative_time(datetime) do
-    diff = DateTime.diff(DateTime.utc_now(), datetime, :second)
-
-    cond do
-      diff < 60 -> gettext("%{count}s ago", count: diff)
-      diff < 3600 -> gettext("%{count}m ago", count: div(diff, 60))
-      diff < 86_400 -> gettext("%{count}h ago", count: div(diff, 3600))
-      true -> gettext("%{count}d ago", count: div(diff, 86_400))
-    end
   end
 
   defp category_badge_class("auth"), do: "badge-primary"
@@ -471,56 +453,5 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
       </div>
     </Layouts.app>
     """
-  end
-
-  defp pagination(assigns) do
-    ~H"""
-    <%= if @total_pages > 1 do %>
-      <div class="flex justify-center mt-6">
-        <div class="join">
-          <button
-            class={["join-item btn btn-sm", if(@page <= 1, do: "btn-disabled")]}
-            phx-click="go-to-page"
-            phx-value-page={max(@page - 1, 1)}
-          >
-            «
-          </button>
-          <%= for p <- visible_pages(@page, @total_pages) do %>
-            <%= if p == :gap do %>
-              <button class="join-item btn btn-sm btn-disabled">…</button>
-            <% else %>
-              <button
-                class={["join-item btn btn-sm", if(p == @page, do: "btn-active")]}
-                phx-click="go-to-page"
-                phx-value-page={p}
-              >
-                {p}
-              </button>
-            <% end %>
-          <% end %>
-          <button
-            class={["join-item btn btn-sm", if(@page >= @total_pages, do: "btn-disabled")]}
-            phx-click="go-to-page"
-            phx-value-page={min(@page + 1, @total_pages)}
-          >
-            »
-          </button>
-        </div>
-      </div>
-    <% end %>
-    """
-  end
-
-  defp visible_pages(_current, total) when total <= 7, do: Enum.to_list(1..total)
-
-  defp visible_pages(current, total) do
-    pages = [1]
-    pages = if current > 3, do: pages ++ [:gap], else: pages
-    middle_start = max(2, current - 1)
-    middle_end = min(total - 1, current + 1)
-    pages = pages ++ Enum.to_list(middle_start..middle_end)
-    pages = if current < total - 2, do: pages ++ [:gap], else: pages
-    pages = pages ++ [total]
-    Enum.uniq(pages)
   end
 end

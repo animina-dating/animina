@@ -12,43 +12,23 @@ defmodule AniminaWeb.UserLive.LogsHub do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Logs")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Logs")}
-            <:subtitle>{gettext("View your account activity logs")}</:subtitle>
-          </.header>
-        </div>
+        <.page_header title={gettext("Logs")} subtitle={gettext("View your account activity logs")}>
+          <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+        </.page_header>
 
         <div class="grid gap-4">
-          <.link
+          <.hub_card
             navigate={~p"/my/logs/emails"}
-            class="flex items-center gap-4 p-5 rounded-lg border border-base-300 hover:border-primary transition-colors"
+            icon="hero-envelope"
+            title={gettext("Email History")}
+            subtitle={gettext("Log of all emails sent to your account")}
+            icon_class="h-8 w-8"
+            padding="p-5"
           >
-            <span class="flex-shrink-0 text-base-content/60">
-              <.icon name="hero-envelope" class="h-8 w-8" />
-            </span>
-            <div class="flex-1 min-w-0">
-              <div class="font-semibold text-base-content">{gettext("Email History")}</div>
-              <div class="text-sm text-base-content/60 mt-0.5">
-                {gettext("Log of all emails sent to your account")}
-              </div>
-            </div>
-            <span class="badge badge-lg badge-outline font-mono">
-              {@email_count}
-            </span>
-            <span class="flex-shrink-0 text-base-content/30">
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
-            </span>
-          </.link>
+            <:trailing>
+              <span class="badge badge-lg badge-outline font-mono">{@email_count}</span>
+            </:trailing>
+          </.hub_card>
         </div>
       </div>
     </Layouts.app>

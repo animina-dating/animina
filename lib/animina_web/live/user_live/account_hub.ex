@@ -15,95 +15,42 @@ defmodule AniminaWeb.UserLive.AccountHub do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("Account & Security")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Account & Security")}
-            <:subtitle>
-              {gettext("Manage your email, password, passkeys, sessions, and account")}
-            </:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("Account & Security")}
+          subtitle={gettext("Manage your email, password, passkeys, sessions, and account")}
+        >
+          <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+        </.page_header>
 
         <div class="grid gap-3">
-          <.account_card
+          <.hub_card
             navigate={~p"/my/settings/account/email-password"}
             icon="hero-envelope"
             title={gettext("Email & Password")}
-            preview={@user.email}
+            subtitle={@user.email}
           />
-          <.account_card
+          <.hub_card
             navigate={~p"/my/settings/account/passkeys"}
             icon="hero-finger-print"
             title={gettext("Passkeys")}
-            preview={@passkey_preview}
+            subtitle={@passkey_preview}
           />
-          <.account_card
+          <.hub_card
             navigate={~p"/my/settings/account/sessions"}
             icon="hero-device-phone-mobile"
             title={gettext("Active Sessions")}
-            preview={@session_preview}
+            subtitle={@session_preview}
           />
-          <.account_card
+          <.hub_card
             navigate={~p"/my/settings/account/delete"}
             icon="hero-trash"
             title={gettext("Delete Account")}
-            preview={gettext("Permanently delete your account and data")}
+            subtitle={gettext("Permanently delete your account and data")}
             danger={true}
           />
         </div>
       </div>
     </Layouts.app>
-    """
-  end
-
-  attr :navigate, :string, required: true
-  attr :icon, :string, required: true
-  attr :title, :string, required: true
-  attr :preview, :string, default: nil
-  attr :danger, :boolean, default: false
-
-  defp account_card(assigns) do
-    ~H"""
-    <.link
-      navigate={@navigate}
-      class={[
-        "flex items-center gap-4 p-4 rounded-lg border transition-colors",
-        if(@danger,
-          do: "border-error/30 hover:border-error",
-          else: "border-base-300 hover:border-primary"
-        )
-      ]}
-    >
-      <span class={[
-        "flex-shrink-0",
-        if(@danger, do: "text-error/60", else: "text-base-content/60")
-      ]}>
-        <.icon name={@icon} class="h-6 w-6" />
-      </span>
-      <div class="flex-1 min-w-0">
-        <div class={[
-          "font-semibold text-sm",
-          if(@danger, do: "text-error", else: "text-base-content")
-        ]}>
-          {@title}
-        </div>
-        <div :if={@preview} class="text-xs text-base-content/60 truncate mt-0.5">
-          {@preview}
-        </div>
-      </div>
-      <span class="flex-shrink-0 text-base-content/30">
-        <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
-      </span>
-    </.link>
     """
   end
 

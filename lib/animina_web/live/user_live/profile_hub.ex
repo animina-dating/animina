@@ -13,21 +13,12 @@ defmodule AniminaWeb.UserLive.ProfileHub do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>{gettext("My Profile")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("My Profile")}
-            <:subtitle>{gettext("Build and manage your dating profile")}</:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("My Profile")}
+          subtitle={gettext("Build and manage your dating profile")}
+        >
+          <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+        </.page_header>
 
         <%!-- Profile Summary --%>
         <div class="flex items-center gap-4 mb-8 p-4 rounded-lg bg-base-200/50">
@@ -62,48 +53,64 @@ defmodule AniminaWeb.UserLive.ProfileHub do
         <% end %>
 
         <div class="grid gap-3 mb-8">
-          <.profile_card
+          <.hub_card
             navigate={~p"/my/settings/profile/photo"}
             icon="hero-camera"
             title={gettext("Profile Photo")}
-            description={gettext("Upload your main profile photo")}
-            complete={@profile_completeness.items.profile_photo}
-          />
-          <.profile_card
+            subtitle={gettext("Upload your main profile photo")}
+          >
+            <:trailing>
+              <.completeness_icon complete={@profile_completeness.items.profile_photo} />
+            </:trailing>
+          </.hub_card>
+          <.hub_card
             navigate={~p"/my/settings/profile/info"}
             icon="hero-user"
             title={gettext("Profile Info")}
-            description={gettext("Add your basic information")}
-            complete={@profile_completeness.items.profile_info}
-          />
-          <.profile_card
+            subtitle={gettext("Add your basic information")}
+          >
+            <:trailing>
+              <.completeness_icon complete={@profile_completeness.items.profile_info} />
+            </:trailing>
+          </.hub_card>
+          <.hub_card
             navigate={~p"/my/settings/profile/moodboard"}
             icon="hero-squares-2x2"
             title={gettext("My Moodboard")}
-            description={gettext("Create your visual profile")}
-            complete={@profile_completeness.items.moodboard}
-          />
-          <.profile_card
+            subtitle={gettext("Create your visual profile")}
+          >
+            <:trailing>
+              <.completeness_icon complete={@profile_completeness.items.moodboard} />
+            </:trailing>
+          </.hub_card>
+          <.hub_card
             navigate={~p"/my/settings/profile/traits"}
             icon="hero-flag"
             title={gettext("My Flags")}
-            description={gettext("Set your personality flags")}
-            complete={@profile_completeness.items.flags}
-          />
-          <.profile_card
+            subtitle={gettext("Set your personality flags")}
+          >
+            <:trailing><.completeness_icon complete={@profile_completeness.items.flags} /></:trailing>
+          </.hub_card>
+          <.hub_card
             navigate={~p"/my/settings/profile/preferences"}
             icon="hero-heart"
             title={gettext("Partner Preferences")}
-            description={gettext("Define what you're looking for")}
-            complete={@profile_completeness.items.partner_preferences}
-          />
-          <.profile_card
+            subtitle={gettext("Define what you're looking for")}
+          >
+            <:trailing>
+              <.completeness_icon complete={@profile_completeness.items.partner_preferences} />
+            </:trailing>
+          </.hub_card>
+          <.hub_card
             navigate={~p"/my/settings/profile/locations"}
             icon="hero-map-pin"
             title={gettext("Locations")}
-            description={gettext("Set your location")}
-            complete={@profile_completeness.items.location}
-          />
+            subtitle={gettext("Set your location")}
+          >
+            <:trailing>
+              <.completeness_icon complete={@profile_completeness.items.location} />
+            </:trailing>
+          </.hub_card>
         </div>
       </div>
     </Layouts.app>
@@ -120,37 +127,17 @@ defmodule AniminaWeb.UserLive.ProfileHub do
     """
   end
 
-  attr :navigate, :string, required: true
-  attr :icon, :string, required: true
-  attr :title, :string, required: true
-  attr :description, :string, required: true
   attr :complete, :boolean, required: true
 
-  defp profile_card(assigns) do
+  defp completeness_icon(assigns) do
     ~H"""
-    <.link
-      navigate={@navigate}
-      class="flex items-center gap-4 p-4 rounded-lg border border-base-300 hover:border-primary transition-colors"
-    >
-      <span class="flex-shrink-0 text-base-content/60">
-        <.icon name={@icon} class="h-6 w-6" />
-      </span>
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-sm text-base-content">
-          {@title}
-        </div>
-        <div class="text-xs text-base-content/60 truncate mt-0.5">
-          {@description}
-        </div>
-      </div>
-      <span class="flex-shrink-0">
-        <%= if @complete do %>
-          <.icon name="hero-check-circle-solid" class="h-6 w-6 text-success" />
-        <% else %>
-          <span class="inline-block h-6 w-6 rounded-full border-2 border-base-content/20" />
-        <% end %>
-      </span>
-    </.link>
+    <span class="flex-shrink-0">
+      <%= if @complete do %>
+        <.icon name="hero-check-circle-solid" class="h-6 w-6 text-success" />
+      <% else %>
+        <span class="inline-block h-6 w-6 rounded-full border-2 border-base-content/20" />
+      <% end %>
+    </span>
     """
   end
 

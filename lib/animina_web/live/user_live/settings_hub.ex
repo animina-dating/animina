@@ -22,62 +22,33 @@ defmodule AniminaWeb.UserLive.SettingsHub do
         </div>
 
         <div class="grid gap-3">
-          <.settings_card
+          <.hub_card
             navigate={~p"/my/settings/profile"}
             icon="hero-user"
             title={gettext("Profile")}
-            preview={@profile_preview}
+            subtitle={@profile_preview}
           />
-          <.settings_card
+          <.hub_card
             navigate={~p"/my/settings/privacy"}
             icon="hero-eye-slash"
             title={gettext("Privacy & Blocking")}
-            preview={@privacy_preview}
+            subtitle={@privacy_preview}
           />
-          <.settings_card
+          <.hub_card
             navigate={~p"/my/settings/account"}
             icon="hero-shield-check"
             title={gettext("Account & Security")}
-            preview={@user.email}
+            subtitle={@user.email}
           />
-          <.settings_card
+          <.hub_card
             navigate={~p"/my/settings/language"}
             icon="hero-globe-alt"
             title={gettext("Language")}
-            preview={@language_preview}
+            subtitle={@language_preview}
           />
         </div>
       </div>
     </Layouts.app>
-    """
-  end
-
-  attr :navigate, :string, required: true
-  attr :icon, :string, required: true
-  attr :title, :string, required: true
-  attr :preview, :string, default: nil
-
-  defp settings_card(assigns) do
-    ~H"""
-    <.link
-      navigate={@navigate}
-      class="flex items-center gap-4 p-4 rounded-lg border border-base-300 hover:border-primary transition-colors"
-    >
-      <span class="flex-shrink-0 text-base-content/60">
-        <.icon name={@icon} class="h-6 w-6" />
-      </span>
-      <div class="flex-1 min-w-0">
-        <div class="font-semibold text-sm text-base-content">
-          {@title}
-        </div>
-        <div :if={@preview} class="text-xs text-base-content/60 truncate mt-0.5">
-          {@preview}
-        </div>
-      </div>
-      <span class="flex-shrink-0 text-base-content/30">
-        <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
-      </span>
-    </.link>
     """
   end
 

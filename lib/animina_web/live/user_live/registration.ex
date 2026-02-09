@@ -377,10 +377,10 @@ defmodule AniminaWeb.UserLive.Registration do
         <button
           type="button"
           phx-click="add_location"
-          disabled={not Regex.match?(~r/^\d{5}$/, @location_input.zip_code || "")}
+          disabled={not location_input_addable?(@location_input)}
           class={[
             "btn btn-outline btn-sm w-full",
-            if(not Regex.match?(~r/^\d{5}$/, @location_input.zip_code || ""), do: "btn-disabled")
+            if(not location_input_addable?(@location_input), do: "btn-disabled")
           ]}
         >
           {gettext("Add location %{number}", number: length(@locations) + 2)}
@@ -716,6 +716,11 @@ defmodule AniminaWeb.UserLive.Registration do
            location_input: %{input | error: gettext("Please enter a valid 5-digit zip code")}
          )}
 
+      is_nil(lookup_city_name(input.zip_code)) ->
+        {:noreply,
+         socket
+         |> assign(location_input: %{input | error: gettext("This is not a valid zip code")})}
+
       Enum.any?(locations, fn loc ->
         loc.country_id == input.country_id and loc.zip_code == input.zip_code
       end) ->
@@ -801,13 +806,18 @@ defmodule AniminaWeb.UserLive.Registration do
         country_id = params["country_id"] || input.country_id
         city_name = lookup_city_name(zip_code)
 
+        error =
+          if Regex.match?(~r/^\d{5}$/, zip_code || "") and is_nil(city_name) do
+            gettext("This is not a valid zip code")
+          end
+
         assign(socket,
           location_input: %{
             input
             | zip_code: zip_code,
               country_id: country_id,
               city_name: city_name,
-              error: nil
+              error: error
           }
         )
     end
@@ -866,11 +876,16 @@ defmodule AniminaWeb.UserLive.Registration do
   defp maybe_auto_add_location_input(_step, socket), do: socket
 
   defp location_input_valid?(input, locations) do
-    Regex.match?(~r/^\d{5}$/, input.zip_code || "") and
-      input.country_id != nil and
+    location_input_addable?(input) and
       not Enum.any?(locations, fn loc ->
         loc.country_id == input.country_id and loc.zip_code == input.zip_code
       end)
+  end
+
+  defp location_input_addable?(input) do
+    Regex.match?(~r/^\d{5}$/, input.zip_code || "") and
+      input.country_id != nil and
+      input.city_name != nil
   end
 
   defp maybe_prefill_step_2(params, socket, 1, 2) do

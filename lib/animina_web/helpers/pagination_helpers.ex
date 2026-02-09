@@ -1,0 +1,169 @@
+defmodule AniminaWeb.Helpers.PaginationHelpers do
+  @moduledoc """
+  Shared pagination, sorting, and time formatting helpers for LiveViews.
+
+  Provides reusable components and functions used across admin and user
+  log pages that display paginated, sortable tables.
+
+  ## Usage
+
+      import AniminaWeb.Helpers.PaginationHelpers
+  """
+
+  use Phoenix.Component
+  use Gettext, backend: AniminaWeb.Gettext
+
+  @doc """
+  Renders a pagination component with page buttons and prev/next navigation.
+
+  Expects `page` and `total_pages` assigns. Emits `"go-to-page"` events
+  with a `page` value.
+
+  ## Examples
+
+      <.pagination page={@page} total_pages={@total_pages} />
+  """
+  attr :page, :integer, required: true
+  attr :total_pages, :integer, required: true
+
+  def pagination(assigns) do
+    ~H"""
+    <%= if @total_pages > 1 do %>
+      <div class="flex justify-center mt-6">
+        <div class="join">
+          <button
+            class={["join-item btn btn-sm", if(@page <= 1, do: "btn-disabled")]}
+            phx-click="go-to-page"
+            phx-value-page={max(@page - 1, 1)}
+          >
+            «
+          </button>
+          <%= for p <- visible_pages(@page, @total_pages) do %>
+            <%= if p == :gap do %>
+              <button class="join-item btn btn-sm btn-disabled">…</button>
+            <% else %>
+              <button
+                class={["join-item btn btn-sm", if(p == @page, do: "btn-active")]}
+                phx-click="go-to-page"
+                phx-value-page={p}
+              >
+                {p}
+              </button>
+            <% end %>
+          <% end %>
+          <button
+            class={["join-item btn btn-sm", if(@page >= @total_pages, do: "btn-disabled")]}
+            phx-click="go-to-page"
+            phx-value-page={min(@page + 1, @total_pages)}
+          >
+            »
+          </button>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  @doc """
+  Renders a sort direction indicator (triangle) for table column headers.
+
+  Shows ▲ for ascending and ▼ for descending when the column matches.
+
+  ## Examples
+
+      <.sort_indicator sort_by={@sort_by} sort_dir={@sort_dir} column={:inserted_at} />
+  """
+  attr :sort_by, :atom, required: true
+  attr :sort_dir, :atom, required: true
+  attr :column, :atom, required: true
+
+  def sort_indicator(assigns) do
+    ~H"""
+    <%= if @sort_by == @column do %>
+      <span class="ml-1">{if @sort_dir == :asc, do: "\u25B2", else: "\u25BC"}</span>
+    <% end %>
+    """
+  end
+
+  @doc """
+  Computes which page numbers to display in pagination, inserting `:gap`
+  atoms where pages are skipped.
+
+  ## Examples
+
+      iex> visible_pages(1, 5)
+      [1, 2, 3, 4, 5]
+
+      iex> visible_pages(5, 10)
+      [1, :gap, 4, 5, 6, :gap, 10]
+  """
+  def visible_pages(_current, total) when total <= 7, do: Enum.to_list(1..total)
+
+  def visible_pages(current, total) do
+    left_gap = if current > 3, do: [:gap], else: []
+    middle = Enum.to_list(max(2, current - 1)..min(total - 1, current + 1))
+    right_gap = if current < total - 2, do: [:gap], else: []
+
+    Enum.uniq([1] ++ left_gap ++ middle ++ right_gap ++ [total])
+  end
+
+  @doc """
+  Formats a datetime as a human-readable relative time string.
+
+  ## Examples
+
+      iex> relative_time(nil)
+      ""
+
+      # Returns strings like "5s ago", "3m ago", "2h ago", "1d ago"
+  """
+  def relative_time(nil), do: ""
+
+  def relative_time(datetime) do
+    diff = DateTime.diff(DateTime.utc_now(), datetime, :second)
+
+    cond do
+      diff < 60 -> gettext("%{count}s ago", count: diff)
+      diff < 3600 -> gettext("%{count}m ago", count: div(diff, 60))
+      diff < 86_400 -> gettext("%{count}h ago", count: div(diff, 3600))
+      true -> gettext("%{count}d ago", count: div(diff, 86_400))
+    end
+  end
+
+  @doc """
+  Parses a sort direction string, defaulting to `:desc`.
+
+  ## Examples
+
+      iex> parse_sort_dir("asc")
+      :asc
+
+      iex> parse_sort_dir("desc")
+      :desc
+
+      iex> parse_sort_dir(nil)
+      :desc
+  """
+  def parse_sort_dir("asc"), do: :asc
+  def parse_sort_dir(_), do: :desc
+
+  @doc """
+  Puts a key-value pair into a map, skipping nil and empty string values.
+
+  Useful for building query parameter maps where blank filters should be omitted.
+
+  ## Examples
+
+      iex> maybe_put(%{page: 1}, :type, "sent")
+      %{page: 1, type: "sent"}
+
+      iex> maybe_put(%{page: 1}, :type, nil)
+      %{page: 1}
+
+      iex> maybe_put(%{page: 1}, :type, "")
+      %{page: 1}
+  """
+  def maybe_put(params, _key, nil), do: params
+  def maybe_put(params, _key, ""), do: params
+  def maybe_put(params, key, value), do: Map.put(params, key, value)
+end

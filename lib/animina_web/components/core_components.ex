@@ -359,21 +359,35 @@ defmodule AniminaWeb.CoreComponents do
   end
 
   @doc """
-  Renders a settings page header with breadcrumb and title.
+  Renders a page header with breadcrumb trail and centered title.
+
+  Replaces the old `settings_header/1` and `profile_header/1` with a single
+  flexible component that supports arbitrary breadcrumb depth.
 
   ## Examples
 
-      <.settings_header title={gettext("Edit Profile")} subtitle={gettext("Update your profile info")} />
+      <.page_header title={gettext("Language")} subtitle={gettext("Choose your language")}>
+        <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+      </.page_header>
+
+      <.page_header title={gettext("Edit Profile")} subtitle={gettext("Update your info")}>
+        <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+        <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
+      </.page_header>
   """
   attr :title, :string, required: true
   attr :subtitle, :string, default: nil
 
-  def settings_header(assigns) do
+  slot :crumb do
+    attr :navigate, :string, required: true
+  end
+
+  def page_header(assigns) do
     ~H"""
     <div class="breadcrumbs text-sm mb-6">
       <ul>
-        <li>
-          <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
+        <li :for={crumb <- @crumb}>
+          <.link navigate={crumb.navigate}>{render_slot(crumb)}</.link>
         </li>
         <li>{@title}</li>
       </ul>
@@ -388,38 +402,93 @@ defmodule AniminaWeb.CoreComponents do
     """
   end
 
-  @doc """
-  Renders a profile sub-page header with breadcrumb: Settings > My Profile > title.
+  @doc false
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
 
-  Used by profile sub-pages (avatar, edit profile, preferences, locations).
+  def settings_header(assigns) do
+    ~H"""
+    <.page_header title={@title} subtitle={@subtitle}>
+      <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+    </.page_header>
+    """
+  end
 
-  ## Examples
-
-      <.profile_header title={gettext("Profile Photo")} subtitle={gettext("Upload your photo")} />
-  """
+  @doc false
   attr :title, :string, required: true
   attr :subtitle, :string, default: nil
 
   def profile_header(assigns) do
     ~H"""
-    <div class="breadcrumbs text-sm mb-6">
-      <ul>
-        <li>
-          <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-        </li>
-        <li>
-          <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
-        </li>
-        <li>{@title}</li>
-      </ul>
-    </div>
+    <.page_header title={@title} subtitle={@subtitle}>
+      <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+      <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
+    </.page_header>
+    """
+  end
 
-    <div class="text-center mb-8">
-      <.header>
-        {@title}
-        <:subtitle :if={@subtitle}>{@subtitle}</:subtitle>
-      </.header>
-    </div>
+  @doc """
+  Renders a hub navigation card — a link with icon, title, optional subtitle, and trailing content.
+
+  Used across settings, account, profile, and log hub pages for consistent navigation cards.
+
+  ## Examples
+
+      <.hub_card navigate={~p"/my/settings/profile"} icon="hero-user" title="Profile" subtitle="Edit your profile" />
+
+      <.hub_card navigate={~p"/delete"} icon="hero-trash" title="Delete" danger={true} />
+
+      <.hub_card navigate={~p"/logs/emails"} icon="hero-envelope" title="Emails" icon_class="h-8 w-8">
+        <:trailing>
+          <span class="badge badge-lg badge-outline">42</span>
+        </:trailing>
+      </.hub_card>
+  """
+  attr :navigate, :string, required: true
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+  attr :danger, :boolean, default: false
+  attr :icon_class, :string, default: "h-6 w-6"
+  attr :padding, :string, default: "p-4"
+
+  slot :trailing
+
+  def hub_card(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class={[
+        "flex items-center gap-4 rounded-lg border transition-colors",
+        @padding,
+        if(@danger,
+          do: "border-error/30 hover:border-error",
+          else: "border-base-300 hover:border-primary"
+        )
+      ]}
+    >
+      <span class={[
+        "flex-shrink-0",
+        if(@danger, do: "text-error/60", else: "text-base-content/60")
+      ]}>
+        <.icon name={@icon} class={@icon_class} />
+      </span>
+      <div class="flex-1 min-w-0">
+        <div class={[
+          "font-semibold text-sm",
+          if(@danger, do: "text-error", else: "text-base-content")
+        ]}>
+          {@title}
+        </div>
+        <div :if={@subtitle} class="text-xs text-base-content/60 truncate mt-0.5">
+          {@subtitle}
+        </div>
+      </div>
+      {render_slot(@trailing)}
+      <span :if={@trailing == []} class="flex-shrink-0 text-base-content/30">
+        <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
+      </span>
+    </.link>
     """
   end
 

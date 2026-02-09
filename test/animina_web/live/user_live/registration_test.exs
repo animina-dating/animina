@@ -715,6 +715,49 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Zip code"
       assert html =~ ~r/<button[^>]*disabled[^>]*>.*Next/s
     end
+
+    test "Next button stays disabled for invalid zip code that doesn't exist", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      # Enter a 5-digit zip code that doesn't exist in the database
+      html =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "location_input" => %{"country_id" => germany_id(), "zip_code" => "99999"}
+          }
+        )
+
+      # Should show validation error
+      assert html =~ "not a valid zip code"
+      # Next button should remain disabled
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Next/s
+    end
+
+    test "add location button is disabled for non-existent zip code", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      fill_step_1(lv)
+      fill_step_2(lv)
+
+      html =
+        lv
+        |> element("#registration_form")
+        |> render_change(
+          user: %{
+            "location_input" => %{"country_id" => germany_id(), "zip_code" => "99999"}
+          }
+        )
+
+      # Should show error, button should be disabled, and no location added
+      assert html =~ "not a valid zip code"
+      assert html =~ ~r/<button[^>]*disabled[^>]*>.*Add location/s
+      refute html =~ "saved-location-"
+    end
   end
 
   describe "birthday max constraint" do
