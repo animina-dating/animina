@@ -228,7 +228,8 @@ defmodule Animina.Accounts.UserNotifier do
         old_email: old_email,
         new_email: new_email,
         undo_url: undo_url,
-        confirm_url: confirm_url
+        confirm_url: confirm_url,
+        support_email: Animina.FeatureFlags.support_email()
       )
 
     # Send to old email (the victim's email)
@@ -248,7 +249,8 @@ defmodule Animina.Accounts.UserNotifier do
         greeting_name: greeting_name(user),
         email: user.email,
         undo_url: undo_url,
-        confirm_url: confirm_url
+        confirm_url: confirm_url,
+        support_email: Animina.FeatureFlags.support_email()
       )
 
     deliver(user_recipient(user), subject, body,

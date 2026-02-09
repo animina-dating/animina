@@ -17,4 +17,4 @@ If this was NOT you, click here to undo immediately:
 The undo link is valid for 48 hours. After that, the
 change becomes permanent.
 
-If you need help, contact support@animina.de
+If you need help, contact <%= @support_email %>

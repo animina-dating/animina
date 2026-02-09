@@ -1,15 +1,13 @@
 defmodule AniminaWeb.UserLive.SettingsHub do
   @moduledoc """
-  Settings hub LiveView showing account settings categories.
-
-  Profile-building features (Moodboard, Flags, Partner Preferences, etc.)
-  are accessible directly from the navigation dropdown. This page focuses
-  on account administration only.
+  Unified settings hub LiveView showing both profile-building categories
+  and account settings on a single page.
   """
 
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Accounts.ProfileCompleteness
   alias Animina.Emails
   alias AniminaWeb.Languages
 
@@ -20,8 +18,8 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
           <.header>
-            {gettext("Account")}
-            <:subtitle>{gettext("Manage your account settings")}</:subtitle>
+            {gettext("My Profile & Settings")}
+            <:subtitle>{gettext("Manage your profile and account settings")}</:subtitle>
           </.header>
         </div>
 
@@ -34,6 +32,72 @@ defmodule AniminaWeb.UserLive.SettingsHub do
             <div class="font-semibold text-base-content">{@user.display_name}</div>
             <div class="text-sm text-base-content/60">{@user.email}</div>
           </div>
+        </div>
+
+        <%!-- Section: My Profile --%>
+        <.section_heading title={gettext("My Profile")} />
+
+        <%!-- Progress Bar --%>
+        <%= if @profile_completeness.completed_count < @profile_completeness.total_count do %>
+          <div class="mb-4 p-4 rounded-lg bg-base-200/50">
+            <div class="flex justify-between text-sm text-base-content/60 mb-2">
+              <span>{gettext("Profile completeness")}</span>
+              <span class="font-medium">
+                {@profile_completeness.completed_count}/{@profile_completeness.total_count}
+              </span>
+            </div>
+            <div class="w-full bg-base-300 rounded-full h-2">
+              <div
+                class="bg-primary h-2 rounded-full transition-all"
+                style={"width: #{@profile_completeness.completed_count / @profile_completeness.total_count * 100}%"}
+              />
+            </div>
+          </div>
+        <% end %>
+
+        <div class="grid gap-3 mb-8">
+          <.profile_card
+            navigate={~p"/settings/avatar"}
+            icon="hero-camera"
+            title={gettext("Profile Photo")}
+            description={gettext("Upload your main profile photo")}
+            complete={@profile_completeness.items.profile_photo}
+          />
+          <.profile_card
+            navigate={~p"/settings/profile"}
+            icon="hero-user"
+            title={gettext("Profile Info")}
+            description={gettext("Add your basic information")}
+            complete={@profile_completeness.items.profile_info}
+          />
+          <.profile_card
+            navigate={~p"/settings/moodboard"}
+            icon="hero-squares-2x2"
+            title={gettext("My Moodboard")}
+            description={gettext("Create your visual profile")}
+            complete={@profile_completeness.items.moodboard}
+          />
+          <.profile_card
+            navigate={~p"/settings/traits"}
+            icon="hero-flag"
+            title={gettext("My Flags")}
+            description={gettext("Set your personality flags")}
+            complete={@profile_completeness.items.flags}
+          />
+          <.profile_card
+            navigate={~p"/settings/preferences"}
+            icon="hero-heart"
+            title={gettext("Partner Preferences")}
+            description={gettext("Define what you're looking for")}
+            complete={@profile_completeness.items.partner_preferences}
+          />
+          <.profile_card
+            navigate={~p"/settings/locations"}
+            icon="hero-map-pin"
+            title={gettext("Locations")}
+            description={gettext("Set your location")}
+            complete={@profile_completeness.items.location}
+          />
         </div>
 
         <%!-- Section: App --%>
@@ -120,6 +184,40 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   attr :navigate, :string, required: true
   attr :icon, :string, required: true
   attr :title, :string, required: true
+  attr :description, :string, required: true
+  attr :complete, :boolean, required: true
+
+  defp profile_card(assigns) do
+    ~H"""
+    <.link
+      navigate={@navigate}
+      class="flex items-center gap-4 p-4 rounded-lg border border-base-300 hover:border-primary transition-colors"
+    >
+      <span class="flex-shrink-0 text-base-content/60">
+        <.icon name={@icon} class="h-6 w-6" />
+      </span>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-sm text-base-content">
+          {@title}
+        </div>
+        <div class="text-xs text-base-content/60 truncate mt-0.5">
+          {@description}
+        </div>
+      </div>
+      <span class="flex-shrink-0">
+        <%= if @complete do %>
+          <.icon name="hero-check-circle-solid" class="h-6 w-6 text-success" />
+        <% else %>
+          <span class="inline-block h-6 w-6 rounded-full border-2 border-base-content/20" />
+        <% end %>
+      </span>
+    </.link>
+    """
+  end
+
+  attr :navigate, :string, required: true
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
   attr :preview, :string, default: nil
   attr :variant, :atom, default: :default
 
@@ -163,11 +261,13 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
     current_locale = Gettext.get_locale(AniminaWeb.Gettext)
+    profile_completeness = ProfileCompleteness.compute(user)
 
     socket =
       socket
-      |> assign(:page_title, gettext("Account"))
+      |> assign(:page_title, gettext("My Profile & Settings"))
       |> assign(:user, user)
+      |> assign(:profile_completeness, profile_completeness)
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:passkeys_preview, build_passkeys_preview(user))
       |> assign(:sessions_preview, build_sessions_preview(user))

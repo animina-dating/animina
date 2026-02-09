@@ -168,6 +168,13 @@ defmodule Animina.FeatureFlags do
       default_value: 14,
       min_value: 1,
       max_value: 365
+    },
+    %{
+      name: :support_email,
+      label: "Support Email",
+      description: "Contact email shown to users in notification emails",
+      type: :string,
+      default_value: "sw@wintermeyer-consulting.de"
     }
   ]
 
@@ -835,6 +842,14 @@ defmodule Animina.FeatureFlags do
   """
   def waitlist_duration_days do
     get_system_setting_value(:waitlist_duration_days, 14)
+  end
+
+  @doc """
+  Returns the configured support email address.
+  Default: "sw@wintermeyer-consulting.de"
+  """
+  def support_email do
+    get_system_setting_value(:support_email, "sw@wintermeyer-consulting.de")
   end
 
   @doc """

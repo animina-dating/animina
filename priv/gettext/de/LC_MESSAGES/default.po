@@ -40,11 +40,8 @@ msgstr "Ein Bestätigungscode wurde an %{email} gesendet."
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Ein Link zur Bestätigung deiner E-Mail-Änderung wurde an die neue Adresse gesendet."
 
-#: lib/animina_web/components/layouts.ex:434
 #: lib/animina_web/live/user_live/registration.ex:13
-#: lib/animina_web/live/user_live/settings_hub.ex:23
-#: lib/animina_web/live/user_live/settings_hub.ex:76
-#: lib/animina_web/live/user_live/settings_hub.ex:169
+#: lib/animina_web/live/user_live/settings_hub.ex:140
 #, elixir-autogen, elixir-format
 msgid "Account"
 msgstr "Account"
@@ -290,7 +287,7 @@ msgstr "Größe in cm (80-225)"
 msgid "If an account exists with this email, you will receive password reset instructions shortly."
 msgstr "Falls ein Konto mit dieser E-Mail existiert, erhältst du in Kürze Anweisungen zum Zurücksetzen des Passworts."
 
-#: lib/animina_web/components/layouts.ex:761
+#: lib/animina_web/components/layouts.ex:645
 #, elixir-autogen, elixir-format
 msgid "Imprint"
 msgstr "Impressum"
@@ -306,16 +303,15 @@ msgid "Joy instead of addiction"
 msgstr "Freude statt Sucht"
 
 #: lib/animina_web/components/layouts.ex:133
-#: lib/animina_web/components/layouts.ex:679
+#: lib/animina_web/components/layouts.ex:563
 #: lib/animina_web/live/user_live/language_settings.ex:14
 #: lib/animina_web/live/user_live/language_settings.ex:51
 #: lib/animina_web/live/user_live/registration.ex:289
-#: lib/animina_web/live/user_live/settings_hub.ex:46
+#: lib/animina_web/live/user_live/settings_hub.ex:110
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Sprache"
 
-#: lib/animina_web/components/layouts.ex:386
 #: lib/animina_web/live/user_live/registration.ex:15
 #, elixir-autogen, elixir-format
 msgid "Location"
@@ -325,13 +321,13 @@ msgstr[1] "Wohnsitze"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:13
 #: lib/animina_web/live/user_live/edit_locations.ex:149
-#: lib/animina_web/live/user_live/profile_hub.ex:83
 #: lib/animina_web/live/user_live/registration.ex:483
+#: lib/animina_web/live/user_live/settings_hub.ex:97
 #, elixir-autogen, elixir-format
 msgid "Locations"
 msgstr "Wohnsitze"
 
-#: lib/animina_web/components/layouts.ex:717
+#: lib/animina_web/components/layouts.ex:601
 #: lib/animina_web/live/user_live/login.ex:17
 #: lib/animina_web/live/user_live/login.ex:59
 #, elixir-autogen, elixir-format
@@ -343,8 +339,8 @@ msgstr "Anmelden"
 msgid "Log in now"
 msgstr "Jetzt anmelden"
 
-#: lib/animina_web/components/layouts.ex:629
-#: lib/animina_web/components/layouts.ex:707
+#: lib/animina_web/components/layouts.ex:513
+#: lib/animina_web/components/layouts.ex:591
 #: lib/animina_web/live/user_live/session_settings.ex:82
 #, elixir-autogen, elixir-format
 msgid "Log out"
@@ -501,11 +497,11 @@ msgstr "Bitte gib eine gültige 5-stellige PLZ ein"
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Bitte authentifiziere dich erneut, um sensible Aktionen durchzuführen."
 
-#: lib/animina_web/components/layouts.ex:755
+#: lib/animina_web/components/layouts.ex:639
 #: lib/animina_web/live/user_live/privacy_settings.ex:16
 #: lib/animina_web/live/user_live/privacy_settings.ex:81
-#: lib/animina_web/live/user_live/settings_hub.ex:52
-#: lib/animina_web/live/user_live/settings_hub.ex:58
+#: lib/animina_web/live/user_live/settings_hub.ex:116
+#: lib/animina_web/live/user_live/settings_hub.ex:122
 #, elixir-autogen, elixir-format
 msgid "Privacy"
 msgstr "Datenschutz"
@@ -540,7 +536,7 @@ msgstr "Rote Flaggen"
 msgid "Referral code (optional)"
 msgstr "Empfehlungscode (optional)"
 
-#: lib/animina_web/components/layouts.ex:723
+#: lib/animina_web/components/layouts.ex:607
 #, elixir-autogen, elixir-format
 msgid "Register"
 msgstr "Registrieren"
@@ -610,7 +606,6 @@ msgid "Set new password"
 msgstr "Neues Passwort setzen"
 
 #: lib/animina_web/components/core_components.ex:376
-#: lib/animina_web/components/layouts.ex:441
 #: lib/animina_web/live/admin/feature_flags_live.ex:782
 #: lib/animina_web/live/user_live/email_logs.ex:169
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
@@ -739,7 +734,7 @@ msgid "Your account has been deleted. Please register again."
 msgstr "Dein Konto wurde gelöscht. Bitte registriere dich erneut."
 
 #: lib/animina_web/components/layouts.ex:177
-#: lib/animina_web/components/layouts.ex:642
+#: lib/animina_web/components/layouts.ex:526
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "Dein Profil"
@@ -774,19 +769,19 @@ msgstr "von"
 msgid "ANIMINA – Create Account"
 msgstr "ANIMINA – Account erstellen"
 
-#: lib/animina_web/components/layouts.ex:858
+#: lib/animina_web/components/layouts.ex:742
 #, elixir-autogen, elixir-format
 msgid "Updating ANIMINA"
 msgstr "ANIMINA wird aktualisiert"
 
-#: lib/animina_web/components/layouts.ex:865
+#: lib/animina_web/components/layouts.ex:749
 #, elixir-autogen, elixir-format
 msgid "A new software version is being installed on the server. This will only take a moment..."
 msgstr "Eine neue Software-Version wird auf dem Server installiert. Das dauert nur einen Moment..."
 
 #: lib/animina_web/live/user_live/settings.ex:17
 #: lib/animina_web/live/user_live/settings.ex:147
-#: lib/animina_web/live/user_live/settings_hub.ex:82
+#: lib/animina_web/live/user_live/settings_hub.ex:146
 #, elixir-autogen, elixir-format
 msgid "Account Security"
 msgstr "Kontosicherheit"
@@ -813,7 +808,7 @@ msgstr "Wohnsitz konnte nicht entfernt werden."
 
 #: lib/animina_web/live/user_live/delete_account.ex:13
 #: lib/animina_web/live/user_live/delete_account.ex:48
-#: lib/animina_web/live/user_live/settings_hub.ex:100
+#: lib/animina_web/live/user_live/settings_hub.ex:164
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Konto löschen"
@@ -884,10 +879,9 @@ msgstr "Mindestalter"
 msgid "No locations added yet."
 msgstr "Noch keine Wohnsitze hinzugefügt."
 
-#: lib/animina_web/components/layouts.ex:372
 #: lib/animina_web/live/user_live/edit_preferences.ex:18
 #: lib/animina_web/live/user_live/edit_preferences.ex:112
-#: lib/animina_web/live/user_live/profile_hub.ex:76
+#: lib/animina_web/live/user_live/settings_hub.ex:90
 #, elixir-autogen, elixir-format
 msgid "Partner Preferences"
 msgstr "Partnervorlieben"
@@ -1059,7 +1053,7 @@ msgid "Add Role"
 msgstr "Rolle hinzufügen"
 
 #: lib/animina_web/components/layouts.ex:215
-#: lib/animina_web/components/layouts.ex:812
+#: lib/animina_web/components/layouts.ex:696
 #: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "Admin"
@@ -1080,7 +1074,7 @@ msgstr "Rolle konnte nicht hinzugefügt werden."
 msgid "Current Roles"
 msgstr "Aktuelle Rollen"
 
-#: lib/animina_web/components/layouts.ex:525
+#: lib/animina_web/components/layouts.ex:409
 #: lib/animina_web/live/admin/user_roles_live.ex:11
 #: lib/animina_web/live/admin/user_roles_live.ex:77
 #, elixir-autogen, elixir-format
@@ -1088,7 +1082,7 @@ msgid "Manage Roles"
 msgstr "Rollen verwalten"
 
 #: lib/animina_web/components/layouts.ex:220
-#: lib/animina_web/components/layouts.ex:813
+#: lib/animina_web/components/layouts.ex:697
 #: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Moderator"
@@ -1109,7 +1103,7 @@ msgstr "Rolle nicht gefunden."
 msgid "Search users by email or name..."
 msgstr "Benutzer nach E-Mail oder Name suchen..."
 
-#: lib/animina_web/components/layouts.ex:547
+#: lib/animina_web/components/layouts.ex:431
 #, elixir-autogen, elixir-format
 msgid "Switch Role"
 msgstr "Rolle wechseln"
@@ -1119,7 +1113,7 @@ msgstr "Rolle wechseln"
 msgid "The user role cannot be removed."
 msgstr "Die Benutzerrolle kann nicht entfernt werden."
 
-#: lib/animina_web/components/layouts.ex:814
+#: lib/animina_web/components/layouts.ex:698
 #: lib/animina_web/live/admin/activity_logs_live.ex:283
 #: lib/animina_web/live/admin/email_logs_live.ex:307
 #: lib/animina_web/live/admin/photo_history_live.ex:177
@@ -1140,7 +1134,7 @@ msgstr "Du bist nicht berechtigt, auf diese Seite zuzugreifen."
 msgid "You do not have that role."
 msgstr "Du hast diese Rolle nicht."
 
-#: lib/animina_web/components/layouts.ex:555
+#: lib/animina_web/components/layouts.ex:439
 #, elixir-autogen, elixir-format
 msgid "active"
 msgstr "aktiv"
@@ -1276,8 +1270,7 @@ msgstr "Eigenschaften, die bei einem Partner Ausschlusskriterien sind"
 msgid "Traits you'd like your partner to have"
 msgstr "Eigenschaften, die dein Partner haben sollte"
 
-#: lib/animina_web/components/layouts.ex:358
-#: lib/animina_web/live/user_live/profile_hub.ex:69
+#: lib/animina_web/live/user_live/settings_hub.ex:83
 #: lib/animina_web/live/user_live/traits_wizard.ex:20
 #: lib/animina_web/live/user_live/traits_wizard.ex:28
 #, elixir-autogen, elixir-format
@@ -1299,13 +1292,13 @@ msgstr "Meine Flags — Partnerwünsche"
 msgid "My Flags — Partner Deal Breakers"
 msgstr "Meine Flags — Partner-Ausschlusskriterien"
 
-#: lib/animina_web/components/layouts.ex:414
-#: lib/animina_web/live/user_live/settings_hub.ex:40
+#: lib/animina_web/components/layouts.ex:312
+#: lib/animina_web/live/user_live/settings_hub.ex:104
 #, elixir-autogen, elixir-format
 msgid "App"
 msgstr "App"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:101
+#: lib/animina_web/live/user_live/settings_hub.ex:165
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account"
 msgstr "Konto dauerhaft löschen"
@@ -3026,11 +3019,10 @@ msgstr "Foto hochgeladen! Es wird in Kürze überprüft."
 msgid "Processing"
 msgstr "Wird verarbeitet"
 
-#: lib/animina_web/components/layouts.ex:316
 #: lib/animina_web/live/user_live/avatar_upload.ex:19
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
-#: lib/animina_web/live/user_live/profile_hub.ex:48
+#: lib/animina_web/live/user_live/settings_hub.ex:62
 #: lib/animina_web/live/user_live/waitlist.ex:103
 #, elixir-autogen, elixir-format
 msgid "Profile Photo"
@@ -3174,7 +3166,7 @@ msgid "Face detection completed"
 msgstr "Gesichtserkennung abgeschlossen"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:32
-#: lib/animina_web/live/user_live/settings_hub.ex:64
+#: lib/animina_web/live/user_live/settings_hub.ex:128
 #, elixir-autogen, elixir-format
 msgid "History"
 msgstr "Verlauf"
@@ -3227,7 +3219,7 @@ msgstr "Foto-Verlauf"
 msgid "Photo ID: %{id}"
 msgstr "Foto-ID: %{id}"
 
-#: lib/animina_web/components/layouts.ex:458
+#: lib/animina_web/components/layouts.ex:342
 #: lib/animina_web/live/admin/photo_history_live.ex:30
 #: lib/animina_web/live/admin/photo_reviews_live.ex:16
 #: lib/animina_web/live/admin/photo_reviews_live.ex:403
@@ -3308,7 +3300,7 @@ msgstr "Ähnliche Bilder werden automatisch abgelehnt"
 msgid "Submitted"
 msgstr "Eingereicht"
 
-#: lib/animina_web/components/layouts.ex:531
+#: lib/animina_web/components/layouts.ex:415
 #: lib/animina_web/live/admin/activity_logs_live.ex:443
 #: lib/animina_web/live/admin/photo_history_live.ex:175
 #, elixir-autogen, elixir-format
@@ -3446,7 +3438,7 @@ msgstr "Verzögerung (ms)"
 msgid "Delays simulate slow processing for UX testing"
 msgstr "Verzögerungen simulieren langsame Verarbeitung für UX-Tests"
 
-#: lib/animina_web/components/layouts.ex:538
+#: lib/animina_web/components/layouts.ex:422
 #: lib/animina_web/live/admin/feature_flags_live.ex:19
 #: lib/animina_web/live/admin/feature_flags_live.ex:389
 #, elixir-autogen, elixir-format
@@ -3566,7 +3558,7 @@ msgstr "Noch keine Sperrlisten-Einträge."
 msgid "No thumbnail"
 msgstr "Kein Vorschaubild"
 
-#: lib/animina_web/components/layouts.ex:480
+#: lib/animina_web/components/layouts.ex:364
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:14
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:128
 #, elixir-autogen, elixir-format
@@ -3697,7 +3689,7 @@ msgstr[1] "%{count} Einsprüche genehmigt."
 msgid "Approved %{resolved} appeals. %{failed} already resolved."
 msgstr "%{resolved} Einsprüche genehmigt. %{failed} bereits bearbeitet."
 
-#: lib/animina_web/components/layouts.ex:449
+#: lib/animina_web/components/layouts.ex:333
 #, elixir-autogen, elixir-format
 msgid "Moderation"
 msgstr "Moderation"
@@ -4081,8 +4073,7 @@ msgstr "Element zum Moodboard hinzugefügt"
 msgid "Moodboard"
 msgstr "Moodboard"
 
-#: lib/animina_web/components/layouts.ex:344
-#: lib/animina_web/live/user_live/profile_hub.ex:62
+#: lib/animina_web/live/user_live/settings_hub.ex:76
 #, elixir-autogen, elixir-format
 msgid "My Moodboard"
 msgstr "Mein Moodboard"
@@ -4316,7 +4307,7 @@ msgstr "Keine Ergebnisse gefunden für \"%{query}\""
 msgid "Photo analysis and debug settings"
 msgstr "Fotoanalyse- und Debug-Einstellungen"
 
-#: lib/animina_web/components/layouts.ex:473
+#: lib/animina_web/components/layouts.ex:357
 #, elixir-autogen, elixir-format
 msgid "Photos"
 msgstr "Fotos"
@@ -4326,12 +4317,12 @@ msgstr "Fotos"
 msgid "Search flags and settings..."
 msgstr "Flags und Einstellungen durchsuchen..."
 
-#: lib/animina_web/components/layouts.ex:518
+#: lib/animina_web/components/layouts.ex:402
 #, elixir-autogen, elixir-format
 msgid "Users"
 msgstr "Benutzer"
 
-#: lib/animina_web/components/layouts.ex:421
+#: lib/animina_web/components/layouts.ex:319
 #: lib/animina_web/live/discover_live.ex:36
 #: lib/animina_web/live/discover_live.ex:387
 #: lib/animina_web/live/messages_live.ex:126
@@ -4380,7 +4371,7 @@ msgstr "Unterhaltung konnte nicht gestartet werden"
 msgid "Failed to send message"
 msgstr "Nachricht konnte nicht gesendet werden"
 
-#: lib/animina_web/components/layouts.ex:427
+#: lib/animina_web/components/layouts.ex:325
 #: lib/animina_web/live/messages_live.ex:113
 #: lib/animina_web/live/messages_live.ex:614
 #: lib/animina_web/live/messages_live.ex:662
@@ -4667,7 +4658,7 @@ msgstr "Regeln für die Nutzung der Plattform"
 msgid "Something went wrong. Please try again."
 msgstr "Etwas ist schiefgelaufen. Bitte versuche es erneut."
 
-#: lib/animina_web/components/layouts.ex:758
+#: lib/animina_web/components/layouts.ex:642
 #: lib/animina_web/live/user_live/accept_terms.ex:40
 #: lib/animina_web/live/user_live/accept_terms.ex:61
 #: lib/animina_web/live/user_live/registration.ex:476
@@ -4901,12 +4892,12 @@ msgstr "Bereite dein Profil vor"
 msgid "Set up your flags"
 msgstr "Richte deine Flags ein"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:214
+#: lib/animina_web/live/user_live/settings_hub.ex:314
 #, elixir-autogen, elixir-format
 msgid "%{count} passkeys"
 msgstr "%{count} Passkeys"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:213
+#: lib/animina_web/live/user_live/settings_hub.ex:313
 #, elixir-autogen, elixir-format
 msgid "1 passkey"
 msgstr "1 Passkey"
@@ -4947,7 +4938,7 @@ msgstr "Passkey konnte nicht entfernt werden."
 msgid "Last used %{date}"
 msgstr "Zuletzt verwendet am %{date}"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:212
+#: lib/animina_web/live/user_live/settings_hub.ex:312
 #, elixir-autogen, elixir-format
 msgid "No passkeys"
 msgstr "Keine Passkeys"
@@ -4979,7 +4970,7 @@ msgstr "Passkey entfernt."
 
 #: lib/animina_web/live/user_live/passkey_settings.ex:12
 #: lib/animina_web/live/user_live/passkey_settings.ex:97
-#: lib/animina_web/live/user_live/settings_hub.ex:88
+#: lib/animina_web/live/user_live/settings_hub.ex:152
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr "Passkeys"
@@ -5025,68 +5016,53 @@ msgstr "Passkey einrichten"
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Melde dich schneller und sicherer mit einem Passkey an."
 
-#: lib/animina_web/components/layouts.ex:778
+#: lib/animina_web/components/layouts.ex:662
 #, elixir-autogen, elixir-format
 msgid "Report bug"
 msgstr "Fehler melden"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:24
-#, elixir-autogen, elixir-format
-msgid "Manage your account settings"
-msgstr "Verwalte Deine Kontoeinstellungen"
-
-#: lib/animina_web/components/layouts.ex:297
-#: lib/animina_web/components/layouts.ex:392
-#: lib/animina_web/components/layouts.ex:399
-#: lib/animina_web/live/user_live/profile_hub.ex:20
-#: lib/animina_web/live/user_live/profile_hub.ex:134
+#: lib/animina_web/live/user_live/settings_hub.ex:38
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr "Mein Profil"
 
-#: lib/animina_web/components/layouts.ex:281
-#: lib/animina_web/live/user_live/profile_hub.ex:29
+#: lib/animina_web/components/layouts.ex:280
+#: lib/animina_web/live/user_live/settings_hub.ex:44
 #, elixir-autogen, elixir-format
 msgid "Profile completeness"
 msgstr "Profilvollständigkeit"
 
-#: lib/animina_web/components/layouts.ex:330
-#: lib/animina_web/live/user_live/profile_hub.ex:55
+#: lib/animina_web/live/user_live/settings_hub.ex:69
 #, elixir-autogen, elixir-format
 msgid "Profile Info"
 msgstr "Profil-Info"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:56
+#: lib/animina_web/live/user_live/settings_hub.ex:70
 #, elixir-autogen, elixir-format
 msgid "Add your basic information"
 msgstr "Füge deine grundlegenden Informationen hinzu"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:21
-#, elixir-autogen, elixir-format
-msgid "Build and complete your dating profile"
-msgstr "Erstelle und vervollständige dein Dating-Profil"
-
-#: lib/animina_web/live/user_live/profile_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:77
 #, elixir-autogen, elixir-format
 msgid "Create your visual profile"
 msgstr "Erstelle dein visuelles Profil"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:77
+#: lib/animina_web/live/user_live/settings_hub.ex:91
 #, elixir-autogen, elixir-format
 msgid "Define what you're looking for"
 msgstr "Lege fest, wonach du suchst"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:84
+#: lib/animina_web/live/user_live/settings_hub.ex:98
 #, elixir-autogen, elixir-format
 msgid "Set your location"
 msgstr "Lege deinen Standort fest"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:70
+#: lib/animina_web/live/user_live/settings_hub.ex:84
 #, elixir-autogen, elixir-format
 msgid "Set your personality flags"
 msgstr "Setze deine Persönlichkeits-Flags"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:49
+#: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo"
 msgstr "Lade dein Profilfoto hoch"
@@ -5176,7 +5152,7 @@ msgstr "Manueller Re-run"
 msgid "No grouped log entries found."
 msgstr "Keine gruppierten Logeinträge gefunden."
 
-#: lib/animina_web/components/layouts.ex:507
+#: lib/animina_web/components/layouts.ex:391
 #: lib/animina_web/live/admin/logs_index_live.ex:55
 #: lib/animina_web/live/admin/ollama_logs_live.ex:21
 #: lib/animina_web/live/admin/ollama_logs_live.ex:391
@@ -5506,12 +5482,12 @@ msgid_plural "%{count} emails"
 msgstr[0] "%{count} E-Mail"
 msgstr[1] "%{count} E-Mails"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:194
+#: lib/animina_web/live/user_live/settings_hub.ex:294
 #, elixir-autogen, elixir-format
 msgid "%{count} emails sent"
 msgstr "%{count} E-Mails gesendet"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:193
+#: lib/animina_web/live/user_live/settings_hub.ex:293
 #, elixir-autogen, elixir-format
 msgid "1 email sent"
 msgstr "1 E-Mail gesendet"
@@ -5524,12 +5500,12 @@ msgstr "Datum"
 #: lib/animina_web/live/user_live/email_logs.ex:15
 #: lib/animina_web/live/user_live/email_logs.ex:172
 #: lib/animina_web/live/user_live/email_logs.ex:178
-#: lib/animina_web/live/user_live/settings_hub.ex:70
+#: lib/animina_web/live/user_live/settings_hub.ex:134
 #, elixir-autogen, elixir-format
 msgid "Email History"
 msgstr "E-Mail-Verlauf"
 
-#: lib/animina_web/components/layouts.ex:493
+#: lib/animina_web/components/layouts.ex:377
 #: lib/animina_web/live/admin/email_logs_live.ex:16
 #: lib/animina_web/live/admin/email_logs_live.ex:206
 #: lib/animina_web/live/admin/logs_index_live.ex:47
@@ -5547,7 +5523,7 @@ msgstr "Protokoll der Ollama-KI-Fotoanalysen"
 msgid "Log of all emails sent by the system"
 msgstr "Protokoll aller vom System gesendeten E-Mails"
 
-#: lib/animina_web/components/layouts.ex:486
+#: lib/animina_web/components/layouts.ex:370
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:31
 #, elixir-autogen, elixir-format
@@ -5559,7 +5535,7 @@ msgstr "Protokolle"
 msgid "No emails found."
 msgstr "Keine E-Mails gefunden."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:192
+#: lib/animina_web/live/user_live/settings_hub.ex:292
 #, elixir-autogen, elixir-format
 msgid "No emails sent"
 msgstr "Keine E-Mails gesendet"
@@ -5589,12 +5565,12 @@ msgstr "System-Protokollansichten"
 msgid "Type"
 msgstr "Typ"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:204
+#: lib/animina_web/live/user_live/settings_hub.ex:304
 #, elixir-autogen, elixir-format
 msgid "%{count} active sessions"
 msgstr "%{count} aktive Sitzungen"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:203
+#: lib/animina_web/live/user_live/settings_hub.ex:303
 #, elixir-autogen, elixir-format
 msgid "1 active session"
 msgstr "1 aktive Sitzung"
@@ -5606,7 +5582,7 @@ msgstr "Kontoänderung bestätigt. Die Sicherheitssperre wurde aufgehoben."
 
 #: lib/animina_web/live/user_live/session_settings.ex:20
 #: lib/animina_web/live/user_live/session_settings.ex:108
-#: lib/animina_web/live/user_live/settings_hub.ex:94
+#: lib/animina_web/live/user_live/settings_hub.ex:158
 #, elixir-autogen, elixir-format
 msgid "Active Sessions"
 msgstr "Aktive Sitzungen"
@@ -5653,7 +5629,7 @@ msgstr "Diese Sitzung abmelden?"
 msgid "Manage your active sessions across devices"
 msgstr "Verwalte deine aktiven Sitzungen auf verschiedenen Geräten"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:202
+#: lib/animina_web/live/user_live/settings_hub.ex:302
 #, elixir-autogen, elixir-format
 msgid "No active sessions"
 msgstr "Keine aktiven Sitzungen"
@@ -5808,7 +5784,7 @@ msgstr "An den meisten Tagen online"
 msgid "Online several times a week"
 msgstr "Mehrmals pro Woche online"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:182
+#: lib/animina_web/live/user_live/settings_hub.ex:282
 #, elixir-autogen, elixir-format
 msgid "Online status hidden"
 msgstr "Online-Status verborgen"
@@ -5823,7 +5799,7 @@ msgstr "Online-Status ist jetzt vor anderen Nutzern verborgen."
 msgid "Online status is now visible to other users."
 msgstr "Online-Status ist jetzt für andere Nutzer sichtbar."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:184
+#: lib/animina_web/live/user_live/settings_hub.ex:284
 #, elixir-autogen, elixir-format
 msgid "Online status visible"
 msgstr "Online-Status sichtbar"
@@ -5921,3 +5897,15 @@ msgstr "Bis"
 #, elixir-autogen, elixir-format
 msgid "Unified activity log for all system events"
 msgstr "Einheitliches Aktivitätsprotokoll für alle Systemereignisse"
+
+#: lib/animina_web/live/user_live/settings_hub.ex:22
+#, elixir-autogen, elixir-format
+msgid "Manage your profile and account settings"
+msgstr "Verwalte Dein Profil und Deine Kontoeinstellungen"
+
+#: lib/animina_web/components/layouts.ex:298
+#: lib/animina_web/live/user_live/settings_hub.ex:21
+#: lib/animina_web/live/user_live/settings_hub.ex:268
+#, elixir-autogen, elixir-format
+msgid "My Profile & Settings"
+msgstr "Mein Profil & Einstellungen"
