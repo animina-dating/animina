@@ -490,6 +490,163 @@ defmodule AniminaWeb.UserAuthTest do
     end
   end
 
+  describe "fetch_current_scope_for_user/2 auto-role switching" do
+    test "auto-switches to admin on /admin/* paths", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "user")
+        |> Map.put(:request_path, "/admin/roles")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "admin"
+      assert get_session(conn, :current_role) == "admin"
+    end
+
+    test "auto-switches to user on /my/* paths when in admin role", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> Map.put(:request_path, "/my/settings")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "user"
+      assert get_session(conn, :current_role) == "user"
+    end
+
+    test "does not switch to admin when user lacks admin role", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "user")
+        |> Map.put(:request_path, "/admin/roles")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "user"
+    end
+
+    test "does not change role on other paths", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "admin")
+        |> Map.put(:request_path, "/discover")
+        |> UserAuth.fetch_current_scope_for_user([])
+
+      assert conn.assigns.current_scope.current_role == "admin"
+    end
+  end
+
+  describe "on_mount :require_admin auto-switch" do
+    test "auto-switches to admin for users with admin role but user session role", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "user")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, updated_socket} = UserAuth.on_mount(:require_admin, %{}, session, socket)
+      assert Scope.admin?(updated_socket.assigns.current_scope)
+    end
+
+    test "still rejects users without admin role", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:halt, _updated_socket} = UserAuth.on_mount(:require_admin, %{}, session, socket)
+    end
+  end
+
+  describe "on_mount :require_moderator auto-switch" do
+    test "auto-switches to admin for users with admin role but user session role", %{conn: conn} do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "admin")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "user")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+
+      assert Scope.admin?(updated_socket.assigns.current_scope)
+    end
+
+    test "auto-switches to moderator for users with moderator role but user session role", %{
+      conn: conn
+    } do
+      user = user_fixture()
+      {:ok, _} = Accounts.assign_role(user, "moderator")
+      user_token = Accounts.generate_user_session_token(user)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> put_session(:current_role, "user")
+        |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+
+      assert Scope.moderator?(updated_socket.assigns.current_scope)
+    end
+
+    test "still rejects users without moderator or admin role", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:halt, _updated_socket} =
+               UserAuth.on_mount(:require_moderator, %{}, session, socket)
+    end
+  end
+
   describe "disconnect_sessions/1" do
     test "broadcasts disconnect messages for each token" do
       tokens = [%{token: "token1"}, %{token: "token2"}]

@@ -84,10 +84,18 @@ defmodule AniminaWeb.UserAuth do
          false <- Accounts.user_deleted?(user) do
       roles = Accounts.get_user_roles(user)
       session_role = get_session(conn, :current_role)
-      scope = Scope.for_user(user, roles, session_role)
+      effective_role = auto_role_for_path(conn.request_path, roles, session_role)
+      scope = Scope.for_user(user, roles, effective_role)
 
       # Update last_seen_at (throttled to every 5 min, very fast update_all)
       Accounts.maybe_update_last_seen(token)
+
+      conn =
+        if effective_role != session_role do
+          put_session(conn, :current_role, effective_role)
+        else
+          conn
+        end
 
       conn
       |> assign(:current_scope, scope)
@@ -103,6 +111,17 @@ defmodule AniminaWeb.UserAuth do
         assign(conn, :current_scope, Scope.for_user(nil))
     end
   end
+
+  # Determines the effective role based on the URL path.
+  # Auto-switches to "admin" for /admin/* paths if the user has the admin role,
+  # and to "user" for /my/* paths if the user has multiple roles.
+  defp auto_role_for_path("/admin/" <> _, roles, _session_role) do
+    if "admin" in roles, do: "admin", else: "user"
+  end
+
+  defp auto_role_for_path("/my/" <> _, _roles, _session_role), do: "user"
+
+  defp auto_role_for_path(_path, _roles, session_role), do: session_role
 
   defp ensure_user_token(conn) do
     if token = get_session(conn, :user_token) do
@@ -297,37 +316,55 @@ defmodule AniminaWeb.UserAuth do
 
   def on_mount(:require_admin, _params, session, socket) do
     socket = mount_current_scope(socket, session)
+    scope = socket.assigns.current_scope
 
-    if Scope.admin?(socket.assigns.current_scope) do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(
-          :error,
-          gettext("You are not authorized to access this page.")
-        )
-        |> Phoenix.LiveView.redirect(to: ~p"/")
+    cond do
+      Scope.admin?(scope) ->
+        {:cont, socket}
 
-      {:halt, socket}
+      Scope.has_role?(scope, "admin") ->
+        updated_scope = %{scope | current_role: "admin"}
+        {:cont, Phoenix.Component.assign(socket, :current_scope, updated_scope)}
+
+      true ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(
+            :error,
+            gettext("You are not authorized to access this page.")
+          )
+          |> Phoenix.LiveView.redirect(to: ~p"/")
+
+        {:halt, socket}
     end
   end
 
   def on_mount(:require_moderator, _params, session, socket) do
     socket = mount_current_scope(socket, session)
+    scope = socket.assigns.current_scope
 
-    if Scope.moderator?(socket.assigns.current_scope) do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(
-          :error,
-          gettext("You are not authorized to access this page.")
-        )
-        |> Phoenix.LiveView.redirect(to: ~p"/")
+    cond do
+      Scope.moderator?(scope) ->
+        {:cont, socket}
 
-      {:halt, socket}
+      Scope.has_role?(scope, "admin") ->
+        updated_scope = %{scope | current_role: "admin"}
+        {:cont, Phoenix.Component.assign(socket, :current_scope, updated_scope)}
+
+      Scope.has_role?(scope, "moderator") ->
+        updated_scope = %{scope | current_role: "moderator"}
+        {:cont, Phoenix.Component.assign(socket, :current_scope, updated_scope)}
+
+      true ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(
+            :error,
+            gettext("You are not authorized to access this page.")
+          )
+          |> Phoenix.LiveView.redirect(to: ~p"/")
+
+        {:halt, socket}
     end
   end
 
