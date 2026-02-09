@@ -16,6 +16,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1, gender_symbol: 1]
 
   alias Animina.Accounts
+  alias Animina.Accounts.OnlineActivity
+  alias Animina.Accounts.Scope
   alias Animina.Discovery
   alias Animina.GeoData
   alias Animina.Messaging
@@ -23,6 +25,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias Animina.Traits
   alias AniminaWeb.ColumnToggle
   alias AniminaWeb.Helpers.ColumnPreferences
+  alias AniminaWeb.Presence
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
 
@@ -68,6 +71,26 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
             </p>
             <p :if={@profile_user.occupation} class="text-base-content/60">
               {@profile_user.occupation}
+            </p>
+            <p
+              :if={!@owner? && !@hide_online_status}
+              class="text-base-content/60 flex items-center gap-1.5 flex-wrap"
+            >
+              <%= if @is_online do %>
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-success"></span>
+                <span class="font-medium text-success">{gettext("Online")}</span>
+              <% else %>
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-base-content/30"></span>
+                <span>{format_last_seen(@last_seen_at)}</span>
+              <% end %>
+              <%= if @activity_level_text do %>
+                <span class="text-base-content/30">&middot;</span>
+                <span>{@activity_level_text}</span>
+              <% end %>
+              <%= if @typical_times_text do %>
+                <span class="text-base-content/30">&middot;</span>
+                <span>{@typical_times_text}</span>
+              <% end %>
             </p>
           </div>
 
@@ -266,6 +289,63 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     String.replace(formatted, ".", ",") <> " m"
   end
 
+  defp compute_online_assigns(socket, profile_user, owner?) do
+    is_online = Presence.user_online?(profile_user.id)
+    viewer_is_privileged = Scope.moderator?(socket.assigns.current_scope)
+    hide_online_status = profile_user.hide_online_status && !viewer_is_privileged
+
+    if owner? || hide_online_status do
+      {is_online, hide_online_status, nil, nil, nil}
+    else
+      last_seen = unless is_online, do: Accounts.last_seen(profile_user.id)
+      al = Accounts.activity_level(profile_user.id)
+      tt = Accounts.typical_online_times(profile_user.id)
+
+      {is_online, hide_online_status, last_seen, OnlineActivity.activity_level_label(al),
+       OnlineActivity.typical_times_label(tt)}
+    end
+  end
+
+  # Format relative time for "last seen" display
+  defp format_last_seen(nil), do: gettext("Offline")
+
+  defp format_last_seen(datetime) do
+    now = Animina.TimeMachine.utc_now()
+    diff_seconds = DateTime.diff(now, datetime, :second)
+    diff_minutes = div(diff_seconds, 60)
+    diff_hours = div(diff_minutes, 60)
+    diff_days = div(diff_hours, 24)
+
+    cond do
+      diff_minutes < 5 ->
+        gettext("Just now")
+
+      diff_minutes < 60 ->
+        ngettext(
+          "Online %{count} minute ago",
+          "Online %{count} minutes ago",
+          diff_minutes
+        )
+
+      diff_hours < 24 ->
+        ngettext(
+          "Online %{count} hour ago",
+          "Online %{count} hours ago",
+          diff_hours
+        )
+
+      diff_days <= 7 ->
+        ngettext(
+          "Online %{count} day ago",
+          "Online %{count} days ago",
+          diff_days
+        )
+
+      true ->
+        gettext("Online more than a week ago")
+    end
+  end
+
   # Group white flags by their category name, preserving order
   defp group_flags_by_category(white_flags) do
     white_flags
@@ -348,6 +428,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         {nil, nil}
       end
 
+    # Online activity assigns
+    {is_online, hide_online_status, last_seen_at, activity_level_text, typical_times_text} =
+      compute_online_assigns(socket, profile_user, owner?)
+
     initial_columns =
       if owner?,
         do: ColumnPreferences.get_columns_for_user(current_user),
@@ -371,7 +455,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       chat_conversation_id: chat_conversation_id,
       chat_subscribed: false,
       chat_typing_timer: nil,
-      wildcard?: false
+      wildcard?: false,
+      is_online: is_online,
+      last_seen_at: last_seen_at,
+      hide_online_status: hide_online_status,
+      activity_level_text: activity_level_text,
+      typical_times_text: typical_times_text
     )
   end
 

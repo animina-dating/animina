@@ -96,6 +96,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/passkeys", UserLive.PasskeySettings, :index
       live "/users/settings/sessions", UserLive.SessionSettings, :index
+      live "/users/settings/privacy", UserLive.PrivacySettings, :index
       live "/users/settings/blocked-contacts", UserLive.BlockedContacts, :index
       live "/users/settings/emails", UserLive.EmailLogs, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete

@@ -70,6 +70,9 @@ defmodule Animina.Accounts.User do
     # Messaging
     field :last_message_notified_at, :utc_datetime
 
+    # Privacy
+    field :hide_online_status, :boolean, default: false
+
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
     field :tos_accepted, :boolean, virtual: true
@@ -557,5 +560,14 @@ defmodule Animina.Accounts.User do
     user
     |> cast(attrs, [:grid_columns])
     |> validate_inclusion(:grid_columns, [1, 2, 3])
+  end
+
+  @doc """
+  A changeset for toggling online status visibility.
+  """
+  def online_status_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:hide_online_status])
+    |> validate_required([:hide_online_status])
   end
 end

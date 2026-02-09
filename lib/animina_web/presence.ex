@@ -21,6 +21,13 @@ defmodule AniminaWeb.Presence do
   end
 
   @doc """
+  Returns true if the given user has at least one tracked presence.
+  """
+  def user_online?(user_id) do
+    @topic |> list() |> Map.has_key?(user_id)
+  end
+
+  @doc """
   Tracks a user's LiveView process in Presence.
   """
   def track_user(pid, user_id) do

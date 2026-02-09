@@ -41,6 +41,9 @@ config :animina, start_online_users_logger: false
 # Disable photo processing GenServer and ML models in tests
 config :animina, start_photo_processor: false
 
+# Disable session tracker GenServer in tests
+config :animina, start_session_tracker: false
+
 # Disable mail queue checker in tests (tested with injected cmd_fn)
 config :animina, start_mail_queue_checker: false
 config :animina, start_photo_serving: false

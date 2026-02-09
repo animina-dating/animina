@@ -29,6 +29,7 @@ defmodule Animina.Application do
         maybe_start_scheduler() ++
         maybe_start_hot_deploy() ++
         maybe_start_online_users_logger() ++
+        maybe_start_session_tracker() ++
         maybe_start_ollama_health_tracker() ++
         maybe_start_photo_processor() ++
         maybe_start_ollama_retry_scheduler() ++
@@ -117,6 +118,14 @@ defmodule Animina.Application do
   defp maybe_start_online_users_logger do
     if Application.get_env(:animina, :start_online_users_logger, true) do
       [Animina.Accounts.OnlineUsersLogger]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_session_tracker do
+    if Application.get_env(:animina, :start_session_tracker, true) do
+      [Animina.Accounts.UserSessionTracker]
     else
       []
     end

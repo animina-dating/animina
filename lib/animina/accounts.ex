@@ -1006,4 +1006,22 @@ defmodule Animina.Accounts do
   defdelegate remove_contact_blacklist_entry(user, entry_id),
     to: Animina.Accounts.ContactBlacklist,
     as: :remove_entry
+
+  # --- Delegations to OnlineActivity ---
+
+  defdelegate last_seen(user_id), to: Animina.Accounts.OnlineActivity
+  defdelegate activity_level(user_id), to: Animina.Accounts.OnlineActivity
+  defdelegate typical_online_times(user_id), to: Animina.Accounts.OnlineActivity
+  defdelegate purge_old_sessions(), to: Animina.Accounts.OnlineActivity
+
+  # --- Online status privacy ---
+
+  @doc """
+  Updates the hide_online_status preference for a user.
+  """
+  def update_online_status_visibility(%User{} = user, attrs) do
+    user
+    |> User.online_status_changeset(attrs)
+    |> Repo.update()
+  end
 end
