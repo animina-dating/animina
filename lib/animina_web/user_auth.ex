@@ -86,6 +86,9 @@ defmodule AniminaWeb.UserAuth do
       session_role = get_session(conn, :current_role)
       scope = Scope.for_user(user, roles, session_role)
 
+      # Update last_seen_at (throttled to every 5 min, very fast update_all)
+      Accounts.maybe_update_last_seen(token)
+
       conn
       |> assign(:current_scope, scope)
       |> maybe_reissue_user_session_token(user, token_inserted_at)
@@ -135,13 +138,29 @@ defmodule AniminaWeb.UserAuth do
   # function will clear the session to avoid fixation attacks. See the
   # renew_session function to customize this behaviour.
   defp create_or_extend_session(conn, user, params) do
-    token = Accounts.generate_user_session_token(user)
+    conn_info = extract_conn_info(conn)
+    token = Accounts.generate_user_session_token(user, conn_info)
     remember_me = get_session(conn, :user_remember_me)
 
     conn
     |> renew_session(user)
     |> put_token_in_session(token)
     |> maybe_write_remember_me_cookie(token, params, remember_me)
+  end
+
+  defp extract_conn_info(conn) do
+    user_agent =
+      case get_req_header(conn, "user-agent") do
+        [ua | _] -> ua
+        _ -> nil
+      end
+
+    ip_address =
+      conn.remote_ip
+      |> :inet.ntoa()
+      |> to_string()
+
+    %{user_agent: user_agent, ip_address: ip_address}
   end
 
   # Do not renew session if the user is already logged in
@@ -326,10 +345,12 @@ defmodule AniminaWeb.UserAuth do
   end
 
   defp mount_current_scope(socket, session) do
+    user_token = session["user_token"]
+
     socket =
       Phoenix.Component.assign_new(socket, :current_scope, fn ->
         {user, _} =
-          if user_token = session["user_token"] do
+          if user_token do
             Accounts.get_user_by_session_token(user_token)
           end || {nil, nil}
 
@@ -341,6 +362,8 @@ defmodule AniminaWeb.UserAuth do
           Scope.for_user(nil)
         end
       end)
+
+    socket = Phoenix.Component.assign(socket, :current_session_token, user_token)
 
     default_locale =
       Application.get_env(:animina, AniminaWeb.Gettext, [])

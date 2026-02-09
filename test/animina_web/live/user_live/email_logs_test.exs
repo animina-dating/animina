@@ -16,12 +16,15 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       assert {:error, {:redirect, _}} = live(conn, ~p"/users/settings/emails")
     end
 
-    test "renders empty state", %{conn: conn, user: user} do
+    test "renders empty state with breadcrumbs", %{conn: conn, user: user} do
       conn = log_in_user(conn, user)
       {:ok, _view, html} = live(conn, ~p"/users/settings/emails")
 
       assert html =~ "Email History"
       assert html =~ "No emails found"
+      # Breadcrumb link to settings
+      assert html =~ ~s(/users/settings)
+      assert html =~ "Settings"
     end
 
     test "shows only current user's emails", %{conn: conn, user: user} do
@@ -76,7 +79,7 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       assert html =~ "Your confirmation PIN is 999888"
     end
 
-    test "filters by type", %{conn: conn, user: user} do
+    test "shows multiple emails", %{conn: conn, user: user} do
       Emails.create_email_log(%{
         email_type: "confirmation_pin",
         recipient: user.email,
@@ -96,14 +99,92 @@ defmodule AniminaWeb.UserLive.EmailLogsTest do
       })
 
       conn = log_in_user(conn, user)
-      {:ok, view, _html} = live(conn, ~p"/users/settings/emails")
+      {:ok, _view, html} = live(conn, ~p"/users/settings/emails")
 
+      assert html =~ "2 emails"
+    end
+
+    test "filters by status", %{conn: conn, user: user} do
+      Emails.create_email_log(%{
+        email_type: "confirmation_pin",
+        recipient: user.email,
+        subject: "Sent Email",
+        body: "Body",
+        status: "sent",
+        user_id: user.id
+      })
+
+      Emails.create_email_log(%{
+        email_type: "confirmation_pin",
+        recipient: user.email,
+        subject: "Failed Email",
+        body: "Body",
+        status: "error",
+        error_message: "SMTP error",
+        user_id: user.id
+      })
+
+      conn = log_in_user(conn, user)
+      {:ok, view, html} = live(conn, ~p"/users/settings/emails")
+
+      # Both shown initially
+      assert html =~ "Sent Email"
+      assert html =~ "Failed Email"
+
+      # Filter to only sent
+      html =
+        view
+        |> element("select[name=status]")
+        |> render_change(%{status: "sent"})
+
+      assert html =~ "Sent Email"
+      refute html =~ "Failed Email"
+    end
+
+    test "filters by type", %{conn: conn, user: user} do
+      Emails.create_email_log(%{
+        email_type: "confirmation_pin",
+        recipient: user.email,
+        subject: "PIN Email",
+        body: "Body",
+        status: "sent",
+        user_id: user.id
+      })
+
+      Emails.create_email_log(%{
+        email_type: "password_reset",
+        recipient: user.email,
+        subject: "Reset Email",
+        body: "Body",
+        status: "sent",
+        user_id: user.id
+      })
+
+      conn = log_in_user(conn, user)
+      {:ok, view, html} = live(conn, ~p"/users/settings/emails")
+
+      assert html =~ "PIN Email"
+      assert html =~ "Reset Email"
+
+      # Filter to only password_reset
       html =
         view
         |> element("select[name=type]")
-        |> render_change(%{"type" => "confirmation_pin"})
+        |> render_change(%{type: "password_reset"})
 
-      assert html =~ "1 email"
+      refute html =~ "PIN Email"
+      assert html =~ "Reset Email"
+    end
+
+    test "shows per page selector", %{conn: conn, user: user} do
+      conn = log_in_user(conn, user)
+      {:ok, _view, html} = live(conn, ~p"/users/settings/emails")
+
+      assert html =~ "Per page"
+      assert html =~ "50"
+      assert html =~ "100"
+      assert html =~ "250"
+      assert html =~ "500"
     end
   end
 end

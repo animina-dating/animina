@@ -78,7 +78,7 @@ defmodule Animina.AccountsFixtures do
   end
 
   def set_password(user) do
-    {:ok, {user, _expired_tokens}} =
+    {:ok, {user, _expired_tokens, _security_info}} =
       Accounts.update_user_password(user, %{password: valid_user_password()})
 
     user

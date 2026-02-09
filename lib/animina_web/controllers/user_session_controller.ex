@@ -38,14 +38,31 @@ defmodule AniminaWeb.UserSessionController do
   def update_password(conn, %{"user" => user_params} = params) do
     user = conn.assigns.current_scope.user
     true = Accounts.sudo_mode?(user)
-    {:ok, {_user, expired_tokens}} = Accounts.update_user_password(user, user_params)
 
-    # disconnect all existing LiveViews with old sessions
-    UserAuth.disconnect_sessions(expired_tokens)
+    case Accounts.update_user_password(user, user_params) do
+      {:ok, {user, expired_tokens, security_info}} ->
+        # disconnect all existing LiveViews with old sessions
+        UserAuth.disconnect_sessions(expired_tokens)
 
-    conn
-    |> put_session(:user_return_to, ~p"/users/settings/account")
-    |> create(params, gettext("Password updated successfully!"))
+        # Send password change notification email with undo/confirm links
+        Accounts.UserNotifier.deliver_password_changed_notification(
+          user,
+          AniminaWeb.Endpoint.url() <> "/users/security/undo/#{security_info.undo_token}",
+          AniminaWeb.Endpoint.url() <> "/users/security/confirm/#{security_info.confirm_token}"
+        )
+
+        conn
+        |> put_session(:user_return_to, ~p"/users/settings/account")
+        |> create(params, gettext("Password updated successfully!"))
+
+      {:error, :cooldown_active} ->
+        conn
+        |> put_flash(
+          :error,
+          gettext("Cannot change password while a recent account change is being reviewed.")
+        )
+        |> redirect(to: ~p"/users/settings/account")
+    end
   end
 
   def create_from_pin(conn, %{"user" => %{"user_id" => user_id} = user_params}) do

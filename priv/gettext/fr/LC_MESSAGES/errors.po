@@ -101,7 +101,7 @@ msgstr "doit être supérieur ou égal à %{number}"
 msgid "must be equal to %{number}"
 msgstr "doit être égal à %{number}"
 
-#: lib/animina/accounts.ex:209
+#: lib/animina/accounts.ex:217
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Code de parrainage non trouvé"
@@ -211,9 +211,9 @@ msgstr "doit contenir le signe @ et ne pas avoir d'espaces"
 #: lib/animina/accounts/contact_blacklist_entry.ex:69
 #, elixir-autogen, elixir-format
 msgid "is not a valid email address"
-msgstr ""
+msgstr "n'est pas une adresse e-mail valide"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:34
 #, elixir-autogen, elixir-format
 msgid "is already blocked"
-msgstr ""
+msgstr "est déjà bloqué"

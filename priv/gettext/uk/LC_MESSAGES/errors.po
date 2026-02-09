@@ -110,7 +110,7 @@ msgstr "повинно бути більше або дорівнювати %{num
 msgid "must be equal to %{number}"
 msgstr "повинно дорівнювати %{number}"
 
-#: lib/animina/accounts.ex:209
+#: lib/animina/accounts.ex:217
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Код запрошення не знайдено"
@@ -220,9 +220,9 @@ msgstr "має містити знак @ і не містити пробілів
 #: lib/animina/accounts/contact_blacklist_entry.ex:69
 #, elixir-autogen, elixir-format
 msgid "is not a valid email address"
-msgstr ""
+msgstr "не є дійсною адресою електронної пошти"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:34
 #, elixir-autogen, elixir-format
 msgid "is already blocked"
-msgstr ""
+msgstr "вже заблоковано"

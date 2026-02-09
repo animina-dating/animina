@@ -1,0 +1,20 @@
+Sicherheitshinweis: Deine E-Mail wurde geändert – ANIMINA
+---
+
+Hallo <%= @greeting_name %>,
+
+Die E-Mail-Adresse deines ANIMINA-Kontos wurde gerade geändert.
+
+Alte E-Mail: <%= @old_email %>
+Neue E-Mail: <%= @new_email %>
+
+Wenn du das warst, klicke hier zur Bestätigung:
+<%= @confirm_url %>
+
+Wenn du das NICHT warst, klicke hier zum sofortigen Rückgängigmachen:
+<%= @undo_url %>
+
+Der Rückgängig-Link ist 48 Stunden gültig. Danach wird
+die Änderung dauerhaft.
+
+Falls du Hilfe brauchst, kontaktiere support@animina.de

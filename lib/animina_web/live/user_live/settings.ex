@@ -4,6 +4,7 @@ defmodule AniminaWeb.UserLive.Settings do
   on_mount {AniminaWeb.UserAuth, :require_sudo_mode}
 
   alias Animina.Accounts
+  alias Animina.Accounts.UserNotifier
 
   @dev_routes Application.compile_env(:animina, :dev_routes)
 
@@ -17,6 +18,15 @@ defmodule AniminaWeb.UserLive.Settings do
           subtitle={gettext("Manage your account email address and password settings")}
         />
 
+        <div :if={@cooldown_active} class="alert alert-warning mb-4" role="alert">
+          <.icon name="hero-shield-exclamation" class="h-5 w-5" />
+          <p>
+            {gettext(
+              "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
+            )}
+          </p>
+        </div>
+
         <div :if={@pending_email} class="alert alert-info mb-4" role="alert">
           <p>
             {gettext(
@@ -27,18 +37,25 @@ defmodule AniminaWeb.UserLive.Settings do
           </p>
         </div>
 
-        <.form for={@email_form} id="email_form" phx-submit="update_email" phx-change="validate_email">
-          <.input
-            field={@email_form[:email]}
-            type="email"
-            label={gettext("Email")}
-            autocomplete="username"
-            required
-          />
-          <.button variant="primary" phx-disable-with={gettext("Changing...")}>
-            {gettext("Change Email")}
-          </.button>
-        </.form>
+        <fieldset disabled={@cooldown_active}>
+          <.form
+            for={@email_form}
+            id="email_form"
+            phx-submit="update_email"
+            phx-change="validate_email"
+          >
+            <.input
+              field={@email_form[:email]}
+              type="email"
+              label={gettext("Email")}
+              autocomplete="username"
+              required
+            />
+            <.button variant="primary" phx-disable-with={gettext("Changing...")}>
+              {gettext("Change Email")}
+            </.button>
+          </.form>
+        </fieldset>
 
         <p :if={@dev_routes} class="mt-4 text-center text-sm text-base-content/50">
           <a href="/dev/mailbox" target="_blank" class="underline hover:text-primary">
@@ -48,39 +65,41 @@ defmodule AniminaWeb.UserLive.Settings do
 
         <div class="divider" />
 
-        <.form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/update-password"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <input
-            name={@password_form[:email].name}
-            type="hidden"
-            id="hidden_user_email"
-            autocomplete="username"
-            value={@current_email}
-          />
-          <.input
-            field={@password_form[:password]}
-            type="password"
-            label={gettext("New password")}
-            autocomplete="new-password"
-            required
-          />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label={gettext("Confirm new password")}
-            autocomplete="new-password"
-          />
-          <.button variant="primary" phx-disable-with={gettext("Saving...")}>
-            {gettext("Save Password")}
-          </.button>
-        </.form>
+        <fieldset disabled={@cooldown_active}>
+          <.form
+            for={@password_form}
+            id="password_form"
+            action={~p"/users/update-password"}
+            method="post"
+            phx-change="validate_password"
+            phx-submit="update_password"
+            phx-trigger-action={@trigger_submit}
+          >
+            <input
+              name={@password_form[:email].name}
+              type="hidden"
+              id="hidden_user_email"
+              autocomplete="username"
+              value={@current_email}
+            />
+            <.input
+              field={@password_form[:password]}
+              type="password"
+              label={gettext("New password")}
+              autocomplete="new-password"
+              required
+            />
+            <.input
+              field={@password_form[:password_confirmation]}
+              type="password"
+              label={gettext("Confirm new password")}
+              autocomplete="new-password"
+            />
+            <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+              {gettext("Save Password")}
+            </.button>
+          </.form>
+        </fieldset>
       </div>
     </Layouts.app>
     """
@@ -92,8 +111,24 @@ defmodule AniminaWeb.UserLive.Settings do
       case Accounts.update_user_email(socket.assigns.current_scope.user, token,
              originator: socket.assigns.current_scope.user
            ) do
-        {:ok, _user} ->
+        {:ok, {_user, security_info}} ->
+          # Send notification to old email with undo/confirm links
+          UserNotifier.deliver_email_changed_notification(
+            socket.assigns.current_scope.user,
+            security_info.old_email,
+            socket.assigns.current_scope.user.email,
+            url(~p"/users/security/undo/#{security_info.undo_token}"),
+            url(~p"/users/security/confirm/#{security_info.confirm_token}")
+          )
+
           put_flash(socket, :info, gettext("Email changed successfully."))
+
+        {:error, :cooldown_active} ->
+          put_flash(
+            socket,
+            :error,
+            gettext("Cannot change email while a recent account change is being reviewed.")
+          )
 
         {:error, _} ->
           put_flash(socket, :error, gettext("Email change link is invalid or it has expired."))
@@ -112,6 +147,7 @@ defmodule AniminaWeb.UserLive.Settings do
       |> assign(:page_title, gettext("Account Security"))
       |> assign(:current_email, user.email)
       |> assign(:pending_email, Accounts.get_pending_email_change(user))
+      |> assign(:cooldown_active, Accounts.has_active_security_cooldown?(user.id))
       |> assign(:dev_routes, @dev_routes)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
@@ -129,6 +165,16 @@ defmodule AniminaWeb.UserLive.Settings do
       |> to_form()
 
     {:noreply, assign(socket, email_form: email_form)}
+  end
+
+  def handle_event("update_email", %{"user" => _user_params}, socket)
+      when socket.assigns.cooldown_active do
+    {:noreply,
+     put_flash(
+       socket,
+       :error,
+       gettext("Cannot change email while a recent account change is being reviewed.")
+     )}
   end
 
   def handle_event("update_email", %{"user" => user_params}, socket) do
@@ -161,6 +207,16 @@ defmodule AniminaWeb.UserLive.Settings do
       |> to_form()
 
     {:noreply, assign(socket, password_form: password_form)}
+  end
+
+  def handle_event("update_password", %{"user" => _user_params}, socket)
+      when socket.assigns.cooldown_active do
+    {:noreply,
+     put_flash(
+       socket,
+       :error,
+       gettext("Cannot change password while a recent account change is being reviewed.")
+     )}
   end
 
   def handle_event("update_password", %{"user" => user_params}, socket) do

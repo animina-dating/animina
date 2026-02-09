@@ -248,6 +248,26 @@ Configure via feature flags at `/admin/feature-flags`:
 - `discovery_popularity_score_bonus` — boost for low-popularity users (default: +10)
 - `discovery_popularity_score_penalty` — penalty for high-popularity users (default: -15)
 
+## Security Features
+
+### Multi-Device Session Management
+
+Users can view and manage their active sessions at `/users/settings/sessions`:
+- Lists all active sessions with browser/OS, IP address, and last active time
+- Current session identified with "This device" badge
+- Per-session "Log out" button and "Log out all other devices" button
+- Revoking a session broadcasts a PubSub disconnect to close the LiveView
+
+### 48-Hour Undo for Email/Password Changes
+
+When a user changes their email or password, a security event is created:
+- **Email changes**: Notification sent to the OLD email with undo and confirm links
+- **Password changes**: Notification sent to the current email with undo and confirm links
+- **48-hour cooldown**: Further email/password changes are blocked during the review period
+- **Undo link**: Reverts the change and kills all sessions (victim can regain access)
+- **Confirm link**: Approves the change and clears the cooldown immediately
+- **Password reset NOT blocked**: The forgot-password flow remains available as a recovery mechanism
+
 ## Legal Compliance
 
 German DSGVO/GDPR compliant with:

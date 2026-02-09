@@ -89,6 +89,12 @@ defmodule AniminaWeb.UserLive.SettingsHub do
             preview={@passkeys_preview}
           />
           <.settings_card
+            navigate={~p"/users/settings/sessions"}
+            icon="hero-computer-desktop"
+            title={gettext("Active Sessions")}
+            preview={@sessions_preview}
+          />
+          <.settings_card
             navigate={~p"/users/settings/delete-account"}
             icon="hero-trash"
             title={gettext("Delete Account")}
@@ -164,6 +170,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       |> assign(:user, user)
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:passkeys_preview, build_passkeys_preview(user))
+      |> assign(:sessions_preview, build_sessions_preview(user))
       |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))
       |> assign(:email_logs_preview, build_email_logs_preview(user))
 
@@ -187,6 +194,16 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       0 -> gettext("No emails sent")
       1 -> gettext("1 email sent")
       n -> gettext("%{count} emails sent", count: n)
+    end
+  end
+
+  defp build_sessions_preview(user) do
+    count = length(Accounts.list_user_sessions(user.id))
+
+    case count do
+      0 -> gettext("No active sessions")
+      1 -> gettext("1 active session")
+      n -> gettext("%{count} active sessions", count: n)
     end
   end
 

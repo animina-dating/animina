@@ -187,7 +187,7 @@ defmodule Animina.AccountsTest do
     end
 
     test "updates the email with a valid token", %{user: user, token: token, email: email} do
-      assert {:ok, %{email: ^email}} = Accounts.update_user_email(user, token)
+      assert {:ok, {%{email: ^email}, _security_info}} = Accounts.update_user_email(user, token)
       changed_user = Repo.get!(User, user.id)
       assert changed_user.email != user.email
       assert changed_user.email == email
@@ -271,7 +271,7 @@ defmodule Animina.AccountsTest do
     end
 
     test "updates the password", %{user: user} do
-      {:ok, {user, expired_tokens}} =
+      {:ok, {user, expired_tokens, _security_info}} =
         Accounts.update_user_password(user, %{
           password: "new valid password"
         })
@@ -284,7 +284,7 @@ defmodule Animina.AccountsTest do
     test "deletes all tokens for the given user", %{user: user} do
       _ = Accounts.generate_user_session_token(user)
 
-      {:ok, {_, _}} =
+      {:ok, {_, _, _security_info}} =
         Accounts.update_user_password(user, %{
           password: "new valid password"
         })

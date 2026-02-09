@@ -259,12 +259,14 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       refute Accounts.get_user_by_email(user.email)
       assert Accounts.get_user_by_email(email)
 
-      # use confirm token again
+      # use confirm token again — blocked by security cooldown
       {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings/account"
       assert %{"error" => message} = flash
-      assert message == "Email change link is invalid or it has expired."
+
+      assert message == "Cannot change email while a recent account change is being reviewed." or
+               message == "Email change link is invalid or it has expired."
     end
 
     test "does not update email with invalid token", %{conn: conn, user: user} do

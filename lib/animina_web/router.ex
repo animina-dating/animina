@@ -95,6 +95,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/locations", UserLive.EditLocations, :edit
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/passkeys", UserLive.PasskeySettings, :index
+      live "/users/settings/sessions", UserLive.SessionSettings, :index
       live "/users/settings/blocked-contacts", UserLive.BlockedContacts, :index
       live "/users/settings/emails", UserLive.EmailLogs, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
@@ -151,5 +152,9 @@ defmodule AniminaWeb.Router do
     # WebAuthn passkey authentication (public — no authentication required)
     post "/webauthn/auth/begin", WebAuthnController, :auth_begin
     post "/webauthn/auth/complete", WebAuthnController, :auth_complete
+
+    # Security event undo/confirm (public — token from email is the auth factor)
+    get "/users/security/undo/:token", SecurityEventController, :undo
+    get "/users/security/confirm/:token", SecurityEventController, :confirm
   end
 end

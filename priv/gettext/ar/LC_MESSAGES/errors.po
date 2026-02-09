@@ -137,7 +137,7 @@ msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
 msgid "must be equal to %{number}"
 msgstr "يجب أن يساوي %{number}"
 
-#: lib/animina/accounts.ex:209
+#: lib/animina/accounts.ex:217
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"
@@ -247,9 +247,9 @@ msgstr "يجب أن يحتوي على علامة @ وبدون مسافات"
 #: lib/animina/accounts/contact_blacklist_entry.ex:69
 #, elixir-autogen, elixir-format
 msgid "is not a valid email address"
-msgstr ""
+msgstr "ليس عنوان بريد إلكتروني صالحاً"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:34
 #, elixir-autogen, elixir-format
 msgid "is already blocked"
-msgstr ""
+msgstr "محظور بالفعل"

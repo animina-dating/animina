@@ -21,6 +21,9 @@ defmodule Animina.Accounts.UserToken do
     field :context, :string
     field :sent_to, :string
     field :authenticated_at, :utc_datetime
+    field :user_agent, :string
+    field :ip_address, :string
+    field :last_seen_at, :utc_datetime
     belongs_to :user, Animina.Accounts.User
 
     timestamps(type: :utc_datetime, updated_at: false)
@@ -45,10 +48,31 @@ defmodule Animina.Accounts.UserToken do
   and devices in the UI and allow users to explicitly expire any
   session they deem invalid.
   """
-  def build_session_token(user) do
+  def build_session_token(user, conn_info \\ %{}) do
     token = :crypto.strong_rand_bytes(@rand_size)
     dt = user.authenticated_at || DateTime.utc_now(:second)
-    {token, %UserToken{token: token, context: "session", user_id: user.id, authenticated_at: dt}}
+
+    {token,
+     %UserToken{
+       token: token,
+       context: "session",
+       user_id: user.id,
+       authenticated_at: dt,
+       user_agent: Map.get(conn_info, :user_agent),
+       ip_address: Map.get(conn_info, :ip_address),
+       last_seen_at: DateTime.utc_now(:second)
+     }}
+  end
+
+  @doc """
+  Returns a query for all active session tokens for a user, ordered by last_seen_at desc.
+  """
+  def user_sessions_query(user_id) do
+    from t in UserToken,
+      where: t.user_id == ^user_id,
+      where: t.context == "session",
+      where: t.inserted_at > ago(@session_validity_in_days, "day"),
+      order_by: [desc: t.last_seen_at, desc: t.inserted_at]
   end
 
   @doc """

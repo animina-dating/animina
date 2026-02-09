@@ -214,6 +214,49 @@ defmodule Animina.Accounts.UserNotifier do
     )
   end
 
+  @doc """
+  Deliver a notification to the OLD email when email was changed.
+  Includes undo and confirm links.
+  """
+  def deliver_email_changed_notification(user, old_email, new_email, undo_url, confirm_url) do
+    locale = user_locale(user)
+    greeting = greeting_name(user)
+
+    {subject, body} =
+      EmailTemplates.render(locale, :email_changed_notification,
+        greeting_name: greeting,
+        old_email: old_email,
+        new_email: new_email,
+        undo_url: undo_url,
+        confirm_url: confirm_url
+      )
+
+    # Send to old email (the victim's email)
+    deliver(old_email, subject, body,
+      email_type: :email_changed_notification,
+      user_id: user.id
+    )
+  end
+
+  @doc """
+  Deliver a notification to the current email when password was changed.
+  Includes undo and confirm links.
+  """
+  def deliver_password_changed_notification(user, undo_url, confirm_url) do
+    {subject, body} =
+      EmailTemplates.render(user_locale(user), :password_changed_notification,
+        greeting_name: greeting_name(user),
+        email: user.email,
+        undo_url: undo_url,
+        confirm_url: confirm_url
+      )
+
+    deliver(user_recipient(user), subject, body,
+      email_type: :password_changed_notification,
+      user_id: user.id
+    )
+  end
+
   @german_months %{
     1 => "Januar",
     2 => "Februar",

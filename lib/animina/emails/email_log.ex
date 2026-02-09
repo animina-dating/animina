@@ -22,6 +22,8 @@ defmodule Animina.Emails.EmailLog do
     registration_spike_alert
     ollama_queue_alert
     unread_messages
+    email_changed_notification
+    password_changed_notification
   )
 
   schema "email_logs" do

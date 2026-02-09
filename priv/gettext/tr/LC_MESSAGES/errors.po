@@ -101,7 +101,7 @@ msgstr "%{number} değerinden büyük veya eşit olmalı"
 msgid "must be equal to %{number}"
 msgstr "%{number} değerine eşit olmalı"
 
-#: lib/animina/accounts.ex:209
+#: lib/animina/accounts.ex:217
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "Davet kodu bulunamadı"
@@ -211,9 +211,9 @@ msgstr "@ işareti içermeli ve boşluk olmamalıdır"
 #: lib/animina/accounts/contact_blacklist_entry.ex:69
 #, elixir-autogen, elixir-format
 msgid "is not a valid email address"
-msgstr ""
+msgstr "geçerli bir e-posta adresi değil"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:34
 #, elixir-autogen, elixir-format
 msgid "is already blocked"
-msgstr ""
+msgstr "zaten engellendi"

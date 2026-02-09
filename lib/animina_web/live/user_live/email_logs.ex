@@ -6,7 +6,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
 
   import AniminaWeb.Helpers.AdminHelpers, only: [parse_int: 2, format_datetime: 1]
 
-  @default_per_page 20
+  @default_per_page 50
 
   @impl true
   def mount(_params, _session, socket) do
@@ -21,6 +21,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
   def handle_params(params, _uri, socket) do
     user_id = socket.assigns.current_scope.user.id
     page = parse_int(params["page"], 1)
+    per_page = parse_int(params["per_page"], @default_per_page)
     sort_by = parse_sort_by(params["sort_by"])
     sort_dir = parse_sort_dir(params["sort_dir"])
     filter_type = params["type"]
@@ -29,7 +30,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
     result =
       Emails.list_email_logs(
         page: page,
-        per_page: @default_per_page,
+        per_page: per_page,
         sort_by: sort_by,
         sort_dir: sort_dir,
         filter_type: filter_type,
@@ -57,6 +58,11 @@ defmodule AniminaWeb.UserLive.EmailLogs do
   @impl true
   def handle_event("go-to-page", %{"page" => page}, socket) do
     {:noreply, push_patch(socket, to: build_path(socket, page: page))}
+  end
+
+  @impl true
+  def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
+    {:noreply, push_patch(socket, to: build_path(socket, page: 1, per_page: per_page))}
   end
 
   @impl true
@@ -114,6 +120,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
     params =
       %{
         page: Keyword.get(overrides, :page, socket.assigns.page),
+        per_page: Keyword.get(overrides, :per_page, socket.assigns.per_page),
         sort_by: Keyword.get(overrides, :sort_by, socket.assigns.sort_by),
         sort_dir: Keyword.get(overrides, :sort_dir, socket.assigns.sort_dir)
       }
@@ -153,13 +160,23 @@ defmodule AniminaWeb.UserLive.EmailLogs do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
-      <div class="max-w-2xl mx-auto">
-        <div class="flex items-center gap-3 mb-6">
-          <.link navigate={~p"/users/settings"} class="btn btn-ghost btn-sm">
-            <.icon name="hero-arrow-left-mini" class="h-4 w-4" />
-          </.link>
+      <div>
+        <%!-- Breadcrumbs --%>
+        <div class="text-sm breadcrumbs mb-4">
+          <ul>
+            <li>
+              <.link navigate={~p"/users/settings"} class="link link-hover">
+                {gettext("Settings")}
+              </.link>
+            </li>
+            <li>{gettext("Email History")}</li>
+          </ul>
+        </div>
+
+        <%!-- Header --%>
+        <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Email History")}</h1>
-          <span class="badge badge-outline">
+          <span class="badge badge-lg badge-outline">
             {ngettext(
               "%{count} email",
               "%{count} emails",
@@ -199,6 +216,26 @@ defmodule AniminaWeb.UserLive.EmailLogs do
               </option>
             </select>
           </label>
+
+          <div class="form-control">
+            <div class="label">
+              <span class="label-text">{gettext("Per page")}</span>
+            </div>
+            <div class="join">
+              <%= for size <- [50, 100, 250, 500] do %>
+                <button
+                  class={[
+                    "btn btn-sm join-item",
+                    if(@per_page == size, do: "btn-active")
+                  ]}
+                  phx-click="change-per-page"
+                  phx-value-per_page={size}
+                >
+                  {size}
+                </button>
+              <% end %>
+            </div>
+          </div>
         </div>
 
         <%!-- Table --%>
@@ -206,15 +243,8 @@ defmodule AniminaWeb.UserLive.EmailLogs do
           <table class="table table-sm">
             <thead>
               <tr>
-                <th
-                  class="cursor-pointer hover:bg-base-200"
-                  phx-click="sort"
-                  phx-value-column="email_type"
-                >
-                  {gettext("Type")}
-                  <.sort_indicator sort_by={@sort_by} sort_dir={@sort_dir} column={:email_type} />
-                </th>
                 <th>{gettext("Subject")}</th>
+                <th>{gettext("Recipient")}</th>
                 <th
                   class="cursor-pointer hover:bg-base-200"
                   phx-click="sort"
@@ -223,7 +253,6 @@ defmodule AniminaWeb.UserLive.EmailLogs do
                   {gettext("Status")}
                   <.sort_indicator sort_by={@sort_by} sort_dir={@sort_dir} column={:status} />
                 </th>
-                <th>{gettext("Error")}</th>
                 <th
                   class="cursor-pointer hover:bg-base-200"
                   phx-click="sort"
@@ -237,7 +266,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
             <tbody>
               <%= if @logs == [] do %>
                 <tr>
-                  <td colspan="5" class="text-center py-8 text-base-content/50">
+                  <td colspan="4" class="text-center py-8 text-base-content/50">
                     {gettext("No emails found.")}
                   </td>
                 </tr>
@@ -251,8 +280,10 @@ defmodule AniminaWeb.UserLive.EmailLogs do
                   phx-click="toggle-expand"
                   phx-value-id={log.id}
                 >
-                  <td><span class="badge badge-sm badge-ghost">{log.email_type}</span></td>
                   <td class="max-w-xs truncate">{log.subject}</td>
+                  <td class="max-w-[10rem] truncate text-xs" title={log.recipient}>
+                    {log.recipient}
+                  </td>
                   <td>
                     <span class={[
                       "badge badge-sm",
@@ -260,9 +291,6 @@ defmodule AniminaWeb.UserLive.EmailLogs do
                     ]}>
                       {log.status}
                     </span>
-                  </td>
-                  <td class="max-w-xs truncate text-xs text-error">
-                    {log.error_message}
                   </td>
                   <td>
                     <span class="text-xs" title={format_datetime(log.inserted_at)}>
@@ -272,7 +300,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
                 </tr>
                 <%= if MapSet.member?(@expanded, log.id) do %>
                   <tr class="bg-base-200/30">
-                    <td colspan="5" class="p-4">
+                    <td colspan="4" class="p-4">
                       <pre class="text-xs whitespace-pre-wrap break-words max-h-96 overflow-y-auto bg-base-100 p-3 rounded-lg">{log.body}</pre>
                     </td>
                   </tr>

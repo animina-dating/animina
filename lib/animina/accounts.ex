@@ -12,7 +12,15 @@ defmodule Animina.Accounts do
   import Ecto.Query, warn: false
   use Gettext, backend: AniminaWeb.Gettext
 
-  alias Animina.Accounts.{User, UserLocation, UserNotifier, UserPasskey, UserToken}
+  alias Animina.Accounts.{
+    AccountSecurityEvent,
+    User,
+    UserLocation,
+    UserNotifier,
+    UserPasskey,
+    UserToken
+  }
+
   alias Animina.Moodboard
   alias Animina.Repo
   alias Animina.TimeMachine
@@ -308,22 +316,31 @@ defmodule Animina.Accounts do
 
   @doc """
   Updates the user email using the given token.
+
+  Returns `{:ok, {user, security_info}}` where security_info contains
+  `old_email`, `undo_token`, and `confirm_token` for the notification email.
+  Returns `{:error, :cooldown_active}` if a security cooldown is in effect.
   """
   def update_user_email(user, token, opts \\ []) do
     context = "change:#{user.email}"
     pt_opts = PT.opts(opts)
 
     Repo.transact(fn ->
-      with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
+      with :ok <- check_no_active_cooldown(user.id),
+           {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
            %UserToken{sent_to: email} <- Repo.one(query),
+           old_email <- user.email,
            {:ok, user} <-
              User.email_changeset(user, %{email: email})
              |> PaperTrail.update(pt_opts)
              |> PT.unwrap(),
            {_count, _result} <-
-             Repo.delete_all(from(UserToken, where: [user_id: ^user.id, context: ^context])) do
-        {:ok, user}
+             Repo.delete_all(from(UserToken, where: [user_id: ^user.id, context: ^context])),
+           {:ok, security_info} <-
+             create_security_event_for_email_change(user, old_email, email) do
+        {:ok, {user, security_info}}
       else
+        {:error, :cooldown_active} -> {:error, :cooldown_active}
         _ -> {:error, :transaction_aborted}
       end
     end)
@@ -338,20 +355,39 @@ defmodule Animina.Accounts do
 
   @doc """
   Updates the user password.
+
+  Returns `{:ok, {user, expired_tokens, security_info}}` on success,
+  where security_info contains `undo_token` and `confirm_token`.
+  Returns `{:error, :cooldown_active}` if a security cooldown is in effect.
   """
   def update_user_password(user, attrs) do
-    user
-    |> User.password_changeset(attrs)
-    |> update_user_and_delete_all_tokens()
+    case check_no_active_cooldown(user.id) do
+      :ok ->
+        old_hashed_password = user.hashed_password
+
+        case user |> User.password_changeset(attrs) |> update_user_and_delete_all_tokens() do
+          {:ok, {user, expired_tokens}} ->
+            {:ok, security_info} =
+              create_security_event_for_password_change(user, old_hashed_password)
+
+            {:ok, {user, expired_tokens, security_info}}
+
+          error ->
+            error
+        end
+
+      {:error, :cooldown_active} ->
+        {:error, :cooldown_active}
+    end
   end
 
   ## Session
 
   @doc """
-  Generates a session token.
+  Generates a session token, optionally with connection metadata.
   """
-  def generate_user_session_token(user) do
-    {token, user_token} = UserToken.build_session_token(user)
+  def generate_user_session_token(user, conn_info \\ %{}) do
+    {token, user_token} = UserToken.build_session_token(user, conn_info)
     Repo.insert!(user_token)
     token
   end
@@ -609,6 +645,229 @@ defmodule Animina.Accounts do
         {:ok, {user, tokens_to_expire}}
       end
     end)
+  end
+
+  ## Session management
+
+  @doc """
+  Lists all active session tokens for a user.
+  """
+  def list_user_sessions(user_id) do
+    UserToken.user_sessions_query(user_id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Deletes a specific session token by its ID, scoped to a user.
+  Returns the deleted token (for broadcasting disconnect) or nil.
+  """
+  def delete_user_session_by_id(token_id, user_id) do
+    query =
+      from(t in UserToken,
+        where: t.id == ^token_id,
+        where: t.user_id == ^user_id,
+        where: t.context == "session"
+      )
+
+    case Repo.one(query) do
+      nil -> nil
+      token -> Repo.delete!(token)
+    end
+  end
+
+  @doc """
+  Deletes all session tokens for a user except the current one.
+  Returns the list of deleted tokens (for broadcasting disconnects).
+  """
+  def delete_other_user_sessions(user_id, current_token) do
+    query =
+      from(t in UserToken,
+        where: t.user_id == ^user_id,
+        where: t.context == "session",
+        where: t.token != ^current_token,
+        select: t
+      )
+
+    tokens = Repo.all(query)
+
+    Repo.delete_all(
+      from(t in UserToken,
+        where: t.user_id == ^user_id,
+        where: t.context == "session",
+        where: t.token != ^current_token
+      )
+    )
+
+    tokens
+  end
+
+  @last_seen_throttle_minutes 5
+
+  @doc """
+  Updates `last_seen_at` on a session token, throttled to every 5 minutes.
+  """
+  def maybe_update_last_seen(token) when is_binary(token) do
+    now = DateTime.utc_now(:second)
+    throttle_cutoff = DateTime.add(now, -@last_seen_throttle_minutes, :minute)
+
+    from(t in UserToken,
+      where: t.token == ^token,
+      where: t.context == "session",
+      where: is_nil(t.last_seen_at) or t.last_seen_at < ^throttle_cutoff
+    )
+    |> Repo.update_all(set: [last_seen_at: now])
+  end
+
+  ## Security events (email/password change protection)
+
+  @doc """
+  Checks whether a user has an active (unresolved, unexpired) security cooldown.
+  """
+  def has_active_security_cooldown?(user_id) do
+    AccountSecurityEvent.active_events_query(user_id)
+    |> Repo.exists?()
+  end
+
+  @doc """
+  Returns the active security event for a user, or nil.
+  """
+  def get_active_security_event(user_id) do
+    AccountSecurityEvent.active_events_query(user_id)
+    |> limit(1)
+    |> Repo.one()
+  end
+
+  @doc """
+  Creates a security event for an email change.
+  Returns `{:ok, %{old_email: ..., undo_token: ..., confirm_token: ...}}`.
+  """
+  def create_security_event_for_email_change(user, old_email, new_email) do
+    {undo_token, confirm_token, event} =
+      AccountSecurityEvent.build(user.id, "email_change", %{
+        old_email: old_email,
+        old_value: old_email,
+        new_value: new_email
+      })
+
+    Repo.insert!(event)
+    {:ok, %{old_email: old_email, undo_token: undo_token, confirm_token: confirm_token}}
+  end
+
+  @doc """
+  Creates a security event for a password change.
+  Returns `{:ok, %{undo_token: ..., confirm_token: ...}}`.
+  """
+  def create_security_event_for_password_change(user, old_hashed_password) do
+    {undo_token, confirm_token, event} =
+      AccountSecurityEvent.build(user.id, "password_change", %{
+        old_value: old_hashed_password
+      })
+
+    Repo.insert!(event)
+    {:ok, %{undo_token: undo_token, confirm_token: confirm_token}}
+  end
+
+  @doc """
+  Verifies an undo token and reverts the associated change.
+
+  For email changes: reverts the email to the old value, kills all sessions.
+  For password changes: restores the old password hash, kills all sessions.
+
+  Returns `{:ok, event}` or `{:error, reason}`.
+  """
+  def undo_security_event(token) do
+    with {:ok, query} <- AccountSecurityEvent.verify_undo_token_query(token),
+         %AccountSecurityEvent{} = event <- Repo.one(query) do
+      case event.event_type do
+        "email_change" -> undo_email_change(event)
+        "password_change" -> undo_password_change(event)
+        _ -> {:error, :unknown_event_type}
+      end
+    else
+      nil -> {:error, :invalid_token}
+      :error -> {:error, :invalid_token}
+    end
+  end
+
+  defp undo_email_change(event) do
+    user = get_user!(event.user_id)
+
+    Repo.transact(fn ->
+      # Revert email
+      user
+      |> Ecto.Changeset.change(email: event.old_value)
+      |> Repo.update!()
+
+      # Resolve the event
+      event
+      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "undone")
+      |> Repo.update!()
+
+      # Kill all sessions
+      Repo.delete_all(from(t in UserToken, where: t.user_id == ^event.user_id))
+
+      {:ok, event}
+    end)
+  end
+
+  defp undo_password_change(event) do
+    user = get_user!(event.user_id)
+
+    Repo.transact(fn ->
+      # Restore old password hash
+      user
+      |> Ecto.Changeset.change(hashed_password: event.old_value)
+      |> Repo.update!()
+
+      # Resolve the event
+      event
+      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "undone")
+      |> Repo.update!()
+
+      # Kill all sessions
+      Repo.delete_all(from(t in UserToken, where: t.user_id == ^event.user_id))
+
+      {:ok, event}
+    end)
+  end
+
+  @doc """
+  Verifies a confirm token and resolves the security event (user approves the change).
+  Returns `{:ok, event}` or `{:error, reason}`.
+  """
+  def confirm_security_event(token) do
+    with {:ok, query} <- AccountSecurityEvent.verify_confirm_token_query(token),
+         %AccountSecurityEvent{} = event <- Repo.one(query) do
+      event
+      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "confirmed")
+      |> Repo.update()
+    else
+      nil -> {:error, :invalid_token}
+      :error -> {:error, :invalid_token}
+    end
+  end
+
+  @doc """
+  Returns `:ok` if no active cooldown exists, or `{:error, :cooldown_active}`.
+  """
+  def check_no_active_cooldown(user_id) do
+    if has_active_security_cooldown?(user_id) do
+      {:error, :cooldown_active}
+    else
+      :ok
+    end
+  end
+
+  @doc """
+  Deletes expired (resolved or past expiry) security events for cleanup.
+  """
+  def cleanup_expired_security_events do
+    now = DateTime.utc_now(:second)
+
+    from(e in AccountSecurityEvent,
+      where: not is_nil(e.resolved_at) or e.expires_at < ^now
+    )
+    |> Repo.delete_all()
   end
 
   ## Passkeys (WebAuthn)
