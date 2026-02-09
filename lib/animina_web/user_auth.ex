@@ -396,11 +396,21 @@ defmodule AniminaWeb.UserAuth do
       socket
       |> Phoenix.Component.assign(:presence_tracked, true)
       |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
-        %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock -> {:halt, sock}
-        _other, sock -> {:cont, sock}
+        %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock ->
+          maybe_refresh_online_count(sock)
+          {:halt, sock}
+
+        _other, sock ->
+          {:cont, sock}
       end)
     else
       _ -> socket
+    end
+  end
+
+  defp maybe_refresh_online_count(sock) do
+    if sock.assigns[:current_scope] && Scope.admin?(sock.assigns[:current_scope]) do
+      Phoenix.LiveView.send_update(AniminaWeb.LiveOnlineCountComponent, id: "online-count")
     end
   end
 

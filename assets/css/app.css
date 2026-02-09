@@ -348,3 +348,15 @@ body {
     background-color: var(--color-base-100) !important;
   }
 }
+
+/* FIDS (split-flap) digit animation for online user count */
+@keyframes fids-flip {
+  0% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(0.6); opacity: 0.6; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+.fids-digit {
+  transition: all 150ms ease-in-out;
+  animation: fids-flip 200ms ease-in-out;
+}

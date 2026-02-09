@@ -71,10 +71,10 @@ defmodule AniminaWeb.Layouts do
     ~H"""
     <div class="min-h-screen flex flex-col bg-base-100">
       <%= if @current_scope && Scope.admin?(@current_scope) do %>
-        <div class="fixed inset-0 z-[100] border-4 border-red-500 pointer-events-none" />
+        <div class={"fixed inset-0 z-[100] border-4 border-red-500 pointer-events-none#{if @dev, do: " border-dashed"}"} />
       <% end %>
       <%= if @current_scope && !Scope.admin?(@current_scope) && Scope.moderator?(@current_scope) do %>
-        <div class="fixed inset-0 z-[100] border-4 border-yellow-400 pointer-events-none" />
+        <div class={"fixed inset-0 z-[100] border-4 border-yellow-400 pointer-events-none#{if @dev, do: " border-dashed"}"} />
       <% end %>
       <!-- Navigation -->
       <header class="fixed top-0 inset-x-0 z-50 bg-base-200/95 backdrop-blur-sm border-b border-base-300">
@@ -155,6 +155,13 @@ defmodule AniminaWeb.Layouts do
                 </div>
               <% end %>
               <%= if @current_scope && !@display_name do %>
+                <%= if Scope.admin?(@current_scope) do %>
+                  <.live_component
+                    module={AniminaWeb.LiveOnlineCountComponent}
+                    id="online-count"
+                    user_id={@current_scope.user.id}
+                  />
+                <% end %>
                 <.live_component
                   module={AniminaWeb.LiveUnreadBadgeComponent}
                   id="unread-badge"
