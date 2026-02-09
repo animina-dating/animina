@@ -6,10 +6,10 @@ defmodule Animina.Accounts.UserNotifier do
   import Swoosh.Email
 
   alias Animina.Accounts.EmailTemplates
-  alias Animina.Mailer
+  alias Animina.Emails
 
   # Delivers the email using the application mailer.
-  defp deliver(recipient, subject, body) do
+  defp deliver(recipient, subject, body, opts) do
     config = Application.fetch_env!(:animina, :email_sender)
 
     email =
@@ -21,9 +21,7 @@ defmodule Animina.Accounts.UserNotifier do
       |> header("Auto-Submitted", "auto-generated")
       |> header("Precedence", "bulk")
 
-    with {:ok, _metadata} <- Mailer.deliver(email) do
-      {:ok, email}
-    end
+    Emails.deliver_and_log(email, opts)
   end
 
   defp user_locale(%{language: lang}) when is_binary(lang), do: lang
@@ -59,7 +57,7 @@ defmodule Animina.Accounts.UserNotifier do
         url: url
       )
 
-    deliver(user_recipient(user), subject, body)
+    deliver(user_recipient(user), subject, body, email_type: :update_email, user_id: user.id)
   end
 
   @doc """
@@ -73,7 +71,10 @@ defmodule Animina.Accounts.UserNotifier do
         url: url
       )
 
-    deliver(user_recipient(user), subject, body)
+    deliver(user_recipient(user), subject, body,
+      email_type: :password_reset,
+      user_id: user.id
+    )
   end
 
   @doc """
@@ -92,7 +93,10 @@ defmodule Animina.Accounts.UserNotifier do
         expires_at: format_berlin_time(expires_berlin)
       )
 
-    deliver(user_recipient(user), subject, body)
+    deliver(user_recipient(user), subject, body,
+      email_type: :confirmation_pin,
+      user_id: user.id
+    )
   end
 
   @doc """
@@ -102,7 +106,7 @@ defmodule Animina.Accounts.UserNotifier do
   def deliver_daily_new_users_report(count, {_name, email}) do
     # Admin report is always in German
     {subject, body} = EmailTemplates.render("de", :daily_report, count: count)
-    deliver(email, subject, body)
+    deliver(email, subject, body, email_type: :daily_report)
   end
 
   @doc """
@@ -122,7 +126,10 @@ defmodule Animina.Accounts.UserNotifier do
         permanent_deletion_date: permanent_deletion_date
       )
 
-    deliver(user_recipient(user), subject, body)
+    deliver(user_recipient(user), subject, body,
+      email_type: :account_deletion_goodbye,
+      user_id: user.id
+    )
   end
 
   defp format_date_for_locale(datetime, _locale) do
@@ -146,7 +153,7 @@ defmodule Animina.Accounts.UserNotifier do
         hourly_breakdown: stats.hourly_breakdown
       )
 
-    deliver(email, subject, body)
+    deliver(email, subject, body, email_type: :registration_spike_alert)
   end
 
   @doc """
@@ -165,7 +172,10 @@ defmodule Animina.Accounts.UserNotifier do
         attempted_at: format_german_time()
       )
 
-    deliver(recipient, subject, body)
+    deliver(recipient, subject, body,
+      email_type: :duplicate_registration,
+      user_id: if(user, do: user.id)
+    )
   end
 
   @doc """
@@ -183,7 +193,7 @@ defmodule Animina.Accounts.UserNotifier do
         ollama_status: stats.ollama_status
       )
 
-    deliver(email, subject, body)
+    deliver(email, subject, body, email_type: :ollama_queue_alert)
   end
 
   @doc """
@@ -198,7 +208,10 @@ defmodule Animina.Accounts.UserNotifier do
         unread_count: unread_count
       )
 
-    deliver(user_recipient(user), subject, body)
+    deliver(user_recipient(user), subject, body,
+      email_type: :unread_messages,
+      user_id: user.id
+    )
   end
 
   @german_months %{

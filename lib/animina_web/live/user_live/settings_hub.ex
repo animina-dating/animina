@@ -10,6 +10,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.Emails
   alias AniminaWeb.Languages
 
   @impl true
@@ -56,6 +57,18 @@ defmodule AniminaWeb.UserLive.SettingsHub do
             icon="hero-shield-check"
             title={gettext("Blocked Contacts")}
             preview={@blocked_contacts_preview}
+          />
+        </div>
+
+        <%!-- Section: History --%>
+        <.section_heading title={gettext("History")} />
+
+        <div class="grid gap-3 mb-8">
+          <.settings_card
+            navigate={~p"/users/settings/emails"}
+            icon="hero-envelope"
+            title={gettext("Email History")}
+            preview={@email_logs_preview}
           />
         </div>
 
@@ -152,6 +165,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:passkeys_preview, build_passkeys_preview(user))
       |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))
+      |> assign(:email_logs_preview, build_email_logs_preview(user))
 
     {:ok, socket}
   end
@@ -163,6 +177,16 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       0 -> gettext("No contacts blocked")
       1 -> gettext("1 contact blocked")
       n -> gettext("%{count} contacts blocked", count: n)
+    end
+  end
+
+  defp build_email_logs_preview(user) do
+    count = Emails.count_email_logs_for_user(user.id)
+
+    case count do
+      0 -> gettext("No emails sent")
+      1 -> gettext("1 email sent")
+      n -> gettext("%{count} emails sent", count: n)
     end
   end
 

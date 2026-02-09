@@ -480,15 +480,21 @@ defmodule AniminaWeb.Layouts do
                           {gettext("Photo Blacklist")}
                         </a>
 
-                        <%!-- AI / Ollama --%>
+                        <%!-- Logs --%>
                         <div class="px-4 py-1.5 pt-2">
                           <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("AI / Ollama")}
+                            {gettext("Logs")}
                           </p>
                         </div>
+                        <a
+                          href="/admin/logs/emails"
+                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                        >
+                          {gettext("Email Logs")}
+                        </a>
                         <% ollama_queue_count = Photos.count_ollama_queue() %>
                         <a
-                          href="/admin/ollama-logs"
+                          href="/admin/logs/ollama"
                           class={[
                             "flex items-center justify-between px-4 py-2 text-sm transition-colors",
                             if(ollama_queue_count > 0,

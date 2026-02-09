@@ -96,6 +96,7 @@ defmodule AniminaWeb.Router do
       live "/users/settings/traits", UserLive.TraitsWizard, :index
       live "/users/settings/passkeys", UserLive.PasskeySettings, :index
       live "/users/settings/blocked-contacts", UserLive.BlockedContacts, :index
+      live "/users/settings/emails", UserLive.EmailLogs, :index
       live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
       live "/users/settings/avatar", UserLive.AvatarUpload, :edit
       live "/users/settings/moodboard", UserLive.MoodboardEditor
@@ -116,6 +117,9 @@ defmodule AniminaWeb.Router do
       live "/admin/photos/:id/history", Admin.PhotoHistoryLive
       live "/admin/feature-flags", Admin.FeatureFlagsLive
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
+      live "/admin/logs", Admin.LogsIndexLive
+      live "/admin/logs/emails", Admin.EmailLogsLive
+      live "/admin/logs/ollama", Admin.OllamaLogsLive
       live "/admin/ollama-logs", Admin.OllamaLogsLive
     end
 

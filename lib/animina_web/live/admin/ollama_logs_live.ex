@@ -253,7 +253,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
       |> maybe_put(:model, Keyword.get(overrides, :filter_model, socket.assigns.filter_model))
       |> maybe_put(:status, Keyword.get(overrides, :filter_status, socket.assigns.filter_status))
 
-    ~p"/admin/ollama-logs?#{params}"
+    ~p"/admin/logs/ollama?#{params}"
   end
 
   defp maybe_put(params, _key, nil), do: params
