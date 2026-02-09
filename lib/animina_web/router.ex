@@ -85,23 +85,37 @@ defmodule AniminaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
-      live "/my-profile", UserLive.ProfileHub, :index
+      # Settings hub
       live "/settings", UserLive.SettingsHub, :index
-      live "/settings/account", UserLive.Settings, :edit
-      live "/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/settings/profile", UserLive.EditProfile, :edit
-      live "/settings/preferences", UserLive.EditPreferences, :edit
-      live "/settings/language", UserLive.LanguageSettings, :edit
-      live "/settings/locations", UserLive.EditLocations, :edit
-      live "/settings/traits", UserLive.TraitsWizard, :index
-      live "/settings/passkeys", UserLive.PasskeySettings, :index
-      live "/settings/sessions", UserLive.SessionSettings, :index
+
+      # Profile hub + nested sub-pages
+      live "/settings/profile", UserLive.ProfileHub, :index
+      live "/settings/profile/photo", UserLive.AvatarUpload, :edit
+      live "/settings/profile/info", UserLive.EditProfile, :edit
+      live "/settings/profile/moodboard", UserLive.MoodboardEditor
+      live "/settings/profile/traits", UserLive.TraitsWizard, :index
+      live "/settings/profile/preferences", UserLive.EditPreferences, :edit
+      live "/settings/profile/locations", UserLive.EditLocations, :edit
+
+      # Account & Security hub + sub-pages
+      live "/settings/account", UserLive.AccountHub, :index
+      live "/settings/account/email-password", UserLive.AccountEmailPassword, :edit
+      live "/settings/account/passkeys", UserLive.AccountPasskeys, :index
+      live "/settings/account/sessions", UserLive.AccountSessions, :index
+      live "/settings/account/delete", UserLive.AccountDelete, :index
+      live "/settings/confirm-email/:token", UserLive.AccountEmailPassword, :confirm_email
+
+      # Privacy
       live "/settings/privacy", UserLive.PrivacySettings, :index
       live "/settings/blocked-contacts", UserLive.BlockedContacts, :index
-      live "/settings/emails", UserLive.EmailLogs, :index
-      live "/settings/delete-account", UserLive.DeleteAccount, :delete
-      live "/settings/avatar", UserLive.AvatarUpload, :edit
-      live "/settings/moodboard", UserLive.MoodboardEditor
+
+      # Language
+      live "/settings/language", UserLive.LanguageSettings, :edit
+
+      # Logs
+      live "/logs", UserLive.LogsHub, :index
+      live "/logs/emails", UserLive.EmailLogs, :index
+
       live "/users/waitlist", UserLive.Waitlist
       live "/discover", DiscoverLive
       live "/messages", MessagesLive, :index

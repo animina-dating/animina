@@ -5,15 +5,17 @@ defmodule AniminaWeb.UserLive.SettingsTest do
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
-  describe "Settings page" do
-    test "renders settings page", %{conn: conn} do
+  describe "Account hub page" do
+    test "renders account hub with 4 cards", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/settings/account")
 
-      assert html =~ "Change Email"
-      assert html =~ "Save Password"
+      assert html =~ "Email &amp; Password"
+      assert html =~ "Passkeys"
+      assert html =~ "Active Sessions"
+      assert html =~ "Delete Account"
     end
 
     test "has page title", %{conn: conn} do
@@ -22,7 +24,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/settings/account")
 
-      assert page_title(lv) == "Account Security - ANIMINA"
+      assert page_title(lv) =~ "Account"
     end
 
     test "has breadcrumbs", %{conn: conn} do
@@ -33,7 +35,19 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
       assert html =~ "breadcrumbs"
       assert has_element?(lv, ".breadcrumbs a[href='/settings']")
-      assert html =~ "Account Security"
+      assert html =~ "Account"
+    end
+
+    test "has navigation links to sub-pages", %{conn: conn} do
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/settings/account")
+
+      assert has_element?(lv, "a[href='/settings/account/email-password']")
+      assert has_element?(lv, "a[href='/settings/account/passkeys']")
+      assert has_element?(lv, "a[href='/settings/account/sessions']")
+      assert has_element?(lv, "a[href='/settings/account/delete']")
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
@@ -57,6 +71,28 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
   end
 
+  describe "Email & Password page" do
+    test "renders email and password forms", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/settings/account/email-password")
+
+      assert html =~ "Change Email"
+      assert html =~ "Save Password"
+    end
+
+    test "has breadcrumbs back to account hub", %{conn: conn} do
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user_fixture(language: "en"))
+        |> live(~p"/settings/account/email-password")
+
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings/account']")
+    end
+  end
+
   describe "pending email change" do
     setup %{conn: conn} do
       user = user_fixture(language: "en")
@@ -72,7 +108,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
         &"/settings/confirm-email/#{&1}"
       )
 
-      {:ok, _lv, html} = live(conn, ~p"/settings/account")
+      {:ok, _lv, html} = live(conn, ~p"/settings/account/email-password")
 
       assert html =~ user.email
       assert html =~ new_email
@@ -80,7 +116,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "does not show pending email info when no change is pending", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/settings/account")
+      {:ok, _lv, html} = live(conn, ~p"/settings/account/email-password")
 
       refute html =~ "confirmation link has been sent"
     end
@@ -88,7 +124,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "shows pending email after submitting email change", %{conn: conn} do
       new_email = unique_user_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -106,7 +142,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/settings/account")
+        |> live(~p"/settings/account/email-password")
 
       refute html =~ "Open dev mailbox"
       refute html =~ "/dev/mailbox"
@@ -122,7 +158,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "updates the user email", %{conn: conn, user: user} do
       new_email = unique_user_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -136,7 +172,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -151,7 +187,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -174,7 +210,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "updates the user password", %{conn: conn, user: user} do
       new_password = valid_user_password()
 
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       form =
         form(lv, "#password_form", %{
@@ -189,7 +225,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
 
       new_password_conn = follow_trigger_action(form, conn)
 
-      assert redirected_to(new_password_conn) == ~p"/settings/account"
+      assert redirected_to(new_password_conn) == ~p"/settings/account/email-password"
 
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
@@ -200,7 +236,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -218,7 +254,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/settings/account")
+      {:ok, lv, _html} = live(conn, ~p"/settings/account/email-password")
 
       result =
         lv
@@ -253,7 +289,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       {:error, redirect} = live(conn, ~p"/settings/confirm-email/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings/account"
+      assert path == ~p"/settings/account/email-password"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
       refute Accounts.get_user_by_email(user.email)
@@ -262,7 +298,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
       # use confirm token again — blocked by security cooldown
       {:error, redirect} = live(conn, ~p"/settings/confirm-email/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings/account"
+      assert path == ~p"/settings/account/email-password"
       assert %{"error" => message} = flash
 
       assert message == "Cannot change email while a recent account change is being reviewed." or
@@ -272,7 +308,7 @@ defmodule AniminaWeb.UserLive.SettingsTest do
     test "does not update email with invalid token", %{conn: conn, user: user} do
       {:error, redirect} = live(conn, ~p"/settings/confirm-email/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/settings/account"
+      assert path == ~p"/settings/account/email-password"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
       assert Accounts.get_user_by_email(user.email)

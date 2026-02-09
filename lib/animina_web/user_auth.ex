@@ -138,6 +138,11 @@ defmodule AniminaWeb.UserAuth do
   # function will clear the session to avoid fixation attacks. See the
   # renew_session function to customize this behaviour.
   defp create_or_extend_session(conn, user, params) do
+    # Delete the old session token to prevent stale sessions from accumulating
+    # (e.g. from sudo re-auth or token reissue on the same browser)
+    old_token = get_session(conn, :user_token)
+    if old_token, do: Accounts.delete_user_session_token(old_token)
+
     conn_info = extract_conn_info(conn)
     token = Accounts.generate_user_session_token(user, conn_info)
     remember_me = get_session(conn, :user_remember_me)
