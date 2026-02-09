@@ -5,7 +5,7 @@ defmodule Animina.MailQueueCheckerTest do
 
   @sample_mailq_output """
   -Queue ID-  --Size-- ----Arrival Time---- -Sender/Recipient-------
-  ABC123DEF*    1234 Sun Feb  2 10:30:00  sender@example.com
+  ABC123DEF     1234 Sun Feb  2 10:30:00  sender@example.com
   (connect to mx.t-online.de[194.25.134.8]:25: Connection refused)
                                            user@t-online.de
   -- 1 Kbytes in 1 Request.

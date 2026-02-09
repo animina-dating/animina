@@ -12,7 +12,7 @@ defmodule Animina.MailQueueChecker.ParserTest do
     test "parses a single deferred entry" do
       output = """
       -Queue ID-  --Size-- ----Arrival Time---- -Sender/Recipient-------
-      ABC123DEF*    1234 Sun Feb  2 10:30:00  sender@example.com
+      ABC123DEF     1234 Sun Feb  2 10:30:00  sender@example.com
       (connect to mx.t-online.de[194.25.134.8]:25: Connection refused)
                                                user@t-online.de
       -- 1 Kbytes in 1 Request.
@@ -30,7 +30,7 @@ defmodule Animina.MailQueueChecker.ParserTest do
     test "parses multiple entries" do
       output = """
       -Queue ID-  --Size-- ----Arrival Time---- -Sender/Recipient-------
-      ABC123DEF*    1234 Sun Feb  2 10:30:00  sender@example.com
+      ABC123DEF     1234 Sun Feb  2 10:30:00  sender@example.com
       (connect to mx.t-online.de[194.25.134.8]:25: Connection refused)
                                                user@t-online.de
 
@@ -50,17 +50,34 @@ defmodule Animina.MailQueueChecker.ParserTest do
       assert second.recipient == "somebody@gmx.de"
     end
 
-    test "strips active delivery marker (*) from queue ID" do
+    test "skips active entries marked with * (still being delivered)" do
       output = """
       -Queue ID-  --Size-- ----Arrival Time---- -Sender/Recipient-------
       ABC123DEF*    1234 Sun Feb  2 10:30:00  sender@example.com
-      (connect to mx.t-online.de[194.25.134.8]:25: Connection refused)
+      (connect to mxext2.mailbox.org[2001:67c:2050:104:0:2:25:1]:25: Network is unreachable)
                                                user@t-online.de
       -- 1 Kbytes in 1 Request.
       """
 
-      [entry] = Parser.parse(output)
-      assert entry.queue_id == "ABC123DEF"
+      assert Parser.parse(output) == []
+    end
+
+    test "parses deferred entries but skips active ones in mixed output" do
+      output = """
+      -Queue ID-  --Size-- ----Arrival Time---- -Sender/Recipient-------
+      ABC123DEF*    1234 Sun Feb  2 10:30:00  sender@example.com
+      (connect to mxext2.mailbox.org[2001:67c:2050:104:0:2:25:1]:25: Network is unreachable)
+                                               active@example.com
+
+      GHI789JKL     5678 Mon Feb  3 14:15:00  other@example.com
+      (host mx.gmx.net[212.227.17.168] said: 550 5.1.1 mailbox unavailable)
+                                               deferred@gmx.de
+      -- 6 Kbytes in 2 Requests.
+      """
+
+      result = Parser.parse(output)
+      assert length(result) == 1
+      assert hd(result).recipient == "deferred@gmx.de"
     end
 
     test "handles entry without active marker" do

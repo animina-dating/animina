@@ -3,7 +3,9 @@ defmodule Animina.MailQueueChecker.Parser do
   Parses Postfix `mailq` output into structured entries.
   """
 
-  @queue_id_regex ~r/^([A-Za-z0-9]+)[*!]?\s+\d+\s+(\w{3}\s+\w{3}\s+\d+\s+\d+:\d+:\d+)\s+\S+/
+  # Match deferred (no marker) and held (!) entries, but NOT active (*) entries.
+  # Active entries are still being delivered and should not be treated as failures.
+  @queue_id_regex ~r/^([A-Za-z0-9]+)!?\s+\d+\s+(\w{3}\s+\w{3}\s+\d+\s+\d+:\d+:\d+)\s+\S+/
 
   @doc """
   Parses mailq output and returns a list of maps with
