@@ -48,7 +48,7 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
           </div>
 
           <.link
-            navigate={~p"/users/settings/blocked-contacts"}
+            navigate={~p"/settings/blocked-contacts"}
             class="flex items-center gap-4 p-4 rounded-lg border border-base-300 hover:border-primary transition-colors"
           >
             <span class="flex-shrink-0 text-base-content/60">

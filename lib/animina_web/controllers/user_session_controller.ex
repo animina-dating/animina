@@ -64,7 +64,7 @@ defmodule AniminaWeb.UserSessionController do
         )
 
         conn
-        |> put_session(:user_return_to, ~p"/users/settings/account")
+        |> put_session(:user_return_to, ~p"/settings/account")
         |> create(params, gettext("Password updated successfully!"))
 
       {:error, :cooldown_active} ->
@@ -73,7 +73,7 @@ defmodule AniminaWeb.UserSessionController do
           :error,
           gettext("Cannot change password while a recent account change is being reviewed.")
         )
-        |> redirect(to: ~p"/users/settings/account")
+        |> redirect(to: ~p"/settings/account")
     end
   end
 

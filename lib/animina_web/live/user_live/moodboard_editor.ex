@@ -28,13 +28,13 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           <div class="breadcrumbs text-sm">
             <ul>
               <li>
-                <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
+                <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
               </li>
               <li>{gettext("Moodboard")}</li>
             </ul>
           </div>
 
-          <.link navigate={~p"/moodboard/#{@user.id}"} class="btn btn-ghost btn-sm">
+          <.link navigate={~p"/users/#{@user.id}"} class="btn btn-ghost btn-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-4 w-4 mr-1"

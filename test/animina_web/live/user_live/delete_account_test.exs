@@ -11,7 +11,7 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
       assert html =~ "Delete Account"
       assert html =~ "30 days"
@@ -22,7 +22,7 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
       assert page_title(lv) == "Delete Account - ANIMINA"
     end
@@ -31,15 +31,15 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
       assert html =~ "Delete Account"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings/delete-account")
+      assert {:error, redirect} = live(conn, ~p"/settings/delete-account")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -52,7 +52,7 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
       lv
       |> form("#delete_account_form", %{
@@ -70,7 +70,7 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
       lv
       |> form("#delete_account_form", %{
@@ -88,9 +88,9 @@ defmodule AniminaWeb.UserLive.DeleteAccountTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/delete-account")
+        |> live(~p"/settings/delete-account")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
     end
   end
 end

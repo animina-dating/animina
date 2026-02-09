@@ -434,7 +434,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
                   <td class="text-xs">
                     <%= if log.actor do %>
                       <.link
-                        navigate={~p"/moodboard/#{log.actor_id}"}
+                        navigate={~p"/users/#{log.actor_id}"}
                         class="link link-hover"
                       >
                         {log.actor.display_name}
@@ -446,7 +446,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
                   <td class="text-xs">
                     <%= if log.subject do %>
                       <.link
-                        navigate={~p"/moodboard/#{log.subject_id}"}
+                        navigate={~p"/users/#{log.subject_id}"}
                         class="link link-hover"
                       >
                         {log.subject.display_name}

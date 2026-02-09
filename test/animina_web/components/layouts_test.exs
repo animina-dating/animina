@@ -47,7 +47,7 @@ defmodule AniminaWeb.LayoutsTest do
       {:ok, _view, html} = live(conn, ~p"/datenschutz")
 
       assert html =~ "user-dropdown"
-      assert html =~ "/users/settings"
+      assert html =~ "/settings"
     end
 
     test "globe icon is hidden for authenticated users", %{conn: conn} do

@@ -302,7 +302,7 @@ defmodule AniminaWeb.Layouts do
                           @profile_completeness.completed_count < @profile_completeness.total_count %>
                       <% items = @profile_completeness && @profile_completeness.items %>
                       <a
-                        href="/users/settings/avatar"
+                        href="/settings/avatar"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -316,7 +316,7 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Profile Photo")}
                       </a>
                       <a
-                        href="/users/settings/profile"
+                        href="/settings/profile"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -330,7 +330,7 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Profile Info")}
                       </a>
                       <a
-                        href="/users/settings/moodboard"
+                        href="/settings/moodboard"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -344,7 +344,7 @@ defmodule AniminaWeb.Layouts do
                         {gettext("My Moodboard")}
                       </a>
                       <a
-                        href="/users/settings/traits"
+                        href="/settings/traits"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -358,7 +358,7 @@ defmodule AniminaWeb.Layouts do
                         {gettext("My Flags")}
                       </a>
                       <a
-                        href="/users/settings/preferences"
+                        href="/settings/preferences"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -372,7 +372,7 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Partner Preferences")}
                       </a>
                       <a
-                        href="/users/settings/locations"
+                        href="/settings/locations"
                         class="flex items-center gap-2 px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         <span :if={show_checks} class="shrink-0">
@@ -435,7 +435,7 @@ defmodule AniminaWeb.Layouts do
                         </p>
                       </div>
                       <a
-                        href="/users/settings"
+                        href="/settings"
                         class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
                         {gettext("Settings")}

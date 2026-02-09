@@ -43,42 +43,42 @@ defmodule AniminaWeb.UserLive.ProfileHub do
         <%!-- Profile Cards --%>
         <div class="grid gap-3">
           <.profile_card
-            navigate={~p"/users/settings/avatar"}
+            navigate={~p"/settings/avatar"}
             icon="hero-camera"
             title={gettext("Profile Photo")}
             description={gettext("Upload your main profile photo")}
             complete={@profile_completeness.items.profile_photo}
           />
           <.profile_card
-            navigate={~p"/users/settings/profile"}
+            navigate={~p"/settings/profile"}
             icon="hero-user"
             title={gettext("Profile Info")}
             description={gettext("Add your basic information")}
             complete={@profile_completeness.items.profile_info}
           />
           <.profile_card
-            navigate={~p"/users/settings/moodboard"}
+            navigate={~p"/settings/moodboard"}
             icon="hero-squares-2x2"
             title={gettext("My Moodboard")}
             description={gettext("Create your visual profile")}
             complete={@profile_completeness.items.moodboard}
           />
           <.profile_card
-            navigate={~p"/users/settings/traits"}
+            navigate={~p"/settings/traits"}
             icon="hero-flag"
             title={gettext("My Flags")}
             description={gettext("Set your personality flags")}
             complete={@profile_completeness.items.flags}
           />
           <.profile_card
-            navigate={~p"/users/settings/preferences"}
+            navigate={~p"/settings/preferences"}
             icon="hero-heart"
             title={gettext("Partner Preferences")}
             description={gettext("Define what you're looking for")}
             complete={@profile_completeness.items.partner_preferences}
           />
           <.profile_card
-            navigate={~p"/users/settings/locations"}
+            navigate={~p"/settings/locations"}
             icon="hero-map-pin"
             title={gettext("Locations")}
             description={gettext("Set your location")}

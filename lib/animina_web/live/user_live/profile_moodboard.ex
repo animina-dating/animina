@@ -125,7 +125,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
             <.link
               :if={@owner?}
-              navigate={~p"/users/settings/moodboard"}
+              navigate={~p"/settings/moodboard"}
               class="btn btn-primary"
             >
               <svg

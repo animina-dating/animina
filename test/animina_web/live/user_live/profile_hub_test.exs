@@ -13,12 +13,12 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
 
       assert html =~ "My Profile"
 
-      assert has_element?(lv, "main a[href='/users/settings/avatar']")
-      assert has_element?(lv, "main a[href='/users/settings/profile']")
-      assert has_element?(lv, "main a[href='/users/settings/moodboard']")
-      assert has_element?(lv, "main a[href='/users/settings/traits']")
-      assert has_element?(lv, "main a[href='/users/settings/preferences']")
-      assert has_element?(lv, "main a[href='/users/settings/locations']")
+      assert has_element?(lv, "main a[href='/settings/avatar']")
+      assert has_element?(lv, "main a[href='/settings/profile']")
+      assert has_element?(lv, "main a[href='/settings/moodboard']")
+      assert has_element?(lv, "main a[href='/settings/traits']")
+      assert has_element?(lv, "main a[href='/settings/preferences']")
+      assert has_element?(lv, "main a[href='/settings/locations']")
     end
 
     test "shows completion indicators", %{conn: conn} do

@@ -127,7 +127,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
       |> maybe_put(:type, Keyword.get(overrides, :filter_type, socket.assigns.filter_type))
       |> maybe_put(:status, Keyword.get(overrides, :filter_status, socket.assigns.filter_status))
 
-    ~p"/users/settings/emails?#{params}"
+    ~p"/settings/emails?#{params}"
   end
 
   defp maybe_put(params, _key, nil), do: params
@@ -165,7 +165,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
         <div class="text-sm breadcrumbs mb-4">
           <ul>
             <li>
-              <.link navigate={~p"/users/settings"} class="link link-hover">
+              <.link navigate={~p"/settings"} class="link link-hover">
                 {gettext("Settings")}
               </.link>
             </li>

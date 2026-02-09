@@ -91,9 +91,9 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> live(~p"/users/waitlist")
 
       assert html =~ "Prepare your profile"
-      assert html =~ ~r"/users/settings/avatar"
-      assert html =~ ~r"/users/settings/moodboard"
-      assert html =~ ~r"/users/settings/traits"
+      assert html =~ ~r"/settings/avatar"
+      assert html =~ ~r"/settings/moodboard"
+      assert html =~ ~r"/settings/traits"
     end
 
     test "shows completion checkmarks on profile preparation cards", %{conn: conn} do
@@ -116,7 +116,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
         |> log_in_user(user)
         |> live(~p"/users/waitlist")
 
-      assert html =~ ~r"/users/settings/passkeys"
+      assert html =~ ~r"/settings/passkeys"
       assert html =~ "Set up a passkey"
       assert html =~ "Optional"
     end

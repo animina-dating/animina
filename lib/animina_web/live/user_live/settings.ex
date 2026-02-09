@@ -69,7 +69,7 @@ defmodule AniminaWeb.UserLive.Settings do
           <.form
             for={@password_form}
             id="password_form"
-            action={~p"/users/update-password"}
+            action={~p"/settings/update-password"}
             method="post"
             phx-change="validate_password"
             phx-submit="update_password"
@@ -134,7 +134,7 @@ defmodule AniminaWeb.UserLive.Settings do
           put_flash(socket, :error, gettext("Email change link is invalid or it has expired."))
       end
 
-    {:ok, push_navigate(socket, to: ~p"/users/settings/account")}
+    {:ok, push_navigate(socket, to: ~p"/settings/account")}
   end
 
   def mount(_params, _session, socket) do
@@ -188,7 +188,7 @@ defmodule AniminaWeb.UserLive.Settings do
         Accounts.deliver_user_update_email_instructions(
           applied_user,
           user.email,
-          &url(~p"/users/settings/confirm-email/#{&1}")
+          &url(~p"/settings/confirm-email/#{&1}")
         )
 
         info = gettext("A link to confirm your email change has been sent to the new address.")

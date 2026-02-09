@@ -15,7 +15,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       assert html =~ "Message"
     end
@@ -26,7 +26,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(owner)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       # The Message button uses toggle_chat; owner should not have it
       refute html =~ "toggle_chat"
@@ -39,7 +39,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       html = lv |> element("button", "Message") |> render_click()
 
@@ -54,7 +54,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       # Open the chat
       lv |> element("button", "Message") |> render_click()
@@ -74,7 +74,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       # Open the chat
       lv |> element("button", "Message") |> render_click()
@@ -98,7 +98,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       html = lv |> element("button", "Message") |> render_click()
 
@@ -116,7 +116,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       # Open panel
       lv |> element("button", "Message") |> render_click()
@@ -142,7 +142,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       # Open panel
       html = lv |> element("button", "Message") |> render_click()
@@ -157,7 +157,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       html = lv |> element("button", "Message") |> render_click()
 
@@ -171,7 +171,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(visitor)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       html = lv |> element("button", "Message") |> render_click()
 

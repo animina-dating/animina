@@ -189,9 +189,9 @@ defmodule AniminaWeb.TermsOfServiceLive do
               <li>
                 Nutzer können ihr Konto jederzeit selbstständig über die Kontoeinstellungen
                 löschen (<a
-                  href="/users/settings/delete-account"
+                  href="/settings/delete-account"
                   class="text-primary hover:underline"
-                >/users/settings/delete-account</a>).
+                >/settings/delete-account</a>).
               </li>
               <li>
                 Nach Beantragung der Löschung besteht eine 30-tägige Nachfrist, in der das

@@ -123,7 +123,7 @@ defmodule AniminaWeb.DiscoverLive do
                   {gettext("Try adjusting your preferences to expand your search.")}
                 </p>
                 <.link
-                  navigate={~p"/users/settings/preferences"}
+                  navigate={~p"/settings/preferences"}
                   class="btn btn-primary btn-sm mt-4"
                 >
                   {gettext("Adjust Preferences")}
@@ -237,7 +237,7 @@ defmodule AniminaWeb.DiscoverLive do
       |> assign(:city_name, city_name)
       |> assign(:age, Accounts.compute_age(user.birthday))
       |> assign(:wildcard?, wildcard?)
-      |> assign(:profile_path, ~p"/moodboard/#{user.id}" <> ref)
+      |> assign(:profile_path, ~p"/users/#{user.id}" <> ref)
       |> assign(:gender, gender_symbol(user.gender))
       |> assign(:formatted_height, format_height(user.height))
       |> assign(:story_preview, story_preview)

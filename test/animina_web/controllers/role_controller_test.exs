@@ -48,11 +48,11 @@ defmodule AniminaWeb.RoleControllerTest do
       conn =
         conn
         |> log_in_user(user)
-        |> put_req_header("referer", "http://localhost:4000/users/settings")
+        |> put_req_header("referer", "http://localhost:4000/settings")
         |> post(~p"/role/switch", %{"role" => "admin"})
 
       # Successful role switch includes ?menu=open to keep dropdown open
-      assert redirected_to(conn) == "/users/settings?menu=open"
+      assert redirected_to(conn) == "/settings?menu=open"
     end
 
     test "requires authentication", %{conn: conn} do

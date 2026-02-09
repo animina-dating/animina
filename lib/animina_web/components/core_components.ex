@@ -373,7 +373,7 @@ defmodule AniminaWeb.CoreComponents do
     <div class="breadcrumbs text-sm mb-6">
       <ul>
         <li>
-          <.link navigate={~p"/users/settings"}>{gettext("Settings")}</.link>
+          <.link navigate={~p"/settings"}>{gettext("Settings")}</.link>
         </li>
         <li>{@title}</li>
       </ul>

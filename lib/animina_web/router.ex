@@ -31,7 +31,6 @@ defmodule AniminaWeb.Router do
       live "/datenschutz", PrivacyPolicyLive
       live "/agb", TermsOfServiceLive
       live "/impressum", ImpressumLive
-      live "/moodboard/:user_id", UserLive.ProfileMoodboard
     end
   end
 
@@ -87,22 +86,22 @@ defmodule AniminaWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
       live "/my-profile", UserLive.ProfileHub, :index
-      live "/users/settings", UserLive.SettingsHub, :index
-      live "/users/settings/account", UserLive.Settings, :edit
-      live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/users/settings/profile", UserLive.EditProfile, :edit
-      live "/users/settings/preferences", UserLive.EditPreferences, :edit
-      live "/users/settings/language", UserLive.LanguageSettings, :edit
-      live "/users/settings/locations", UserLive.EditLocations, :edit
-      live "/users/settings/traits", UserLive.TraitsWizard, :index
-      live "/users/settings/passkeys", UserLive.PasskeySettings, :index
-      live "/users/settings/sessions", UserLive.SessionSettings, :index
-      live "/users/settings/privacy", UserLive.PrivacySettings, :index
-      live "/users/settings/blocked-contacts", UserLive.BlockedContacts, :index
-      live "/users/settings/emails", UserLive.EmailLogs, :index
-      live "/users/settings/delete-account", UserLive.DeleteAccount, :delete
-      live "/users/settings/avatar", UserLive.AvatarUpload, :edit
-      live "/users/settings/moodboard", UserLive.MoodboardEditor
+      live "/settings", UserLive.SettingsHub, :index
+      live "/settings/account", UserLive.Settings, :edit
+      live "/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+      live "/settings/profile", UserLive.EditProfile, :edit
+      live "/settings/preferences", UserLive.EditPreferences, :edit
+      live "/settings/language", UserLive.LanguageSettings, :edit
+      live "/settings/locations", UserLive.EditLocations, :edit
+      live "/settings/traits", UserLive.TraitsWizard, :index
+      live "/settings/passkeys", UserLive.PasskeySettings, :index
+      live "/settings/sessions", UserLive.SessionSettings, :index
+      live "/settings/privacy", UserLive.PrivacySettings, :index
+      live "/settings/blocked-contacts", UserLive.BlockedContacts, :index
+      live "/settings/emails", UserLive.EmailLogs, :index
+      live "/settings/delete-account", UserLive.DeleteAccount, :delete
+      live "/settings/avatar", UserLive.AvatarUpload, :edit
+      live "/settings/moodboard", UserLive.MoodboardEditor
       live "/users/waitlist", UserLive.Waitlist
       live "/discover", DiscoverLive
       live "/messages", MessagesLive, :index
@@ -127,7 +126,7 @@ defmodule AniminaWeb.Router do
     end
 
     post "/role/switch", RoleController, :switch
-    post "/users/update-password", UserSessionController, :update_password
+    post "/settings/update-password", UserSessionController, :update_password
 
     # WebAuthn passkey registration (requires authentication)
     post "/webauthn/register/begin", WebAuthnController, :register_begin
@@ -158,5 +157,16 @@ defmodule AniminaWeb.Router do
     # Security event undo/confirm (public — token from email is the auth factor)
     get "/users/security/undo/:token", SecurityEventController, :undo
     get "/users/security/confirm/:token", SecurityEventController, :confirm
+
+    # Legacy redirects (301 permanent) — must be before /users/:user_id catch-all
+    get "/users/settings", LegacyRedirectController, :settings_root
+    get "/users/settings/*path", LegacyRedirectController, :settings
+    get "/moodboard/:user_id", LegacyRedirectController, :moodboard
+
+    # User profile (after literal auth routes and legacy redirects so they match first)
+    live_session :user_profile,
+      on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}] do
+      live "/users/:user_id", UserLive.ProfileMoodboard
+    end
   end
 end

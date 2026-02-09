@@ -14,10 +14,10 @@ defmodule AniminaWeb.LocaleControllerTest do
     test "redirects back to referer", %{conn: conn} do
       conn =
         conn
-        |> put_req_header("referer", "http://localhost:4000/users/settings")
+        |> put_req_header("referer", "http://localhost:4000/settings")
         |> post(~p"/locale", %{"locale" => "en"})
 
-      assert redirected_to(conn) == "/users/settings"
+      assert redirected_to(conn) == "/settings"
     end
 
     test "ignores invalid locale and redirects", %{conn: conn} do

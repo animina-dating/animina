@@ -38,7 +38,7 @@ defmodule AniminaWeb.MessagesLive do
 
           <%= if @conversation_data do %>
             <.link
-              navigate={~p"/moodboard/#{@conversation_data.other_user.id}"}
+              navigate={~p"/users/#{@conversation_data.other_user.id}"}
               class="flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
               <.avatar user={@conversation_data.other_user} photos={@avatar_photos} size={:sm} />

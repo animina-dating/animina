@@ -12,7 +12,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert html =~ "Profile Photo"
       assert html =~ "Upload a photo"
@@ -22,7 +22,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert page_title(lv) == "Profile Photo - ANIMINA"
     end
@@ -31,15 +31,15 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
       assert html =~ "Profile Photo"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings/avatar")
+      assert {:error, redirect} = live(conn, ~p"/settings/avatar")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -52,7 +52,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Should show initial placeholder (first letter of display name)
       assert has_element?(lv, "[data-role='avatar-placeholder']")
@@ -65,7 +65,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert has_element?(lv, "[data-role='avatar-image']")
       refute has_element?(lv, "[data-role='status-badge']")
@@ -78,7 +78,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Should show placeholder (not the image) since file isn't processed yet
       refute has_element?(lv, "[data-role='avatar-image']")
@@ -99,7 +99,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert html =~ "Processing"
     end
@@ -115,7 +115,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert html =~ "Analyzing photo"
     end
@@ -132,7 +132,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       assert has_element?(lv, "[data-role='status-badge']")
       # Should still show the image (so user can see what was rejected)
@@ -150,7 +150,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Initially shows processing indicator
       assert has_element?(lv, "[data-role='processing-progress']")
@@ -186,7 +186,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Create a test image
       image_path = create_test_image()
@@ -227,7 +227,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Create a test image
       image_path = create_test_image()
@@ -266,7 +266,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Try to upload an invalid file type
       avatar =
@@ -288,7 +288,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Initially shows processing indicator for pending photo
       assert has_element?(lv, "[data-role='processing-progress']")
@@ -324,7 +324,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/avatar")
+        |> live(~p"/settings/avatar")
 
       # Initially shows processing indicator for pending photo
       assert has_element?(lv, "[data-role='processing-progress']")

@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       assert html =~ "Moodboard"
       assert html =~ user.display_name
@@ -31,7 +31,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       # Check height is displayed (175 cm -> 1,75 m)
       assert html =~ "1,75 m"
@@ -49,7 +49,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       # Check male gender icon is displayed (♂)
       assert html =~ "♂"
@@ -61,7 +61,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       # Occupation paragraph should not appear
       refute html =~ ~r/<p[^>]*class="text-base-content\/60">\s*[^<]+\s*<\/p>\s*<\/div>\s*<\.link/
@@ -73,7 +73,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       # Page title should include: Display Name · ♀ XX years · 1,72 m · XXXXX City
       assert html =~ "<title"
@@ -86,7 +86,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
     test "anonymous user sees vague denial and is redirected to /", %{conn: conn} do
       user = user_fixture(language: "en")
 
-      assert {:error, redirect} = live(conn, ~p"/moodboard/#{user.id}")
+      assert {:error, redirect} = live(conn, ~p"/users/#{user.id}")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/"
@@ -100,7 +100,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(other_user)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       assert html =~ "Moodboard"
       assert html =~ owner.display_name
@@ -113,7 +113,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(other_user)
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       refute html =~ "Edit Moodboard"
     end
@@ -123,7 +123,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
     } do
       random_uuid = Ecto.UUID.generate()
 
-      assert {:error, redirect} = live(conn, ~p"/moodboard/#{random_uuid}")
+      assert {:error, redirect} = live(conn, ~p"/users/#{random_uuid}")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/"
@@ -137,7 +137,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       assert {:error, redirect} =
                conn
                |> log_in_user(user)
-               |> live(~p"/moodboard/#{random_uuid}")
+               |> live(~p"/users/#{random_uuid}")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/"
@@ -154,7 +154,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(admin_user, current_role: "admin")
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       assert html =~ "Moodboard"
       assert html =~ owner.display_name
@@ -168,7 +168,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(admin_user, current_role: "admin")
-        |> live(~p"/moodboard/#{owner.id}")
+        |> live(~p"/users/#{owner.id}")
 
       refute html =~ "Edit Moodboard"
     end

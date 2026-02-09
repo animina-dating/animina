@@ -17,7 +17,7 @@ defmodule AniminaWeb.LiveStoryComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       html = render(view)
 
@@ -37,7 +37,7 @@ defmodule AniminaWeb.LiveStoryComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       html = render(view)
       assert html =~ "First paragraph."
@@ -51,7 +51,7 @@ defmodule AniminaWeb.LiveStoryComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       html = render(view)
       assert html =~ "My caption text"
@@ -66,7 +66,7 @@ defmodule AniminaWeb.LiveStoryComponentTest do
       {:ok, view, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/moodboard/#{user.id}")
+        |> live(~p"/users/#{user.id}")
 
       html = render(view)
       # Script tags should be escaped, not rendered as executable HTML

@@ -89,7 +89,7 @@ defmodule AniminaWeb.UserLive.AcceptTerms do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Terms of Service accepted. Welcome back!"))
-         |> push_navigate(to: ~p"/users/settings")}
+         |> push_navigate(to: ~p"/settings")}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, gettext("Something went wrong. Please try again."))}

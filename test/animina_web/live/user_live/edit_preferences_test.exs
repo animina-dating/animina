@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/preferences")
+        |> live(~p"/settings/preferences")
 
       assert html =~ "Partner Preferences"
       assert html =~ "Preferred Partner Gender"
@@ -26,7 +26,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/preferences")
+        |> live(~p"/settings/preferences")
 
       assert page_title(lv) == "Partner Preferences - ANIMINA"
     end
@@ -35,15 +35,15 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/preferences")
+        |> live(~p"/settings/preferences")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
       assert html =~ "Partner Preferences"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings/preferences")
+      assert {:error, redirect} = live(conn, ~p"/settings/preferences")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -56,7 +56,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/preferences")
+        |> live(~p"/settings/preferences")
 
       lv
       |> form("#preferences_form", %{
@@ -78,9 +78,9 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/users/settings/preferences")
+        |> live(~p"/settings/preferences")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/users/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/settings']")
     end
   end
 end

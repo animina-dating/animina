@@ -41,7 +41,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <div class="grid gap-3 mb-8">
           <.settings_card
-            navigate={~p"/users/settings/language"}
+            navigate={~p"/settings/language"}
             icon="hero-globe-alt"
             title={gettext("Language")}
             preview={@language_preview}
@@ -53,7 +53,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <div class="grid gap-3 mb-8">
           <.settings_card
-            navigate={~p"/users/settings/privacy"}
+            navigate={~p"/settings/privacy"}
             icon="hero-eye-slash"
             title={gettext("Privacy")}
             preview={@privacy_preview}
@@ -65,7 +65,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <div class="grid gap-3 mb-8">
           <.settings_card
-            navigate={~p"/users/settings/emails"}
+            navigate={~p"/settings/emails"}
             icon="hero-envelope"
             title={gettext("Email History")}
             preview={@email_logs_preview}
@@ -77,25 +77,25 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
         <div class="grid gap-3 mb-8">
           <.settings_card
-            navigate={~p"/users/settings/account"}
+            navigate={~p"/settings/account"}
             icon="hero-shield-check"
             title={gettext("Account Security")}
             preview={@user.email}
           />
           <.settings_card
-            navigate={~p"/users/settings/passkeys"}
+            navigate={~p"/settings/passkeys"}
             icon="hero-finger-print"
             title={gettext("Passkeys")}
             preview={@passkeys_preview}
           />
           <.settings_card
-            navigate={~p"/users/settings/sessions"}
+            navigate={~p"/settings/sessions"}
             icon="hero-computer-desktop"
             title={gettext("Active Sessions")}
             preview={@sessions_preview}
           />
           <.settings_card
-            navigate={~p"/users/settings/delete-account"}
+            navigate={~p"/settings/delete-account"}
             icon="hero-trash"
             title={gettext("Delete Account")}
             preview={gettext("Permanently delete your account")}

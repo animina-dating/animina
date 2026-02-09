@@ -8,7 +8,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
 
   describe "Blocked Contacts page" do
     test "redirects unauthenticated users", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings/blocked-contacts")
+      assert {:error, redirect} = live(conn, ~p"/settings/blocked-contacts")
       assert {:redirect, %{to: "/users/log-in"}} = redirect
     end
 
@@ -18,7 +18,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       assert html =~ "Blocked Contacts"
       assert html =~ "No contacts blocked yet"
@@ -31,7 +31,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       html =
         lv
@@ -49,7 +49,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       html =
         lv
@@ -67,7 +67,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       html =
         lv
@@ -85,7 +85,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       assert html =~ "remove@example.com"
 
@@ -104,7 +104,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       html =
         lv
@@ -129,7 +129,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       # All entries visible initially
       assert html =~ "Alice"
@@ -173,7 +173,7 @@ defmodule AniminaWeb.UserLive.BlockedContactsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/blocked-contacts")
+        |> live(~p"/settings/blocked-contacts")
 
       # Sort A-Z by value
       html = lv |> element("#sort-select") |> render_change(%{sort: "value_asc"})

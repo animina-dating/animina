@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.SessionSettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/sessions")
+        |> live(~p"/settings/sessions")
 
       assert html =~ "Active Sessions"
       assert html =~ "This device"
@@ -25,13 +25,13 @@ defmodule AniminaWeb.UserLive.SessionSettingsTest do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/sessions")
+        |> live(~p"/settings/sessions")
 
       assert page_title(lv) == "Active Sessions - ANIMINA"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings/sessions")
+      assert {:error, redirect} = live(conn, ~p"/settings/sessions")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"
@@ -50,7 +50,7 @@ defmodule AniminaWeb.UserLive.SessionSettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/sessions")
+        |> live(~p"/settings/sessions")
 
       # Should show current session + the one we created
       assert html =~ "This device"
@@ -68,7 +68,7 @@ defmodule AniminaWeb.UserLive.SessionSettingsTest do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user)
-        |> live(~p"/users/settings/sessions")
+        |> live(~p"/settings/sessions")
 
       assert html =~ "Log out all other devices"
     end

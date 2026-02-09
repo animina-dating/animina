@@ -149,7 +149,7 @@ defmodule AniminaWeb.ChatPanelComponent do
           </button>
 
           <.link
-            navigate={~p"/moodboard/#{@profile_user.id}"}
+            navigate={~p"/users/#{@profile_user.id}"}
             class="flex items-center gap-2 flex-1 min-w-0"
           >
             <%= if @avatar_photo do %>
