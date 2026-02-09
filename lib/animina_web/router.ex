@@ -11,6 +11,7 @@ defmodule AniminaWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers
     plug :fetch_current_scope_for_user
+    plug AniminaWeb.Plugs.RequireAdminPath
     plug AniminaWeb.Plugs.SetLocale
   end
 
@@ -123,7 +124,6 @@ defmodule AniminaWeb.Router do
       live "/admin/logs/emails", Admin.EmailLogsLive
       live "/admin/logs/ollama", Admin.OllamaLogsLive
       live "/admin/logs/activity", Admin.ActivityLogsLive
-      live "/admin/ollama-logs", Admin.OllamaLogsLive
     end
 
     post "/role/switch", RoleController, :switch
