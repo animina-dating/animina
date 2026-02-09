@@ -8,11 +8,11 @@ Your confirmation code is:
     <%= @pin %>
 
 This email was sent at <%= @sent_at %>.
-Please enter this code within 30 minutes to confirm
+Please enter this code within <%= @pin_validity_minutes %> minutes to confirm
 your email address.
 
 You have a maximum of 3 attempts. After 3 wrong entries
-or after 30 minutes (at <%= @expires_at %>), your account
+or after <%= @pin_validity_minutes %> minutes (at <%= @expires_at %>), your account
 will be automatically deleted and you will need to
 register again.
 

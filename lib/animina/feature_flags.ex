@@ -175,6 +175,16 @@ defmodule Animina.FeatureFlags do
       description: "Contact email shown to users in notification emails",
       type: :string,
       default_value: "sw@wintermeyer-consulting.de"
+    },
+    %{
+      name: :pin_validity_minutes,
+      label: "PIN Validity Minutes",
+      description:
+        "Minutes a registration confirmation PIN stays valid before the account is auto-deleted",
+      type: :integer,
+      default_value: 60,
+      min_value: 5,
+      max_value: 1440
     }
   ]
 
@@ -850,6 +860,14 @@ defmodule Animina.FeatureFlags do
   """
   def support_email do
     get_system_setting_value(:support_email, "sw@wintermeyer-consulting.de")
+  end
+
+  @doc """
+  Returns the configured PIN validity duration in minutes.
+  Default: 60
+  """
+  def pin_validity_minutes do
+    get_system_setting_value(:pin_validity_minutes, 60)
   end
 
   @doc """

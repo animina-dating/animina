@@ -8,6 +8,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
       email: "test@example.com",
       greeting_name: "Test User",
       pin: "123456",
+      pin_validity_minutes: 60,
       sent_at: "14:30 CET",
       expires_at: "15:00 CET"
     ],
@@ -58,6 +59,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "user@test.de",
           greeting_name: "Max",
           pin: "654321",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -73,6 +75,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "user@test.com",
           greeting_name: "Jane",
           pin: "111222",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -143,6 +146,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "000000",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -156,6 +160,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "000000",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -169,6 +174,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "u@t.tr",
           greeting_name: "Ahmet",
           pin: "999888",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -206,6 +212,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -219,6 +226,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -232,6 +240,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -245,6 +254,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -259,6 +269,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -273,6 +284,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )
@@ -287,6 +299,7 @@ defmodule Animina.Accounts.EmailTemplatesTest do
           email: "a@b.com",
           greeting_name: "Test",
           pin: "123456",
+          pin_validity_minutes: 60,
           sent_at: "14:30 CET",
           expires_at: "15:00 CET"
         )

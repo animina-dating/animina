@@ -2,6 +2,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
+  alias Animina.FeatureFlags
   alias Animina.MailQueueChecker
 
   @max_attempts 3
@@ -45,7 +46,9 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
                 )}
               </p>
               <p class="text-sm mt-1">
-                {gettext("Your account data will be automatically deleted in 30 minutes.")}
+                {gettext("Your account data will be automatically deleted in %{minutes} minutes.",
+                  minutes: FeatureFlags.pin_validity_minutes()
+                )}
               </p>
               <p class="text-sm mt-1">
                 {gettext("Please try registering with a different email address, or try again later.")}
@@ -121,7 +124,9 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
 
   @impl true
   def mount(%{"token" => token}, _session, socket) do
-    case Phoenix.Token.verify(AniminaWeb.Endpoint, "pin_confirmation", token, max_age: 1800) do
+    case Phoenix.Token.verify(AniminaWeb.Endpoint, "pin_confirmation", token,
+           max_age: FeatureFlags.pin_validity_minutes() * 60
+         ) do
       {:ok, {:phantom, _id, email}} ->
         # Phantom flow: no real user behind this token.
         # Show identical UI to prevent email enumeration.
@@ -133,7 +138,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
            delivery_failure: nil,
            remaining_attempts: @max_attempts,
            max_attempts: @max_attempts,
-           remaining_minutes: 30,
+           remaining_minutes: FeatureFlags.pin_validity_minutes(),
            trigger_login: false,
            dev_routes: @dev_routes,
            login_form: to_form(%{"user_id" => "", "remember_me" => "true"}, as: "user")
@@ -262,7 +267,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
 
   defp compute_remaining_minutes(sent_at) do
     elapsed = DateTime.diff(DateTime.utc_now(), sent_at, :minute)
-    30 - elapsed
+    FeatureFlags.pin_validity_minutes() - elapsed
   end
 
   defp assign_form(socket) do

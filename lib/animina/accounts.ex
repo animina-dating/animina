@@ -481,7 +481,6 @@ defmodule Animina.Accounts do
   ## Confirmation PIN
 
   @pin_max_attempts 3
-  @pin_validity_minutes 30
 
   @doc """
   Generates a random 6-digit confirmation PIN.
@@ -514,10 +513,26 @@ defmodule Animina.Accounts do
   def verify_confirmation_pin(%User{} = user, pin) do
     cond do
       pin_expired?(user) ->
+        ActivityLog.log(
+          "system",
+          "account_expired",
+          "Unconfirmed account #{user.display_name} (#{user.email}) auto-deleted: PIN expired",
+          subject_id: user.id,
+          metadata: %{"reason" => "pin_expired"}
+        )
+
         Repo.delete(user)
         {:error, :expired}
 
       user.confirmation_pin_attempts >= @pin_max_attempts ->
+        ActivityLog.log(
+          "system",
+          "account_expired",
+          "Unconfirmed account #{user.display_name} (#{user.email}) auto-deleted: too many attempts",
+          subject_id: user.id,
+          metadata: %{"reason" => "too_many_attempts"}
+        )
+
         Repo.delete(user)
         {:error, :too_many_attempts}
 
@@ -541,6 +556,14 @@ defmodule Animina.Accounts do
           |> Repo.update!()
 
         if updated_user.confirmation_pin_attempts >= @pin_max_attempts do
+          ActivityLog.log(
+            "system",
+            "account_expired",
+            "Unconfirmed account #{updated_user.display_name} (#{updated_user.email}) auto-deleted: too many attempts",
+            subject_id: updated_user.id,
+            metadata: %{"reason" => "too_many_attempts"}
+          )
+
           Repo.delete(updated_user)
           {:error, :too_many_attempts}
         else
@@ -552,21 +575,40 @@ defmodule Animina.Accounts do
   defp pin_expired?(%User{confirmation_pin_sent_at: nil}), do: true
 
   defp pin_expired?(%User{confirmation_pin_sent_at: sent_at}) do
-    DateTime.diff(DateTime.utc_now(), sent_at, :minute) >= @pin_validity_minutes
+    DateTime.diff(DateTime.utc_now(), sent_at, :minute) >=
+      Animina.FeatureFlags.pin_validity_minutes()
   end
 
   @doc """
   Deletes all unconfirmed users whose confirmation PIN has expired.
   """
   def delete_expired_unconfirmed_users do
-    cutoff = DateTime.utc_now() |> DateTime.add(-@pin_validity_minutes, :minute)
+    cutoff =
+      DateTime.utc_now()
+      |> DateTime.add(-Animina.FeatureFlags.pin_validity_minutes(), :minute)
 
-    from(u in User,
-      where: is_nil(u.confirmed_at),
-      where: not is_nil(u.confirmation_pin_sent_at),
-      where: u.confirmation_pin_sent_at < ^cutoff
-    )
-    |> Repo.delete_all()
+    query =
+      from(u in User,
+        where: is_nil(u.confirmed_at),
+        where: not is_nil(u.confirmation_pin_sent_at),
+        where: u.confirmation_pin_sent_at < ^cutoff
+      )
+
+    users =
+      from(u in query, select: %{id: u.id, display_name: u.display_name, email: u.email})
+      |> Repo.all()
+
+    for user <- users do
+      ActivityLog.log(
+        "system",
+        "account_expired",
+        "Unconfirmed account #{user.display_name} (#{user.email}) auto-deleted after PIN expiry",
+        subject_id: user.id,
+        metadata: %{"reason" => "pin_expired"}
+      )
+    end
+
+    Repo.delete_all(query)
   end
 
   ## User profile & preferences

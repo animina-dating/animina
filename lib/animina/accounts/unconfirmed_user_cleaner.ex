@@ -1,7 +1,8 @@
 defmodule Animina.Accounts.UnconfirmedUserCleaner do
   @moduledoc """
   A GenServer that periodically deletes unconfirmed users
-  whose confirmation PIN has expired (older than 30 minutes).
+  whose confirmation PIN has expired (duration configured via
+  the `pin_validity_minutes` feature flag).
   """
   use GenServer
 

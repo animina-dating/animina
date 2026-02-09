@@ -8,11 +8,11 @@ Dein Bestätigungscode lautet:
     <%= @pin %>
 
 Diese E-Mail wurde um <%= @sent_at %> gesendet.
-Bitte gib diesen Code innerhalb von 30 Minuten ein,
+Bitte gib diesen Code innerhalb von <%= @pin_validity_minutes %> Minuten ein,
 um deine E-Mail-Adresse zu bestätigen.
 
 Du hast maximal 3 Versuche. Nach 3 Fehleingaben oder
-nach 30 Minuten (um <%= @expires_at %>) wird dein Konto
+nach <%= @pin_validity_minutes %> Minuten (um <%= @expires_at %>) wird dein Konto
 automatisch gelöscht und du musst dich erneut
 registrieren.
 

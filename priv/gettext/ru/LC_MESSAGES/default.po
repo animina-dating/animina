@@ -100,7 +100,7 @@ msgstr "Изменить e-mail"
 msgid "Changing..."
 msgstr "Изменение..."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:92
+#: lib/animina_web/live/user_live/pin_confirmation.ex:95
 #, elixir-autogen, elixir-format
 msgid "Confirm"
 msgstr "Подтвердить"
@@ -111,12 +111,12 @@ msgstr "Подтвердить"
 msgid "Confirm new password"
 msgstr "Подтвердите новый пароль"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:18
+#: lib/animina_web/live/user_live/pin_confirmation.ex:19
 #, elixir-autogen, elixir-format
 msgid "Confirm your email"
 msgstr "Подтвердите ваш e-mail"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:66
+#: lib/animina_web/live/user_live/pin_confirmation.ex:69
 #, elixir-autogen, elixir-format
 msgid "Confirmation code"
 msgstr "Код подтверждения"
@@ -410,7 +410,7 @@ msgstr "На традиционных платформах обе стороны
 
 #: lib/animina_web/live/components/account_email_password_component.ex:54
 #: lib/animina_web/live/user_live/forgot_password.ex:52
-#: lib/animina_web/live/user_live/pin_confirmation.ex:98
+#: lib/animina_web/live/user_live/pin_confirmation.ex:101
 #, elixir-autogen, elixir-format
 msgid "Open dev mailbox"
 msgstr "Открыть почтовый ящик разработчика"
@@ -532,12 +532,12 @@ msgstr "Зарегистрироваться"
 msgid "Register now – free"
 msgstr "Зарегистрироваться – бесплатно"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:79
+#: lib/animina_web/live/user_live/pin_confirmation.ex:82
 #, elixir-autogen, elixir-format
 msgid "Remaining attempts:"
 msgstr "Осталось попыток:"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:83
+#: lib/animina_web/live/user_live/pin_confirmation.ex:86
 #, elixir-autogen, elixir-format
 msgid "Remaining time:"
 msgstr "Оставшееся время:"
@@ -618,8 +618,8 @@ msgstr "Истории вместо свайпов"
 msgid "That's a no-go"
 msgstr "Это неприемлемо"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:169
-#: lib/animina_web/live/user_live/pin_confirmation.ex:176
+#: lib/animina_web/live/user_live/pin_confirmation.ex:174
+#: lib/animina_web/live/user_live/pin_confirmation.ex:181
 #, elixir-autogen, elixir-format
 msgid "This confirmation link is invalid or expired."
 msgstr "Эта ссылка для подтверждения недействительна или истекла."
@@ -649,7 +649,7 @@ msgstr "Прозрачность через открытый исходный к
 msgid "Verified profiles and active moderation ensure a safe community. Fake profiles and bots barely stand a chance with us."
 msgstr "Проверенные профили и активная модерация обеспечивают безопасное сообщество. Фейковые профили и боты почти не имеют шансов у нас."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:89
+#: lib/animina_web/live/user_live/pin_confirmation.ex:92
 #, elixir-autogen, elixir-format
 msgid "Verifying..."
 msgstr "Проверка..."
@@ -659,7 +659,7 @@ msgstr "Проверка..."
 msgid "View code on GitHub"
 msgstr "Посмотреть код на GitHub"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:21
+#: lib/animina_web/live/user_live/pin_confirmation.ex:22
 #, elixir-autogen, elixir-format
 msgid "We sent a 6-digit code to"
 msgstr "Мы отправили 6-значный код на"
@@ -696,8 +696,8 @@ msgstr "На других платформах знакомств вы нико�
 msgid "Without labels"
 msgstr "Без ярлыков"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:203
-#: lib/animina_web/live/user_live/pin_confirmation.ex:228
+#: lib/animina_web/live/user_live/pin_confirmation.ex:208
+#: lib/animina_web/live/user_live/pin_confirmation.ex:233
 #, elixir-autogen, elixir-format
 msgid "Wrong code. %{count} attempt remaining."
 msgid_plural "Wrong code. %{count} attempts remaining."
@@ -717,8 +717,8 @@ msgstr "Для доступа к этой странице необходимо 
 msgid "You must re-authenticate to access this page."
 msgstr "Для доступа к этой странице необходимо повторно авторизоваться."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:194
-#: lib/animina_web/live/user_live/pin_confirmation.ex:241
+#: lib/animina_web/live/user_live/pin_confirmation.ex:199
+#: lib/animina_web/live/user_live/pin_confirmation.ex:246
 #, elixir-autogen, elixir-format
 msgid "Your account has been deleted. Please register again."
 msgstr "Ваш аккаунт был удалён. Пожалуйста, зарегистрируйтесь снова."
@@ -744,12 +744,12 @@ msgstr "закрыть"
 msgid "e.g. A7X3K9"
 msgstr "напр. A7X3K9"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:84
+#: lib/animina_web/live/user_live/pin_confirmation.ex:87
 #, elixir-autogen, elixir-format
 msgid "minutes"
 msgstr "минут"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:80
+#: lib/animina_web/live/user_live/pin_confirmation.ex:83
 #, elixir-autogen, elixir-format
 msgid "of"
 msgstr "из"
@@ -5241,24 +5241,19 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:40
+#: lib/animina_web/live/user_live/pin_confirmation.ex:41
 #, elixir-autogen, elixir-format
 msgid "Email delivery problem"
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:51
+#: lib/animina_web/live/user_live/pin_confirmation.ex:54
 #, elixir-autogen, elixir-format
 msgid "Please try registering with a different email address, or try again later."
 msgstr ""
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:42
+#: lib/animina_web/live/user_live/pin_confirmation.ex:43
 #, elixir-autogen, elixir-format
 msgid "Your email provider is currently rejecting emails from our server. The confirmation code could not be delivered to %{email}."
-msgstr ""
-
-#: lib/animina_web/live/user_live/pin_confirmation.ex:48
-#, elixir-autogen, elixir-format
-msgid "Your account data will be automatically deleted in 30 minutes."
 msgstr ""
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:120
@@ -5960,4 +5955,9 @@ msgstr ""
 #: lib/animina_web/live/user_live/waitlist.ex:241
 #, elixir-autogen, elixir-format, fuzzy
 msgid "each confirmed signup halves the waitlist time for both of you."
+msgstr ""
+
+#: lib/animina_web/live/user_live/pin_confirmation.ex:49
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Your account data will be automatically deleted in %{minutes} minutes."
 msgstr ""

@@ -2,6 +2,7 @@ defmodule Animina.AccountsTest do
   use Animina.DataCase
 
   alias Animina.Accounts
+  alias Animina.ActivityLog.ActivityLogEntry
 
   import Animina.AccountsFixtures
   alias Animina.Accounts.{User, UserToken}
@@ -410,46 +411,100 @@ defmodule Animina.AccountsTest do
       assert updated.confirmation_pin_attempts == 1
     end
 
-    test "deletes user after 3 failed attempts", %{user: user} do
+    test "deletes user after 3 failed attempts and logs to activity log", %{user: user} do
+      user_id = user.id
+
       assert {:error, :wrong_pin} = Accounts.verify_confirmation_pin(user, "000000")
-      user = Repo.get!(User, user.id)
+      user = Repo.get!(User, user_id)
       assert {:error, :wrong_pin} = Accounts.verify_confirmation_pin(user, "000000")
-      user = Repo.get!(User, user.id)
+      user = Repo.get!(User, user_id)
       assert {:error, :too_many_attempts} = Accounts.verify_confirmation_pin(user, "000000")
-      refute Repo.get(User, user.id)
+      refute Repo.get(User, user_id)
+
+      # subject_id is nilified on user delete, so match by summary content
+      log_entry =
+        Repo.one(
+          from(e in ActivityLogEntry,
+            where:
+              e.event == "account_expired" and
+                fragment("? ->> 'reason' = ?", e.metadata, "too_many_attempts") and
+                like(e.summary, ^"%#{user.display_name}%")
+          )
+        )
+
+      assert log_entry
+      assert log_entry.category == "system"
     end
 
     test "returns error for nil user" do
       assert {:error, :not_found} = Accounts.verify_confirmation_pin(nil, "123456")
     end
 
-    test "returns expired when PIN is too old", %{user: user} do
-      # Set sent_at to 31 minutes ago
+    test "returns expired when PIN is too old and logs to activity log", %{user: user} do
+      user_id = user.id
+
+      # Set sent_at past the configured validity window
+      expired_minutes = Animina.FeatureFlags.pin_validity_minutes() + 1
+
       Repo.update_all(
-        from(u in User, where: u.id == ^user.id),
-        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -31, :minute)]
+        from(u in User, where: u.id == ^user_id),
+        set: [
+          confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -expired_minutes, :minute)
+        ]
       )
 
-      user = Repo.get!(User, user.id)
+      user = Repo.get!(User, user_id)
       assert {:error, :expired} = Accounts.verify_confirmation_pin(user, "123456")
-      refute Repo.get(User, user.id)
+      refute Repo.get(User, user_id)
+
+      # subject_id is nilified on user delete, so match by summary content
+      log_entry =
+        Repo.one(
+          from(e in ActivityLogEntry,
+            where:
+              e.event == "account_expired" and
+                fragment("? ->> 'reason' = ?", e.metadata, "pin_expired") and
+                like(e.summary, ^"%#{user.display_name}%")
+          )
+        )
+
+      assert log_entry
+      assert log_entry.category == "system"
     end
   end
 
   describe "delete_expired_unconfirmed_users/0" do
-    test "deletes expired unconfirmed users" do
+    test "deletes expired unconfirmed users and logs to activity log" do
       user = unconfirmed_user_fixture()
       {:ok, _pin} = Accounts.send_confirmation_pin(user)
 
-      # Set sent_at to 31 minutes ago
+      # Set sent_at to past the configured validity window
+      expired_minutes = Animina.FeatureFlags.pin_validity_minutes() + 1
+
       Repo.update_all(
         from(u in User, where: u.id == ^user.id),
-        set: [confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -31, :minute)]
+        set: [
+          confirmation_pin_sent_at: DateTime.add(DateTime.utc_now(), -expired_minutes, :minute)
+        ]
       )
 
       {count, _} = Accounts.delete_expired_unconfirmed_users()
       assert count >= 1
       refute Repo.get(User, user.id)
+
+      # subject_id is nilified on user delete, so match by summary content
+      log_entry =
+        Repo.one(
+          from(e in ActivityLogEntry,
+            where:
+              e.event == "account_expired" and
+                fragment("? ->> 'reason' = ?", e.metadata, "pin_expired") and
+                like(e.summary, ^"%#{user.display_name}%")
+          )
+        )
+
+      assert log_entry
+      assert log_entry.category == "system"
     end
 
     test "does not delete confirmed users" do

@@ -82,13 +82,15 @@ defmodule Animina.Accounts.UserNotifier do
   """
   def deliver_confirmation_pin(user, pin) do
     now_berlin = berlin_now()
-    expires_berlin = DateTime.add(now_berlin, 30, :minute)
+    minutes = Animina.FeatureFlags.pin_validity_minutes()
+    expires_berlin = DateTime.add(now_berlin, minutes, :minute)
 
     {subject, body} =
       EmailTemplates.render(user_locale(user), :confirmation_pin,
         email: user.email,
         greeting_name: greeting_name(user),
         pin: pin,
+        pin_validity_minutes: minutes,
         sent_at: format_berlin_time(now_berlin),
         expires_at: format_berlin_time(expires_berlin)
       )

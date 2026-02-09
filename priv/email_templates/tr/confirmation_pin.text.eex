@@ -9,10 +9,10 @@ Onay kodunuz:
 
 Bu e-posta <%= @sent_at %> saatinde gönderildi.
 E-posta adresinizi onaylamak için lütfen bu kodu
-30 dakika içinde girin.
+<%= @pin_validity_minutes %> dakika içinde girin.
 
 En fazla 3 deneme hakkınız var. 3 yanlış giriş veya
-30 dakika sonra (saat <%= @expires_at %>) hesabınız
+<%= @pin_validity_minutes %> dakika sonra (saat <%= @expires_at %>) hesabınız
 otomatik olarak silinecek ve tekrar kayıt olmanız
 gerekecektir.
 
