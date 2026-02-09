@@ -4,6 +4,7 @@ defmodule AniminaWeb.UserLive.Registration do
   alias Animina.Accounts
   alias Animina.Accounts.GenderGuesser
   alias Animina.Accounts.User
+  alias Animina.ActivityLog
   alias Animina.GeoData
 
   @step_params %{1 => "account", 2 => "profile", 3 => "location", 4 => "partner"}
@@ -569,6 +570,15 @@ defmodule AniminaWeb.UserLive.Registration do
     socket = maybe_auto_add_location_input(current, socket)
 
     if step_valid?(current, params, socket.assigns.locations) do
+      step_name = @step_params[current]
+
+      ActivityLog.log(
+        "profile",
+        "registration_step_completed",
+        "Registration step '#{step_name}' completed",
+        metadata: %{"step" => step_name}
+      )
+
       next = current + 1
       {params, socket} = maybe_prefill_step_2(params, socket, current, next)
       {params, socket} = maybe_auto_fill_preferences(params, socket, next)

@@ -18,6 +18,7 @@ defmodule Animina.Moodboard.Items do
 
   import Ecto.Query
 
+  alias Animina.ActivityLog
   alias Animina.Moodboard.MoodboardItem
   alias Animina.Moodboard.MoodboardPhoto
   alias Animina.Moodboard.MoodboardStory
@@ -101,6 +102,7 @@ defmodule Animina.Moodboard.Items do
         end
 
         broadcast_item_created(item)
+        log_moodboard_item_created(user, "photo")
         {:ok, item}
 
       error ->
@@ -127,6 +129,7 @@ defmodule Animina.Moodboard.Items do
     case result do
       {:ok, item} ->
         broadcast_item_created(item)
+        log_moodboard_item_created(user, "story")
         {:ok, item}
 
       error ->
@@ -165,11 +168,23 @@ defmodule Animina.Moodboard.Items do
         end
 
         broadcast_item_created(item)
+        log_moodboard_item_created(user, "combined")
         {:ok, item}
 
       error ->
         error
     end
+  end
+
+  defp log_moodboard_item_created(user, item_type) do
+    ActivityLog.log(
+      "profile",
+      "moodboard_changed",
+      "#{user.display_name} added a #{item_type} to their moodboard",
+      actor_id: user.id,
+      subject_id: user.id,
+      metadata: %{"item_type" => item_type, "action" => "created"}
+    )
   end
 
   defp create_item(user_id, item_type, position) do

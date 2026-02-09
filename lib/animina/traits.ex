@@ -9,6 +9,8 @@ defmodule Animina.Traits do
 
   import Ecto.Query
 
+  alias Animina.Accounts.User
+  alias Animina.ActivityLog
   alias Animina.Repo
   alias Animina.Traits.{Category, Flag, UserCategoryOptIn, UserFlag, UserWhiteFlagCategoryPublish}
   alias Animina.Traits.Validations
@@ -156,6 +158,7 @@ defmodule Animina.Traits do
          {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> PT.unwrap() do
       expand_on_write(user_flag)
       maybe_broadcast_white_flags(user_flag)
+      maybe_log_first_flag_of_color(user_flag)
       {:ok, user_flag}
     end
   end
@@ -165,6 +168,30 @@ defmodule Animina.Traits do
   end
 
   defp maybe_broadcast_white_flags(_user_flag), do: :ok
+
+  defp maybe_log_first_flag_of_color(%{user_id: user_id, color: color}) do
+    # Only log if this is the first flag of this color for the user
+    count =
+      from(uf in UserFlag,
+        where: uf.user_id == ^user_id and uf.color == ^color and uf.inherited == false,
+        select: count()
+      )
+      |> Repo.one()
+
+    if count == 1 do
+      user = Repo.get(User, user_id)
+      display_name = if user, do: user.display_name, else: "User"
+
+      ActivityLog.log(
+        "profile",
+        "flags_changed",
+        "#{display_name} set their first #{color} flag",
+        actor_id: user_id,
+        subject_id: user_id,
+        metadata: %{"color" => color, "action" => "first_flag"}
+      )
+    end
+  end
 
   defp expand_on_write(user_flag) do
     flag = Repo.get!(Flag, user_flag.flag_id) |> Repo.preload(:children)

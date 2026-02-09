@@ -3,8 +3,11 @@ defmodule Animina.ActivityLogTest do
 
   alias Animina.ActivityLog
   alias Animina.ActivityLog.ActivityLogEntry
+  alias Animina.Moodboard.Items
+  alias Animina.Traits
 
   import Animina.AccountsFixtures
+  import Animina.TraitsFixtures
 
   describe "ActivityLogEntry changeset" do
     test "valid changeset with all fields" do
@@ -230,6 +233,150 @@ defmodule Animina.ActivityLogTest do
 
       ActivityLog.log("auth", "login_email", "Login")
       assert ActivityLog.count() == 1
+    end
+  end
+
+  describe "registration_step_completed event" do
+    test "is a valid event" do
+      assert "registration_step_completed" in ActivityLogEntry.valid_events()
+      assert "registration_step_completed" in ActivityLogEntry.events_for_category("profile")
+    end
+
+    test "can log a registration step without actor_id" do
+      {:ok, entry} =
+        ActivityLog.log(
+          "profile",
+          "registration_step_completed",
+          "Registration step 'Account' completed",
+          metadata: %{"step" => "account"}
+        )
+
+      assert entry.category == "profile"
+      assert entry.event == "registration_step_completed"
+      assert entry.metadata["step"] == "account"
+      assert is_nil(entry.actor_id)
+    end
+  end
+
+  describe "flags_changed logging via Traits context" do
+    test "logs when first flag of a color is added" do
+      user = user_fixture()
+      flag = flag_fixture()
+
+      {:ok, _uf} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      # Should have one new flags_changed entry
+      result =
+        ActivityLog.list_activity_logs(
+          filter_event: "flags_changed",
+          filter_user_id: user.id
+        )
+
+      assert result.total_count >= 1
+
+      entry = hd(result.entries)
+      assert entry.summary =~ "white"
+      assert entry.metadata["color"] == "white"
+    end
+
+    test "does not log when adding a second flag of the same color" do
+      user = user_fixture()
+      flag1 = flag_fixture()
+      flag2 = flag_fixture()
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "green",
+          intensity: "soft",
+          position: 1
+        })
+
+      count_after_first =
+        ActivityLog.list_activity_logs(
+          filter_event: "flags_changed",
+          filter_user_id: user.id
+        ).total_count
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "green",
+          intensity: "soft",
+          position: 2
+        })
+
+      count_after_second =
+        ActivityLog.list_activity_logs(
+          filter_event: "flags_changed",
+          filter_user_id: user.id
+        ).total_count
+
+      assert count_after_second == count_after_first
+    end
+
+    test "logs separately for different colors" do
+      user = user_fixture()
+      flag1 = flag_fixture()
+      flag2 = flag_fixture()
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "red",
+          intensity: "hard",
+          position: 2
+        })
+
+      result =
+        ActivityLog.list_activity_logs(
+          filter_event: "flags_changed",
+          filter_user_id: user.id
+        )
+
+      assert result.total_count == 2
+      colors = Enum.map(result.entries, & &1.metadata["color"])
+      assert "white" in colors
+      assert "red" in colors
+    end
+  end
+
+  describe "moodboard_changed logging via Items context" do
+    test "logs when a story moodboard item is created" do
+      user = user_fixture()
+
+      {:ok, _item} = Items.create_story_item(user, "My test story")
+
+      result =
+        ActivityLog.list_activity_logs(
+          filter_event: "moodboard_changed",
+          filter_user_id: user.id
+        )
+
+      assert result.total_count >= 1
+
+      entry = hd(result.entries)
+      assert entry.summary =~ "moodboard"
+      assert entry.metadata["item_type"] == "story"
     end
   end
 end
