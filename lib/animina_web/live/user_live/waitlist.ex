@@ -237,7 +237,12 @@ defmodule AniminaWeb.UserLive.Waitlist do
                   <.icon name="hero-share" class="w-5 h-5" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-base-content">{gettext("Skip the waitlist")}</p>
+                  <div class="flex items-center gap-2">
+                    <p class="font-medium text-base-content">{gettext("Skip the waitlist")}</p>
+                    <span class="badge badge-sm badge-accent badge-outline">
+                      {@referral_count}/{@referral_threshold}
+                    </span>
+                  </div>
                   <p class="text-xs text-base-content/60">
                     {gettext("Share the code")}
                     <strong
@@ -246,7 +251,10 @@ defmodule AniminaWeb.UserLive.Waitlist do
                     >
                       {@referral_code}
                     </strong>
-                    — {gettext("each confirmed signup halves the waitlist time for both of you.")}
+                    — {gettext(
+                      "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you.",
+                      threshold: @referral_threshold
+                    )}
                     <button
                       type="button"
                       class="inline-flex items-center text-base-content/40 hover:text-base-content/60 align-middle ml-0.5"
@@ -255,6 +263,13 @@ defmodule AniminaWeb.UserLive.Waitlist do
                       <.icon name="hero-clipboard-document" class="w-3.5 h-3.5" />
                     </button>
                   </p>
+                  <progress
+                    :if={@referral_count > 0}
+                    class="progress progress-accent w-full mt-2"
+                    value={@referral_count}
+                    max={@referral_threshold}
+                  >
+                  </progress>
                 </div>
               </div>
             </div>

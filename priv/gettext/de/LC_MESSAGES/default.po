@@ -38,7 +38,7 @@ msgstr "Ein Link zur Bestätigung deiner E-Mail-Änderung wurde an die neue Adre
 msgid "Account"
 msgstr "Account"
 
-#: lib/animina_web/components/core_components.ex:534
+#: lib/animina_web/components/core_components.ex:536
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Aktionen"
@@ -3669,7 +3669,7 @@ msgstr "Alterserkennung"
 #: lib/animina_web/live/admin/ollama_logs_live.ex:434
 #: lib/animina_web/live/user_live/email_logs.ex:138
 #: lib/animina_web/live/user_live/email_logs.ex:154
-#: lib/animina_web/live/user_live/login_history.ex:286
+#: lib/animina_web/live/user_live/login_history.ex:294
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "Alle"
@@ -4986,7 +4986,7 @@ msgstr "Lade dein Profilfoto hoch"
 msgid "Upload your main profile photo."
 msgstr "Lade dein Profilfoto hoch."
 
-#: lib/animina_web/live/user_live/waitlist.ex:312
+#: lib/animina_web/live/user_live/waitlist.ex:327
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "Optional"
@@ -5365,7 +5365,7 @@ msgstr[0] "%{count} E-Mail"
 msgstr[1] "%{count} E-Mails"
 
 #: lib/animina_web/live/user_live/email_logs.ex:188
-#: lib/animina_web/live/user_live/login_history.ex:318
+#: lib/animina_web/live/user_live/login_history.ex:326
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr "Datum"
@@ -5403,7 +5403,7 @@ msgstr "Protokoll aller vom System gesendeten E-Mails"
 #: lib/animina_web/live/admin/logs_index_live.ex:29
 #: lib/animina_web/live/admin/ollama_logs_live.ex:344
 #: lib/animina_web/live/user_live/email_logs.ex:111
-#: lib/animina_web/live/user_live/login_history.ex:194
+#: lib/animina_web/live/user_live/login_history.ex:195
 #: lib/animina_web/live/user_live/logs_hub.ex:16
 #: lib/animina_web/live/user_live/logs_hub.ex:60
 #: lib/animina_web/live/user_live/my_hub.ex:53
@@ -5538,19 +5538,19 @@ msgstr "Dieser Rückgängig-Link ist ungültig, abgelaufen oder wurde bereits ve
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr "Zu deiner Sicherheit wird eine kürzliche Kontoänderung überprüft. Wir haben dir eine E-Mail geschickt, um die Änderung zu bestätigen oder rückgängig zu machen. Bis dahin sind weitere E-Mail- und Passwortänderungen für bis zu 48 Stunden pausiert, um dein Konto zu schützen."
 
-#: lib/animina_web/live/user_live/waitlist.ex:358
+#: lib/animina_web/live/user_live/waitlist.ex:373
 #, elixir-autogen, elixir-format
 msgid "Waitlisted"
 msgstr "Warteliste"
 
-#: lib/animina_web/live/user_live/waitlist.ex:351
+#: lib/animina_web/live/user_live/waitlist.ex:366
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
 msgstr[0] "Warteliste — noch %{count} Tag"
 msgstr[1] "Warteliste — noch %{count} Tage"
 
-#: lib/animina_web/live/user_live/waitlist.ex:366
+#: lib/animina_web/live/user_live/waitlist.ex:381
 #, elixir-autogen, elixir-format
 msgid "Your account is on the waitlist. Prepare your profile while you wait."
 msgstr "Dein Account steht auf der Warteliste. Bereite dein Profil vor, während du wartest."
@@ -5724,8 +5724,8 @@ msgstr "Kategorie"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:331
 #: lib/animina_web/live/admin/activity_logs_live.ex:384
-#: lib/animina_web/live/user_live/login_history.ex:283
-#: lib/animina_web/live/user_live/login_history.ex:310
+#: lib/animina_web/live/user_live/login_history.ex:291
+#: lib/animina_web/live/user_live/login_history.ex:318
 #, elixir-autogen, elixir-format
 msgid "Event"
 msgstr "Ereignis"
@@ -5746,7 +5746,7 @@ msgid "Search by name or email..."
 msgstr "Nach Name oder E-Mail suchen..."
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:387
-#: lib/animina_web/live/user_live/login_history.ex:312
+#: lib/animina_web/live/user_live/login_history.ex:320
 #, elixir-autogen, elixir-format
 msgid "Summary"
 msgstr "Zusammenfassung"
@@ -5875,20 +5875,15 @@ msgstr "Konto und Daten dauerhaft löschen"
 msgid "Sign in with Face ID, Touch ID, or a security key"
 msgstr "Melde dich mit Face ID, Touch ID oder einem Sicherheitsschlüssel an"
 
-#: lib/animina_web/live/user_live/waitlist.ex:240
+#: lib/animina_web/live/user_live/waitlist.ex:241
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr "Warteliste überspringen"
 
-#: lib/animina_web/live/user_live/waitlist.ex:242
+#: lib/animina_web/live/user_live/waitlist.ex:247
 #, elixir-autogen, elixir-format
 msgid "Share the code"
 msgstr "Teile den Code"
-
-#: lib/animina_web/live/user_live/waitlist.ex:249
-#, elixir-autogen, elixir-format
-msgid "each confirmed signup halves the waitlist time for both of you."
-msgstr "jede bestätigte Anmeldung halbiert die Wartezeit für euch beide."
 
 #: lib/animina_web/live/user_live/pin_confirmation.ex:50
 #, elixir-autogen, elixir-format
@@ -5961,7 +5956,7 @@ msgstr "Deine ANIMINA-Instanz verwalten"
 #: lib/animina_web/live/user_live/account_passkeys.ex:16
 #: lib/animina_web/live/user_live/account_sessions.ex:16
 #: lib/animina_web/live/user_live/email_logs.ex:106
-#: lib/animina_web/live/user_live/login_history.ex:189
+#: lib/animina_web/live/user_live/login_history.ex:190
 #: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/my_hub.ex:17
@@ -6033,78 +6028,78 @@ msgid_plural "We activate new accounts in regional waves to ensure the best expe
 msgstr[0] "Wir aktivieren neue Accounts in regionalen Wellen, um allen die beste Erfahrung zu bieten. Richte Dein Profil jetzt ein – Dein GO kommt spätestens nach %{count} Tag. Lade %{referral_threshold} Freunde mit Deinem Empfehlungscode ein und überspringe die Wartezeit!"
 msgstr[1] "Wir aktivieren neue Accounts in regionalen Wellen, um allen die beste Erfahrung zu bieten. Richte Dein Profil jetzt ein – Dein GO kommt spätestens nach %{count} Tagen. Lade %{referral_threshold} Freunde mit Deinem Empfehlungscode ein und überspringe die Wartezeit!"
 
-#: lib/animina_web/live/user_live/login_history.ex:205
+#: lib/animina_web/live/user_live/login_history.ex:206
 #, elixir-autogen, elixir-format
 msgid "%{count} event"
 msgid_plural "%{count} events"
 msgstr[0] "%{count} Ereignis"
 msgstr[1] "%{count} Ereignisse"
 
-#: lib/animina_web/live/user_live/login_history.ex:260
+#: lib/animina_web/live/user_live/login_history.ex:262
 #, elixir-autogen, elixir-format
 msgid "%{count} login"
 msgid_plural "%{count} logins"
 msgstr[0] "%{count} Anmeldung"
 msgstr[1] "%{count} Anmeldungen"
 
-#: lib/animina_web/live/user_live/login_history.ex:150
+#: lib/animina_web/live/user_live/login_history.ex:156
 #, elixir-autogen, elixir-format
 msgid "Apr"
 msgstr "Apr"
 
-#: lib/animina_web/live/user_live/login_history.ex:154
+#: lib/animina_web/live/user_live/login_history.ex:160
 #, elixir-autogen, elixir-format
 msgid "Aug"
 msgstr "Aug"
 
-#: lib/animina_web/live/user_live/login_history.ex:158
+#: lib/animina_web/live/user_live/login_history.ex:164
 #, elixir-autogen, elixir-format
 msgid "Dec"
 msgstr "Dez"
 
-#: lib/animina_web/live/user_live/login_history.ex:311
+#: lib/animina_web/live/user_live/login_history.ex:319
 #, elixir-autogen, elixir-format
 msgid "Device"
 msgstr "Gerät"
 
 #: lib/animina_web/live/user_live/login_history.ex:84
-#: lib/animina_web/live/user_live/login_history.ex:288
+#: lib/animina_web/live/user_live/login_history.ex:296
 #, elixir-autogen, elixir-format
 msgid "Email Login"
 msgstr "E-Mail-Anmeldung"
 
 #: lib/animina_web/live/user_live/login_history.ex:87
-#: lib/animina_web/live/user_live/login_history.ex:297
+#: lib/animina_web/live/user_live/login_history.ex:305
 #, elixir-autogen, elixir-format
 msgid "Failed Login"
 msgstr "Fehlgeschlagene Anmeldung"
 
-#: lib/animina_web/live/user_live/login_history.ex:148
+#: lib/animina_web/live/user_live/login_history.ex:154
 #, elixir-autogen, elixir-format
 msgid "Feb"
 msgstr "Feb"
 
-#: lib/animina_web/live/user_live/login_history.ex:246
+#: lib/animina_web/live/user_live/login_history.ex:247
 #, elixir-autogen, elixir-format
 msgid "Fri"
 msgstr "Fr"
 
-#: lib/animina_web/live/user_live/login_history.ex:147
+#: lib/animina_web/live/user_live/login_history.ex:153
 #, elixir-autogen, elixir-format
 msgid "Jan"
 msgstr "Jan"
 
-#: lib/animina_web/live/user_live/login_history.ex:153
+#: lib/animina_web/live/user_live/login_history.ex:159
 #, elixir-autogen, elixir-format
 msgid "Jul"
 msgstr "Jul"
 
-#: lib/animina_web/live/user_live/login_history.ex:152
+#: lib/animina_web/live/user_live/login_history.ex:158
 #, elixir-autogen, elixir-format
 msgid "Jun"
 msgstr "Jun"
 
-#: lib/animina_web/live/user_live/login_history.ex:269
+#: lib/animina_web/live/user_live/login_history.ex:277
 #, elixir-autogen, elixir-format
 msgid "Less"
 msgstr "Weniger"
@@ -6114,79 +6109,84 @@ msgstr "Weniger"
 msgid "Log of all login and logout events"
 msgstr "Protokoll aller An- und Abmeldungen"
 
-#: lib/animina_web/live/user_live/login_history.ex:216
-#: lib/animina_web/live/user_live/login_history.ex:222
+#: lib/animina_web/live/user_live/login_history.ex:217
+#: lib/animina_web/live/user_live/login_history.ex:223
 #, elixir-autogen, elixir-format
 msgid "Login Activity"
 msgstr "Anmeldeaktivität"
 
 #: lib/animina_web/live/user_live/login_history.ex:19
-#: lib/animina_web/live/user_live/login_history.ex:197
-#: lib/animina_web/live/user_live/login_history.ex:203
+#: lib/animina_web/live/user_live/login_history.ex:198
+#: lib/animina_web/live/user_live/login_history.ex:204
 #: lib/animina_web/live/user_live/logs_hub.ex:37
 #, elixir-autogen, elixir-format
 msgid "Login History"
 msgstr "Anmeldeverlauf"
 
 #: lib/animina_web/live/user_live/login_history.ex:86
-#: lib/animina_web/live/user_live/login_history.ex:294
+#: lib/animina_web/live/user_live/login_history.ex:302
 #, elixir-autogen, elixir-format
 msgid "Logout"
 msgstr "Abmeldung"
 
-#: lib/animina_web/live/user_live/login_history.ex:149
+#: lib/animina_web/live/user_live/login_history.ex:155
 #, elixir-autogen, elixir-format
 msgid "Mar"
 msgstr "Mär"
 
-#: lib/animina_web/live/user_live/login_history.ex:151
+#: lib/animina_web/live/user_live/login_history.ex:157
 #, elixir-autogen, elixir-format
 msgid "May"
 msgstr "Mai"
 
-#: lib/animina_web/live/user_live/login_history.ex:240
+#: lib/animina_web/live/user_live/login_history.ex:241
 #, elixir-autogen, elixir-format
 msgid "Mon"
 msgstr "Mo"
 
-#: lib/animina_web/live/user_live/login_history.ex:275
+#: lib/animina_web/live/user_live/login_history.ex:283
 #, elixir-autogen, elixir-format
 msgid "More"
 msgstr "Mehr"
 
-#: lib/animina_web/live/user_live/login_history.ex:327
+#: lib/animina_web/live/user_live/login_history.ex:335
 #, elixir-autogen, elixir-format
 msgid "No login events found."
 msgstr "Keine Anmeldeereignisse gefunden."
 
-#: lib/animina_web/live/user_live/login_history.ex:157
+#: lib/animina_web/live/user_live/login_history.ex:163
 #, elixir-autogen, elixir-format
 msgid "Nov"
 msgstr "Nov"
 
-#: lib/animina_web/live/user_live/login_history.ex:156
+#: lib/animina_web/live/user_live/login_history.ex:162
 #, elixir-autogen, elixir-format
 msgid "Oct"
 msgstr "Okt"
 
 #: lib/animina_web/live/user_live/login_history.ex:85
-#: lib/animina_web/live/user_live/login_history.ex:291
+#: lib/animina_web/live/user_live/login_history.ex:299
 #, elixir-autogen, elixir-format
 msgid "Passkey Login"
 msgstr "Passkey-Anmeldung"
 
-#: lib/animina_web/live/user_live/login_history.ex:155
+#: lib/animina_web/live/user_live/login_history.ex:161
 #, elixir-autogen, elixir-format
 msgid "Sep"
 msgstr "Sep"
 
-#: lib/animina_web/live/user_live/login_history.ex:92
-#: lib/animina_web/live/user_live/login_history.ex:97
+#: lib/animina_web/live/user_live/login_history.ex:98
+#: lib/animina_web/live/user_live/login_history.ex:103
 #, elixir-autogen, elixir-format
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: lib/animina_web/live/user_live/login_history.ex:243
+#: lib/animina_web/live/user_live/login_history.ex:244
 #, elixir-autogen, elixir-format
 msgid "Wed"
 msgstr "Mi"
+
+#: lib/animina_web/live/user_live/waitlist.ex:254
+#, elixir-autogen, elixir-format
+msgid "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you."
+msgstr "jede bestätigte Anmeldung reduziert die Wartezeit um 1/%{threshold} für euch beide."

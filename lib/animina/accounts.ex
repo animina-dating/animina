@@ -106,6 +106,9 @@ defmodule Animina.Accounts do
     from(u in User, where: u.id == ^referrer_id)
     |> Repo.update_all(inc: [waitlist_priority: 1])
 
+    reduce_waitlist_time(user.id)
+    reduce_waitlist_time(referrer_id)
+
     maybe_auto_activate(referrer_id)
     maybe_auto_activate(user.id)
 
@@ -122,6 +125,35 @@ defmodule Animina.Accounts do
       )
       |> Repo.update_all(set: [state: "normal"])
     end
+  end
+
+  defp reduce_waitlist_time(user_id) do
+    user = Repo.get(User, user_id)
+
+    if user && user.state == "waitlisted" && user.end_waitlist_at do
+      apply_waitlist_reduction(user)
+    end
+  end
+
+  defp apply_waitlist_reduction(user) do
+    threshold = Animina.FeatureFlags.referral_threshold()
+    duration_days = Animina.FeatureFlags.waitlist_duration_days()
+    reduction_seconds = div(duration_days * 86_400, threshold)
+    now = TimeMachine.utc_now(:second)
+
+    reduced = DateTime.add(user.end_waitlist_at, -reduction_seconds, :second)
+    new_end_at = Enum.max([reduced, now], DateTime)
+
+    from(u in User, where: u.id == ^user.id)
+    |> Repo.update_all(set: [end_waitlist_at: new_end_at])
+
+    ActivityLog.log(
+      "profile",
+      "referral_waitlist_reduced",
+      "Waitlist time reduced by #{div(reduction_seconds, 86_400)} days for #{user.display_name}",
+      actor_id: user.id,
+      subject_id: user.id
+    )
   end
 
   ## Terms of Service

@@ -68,7 +68,7 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
       assert html =~ "Skip the waitlist"
     end
 
-    test "shows referral count and progress", %{conn: conn} do
+    test "shows referral count and threshold badge", %{conn: conn} do
       user = user_fixture(language: "en")
 
       {:ok, _lv, html} =
@@ -78,6 +78,31 @@ defmodule AniminaWeb.UserLive.WaitlistTest do
 
       assert html =~ "Skip the waitlist"
       assert html =~ "Share the code"
+      # Should show 0/3 badge (default threshold is 3, no referrals yet)
+      assert html =~ "0/"
+      # Should show the 1/threshold text
+      assert html =~ "reduces your waitlist time"
+    end
+
+    test "shows progress bar when user has referrals", %{conn: conn} do
+      referrer = user_fixture(language: "en", display_name: "Referrer")
+
+      # Create a referred user who counts as a confirmed referral
+      _referred = user_fixture(language: "en", display_name: "Referred")
+
+      import Ecto.Query
+
+      from(u in Animina.Accounts.User, where: u.display_name == "Referred")
+      |> Animina.Repo.update_all(set: [referred_by_id: referrer.id])
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(referrer)
+        |> live(~p"/my/waitlist")
+
+      # Should show the progress bar since referral_count > 0
+      assert html =~ "progress-accent"
+      assert html =~ "1/"
     end
 
     test "shows links to avatar, moodboard editor and flag wizard", %{conn: conn} do
