@@ -95,6 +95,9 @@ defmodule AniminaWeb.Admin.FlagsDiscoveryLive do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>
               <.link navigate={~p"/admin/flags"}>{gettext("Feature Flags")}</.link>
             </li>
             <li>{gettext("Discovery / Matching")}</li>

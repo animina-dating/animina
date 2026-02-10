@@ -124,6 +124,14 @@ defmodule AniminaWeb.Admin.PhotoBlacklistLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>{gettext("Photo Blacklist")}</li>
+          </ul>
+        </div>
         <div class="mb-8">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Photo Blacklist")}</h1>
           <p class="text-base-content/70 mt-1">

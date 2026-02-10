@@ -26,7 +26,9 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <.page_header title={gettext("Logs")} subtitle={gettext("System log viewers")} />
+        <.page_header title={gettext("Logs")} subtitle={gettext("System log viewers")}>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+        </.page_header>
 
         <div class="grid gap-4">
           <.hub_card

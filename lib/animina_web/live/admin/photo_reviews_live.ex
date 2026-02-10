@@ -398,6 +398,15 @@ defmodule AniminaWeb.Admin.PhotoReviewsLive do
         id="photo-reviews-container"
         phx-hook="ShiftSelect"
       >
+        <%!-- Breadcrumb --%>
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>{gettext("Photo Reviews")}</li>
+          </ul>
+        </div>
         <%!-- Header with count --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Photo Reviews")}</h1>

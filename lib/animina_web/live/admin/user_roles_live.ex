@@ -74,6 +74,14 @@ defmodule AniminaWeb.Admin.UserRolesLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>{gettext("Manage Roles")}</li>
+          </ul>
+        </div>
         <h1 class="text-2xl font-bold text-base-content mb-6">{gettext("Manage Roles")}</h1>
 
         <div class="mb-6">

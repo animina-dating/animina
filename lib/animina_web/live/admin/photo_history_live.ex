@@ -27,6 +27,9 @@ defmodule AniminaWeb.Admin.PhotoHistoryLive do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>
               <.link navigate={~p"/admin/photo-reviews"}>{gettext("Photo Reviews")}</.link>
             </li>
             <li>{gettext("History")}</li>

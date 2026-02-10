@@ -16,6 +16,14 @@ defmodule AniminaWeb.UserLive.Waitlist do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="space-y-6">
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li>
+              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+            </li>
+            <li>{gettext("Waitlist")}</li>
+          </ul>
+        </div>
         <%!-- Status banner --%>
         <div class="max-w-2xl mx-auto text-center">
           <p class="text-base-content/70">

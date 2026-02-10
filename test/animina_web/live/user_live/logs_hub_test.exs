@@ -23,13 +23,13 @@ defmodule AniminaWeb.UserLive.LogsHubTest do
       assert page_title(lv) == "Logs - ANIMINA"
     end
 
-    test "has breadcrumb to settings", %{conn: conn} do
+    test "has breadcrumb to My ANIMINA", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/logs")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my']")
     end
 
     test "has navigation link to email logs", %{conn: conn} do

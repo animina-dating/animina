@@ -28,7 +28,7 @@ msgstr "100% бесплатно"
 msgid "A confirmation code has been sent to %{email}."
 msgstr "Код подтверждения отправлен на %{email}."
 
-#: lib/animina_web/live/user_live/account_email_password.ex:140
+#: lib/animina_web/live/user_live/account_email_password.ex:143
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Ссылка для подтверждения смены e-mail отправлена на новый адрес."
@@ -38,7 +38,7 @@ msgstr "Ссылка для подтверждения смены e-mail отп�
 msgid "Account"
 msgstr "Аккаунт"
 
-#: lib/animina_web/components/core_components.ex:532
+#: lib/animina_web/components/core_components.ex:534
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Действия"
@@ -69,7 +69,7 @@ msgid "At ANIMINA everything is different."
 msgstr "В ANIMINA всё по-другому."
 
 #: lib/animina_web/live/user_live/registration.ex:105
-#: lib/animina_web/live/user_live/traits_wizard.ex:146
+#: lib/animina_web/live/user_live/traits_wizard.ex:152
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Назад"
@@ -182,12 +182,12 @@ msgstr "Адрес электронной почты"
 msgid "Email address confirmed successfully."
 msgstr "Адрес электронной почты успешно подтверждён."
 
-#: lib/animina_web/live/user_live/account_email_password.ex:79
+#: lib/animina_web/live/user_live/account_email_password.ex:82
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "Ссылка для смены e-mail недействительна или истекла."
 
-#: lib/animina_web/live/user_live/account_email_password.ex:69
+#: lib/animina_web/live/user_live/account_email_password.ex:72
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "E-mail успешно изменён."
@@ -283,7 +283,7 @@ msgstr "Радость вместо зависимости"
 #: lib/animina_web/live/user_live/language_settings.ex:14
 #: lib/animina_web/live/user_live/language_settings.ex:51
 #: lib/animina_web/live/user_live/registration.ex:299
-#: lib/animina_web/live/user_live/settings_hub.ex:46
+#: lib/animina_web/live/user_live/settings_hub.ex:43
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Язык"
@@ -298,7 +298,7 @@ msgstr[2] "Местоположений"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:13
 #: lib/animina_web/live/user_live/edit_locations.ex:149
-#: lib/animina_web/live/user_live/profile_hub.ex:107
+#: lib/animina_web/live/user_live/profile_hub.ex:108
 #: lib/animina_web/live/user_live/registration.ex:493
 #, elixir-autogen, elixir-format
 msgid "Locations"
@@ -371,7 +371,7 @@ msgid "New password"
 msgstr "Новый пароль"
 
 #: lib/animina_web/live/user_live/registration.ex:116
-#: lib/animina_web/live/user_live/traits_wizard.ex:153
+#: lib/animina_web/live/user_live/traits_wizard.ex:159
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "Далее"
@@ -475,7 +475,7 @@ msgid "Privacy"
 msgstr "Конфиденциальность"
 
 #: lib/animina_web/live/user_live/registration.ex:15
-#: lib/animina_web/live/user_live/settings_hub.ex:28
+#: lib/animina_web/live/user_live/settings_hub.ex:25
 #, elixir-autogen, elixir-format
 msgid "Profile"
 msgstr "Профиль"
@@ -574,20 +574,22 @@ msgstr "Отправить ссылку для сброса"
 msgid "Set new password"
 msgstr "Установить новый пароль"
 
-#: lib/animina_web/components/core_components.ex:412
-#: lib/animina_web/components/core_components.ex:424
+#: lib/animina_web/components/core_components.ex:413
+#: lib/animina_web/components/core_components.ex:426
 #: lib/animina_web/components/layouts.ex:272
-#: lib/animina_web/live/user_live/account_delete.ex:16
-#: lib/animina_web/live/user_live/account_email_password.ex:19
-#: lib/animina_web/live/user_live/account_hub.ex:22
-#: lib/animina_web/live/user_live/account_passkeys.ex:16
-#: lib/animina_web/live/user_live/account_sessions.ex:16
-#: lib/animina_web/live/user_live/email_logs.ex:106
-#: lib/animina_web/live/user_live/logs_hub.ex:16
+#: lib/animina_web/live/user_live/account_delete.ex:19
+#: lib/animina_web/live/user_live/account_email_password.ex:22
+#: lib/animina_web/live/user_live/account_hub.ex:23
+#: lib/animina_web/live/user_live/account_passkeys.ex:19
+#: lib/animina_web/live/user_live/account_sessions.ex:19
+#: lib/animina_web/live/user_live/email_logs.ex:111
+#: lib/animina_web/live/user_live/logs_hub.ex:17
+#: lib/animina_web/live/user_live/moodboard_editor.ex:34
 #: lib/animina_web/live/user_live/my_hub.ex:47
-#: lib/animina_web/live/user_live/profile_hub.ex:20
-#: lib/animina_web/live/user_live/settings_hub.ex:19
-#: lib/animina_web/live/user_live/settings_hub.ex:73
+#: lib/animina_web/live/user_live/profile_hub.ex:21
+#: lib/animina_web/live/user_live/settings_hub.ex:17
+#: lib/animina_web/live/user_live/settings_hub.ex:70
+#: lib/animina_web/live/user_live/traits_wizard.ex:20
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Настройки"
@@ -670,7 +672,7 @@ msgid "What makes ANIMINA different"
 msgstr "Что отличает ANIMINA"
 
 #: lib/animina_web/live/index_live.ex:200
-#: lib/animina_web/live/user_live/traits_wizard.ex:38
+#: lib/animina_web/live/user_live/traits_wizard.ex:44
 #, elixir-autogen, elixir-format
 msgid "White Flags"
 msgstr "Белые флаги"
@@ -775,10 +777,10 @@ msgid "Could not remove location."
 msgstr "Не удалось удалить местоположение."
 
 #: lib/animina_web/live/components/account_delete_component.ex:10
-#: lib/animina_web/live/user_live/account_delete.ex:21
-#: lib/animina_web/live/user_live/account_delete.ex:27
-#: lib/animina_web/live/user_live/account_delete.ex:51
-#: lib/animina_web/live/user_live/account_hub.ex:47
+#: lib/animina_web/live/user_live/account_delete.ex:24
+#: lib/animina_web/live/user_live/account_delete.ex:30
+#: lib/animina_web/live/user_live/account_delete.ex:54
+#: lib/animina_web/live/user_live/account_hub.ex:48
 #, elixir-autogen, elixir-format
 msgid "Delete Account"
 msgstr "Удалить аккаунт"
@@ -809,7 +811,7 @@ msgstr "Редактировать профиль"
 msgid "Height (cm)"
 msgstr "Рост (см)"
 
-#: lib/animina_web/live/user_live/account_delete.ex:72
+#: lib/animina_web/live/user_live/account_delete.ex:75
 #, elixir-autogen, elixir-format
 msgid "Invalid password."
 msgstr "Неверный пароль."
@@ -851,7 +853,7 @@ msgstr "Местоположения ещё не добавлены."
 
 #: lib/animina_web/live/user_live/edit_preferences.ex:18
 #: lib/animina_web/live/user_live/edit_preferences.ex:112
-#: lib/animina_web/live/user_live/profile_hub.ex:97
+#: lib/animina_web/live/user_live/profile_hub.ex:98
 #, elixir-autogen, elixir-format
 msgid "Partner Preferences"
 msgstr "Предпочтения партнёра"
@@ -873,7 +875,7 @@ msgstr "Профиль успешно обновлён."
 
 #: lib/animina_web/live/user_live/edit_locations.ex:84
 #: lib/animina_web/live/user_live/edit_locations.ex:87
-#: lib/animina_web/live/user_live/moodboard_editor.ex:427
+#: lib/animina_web/live/user_live/moodboard_editor.ex:433
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr "Удалить"
@@ -903,7 +905,7 @@ msgstr "Обновите информацию профиля"
 msgid "You can have at most 4 locations."
 msgstr "Вы можете добавить не более 4 местоположений."
 
-#: lib/animina_web/live/user_live/account_delete.ex:67
+#: lib/animina_web/live/user_live/account_delete.ex:70
 #, elixir-autogen, elixir-format
 msgid "Your account has been scheduled for deletion."
 msgstr "Ваш аккаунт запланирован к удалению."
@@ -1012,18 +1014,30 @@ msgstr "Собственный сервер в Германии"
 msgid "Our servers are not in the cloud – they run on our own physical hardware in Germany."
 msgstr "Наши серверы не в облаке – они работают на собственном физическом оборудовании в Германии."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:145
+#: lib/animina_web/live/admin/user_roles_live.ex:153
 #, elixir-autogen, elixir-format
 msgid "Add Role"
 msgstr "Добавить роль"
 
 #: lib/animina_web/components/layouts.ex:214
-#: lib/animina_web/live/admin/photo_history_live.ex:179
+#: lib/animina_web/live/admin/activity_logs_live.ex:232
+#: lib/animina_web/live/admin/email_logs_live.ex:140
+#: lib/animina_web/live/admin/flags_ai_live.ex:164
+#: lib/animina_web/live/admin/flags_discovery_live.ex:98
+#: lib/animina_web/live/admin/flags_index_live.ex:31
+#: lib/animina_web/live/admin/flags_system_live.ex:76
+#: lib/animina_web/live/admin/logs_index_live.ex:30
+#: lib/animina_web/live/admin/ollama_logs_live.ex:341
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:130
+#: lib/animina_web/live/admin/photo_history_live.ex:30
+#: lib/animina_web/live/admin/photo_history_live.ex:182
+#: lib/animina_web/live/admin/photo_reviews_live.ex:405
+#: lib/animina_web/live/admin/user_roles_live.ex:80
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr "Администратор"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:161
+#: lib/animina_web/live/admin/user_roles_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "All roles assigned."
 msgstr "Все роли назначены."
@@ -1033,25 +1047,26 @@ msgstr "Все роли назначены."
 msgid "Could not add role."
 msgstr "Не удалось добавить роль."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:119
+#: lib/animina_web/live/admin/user_roles_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "Current Roles"
 msgstr "Текущие роли"
 
 #: lib/animina_web/live/admin/admin_hub.ex:60
 #: lib/animina_web/live/admin/user_roles_live.ex:11
-#: lib/animina_web/live/admin/user_roles_live.ex:77
+#: lib/animina_web/live/admin/user_roles_live.ex:82
+#: lib/animina_web/live/admin/user_roles_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Manage Roles"
 msgstr "Управление ролями"
 
 #: lib/animina_web/components/layouts.ex:219
-#: lib/animina_web/live/admin/photo_history_live.ex:178
+#: lib/animina_web/live/admin/photo_history_live.ex:181
 #, elixir-autogen, elixir-format
 msgid "Moderator"
 msgstr "Модератор"
 
-#: lib/animina_web/live/admin/user_roles_live.ex:135
+#: lib/animina_web/live/admin/user_roles_live.ex:143
 #, elixir-autogen, elixir-format
 msgid "Remove role"
 msgstr "Удалить роль"
@@ -1061,7 +1076,7 @@ msgstr "Удалить роль"
 msgid "Role not found."
 msgstr "Роль не найдена."
 
-#: lib/animina_web/live/admin/user_roles_live.ex:85
+#: lib/animina_web/live/admin/user_roles_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Search users by email or name..."
 msgstr "Поиск пользователей по email или имени..."
@@ -1071,10 +1086,10 @@ msgstr "Поиск пользователей по email или имени..."
 msgid "The user role cannot be removed."
 msgstr "Роль пользователя не может быть удалена."
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:268
-#: lib/animina_web/live/admin/email_logs_live.ex:232
-#: lib/animina_web/live/admin/photo_history_live.ex:177
-#: lib/animina_web/live/admin/photo_reviews_live.ex:614
+#: lib/animina_web/live/admin/activity_logs_live.ex:271
+#: lib/animina_web/live/admin/email_logs_live.ex:235
+#: lib/animina_web/live/admin/photo_history_live.ex:180
+#: lib/animina_web/live/admin/photo_reviews_live.ex:623
 #, elixir-autogen, elixir-format
 msgid "User"
 msgstr "Пользователь"
@@ -1097,149 +1112,149 @@ msgid "Cannot remove the last admin. Assign another admin first."
 msgstr "Невозможно удалить последнего администратора. Сначала назначьте другого администратора."
 
 #: lib/animina_web/components/moodboard_components.ex:287
-#: lib/animina_web/live/user_live/traits_wizard.ex:360
+#: lib/animina_web/live/user_live/traits_wizard.ex:366
 #, elixir-autogen, elixir-format
 msgid "About Me"
 msgstr "Обо мне"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:655
+#: lib/animina_web/live/user_live/traits_wizard.ex:661
 #, elixir-autogen, elixir-format
 msgid "Could not add flag."
 msgstr "Не удалось добавить флаг."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:157
+#: lib/animina_web/live/user_live/traits_wizard.ex:163
 #, elixir-autogen, elixir-format
 msgid "Finish"
 msgstr "Готово"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:604
+#: lib/animina_web/live/user_live/traits_wizard.ex:610
 #, elixir-autogen, elixir-format
 msgid "All flags have been deleted."
 msgstr "Все флаги удалены."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:715
+#: lib/animina_web/live/user_live/traits_wizard.ex:721
 #, elixir-autogen, elixir-format
 msgid "Are you sure that you want to delete all %{white} white, %{green} green and %{red} red flags of yours?"
 msgstr "Ты уверен(а), что хочешь удалить все свои %{white} белых, %{green} зелёных и %{red} красных флагов?"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:176
+#: lib/animina_web/live/user_live/traits_wizard.ex:182
 #, elixir-autogen, elixir-format
 msgid "Delete all flags"
 msgstr "Удалить все флаги"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:78
+#: lib/animina_web/live/user_live/traits_wizard.ex:84
 #, elixir-autogen, elixir-format
 msgid "Click to cycle:"
 msgstr "Нажми для переключения:"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:387
+#: lib/animina_web/live/user_live/traits_wizard.ex:393
 #, elixir-autogen, elixir-format
 msgid "Traits that describe who you are"
 msgstr "Качества, которые описывают тебя"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:396
+#: lib/animina_web/live/user_live/traits_wizard.ex:402
 #, elixir-autogen, elixir-format
 msgid "deal breaker"
 msgstr "неприемлемо"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:395
+#: lib/animina_web/live/user_live/traits_wizard.ex:401
 #, elixir-autogen, elixir-format
 msgid "must have"
 msgstr "обязательно"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:398
+#: lib/animina_web/live/user_live/traits_wizard.ex:404
 #, elixir-autogen, elixir-format
 msgid "nice to have"
 msgstr "желательно"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:105
+#: lib/animina_web/live/user_live/traits_wizard.ex:111
 #, elixir-autogen, elixir-format
 msgid "off"
 msgstr "выкл"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:399
+#: lib/animina_web/live/user_live/traits_wizard.ex:405
 #, elixir-autogen, elixir-format
 msgid "prefer not"
 msgstr "лучше нет"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:621
+#: lib/animina_web/live/user_live/traits_wizard.ex:627
 #, elixir-autogen, elixir-format
 msgid "Could not update flag."
 msgstr "Не удалось обновить флаг."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:188
+#: lib/animina_web/live/user_live/traits_wizard.ex:194
 #, elixir-autogen, elixir-format
 msgid "Optional Categories"
 msgstr "Дополнительные категории"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:316
+#: lib/animina_web/live/user_live/traits_wizard.ex:322
 #, elixir-autogen, elixir-format
 msgid "Going Out & Travels"
 msgstr "Отдых и путешествия"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:315
+#: lib/animina_web/live/user_live/traits_wizard.ex:321
 #, elixir-autogen, elixir-format
 msgid "Interests"
 msgstr "Интересы"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:314
+#: lib/animina_web/live/user_live/traits_wizard.ex:320
 #, elixir-autogen, elixir-format
 msgid "Lifestyle"
 msgstr "Образ жизни"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:317
+#: lib/animina_web/live/user_live/traits_wizard.ex:323
 #, elixir-autogen, elixir-format
 msgid "Sensitive"
 msgstr "Деликатное"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:361
+#: lib/animina_web/live/user_live/traits_wizard.ex:367
 #, elixir-autogen, elixir-format
 msgid "I Like in a Partner"
 msgstr "Что мне нравится в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:362
+#: lib/animina_web/live/user_live/traits_wizard.ex:368
 #, elixir-autogen, elixir-format
 msgid "Partner Deal Breakers"
 msgstr "Неприемлемое в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:49
+#: lib/animina_web/live/user_live/traits_wizard.ex:55
 #, elixir-autogen, elixir-format
 msgid "Partner Likes"
 msgstr "Предпочтения в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:60
+#: lib/animina_web/live/user_live/traits_wizard.ex:66
 #, elixir-autogen, elixir-format
 msgid "Partner No-Go"
 msgstr "Неприемлемое в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:393
+#: lib/animina_web/live/user_live/traits_wizard.ex:399
 #, elixir-autogen, elixir-format
 msgid "Traits that are deal-breakers in a partner"
 msgstr "Качества, которые неприемлемы в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:390
+#: lib/animina_web/live/user_live/traits_wizard.ex:396
 #, elixir-autogen, elixir-format
 msgid "Traits you'd like your partner to have"
 msgstr "Качества, которые ты хочешь видеть в партнёре"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:89
-#: lib/animina_web/live/user_live/traits_wizard.ex:20
-#: lib/animina_web/live/user_live/traits_wizard.ex:28
+#: lib/animina_web/live/user_live/profile_hub.ex:90
+#: lib/animina_web/live/user_live/traits_wizard.ex:26
+#: lib/animina_web/live/user_live/traits_wizard.ex:34
 #, elixir-autogen, elixir-format
 msgid "My Flags"
 msgstr "Мои флаги"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:364
+#: lib/animina_web/live/user_live/traits_wizard.ex:370
 #, elixir-autogen, elixir-format
 msgid "My Flags — About Me"
 msgstr "Мои флаги — Обо мне"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:365
+#: lib/animina_web/live/user_live/traits_wizard.ex:371
 #, elixir-autogen, elixir-format
 msgid "My Flags — I Like in a Partner"
 msgstr "Мои флаги — Что мне нравится в партнёре"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:366
+#: lib/animina_web/live/user_live/traits_wizard.ex:372
 #, elixir-autogen, elixir-format
 msgid "My Flags — Partner Deal Breakers"
 msgstr "Мои флаги — Неприемлемое в партнёре"
@@ -1251,17 +1266,17 @@ msgstr "Приложение"
 
 #: lib/animina_web/components/love_emergency_component.ex:69
 #: lib/animina_web/components/moodboard_components.ex:556
-#: lib/animina_web/live/admin/flags_ai_live.ex:402
-#: lib/animina_web/live/admin/flags_discovery_live.ex:251
-#: lib/animina_web/live/admin/flags_system_live.ex:209
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:211
-#: lib/animina_web/live/admin/photo_reviews_live.ex:749
-#: lib/animina_web/live/messages_live.ex:191
+#: lib/animina_web/live/admin/flags_ai_live.ex:405
+#: lib/animina_web/live/admin/flags_discovery_live.ex:254
+#: lib/animina_web/live/admin/flags_system_live.ex:212
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:219
+#: lib/animina_web/live/admin/photo_reviews_live.ex:758
+#: lib/animina_web/live/messages_live.ex:209
 #: lib/animina_web/live/user_live/avatar_upload.ex:267
 #: lib/animina_web/live/user_live/edit_locations.ex:54
-#: lib/animina_web/live/user_live/moodboard_editor.ex:501
-#: lib/animina_web/live/user_live/moodboard_editor.ex:562
-#: lib/animina_web/live/user_live/moodboard_editor.ex:611
+#: lib/animina_web/live/user_live/moodboard_editor.ex:507
+#: lib/animina_web/live/user_live/moodboard_editor.ex:568
+#: lib/animina_web/live/user_live/moodboard_editor.ex:617
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr "Отмена"
@@ -1283,17 +1298,17 @@ msgid "Location updated."
 msgstr "Местоположение обновлено."
 
 #: lib/animina_web/components/moodboard_components.ex:559
-#: lib/animina_web/live/admin/flags_ai_live.ex:405
-#: lib/animina_web/live/admin/flags_discovery_live.ex:254
-#: lib/animina_web/live/admin/flags_system_live.ex:212
+#: lib/animina_web/live/admin/flags_ai_live.ex:408
+#: lib/animina_web/live/admin/flags_discovery_live.ex:257
+#: lib/animina_web/live/admin/flags_system_live.ex:215
 #: lib/animina_web/live/user_live/edit_locations.ex:47
-#: lib/animina_web/live/user_live/moodboard_editor.ex:508
-#: lib/animina_web/live/user_live/moodboard_editor.ex:620
+#: lib/animina_web/live/user_live/moodboard_editor.ex:514
+#: lib/animina_web/live/user_live/moodboard_editor.ex:626
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Сохранить"
 
-#: lib/animina_web/live/messages_live.ex:290
+#: lib/animina_web/live/messages_live.ex:308
 #: lib/animina_web/live/user_live/profile_moodboard.ex:64
 #: lib/animina_web/live/user_live/profile_moodboard.ex:275
 #, elixir-autogen, elixir-format
@@ -2800,7 +2815,7 @@ msgstr "Сексуальные предпочтения"
 msgid "Shared Activities"
 msgstr "Совместные занятия"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:745
+#: lib/animina_web/live/admin/ollama_logs_live.ex:748
 #: lib/animina_web/trait_translations.ex:52
 #, elixir-autogen, elixir-format
 msgid "Single"
@@ -2946,7 +2961,7 @@ msgstr "Только один файл за раз"
 msgid "Pending review"
 msgstr "Ожидает проверки"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:157
+#: lib/animina_web/live/admin/photo_history_live.ex:160
 #, elixir-autogen, elixir-format
 msgid "Photo uploaded"
 msgstr "Фото загружено"
@@ -2966,8 +2981,8 @@ msgstr "Обработка"
 #: lib/animina_web/live/user_live/avatar_upload.ex:19
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
-#: lib/animina_web/live/user_live/profile_hub.ex:59
-#: lib/animina_web/live/user_live/waitlist.ex:103
+#: lib/animina_web/live/user_live/profile_hub.ex:60
+#: lib/animina_web/live/user_live/waitlist.ex:111
 #, elixir-autogen, elixir-format
 msgid "Profile Photo"
 msgstr "Фото профиля"
@@ -2983,7 +2998,7 @@ msgid "Upload a photo that shows your face clearly"
 msgstr "Загрузите фото, на котором чётко видно ваше лицо"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:571
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1038
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1044
 #, elixir-autogen, elixir-format
 msgid "Upload error"
 msgstr "Ошибка загрузки"
@@ -3017,33 +3032,33 @@ msgstr "В списке ожидания"
 msgid "No face detected"
 msgstr "Лицо не обнаружено"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:176
+#: lib/animina_web/live/admin/photo_history_live.ex:179
 #, elixir-autogen, elixir-format
 msgid "AI"
 msgstr "ИИ"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:702
+#: lib/animina_web/live/admin/photo_reviews_live.ex:711
 #, elixir-autogen, elixir-format
 msgid "Add notes about your decision..."
 msgstr "Добавьте заметки о вашем решении..."
 
-#: lib/animina_web/live/admin/photo_history_live.ex:171
+#: lib/animina_web/live/admin/photo_history_live.ex:174
 #, elixir-autogen, elixir-format
 msgid "Added to blacklist"
 msgstr "Добавлено в чёрный список"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:669
+#: lib/animina_web/live/admin/photo_reviews_live.ex:678
 #, elixir-autogen, elixir-format
 msgid "Appeal Reason"
 msgstr "Причина апелляции"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:169
+#: lib/animina_web/live/admin/photo_history_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "Appeal approved"
 msgstr "Апелляция одобрена"
 
 #: lib/animina_web/helpers/photo_status.ex:68
-#: lib/animina_web/live/admin/photo_history_live.ex:170
+#: lib/animina_web/live/admin/photo_history_live.ex:173
 #: lib/animina_web/live/user_live/avatar_upload.ex:492
 #, elixir-autogen, elixir-format
 msgid "Appeal rejected"
@@ -3054,22 +3069,22 @@ msgstr "Апелляция отклонена"
 msgid "Appeal rejected."
 msgstr "Апелляция отклонена."
 
-#: lib/animina_web/live/admin/photo_history_live.ex:168
+#: lib/animina_web/live/admin/photo_history_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Appeal submitted"
 msgstr "Апелляция подана"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:757
+#: lib/animina_web/live/admin/photo_reviews_live.ex:766
 #, elixir-autogen, elixir-format
 msgid "Approve"
 msgstr "Одобрить"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:160
+#: lib/animina_web/live/admin/photo_history_live.ex:163
 #, elixir-autogen, elixir-format
 msgid "Blacklist checked"
 msgstr "Чёрный список проверен"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:161
+#: lib/animina_web/live/admin/photo_history_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Blacklist match found"
 msgstr "Найдено совпадение в чёрном списке"
@@ -3089,47 +3104,47 @@ msgstr "Не удалось отклонить: %{reason}"
 msgid "Could not submit appeal. Please try again."
 msgstr "Не удалось подать апелляцию. Пожалуйста, попробуйте ещё раз."
 
-#: lib/animina_web/live/admin/photo_history_live.ex:165
+#: lib/animina_web/live/admin/photo_history_live.ex:168
 #, elixir-autogen, elixir-format
 msgid "Escalated to Ollama (Face)"
 msgstr "Передано в Ollama (лицо)"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:163
+#: lib/animina_web/live/admin/photo_history_live.ex:166
 #, elixir-autogen, elixir-format
 msgid "Escalated to Ollama (NSFW)"
 msgstr "Передано в Ollama (NSFW)"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:164
+#: lib/animina_web/live/admin/photo_history_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Face detection completed"
 msgstr "Обнаружение лица завершено"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:32
+#: lib/animina_web/live/admin/photo_history_live.ex:35
 #, elixir-autogen, elixir-format
 msgid "History"
 msgstr "История"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:57
+#: lib/animina_web/live/admin/photo_history_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "NSFW"
 msgstr "NSFW"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:162
+#: lib/animina_web/live/admin/photo_history_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "NSFW check completed"
 msgstr "Проверка NSFW завершена"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:60
+#: lib/animina_web/live/admin/photo_history_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "No Face"
 msgstr "Лицо не найдено"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:148
+#: lib/animina_web/live/admin/photo_history_live.ex:151
 #, elixir-autogen, elixir-format
 msgid "No history recorded for this photo."
 msgstr "История для этого фото не записана."
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:461
+#: lib/animina_web/live/admin/photo_reviews_live.ex:470
 #, elixir-autogen, elixir-format
 msgid "No pending appeals."
 msgstr "Нет апелляций на рассмотрении."
@@ -3139,33 +3154,34 @@ msgstr "Нет апелляций на рассмотрении."
 msgid "Pending moderator review"
 msgstr "Ожидает проверки модератора"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:470
-#: lib/animina_web/live/admin/photo_history_live.ex:41
-#: lib/animina_web/live/user_live/moodboard_editor.ex:394
+#: lib/animina_web/live/admin/ollama_logs_live.ex:473
+#: lib/animina_web/live/admin/photo_history_live.ex:44
+#: lib/animina_web/live/user_live/moodboard_editor.ex:400
 #, elixir-autogen, elixir-format
 msgid "Photo"
 msgstr "Фото"
 
 #: lib/animina_web/live/admin/photo_history_live.ex:16
-#: lib/animina_web/live/admin/photo_history_live.ex:48
+#: lib/animina_web/live/admin/photo_history_live.ex:51
 #, elixir-autogen, elixir-format
 msgid "Photo History"
 msgstr "История фото"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:64
+#: lib/animina_web/live/admin/photo_history_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Photo ID: %{id}"
 msgstr "ID фото: %{id}"
 
 #: lib/animina_web/live/admin/admin_hub.ex:42
-#: lib/animina_web/live/admin/photo_history_live.ex:30
+#: lib/animina_web/live/admin/photo_history_live.ex:33
 #: lib/animina_web/live/admin/photo_reviews_live.ex:16
-#: lib/animina_web/live/admin/photo_reviews_live.ex:403
+#: lib/animina_web/live/admin/photo_reviews_live.ex:407
+#: lib/animina_web/live/admin/photo_reviews_live.ex:412
 #, elixir-autogen, elixir-format
 msgid "Photo Reviews"
 msgstr "Проверки фото"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:166
+#: lib/animina_web/live/admin/photo_history_live.ex:169
 #, elixir-autogen, elixir-format
 msgid "Photo approved"
 msgstr "Фото одобрено"
@@ -3176,39 +3192,39 @@ msgid "Photo approved."
 msgstr "Фото одобрено."
 
 #: lib/animina_web/helpers/photo_status.ex:60
-#: lib/animina_web/live/admin/photo_history_live.ex:167
+#: lib/animina_web/live/admin/photo_history_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "Photo rejected"
 msgstr "Фото отклонено"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:485
-#: lib/animina_web/live/admin/photo_reviews_live.ex:605
+#: lib/animina_web/live/admin/photo_reviews_live.ex:494
+#: lib/animina_web/live/admin/photo_reviews_live.ex:614
 #, elixir-autogen, elixir-format
 msgid "Photo under review"
 msgstr "Фото на проверке"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:159
+#: lib/animina_web/live/admin/photo_history_live.ex:162
 #, elixir-autogen, elixir-format
 msgid "Processing completed"
 msgstr "Обработка завершена"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:158
+#: lib/animina_web/live/admin/photo_history_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Processing started"
 msgstr "Обработка начата"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:753
+#: lib/animina_web/live/admin/photo_reviews_live.ex:762
 #, elixir-autogen, elixir-format
 msgid "Reject"
 msgstr "Отклонить"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:230
-#: lib/animina_web/live/admin/photo_reviews_live.ex:721
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:238
+#: lib/animina_web/live/admin/photo_reviews_live.ex:730
 #, elixir-autogen, elixir-format
 msgid "Remove from blacklist"
 msgstr "Удалить из чёрного списка"
 
-#: lib/animina_web/live/admin/photo_history_live.ex:172
+#: lib/animina_web/live/admin/photo_history_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "Removed from blacklist"
 msgstr "Удалено из чёрного списка"
@@ -3218,28 +3234,28 @@ msgstr "Удалено из чёрного списка"
 msgid "Request Human Review"
 msgstr "Запросить проверку человеком"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:597
+#: lib/animina_web/live/admin/photo_reviews_live.ex:606
 #, elixir-autogen, elixir-format
 msgid "Review Appeal"
 msgstr "Рассмотреть апелляцию"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:698
+#: lib/animina_web/live/admin/photo_reviews_live.ex:707
 #, elixir-autogen, elixir-format
 msgid "Reviewer Notes (optional)"
 msgstr "Заметки проверяющего (необязательно)"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:738
+#: lib/animina_web/live/admin/photo_reviews_live.ex:747
 #, elixir-autogen, elixir-format
 msgid "Similar images will be auto-rejected"
 msgstr "Похожие изображения будут автоматически отклонены"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:676
+#: lib/animina_web/live/admin/photo_reviews_live.ex:685
 #, elixir-autogen, elixir-format
 msgid "Submitted"
 msgstr "Подано"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:412
-#: lib/animina_web/live/admin/photo_history_live.ex:175
+#: lib/animina_web/live/admin/activity_logs_live.ex:415
+#: lib/animina_web/live/admin/photo_history_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "System"
 msgstr "Система"
@@ -3249,12 +3265,12 @@ msgstr "Система"
 msgid "Think this was a mistake? You can request a human review."
 msgstr "Считаете, что произошла ошибка? Вы можете запросить проверку человеком."
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:723
+#: lib/animina_web/live/admin/photo_reviews_live.ex:732
 #, elixir-autogen, elixir-format
 msgid "This photo is currently blacklisted"
 msgstr "Это фото сейчас в чёрном списке"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:688
+#: lib/animina_web/live/admin/photo_reviews_live.ex:697
 #, elixir-autogen, elixir-format
 msgid "View full history"
 msgstr "Посмотреть полную историю"
@@ -3264,47 +3280,47 @@ msgstr "Посмотреть полную историю"
 msgid "Your appeal was rejected. Please upload a different photo."
 msgstr "Ваша апелляция была отклонена. Пожалуйста, загрузите другое фото."
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:627
+#: lib/animina_web/live/admin/photo_reviews_live.ex:636
 #, elixir-autogen, elixir-format
 msgid "AI Analysis"
 msgstr "ИИ-анализ"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:736
+#: lib/animina_web/live/admin/photo_reviews_live.ex:745
 #, elixir-autogen, elixir-format
 msgid "Add rejected photo to blacklist automatically"
 msgstr "Автоматически добавлять отклонённые фото в чёрный список"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:772
+#: lib/animina_web/live/admin/photo_reviews_live.ex:781
 #, elixir-autogen, elixir-format
 msgid "Blacklist check"
 msgstr "Проверка чёрного списка"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:773
+#: lib/animina_web/live/admin/photo_reviews_live.ex:782
 #, elixir-autogen, elixir-format
 msgid "Blacklist match"
 msgstr "Совпадение с чёрным списком"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:770
+#: lib/animina_web/live/admin/photo_reviews_live.ex:779
 #, elixir-autogen, elixir-format
 msgid "Face detection"
 msgstr "Обнаружение лица"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:776
+#: lib/animina_web/live/admin/photo_reviews_live.ex:785
 #, elixir-autogen, elixir-format
 msgid "Face escalated to Ollama"
 msgstr "Лицо передано в Ollama"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:769
+#: lib/animina_web/live/admin/photo_reviews_live.ex:778
 #, elixir-autogen, elixir-format
 msgid "NSFW check"
 msgstr "Проверка NSFW"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:775
+#: lib/animina_web/live/admin/photo_reviews_live.ex:784
 #, elixir-autogen, elixir-format
 msgid "NSFW escalated to Ollama"
 msgstr "NSFW передано в Ollama"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:774
+#: lib/animina_web/live/admin/photo_reviews_live.ex:783
 #, elixir-autogen, elixir-format
 msgid "Rejected"
 msgstr "Отклонено"
@@ -3329,27 +3345,27 @@ msgstr "Удалить фото"
 msgid "Photo deleted."
 msgstr "Фото удалено."
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:355
+#: lib/animina_web/live/admin/flags_ai_live.ex:358
 #, elixir-autogen, elixir-format
 msgid "Artificial delay in milliseconds (0 = no delay)"
 msgstr "Искусственная задержка в миллисекундах (0 = без задержки)"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:199
+#: lib/animina_web/live/admin/flags_ai_live.ex:202
 #, elixir-autogen, elixir-format
 msgid "Auto"
 msgstr "Авто"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:301
+#: lib/animina_web/live/admin/flags_ai_live.ex:304
 #, elixir-autogen, elixir-format
 msgid "Auto-approve"
 msgstr "Автоодобрение"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:83
+#: lib/animina_web/live/admin/flags_index_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "Auto-approve skips the check and returns a preset value"
 msgstr "Автоодобрение пропускает проверку и возвращает заданное значение"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:312
+#: lib/animina_web/live/admin/flags_ai_live.ex:315
 #, elixir-autogen, elixir-format
 msgid "Auto-approve value"
 msgstr "Значение автоодобрения"
@@ -3359,39 +3375,39 @@ msgstr "Значение автоодобрения"
 msgid "Could not save settings."
 msgstr "Не удалось сохранить настройки."
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:341
+#: lib/animina_web/live/admin/flags_ai_live.ex:344
 #, elixir-autogen, elixir-format
 msgid "Delay (ms)"
 msgstr "Задержка (мс)"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:84
+#: lib/animina_web/live/admin/flags_index_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Delays simulate slow processing for UX testing"
 msgstr "Задержки имитируют медленную обработку для UX-тестирования"
 
 #: lib/animina_web/live/admin/admin_hub.ex:66
-#: lib/animina_web/live/admin/flags_ai_live.ex:164
-#: lib/animina_web/live/admin/flags_discovery_live.ex:98
+#: lib/animina_web/live/admin/flags_ai_live.ex:167
+#: lib/animina_web/live/admin/flags_discovery_live.ex:101
 #: lib/animina_web/live/admin/flags_index_live.ex:15
 #: lib/animina_web/live/admin/flags_index_live.ex:28
-#: lib/animina_web/live/admin/flags_system_live.ex:76
+#: lib/animina_web/live/admin/flags_system_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "Feature Flags"
 msgstr "Функциональные флаги"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:80
+#: lib/animina_web/live/admin/flags_index_live.ex:82
 #, elixir-autogen, elixir-format
 msgid "How it works"
 msgstr "Как это работает"
 
 #: lib/animina_web/helpers/feature_flag_helpers.ex:37
-#: lib/animina_web/live/admin/flags_discovery_live.ex:133
+#: lib/animina_web/live/admin/flags_discovery_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Off"
 msgstr "Выкл"
 
 #: lib/animina_web/helpers/feature_flag_helpers.ex:30
-#: lib/animina_web/live/admin/flags_discovery_live.ex:133
+#: lib/animina_web/live/admin/flags_discovery_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "On"
 msgstr "Вкл"
@@ -3401,25 +3417,25 @@ msgstr "Вкл"
 msgid "Settings saved."
 msgstr "Настройки сохранены."
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:303
+#: lib/animina_web/live/admin/flags_ai_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "Skip this check and return a preset value"
 msgstr "Пропустить проверку и вернуть заданное значение"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:82
+#: lib/animina_web/live/admin/flags_index_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Toggle switches enable/disable processing steps"
 msgstr "Переключатели включают/выключают этапы обработки"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:333
+#: lib/animina_web/live/admin/flags_ai_live.ex:336
 #, elixir-autogen, elixir-format
 msgid "Value returned when auto-approve is enabled"
 msgstr "Значение, возвращаемое при включённом автоодобрении"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:241
-#: lib/animina_web/live/admin/email_logs_live.ex:149
-#: lib/animina_web/live/admin/ollama_logs_live.ex:350
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:144
+#: lib/animina_web/live/admin/activity_logs_live.ex:244
+#: lib/animina_web/live/admin/email_logs_live.ex:152
+#: lib/animina_web/live/admin/ollama_logs_live.ex:353
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:152
 #, elixir-autogen, elixir-format
 msgid "%{count} entry"
 msgid_plural "%{count} entries"
@@ -3427,7 +3443,7 @@ msgstr[0] "%{count} запись"
 msgstr[1] "%{count} записи"
 msgstr[2] "%{count} записей"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:182
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:190
 #, elixir-autogen, elixir-format
 msgid "Added:"
 msgstr "Добавлено:"
@@ -3437,12 +3453,12 @@ msgstr "Добавлено:"
 msgid "Blacklist entry deleted."
 msgstr "Запись из чёрного списка удалена."
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:156
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Blacklisted photo"
 msgstr "Фото в чёрном списке"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:187
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:195
 #, elixir-autogen, elixir-format
 msgid "By:"
 msgstr "Кем:"
@@ -3453,14 +3469,14 @@ msgid "Could not delete entry."
 msgstr "Не удалось удалить запись."
 
 #: lib/animina_web/components/chat_panel_component.ex:320
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:219
-#: lib/animina_web/live/messages_live.ex:409
-#: lib/animina_web/live/user_live/moodboard_editor.ex:565
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:227
+#: lib/animina_web/live/messages_live.ex:427
+#: lib/animina_web/live/user_live/moodboard_editor.ex:571
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr "Удалить"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:204
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:212
 #, elixir-autogen, elixir-format
 msgid "Delete this entry?"
 msgstr "Удалить эту запись?"
@@ -3470,34 +3486,35 @@ msgstr "Удалить эту запись?"
 msgid "Entry not found."
 msgstr "Запись не найдена."
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:130
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "Manage blacklisted photo hashes. Photos matching these hashes are automatically rejected."
 msgstr "Управление хешами фото в чёрном списке. Фотографии, совпадающие с этими хешами, автоматически отклоняются."
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:139
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "No blacklist entries yet."
 msgstr "В чёрном списке пока нет записей."
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:162
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:170
 #, elixir-autogen, elixir-format
 msgid "No thumbnail"
 msgstr "Нет миниатюры"
 
 #: lib/animina_web/live/admin/admin_hub.ex:54
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:14
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:128
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:132
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Photo Blacklist"
 msgstr "Чёрный список фото"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:193
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:201
 #, elixir-autogen, elixir-format
 msgid "Source user:"
 msgstr "Исходный пользователь:"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:405
+#: lib/animina_web/live/admin/photo_reviews_live.ex:414
 #, elixir-autogen, elixir-format
 msgid "%{count} pending appeal"
 msgid_plural "%{count} pending appeals"
@@ -3505,7 +3522,7 @@ msgstr[0] "%{count} апелляция на рассмотрении"
 msgstr[1] "%{count} апелляции на рассмотрении"
 msgstr[2] "%{count} апелляций на рассмотрении"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:418
+#: lib/animina_web/live/admin/photo_reviews_live.ex:427
 #, elixir-autogen, elixir-format
 msgid "%{count} selected"
 msgid_plural "%{count} selected"
@@ -3513,8 +3530,8 @@ msgstr[0] "%{count} выбрана"
 msgstr[1] "%{count} выбраны"
 msgstr[2] "%{count} выбрано"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:287
-#: lib/animina_web/live/admin/photo_reviews_live.ex:564
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:295
+#: lib/animina_web/live/admin/photo_reviews_live.ex:573
 #, elixir-autogen, elixir-format
 msgid "%{count} total"
 msgid_plural "%{count} total"
@@ -3522,27 +3539,27 @@ msgstr[0] "%{count} всего"
 msgstr[1] "%{count} всего"
 msgstr[2] "%{count} всего"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:445
+#: lib/animina_web/live/admin/photo_reviews_live.ex:454
 #, elixir-autogen, elixir-format
 msgid "Add to blacklist"
 msgstr "Добавить в чёрный список"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:453
+#: lib/animina_web/live/admin/photo_reviews_live.ex:462
 #, elixir-autogen, elixir-format
 msgid "Clear selection"
 msgstr "Очистить выбор"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:580
+#: lib/animina_web/live/admin/photo_reviews_live.ex:589
 #, elixir-autogen, elixir-format
 msgid "Click"
 msgstr "Нажмите"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:573
+#: lib/animina_web/live/admin/photo_reviews_live.ex:582
 #, elixir-autogen, elixir-format
 msgid "Close / Deselect"
 msgstr "Закрыть / Снять выбор"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:575
+#: lib/animina_web/live/admin/photo_reviews_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "Navigate pages"
 msgstr "Навигация по страницам"
@@ -3553,29 +3570,29 @@ msgstr "Навигация по страницам"
 msgid "No appeals selected."
 msgstr "Апелляции не выбраны."
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:253
-#: lib/animina_web/live/admin/photo_reviews_live.ex:530
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:261
+#: lib/animina_web/live/admin/photo_reviews_live.ex:539
 #, elixir-autogen, elixir-format
 msgid "Page %{page} of %{total}"
 msgstr "Страница %{page} из %{total}"
 
-#: lib/animina_web/live/admin/photo_blacklist_live.ex:268
-#: lib/animina_web/live/admin/photo_reviews_live.ex:545
+#: lib/animina_web/live/admin/photo_blacklist_live.ex:276
+#: lib/animina_web/live/admin/photo_reviews_live.ex:554
 #, elixir-autogen, elixir-format
 msgid "Per page:"
 msgstr "На странице:"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:580
+#: lib/animina_web/live/admin/photo_reviews_live.ex:589
 #, elixir-autogen, elixir-format
 msgid "Range select"
 msgstr "Выбор диапазона"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:434
+#: lib/animina_web/live/admin/photo_reviews_live.ex:443
 #, elixir-autogen, elixir-format
 msgid "Reject Selected"
 msgstr "Отклонить выбранные"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:572
+#: lib/animina_web/live/admin/photo_reviews_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "Reject selected"
 msgstr "Отклонить выбранные"
@@ -3593,17 +3610,17 @@ msgstr[2] "Отклонено %{count} апелляций."
 msgid "Rejected %{resolved} appeals. %{failed} already resolved."
 msgstr "Отклонено %{resolved} апелляций. %{failed} уже рассмотрены."
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:570
+#: lib/animina_web/live/admin/photo_reviews_live.ex:579
 #, elixir-autogen, elixir-format
 msgid "Select all"
 msgstr "Выбрать все"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:428
+#: lib/animina_web/live/admin/photo_reviews_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "Approve Selected"
 msgstr "Одобрить выбранные"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:571
+#: lib/animina_web/live/admin/photo_reviews_live.ex:580
 #, elixir-autogen, elixir-format
 msgid "Approve selected"
 msgstr "Одобрить выбранные"
@@ -3632,7 +3649,7 @@ msgid "This usually takes 40 seconds"
 msgstr "Обычно это занимает 40 секунд"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:568
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1035
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1041
 #, elixir-autogen, elixir-format
 msgid "File is too large (max 6MB)"
 msgstr "Файл слишком большой (макс. 6 МБ)"
@@ -3642,33 +3659,33 @@ msgstr "Файл слишком большой (макс. 6 МБ)"
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr "JPG, PNG, WEBP или HEIC. Макс. 6 МБ."
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:475
-#: lib/animina_web/live/admin/ollama_logs_live.ex:598
-#: lib/animina_web/live/admin/photo_reviews_live.ex:657
+#: lib/animina_web/live/admin/ollama_logs_live.ex:478
+#: lib/animina_web/live/admin/ollama_logs_live.ex:601
+#: lib/animina_web/live/admin/photo_reviews_live.ex:666
 #, elixir-autogen, elixir-format
 msgid "Server"
 msgstr "Сервер"
 
-#: lib/animina_web/live/admin/photo_reviews_live.ex:771
+#: lib/animina_web/live/admin/photo_reviews_live.ex:780
 #, elixir-autogen, elixir-format
 msgid "Age detection"
 msgstr "Определение возраста"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:318
-#: lib/animina_web/live/admin/activity_logs_live.ex:335
-#: lib/animina_web/live/admin/email_logs_live.ex:178
-#: lib/animina_web/live/admin/email_logs_live.ex:194
-#: lib/animina_web/live/admin/ollama_logs_live.ex:415
-#: lib/animina_web/live/admin/ollama_logs_live.ex:431
-#: lib/animina_web/live/user_live/email_logs.ex:138
-#: lib/animina_web/live/user_live/email_logs.ex:154
+#: lib/animina_web/live/admin/activity_logs_live.ex:321
+#: lib/animina_web/live/admin/activity_logs_live.ex:338
+#: lib/animina_web/live/admin/email_logs_live.ex:181
+#: lib/animina_web/live/admin/email_logs_live.ex:197
+#: lib/animina_web/live/admin/ollama_logs_live.ex:418
+#: lib/animina_web/live/admin/ollama_logs_live.ex:434
+#: lib/animina_web/live/user_live/email_logs.ex:143
+#: lib/animina_web/live/user_live/email_logs.ex:159
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "Все"
 
 #: lib/animina_web/components/moodboard_components.ex:398
-#: lib/animina_web/live/user_live/moodboard_editor.ex:90
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1015
+#: lib/animina_web/live/user_live/moodboard_editor.ex:96
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1021
 #, elixir-autogen, elixir-format
 msgid "Add Photo"
 msgstr "Добавить фото"
@@ -3679,37 +3696,37 @@ msgstr "Добавить фото"
 msgid "Analyzing photo"
 msgstr "Анализ фото"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:557
+#: lib/animina_web/live/user_live/moodboard_editor.ex:563
 #, elixir-autogen, elixir-format
 msgid "Are you sure you want to delete this item? This cannot be undone."
 msgstr "Вы уверены, что хотите удалить этот элемент? Это действие нельзя отменить."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:455
+#: lib/animina_web/live/user_live/moodboard_editor.ex:461
 #, elixir-autogen, elixir-format
 msgid "Choose File"
 msgstr "Выберите файл"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:160
+#: lib/animina_web/live/user_live/moodboard_editor.ex:166
 #, elixir-autogen, elixir-format
 msgid "Click a button above to add your first item."
 msgstr "Нажмите кнопку выше, чтобы добавить первый элемент."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:555
+#: lib/animina_web/live/user_live/moodboard_editor.ex:561
 #, elixir-autogen, elixir-format
 msgid "Delete Item"
 msgstr "Удалить элемент"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:448
+#: lib/animina_web/live/user_live/moodboard_editor.ex:454
 #, elixir-autogen, elixir-format
 msgid "Drag and drop or click to upload"
 msgstr "Перетащите или нажмите для загрузки"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:819
+#: lib/animina_web/live/user_live/moodboard_editor.ex:825
 #, elixir-autogen, elixir-format
 msgid "Failed to add item"
 msgstr "Не удалось добавить элемент"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:953
+#: lib/animina_web/live/user_live/moodboard_editor.ex:959
 #, elixir-autogen, elixir-format
 msgid "Failed to delete item"
 msgstr "Не удалось удалить элемент"
@@ -3723,22 +3740,22 @@ msgstr "Не удалось удалить элемент"
 msgid "Hidden"
 msgstr "Скрыто"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1036
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1042
 #, elixir-autogen, elixir-format
 msgid "Invalid file type"
 msgstr "Недопустимый тип файла"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:947
+#: lib/animina_web/live/user_live/moodboard_editor.ex:953
 #, elixir-autogen, elixir-format
 msgid "Item deleted"
 msgstr "Элемент удалён"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:451
+#: lib/animina_web/live/user_live/moodboard_editor.ex:457
 #, elixir-autogen, elixir-format
 msgid "JPG, PNG, WebP, HEIC up to 6MB"
 msgstr "JPG, PNG, WebP, HEIC до 6 МБ"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1037
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1043
 #, elixir-autogen, elixir-format
 msgid "Too many files"
 msgstr "Слишком много файлов"
@@ -3775,13 +3792,13 @@ msgstr "Три колонки"
 msgid "Delete item"
 msgstr "Удалить элемент"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1017
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1023
 #, elixir-autogen, elixir-format
 msgid "Add Photo + Text"
 msgstr "Добавить фото + текст"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:113
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1016
+#: lib/animina_web/live/user_live/moodboard_editor.ex:119
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1022
 #, elixir-autogen, elixir-format
 msgid "Add Text"
 msgstr "Добавить текст"
@@ -3794,31 +3811,31 @@ msgstr "Добавить текст"
 msgid "Edit text"
 msgstr "Редактировать текст"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:893
-#: lib/animina_web/live/user_live/moodboard_editor.ex:919
+#: lib/animina_web/live/user_live/moodboard_editor.ex:899
+#: lib/animina_web/live/user_live/moodboard_editor.ex:925
 #, elixir-autogen, elixir-format
 msgid "Failed to update text"
 msgstr "Не удалось обновить текст"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:136
+#: lib/animina_web/live/user_live/moodboard_editor.ex:142
 #, elixir-autogen, elixir-format
 msgid "Photo + Text"
 msgstr "Фото + текст"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:480
+#: lib/animina_web/live/user_live/moodboard_editor.ex:486
 #, elixir-autogen, elixir-format
 msgid "Text"
 msgstr "Текст"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:890
-#: lib/animina_web/live/user_live/moodboard_editor.ex:916
+#: lib/animina_web/live/user_live/moodboard_editor.ex:896
+#: lib/animina_web/live/user_live/moodboard_editor.ex:922
 #, elixir-autogen, elixir-format
 msgid "Text updated"
 msgstr "Текст обновлён"
 
 #: lib/animina_web/components/moodboard_components.ex:546
-#: lib/animina_web/live/user_live/moodboard_editor.ex:490
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1143
+#: lib/animina_web/live/user_live/moodboard_editor.ex:496
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1149
 #, elixir-autogen, elixir-format
 msgid "Write your text here..."
 msgstr "Напишите текст здесь..."
@@ -3834,28 +3851,28 @@ msgid "Apply Crop"
 msgstr "Применить обрезку"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:252
-#: lib/animina_web/live/user_live/moodboard_editor.ex:516
+#: lib/animina_web/live/user_live/moodboard_editor.ex:522
 #, elixir-autogen, elixir-format
 msgid "Crop Photo"
 msgstr "Обрезать фото"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1089
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1095
 #, elixir-autogen, elixir-format
 msgid "Crop to Square"
 msgstr "Обрезать до квадрата"
 
 #: lib/animina_web/live/user_live/avatar_upload.ex:187
-#: lib/animina_web/live/user_live/moodboard_editor.ex:408
+#: lib/animina_web/live/user_live/moodboard_editor.ex:414
 #, elixir-autogen, elixir-format
 msgid "Cropped preview"
 msgstr "Предпросмотр обрезки"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1066
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
 #, elixir-autogen, elixir-format
 msgid "Cropped to square"
 msgstr "Обрезано до квадрата"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:531
+#: lib/animina_web/live/user_live/moodboard_editor.ex:537
 #, elixir-autogen, elixir-format
 msgid "Use Full Image"
 msgstr "Использовать полное изображение"
@@ -3872,95 +3889,95 @@ msgstr "Обработка..."
 msgid "Ready to upload"
 msgstr "Готово к загрузке"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1092
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1098
 #, elixir-autogen, elixir-format
 msgid "Apply"
 msgstr "Применить"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:266
+#: lib/animina_web/live/user_live/moodboard_editor.ex:272
 #, elixir-autogen, elixir-format
 msgid "Aspect Ratio"
 msgstr "Соотношение сторон"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1090
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1096
 #, elixir-autogen, elixir-format
 msgid "Crop to 16:9"
 msgstr "Обрезать до 16:9"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1091
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1097
 #, elixir-autogen, elixir-format
 msgid "Crop to 4:3"
 msgstr "Обрезать до 4:3"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1087
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1093
 #, elixir-autogen, elixir-format
 msgid "Crop your photo or skip to use the full image."
 msgstr "Обрежьте фото или пропустите, чтобы использовать полное изображение."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1080
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1086
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 16:9 format, or skip to use the full image."
 msgstr "Обрежьте фото до формата 16:9 или пропустите, чтобы использовать полное изображение."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1084
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1090
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to 4:3 format, or skip to use the full image."
 msgstr "Обрежьте фото до формата 4:3 или пропустите, чтобы использовать полное изображение."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1076
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1082
 #, elixir-autogen, elixir-format
 msgid "Crop your photo to a square, or skip to use the full image."
 msgstr "Обрежьте фото до квадрата или пропустите, чтобы использовать полное изображение."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1067
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1073
 #, elixir-autogen, elixir-format
 msgid "Cropped to 16:9"
 msgstr "Обрезано до 16:9"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1068
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1074
 #, elixir-autogen, elixir-format
 msgid "Cropped to 4:3"
 msgstr "Обрезано до 4:3"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:363
+#: lib/animina_web/live/user_live/moodboard_editor.ex:369
 #, elixir-autogen, elixir-format
 msgid "Landscape"
 msgstr "Альбомная"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:337
+#: lib/animina_web/live/user_live/moodboard_editor.ex:343
 #, elixir-autogen, elixir-format
 msgid "Orientation"
 msgstr "Ориентация"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:283
+#: lib/animina_web/live/user_live/moodboard_editor.ex:289
 #, elixir-autogen, elixir-format
 msgid "Original"
 msgstr "Оригинал"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1065
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1069
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1071
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1075
 #, elixir-autogen, elixir-format
 msgid "Photo ready"
 msgstr "Фото готово"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:388
+#: lib/animina_web/live/user_live/moodboard_editor.ex:394
 #, elixir-autogen, elixir-format
 msgid "Portrait"
 msgstr "Портретная"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:329
+#: lib/animina_web/live/user_live/moodboard_editor.ex:335
 #, elixir-autogen, elixir-format
 msgid "Square"
 msgstr "Квадрат"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1072
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1078
 #, elixir-autogen, elixir-format
 msgid "Your photo doesn't need cropping. Click 'Use Full Image' to continue."
 msgstr "Ваше фото не нуждается в обрезке. Нажмите «Использовать полное изображение», чтобы продолжить."
 
 #: lib/animina_web/components/moodboard_components.ex:411
 #: lib/animina_web/components/moodboard_components.ex:452
-#: lib/animina_web/live/user_live/moodboard_editor.ex:1142
+#: lib/animina_web/live/user_live/moodboard_editor.ex:1148
 #, elixir-autogen, elixir-format
 msgid "Tell us about yourself..."
 msgstr "Расскажите нам о себе..."
@@ -3970,7 +3987,7 @@ msgstr "Расскажите нам о себе..."
 msgid "Upload a profile photo to complete your About Me"
 msgstr "Загрузите фото профиля, чтобы заполнить раздел «Обо мне»"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:578
+#: lib/animina_web/live/user_live/moodboard_editor.ex:584
 #, elixir-autogen, elixir-format
 msgid "Edit Text"
 msgstr "Редактировать текст"
@@ -3980,27 +3997,27 @@ msgstr "Редактировать текст"
 msgid "Add photos and text to your moodboard to share with others."
 msgstr "Добавьте фото и текст на мудборд, чтобы поделиться с другими."
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:62
-#: lib/animina_web/live/user_live/moodboard_editor.ex:652
+#: lib/animina_web/live/user_live/moodboard_editor.ex:68
+#: lib/animina_web/live/user_live/moodboard_editor.ex:658
 #: lib/animina_web/live/user_live/profile_moodboard.ex:145
-#: lib/animina_web/live/user_live/waitlist.ex:152
+#: lib/animina_web/live/user_live/waitlist.ex:160
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Редактировать мудборд"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:816
+#: lib/animina_web/live/user_live/moodboard_editor.ex:822
 #, elixir-autogen, elixir-format
 msgid "Item added to moodboard"
 msgstr "Элемент добавлен на мудборд"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:501
-#: lib/animina_web/live/admin/ollama_logs_live.ex:601
-#: lib/animina_web/live/user_live/moodboard_editor.ex:33
+#: lib/animina_web/live/admin/ollama_logs_live.ex:504
+#: lib/animina_web/live/admin/ollama_logs_live.ex:604
+#: lib/animina_web/live/user_live/moodboard_editor.ex:39
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
 msgstr "Мудборд"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:79
+#: lib/animina_web/live/user_live/profile_hub.ex:80
 #, elixir-autogen, elixir-format
 msgid "My Moodboard"
 msgstr "Мой мудборд"
@@ -4010,12 +4027,12 @@ msgstr "Мой мудборд"
 msgid "No moodboard items yet"
 msgstr "На мудборде пока ничего нет"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:58
+#: lib/animina_web/live/user_live/moodboard_editor.ex:64
 #, elixir-autogen, elixir-format
 msgid "View Moodboard"
 msgstr "Посмотреть мудборд"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:157
+#: lib/animina_web/live/user_live/moodboard_editor.ex:163
 #, elixir-autogen, elixir-format
 msgid "Your moodboard is empty"
 msgstr "Ваш мудборд пуст"
@@ -4025,12 +4042,12 @@ msgstr "Ваш мудборд пуст"
 msgid "Could not save setting."
 msgstr "Не удалось сохранить настройку."
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:208
-#: lib/animina_web/live/admin/flags_ai_live.ex:389
-#: lib/animina_web/live/admin/flags_discovery_live.ex:142
-#: lib/animina_web/live/admin/flags_discovery_live.ex:239
-#: lib/animina_web/live/admin/flags_system_live.ex:113
-#: lib/animina_web/live/admin/flags_system_live.ex:197
+#: lib/animina_web/live/admin/flags_ai_live.ex:211
+#: lib/animina_web/live/admin/flags_ai_live.ex:392
+#: lib/animina_web/live/admin/flags_discovery_live.ex:145
+#: lib/animina_web/live/admin/flags_discovery_live.ex:242
+#: lib/animina_web/live/admin/flags_system_live.ex:116
+#: lib/animina_web/live/admin/flags_system_live.ex:200
 #, elixir-autogen, elixir-format
 msgid "Default: %{default}, Range: %{min}-%{max}"
 msgstr "По умолчанию: %{default}, Диапазон: %{min}-%{max}"
@@ -4040,22 +4057,22 @@ msgstr "По умолчанию: %{default}, Диапазон: %{min}-%{max}"
 msgid "Setting saved."
 msgstr "Настройка сохранена."
 
-#: lib/animina_web/live/admin/flags_index_live.ex:50
+#: lib/animina_web/live/admin/flags_index_live.ex:52
 #: lib/animina_web/live/admin/flags_system_live.ex:14
-#: lib/animina_web/live/admin/flags_system_live.ex:78
-#: lib/animina_web/live/admin/flags_system_live.ex:82
+#: lib/animina_web/live/admin/flags_system_live.ex:81
+#: lib/animina_web/live/admin/flags_system_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "System Settings"
 msgstr "Системные настройки"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:362
-#: lib/animina_web/live/admin/flags_discovery_live.ex:212
-#: lib/animina_web/live/admin/flags_system_live.ex:170
+#: lib/animina_web/live/admin/flags_ai_live.ex:365
+#: lib/animina_web/live/admin/flags_discovery_live.ex:215
+#: lib/animina_web/live/admin/flags_system_live.ex:173
 #, elixir-autogen, elixir-format
 msgid "Value"
 msgstr "Значение"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:64
+#: lib/animina_web/live/user_live/moodboard_editor.ex:70
 #, elixir-autogen, elixir-format
 msgid "Add photos and text to present yourself. Drag to reorder."
 msgstr "Добавьте фото и текст, чтобы представить себя. Перетаскивайте для изменения порядка."
@@ -4065,57 +4082,57 @@ msgstr "Добавьте фото и текст, чтобы представит
 msgid "Close"
 msgstr "Закрыть"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:489
-#: lib/animina_web/live/admin/ollama_logs_live.ex:597
+#: lib/animina_web/live/admin/ollama_logs_live.ex:492
+#: lib/animina_web/live/admin/ollama_logs_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr "Продолжительность"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:200
-#: lib/animina_web/live/admin/email_logs_live.ex:231
-#: lib/animina_web/live/admin/ollama_logs_live.ex:435
-#: lib/animina_web/live/user_live/email_logs.ex:160
+#: lib/animina_web/live/admin/email_logs_live.ex:203
+#: lib/animina_web/live/admin/email_logs_live.ex:234
+#: lib/animina_web/live/admin/ollama_logs_live.ex:438
+#: lib/animina_web/live/user_live/email_logs.ex:165
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr "Ошибка"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:372
-#: lib/animina_web/live/admin/ollama_logs_live.ex:412
-#: lib/animina_web/live/admin/ollama_logs_live.ex:472
-#: lib/animina_web/live/admin/ollama_logs_live.ex:596
+#: lib/animina_web/live/admin/ollama_logs_live.ex:375
+#: lib/animina_web/live/admin/ollama_logs_live.ex:415
+#: lib/animina_web/live/admin/ollama_logs_live.ex:475
+#: lib/animina_web/live/admin/ollama_logs_live.ex:599
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr "Модель"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:187
-#: lib/animina_web/live/admin/email_logs_live.ex:228
-#: lib/animina_web/live/admin/ollama_logs_live.ex:424
-#: lib/animina_web/live/admin/ollama_logs_live.ex:481
-#: lib/animina_web/live/admin/ollama_logs_live.ex:599
-#: lib/animina_web/live/user_live/email_logs.ex:147
-#: lib/animina_web/live/user_live/email_logs.ex:180
+#: lib/animina_web/live/admin/email_logs_live.ex:190
+#: lib/animina_web/live/admin/email_logs_live.ex:231
+#: lib/animina_web/live/admin/ollama_logs_live.ex:427
+#: lib/animina_web/live/admin/ollama_logs_live.ex:484
+#: lib/animina_web/live/admin/ollama_logs_live.ex:602
+#: lib/animina_web/live/user_live/email_logs.ex:152
+#: lib/animina_web/live/user_live/email_logs.ex:185
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Статус"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:379
-#: lib/animina_web/live/admin/email_logs_live.ex:238
-#: lib/animina_web/live/admin/ollama_logs_live.ex:497
+#: lib/animina_web/live/admin/activity_logs_live.ex:382
+#: lib/animina_web/live/admin/email_logs_live.ex:241
+#: lib/animina_web/live/admin/ollama_logs_live.ex:500
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr "Время"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:433
+#: lib/animina_web/live/admin/ollama_logs_live.ex:436
 #, elixir-autogen, elixir-format
 msgid "Success"
 msgstr "Успешно"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:217
-#: lib/animina_web/live/admin/flags_ai_live.ex:373
-#: lib/animina_web/live/admin/flags_discovery_live.ex:151
-#: lib/animina_web/live/admin/flags_discovery_live.ex:223
-#: lib/animina_web/live/admin/flags_system_live.ex:109
-#: lib/animina_web/live/admin/flags_system_live.ex:181
+#: lib/animina_web/live/admin/flags_ai_live.ex:220
+#: lib/animina_web/live/admin/flags_ai_live.ex:376
+#: lib/animina_web/live/admin/flags_discovery_live.ex:154
+#: lib/animina_web/live/admin/flags_discovery_live.ex:226
+#: lib/animina_web/live/admin/flags_system_live.ex:112
+#: lib/animina_web/live/admin/flags_system_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Default: %{default}"
 msgstr "По умолчанию: %{default}"
@@ -4166,13 +4183,13 @@ msgstr "На проверке"
 msgid "Under review"
 msgstr "На проверке"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:279
+#: lib/animina_web/live/user_live/traits_wizard.ex:285
 #, elixir-autogen, elixir-format
 msgid "Private"
 msgstr "Приватный"
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:45
-#: lib/animina_web/live/user_live/traits_wizard.ex:278
+#: lib/animina_web/live/user_live/traits_wizard.ex:284
 #, elixir-autogen, elixir-format
 msgid "Visible"
 msgstr "Видимый"
@@ -4187,7 +4204,7 @@ msgstr "В разводе"
 msgid "Separated"
 msgstr "Раздельное проживание"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:370
+#: lib/animina_web/live/user_live/traits_wizard.ex:376
 #, elixir-autogen, elixir-format
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
 msgstr "Выберите черты, которые вас описывают. Некоторые категории видны в профиле по умолчанию, другие — приватные. Нажмите, чтобы переключить видимость."
@@ -4203,28 +4220,28 @@ msgid "private"
 msgstr "приватно"
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:23
-#: lib/animina_web/live/admin/flags_ai_live.ex:166
-#: lib/animina_web/live/admin/flags_ai_live.ex:170
-#: lib/animina_web/live/admin/flags_index_live.ex:35
+#: lib/animina_web/live/admin/flags_ai_live.ex:169
+#: lib/animina_web/live/admin/flags_ai_live.ex:173
+#: lib/animina_web/live/admin/flags_index_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "AI / Ollama"
 msgstr "ИИ / Ollama"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:51
-#: lib/animina_web/live/admin/flags_system_live.ex:83
+#: lib/animina_web/live/admin/flags_index_live.ex:53
+#: lib/animina_web/live/admin/flags_system_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Application configuration"
 msgstr "Настройки приложения"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:179
-#: lib/animina_web/live/admin/flags_discovery_live.ex:115
-#: lib/animina_web/live/admin/flags_system_live.ex:91
+#: lib/animina_web/live/admin/flags_ai_live.ex:182
+#: lib/animina_web/live/admin/flags_discovery_live.ex:118
+#: lib/animina_web/live/admin/flags_system_live.ex:94
 #, elixir-autogen, elixir-format
 msgid "No results found for \"%{query}\""
 msgstr "По запросу «%{query}» ничего не найдено"
 
-#: lib/animina_web/live/admin/flags_ai_live.ex:171
-#: lib/animina_web/live/admin/flags_index_live.ex:36
+#: lib/animina_web/live/admin/flags_ai_live.ex:174
+#: lib/animina_web/live/admin/flags_index_live.ex:38
 #, elixir-autogen, elixir-format
 msgid "Photo analysis and debug settings"
 msgstr "Настройки анализа фото и отладки"
@@ -4237,7 +4254,7 @@ msgstr "Поиск флагов и настроек..."
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/live/discover_live.ex:36
 #: lib/animina_web/live/discover_live.ex:387
-#: lib/animina_web/live/messages_live.ex:126
+#: lib/animina_web/live/messages_live.ex:144
 #: lib/animina_web/live/user_live/my_hub.ex:27
 #, elixir-autogen, elixir-format
 msgid "Discover"
@@ -4263,53 +4280,55 @@ msgstr "Не интересует"
 msgid "View Profile"
 msgstr "Посмотреть профиль"
 
-#: lib/animina_web/live/messages_live.ex:56
+#: lib/animina_web/live/messages_live.ex:66
 #, elixir-autogen, elixir-format
 msgid "Blocked"
 msgstr "Заблокировано"
 
-#: lib/animina_web/live/messages_live.ex:682
+#: lib/animina_web/live/messages_live.ex:700
 #, elixir-autogen, elixir-format
 msgid "Conversation not found"
 msgstr "Беседа не найдена"
 
-#: lib/animina_web/live/messages_live.ex:758
-#: lib/animina_web/live/messages_live.ex:768
+#: lib/animina_web/live/messages_live.ex:776
+#: lib/animina_web/live/messages_live.ex:786
 #, elixir-autogen, elixir-format
 msgid "Could not start conversation"
 msgstr "Не удалось начать беседу"
 
-#: lib/animina_web/live/messages_live.ex:797
+#: lib/animina_web/live/messages_live.ex:815
 #, elixir-autogen, elixir-format
 msgid "Failed to send message"
 msgstr "Не удалось отправить сообщение"
 
 #: lib/animina_web/components/layouts.ex:294
-#: lib/animina_web/live/messages_live.ex:113
-#: lib/animina_web/live/messages_live.ex:614
-#: lib/animina_web/live/messages_live.ex:662
+#: lib/animina_web/live/messages_live.ex:39
+#: lib/animina_web/live/messages_live.ex:127
+#: lib/animina_web/live/messages_live.ex:131
+#: lib/animina_web/live/messages_live.ex:632
+#: lib/animina_web/live/messages_live.ex:680
 #: lib/animina_web/live/user_live/my_hub.ex:34
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "Сообщения"
 
-#: lib/animina_web/live/messages_live.ex:120
+#: lib/animina_web/live/messages_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "No conversations yet"
 msgstr "Пока нет бесед"
 
-#: lib/animina_web/live/messages_live.ex:79
+#: lib/animina_web/live/messages_live.ex:89
 #, elixir-autogen, elixir-format
 msgid "No messages yet"
 msgstr "Пока нет сообщений"
 
 #: lib/animina_web/components/chat_panel_component.ex:198
-#: lib/animina_web/live/messages_live.ex:80
+#: lib/animina_web/live/messages_live.ex:90
 #, elixir-autogen, elixir-format
 msgid "Send a message to start the conversation"
 msgstr "Отправьте сообщение, чтобы начать беседу"
 
-#: lib/animina_web/live/messages_live.ex:122
+#: lib/animina_web/live/messages_live.ex:140
 #, elixir-autogen, elixir-format
 msgid "Start a conversation from a user's profile"
 msgstr "Начните беседу из профиля пользователя"
@@ -4321,74 +4340,74 @@ msgstr "Введите сообщение..."
 
 #: lib/animina_web/components/chat_panel_component.ex:638
 #: lib/animina_web/components/chat_panel_component.ex:652
-#: lib/animina_web/live/messages_live.ex:480
 #: lib/animina_web/live/messages_live.ex:498
-#: lib/animina_web/live/messages_live.ex:595
+#: lib/animina_web/live/messages_live.ex:516
+#: lib/animina_web/live/messages_live.ex:613
 #, elixir-autogen, elixir-format
 msgid "Yesterday"
 msgstr "Вчера"
 
 #: lib/animina_web/components/message_components.ex:48
-#: lib/animina_web/live/messages_live.ex:794
+#: lib/animina_web/live/messages_live.ex:812
 #, elixir-autogen, elixir-format
 msgid "You cannot send messages in this conversation"
 msgstr "Вы не можете отправлять сообщения в этой беседе"
 
 #: lib/animina_web/components/chat_panel_component.ex:293
-#: lib/animina_web/live/messages_live.ex:379
+#: lib/animina_web/live/messages_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "edited"
 msgstr "изменено"
 
 #: lib/animina_web/components/chat_panel_component.ex:172
-#: lib/animina_web/live/messages_live.ex:48
+#: lib/animina_web/live/messages_live.ex:58
 #, elixir-autogen, elixir-format
 msgid "typing..."
 msgstr "печатает..."
 
-#: lib/animina_web/live/messages_live.ex:837
+#: lib/animina_web/live/messages_live.ex:855
 #, elixir-autogen, elixir-format
 msgid "Cannot delete a message that has been read"
 msgstr "Невозможно удалить прочитанное сообщение"
 
 #: lib/animina_web/components/chat_panel_component.ex:318
-#: lib/animina_web/live/messages_live.ex:407
+#: lib/animina_web/live/messages_live.ex:425
 #, elixir-autogen, elixir-format
 msgid "Delete this message?"
 msgstr "Удалить это сообщение?"
 
-#: lib/animina_web/live/messages_live.ex:840
+#: lib/animina_web/live/messages_live.ex:858
 #, elixir-autogen, elixir-format
 msgid "Failed to delete message"
 msgstr "Не удалось удалить сообщение"
 
-#: lib/animina_web/live/messages_live.ex:582
+#: lib/animina_web/live/messages_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "Read"
 msgstr "Прочитано"
 
 #: lib/animina_web/components/chat_panel_component.ex:637
-#: lib/animina_web/live/messages_live.ex:497
+#: lib/animina_web/live/messages_live.ex:515
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr "Сегодня"
 
 #: lib/animina_web/components/chat_panel_component.ex:650
-#: lib/animina_web/live/messages_live.ex:593
+#: lib/animina_web/live/messages_live.ex:611
 #, elixir-autogen, elixir-format
 msgid "just now"
 msgstr "только что"
 
 #: lib/animina_web/live/admin/flags_discovery_live.ex:15
-#: lib/animina_web/live/admin/flags_discovery_live.ex:100
-#: lib/animina_web/live/admin/flags_discovery_live.ex:104
-#: lib/animina_web/live/admin/flags_index_live.ex:65
+#: lib/animina_web/live/admin/flags_discovery_live.ex:103
+#: lib/animina_web/live/admin/flags_discovery_live.ex:107
+#: lib/animina_web/live/admin/flags_index_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Discovery / Matching"
 msgstr "Знакомства / Совместимость"
 
-#: lib/animina_web/live/admin/flags_discovery_live.ex:106
-#: lib/animina_web/live/admin/flags_index_live.ex:66
+#: lib/animina_web/live/admin/flags_discovery_live.ex:109
+#: lib/animina_web/live/admin/flags_index_live.ex:68
 #, elixir-autogen, elixir-format
 msgid "Partner suggestion algorithm tuning"
 msgstr "Настройка алгоритма подбора партнёра"
@@ -4403,15 +4422,15 @@ msgstr "Чат"
 msgid "Visited"
 msgstr "Посещено"
 
-#: lib/animina_web/live/messages_live.ex:585
+#: lib/animina_web/live/messages_live.ex:603
 #, elixir-autogen, elixir-format
 msgid "Read %{time}"
 msgstr "Прочитано %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:304
-#: lib/animina_web/live/admin/email_logs_live.ex:195
-#: lib/animina_web/live/messages_live.ex:393
-#: lib/animina_web/live/user_live/email_logs.ex:155
+#: lib/animina_web/live/admin/email_logs_live.ex:198
+#: lib/animina_web/live/messages_live.ex:411
+#: lib/animina_web/live/user_live/email_logs.ex:160
 #, elixir-autogen, elixir-format
 msgid "Sent"
 msgstr "Отправлено"
@@ -4461,72 +4480,72 @@ msgstr "Этот профиль был предложен случайно и м
 msgid "Wildcard pick"
 msgstr "Случайный выбор"
 
-#: lib/animina_web/live/messages_live.ex:233
+#: lib/animina_web/live/messages_live.ex:251
 #, elixir-autogen, elixir-format
 msgid "Draft:"
 msgstr "Черновик:"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:401
+#: lib/animina_web/live/user_live/traits_wizard.ex:407
 #, elixir-autogen, elixir-format
 msgid "+10 pts"
 msgstr "+10 баллов"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:403
+#: lib/animina_web/live/user_live/traits_wizard.ex:409
 #, elixir-autogen, elixir-format
 msgid "-50 pts"
 msgstr "-50 баллов"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:432
+#: lib/animina_web/live/user_live/traits_wizard.ex:438
 #, elixir-autogen, elixir-format
 msgid "click to set as nice to have (+10 pts)"
 msgstr "нажми, чтобы отметить как желательно (+10 баллов)"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:433
+#: lib/animina_web/live/user_live/traits_wizard.ex:439
 #, elixir-autogen, elixir-format
 msgid "click to set as prefer not (-50 pts)"
 msgstr "нажми, чтобы отметить как лучше нет (-50 баллов)"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:108
+#: lib/animina_web/live/user_live/traits_wizard.ex:114
 #, elixir-autogen, elixir-format
 msgid "0 pts"
 msgstr "0 баллов"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:404
+#: lib/animina_web/live/user_live/traits_wizard.ex:410
 #, elixir-autogen, elixir-format
 msgid "Excluded"
 msgstr "Исключено"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:402
+#: lib/animina_web/live/user_live/traits_wizard.ex:408
 #, elixir-autogen, elixir-format
 msgid "Required"
 msgstr "Обязательно"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:382
+#: lib/animina_web/live/user_live/traits_wizard.ex:388
 #, elixir-autogen, elixir-format
 msgid "Select traits you don't want in a partner. Click once for prefer not (-50 pts, still visible), again for deal breaker (excluded — hides profiles with this trait). These flags are always private."
 msgstr "Выбери качества, которые ты не хочешь видеть в партнёре. Нажми один раз — лучше нет (-50 баллов, профиль виден), ещё раз — неприемлемо (исключено — скрывает профили с этой чертой). Эти флаги всегда приватные."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:376
+#: lib/animina_web/live/user_live/traits_wizard.ex:382
 #, elixir-autogen, elixir-format
 msgid "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
 msgstr "Выбери качества, которые ты хочешь видеть в партнёре. Нажми один раз — желательно (+10 баллов), ещё раз — обязательно (требуется — показывает только профили с этой чертой). Эти флаги всегда приватные."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:443
+#: lib/animina_web/live/user_live/traits_wizard.ex:449
 #, elixir-autogen, elixir-format
 msgid "deal breaker (excluded) — click to remove"
 msgstr "неприемлемо (исключено) — нажмите, чтобы убрать"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:442
+#: lib/animina_web/live/user_live/traits_wizard.ex:448
 #, elixir-autogen, elixir-format
 msgid "must have (required) — click to remove"
 msgstr "обязательно (требуется) — нажмите, чтобы убрать"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:437
+#: lib/animina_web/live/user_live/traits_wizard.ex:443
 #, elixir-autogen, elixir-format
 msgid "nice to have (+10 pts) — click to change to must have (required)"
 msgstr "желательно (+10 баллов) — нажмите, чтобы сделать обязательным (требуется)"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:438
+#: lib/animina_web/live/user_live/traits_wizard.ex:444
 #, elixir-autogen, elixir-format
 msgid "prefer not (-50 pts) — click to change to deal breaker (excluded)"
 msgstr "лучше нет (-50 баллов) — нажмите, чтобы сменить на неприемлемо (исключено)"
@@ -4630,27 +4649,27 @@ msgstr "%{selected}/%{cost} выбрано"
 msgid "All chat slots are full"
 msgstr "Все слоты для бесед заняты"
 
-#: lib/animina_web/live/messages_live.ex:864
+#: lib/animina_web/live/messages_live.ex:882
 #, elixir-autogen, elixir-format
 msgid "Conversation closed"
 msgstr "Беседа закрыта"
 
-#: lib/animina_web/live/messages_live.ex:1065
+#: lib/animina_web/live/messages_live.ex:1083
 #, elixir-autogen, elixir-format
 msgid "Conversation reopened!"
 msgstr "Беседа возобновлена!"
 
-#: lib/animina_web/live/messages_live.ex:150
+#: lib/animina_web/live/messages_live.ex:168
 #, elixir-autogen, elixir-format
 msgid "Conversations you've let go of. You can reopen one via Love Emergency."
 msgstr "Беседы, которые вы отпустили. Вы можете возобновить одну через «Экстренную любовь»."
 
-#: lib/animina_web/live/messages_live.ex:878
+#: lib/animina_web/live/messages_live.ex:896
 #, elixir-autogen, elixir-format
 msgid "Failed to close conversation"
 msgstr "Не удалось закрыть беседу"
 
-#: lib/animina_web/live/messages_live.ex:1075
+#: lib/animina_web/live/messages_live.ex:1093
 #, elixir-autogen, elixir-format
 msgid "Failed to reopen conversation"
 msgstr "Не удалось возобновить беседу"
@@ -4665,23 +4684,23 @@ msgstr "Перейти к сообщениям"
 msgid "How Discovery Works"
 msgstr "Как работают знакомства"
 
-#: lib/animina_web/live/messages_live.ex:195
+#: lib/animina_web/live/messages_live.ex:213
 #, elixir-autogen, elixir-format
 msgid "Let Go"
 msgstr "Отпустить"
 
-#: lib/animina_web/live/messages_live.ex:146
+#: lib/animina_web/live/messages_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Let Go Archive"
 msgstr "Архив отпущенных"
 
-#: lib/animina_web/live/messages_live.ex:63
-#: lib/animina_web/live/messages_live.ex:259
+#: lib/animina_web/live/messages_live.ex:73
+#: lib/animina_web/live/messages_live.ex:277
 #, elixir-autogen, elixir-format
 msgid "Let go"
 msgstr "Отпустить"
 
-#: lib/animina_web/live/messages_live.ex:184
+#: lib/animina_web/live/messages_live.ex:202
 #, elixir-autogen, elixir-format
 msgid "Let go of this conversation?"
 msgstr "Отпустить эту беседу?"
@@ -4706,7 +4725,7 @@ msgstr "Нет свободных слотов для бесед"
 msgid "No free slots"
 msgstr "Нет свободных слотов"
 
-#: lib/animina_web/live/messages_live.ex:302
+#: lib/animina_web/live/messages_live.ex:320
 #: lib/animina_web/live/user_live/profile_moodboard.ex:122
 #, elixir-autogen, elixir-format
 msgid "Reopen"
@@ -4717,7 +4736,7 @@ msgstr "Возобновить"
 msgid "Reopen Conversation"
 msgstr "Возобновить беседу"
 
-#: lib/animina_web/live/messages_live.ex:299
+#: lib/animina_web/live/messages_live.ex:317
 #, elixir-autogen, elixir-format
 msgid "Reopen by closing %{cost} other conversations"
 msgstr "Возобновить, закрыв %{cost} других бесед"
@@ -4728,12 +4747,12 @@ msgid "Take your time — choose who you really want to talk to."
 msgstr "Не торопитесь — выберите, с кем вы действительно хотите общаться."
 
 #: lib/animina_web/components/chat_panel_component.ex:449
-#: lib/animina_web/live/messages_live.ex:755
+#: lib/animina_web/live/messages_live.ex:773
 #, elixir-autogen, elixir-format
 msgid "This conversation was previously closed."
 msgstr "Эта беседа была ранее закрыта."
 
-#: lib/animina_web/live/messages_live.ex:187
+#: lib/animina_web/live/messages_live.ex:205
 #, elixir-autogen, elixir-format
 msgid "This is permanent. Both of you will no longer see each other in discovery."
 msgstr "Это необратимо. Вы больше не будете видеть друг друга в знакомствах."
@@ -4754,7 +4773,7 @@ msgid "You can have up to %{max} active conversations. Each day, you can start u
 msgstr "У вас может быть до %{max} активных бесед. Каждый день вы можете начать до %{daily} новых."
 
 #: lib/animina_web/components/chat_panel_component.ex:443
-#: lib/animina_web/live/messages_live.ex:751
+#: lib/animina_web/live/messages_live.ex:769
 #, elixir-autogen, elixir-format
 msgid "You have no free chat slots. Let go of a conversation first."
 msgstr "У вас нет свободных слотов для бесед. Сначала отпустите одну из бесед."
@@ -4784,28 +4803,28 @@ msgstr "Новые случайные выборы генерируются еж
 msgid "Try adjusting your preferences to expand your search."
 msgstr "Попробуйте изменить предпочтения, чтобы расширить поиск."
 
-#: lib/animina_web/live/user_live/waitlist.ex:30
-#: lib/animina_web/live/user_live/waitlist.ex:46
+#: lib/animina_web/live/user_live/waitlist.ex:38
+#: lib/animina_web/live/user_live/waitlist.ex:54
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
 msgstr "Ваша активация обрабатывается"
 
-#: lib/animina_web/live/user_live/waitlist.ex:154
+#: lib/animina_web/live/user_live/waitlist.ex:162
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr "Добавьте фото и истории, чтобы произвести отличное первое впечатление."
 
-#: lib/animina_web/live/user_live/waitlist.ex:125
+#: lib/animina_web/live/user_live/waitlist.ex:133
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr "Определите, кто вы и что ищете."
 
-#: lib/animina_web/live/user_live/waitlist.ex:64
+#: lib/animina_web/live/user_live/waitlist.ex:72
 #, elixir-autogen, elixir-format
 msgid "Prepare your profile"
 msgstr "Подготовьте свой профиль"
 
-#: lib/animina_web/live/user_live/waitlist.ex:123
+#: lib/animina_web/live/user_live/waitlist.ex:131
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr "Настройте свои флаги"
@@ -4831,12 +4850,12 @@ msgstr "Добавлен %{date}"
 msgid "Are you sure you want to remove this passkey?"
 msgstr "Вы уверены, что хотите удалить этот ключ доступа?"
 
-#: lib/animina_web/live/user_live/account_passkeys.ex:96
+#: lib/animina_web/live/user_live/account_passkeys.ex:99
 #, elixir-autogen, elixir-format
 msgid "Could not add passkey: %{reason}"
 msgstr "Не удалось добавить ключ доступа: %{reason}"
 
-#: lib/animina_web/live/user_live/account_passkeys.ex:116
+#: lib/animina_web/live/user_live/account_passkeys.ex:119
 #, elixir-autogen, elixir-format
 msgid "Could not remove passkey."
 msgstr "Не удалось удалить ключ доступа."
@@ -4856,7 +4875,7 @@ msgstr "Ключи доступа ещё не зарегистрированы."
 msgid "Passkey"
 msgstr "Ключ доступа"
 
-#: lib/animina_web/live/user_live/account_passkeys.ex:79
+#: lib/animina_web/live/user_live/account_passkeys.ex:82
 #, elixir-autogen, elixir-format
 msgid "Passkey added successfully!"
 msgstr "Ключ доступа успешно добавлен!"
@@ -4866,16 +4885,16 @@ msgstr "Ключ доступа успешно добавлен!"
 msgid "Passkey not recognized. Please try again or use password."
 msgstr "Ключ доступа не распознан. Попробуйте ещё раз или используйте пароль."
 
-#: lib/animina_web/live/user_live/account_passkeys.ex:111
+#: lib/animina_web/live/user_live/account_passkeys.ex:114
 #, elixir-autogen, elixir-format
 msgid "Passkey removed."
 msgstr "Ключ доступа удалён."
 
 #: lib/animina_web/live/components/account_passkeys_component.ex:10
-#: lib/animina_web/live/user_live/account_hub.ex:35
-#: lib/animina_web/live/user_live/account_passkeys.ex:21
-#: lib/animina_web/live/user_live/account_passkeys.ex:27
-#: lib/animina_web/live/user_live/account_passkeys.ex:53
+#: lib/animina_web/live/user_live/account_hub.ex:36
+#: lib/animina_web/live/user_live/account_passkeys.ex:24
+#: lib/animina_web/live/user_live/account_passkeys.ex:30
+#: lib/animina_web/live/user_live/account_passkeys.ex:56
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr "Ключи доступа"
@@ -4906,12 +4925,12 @@ msgstr "Ваш браузер не поддерживает ключи дост�
 msgid "or"
 msgstr "или"
 
-#: lib/animina_web/live/user_live/waitlist.ex:184
+#: lib/animina_web/live/user_live/waitlist.ex:192
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr "Настроить ключ доступа"
 
-#: lib/animina_web/live/user_live/waitlist.ex:186
+#: lib/animina_web/live/user_live/waitlist.ex:194
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Входите быстрее и безопаснее с помощью ключа доступа."
@@ -4921,67 +4940,67 @@ msgstr "Входите быстрее и безопаснее с помощью 
 msgid "Report bug"
 msgstr "Сообщить об ошибке"
 
-#: lib/animina_web/components/core_components.ex:425
-#: lib/animina_web/live/user_live/moodboard_editor.ex:31
+#: lib/animina_web/components/core_components.ex:427
+#: lib/animina_web/live/user_live/moodboard_editor.ex:37
 #: lib/animina_web/live/user_live/profile_hub.ex:17
-#: lib/animina_web/live/user_live/profile_hub.ex:35
-#: lib/animina_web/live/user_live/profile_hub.ex:151
-#: lib/animina_web/live/user_live/traits_wizard.ex:17
+#: lib/animina_web/live/user_live/profile_hub.ex:36
+#: lib/animina_web/live/user_live/profile_hub.ex:152
+#: lib/animina_web/live/user_live/traits_wizard.ex:23
 #, elixir-autogen, elixir-format
 msgid "My Profile"
 msgstr "Мой профиль"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:41
+#: lib/animina_web/live/user_live/profile_hub.ex:42
 #, elixir-autogen, elixir-format
 msgid "Profile completeness"
 msgstr "Заполненность профиля"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:69
+#: lib/animina_web/live/user_live/profile_hub.ex:70
 #, elixir-autogen, elixir-format
 msgid "Profile Info"
 msgstr "Информация профиля"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:70
+#: lib/animina_web/live/user_live/profile_hub.ex:71
 #, elixir-autogen, elixir-format
 msgid "Add your basic information"
 msgstr "Добавьте основную информацию"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:80
+#: lib/animina_web/live/user_live/profile_hub.ex:81
 #, elixir-autogen, elixir-format
 msgid "Create your visual profile"
 msgstr "Создайте свой визуальный профиль"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:98
+#: lib/animina_web/live/user_live/profile_hub.ex:99
 #, elixir-autogen, elixir-format
 msgid "Define what you're looking for"
 msgstr "Определите, что вы ищете"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:108
+#: lib/animina_web/live/user_live/profile_hub.ex:109
 #, elixir-autogen, elixir-format
 msgid "Set your location"
 msgstr "Укажите местоположение"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:90
+#: lib/animina_web/live/user_live/profile_hub.ex:91
 #, elixir-autogen, elixir-format
 msgid "Set your personality flags"
 msgstr "Настройте флаги личности"
 
-#: lib/animina_web/live/user_live/profile_hub.ex:60
+#: lib/animina_web/live/user_live/profile_hub.ex:61
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo"
 msgstr "Загрузите основное фото профиля"
 
-#: lib/animina_web/live/user_live/waitlist.ex:104
+#: lib/animina_web/live/user_live/waitlist.ex:112
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo."
 msgstr "Загрузите основное фото профиля."
 
-#: lib/animina_web/live/user_live/waitlist.ex:304
+#: lib/animina_web/live/user_live/waitlist.ex:312
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "Дополнительные категории"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:584
+#: lib/animina_web/live/admin/ollama_logs_live.ex:587
 #, elixir-autogen, elixir-format
 msgid "%{count} run"
 msgid_plural "%{count} runs"
@@ -5009,22 +5028,22 @@ msgstr "%{count} мин. назад"
 msgid "%{count}s ago"
 msgstr "%{count} сек. назад"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:741
+#: lib/animina_web/live/admin/ollama_logs_live.ex:744
 #, elixir-autogen, elixir-format
 msgid "Agree"
 msgstr "Согласен"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:397
+#: lib/animina_web/live/admin/ollama_logs_live.ex:400
 #, elixir-autogen, elixir-format
 msgid "All Logs"
 msgstr "Все логи"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:404
+#: lib/animina_web/live/admin/ollama_logs_live.ex:407
 #, elixir-autogen, elixir-format
 msgid "By Photo"
 msgstr "По фото"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:743
+#: lib/animina_web/live/admin/ollama_logs_live.ex:746
 #, elixir-autogen, elixir-format
 msgid "Disagree"
 msgstr "Не согласен"
@@ -5035,20 +5054,20 @@ msgstr "Не согласен"
 msgid "Log entry or photo not found."
 msgstr "Запись журнала или фото не найдены."
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:522
+#: lib/animina_web/live/admin/ollama_logs_live.ex:525
 #, elixir-autogen, elixir-format
 msgid "Manual re-run"
 msgstr "Ручной перезапуск"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:559
+#: lib/animina_web/live/admin/ollama_logs_live.ex:562
 #, elixir-autogen, elixir-format
 msgid "No grouped log entries found."
 msgstr "Сгруппированные записи журнала не найдены."
 
-#: lib/animina_web/live/admin/logs_index_live.ex:60
+#: lib/animina_web/live/admin/logs_index_live.ex:62
 #: lib/animina_web/live/admin/ollama_logs_live.ex:23
-#: lib/animina_web/live/admin/ollama_logs_live.ex:343
-#: lib/animina_web/live/admin/ollama_logs_live.ex:348
+#: lib/animina_web/live/admin/ollama_logs_live.ex:346
+#: lib/animina_web/live/admin/ollama_logs_live.ex:351
 #, elixir-autogen, elixir-format
 msgid "Ollama Logs"
 msgstr "Логи Ollama"
@@ -5058,13 +5077,13 @@ msgstr "Логи Ollama"
 msgid "Per page"
 msgstr "На странице"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:577
+#: lib/animina_web/live/admin/ollama_logs_live.ex:580
 #, elixir-autogen, elixir-format
 msgid "Photo deleted"
 msgstr "Фото удалено"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:502
-#: lib/animina_web/live/admin/ollama_logs_live.ex:602
+#: lib/animina_web/live/admin/ollama_logs_live.ex:505
+#: lib/animina_web/live/admin/ollama_logs_live.ex:605
 #, elixir-autogen, elixir-format
 msgid "Re-run"
 msgstr "Перезапустить"
@@ -5074,44 +5093,44 @@ msgstr "Перезапустить"
 msgid "Re-run failed: %{reason}"
 msgstr "Перезапуск не удался: %{reason}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:705
+#: lib/animina_web/live/admin/ollama_logs_live.ex:708
 #, elixir-autogen, elixir-format
 msgid "Re-run with %{model}"
 msgstr "Перезапуск с %{model}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:437
+#: lib/animina_web/live/admin/ollama_logs_live.ex:440
 #, elixir-autogen, elixir-format
 msgid "In Progress"
 msgstr "В процессе"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:724
+#: lib/animina_web/live/admin/ollama_logs_live.ex:727
 #, elixir-autogen, elixir-format
 msgid "Re-run on %{server}"
 msgstr "Перезапуск на %{server}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:362
+#: lib/animina_web/live/admin/ollama_logs_live.ex:365
 #, elixir-autogen, elixir-format
 msgid "Queue"
 msgstr "Очередь"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:375
+#: lib/animina_web/live/admin/ollama_logs_live.ex:378
 #, elixir-autogen, elixir-format
 msgid "adaptive"
 msgstr "адаптивный"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:161
-#: lib/animina_web/live/admin/ollama_logs_live.ex:380
+#: lib/animina_web/live/admin/email_logs_live.ex:164
+#: lib/animina_web/live/admin/ollama_logs_live.ex:383
 #, elixir-autogen, elixir-format
 msgid "Auto-reload"
 msgstr "Автоперезагрузка"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:672
+#: lib/animina_web/live/admin/ollama_logs_live.ex:675
 #, elixir-autogen, elixir-format
 msgid "Approved"
 msgstr "Одобрено"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:500
-#: lib/animina_web/live/admin/ollama_logs_live.ex:600
+#: lib/animina_web/live/admin/ollama_logs_live.ex:503
+#: lib/animina_web/live/admin/ollama_logs_live.ex:603
 #, elixir-autogen, elixir-format
 msgid "Avatar"
 msgstr "Аватар"
@@ -5121,7 +5140,7 @@ msgstr "Аватар"
 msgid "Animal photo detected"
 msgstr "Обнаружено фото животного"
 
-#: lib/animina_web/live/user_live/waitlist.ex:67
+#: lib/animina_web/live/user_live/waitlist.ex:75
 #, elixir-autogen, elixir-format
 msgid "Use the waiting time to set up your profile so you can get started right away."
 msgstr "Используйте время ожидания, чтобы настроить профиль и начать сразу же."
@@ -5136,17 +5155,17 @@ msgstr "Ваше фото профиля одобрено!"
 msgid "Ideal Partner"
 msgstr "Идеальный партнёр"
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:170
+#: lib/animina_web/live/user_live/moodboard_editor.ex:176
 #, elixir-autogen, elixir-format
 msgid "Profiles with more than one moodboard item are a lot more popular."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:173
+#: lib/animina_web/live/user_live/moodboard_editor.ex:179
 #, elixir-autogen, elixir-format
 msgid "Write about your last trip or a hobby. Share a cooking recipe or a photo of your dog."
 msgstr ""
 
-#: lib/animina_web/live/user_live/moodboard_editor.ex:466
+#: lib/animina_web/live/user_live/moodboard_editor.ex:472
 #, elixir-autogen, elixir-format
 msgid "Take Photo"
 msgstr ""
@@ -5208,7 +5227,7 @@ msgstr ""
 msgid "Are you sure you want to unblock this contact?"
 msgstr "Вы уверены, что хотите удалить этот ключ доступа?"
 
-#: lib/animina_web/live/user_live/waitlist.ex:211
+#: lib/animina_web/live/user_live/waitlist.ex:219
 #, elixir-autogen, elixir-format
 msgid "Block contacts"
 msgstr ""
@@ -5260,7 +5279,7 @@ msgstr ""
 msgid "Phone number or email"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:213
+#: lib/animina_web/live/user_live/waitlist.ex:221
 #, elixir-autogen, elixir-format
 msgid "Prevent ex-partners or acquaintances from seeing your profile."
 msgstr ""
@@ -5305,7 +5324,7 @@ msgstr "Сначала уважение"
 msgid "Z–A"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:216
+#: lib/animina_web/live/user_live/waitlist.ex:224
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} contact blocked"
 msgid_plural "%{count} contacts blocked"
@@ -5313,7 +5332,7 @@ msgstr[0] "%{count} всего"
 msgstr[1] "%{count} всего"
 msgstr[2] "%{count} всего"
 
-#: lib/animina_web/live/user_live/waitlist.ex:128
+#: lib/animina_web/live/user_live/waitlist.ex:136
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} flag set"
 msgid_plural "%{count} flags set"
@@ -5321,7 +5340,7 @@ msgstr[0] "%{count} мин. назад"
 msgstr[1] "%{count} мин. назад"
 msgstr[2] "%{count} мин. назад"
 
-#: lib/animina_web/live/user_live/waitlist.ex:157
+#: lib/animina_web/live/user_live/waitlist.ex:165
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} item"
 msgid_plural "%{count} items"
@@ -5329,7 +5348,7 @@ msgstr[0] "%{count} запись"
 msgstr[1] "%{count} записи"
 msgstr[2] "%{count} записей"
 
-#: lib/animina_web/live/user_live/waitlist.ex:22
+#: lib/animina_web/live/user_live/waitlist.ex:30
 #, elixir-autogen, elixir-format
 msgid "Your account is on the waitlist."
 msgstr ""
@@ -5351,7 +5370,7 @@ msgstr "Онлайн-знакомства 👫❤️"
 msgid "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
 msgstr "Бесплатные онлайн-знакомства с подбором по характеру. Открытый код, рекламная модель и справедливость для всех."
 
-#: lib/animina_web/live/user_live/email_logs.ex:122
+#: lib/animina_web/live/user_live/email_logs.ex:127
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} email"
 msgid_plural "%{count} emails"
@@ -5359,65 +5378,65 @@ msgstr[0] "%{count} запись"
 msgstr[1] "%{count} записи"
 msgstr[2] "%{count} записей"
 
-#: lib/animina_web/live/user_live/email_logs.ex:188
+#: lib/animina_web/live/user_live/email_logs.ex:193
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Date"
 msgstr "Свидания"
 
 #: lib/animina_web/live/user_live/email_logs.ex:18
-#: lib/animina_web/live/user_live/email_logs.ex:114
-#: lib/animina_web/live/user_live/email_logs.ex:120
-#: lib/animina_web/live/user_live/logs_hub.ex:23
+#: lib/animina_web/live/user_live/email_logs.ex:119
+#: lib/animina_web/live/user_live/email_logs.ex:125
+#: lib/animina_web/live/user_live/logs_hub.ex:24
 #, elixir-autogen, elixir-format
 msgid "Email History"
 msgstr ""
 
 #: lib/animina_web/live/admin/email_logs_live.ex:18
-#: lib/animina_web/live/admin/email_logs_live.ex:142
-#: lib/animina_web/live/admin/email_logs_live.ex:147
-#: lib/animina_web/live/admin/logs_index_live.ex:47
+#: lib/animina_web/live/admin/email_logs_live.ex:145
+#: lib/animina_web/live/admin/email_logs_live.ex:150
+#: lib/animina_web/live/admin/logs_index_live.ex:49
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Email Logs"
 msgstr "E-mail"
 
-#: lib/animina_web/live/admin/logs_index_live.ex:61
+#: lib/animina_web/live/admin/logs_index_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Log of Ollama AI photo analysis runs"
 msgstr ""
 
-#: lib/animina_web/live/admin/logs_index_live.ex:48
+#: lib/animina_web/live/admin/logs_index_live.ex:50
 #, elixir-autogen, elixir-format
 msgid "Log of all emails sent by the system"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:232
+#: lib/animina_web/live/admin/activity_logs_live.ex:235
 #: lib/animina_web/live/admin/admin_hub.ex:72
-#: lib/animina_web/live/admin/email_logs_live.ex:140
+#: lib/animina_web/live/admin/email_logs_live.ex:143
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:29
-#: lib/animina_web/live/admin/ollama_logs_live.ex:341
-#: lib/animina_web/live/user_live/email_logs.ex:111
+#: lib/animina_web/live/admin/ollama_logs_live.ex:344
+#: lib/animina_web/live/user_live/email_logs.ex:116
 #: lib/animina_web/live/user_live/logs_hub.ex:15
-#: lib/animina_web/live/user_live/logs_hub.ex:45
+#: lib/animina_web/live/user_live/logs_hub.ex:46
 #: lib/animina_web/live/user_live/my_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/email_logs.ex:197
+#: lib/animina_web/live/user_live/email_logs.ex:202
 #, elixir-autogen, elixir-format
 msgid "No emails found."
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:213
-#: lib/animina_web/live/user_live/email_logs.ex:174
+#: lib/animina_web/live/admin/email_logs_live.ex:216
+#: lib/animina_web/live/user_live/email_logs.ex:179
 #, elixir-autogen, elixir-format
 msgid "Recipient"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:383
-#: lib/animina_web/live/admin/email_logs_live.ex:222
-#: lib/animina_web/live/user_live/email_logs.ex:173
+#: lib/animina_web/live/admin/activity_logs_live.ex:386
+#: lib/animina_web/live/admin/email_logs_live.ex:225
+#: lib/animina_web/live/user_live/email_logs.ex:178
 #, elixir-autogen, elixir-format
 msgid "Subject"
 msgstr ""
@@ -5428,9 +5447,9 @@ msgstr ""
 msgid "System log viewers"
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:175
-#: lib/animina_web/live/admin/email_logs_live.ex:219
-#: lib/animina_web/live/user_live/email_logs.ex:135
+#: lib/animina_web/live/admin/email_logs_live.ex:178
+#: lib/animina_web/live/admin/email_logs_live.ex:222
+#: lib/animina_web/live/user_live/email_logs.ex:140
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -5441,27 +5460,27 @@ msgid "Account change confirmed. The security cooldown has been cleared."
 msgstr ""
 
 #: lib/animina_web/live/components/account_sessions_component.ex:12
-#: lib/animina_web/live/user_live/account_hub.ex:41
-#: lib/animina_web/live/user_live/account_sessions.ex:21
-#: lib/animina_web/live/user_live/account_sessions.ex:27
-#: lib/animina_web/live/user_live/account_sessions.ex:57
+#: lib/animina_web/live/user_live/account_hub.ex:42
+#: lib/animina_web/live/user_live/account_sessions.ex:24
+#: lib/animina_web/live/user_live/account_sessions.ex:30
+#: lib/animina_web/live/user_live/account_sessions.ex:60
 #, elixir-autogen, elixir-format
 msgid "Active Sessions"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_sessions.ex:96
+#: lib/animina_web/live/user_live/account_sessions.ex:99
 #, elixir-autogen, elixir-format
 msgid "All other sessions have been logged out."
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_email_password.ex:75
-#: lib/animina_web/live/user_live/account_email_password.ex:122
+#: lib/animina_web/live/user_live/account_email_password.ex:78
+#: lib/animina_web/live/user_live/account_email_password.ex:125
 #, elixir-autogen, elixir-format
 msgid "Cannot change email while a recent account change is being reviewed."
 msgstr ""
 
 #: lib/animina_web/controllers/user_session_controller.ex:75
-#: lib/animina_web/live/user_live/account_email_password.ex:164
+#: lib/animina_web/live/user_live/account_email_password.ex:167
 #, elixir-autogen, elixir-format
 msgid "Cannot change password while a recent account change is being reviewed."
 msgstr ""
@@ -5491,12 +5510,12 @@ msgstr ""
 msgid "No active sessions found."
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_sessions.ex:80
+#: lib/animina_web/live/user_live/account_sessions.ex:83
 #, elixir-autogen, elixir-format
 msgid "Session has been logged out."
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_sessions.ex:71
+#: lib/animina_web/live/user_live/account_sessions.ex:74
 #, elixir-autogen, elixir-format
 msgid "Session not found."
 msgstr ""
@@ -5531,12 +5550,12 @@ msgstr ""
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:350
+#: lib/animina_web/live/user_live/waitlist.ex:358
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlisted"
 msgstr "В списке ожидания"
 
-#: lib/animina_web/live/user_live/waitlist.ex:343
+#: lib/animina_web/live/user_live/waitlist.ex:351
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
@@ -5544,19 +5563,19 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:358
+#: lib/animina_web/live/user_live/waitlist.ex:366
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Your account is on the waitlist. Prepare your profile while you wait."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:40
-#: lib/animina_web/live/user_live/waitlist.ex:55
+#: lib/animina_web/live/user_live/waitlist.ex:48
+#: lib/animina_web/live/user_live/waitlist.ex:63
 #, elixir-autogen, elixir-format
 msgid "until your account is activated"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:33
-#: lib/animina_web/live/user_live/waitlist.ex:52
+#: lib/animina_web/live/user_live/waitlist.ex:41
+#: lib/animina_web/live/user_live/waitlist.ex:60
 #, elixir-autogen, elixir-format, fuzzy
 msgid "approximately 2 weeks"
 msgstr "примерно 4 недели"
@@ -5640,7 +5659,7 @@ msgstr ""
 msgid "Online several times a week"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:84
+#: lib/animina_web/live/user_live/settings_hub.ex:81
 #, elixir-autogen, elixir-format
 msgid "Online status hidden"
 msgstr ""
@@ -5655,7 +5674,7 @@ msgstr ""
 msgid "Online status is now visible to other users."
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:86
+#: lib/animina_web/live/user_live/settings_hub.ex:83
 #, elixir-autogen, elixir-format
 msgid "Online status visible"
 msgstr ""
@@ -5701,56 +5720,56 @@ msgid "night"
 msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:20
-#: lib/animina_web/live/admin/activity_logs_live.ex:234
-#: lib/animina_web/live/admin/activity_logs_live.ex:239
-#: lib/animina_web/live/admin/logs_index_live.ex:34
+#: lib/animina_web/live/admin/activity_logs_live.ex:237
+#: lib/animina_web/live/admin/activity_logs_live.ex:242
+#: lib/animina_web/live/admin/logs_index_live.ex:36
 #, elixir-autogen, elixir-format
 msgid "Activity Logs"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:382
+#: lib/animina_web/live/admin/activity_logs_live.ex:385
 #, elixir-autogen, elixir-format
 msgid "Actor"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:311
-#: lib/animina_web/live/admin/activity_logs_live.ex:380
+#: lib/animina_web/live/admin/activity_logs_live.ex:314
+#: lib/animina_web/live/admin/activity_logs_live.ex:383
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:328
-#: lib/animina_web/live/admin/activity_logs_live.ex:381
+#: lib/animina_web/live/admin/activity_logs_live.ex:331
+#: lib/animina_web/live/admin/activity_logs_live.ex:384
 #, elixir-autogen, elixir-format
 msgid "Event"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:345
+#: lib/animina_web/live/admin/activity_logs_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "From"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:253
+#: lib/animina_web/live/admin/activity_logs_live.ex:256
 #, elixir-autogen, elixir-format
 msgid "Live"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:284
+#: lib/animina_web/live/admin/activity_logs_live.ex:287
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Search by name or email..."
 msgstr "Поиск пользователей по email или имени..."
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:384
+#: lib/animina_web/live/admin/activity_logs_live.ex:387
 #, elixir-autogen, elixir-format
 msgid "Summary"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:359
+#: lib/animina_web/live/admin/activity_logs_live.ex:362
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To"
 msgstr "Игрушки"
 
-#: lib/animina_web/live/admin/logs_index_live.ex:35
+#: lib/animina_web/live/admin/logs_index_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Unified activity log for all system events"
 msgstr ""
@@ -5760,38 +5779,38 @@ msgstr ""
 msgid "Build and manage your dating profile"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:20
+#: lib/animina_web/live/user_live/settings_hub.ex:17
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Manage your account and app settings"
 msgstr "Управляйте настройками вашего аккаунта"
 
 #: lib/animina_web/live/user_live/my_hub.ex:69
-#: lib/animina_web/live/user_live/settings_hub.ex:63
+#: lib/animina_web/live/user_live/settings_hub.ex:60
 #, elixir-autogen, elixir-format
 msgid "%{completed}/%{total} complete"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_delete.ex:19
-#: lib/animina_web/live/user_live/account_email_password.ex:22
+#: lib/animina_web/live/user_live/account_delete.ex:22
+#: lib/animina_web/live/user_live/account_email_password.ex:25
 #: lib/animina_web/live/user_live/account_hub.ex:19
-#: lib/animina_web/live/user_live/account_hub.ex:78
-#: lib/animina_web/live/user_live/account_passkeys.ex:19
-#: lib/animina_web/live/user_live/account_sessions.ex:19
-#: lib/animina_web/live/user_live/settings_hub.ex:40
+#: lib/animina_web/live/user_live/account_hub.ex:79
+#: lib/animina_web/live/user_live/account_passkeys.ex:22
+#: lib/animina_web/live/user_live/account_sessions.ex:22
+#: lib/animina_web/live/user_live/settings_hub.ex:37
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Account & Security"
 msgstr "Безопасность аккаунта"
 
 #: lib/animina_web/live/components/account_email_password_component.ex:10
-#: lib/animina_web/live/user_live/account_email_password.ex:24
-#: lib/animina_web/live/user_live/account_email_password.ex:30
-#: lib/animina_web/live/user_live/account_email_password.ex:92
-#: lib/animina_web/live/user_live/account_hub.ex:29
+#: lib/animina_web/live/user_live/account_email_password.ex:27
+#: lib/animina_web/live/user_live/account_email_password.ex:33
+#: lib/animina_web/live/user_live/account_email_password.ex:95
+#: lib/animina_web/live/user_live/account_hub.ex:30
 #, elixir-autogen, elixir-format
 msgid "Email & Password"
 msgstr ""
 
-#: lib/animina_web/live/user_live/logs_hub.ex:24
+#: lib/animina_web/live/user_live/logs_hub.ex:25
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log of all emails sent to your account"
 msgstr ""
@@ -5803,13 +5822,13 @@ msgstr ""
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:16
 #: lib/animina_web/live/user_live/privacy_settings.ex:81
-#: lib/animina_web/live/user_live/settings_hub.ex:34
+#: lib/animina_web/live/user_live/settings_hub.ex:31
 #, elixir-autogen, elixir-format
 msgid "Privacy & Blocking"
 msgstr ""
 
 #: lib/animina_web/live/user_live/my_hub.ex:74
-#: lib/animina_web/live/user_live/settings_hub.ex:68
+#: lib/animina_web/live/user_live/settings_hub.ex:65
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile complete"
 msgstr "Заполненность профиля"
@@ -5819,67 +5838,67 @@ msgstr "Заполненность профиля"
 msgid "View your account activity logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_hub.ex:73
+#: lib/animina_web/live/user_live/account_hub.ex:74
 #, elixir-autogen, elixir-format
 msgid "%{count} active sessions"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_hub.ex:67
+#: lib/animina_web/live/user_live/account_hub.ex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} passkeys"
 msgstr "%{count} запись"
 
-#: lib/animina_web/live/user_live/account_hub.ex:72
+#: lib/animina_web/live/user_live/account_hub.ex:73
 #, elixir-autogen, elixir-format, fuzzy
 msgid "1 active session"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_hub.ex:66
+#: lib/animina_web/live/user_live/account_hub.ex:67
 #, elixir-autogen, elixir-format, fuzzy
 msgid "1 passkey"
 msgstr "Ключ доступа"
 
-#: lib/animina_web/live/user_live/account_sessions.ex:29
+#: lib/animina_web/live/user_live/account_sessions.ex:32
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Manage your active login sessions"
 msgstr "Управление местоположениями"
 
-#: lib/animina_web/live/user_live/account_email_password.ex:32
+#: lib/animina_web/live/user_live/account_email_password.ex:35
 #, elixir-autogen, elixir-format
 msgid "Manage your email address and password"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_hub.ex:65
+#: lib/animina_web/live/user_live/account_hub.ex:66
 #, elixir-autogen, elixir-format, fuzzy
 msgid "No passkeys"
 msgstr "Ключи доступа"
 
-#: lib/animina_web/live/user_live/account_delete.ex:29
+#: lib/animina_web/live/user_live/account_delete.ex:32
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account and all your data"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_hub.ex:48
+#: lib/animina_web/live/user_live/account_hub.ex:49
 #, elixir-autogen, elixir-format
 msgid "Permanently delete your account and data"
 msgstr ""
 
-#: lib/animina_web/live/user_live/account_passkeys.ex:29
+#: lib/animina_web/live/user_live/account_passkeys.ex:32
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Sign in with Face ID, Touch ID, or a security key"
 msgstr "Войдите с помощью Face ID, Touch ID или ключа безопасности — быстрее и безопаснее, чем пароли."
 
-#: lib/animina_web/live/user_live/waitlist.ex:232
+#: lib/animina_web/live/user_live/waitlist.ex:240
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:234
+#: lib/animina_web/live/user_live/waitlist.ex:242
 #, elixir-autogen, elixir-format
 msgid "Share the code"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:241
+#: lib/animina_web/live/user_live/waitlist.ex:249
 #, elixir-autogen, elixir-format, fuzzy
 msgid "each confirmed signup halves the waitlist time for both of you."
 msgstr ""
@@ -5889,8 +5908,8 @@ msgstr ""
 msgid "Your account data will be automatically deleted in %{minutes} minutes."
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:197
-#: lib/animina_web/live/user_live/email_logs.ex:157
+#: lib/animina_web/live/admin/email_logs_live.ex:200
+#: lib/animina_web/live/user_live/email_logs.ex:162
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Bounced"
 msgstr "Заблокировано"
@@ -5901,8 +5920,8 @@ msgstr "Заблокировано"
 msgid "This is not a valid zip code"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:407
-#: lib/animina_web/live/admin/activity_logs_live.ex:421
+#: lib/animina_web/live/admin/activity_logs_live.ex:410
+#: lib/animina_web/live/admin/activity_logs_live.ex:424
 #, elixir-autogen, elixir-format
 msgid "Filter by this user"
 msgstr ""
@@ -5944,9 +5963,25 @@ msgstr ""
 msgid "Manage your ANIMINA instance"
 msgstr ""
 
+#: lib/animina_web/components/core_components.ex:412
+#: lib/animina_web/components/core_components.ex:425
 #: lib/animina_web/components/layouts.ex:265
+#: lib/animina_web/live/messages_live.ex:36
+#: lib/animina_web/live/messages_live.ex:125
+#: lib/animina_web/live/user_live/account_delete.ex:16
+#: lib/animina_web/live/user_live/account_email_password.ex:19
+#: lib/animina_web/live/user_live/account_hub.ex:22
+#: lib/animina_web/live/user_live/account_passkeys.ex:16
+#: lib/animina_web/live/user_live/account_sessions.ex:16
+#: lib/animina_web/live/user_live/email_logs.ex:106
+#: lib/animina_web/live/user_live/logs_hub.ex:16
+#: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/my_hub.ex:17
 #: lib/animina_web/live/user_live/my_hub.ex:79
+#: lib/animina_web/live/user_live/profile_hub.ex:20
+#: lib/animina_web/live/user_live/settings_hub.ex:18
+#: lib/animina_web/live/user_live/traits_wizard.ex:17
+#: lib/animina_web/live/user_live/waitlist.ex:22
 #, elixir-autogen, elixir-format
 msgid "My ANIMINA"
 msgstr ""
@@ -5962,6 +5997,7 @@ msgid "Toggle features and system settings"
 msgstr ""
 
 #: lib/animina_web/live/user_live/my_hub.ex:41
+#: lib/animina_web/live/user_live/waitlist.ex:24
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlist"
 msgstr "В списке ожидания"

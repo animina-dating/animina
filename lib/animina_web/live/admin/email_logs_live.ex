@@ -137,6 +137,9 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
+              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
+            </li>
+            <li>
               <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
             </li>
             <li>{gettext("Email Logs")}</li>

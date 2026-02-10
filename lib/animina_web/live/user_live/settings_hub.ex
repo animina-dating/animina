@@ -14,12 +14,12 @@ defmodule AniminaWeb.UserLive.SettingsHub do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Settings")}
-            <:subtitle>{gettext("Manage your account and app settings")}</:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("Settings")}
+          subtitle={gettext("Manage your account and app settings")}
+        >
+          <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+        </.page_header>
 
         <div class="grid gap-3">
           <.hub_card

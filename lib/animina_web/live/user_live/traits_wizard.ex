@@ -14,6 +14,12 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
+              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+            </li>
+            <li>
+              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
+            </li>
+            <li>
               <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
             </li>
             <li>

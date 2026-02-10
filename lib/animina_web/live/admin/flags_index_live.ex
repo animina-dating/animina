@@ -27,7 +27,9 @@ defmodule AniminaWeb.Admin.FlagsIndexLive do
         <.page_header
           title={gettext("Feature Flags")}
           subtitle={gettext("Control feature flags and system settings.")}
-        />
+        >
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+        </.page_header>
 
         <div class="grid gap-4">
           <.hub_card

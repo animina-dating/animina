@@ -102,8 +102,8 @@ defmodule AniminaWeb.UserLive.EmailLogs do
         <div class="text-sm breadcrumbs mb-4">
           <ul>
             <li>
-              <.link navigate={~p"/my/settings"} class="link link-hover">
-                {gettext("Settings")}
+              <.link navigate={~p"/my"} class="link link-hover">
+                {gettext("My ANIMINA")}
               </.link>
             </li>
             <li>
