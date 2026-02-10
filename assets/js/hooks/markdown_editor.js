@@ -43,11 +43,15 @@ const MarkdownEditor = {
     this.hiddenInput = hiddenInput
     this.maxLength = maxLength
 
-    // Update hidden input and character counter on change
-    this.editor.on("change", () => {
-      const markdown = this.editor.getMarkdown()
+    // Track whether the user is actively editing to prevent
+    // updated() from resetting the editor content mid-typing
+    this.isEditing = false
+    this.editor.on("focus", () => { this.isEditing = true })
+    this.editor.on("blur", () => {
+      this.isEditing = false
 
-      // Enforce max length
+      // Enforce max length on blur to avoid cursor-resetting setMarkdown() mid-typing
+      const markdown = this.editor.getMarkdown()
       if (markdown.length > maxLength) {
         const truncated = markdown.slice(0, maxLength)
         this.editor.setMarkdown(truncated)
@@ -56,13 +60,19 @@ const MarkdownEditor = {
           this.hiddenInput.dispatchEvent(new Event("input", { bubbles: true }))
         }
         if (this.counterEl) this.counterEl.textContent = `${maxLength}/${maxLength}`
-      } else {
-        if (this.hiddenInput) {
-          this.hiddenInput.value = markdown
-          this.hiddenInput.dispatchEvent(new Event("input", { bubbles: true }))
-        }
-        if (this.counterEl) this.counterEl.textContent = `${markdown.length}/${maxLength}`
       }
+    })
+
+    // Update hidden input and character counter on change
+    this.editor.on("change", () => {
+      const markdown = this.editor.getMarkdown()
+      const len = Math.min(markdown.length, maxLength)
+
+      if (this.hiddenInput) {
+        this.hiddenInput.value = markdown.length > maxLength ? markdown.slice(0, maxLength) : markdown
+        this.hiddenInput.dispatchEvent(new Event("input", { bubbles: true }))
+      }
+      if (this.counterEl) this.counterEl.textContent = `${len}/${maxLength}`
     })
 
     // Set initial counter value
@@ -72,9 +82,10 @@ const MarkdownEditor = {
   },
 
   updated() {
-    // If the modal is re-opened with new initial value, reset the editor
     const newValue = this.el.dataset.initialValue || ""
-    if (this.editor && this.editor.getMarkdown() !== newValue) {
+    // Only reset editor content when the user is NOT actively editing
+    // (e.g., modal re-opened with different story content)
+    if (this.editor && !this.isEditing && this.editor.getMarkdown() !== newValue) {
       this.editor.setMarkdown(newValue)
       if (this.counterEl) {
         this.counterEl.textContent = `${newValue.length}/${this.maxLength}`
