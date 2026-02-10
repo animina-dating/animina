@@ -13,6 +13,7 @@ defmodule Animina.Photos.OllamaQueue do
   alias Animina.Photos.Helpers
   alias Animina.Photos.Photo
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   @doc """
   Lists photos in the Ollama retry queue (pending_ollama and needs_manual_review states).
@@ -35,8 +36,6 @@ defmodule Animina.Photos.OllamaQueue do
     * `:state_filter` - filter by specific state (nil for all queue states)
   """
   def list_ollama_queue_paginated(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per_page = Keyword.get(opts, :per_page, 50) |> max(1) |> min(250)
     state_filter = Keyword.get(opts, :state_filter)
 
     states =
@@ -46,27 +45,10 @@ defmodule Animina.Photos.OllamaQueue do
         Photos.ollama_queue_states()
       end
 
-    base_query =
-      Photo
-      |> where([p], p.state in ^states)
-
-    total_count = Repo.aggregate(base_query, :count)
-    total_pages = max(1, ceil(total_count / per_page))
-
-    entries =
-      base_query
-      |> order_by([p], asc: p.ollama_retry_at, asc: p.inserted_at)
-      |> offset(^((page - 1) * per_page))
-      |> limit(^per_page)
-      |> Repo.all()
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: total_pages
-    }
+    Photo
+    |> where([p], p.state in ^states)
+    |> order_by([p], asc: p.ollama_retry_at, asc: p.inserted_at)
+    |> Paginator.paginate(page: opts[:page], per_page: opts[:per_page], max_per_page: 250)
   end
 
   @doc """

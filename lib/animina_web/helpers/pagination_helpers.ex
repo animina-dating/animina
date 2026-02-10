@@ -7,11 +7,111 @@ defmodule AniminaWeb.Helpers.PaginationHelpers do
 
   ## Usage
 
+  For components and helper functions only:
+
       import AniminaWeb.Helpers.PaginationHelpers
+
+  To also get shared `handle_event` callbacks for `"change-per-page"`,
+  `"go-to-page"`, and `"sort"`, use the macro form instead:
+
+      use AniminaWeb.Helpers.PaginationHelpers
+
+  The calling module must define a private `build_path(socket, overrides)`
+  function. For the `"sort"` handler, it must also define
+  `parse_sort_by(column_string)`.
   """
+
+  defmacro __using__(opts) do
+    sort? = Keyword.get(opts, :sort, false)
+    expand? = Keyword.get(opts, :expand, false)
+
+    quote do
+      import AniminaWeb.Helpers.PaginationHelpers
+
+      @impl true
+      def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
+        {:noreply, push_patch(socket, to: build_path(socket, page: 1, per_page: per_page))}
+      end
+
+      @impl true
+      def handle_event("go-to-page", %{"page" => page}, socket) do
+        {:noreply, push_patch(socket, to: build_path(socket, page: page))}
+      end
+
+      if unquote(sort?) do
+        @impl true
+        def handle_event("sort", %{"column" => column}, socket) do
+          col = parse_sort_by(column)
+
+          new_dir =
+            cond do
+              socket.assigns.sort_by != col -> :desc
+              socket.assigns.sort_dir == :desc -> :asc
+              true -> :desc
+            end
+
+          {:noreply,
+           push_patch(socket,
+             to: build_path(socket, page: 1, sort_by: col, sort_dir: new_dir)
+           )}
+        end
+      end
+
+      if unquote(expand?) do
+        @impl true
+        def handle_event("toggle-expand", %{"id" => id}, socket) do
+          expanded =
+            if MapSet.member?(socket.assigns.expanded, id) do
+              MapSet.delete(socket.assigns.expanded, id)
+            else
+              MapSet.put(socket.assigns.expanded, id)
+            end
+
+          {:noreply, assign(socket, expanded: expanded)}
+        end
+      end
+    end
+  end
 
   use Phoenix.Component
   use Gettext, backend: AniminaWeb.Gettext
+
+  @doc """
+  Renders a per-page size selector as a button group.
+
+  Emits `"change-per-page"` events with a `per_page` value.
+
+  ## Examples
+
+      <.per_page_selector per_page={@per_page} />
+      <.per_page_selector per_page={@per_page} sizes={[50, 100, 150, 500]} />
+  """
+  attr :per_page, :integer, required: true
+  attr :sizes, :list, default: [50, 100, 250, 500]
+
+  def per_page_selector(assigns) do
+    ~H"""
+    <div class="form-control">
+      <div class="label">
+        <span class="label-text">{gettext("Per page")}</span>
+      </div>
+      <div class="join">
+        <%= for size <- @sizes do %>
+          <button
+            class={[
+              "btn btn-sm join-item",
+              if(@per_page == size, do: "btn-active")
+            ]}
+            phx-click="change-per-page"
+            phx-value-per_page={size}
+          >
+            {size}
+          </button>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
 
   @doc """
   Renders a pagination component with page buttons and prev/next navigation.

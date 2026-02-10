@@ -10,8 +10,6 @@ defmodule Animina.Accounts.AccountSecurityEvent do
   use Ecto.Schema
   import Ecto.Query
 
-  alias __MODULE__
-
   @hash_algorithm :sha256
   @rand_size 32
   @cooldown_hours 48
@@ -37,7 +35,7 @@ defmodule Animina.Accounts.AccountSecurityEvent do
   @doc """
   Builds a security event struct with cryptographic undo and confirm tokens.
 
-  Returns `{undo_token, confirm_token, %AccountSecurityEvent{}}`.
+  Returns `{undo_token, confirm_token, %__MODULE__{}}`.
   The raw tokens are URL-safe base64 encoded for use in email links.
   Only the SHA-256 hashes are stored in the database.
   """
@@ -45,7 +43,7 @@ defmodule Animina.Accounts.AccountSecurityEvent do
     undo_token = :crypto.strong_rand_bytes(@rand_size)
     confirm_token = :crypto.strong_rand_bytes(@rand_size)
 
-    event = %AccountSecurityEvent{
+    event = %__MODULE__{
       user_id: user_id,
       event_type: event_type,
       undo_token_hash: :crypto.hash(@hash_algorithm, undo_token),
@@ -70,7 +68,7 @@ defmodule Animina.Accounts.AccountSecurityEvent do
         hashed = :crypto.hash(@hash_algorithm, decoded)
 
         query =
-          from e in AccountSecurityEvent,
+          from e in __MODULE__,
             where: e.undo_token_hash == ^hashed,
             where: is_nil(e.resolved_at),
             where: e.expires_at > ^DateTime.utc_now(:second)
@@ -92,7 +90,7 @@ defmodule Animina.Accounts.AccountSecurityEvent do
         hashed = :crypto.hash(@hash_algorithm, decoded)
 
         query =
-          from e in AccountSecurityEvent,
+          from e in __MODULE__,
             where: e.confirm_token_hash == ^hashed,
             where: is_nil(e.resolved_at),
             where: e.expires_at > ^DateTime.utc_now(:second)
@@ -108,7 +106,7 @@ defmodule Animina.Accounts.AccountSecurityEvent do
   Returns a query for active (unresolved, unexpired) security events for a user.
   """
   def active_events_query(user_id) do
-    from e in AccountSecurityEvent,
+    from e in __MODULE__,
       where: e.user_id == ^user_id,
       where: is_nil(e.resolved_at),
       where: e.expires_at > ^DateTime.utc_now(:second)

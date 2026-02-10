@@ -9,7 +9,7 @@ defmodule Animina.Accounts do
   - `Animina.Accounts.Statistics` - User counts and analytics
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
   use Gettext, backend: AniminaWeb.Gettext
 
   alias Animina.ActivityLog

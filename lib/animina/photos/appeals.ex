@@ -15,6 +15,7 @@ defmodule Animina.Photos.Appeals do
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoAppeal
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   @doc """
   Creates an appeal for a rejected photo.
@@ -73,33 +74,18 @@ defmodule Animina.Photos.Appeals do
       unless they are the only moderator in the system
   """
   def list_pending_appeals_paginated(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per_page = Keyword.get(opts, :per_page, 50) |> max(1) |> min(250)
     viewer_id = Keyword.get(opts, :viewer_id)
 
-    base_query =
-      PhotoAppeal
-      |> where([a], a.status == "pending")
-      |> maybe_exclude_own_appeals(viewer_id)
-
-    total_count = Repo.aggregate(base_query, :count)
-    total_pages = max(1, ceil(total_count / per_page))
-
-    entries =
-      base_query
-      |> order_by([a], desc: a.inserted_at)
-      |> offset(^((page - 1) * per_page))
-      |> limit(^per_page)
-      |> preload([:photo, :user])
-      |> Repo.all()
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: total_pages
-    }
+    PhotoAppeal
+    |> where([a], a.status == "pending")
+    |> maybe_exclude_own_appeals(viewer_id)
+    |> order_by([a], desc: a.inserted_at)
+    |> Paginator.paginate(
+      page: opts[:page],
+      per_page: opts[:per_page],
+      max_per_page: 250,
+      preload: [:photo, :user]
+    )
   end
 
   defp maybe_exclude_own_appeals(query, nil), do: query

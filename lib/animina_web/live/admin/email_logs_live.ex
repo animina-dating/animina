@@ -5,9 +5,9 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   alias AniminaWeb.Layouts
 
   import AniminaWeb.Helpers.AdminHelpers,
-    only: [parse_int: 2, format_datetime: 1]
+    only: [parse_int: 2, format_datetime: 1, email_status_badge_class: 1]
 
-  import AniminaWeb.Helpers.PaginationHelpers
+  use AniminaWeb.Helpers.PaginationHelpers, sort: true, expand: true
 
   @default_per_page 50
 
@@ -66,33 +66,6 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   end
 
   @impl true
-  def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, per_page: per_page))}
-  end
-
-  @impl true
-  def handle_event("go-to-page", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: page))}
-  end
-
-  @impl true
-  def handle_event("sort", %{"column" => column}, socket) do
-    col = parse_sort_by(column)
-
-    new_dir =
-      if socket.assigns.sort_by == col do
-        if socket.assigns.sort_dir == :desc, do: :asc, else: :desc
-      else
-        :desc
-      end
-
-    {:noreply,
-     push_patch(socket,
-       to: build_path(socket, page: 1, sort_by: col, sort_dir: new_dir)
-     )}
-  end
-
-  @impl true
   def handle_event("filter-type", %{"type" => type}, socket) do
     filter = if type == "", do: nil, else: type
     {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_type: filter))}
@@ -102,18 +75,6 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   def handle_event("filter-status", %{"status" => status}, socket) do
     filter = if status == "", do: nil, else: status
     {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_status: filter))}
-  end
-
-  @impl true
-  def handle_event("toggle-expand", %{"id" => id}, socket) do
-    expanded =
-      if MapSet.member?(socket.assigns.expanded, id) do
-        MapSet.delete(socket.assigns.expanded, id)
-      else
-        MapSet.put(socket.assigns.expanded, id)
-      end
-
-    {:noreply, assign(socket, expanded: expanded)}
   end
 
   @impl true
@@ -164,10 +125,6 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
 
     ~p"/admin/logs/emails?#{params}"
   end
-
-  defp status_badge_class("sent"), do: "badge-success"
-  defp status_badge_class("bounced"), do: "badge-warning"
-  defp status_badge_class(_), do: "badge-error"
 
   # --- Render ---
 
@@ -245,25 +202,7 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
             </select>
           </label>
 
-          <div class="form-control">
-            <div class="label">
-              <span class="label-text">{gettext("Per page")}</span>
-            </div>
-            <div class="join">
-              <%= for size <- [50, 100, 150, 500] do %>
-                <button
-                  class={[
-                    "btn btn-sm join-item",
-                    if(@per_page == size, do: "btn-active")
-                  ]}
-                  phx-click="change-per-page"
-                  phx-value-per_page={size}
-                >
-                  {size}
-                </button>
-              <% end %>
-            </div>
-          </div>
+          <.per_page_selector per_page={@per_page} sizes={[50, 100, 150, 500]} />
         </div>
 
         <%!-- Table --%>
@@ -318,7 +257,7 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
                   <td>
                     <span class={[
                       "badge badge-sm",
-                      status_badge_class(log.status)
+                      email_status_badge_class(log.status)
                     ]}>
                       {log.status}
                     </span>

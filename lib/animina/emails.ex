@@ -13,6 +13,7 @@ defmodule Animina.Emails do
   alias Animina.Emails.EmailLog
   alias Animina.Mailer
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   @doc """
   Delivers a Swoosh email and logs the result.
@@ -113,37 +114,18 @@ defmodule Animina.Emails do
     * `:user_id` - filter by user_id
   """
   def list_email_logs(opts \\ []) do
-    page = Keyword.get(opts, :page, 1)
-    per_page = Keyword.get(opts, :per_page, 50)
     sort_by = Keyword.get(opts, :sort_by, :inserted_at)
     sort_dir = Keyword.get(opts, :sort_dir, :desc)
 
-    query =
-      from(e in EmailLog,
-        left_join: u in assoc(e, :user),
-        preload: [user: u]
-      )
-      |> maybe_filter_type(Keyword.get(opts, :filter_type))
-      |> maybe_filter_status(Keyword.get(opts, :filter_status))
-      |> maybe_filter_user(Keyword.get(opts, :user_id))
-      |> order_by([e], [{^sort_dir, field(e, ^sort_by)}])
-
-    total_count = Repo.aggregate(query, :count)
-    total_pages = max(ceil(total_count / per_page), 1)
-
-    entries =
-      query
-      |> limit(^per_page)
-      |> offset(^((page - 1) * per_page))
-      |> Repo.all()
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: total_pages
-    }
+    from(e in EmailLog,
+      left_join: u in assoc(e, :user),
+      preload: [user: u]
+    )
+    |> maybe_filter_type(Keyword.get(opts, :filter_type))
+    |> maybe_filter_status(Keyword.get(opts, :filter_status))
+    |> maybe_filter_user(Keyword.get(opts, :user_id))
+    |> order_by([e], [{^sort_dir, field(e, ^sort_by)}])
+    |> Paginator.paginate(opts)
   end
 
   @doc """

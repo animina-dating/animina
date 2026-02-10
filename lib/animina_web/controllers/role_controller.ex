@@ -2,7 +2,7 @@ defmodule AniminaWeb.RoleController do
   use AniminaWeb, :controller
 
   alias Animina.Accounts
-  use Gettext, backend: AniminaWeb.Gettext
+  import AniminaWeb.Helpers.ControllerHelpers, only: [redirect_back: 1]
 
   def switch(conn, %{"role" => role}) do
     user = conn.assigns.current_scope.user
@@ -21,25 +21,5 @@ defmodule AniminaWeb.RoleController do
 
   def switch(conn, _params) do
     redirect_back(conn)
-  end
-
-  defp redirect_back(conn) do
-    path =
-      case get_req_header(conn, "referer") do
-        [referer | _] ->
-          uri = URI.parse(referer)
-          base_path = uri.path || "/"
-
-          if uri.query do
-            "#{base_path}?#{uri.query}"
-          else
-            base_path
-          end
-
-        _ ->
-          "/"
-      end
-
-    redirect(conn, to: path)
   end
 end

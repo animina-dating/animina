@@ -13,6 +13,7 @@ defmodule Animina.Photos.Blacklist do
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoBlacklist
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   @doc """
   Computes the dhash (perceptual hash) for an image.
@@ -182,32 +183,17 @@ defmodule Animina.Photos.Blacklist do
       unless they are the only admin in the system
   """
   def list_blacklist_entries_paginated(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per_page = Keyword.get(opts, :per_page, 50) |> max(1) |> min(250)
     viewer_id = Keyword.get(opts, :viewer_id)
 
-    base_query =
-      PhotoBlacklist
-      |> maybe_exclude_own_blacklist_entries(viewer_id)
-
-    total_count = Repo.aggregate(base_query, :count)
-    total_pages = max(1, ceil(total_count / per_page))
-
-    entries =
-      base_query
-      |> order_by([b], desc: b.inserted_at)
-      |> offset(^((page - 1) * per_page))
-      |> limit(^per_page)
-      |> preload([:added_by, :source_photo, :source_user])
-      |> Repo.all()
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: total_pages
-    }
+    PhotoBlacklist
+    |> maybe_exclude_own_blacklist_entries(viewer_id)
+    |> order_by([b], desc: b.inserted_at)
+    |> Paginator.paginate(
+      page: opts[:page],
+      per_page: opts[:per_page],
+      max_per_page: 250,
+      preload: [:added_by, :source_photo, :source_user]
+    )
   end
 
   defp maybe_exclude_own_blacklist_entries(query, nil), do: query

@@ -16,6 +16,7 @@ defmodule Animina.Photos do
   alias Animina.Photos.FileManagement
   alias Animina.Photos.Photo
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   # --- Configuration helpers ---
 
@@ -404,33 +405,14 @@ defmodule Animina.Photos do
     - `:filter_status` - filter by status ("success" or "error")
   """
   def list_ollama_logs(opts \\ []) do
-    page = max(opts[:page] || 1, 1)
-    per_page = min(max(opts[:per_page] || 50, 1), 500)
-    sort_by = opts[:sort_by] || :inserted_at
-    sort_dir = if opts[:sort_dir] == :asc, do: :asc, else: :desc
+    sort_by = Keyword.get(opts, :sort_by, :inserted_at)
+    sort_dir = Keyword.get(opts, :sort_dir, :desc)
 
-    query =
-      OllamaLog
-      |> maybe_filter_model(opts[:filter_model])
-      |> maybe_filter_status(opts[:filter_status])
-
-    total_count = Repo.aggregate(query, :count)
-
-    entries =
-      query
-      |> order_by([l], [{^sort_dir, ^sort_by}])
-      |> limit(^per_page)
-      |> offset(^((page - 1) * per_page))
-      |> Repo.all()
-      |> Repo.preload([:photo, :owner, :requester])
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: max(ceil(total_count / per_page), 1)
-    }
+    OllamaLog
+    |> maybe_filter_model(opts[:filter_model])
+    |> maybe_filter_status(opts[:filter_status])
+    |> order_by([l], [{^sort_dir, ^sort_by}])
+    |> Paginator.paginate(Keyword.merge(opts, preload: [:photo, :owner, :requester]))
   end
 
   @doc """

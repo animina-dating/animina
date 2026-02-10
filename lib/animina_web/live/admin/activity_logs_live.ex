@@ -9,7 +9,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  import AniminaWeb.Helpers.PaginationHelpers
+  use AniminaWeb.Helpers.PaginationHelpers
 
   @default_per_page 50
 
@@ -36,16 +36,17 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
     date_from = params["date_from"]
     date_to = params["date_to"]
 
-    # Load selected user if user_id is in params
+    # Load selected user if user_id is in params, clear if filter removed
     selected_user =
-      if filter_user_id && filter_user_id != "" do
-        Accounts.get_user(filter_user_id)
-      else
-        socket.assigns[:selected_user]
-        |> then(fn
-          user when not is_nil(user) and filter_user_id in [nil, ""] -> nil
-          user -> user
-        end)
+      cond do
+        filter_user_id && filter_user_id != "" ->
+          Accounts.get_user(filter_user_id)
+
+        filter_user_id in [nil, ""] ->
+          nil
+
+        true ->
+          socket.assigns[:selected_user]
       end
 
     result =
@@ -156,16 +157,6 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
      socket
      |> assign(user_search: "", user_results: [], selected_user: nil)
      |> push_patch(to: build_path(socket, page: 1, filter_user_id: nil))}
-  end
-
-  @impl true
-  def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, per_page: per_page))}
-  end
-
-  @impl true
-  def handle_event("go-to-page", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: page))}
   end
 
   # --- PubSub ---
@@ -377,25 +368,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
           </label>
 
           <%!-- Per Page --%>
-          <div class="form-control">
-            <div class="label">
-              <span class="label-text">{gettext("Per page")}</span>
-            </div>
-            <div class="join">
-              <%= for size <- [50, 100, 250, 500] do %>
-                <button
-                  class={[
-                    "btn btn-sm join-item",
-                    if(@per_page == size, do: "btn-active")
-                  ]}
-                  phx-click="change-per-page"
-                  phx-value-per_page={size}
-                >
-                  {size}
-                </button>
-              <% end %>
-            </div>
-          </div>
+          <.per_page_selector per_page={@per_page} />
         </div>
 
         <%!-- Table --%>

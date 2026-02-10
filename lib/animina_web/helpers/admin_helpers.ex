@@ -42,14 +42,14 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
     min = Keyword.get(opts, :min, 1)
 
     case Integer.parse(val) do
-      {n, _} -> if min == nil or n >= min, do: n, else: default
+      {n, _} -> if is_nil(min) or n >= min, do: n, else: default
       :error -> default
     end
   end
 
   def parse_int(val, default, opts) when is_integer(val) do
     min = Keyword.get(opts, :min, 1)
-    if min == nil or val >= min, do: val, else: default
+    if is_nil(min) or val >= min, do: val, else: default
   end
 
   def parse_int(_, default, _opts), do: default
@@ -120,6 +120,24 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_datetime(datetime) do
     Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
   end
+
+  @doc """
+  Returns the DaisyUI badge class for an email log status.
+
+  ## Examples
+
+      iex> email_status_badge_class("sent")
+      "badge-success"
+
+      iex> email_status_badge_class("bounced")
+      "badge-warning"
+
+      iex> email_status_badge_class("error")
+      "badge-error"
+  """
+  def email_status_badge_class("sent"), do: "badge-success"
+  def email_status_badge_class("bounced"), do: "badge-warning"
+  def email_status_badge_class(_), do: "badge-error"
 
   @doc """
   Formats a datetime with seconds for detailed views.

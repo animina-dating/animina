@@ -10,6 +10,7 @@ defmodule Animina.ActivityLog do
 
   alias Animina.ActivityLog.ActivityLogEntry
   alias Animina.Repo
+  alias Animina.Repo.Paginator
 
   @pubsub_topic "activity_logs"
 
@@ -72,39 +73,20 @@ defmodule Animina.ActivityLog do
     * `:date_to` - filter entries before this date
   """
   def list_activity_logs(opts \\ []) do
-    page = Keyword.get(opts, :page, 1) |> max(1)
-    per_page = Keyword.get(opts, :per_page, 50) |> max(1) |> min(500)
     sort_dir = Keyword.get(opts, :sort_dir, :desc)
 
-    query =
-      from(e in ActivityLogEntry,
-        left_join: a in assoc(e, :actor),
-        left_join: s in assoc(e, :subject),
-        preload: [actor: a, subject: s]
-      )
-      |> maybe_filter_category(Keyword.get(opts, :filter_category))
-      |> maybe_filter_event(Keyword.get(opts, :filter_event))
-      |> maybe_filter_user(Keyword.get(opts, :filter_user_id))
-      |> maybe_filter_date_from(Keyword.get(opts, :date_from))
-      |> maybe_filter_date_to(Keyword.get(opts, :date_to))
-      |> order_by([e], [{^sort_dir, e.inserted_at}])
-
-    total_count = Repo.aggregate(query, :count)
-    total_pages = max(ceil(total_count / per_page), 1)
-
-    entries =
-      query
-      |> limit(^per_page)
-      |> offset(^((page - 1) * per_page))
-      |> Repo.all()
-
-    %{
-      entries: entries,
-      page: page,
-      per_page: per_page,
-      total_count: total_count,
-      total_pages: total_pages
-    }
+    from(e in ActivityLogEntry,
+      left_join: a in assoc(e, :actor),
+      left_join: s in assoc(e, :subject),
+      preload: [actor: a, subject: s]
+    )
+    |> maybe_filter_category(Keyword.get(opts, :filter_category))
+    |> maybe_filter_event(Keyword.get(opts, :filter_event))
+    |> maybe_filter_user(Keyword.get(opts, :filter_user_id))
+    |> maybe_filter_date_from(Keyword.get(opts, :date_from))
+    |> maybe_filter_date_to(Keyword.get(opts, :date_to))
+    |> order_by([e], [{^sort_dir, e.inserted_at}])
+    |> Paginator.paginate(opts)
   end
 
   @doc """

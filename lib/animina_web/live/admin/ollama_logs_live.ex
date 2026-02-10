@@ -11,7 +11,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  import AniminaWeb.Helpers.PaginationHelpers
+  use AniminaWeb.Helpers.PaginationHelpers, sort: true
 
   @default_per_page 50
   @available_models ["qwen3-vl:2b", "qwen3-vl:4b", "qwen3-vl:8b"]
@@ -86,33 +86,6 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
     socket = assign(socket, auto_reload: new_state)
     if new_state, do: send(self(), :auto_reload)
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("change-per-page", %{"per_page" => per_page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, per_page: per_page))}
-  end
-
-  @impl true
-  def handle_event("go-to-page", %{"page" => page}, socket) do
-    {:noreply, push_patch(socket, to: build_path(socket, page: page))}
-  end
-
-  @impl true
-  def handle_event("sort", %{"column" => column}, socket) do
-    col = parse_sort_by(column)
-
-    new_dir =
-      if socket.assigns.sort_by == col do
-        if socket.assigns.sort_dir == :desc, do: :asc, else: :desc
-      else
-        :desc
-      end
-
-    {:noreply,
-     push_patch(socket,
-       to: build_path(socket, page: 1, sort_by: col, sort_dir: new_dir)
-     )}
   end
 
   @impl true
@@ -466,25 +439,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
             </select>
           </label>
 
-          <div class="form-control">
-            <div class="label">
-              <span class="label-text">{gettext("Per page")}</span>
-            </div>
-            <div class="join">
-              <%= for size <- [50, 100, 150, 500] do %>
-                <button
-                  class={[
-                    "btn btn-sm join-item",
-                    if(@per_page == size, do: "btn-active")
-                  ]}
-                  phx-click="change-per-page"
-                  phx-value-per_page={size}
-                >
-                  {size}
-                </button>
-              <% end %>
-            </div>
-          </div>
+          <.per_page_selector per_page={@per_page} sizes={[50, 100, 150, 500]} />
         </div>
 
         <%!-- Content --%>
@@ -549,13 +504,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
         </thead>
         <tbody>
           <%= for log <- @logs do %>
-            <tr class={
-              cond do
-                log.status == "error" -> "bg-error/5"
-                log.status == "in_progress" -> "bg-warning/5"
-                true -> nil
-              end
-            }>
+            <tr class={ollama_row_class(log.status)}>
               <td>
                 <.photo_thumbnail photo={log.photo} owner={log.owner} />
               </td>
@@ -566,14 +515,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
                 </span>
               </td>
               <td>
-                <span class={[
-                  "badge badge-sm",
-                  cond do
-                    log.status == "success" -> "badge-success"
-                    log.status == "in_progress" -> "badge-warning"
-                    true -> "badge-error"
-                  end
-                ]}>
+                <span class={["badge badge-sm", ollama_status_badge_class(log.status)]}>
                   {log.status}
                 </span>
                 <%= if log.requester do %>
@@ -673,14 +615,7 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
                         {format_server_url(entry.server_url)}
                       </td>
                       <td>
-                        <span class={[
-                          "badge badge-xs",
-                          cond do
-                            entry.status == "success" -> "badge-success"
-                            entry.status == "in_progress" -> "badge-warning"
-                            true -> "badge-error"
-                          end
-                        ]}>
+                        <span class={["badge badge-xs", ollama_status_badge_class(entry.status)]}>
                           {entry.status}
                         </span>
                       </td>
@@ -813,6 +748,14 @@ defmodule AniminaWeb.Admin.OllamaLogsLive do
     <% end %>
     """
   end
+
+  defp ollama_row_class("error"), do: "bg-error/5"
+  defp ollama_row_class("in_progress"), do: "bg-warning/5"
+  defp ollama_row_class(_), do: nil
+
+  defp ollama_status_badge_class("success"), do: "badge-success"
+  defp ollama_status_badge_class("in_progress"), do: "badge-warning"
+  defp ollama_status_badge_class(_), do: "badge-error"
 
   defp format_duration(nil), do: ""
   defp format_duration(ms) when ms < 1000, do: "#{ms}ms"

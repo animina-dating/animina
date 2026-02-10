@@ -2,6 +2,7 @@ defmodule AniminaWeb.LocaleController do
   use AniminaWeb, :controller
 
   alias AniminaWeb.Plugs.SetLocale
+  import AniminaWeb.Helpers.ControllerHelpers, only: [redirect_back: 1]
 
   def update(conn, %{"locale" => locale}) do
     if locale in SetLocale.supported_locales() do
@@ -22,19 +23,5 @@ defmodule AniminaWeb.LocaleController do
 
   def update(conn, _params) do
     redirect_back(conn)
-  end
-
-  defp redirect_back(conn) do
-    path =
-      case get_req_header(conn, "referer") do
-        [referer | _] ->
-          uri = URI.parse(referer)
-          if uri.query, do: "#{uri.path || "/"}?#{uri.query}", else: uri.path || "/"
-
-        _ ->
-          "/"
-      end
-
-    redirect(conn, to: path)
   end
 end
