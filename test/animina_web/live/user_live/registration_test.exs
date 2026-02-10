@@ -91,14 +91,17 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     test "has the correct HTML page title", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
-      assert page_title(lv) == "ANIMINA – Create Account - ANIMINA"
+      assert page_title(lv) == "ANIMINA – Secure Your Spot - ANIMINA"
     end
 
     test "renders registration page with step 1 visible", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Create account"
+      assert html =~ "Secure your spot"
       assert html =~ "Log in now"
+      assert html =~ "regional waves"
+      # Verify waitlist max days is shown (waitlist_duration_days default 14 + 1)
+      assert html =~ "within 15 days at most"
       # Step 1 fields visible
       assert html =~ "First name"
       assert html =~ "Last name"
@@ -108,9 +111,9 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Birthday"
       # Step 1 should show optional referral code field
       assert html =~ "Referral code"
-      # Step 1 should show "Next" button, not "Create account" submit
+      # Step 1 should show "Next" button, not "Secure your spot" submit
       assert html =~ "Next"
-      refute html =~ ~r/<button[^>]*type="submit"[^>]*>\s*Create account/s
+      refute html =~ ~r/<button[^>]*type="submit"[^>]*>\s*Secure your spot/s
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -281,8 +284,8 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
       assert html =~ "Search radius"
       assert html =~ "Privacy Policy"
       assert html =~ "Terms of Service"
-      # Step 4 should show "Create account" instead of "Next"
-      assert html =~ "Create account"
+      # Step 4 should show "Secure your spot" instead of "Next"
+      assert html =~ "Secure your spot"
     end
 
     test "auto-fills partner preferences when advancing to step 4", %{conn: conn} do

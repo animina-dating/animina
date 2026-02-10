@@ -37,8 +37,15 @@ defmodule AniminaWeb.UserLive.Registration do
         <div class="bg-surface rounded-xl shadow-md p-6 sm:p-8">
           <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-light text-base-content">
-              {gettext("Create account")}
+              {gettext("Secure your spot")}
             </h1>
+            <p class="mt-3 text-sm text-base-content/70 max-w-md mx-auto">
+              {ngettext(
+                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} day at most. Invite friends with your referral code to skip ahead!",
+                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} days at most. Invite friends with your referral code to skip ahead!",
+                @max_waitlist_days
+              )}
+            </p>
             <p class="mt-2 text-base text-base-content/70">
               {gettext("Already registered?")}
               <.link navigate={~p"/users/log-in"} class="font-semibold text-primary hover:underline">
@@ -110,10 +117,10 @@ defmodule AniminaWeb.UserLive.Registration do
               </button>
               <.button
                 :if={@current_step == 4}
-                phx-disable-with={gettext("Creating account...")}
+                phx-disable-with={gettext("Securing your spot...")}
                 class="btn btn-primary"
               >
-                {gettext("Create account")}
+                {gettext("Secure your spot")}
               </.button>
             </div>
           </.form>
@@ -531,7 +538,8 @@ defmodule AniminaWeb.UserLive.Registration do
 
     socket =
       socket
-      |> assign(page_title: gettext("ANIMINA – Create Account"))
+      |> assign(page_title: gettext("ANIMINA – Secure Your Spot"))
+      |> assign(max_waitlist_days: Animina.FeatureFlags.waitlist_duration_days() + 1)
       |> assign(country_options: country_options)
       |> assign(preferences_auto_filled: false)
       |> assign(guessed_gender: nil)

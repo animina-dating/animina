@@ -77,7 +77,7 @@ defmodule AniminaWeb.UserLive.LoginTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert login_html =~ "Create account"
+      assert login_html =~ "Secure your spot"
     end
   end
 
