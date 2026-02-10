@@ -5,6 +5,7 @@ defmodule AniminaWeb.UserLive.LogsHub do
 
   use AniminaWeb, :live_view
 
+  alias Animina.ActivityLog
   alias Animina.Emails
 
   @impl true
@@ -29,6 +30,19 @@ defmodule AniminaWeb.UserLive.LogsHub do
               <span class="badge badge-lg badge-outline font-mono">{@email_count}</span>
             </:trailing>
           </.hub_card>
+
+          <.hub_card
+            navigate={~p"/my/logs/logins"}
+            icon="hero-key"
+            title={gettext("Login History")}
+            subtitle={gettext("Log of all login and logout events")}
+            icon_class="h-8 w-8"
+            padding="p-5"
+          >
+            <:trailing>
+              <span class="badge badge-lg badge-outline font-mono">{@login_count}</span>
+            </:trailing>
+          </.hub_card>
         </div>
       </div>
     </Layouts.app>
@@ -39,11 +53,13 @@ defmodule AniminaWeb.UserLive.LogsHub do
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
     email_count = Emails.count_email_logs_for_user(user.id)
+    login_count = ActivityLog.count_auth_events_for_user(user.id)
 
     {:ok,
      assign(socket,
        page_title: gettext("Logs"),
-       email_count: email_count
+       email_count: email_count,
+       login_count: login_count
      )}
   end
 end

@@ -208,7 +208,8 @@ defmodule AniminaWeb.WebAuthnController do
         Accounts.update_passkey_after_auth(passkey, auth_data.sign_count)
 
         ActivityLog.log("auth", "login_passkey", "#{user.display_name} logged in via passkey",
-          actor_id: user.id
+          actor_id: user.id,
+          metadata: conn_metadata(conn)
         )
 
         conn
@@ -217,7 +218,7 @@ defmodule AniminaWeb.WebAuthnController do
 
       {:error, error} ->
         ActivityLog.log("auth", "login_failed", "Failed passkey authentication",
-          metadata: %{"error" => Exception.message(error)}
+          metadata: Map.put(conn_metadata(conn), "error", Exception.message(error))
         )
 
         conn
@@ -252,6 +253,17 @@ defmodule AniminaWeb.WebAuthnController do
 
   defp lookup_credential(credential_id) do
     Accounts.get_user_by_passkey_credential_id(credential_id)
+  end
+
+  defp conn_metadata(conn) do
+    ua =
+      case Plug.Conn.get_req_header(conn, "user-agent") do
+        [ua | _] -> ua
+        _ -> nil
+      end
+
+    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
+    %{"user_agent" => ua, "ip_address" => ip}
   end
 
   defp format_changeset_errors(changeset) do

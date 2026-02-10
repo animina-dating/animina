@@ -118,6 +118,7 @@ defmodule AniminaWeb.Router do
       # Logs
       live "/my/logs", UserLive.LogsHub, :index
       live "/my/logs/emails", UserLive.EmailLogs, :index
+      live "/my/logs/logins", UserLive.LoginHistory, :index
 
       live "/my/waitlist", UserLive.Waitlist
       live "/discover", DiscoverLive

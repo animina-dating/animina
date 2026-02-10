@@ -96,6 +96,60 @@ defmodule Animina.ActivityLog do
     Repo.aggregate(ActivityLogEntry, :count)
   end
 
+  @auth_events ~w(login_email login_passkey login_failed logout)
+  @login_events ~w(login_email login_passkey)
+
+  @doc """
+  Lists auth events for a specific user with pagination and optional filtering.
+
+  ## Options
+
+    * `:page` - page number (default: 1)
+    * `:per_page` - results per page (default: 50)
+    * `:sort_dir` - :asc or :desc (default: :desc)
+    * `:filter_event` - filter by specific event type
+  """
+  def list_auth_events_for_user(user_id, opts \\ []) do
+    sort_dir = Keyword.get(opts, :sort_dir, :desc)
+
+    from(e in ActivityLogEntry,
+      where: e.actor_id == ^user_id and e.category == "auth" and e.event in ^@auth_events
+    )
+    |> maybe_filter_event(Keyword.get(opts, :filter_event))
+    |> order_by([e], [{^sort_dir, e.inserted_at}])
+    |> Paginator.paginate(opts)
+  end
+
+  @doc """
+  Returns a map of %{Date.t() => integer()} with daily login counts
+  for the last 52 weeks. Only counts successful logins (login_email, login_passkey).
+  """
+  def login_heatmap_data(user_id) do
+    cutoff = Date.utc_today() |> Date.add(-364)
+    cutoff_dt = DateTime.new!(cutoff, ~T[00:00:00], "Etc/UTC")
+
+    from(e in ActivityLogEntry,
+      where:
+        e.actor_id == ^user_id and
+          e.event in ^@login_events and
+          e.inserted_at >= ^cutoff_dt,
+      group_by: fragment("DATE(?)", e.inserted_at),
+      select: {fragment("DATE(?)", e.inserted_at), count(e.id)}
+    )
+    |> Repo.all()
+    |> Enum.into(%{})
+  end
+
+  @doc """
+  Returns the total count of auth events for a user (for hub card badge).
+  """
+  def count_auth_events_for_user(user_id) do
+    from(e in ActivityLogEntry,
+      where: e.actor_id == ^user_id and e.category == "auth" and e.event in ^@auth_events
+    )
+    |> Repo.aggregate(:count)
+  end
+
   @doc """
   Returns the PubSub topic for activity log broadcasts.
   """

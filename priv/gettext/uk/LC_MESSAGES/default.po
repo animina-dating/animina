@@ -121,7 +121,7 @@ msgstr "Підтвердіть вашу електронну пошту"
 msgid "Confirmation code"
 msgstr "Код підтвердження"
 
-#: lib/animina_web/controllers/user_session_controller.ex:91
+#: lib/animina_web/controllers/user_session_controller.ex:92
 #, elixir-autogen, elixir-format
 msgid "Confirmation failed. Please register again."
 msgstr "Підтвердження не вдалося. Будь ласка, зареєструйтесь знову."
@@ -177,7 +177,7 @@ msgstr "E-mail"
 msgid "Email address"
 msgstr "Адреса електронної пошти"
 
-#: lib/animina_web/controllers/user_session_controller.ex:85
+#: lib/animina_web/controllers/user_session_controller.ex:86
 #, elixir-autogen, elixir-format
 msgid "Email address confirmed successfully."
 msgstr "Адресу електронної пошти успішно підтверджено."
@@ -268,7 +268,7 @@ msgstr "Якщо акаунт з цим e-mail існує, ви скоро от�
 msgid "Imprint"
 msgstr "Імпресум"
 
-#: lib/animina_web/controllers/user_session_controller.ex:45
+#: lib/animina_web/controllers/user_session_controller.ex:46
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
 msgstr "Невірний e-mail або пароль"
@@ -323,7 +323,7 @@ msgstr "Увійдіть зараз"
 msgid "Log out"
 msgstr "Вийти"
 
-#: lib/animina_web/controllers/user_session_controller.ex:100
+#: lib/animina_web/controllers/user_session_controller.ex:101
 #, elixir-autogen, elixir-format
 msgid "Logged out successfully."
 msgstr "Ви успішно вийшли."
@@ -444,7 +444,7 @@ msgstr "Пароль успішно скинуто."
 msgid "Password reset link is invalid or expired."
 msgstr "Посилання для скидання пароля недійсне або закінчилося."
 
-#: lib/animina_web/controllers/user_session_controller.ex:69
+#: lib/animina_web/controllers/user_session_controller.ex:70
 #, elixir-autogen, elixir-format
 msgid "Password updated successfully!"
 msgstr "Пароль успішно оновлено!"
@@ -3677,6 +3677,7 @@ msgstr "Визначення віку"
 #: lib/animina_web/live/admin/ollama_logs_live.ex:434
 #: lib/animina_web/live/user_live/email_logs.ex:138
 #: lib/animina_web/live/user_live/email_logs.ex:154
+#: lib/animina_web/live/user_live/login_history.ex:286
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "Усі"
@@ -5377,6 +5378,7 @@ msgstr[1] "%{count} записи"
 msgstr[2] "%{count} записів"
 
 #: lib/animina_web/live/user_live/email_logs.ex:188
+#: lib/animina_web/live/user_live/login_history.ex:318
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Date"
 msgstr "Побачення"
@@ -5384,7 +5386,7 @@ msgstr "Побачення"
 #: lib/animina_web/live/user_live/email_logs.ex:18
 #: lib/animina_web/live/user_live/email_logs.ex:114
 #: lib/animina_web/live/user_live/email_logs.ex:120
-#: lib/animina_web/live/user_live/logs_hub.ex:23
+#: lib/animina_web/live/user_live/logs_hub.ex:24
 #, elixir-autogen, elixir-format
 msgid "Email History"
 msgstr ""
@@ -5414,8 +5416,9 @@ msgstr ""
 #: lib/animina_web/live/admin/logs_index_live.ex:29
 #: lib/animina_web/live/admin/ollama_logs_live.ex:344
 #: lib/animina_web/live/user_live/email_logs.ex:111
-#: lib/animina_web/live/user_live/logs_hub.ex:15
-#: lib/animina_web/live/user_live/logs_hub.ex:45
+#: lib/animina_web/live/user_live/login_history.ex:194
+#: lib/animina_web/live/user_live/logs_hub.ex:16
+#: lib/animina_web/live/user_live/logs_hub.ex:60
 #: lib/animina_web/live/user_live/my_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Logs"
@@ -5477,7 +5480,7 @@ msgstr ""
 msgid "Cannot change email while a recent account change is being reviewed."
 msgstr ""
 
-#: lib/animina_web/controllers/user_session_controller.ex:75
+#: lib/animina_web/controllers/user_session_controller.ex:76
 #: lib/animina_web/live/user_live/account_email_password.ex:167
 #, elixir-autogen, elixir-format
 msgid "Cannot change password while a recent account change is being reviewed."
@@ -5738,6 +5741,8 @@ msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:331
 #: lib/animina_web/live/admin/activity_logs_live.ex:384
+#: lib/animina_web/live/user_live/login_history.ex:283
+#: lib/animina_web/live/user_live/login_history.ex:310
 #, elixir-autogen, elixir-format
 msgid "Event"
 msgstr ""
@@ -5758,6 +5763,7 @@ msgid "Search by name or email..."
 msgstr "Пошук користувачів за email або іменем..."
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:387
+#: lib/animina_web/live/user_live/login_history.ex:312
 #, elixir-autogen, elixir-format
 msgid "Summary"
 msgstr ""
@@ -5808,7 +5814,7 @@ msgstr "Безпека акаунту"
 msgid "Email & Password"
 msgstr ""
 
-#: lib/animina_web/live/user_live/logs_hub.ex:24
+#: lib/animina_web/live/user_live/logs_hub.ex:25
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log of all emails sent to your account"
 msgstr ""
@@ -5831,7 +5837,7 @@ msgstr ""
 msgid "Profile complete"
 msgstr "Повнота профілю"
 
-#: lib/animina_web/live/user_live/logs_hub.ex:15
+#: lib/animina_web/live/user_live/logs_hub.ex:16
 #, elixir-autogen, elixir-format
 msgid "View your account activity logs"
 msgstr ""
@@ -5972,7 +5978,8 @@ msgstr ""
 #: lib/animina_web/live/user_live/account_passkeys.ex:16
 #: lib/animina_web/live/user_live/account_sessions.ex:16
 #: lib/animina_web/live/user_live/email_logs.ex:106
-#: lib/animina_web/live/user_live/logs_hub.ex:16
+#: lib/animina_web/live/user_live/login_history.ex:189
+#: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/my_hub.ex:17
 #: lib/animina_web/live/user_live/my_hub.ex:79
@@ -6043,3 +6050,163 @@ msgid_plural "We activate new accounts in regional waves to ensure the best expe
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+
+#: lib/animina_web/live/user_live/login_history.ex:205
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{count} event"
+msgid_plural "%{count} events"
+msgstr[0] "%{count} запис"
+msgstr[1] "%{count} записи"
+msgstr[2] "%{count} записів"
+
+#: lib/animina_web/live/user_live/login_history.ex:260
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{count} login"
+msgid_plural "%{count} logins"
+msgstr[0] "%{count} запуск"
+msgstr[1] "%{count} запуски"
+msgstr[2] "%{count} запусків"
+
+#: lib/animina_web/live/user_live/login_history.ex:150
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Apr"
+msgstr "Схвалити"
+
+#: lib/animina_web/live/user_live/login_history.ex:154
+#, elixir-autogen, elixir-format
+msgid "Aug"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:158
+#, elixir-autogen, elixir-format
+msgid "Dec"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:311
+#, elixir-autogen, elixir-format
+msgid "Device"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:84
+#: lib/animina_web/live/user_live/login_history.ex:288
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Email Login"
+msgstr "E-mail"
+
+#: lib/animina_web/live/user_live/login_history.ex:87
+#: lib/animina_web/live/user_live/login_history.ex:297
+#, elixir-autogen, elixir-format
+msgid "Failed Login"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:148
+#, elixir-autogen, elixir-format
+msgid "Feb"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:246
+#, elixir-autogen, elixir-format
+msgid "Fri"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:147
+#, elixir-autogen, elixir-format
+msgid "Jan"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:153
+#, elixir-autogen, elixir-format
+msgid "Jul"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:152
+#, elixir-autogen, elixir-format
+msgid "Jun"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:269
+#, elixir-autogen, elixir-format
+msgid "Less"
+msgstr ""
+
+#: lib/animina_web/live/user_live/logs_hub.ex:38
+#, elixir-autogen, elixir-format
+msgid "Log of all login and logout events"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:216
+#: lib/animina_web/live/user_live/login_history.ex:222
+#, elixir-autogen, elixir-format
+msgid "Login Activity"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:19
+#: lib/animina_web/live/user_live/login_history.ex:197
+#: lib/animina_web/live/user_live/login_history.ex:203
+#: lib/animina_web/live/user_live/logs_hub.ex:37
+#, elixir-autogen, elixir-format
+msgid "Login History"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:86
+#: lib/animina_web/live/user_live/login_history.ex:294
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Logout"
+msgstr "Вийти"
+
+#: lib/animina_web/live/user_live/login_history.ex:149
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Mar"
+msgstr "Одружений/заміжня"
+
+#: lib/animina_web/live/user_live/login_history.ex:151
+#, elixir-autogen, elixir-format
+msgid "May"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:240
+#, elixir-autogen, elixir-format
+msgid "Mon"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:275
+#, elixir-autogen, elixir-format, fuzzy
+msgid "More"
+msgstr "або"
+
+#: lib/animina_web/live/user_live/login_history.ex:327
+#, elixir-autogen, elixir-format
+msgid "No login events found."
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:157
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Nov"
+msgstr "Романи"
+
+#: lib/animina_web/live/user_live/login_history.ex:156
+#, elixir-autogen, elixir-format
+msgid "Oct"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:85
+#: lib/animina_web/live/user_live/login_history.ex:291
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Passkey Login"
+msgstr "Ключ доступу"
+
+#: lib/animina_web/live/user_live/login_history.ex:155
+#, elixir-autogen, elixir-format
+msgid "Sep"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:92
+#: lib/animina_web/live/user_live/login_history.ex:97
+#, elixir-autogen, elixir-format
+msgid "Unknown"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login_history.ex:243
+#, elixir-autogen, elixir-format
+msgid "Wed"
+msgstr ""

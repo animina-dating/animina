@@ -486,7 +486,9 @@ defmodule AniminaWeb.CoreComponents do
           {@subtitle}
         </div>
       </div>
-      {render_slot(@trailing)}
+      <span :if={@trailing != []} class="flex-shrink-0">
+        {render_slot(@trailing)}
+      </span>
       <span :if={@trailing == []} class="flex-shrink-0 text-base-content/30">
         <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
       </span>

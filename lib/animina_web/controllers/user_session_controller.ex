@@ -16,7 +16,8 @@ defmodule AniminaWeb.UserSessionController do
     cond do
       user = Accounts.get_user_by_email_and_password(email, password) ->
         ActivityLog.log("auth", "login_email", "#{user.display_name} logged in via email",
-          actor_id: user.id
+          actor_id: user.id,
+          metadata: conn_metadata(conn)
         )
 
         conn
@@ -37,7 +38,7 @@ defmodule AniminaWeb.UserSessionController do
           "auth",
           "login_failed",
           "Failed login attempt for #{String.slice(email, 0, 160)}",
-          metadata: %{"email" => String.slice(email, 0, 160)}
+          metadata: Map.put(conn_metadata(conn), "email", String.slice(email, 0, 160))
         )
 
         # In order to prevent user enumeration attacks, don't disclose whether the email is registered.
@@ -94,7 +95,7 @@ defmodule AniminaWeb.UserSessionController do
   end
 
   def delete(conn, _params) do
-    log_logout(conn.assigns[:current_scope])
+    log_logout(conn.assigns[:current_scope], conn)
 
     conn
     |> put_flash(:info, gettext("Logged out successfully."))
@@ -108,9 +109,23 @@ defmodule AniminaWeb.UserSessionController do
 
   defp maybe_set_sudo_return_to(conn, _params), do: conn
 
-  defp log_logout(%{user: %{id: id, display_name: name}}) do
-    ActivityLog.log("auth", "logout", "#{name} logged out", actor_id: id)
+  defp log_logout(%{user: %{id: id, display_name: name}}, conn) do
+    ActivityLog.log("auth", "logout", "#{name} logged out",
+      actor_id: id,
+      metadata: conn_metadata(conn)
+    )
   end
 
-  defp log_logout(_), do: :ok
+  defp log_logout(_, _conn), do: :ok
+
+  defp conn_metadata(conn) do
+    ua =
+      case Plug.Conn.get_req_header(conn, "user-agent") do
+        [ua | _] -> ua
+        _ -> nil
+      end
+
+    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
+    %{"user_agent" => ua, "ip_address" => ip}
+  end
 end
