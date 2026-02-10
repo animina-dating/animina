@@ -1,7 +1,7 @@
 defmodule AniminaWeb.UserLive.AccountDelete do
   use AniminaWeb, :live_view
 
-  on_mount {AniminaWeb.UserAuth, :require_sudo_mode}
+  on_mount {AniminaWeb.UserAuth, {:require_sudo_mode, "/my/settings/account/delete"}}
 
   alias Animina.Accounts
 

@@ -34,7 +34,7 @@ function getCsrfToken() {
 
 export default {
   mounted() {
-    this.handleEvent("passkey:auth_begin", async () => {
+    this.handleEvent("passkey:auth_begin", async (payload) => {
       try {
         // 1. Fetch challenge from server
         const beginRes = await fetch("/webauthn/auth/begin", {
@@ -53,12 +53,20 @@ export default {
 
         const options = await beginRes.json()
 
-        // 2. Call navigator.credentials.get() — no allowCredentials = discoverable
+        // 2. Call navigator.credentials.get()
         const publicKeyOptions = {
           challenge: base64URLToBuffer(options.challenge),
           rpId: options.rpId,
           userVerification: options.userVerification,
           timeout: options.timeout
+        }
+
+        // During sudo mode, restrict to current user's passkeys
+        if (payload.allow_credentials && payload.allow_credentials.length > 0) {
+          publicKeyOptions.allowCredentials = payload.allow_credentials.map(cred => ({
+            type: cred.type,
+            id: base64URLToBuffer(cred.id)
+          }))
         }
 
         const assertion = await navigator.credentials.get({ publicKey: publicKeyOptions })
@@ -69,6 +77,11 @@ export default {
           authenticator_data: bufferToBase64URL(assertion.response.authenticatorData),
           signature: bufferToBase64URL(assertion.response.signature),
           client_data_json: bufferToBase64URL(assertion.response.clientDataJSON)
+        }
+
+        // Forward sudo_return_to so the server can set the redirect
+        if (payload.sudo_return_to) {
+          body.sudo_return_to = payload.sudo_return_to
         }
 
         const completeRes = await fetch("/webauthn/auth/complete", {

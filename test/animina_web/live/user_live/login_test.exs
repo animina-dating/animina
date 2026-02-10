@@ -96,5 +96,33 @@ defmodule AniminaWeb.UserLive.LoginTest do
       assert html =~
                ~s(<input type="email" name="user[email]" id="login_form_password_email" value="#{user.email}")
     end
+
+    test "shows passkey button during sudo mode", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+
+      assert html =~ "Re-authenticate with passkey"
+      assert html =~ "passkey-login"
+    end
+
+    test "shows forgot password link during sudo mode", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+
+      assert html =~ "Forgot your password?"
+      assert html =~ ~s(href="/users/forgot-password")
+    end
+
+    test "includes sudo_return_to hidden input when query param is present", %{conn: conn} do
+      {:ok, _lv, html} =
+        live(conn, ~p"/users/log-in" <> "?sudo_return_to=%2Fmy%2Fsettings%2Faccount%2Fpasskeys")
+
+      assert html =~ ~s(name="user[sudo_return_to]")
+      assert html =~ ~s(value="/my/settings/account/passkeys")
+    end
+
+    test "does not include sudo_return_to hidden input without query param", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+
+      refute html =~ ~s(name="user[sudo_return_to]")
+    end
   end
 end

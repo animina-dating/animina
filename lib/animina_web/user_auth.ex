@@ -386,6 +386,27 @@ defmodule AniminaWeb.UserAuth do
     end
   end
 
+  def on_mount({:require_sudo_mode, return_to}, _params, session, socket)
+      when is_binary(return_to) do
+    socket = mount_current_scope(socket, session)
+
+    if Accounts.sudo_mode?(socket.assigns.current_scope.user, -10) do
+      {:cont, socket}
+    else
+      redirect_url = ~p"/users/log-in" <> "?sudo_return_to=#{URI.encode_www_form(return_to)}"
+
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          gettext("You must re-authenticate to access this page.")
+        )
+        |> Phoenix.LiveView.redirect(to: redirect_url)
+
+      {:halt, socket}
+    end
+  end
+
   defp mount_current_scope(socket, session) do
     user_token = session["user_token"]
 

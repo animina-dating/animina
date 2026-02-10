@@ -65,7 +65,10 @@ defmodule AniminaWeb.UserLive.SettingsTest do
           token_authenticated_at: DateTime.add(DateTime.utc_now(:second), -11, :minute)
         )
         |> live(~p"/my/settings/account")
-        |> follow_redirect(conn, ~p"/users/log-in")
+        |> follow_redirect(
+          conn,
+          ~p"/users/log-in" <> "?sudo_return_to=%2Fmy%2Fsettings%2Faccount"
+        )
 
       assert conn.resp_body =~ "You must re-authenticate to access this page."
     end

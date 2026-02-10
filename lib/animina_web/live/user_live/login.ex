@@ -55,12 +55,18 @@ defmodule AniminaWeb.UserLive.Login do
               autocomplete="current-password"
               required
             />
+            <input
+              :if={@sudo_return_to}
+              type="hidden"
+              name="user[sudo_return_to]"
+              value={@sudo_return_to}
+            />
             <.button class="btn btn-primary w-full" name={@form[:remember_me].name} value="true">
               {gettext("Log in")}
             </.button>
           </.form>
 
-          <div :if={!@current_scope} id="passkey-login" phx-hook="PasskeyLogin">
+          <div id="passkey-login" phx-hook="PasskeyLogin">
             <div class="divider text-xs text-base-content/50 my-4">{gettext("or")}</div>
             <button
               phx-click="passkey_login"
@@ -68,13 +74,15 @@ defmodule AniminaWeb.UserLive.Login do
               disabled={@passkey_loading}
             >
               <.icon name="hero-finger-print" class="h-5 w-5" />
-              {if @passkey_loading,
-                do: gettext("Waiting for device..."),
-                else: gettext("Sign in with passkey")}
+              {cond do
+                @passkey_loading -> gettext("Waiting for device...")
+                @current_scope -> gettext("Re-authenticate with passkey")
+                true -> gettext("Sign in with passkey")
+              end}
             </button>
           </div>
 
-          <div :if={!@current_scope} class="mt-4 text-center">
+          <div class="mt-4 text-center">
             <.link
               navigate={~p"/users/forgot-password"}
               class="text-sm text-base-content/70 hover:text-primary hover:underline"
@@ -170,8 +178,22 @@ defmodule AniminaWeb.UserLive.Login do
        trigger_submit: false,
        dev_routes: @dev_routes,
        dev_users: dev_users,
-       passkey_loading: false
+       passkey_loading: false,
+       sudo_return_to: nil
      )}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    sudo_return_to = params["sudo_return_to"]
+
+    # Only accept paths starting with "/" to prevent open redirects
+    sudo_return_to =
+      if is_binary(sudo_return_to) and String.starts_with?(sudo_return_to, "/"),
+        do: sudo_return_to,
+        else: nil
+
+    {:noreply, assign(socket, :sudo_return_to, sudo_return_to)}
   end
 
   @impl true
@@ -180,10 +202,12 @@ defmodule AniminaWeb.UserLive.Login do
   end
 
   def handle_event("passkey_login", _params, socket) do
+    payload = build_passkey_payload(socket)
+
     socket =
       socket
       |> assign(:passkey_loading, true)
-      |> push_event("passkey:auth_begin", %{})
+      |> push_event("passkey:auth_begin", payload)
 
     {:noreply, socket}
   end
@@ -199,6 +223,34 @@ defmodule AniminaWeb.UserLive.Login do
       |> put_flash(:error, error)
 
     {:noreply, socket}
+  end
+
+  defp build_passkey_payload(socket) do
+    payload = %{}
+
+    # During sudo mode, restrict to current user's passkeys
+    payload =
+      case socket.assigns[:current_scope] do
+        %{user: %{} = user} ->
+          passkeys = Animina.Accounts.list_user_passkeys(user)
+
+          allow_credentials =
+            Enum.map(passkeys, fn pk ->
+              %{type: "public-key", id: Base.url_encode64(pk.credential_id, padding: false)}
+            end)
+
+          Map.put(payload, :allow_credentials, allow_credentials)
+
+        _ ->
+          payload
+      end
+
+    # Pass sudo_return_to so JS can forward it to auth/complete
+    if return_to = socket.assigns[:sudo_return_to] do
+      Map.put(payload, :sudo_return_to, return_to)
+    else
+      payload
+    end
   end
 
   defp load_dev_users do

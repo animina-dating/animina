@@ -121,7 +121,7 @@ msgstr "Confirmez votre e-mail"
 msgid "Confirmation code"
 msgstr "Code de confirmation"
 
-#: lib/animina_web/controllers/user_session_controller.ex:90
+#: lib/animina_web/controllers/user_session_controller.ex:91
 #, elixir-autogen, elixir-format
 msgid "Confirmation failed. Please register again."
 msgstr "La confirmation a échoué. Veuillez vous réinscrire."
@@ -188,7 +188,7 @@ msgstr "E-mail"
 msgid "Email address"
 msgstr "Adresse e-mail"
 
-#: lib/animina_web/controllers/user_session_controller.ex:84
+#: lib/animina_web/controllers/user_session_controller.ex:85
 #, elixir-autogen, elixir-format
 msgid "Email address confirmed successfully."
 msgstr "Adresse e-mail confirmée avec succès."
@@ -234,7 +234,7 @@ msgstr "Système de drapeaux"
 msgid "Forgot your password"
 msgstr "Mot de passe oublié"
 
-#: lib/animina_web/live/user_live/login.ex:82
+#: lib/animina_web/live/user_live/login.ex:90
 #, elixir-autogen, elixir-format
 msgid "Forgot your password?"
 msgstr "Mot de passe oublié ?"
@@ -279,7 +279,7 @@ msgstr "Si un compte existe avec cet e-mail, vous recevrez bientôt les instruct
 msgid "Imprint"
 msgstr "Mentions légales"
 
-#: lib/animina_web/controllers/user_session_controller.ex:44
+#: lib/animina_web/controllers/user_session_controller.ex:45
 #, elixir-autogen, elixir-format
 msgid "Invalid email or password"
 msgstr "E-mail ou mot de passe invalide"
@@ -316,7 +316,7 @@ msgstr "Lieux"
 
 #: lib/animina_web/components/layouts.ex:563
 #: lib/animina_web/live/user_live/login.ex:17
-#: lib/animina_web/live/user_live/login.ex:59
+#: lib/animina_web/live/user_live/login.ex:65
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr "Se connecter"
@@ -333,7 +333,7 @@ msgstr "Connectez-vous maintenant"
 msgid "Log out"
 msgstr "Se déconnecter"
 
-#: lib/animina_web/controllers/user_session_controller.ex:99
+#: lib/animina_web/controllers/user_session_controller.ex:100
 #, elixir-autogen, elixir-format
 msgid "Logged out successfully."
 msgstr "Déconnexion réussie."
@@ -454,7 +454,7 @@ msgstr "Le mot de passe a été réinitialisé avec succès."
 msgid "Password reset link is invalid or expired."
 msgstr "Le lien de réinitialisation du mot de passe est invalide ou a expiré."
 
-#: lib/animina_web/controllers/user_session_controller.ex:68
+#: lib/animina_web/controllers/user_session_controller.ex:69
 #, elixir-autogen, elixir-format
 msgid "Password updated successfully!"
 msgstr "Mot de passe mis à jour avec succès !"
@@ -593,7 +593,7 @@ msgstr "Définir un nouveau mot de passe"
 #: lib/animina_web/live/user_live/account_hub.ex:22
 #: lib/animina_web/live/user_live/account_passkeys.ex:16
 #: lib/animina_web/live/user_live/account_sessions.ex:16
-#: lib/animina_web/live/user_live/email_logs.ex:147
+#: lib/animina_web/live/user_live/email_logs.ex:106
 #: lib/animina_web/live/user_live/logs_hub.ex:16
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/settings_hub.ex:19
@@ -705,12 +705,13 @@ msgstr[1] "Code incorrect. %{count} tentatives restantes."
 
 #: lib/animina_web/user_auth.ex:289
 #: lib/animina_web/user_auth.ex:303
-#: lib/animina_web/user_auth.ex:531
+#: lib/animina_web/user_auth.ex:552
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Vous devez vous connecter pour accéder à cette page."
 
 #: lib/animina_web/user_auth.ex:381
+#: lib/animina_web/user_auth.ex:402
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Vous devez vous ré-authentifier pour accéder à cette page."
@@ -1092,8 +1093,8 @@ msgid "The user role cannot be removed."
 msgstr "Le rôle utilisateur ne peut pas être supprimé."
 
 #: lib/animina_web/components/layouts.ex:660
-#: lib/animina_web/live/admin/activity_logs_live.ex:277
-#: lib/animina_web/live/admin/email_logs_live.ex:293
+#: lib/animina_web/live/admin/activity_logs_live.ex:268
+#: lib/animina_web/live/admin/email_logs_live.ex:232
 #: lib/animina_web/live/admin/photo_history_live.ex:177
 #: lib/animina_web/live/admin/photo_reviews_live.ex:614
 #, elixir-autogen, elixir-format
@@ -2828,7 +2829,7 @@ msgstr "Préférences sexuelles"
 msgid "Shared Activities"
 msgstr "Activités partagées"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:810
+#: lib/animina_web/live/admin/ollama_logs_live.ex:745
 #: lib/animina_web/trait_translations.ex:52
 #, elixir-autogen, elixir-format
 msgid "Single"
@@ -3167,7 +3168,7 @@ msgstr "Aucun appel en attente."
 msgid "Pending moderator review"
 msgstr "En attente de vérification par un modérateur"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:515
+#: lib/animina_web/live/admin/ollama_logs_live.ex:470
 #: lib/animina_web/live/admin/photo_history_live.ex:41
 #: lib/animina_web/live/user_live/moodboard_editor.ex:394
 #, elixir-autogen, elixir-format
@@ -3267,7 +3268,7 @@ msgid "Submitted"
 msgstr "Soumis"
 
 #: lib/animina_web/components/layouts.ex:377
-#: lib/animina_web/live/admin/activity_logs_live.ex:439
+#: lib/animina_web/live/admin/activity_logs_live.ex:412
 #: lib/animina_web/live/admin/photo_history_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "System"
@@ -3456,9 +3457,9 @@ msgstr "Les interrupteurs activent/désactivent les étapes de traitement"
 msgid "Value returned when auto-approve is enabled"
 msgstr "Valeur renvoyée lorsque l'approbation automatique est activée"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:250
-#: lib/animina_web/live/admin/email_logs_live.ex:192
-#: lib/animina_web/live/admin/ollama_logs_live.ex:377
+#: lib/animina_web/live/admin/activity_logs_live.ex:241
+#: lib/animina_web/live/admin/email_logs_live.ex:149
+#: lib/animina_web/live/admin/ollama_logs_live.ex:350
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:144
 #, elixir-autogen, elixir-format
 msgid "%{count} entry"
@@ -3681,8 +3682,8 @@ msgstr "Le fichier est trop volumineux (max 6 Mo)"
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr "JPG, PNG, WEBP ou HEIC. Max 6 Mo."
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:520
-#: lib/animina_web/live/admin/ollama_logs_live.ex:656
+#: lib/animina_web/live/admin/ollama_logs_live.ex:475
+#: lib/animina_web/live/admin/ollama_logs_live.ex:598
 #: lib/animina_web/live/admin/photo_reviews_live.ex:657
 #, elixir-autogen, elixir-format
 msgid "Server"
@@ -3693,14 +3694,14 @@ msgstr "Serveur"
 msgid "Age detection"
 msgstr "Détection de l'âge"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:327
-#: lib/animina_web/live/admin/activity_logs_live.ex:344
-#: lib/animina_web/live/admin/email_logs_live.ex:221
-#: lib/animina_web/live/admin/email_logs_live.ex:237
-#: lib/animina_web/live/admin/ollama_logs_live.ex:442
-#: lib/animina_web/live/admin/ollama_logs_live.ex:458
-#: lib/animina_web/live/user_live/email_logs.ex:179
-#: lib/animina_web/live/user_live/email_logs.ex:195
+#: lib/animina_web/live/admin/activity_logs_live.ex:318
+#: lib/animina_web/live/admin/activity_logs_live.ex:335
+#: lib/animina_web/live/admin/email_logs_live.ex:178
+#: lib/animina_web/live/admin/email_logs_live.ex:194
+#: lib/animina_web/live/admin/ollama_logs_live.ex:415
+#: lib/animina_web/live/admin/ollama_logs_live.ex:431
+#: lib/animina_web/live/user_live/email_logs.ex:138
+#: lib/animina_web/live/user_live/email_logs.ex:154
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr "Tous"
@@ -4032,8 +4033,8 @@ msgstr "Modifier le moodboard"
 msgid "Item added to moodboard"
 msgstr "Élément ajouté au moodboard"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:546
-#: lib/animina_web/live/admin/ollama_logs_live.ex:659
+#: lib/animina_web/live/admin/ollama_logs_live.ex:501
+#: lib/animina_web/live/admin/ollama_logs_live.ex:601
 #: lib/animina_web/live/user_live/moodboard_editor.ex:33
 #, elixir-autogen, elixir-format
 msgid "Moodboard"
@@ -4101,47 +4102,47 @@ msgstr "Ajoutez des photos et du texte pour vous présenter. Glissez pour réord
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:534
-#: lib/animina_web/live/admin/ollama_logs_live.ex:655
+#: lib/animina_web/live/admin/ollama_logs_live.ex:489
+#: lib/animina_web/live/admin/ollama_logs_live.ex:597
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr "Durée"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:243
-#: lib/animina_web/live/admin/email_logs_live.ex:292
-#: lib/animina_web/live/admin/ollama_logs_live.ex:462
-#: lib/animina_web/live/user_live/email_logs.ex:201
+#: lib/animina_web/live/admin/email_logs_live.ex:200
+#: lib/animina_web/live/admin/email_logs_live.ex:231
+#: lib/animina_web/live/admin/ollama_logs_live.ex:435
+#: lib/animina_web/live/user_live/email_logs.ex:160
 #, elixir-autogen, elixir-format
 msgid "Error"
 msgstr "Erreur"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:399
-#: lib/animina_web/live/admin/ollama_logs_live.ex:439
-#: lib/animina_web/live/admin/ollama_logs_live.ex:517
-#: lib/animina_web/live/admin/ollama_logs_live.ex:654
+#: lib/animina_web/live/admin/ollama_logs_live.ex:372
+#: lib/animina_web/live/admin/ollama_logs_live.ex:412
+#: lib/animina_web/live/admin/ollama_logs_live.ex:472
+#: lib/animina_web/live/admin/ollama_logs_live.ex:596
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr "Modèle"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:230
-#: lib/animina_web/live/admin/email_logs_live.ex:289
-#: lib/animina_web/live/admin/ollama_logs_live.ex:451
-#: lib/animina_web/live/admin/ollama_logs_live.ex:526
-#: lib/animina_web/live/admin/ollama_logs_live.ex:657
-#: lib/animina_web/live/user_live/email_logs.ex:188
-#: lib/animina_web/live/user_live/email_logs.ex:239
+#: lib/animina_web/live/admin/email_logs_live.ex:187
+#: lib/animina_web/live/admin/email_logs_live.ex:228
+#: lib/animina_web/live/admin/ollama_logs_live.ex:424
+#: lib/animina_web/live/admin/ollama_logs_live.ex:481
+#: lib/animina_web/live/admin/ollama_logs_live.ex:599
+#: lib/animina_web/live/user_live/email_logs.ex:147
+#: lib/animina_web/live/user_live/email_logs.ex:180
 #, elixir-autogen, elixir-format
 msgid "Status"
 msgstr "Statut"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:406
-#: lib/animina_web/live/admin/email_logs_live.ex:299
-#: lib/animina_web/live/admin/ollama_logs_live.ex:542
+#: lib/animina_web/live/admin/activity_logs_live.ex:379
+#: lib/animina_web/live/admin/email_logs_live.ex:238
+#: lib/animina_web/live/admin/ollama_logs_live.ex:497
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr "Heure"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:460
+#: lib/animina_web/live/admin/ollama_logs_live.ex:433
 #, elixir-autogen, elixir-format
 msgid "Success"
 msgstr "Succès"
@@ -4457,9 +4458,9 @@ msgid "Read %{time}"
 msgstr "Lu %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:304
-#: lib/animina_web/live/admin/email_logs_live.ex:238
+#: lib/animina_web/live/admin/email_logs_live.ex:195
 #: lib/animina_web/live/messages_live.ex:393
-#: lib/animina_web/live/user_live/email_logs.ex:196
+#: lib/animina_web/live/user_live/email_logs.ex:155
 #, elixir-autogen, elixir-format
 msgid "Sent"
 msgstr "Envoyé"
@@ -4909,7 +4910,7 @@ msgstr "Passkey"
 msgid "Passkey added successfully!"
 msgstr "Passkey ajouté avec succès !"
 
-#: lib/animina_web/controllers/webauthn_controller.ex:148
+#: lib/animina_web/controllers/webauthn_controller.ex:151
 #, elixir-autogen, elixir-format
 msgid "Passkey not recognized. Please try again or use password."
 msgstr "Passkey non reconnu. Veuillez réessayer ou utiliser votre mot de passe."
@@ -4933,13 +4934,13 @@ msgstr "Passkeys"
 msgid "Sign in with Face ID, Touch ID, or a security key — faster and more secure than passwords."
 msgstr "Connectez-vous avec Face ID, Touch ID ou une clé de sécurité — plus rapide et plus sûr qu'un mot de passe."
 
-#: lib/animina_web/live/user_live/login.ex:73
+#: lib/animina_web/live/user_live/login.ex:80
 #, elixir-autogen, elixir-format
 msgid "Sign in with passkey"
 msgstr "Se connecter avec un passkey"
 
 #: lib/animina_web/live/components/account_passkeys_component.ex:36
-#: lib/animina_web/live/user_live/login.ex:72
+#: lib/animina_web/live/user_live/login.ex:78
 #, elixir-autogen, elixir-format
 msgid "Waiting for device..."
 msgstr "En attente de l'appareil..."
@@ -4949,7 +4950,7 @@ msgstr "En attente de l'appareil..."
 msgid "Your browser does not support passkeys."
 msgstr "Votre navigateur ne prend pas en charge les passkeys."
 
-#: lib/animina_web/live/user_live/login.ex:64
+#: lib/animina_web/live/user_live/login.ex:70
 #, elixir-autogen, elixir-format
 msgid "or"
 msgstr "ou"
@@ -5029,65 +5030,65 @@ msgstr "Téléchargez votre photo de profil principale."
 msgid "Optional"
 msgstr "Optionnel"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:642
+#: lib/animina_web/live/admin/ollama_logs_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "%{count} run"
 msgid_plural "%{count} runs"
 msgstr[0] "%{count} exécution"
 msgstr[1] "%{count} exécutions"
 
-#: lib/animina_web/helpers/pagination_helpers.ex:129
+#: lib/animina_web/helpers/pagination_helpers.ex:229
 #, elixir-autogen, elixir-format
 msgid "%{count}d ago"
 msgstr "il y a %{count} j"
 
-#: lib/animina_web/helpers/pagination_helpers.ex:128
+#: lib/animina_web/helpers/pagination_helpers.ex:228
 #, elixir-autogen, elixir-format
 msgid "%{count}h ago"
 msgstr "il y a %{count} h"
 
-#: lib/animina_web/helpers/pagination_helpers.ex:127
+#: lib/animina_web/helpers/pagination_helpers.ex:227
 #, elixir-autogen, elixir-format
 msgid "%{count}m ago"
 msgstr "il y a %{count} min"
 
-#: lib/animina_web/helpers/pagination_helpers.ex:126
+#: lib/animina_web/helpers/pagination_helpers.ex:226
 #, elixir-autogen, elixir-format
 msgid "%{count}s ago"
 msgstr "il y a %{count} s"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:806
+#: lib/animina_web/live/admin/ollama_logs_live.ex:741
 #, elixir-autogen, elixir-format
 msgid "Agree"
 msgstr "D'accord"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:424
+#: lib/animina_web/live/admin/ollama_logs_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "All Logs"
 msgstr "Tous les journaux"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:431
+#: lib/animina_web/live/admin/ollama_logs_live.ex:404
 #, elixir-autogen, elixir-format
 msgid "By Photo"
 msgstr "Par photo"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:808
+#: lib/animina_web/live/admin/ollama_logs_live.ex:743
 #, elixir-autogen, elixir-format
 msgid "Disagree"
 msgstr "Pas d'accord"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:152
-#: lib/animina_web/live/admin/ollama_logs_live.ex:173
+#: lib/animina_web/live/admin/ollama_logs_live.ex:125
+#: lib/animina_web/live/admin/ollama_logs_live.ex:146
 #, elixir-autogen, elixir-format
 msgid "Log entry or photo not found."
 msgstr "Entrée de journal ou photo introuvable."
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:580
+#: lib/animina_web/live/admin/ollama_logs_live.ex:522
 #, elixir-autogen, elixir-format
 msgid "Manual re-run"
 msgstr "Relance manuelle"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:617
+#: lib/animina_web/live/admin/ollama_logs_live.ex:559
 #, elixir-autogen, elixir-format
 msgid "No grouped log entries found."
 msgstr "Aucune entrée de journal groupée trouvée."
@@ -5095,74 +5096,71 @@ msgstr "Aucune entrée de journal groupée trouvée."
 #: lib/animina_web/components/layouts.ex:353
 #: lib/animina_web/live/admin/logs_index_live.ex:60
 #: lib/animina_web/live/admin/ollama_logs_live.ex:23
-#: lib/animina_web/live/admin/ollama_logs_live.ex:370
-#: lib/animina_web/live/admin/ollama_logs_live.ex:375
+#: lib/animina_web/live/admin/ollama_logs_live.ex:343
+#: lib/animina_web/live/admin/ollama_logs_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Ollama Logs"
 msgstr "Journaux Ollama"
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:382
-#: lib/animina_web/live/admin/email_logs_live.ex:250
-#: lib/animina_web/live/admin/ollama_logs_live.ex:471
-#: lib/animina_web/live/user_live/email_logs.ex:208
+#: lib/animina_web/helpers/pagination_helpers.ex:96
 #, elixir-autogen, elixir-format
 msgid "Per page"
 msgstr "Par page"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:635
+#: lib/animina_web/live/admin/ollama_logs_live.ex:577
 #, elixir-autogen, elixir-format
 msgid "Photo deleted"
 msgstr "Photo supprimée"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:547
-#: lib/animina_web/live/admin/ollama_logs_live.ex:660
+#: lib/animina_web/live/admin/ollama_logs_live.ex:502
+#: lib/animina_web/live/admin/ollama_logs_live.ex:602
 #, elixir-autogen, elixir-format
 msgid "Re-run"
 msgstr "Relancer"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:201
+#: lib/animina_web/live/admin/ollama_logs_live.ex:174
 #, elixir-autogen, elixir-format
 msgid "Re-run failed: %{reason}"
 msgstr "Échec de la relance : %{reason}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:770
+#: lib/animina_web/live/admin/ollama_logs_live.ex:705
 #, elixir-autogen, elixir-format
 msgid "Re-run with %{model}"
 msgstr "Relancer avec %{model}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:464
+#: lib/animina_web/live/admin/ollama_logs_live.ex:437
 #, elixir-autogen, elixir-format
 msgid "In Progress"
 msgstr "En cours"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:789
+#: lib/animina_web/live/admin/ollama_logs_live.ex:724
 #, elixir-autogen, elixir-format
 msgid "Re-run on %{server}"
 msgstr "Relancer sur %{server}"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:389
+#: lib/animina_web/live/admin/ollama_logs_live.ex:362
 #, elixir-autogen, elixir-format
 msgid "Queue"
 msgstr "File d'attente"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:402
+#: lib/animina_web/live/admin/ollama_logs_live.ex:375
 #, elixir-autogen, elixir-format
 msgid "adaptive"
 msgstr "adaptatif"
 
-#: lib/animina_web/live/admin/email_logs_live.ex:204
-#: lib/animina_web/live/admin/ollama_logs_live.ex:407
+#: lib/animina_web/live/admin/email_logs_live.ex:161
+#: lib/animina_web/live/admin/ollama_logs_live.ex:380
 #, elixir-autogen, elixir-format
 msgid "Auto-reload"
 msgstr "Rechargement auto"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:737
+#: lib/animina_web/live/admin/ollama_logs_live.ex:672
 #, elixir-autogen, elixir-format
 msgid "Approved"
 msgstr "Approuvé"
 
-#: lib/animina_web/live/admin/ollama_logs_live.ex:545
-#: lib/animina_web/live/admin/ollama_logs_live.ex:658
+#: lib/animina_web/live/admin/ollama_logs_live.ex:500
+#: lib/animina_web/live/admin/ollama_logs_live.ex:600
 #, elixir-autogen, elixir-format
 msgid "Avatar"
 msgstr "Avatar"
@@ -5399,21 +5397,21 @@ msgstr "Rencontres en ligne 👫❤️"
 msgid "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
 msgstr "Rencontres en ligne gratuites avec compatibilité basée sur la personnalité. Open source, financé par la publicité et équitable pour tous."
 
-#: lib/animina_web/live/user_live/email_logs.ex:163
+#: lib/animina_web/live/user_live/email_logs.ex:122
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} email"
 msgid_plural "%{count} emails"
 msgstr[0] "%{count} entrée"
 msgstr[1] "%{count} entrées"
 
-#: lib/animina_web/live/user_live/email_logs.ex:247
+#: lib/animina_web/live/user_live/email_logs.ex:188
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Date"
 msgstr "Rendez-vous"
 
-#: lib/animina_web/live/user_live/email_logs.ex:16
-#: lib/animina_web/live/user_live/email_logs.ex:155
-#: lib/animina_web/live/user_live/email_logs.ex:161
+#: lib/animina_web/live/user_live/email_logs.ex:18
+#: lib/animina_web/live/user_live/email_logs.ex:114
+#: lib/animina_web/live/user_live/email_logs.ex:120
 #: lib/animina_web/live/user_live/logs_hub.ex:23
 #, elixir-autogen, elixir-format
 msgid "Email History"
@@ -5421,8 +5419,8 @@ msgstr ""
 
 #: lib/animina_web/components/layouts.ex:339
 #: lib/animina_web/live/admin/email_logs_live.ex:18
-#: lib/animina_web/live/admin/email_logs_live.ex:185
-#: lib/animina_web/live/admin/email_logs_live.ex:190
+#: lib/animina_web/live/admin/email_logs_live.ex:142
+#: lib/animina_web/live/admin/email_logs_live.ex:147
 #: lib/animina_web/live/admin/logs_index_live.ex:47
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Email Logs"
@@ -5439,32 +5437,32 @@ msgid "Log of all emails sent by the system"
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:332
-#: lib/animina_web/live/admin/activity_logs_live.ex:241
-#: lib/animina_web/live/admin/email_logs_live.ex:183
+#: lib/animina_web/live/admin/activity_logs_live.ex:232
+#: lib/animina_web/live/admin/email_logs_live.ex:140
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:29
-#: lib/animina_web/live/admin/ollama_logs_live.ex:368
-#: lib/animina_web/live/user_live/email_logs.ex:152
+#: lib/animina_web/live/admin/ollama_logs_live.ex:341
+#: lib/animina_web/live/user_live/email_logs.ex:111
 #: lib/animina_web/live/user_live/logs_hub.ex:15
 #: lib/animina_web/live/user_live/logs_hub.ex:45
 #, elixir-autogen, elixir-format
 msgid "Logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/email_logs.ex:256
+#: lib/animina_web/live/user_live/email_logs.ex:197
 #, elixir-autogen, elixir-format
 msgid "No emails found."
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:274
-#: lib/animina_web/live/user_live/email_logs.ex:233
+#: lib/animina_web/live/admin/email_logs_live.ex:213
+#: lib/animina_web/live/user_live/email_logs.ex:174
 #, elixir-autogen, elixir-format
 msgid "Recipient"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:410
-#: lib/animina_web/live/admin/email_logs_live.ex:283
-#: lib/animina_web/live/user_live/email_logs.ex:232
+#: lib/animina_web/live/admin/activity_logs_live.ex:383
+#: lib/animina_web/live/admin/email_logs_live.ex:222
+#: lib/animina_web/live/user_live/email_logs.ex:173
 #, elixir-autogen, elixir-format
 msgid "Subject"
 msgstr ""
@@ -5474,9 +5472,9 @@ msgstr ""
 msgid "System log viewers"
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:218
-#: lib/animina_web/live/admin/email_logs_live.ex:280
-#: lib/animina_web/live/user_live/email_logs.ex:176
+#: lib/animina_web/live/admin/email_logs_live.ex:175
+#: lib/animina_web/live/admin/email_logs_live.ex:219
+#: lib/animina_web/live/user_live/email_logs.ex:135
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -5506,7 +5504,7 @@ msgstr ""
 msgid "Cannot change email while a recent account change is being reviewed."
 msgstr ""
 
-#: lib/animina_web/controllers/user_session_controller.ex:74
+#: lib/animina_web/controllers/user_session_controller.ex:75
 #: lib/animina_web/live/user_live/account_email_password.ex:164
 #, elixir-autogen, elixir-format
 msgid "Cannot change password while a recent account change is being reviewed."
@@ -5743,51 +5741,51 @@ msgid "night"
 msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:20
-#: lib/animina_web/live/admin/activity_logs_live.ex:243
-#: lib/animina_web/live/admin/activity_logs_live.ex:248
+#: lib/animina_web/live/admin/activity_logs_live.ex:234
+#: lib/animina_web/live/admin/activity_logs_live.ex:239
 #: lib/animina_web/live/admin/logs_index_live.ex:34
 #, elixir-autogen, elixir-format
 msgid "Activity Logs"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:409
+#: lib/animina_web/live/admin/activity_logs_live.ex:382
 #, elixir-autogen, elixir-format
 msgid "Actor"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:320
-#: lib/animina_web/live/admin/activity_logs_live.ex:407
+#: lib/animina_web/live/admin/activity_logs_live.ex:311
+#: lib/animina_web/live/admin/activity_logs_live.ex:380
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:337
-#: lib/animina_web/live/admin/activity_logs_live.ex:408
+#: lib/animina_web/live/admin/activity_logs_live.ex:328
+#: lib/animina_web/live/admin/activity_logs_live.ex:381
 #, elixir-autogen, elixir-format
 msgid "Event"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:354
+#: lib/animina_web/live/admin/activity_logs_live.ex:345
 #, elixir-autogen, elixir-format
 msgid "From"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:262
+#: lib/animina_web/live/admin/activity_logs_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "Live"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:293
+#: lib/animina_web/live/admin/activity_logs_live.ex:284
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Search by name or email..."
 msgstr "Rechercher des utilisateurs par e-mail ou nom..."
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:411
+#: lib/animina_web/live/admin/activity_logs_live.ex:384
 #, elixir-autogen, elixir-format
 msgid "Summary"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:368
+#: lib/animina_web/live/admin/activity_logs_live.ex:359
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To"
 msgstr "Jouets"
@@ -5929,8 +5927,8 @@ msgstr ""
 msgid "Your account data will be automatically deleted in %{minutes} minutes."
 msgstr ""
 
-#: lib/animina_web/live/admin/email_logs_live.ex:240
-#: lib/animina_web/live/user_live/email_logs.ex:198
+#: lib/animina_web/live/admin/email_logs_live.ex:197
+#: lib/animina_web/live/user_live/email_logs.ex:157
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Bounced"
 msgstr "Bloqué"
@@ -5941,8 +5939,18 @@ msgstr "Bloqué"
 msgid "This is not a valid zip code"
 msgstr ""
 
-#: lib/animina_web/live/admin/activity_logs_live.ex:434
-#: lib/animina_web/live/admin/activity_logs_live.ex:448
+#: lib/animina_web/live/admin/activity_logs_live.ex:407
+#: lib/animina_web/live/admin/activity_logs_live.ex:421
 #, elixir-autogen, elixir-format
 msgid "Filter by this user"
+msgstr ""
+
+#: lib/animina_web/live/user_live/login.ex:79
+#, elixir-autogen, elixir-format
+msgid "Re-authenticate with passkey"
+msgstr ""
+
+#: lib/animina_web/controllers/webauthn_controller.ex:158
+#, elixir-autogen, elixir-format
+msgid "This passkey does not belong to your account."
 msgstr ""

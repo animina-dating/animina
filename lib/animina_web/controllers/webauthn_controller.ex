@@ -129,9 +129,12 @@ defmodule AniminaWeb.WebAuthnController do
            {:ok, client_data_json} <-
              decode_b64(params["client_data_json"]),
            {user, passkey} <-
-             lookup_credential(credential_id) do
-        verify_and_login(
-          conn,
+             lookup_credential(credential_id),
+           :ok <-
+             verify_sudo_user(conn, user) do
+        conn
+        |> maybe_set_sudo_return_to(params)
+        |> verify_and_login(
           credential_id,
           authenticator_data,
           signature,
@@ -146,6 +149,14 @@ defmodule AniminaWeb.WebAuthnController do
           |> delete_session(:webauthn_challenge)
           |> put_status(401)
           |> json(%{error: gettext("Passkey not recognized. Please try again or use password.")})
+
+        :sudo_mismatch ->
+          conn
+          |> delete_session(:webauthn_challenge)
+          |> put_status(403)
+          |> json(%{
+            error: gettext("This passkey does not belong to your account.")
+          })
 
         {:error, reason} ->
           conn
@@ -215,6 +226,20 @@ defmodule AniminaWeb.WebAuthnController do
         |> json(%{error: Exception.message(error)})
     end
   end
+
+  # During sudo mode, verify the passkey belongs to the currently logged-in user
+  defp verify_sudo_user(%{assigns: %{current_scope: %{user: %{id: session_user_id}}}}, user) do
+    if user.id == session_user_id, do: :ok, else: :sudo_mismatch
+  end
+
+  defp verify_sudo_user(_conn, _user), do: :ok
+
+  # Set user_return_to from sudo_return_to param (validates path starts with "/")
+  defp maybe_set_sudo_return_to(conn, %{"sudo_return_to" => "/" <> _ = return_to}) do
+    put_session(conn, :user_return_to, return_to)
+  end
+
+  defp maybe_set_sudo_return_to(conn, _params), do: conn
 
   defp decode_b64(nil), do: {:error, "missing parameter"}
 

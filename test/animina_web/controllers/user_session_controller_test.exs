@@ -64,6 +64,39 @@ defmodule AniminaWeb.UserSessionControllerTest do
     end
   end
 
+  describe "POST /users/log-in - sudo_return_to" do
+    test "redirects to sudo_return_to path after login", %{conn: conn, user: user} do
+      user = set_password(user)
+
+      conn =
+        post(conn, ~p"/users/log-in", %{
+          "user" => %{
+            "email" => user.email,
+            "password" => valid_user_password(),
+            "sudo_return_to" => "/my/settings/account/passkeys"
+          }
+        })
+
+      assert redirected_to(conn) == "/my/settings/account/passkeys"
+    end
+
+    test "ignores sudo_return_to that does not start with /", %{conn: conn, user: user} do
+      user = set_password(user)
+
+      conn =
+        post(conn, ~p"/users/log-in", %{
+          "user" => %{
+            "email" => user.email,
+            "password" => valid_user_password(),
+            "sudo_return_to" => "https://evil.com"
+          }
+        })
+
+      # Should redirect to default path, not the external URL
+      refute redirected_to(conn) == "https://evil.com"
+    end
+  end
+
   describe "POST /users/log-in - soft-deleted user" do
     test "redirects to reactivation page with correct credentials", %{conn: conn, user: user} do
       user = set_password(user)

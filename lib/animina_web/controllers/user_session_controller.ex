@@ -21,6 +21,7 @@ defmodule AniminaWeb.UserSessionController do
 
         conn
         |> put_flash(:info, info)
+        |> maybe_set_sudo_return_to(user_params)
         |> UserAuth.log_in_user(user, user_params)
 
       deleted_user = Accounts.get_deleted_user_by_email_and_password(email, password) ->
@@ -99,6 +100,13 @@ defmodule AniminaWeb.UserSessionController do
     |> put_flash(:info, gettext("Logged out successfully."))
     |> UserAuth.log_out_user()
   end
+
+  # Set user_return_to from sudo_return_to param (validates path starts with "/")
+  defp maybe_set_sudo_return_to(conn, %{"sudo_return_to" => "/" <> _ = return_to}) do
+    put_session(conn, :user_return_to, return_to)
+  end
+
+  defp maybe_set_sudo_return_to(conn, _params), do: conn
 
   defp log_logout(%{user: %{id: id, display_name: name}}) do
     ActivityLog.log("auth", "logout", "#{name} logged out", actor_id: id)

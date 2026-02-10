@@ -1,7 +1,7 @@
 defmodule AniminaWeb.UserLive.AccountEmailPassword do
   use AniminaWeb, :live_view
 
-  on_mount {AniminaWeb.UserAuth, :require_sudo_mode}
+  on_mount {AniminaWeb.UserAuth, {:require_sudo_mode, "/my/settings/account/email-password"}}
 
   alias Animina.Accounts
   alias Animina.Accounts.UserNotifier
