@@ -41,9 +41,10 @@ defmodule AniminaWeb.UserLive.Registration do
             </h1>
             <p class="mt-3 text-sm text-base-content/70 max-w-md mx-auto">
               {ngettext(
-                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} day at most. Invite friends with your referral code to skip ahead!",
-                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} days at most. Invite friends with your referral code to skip ahead!",
-                @max_waitlist_days
+                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} day at most. Invite %{referral_threshold} friends with your referral code to skip ahead!",
+                "We activate new accounts in regional waves to ensure the best experience. Set up your profile now — you'll get your GO within %{count} days at most. Invite %{referral_threshold} friends with your referral code to skip ahead!",
+                @max_waitlist_days,
+                referral_threshold: @referral_threshold
               )}
             </p>
             <p class="mt-2 text-base text-base-content/70">
@@ -540,6 +541,7 @@ defmodule AniminaWeb.UserLive.Registration do
       socket
       |> assign(page_title: gettext("ANIMINA – Secure Your Spot"))
       |> assign(max_waitlist_days: Animina.FeatureFlags.waitlist_duration_days() + 1)
+      |> assign(referral_threshold: Animina.FeatureFlags.referral_threshold())
       |> assign(country_options: country_options)
       |> assign(preferences_auto_filled: false)
       |> assign(guessed_gender: nil)
