@@ -303,7 +303,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
       |> allow_upload(:avatar,
         accept: ~w(.jpg .jpeg .png .webp .heic),
         max_entries: 1,
-        max_file_size: 6_000_000
+        max_file_size: Animina.Photos.max_upload_size()
       )
 
     {:ok, socket}

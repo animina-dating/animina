@@ -270,7 +270,7 @@ defmodule Animina.FeatureFlagsTest do
     test "system_setting_definitions/0 returns all setting definitions" do
       definitions = FeatureFlags.system_setting_definitions()
 
-      assert length(definitions) == 5
+      assert length(definitions) == 6
 
       referral_def = Enum.find(definitions, &(&1.name == :referral_threshold))
       assert referral_def.label == "Referral Threshold"
@@ -331,7 +331,7 @@ defmodule Animina.FeatureFlagsTest do
     test "get_all_system_settings/0 returns all settings with current values" do
       settings = FeatureFlags.get_all_system_settings()
 
-      assert length(settings) == 5
+      assert length(settings) == 6
 
       referral = Enum.find(settings, &(&1.name == :referral_threshold))
       assert referral.current_value == 3

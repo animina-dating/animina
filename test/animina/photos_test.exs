@@ -952,7 +952,7 @@ defmodule Animina.PhotosTest do
     test "rejects files larger than max_upload_size" do
       owner_id = Ecto.UUID.generate()
 
-      # Create a file larger than max_upload_size (6MB default)
+      # Create a file larger than max_upload_size (10MB default, configurable via feature flags)
       # We can't easily create a 6MB+ file in tests, so we'll test the validation function directly
       path = Path.join(System.tmp_dir!(), "large_#{:rand.uniform(1000)}.jpg")
 

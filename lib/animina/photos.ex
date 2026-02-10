@@ -27,7 +27,11 @@ defmodule Animina.Photos do
   end
 
   def upload_dir, do: config(:upload_dir, "uploads")
-  def max_upload_size, do: config(:max_upload_size, 6_000_000)
+
+  def max_upload_size do
+    Animina.FeatureFlags.photo_max_upload_size_mb() * 1_000_000
+  end
+
   def max_dimension, do: config(:max_dimension, 1400)
   def webp_quality, do: config(:webp_quality, 80)
   def blacklist_hamming_threshold, do: config(:blacklist_hamming_threshold, 10)

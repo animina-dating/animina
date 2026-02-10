@@ -186,6 +186,15 @@ defmodule Animina.FeatureFlags do
       default_value: 60,
       min_value: 5,
       max_value: 1440
+    },
+    %{
+      name: :photo_max_upload_size_mb,
+      label: "Photo Max Upload Size (MB)",
+      description: "Maximum file size for photo uploads in megabytes",
+      type: :integer,
+      default_value: 10,
+      min_value: 1,
+      max_value: 50
     }
   ]
 
@@ -869,6 +878,14 @@ defmodule Animina.FeatureFlags do
   """
   def pin_validity_minutes do
     get_system_setting_value(:pin_validity_minutes, 60)
+  end
+
+  @doc """
+  Returns the configured maximum photo upload size in megabytes.
+  Default: 10
+  """
+  def photo_max_upload_size_mb do
+    get_system_setting_value(:photo_max_upload_size_mb, 10)
   end
 
   @doc """
