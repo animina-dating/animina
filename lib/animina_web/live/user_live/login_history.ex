@@ -147,26 +147,21 @@ defmodule AniminaWeb.UserLive.LoginHistory do
         _ -> false
       end
     end)
-    |> Enum.map(fn {[{date, _} | _], idx} ->
-      label =
-        case date.month do
-          1 -> gettext("Jan")
-          2 -> gettext("Feb")
-          3 -> gettext("Mar")
-          4 -> gettext("Apr")
-          5 -> gettext("May")
-          6 -> gettext("Jun")
-          7 -> gettext("Jul")
-          8 -> gettext("Aug")
-          9 -> gettext("Sep")
-          10 -> gettext("Oct")
-          11 -> gettext("Nov")
-          12 -> gettext("Dec")
-        end
-
-      {idx, label}
-    end)
+    |> Enum.map(fn {[{date, _} | _], idx} -> {idx, month_abbr(date.month)} end)
   end
+
+  defp month_abbr(1), do: gettext("Jan")
+  defp month_abbr(2), do: gettext("Feb")
+  defp month_abbr(3), do: gettext("Mar")
+  defp month_abbr(4), do: gettext("Apr")
+  defp month_abbr(5), do: gettext("May")
+  defp month_abbr(6), do: gettext("Jun")
+  defp month_abbr(7), do: gettext("Jul")
+  defp month_abbr(8), do: gettext("Aug")
+  defp month_abbr(9), do: gettext("Sep")
+  defp month_abbr(10), do: gettext("Oct")
+  defp month_abbr(11), do: gettext("Nov")
+  defp month_abbr(12), do: gettext("Dec")
 
   defp format_heatmap_date(date) do
     Calendar.strftime(date, "%b %d, %Y")
