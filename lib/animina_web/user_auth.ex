@@ -115,11 +115,11 @@ defmodule AniminaWeb.UserAuth do
   # Determines the effective role based on the URL path.
   # Auto-switches to "admin" for /admin/* paths if the user has the admin role,
   # and to "user" for /my/* paths if the user has multiple roles.
-  defp auto_role_for_path("/admin/" <> _, roles, _session_role) do
+  defp auto_role_for_path("/admin" <> _, roles, _session_role) do
     if "admin" in roles, do: "admin", else: "user"
   end
 
-  defp auto_role_for_path("/my/" <> _, _roles, _session_role), do: "user"
+  defp auto_role_for_path("/my" <> _, _roles, _session_role), do: "user"
 
   defp auto_role_for_path(_path, _roles, session_role), do: session_role
 

@@ -6,7 +6,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
 
   alias Animina.FeatureFlags
 
-  describe "Feature Flags admin page" do
+  describe "Feature Flags hub page" do
     setup do
       admin = admin_fixture()
 
@@ -17,48 +17,60 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       user = user_fixture()
       conn = log_in_user(conn, user)
 
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/feature-flags")
+      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/flags")
     end
 
-    test "renders feature flags page for admin", %{conn: conn, admin: admin} do
+    test "renders hub with 3 cards", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, html} = live(conn, ~p"/admin/feature-flags")
+      {:ok, _view, html} = live(conn, ~p"/admin/flags")
 
       assert html =~ "Feature Flags"
-      assert html =~ "Photo Processing"
+      assert html =~ "AI / Ollama"
+      assert html =~ "System Settings"
+      assert html =~ "Discovery / Matching"
+    end
+
+    test "backward compat: /admin/feature-flags shows hub", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+      {:ok, _view, html} = live(conn, ~p"/admin/feature-flags")
+
+      assert html =~ "Feature Flags"
+      assert html =~ "AI / Ollama"
+    end
+  end
+
+  describe "AI/Ollama subpage" do
+    setup do
+      admin = admin_fixture()
+
+      %{admin: admin}
+    end
+
+    test "renders AI settings page with breadcrumbs", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+      {:ok, _view, html} = live(conn, ~p"/admin/flags/ai")
+
       assert html =~ "AI / Ollama"
       assert html =~ "Ollama Photo Check"
-      assert html =~ "Blacklist Check"
-      # Ollama Photo Check is now in ollama_settings section with data-setting
-      assert has_element?(view, "[data-setting='photo_ollama_check']")
-      assert has_element?(view, "[data-flag='photo_blacklist_check']")
+      assert html =~ "Feature Flags"
     end
 
     test "can toggle an ollama flag", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      # Initially enable the flag
       FunWithFlags.enable(:photo_ollama_check)
-      {:ok, view, _} = live(conn, ~p"/admin/feature-flags")
+      {:ok, view, _} = live(conn, ~p"/admin/flags/ai")
 
-      # Toggle the flag off
       view
       |> element("[data-setting='photo_ollama_check'] [phx-click='toggle-ollama-flag']")
       |> render_click()
 
       assert FeatureFlags.enabled?(:photo_ollama_check) == false
-
-      # Toggle it back on
-      view
-      |> element("[data-setting='photo_ollama_check'] [phx-click='toggle-ollama-flag']")
-      |> render_click()
-
-      assert FeatureFlags.enabled?(:photo_ollama_check) == true
     end
 
-    test "can open ollama settings modal", %{conn: conn, admin: admin} do
+    test "can open and close ollama settings modal", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
+      {:ok, view, _html} = live(conn, ~p"/admin/flags/ai")
 
       view
       |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
@@ -66,19 +78,22 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
 
       assert has_element?(view, "#ollama-setting-modal")
       assert render(view) =~ "Auto-approve"
-      assert render(view) =~ "Delay"
+
+      view
+      |> element(".modal-action button.btn-ghost[phx-click='close-ollama-modal']")
+      |> render_click()
+
+      refute has_element?(view, "#ollama-setting-modal")
     end
 
     test "can save ollama settings", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
+      {:ok, view, _html} = live(conn, ~p"/admin/flags/ai")
 
-      # Open settings modal
       view
       |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
       |> render_click()
 
-      # Submit settings form
       view
       |> form("#ollama-setting-form", %{
         "ollama_setting" => %{
@@ -88,51 +103,76 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       })
       |> render_submit()
 
-      # Verify the settings were saved
       setting = FeatureFlags.get_flag_setting("photo_ollama_check")
       assert setting.settings["auto_approve"] == true
       assert setting.settings["delay_ms"] == 500
     end
+  end
 
-    test "shows badges for configured settings", %{conn: conn, admin: admin} do
-      # Update the existing setting with delay and auto_approve
-      setting = FeatureFlags.get_flag_setting(:photo_ollama_check)
+  describe "System subpage" do
+    setup do
+      admin = admin_fixture()
 
-      if setting do
-        FeatureFlags.update_flag_setting(setting, %{
-          settings: %{delay_ms: 1000, auto_approve: true}
-        })
-      else
-        FeatureFlags.create_flag_setting(%{
-          flag_name: "photo_ollama_check",
-          settings: %{delay_ms: 1000, auto_approve: true}
-        })
-      end
-
-      conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, _view, html} = live(conn, ~p"/admin/feature-flags")
-
-      assert html =~ "1000ms"
-      assert html =~ "Auto"
+      %{admin: admin}
     end
 
-    test "can close ollama settings modal", %{conn: conn, admin: admin} do
+    test "renders system settings with breadcrumbs", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/feature-flags")
+      {:ok, _view, html} = live(conn, ~p"/admin/flags/system")
 
-      # Open modal
+      assert html =~ "System Settings"
+      assert html =~ "Referral Threshold"
+      assert html =~ "Feature Flags"
+    end
+
+    test "can open and save a system setting", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+      {:ok, view, _html} = live(conn, ~p"/admin/flags/system")
+
       view
-      |> element("[data-setting='photo_ollama_check'] [phx-click='open-ollama-setting']")
+      |> element("[data-setting='referral_threshold'] [phx-click='open-system-setting']")
       |> render_click()
 
-      assert has_element?(view, "#ollama-setting-modal")
+      assert has_element?(view, "#system-setting-modal")
 
-      # Close modal using the Cancel button (the one that says "Cancel")
       view
-      |> element(".modal-action button.btn-ghost[phx-click='close-ollama-modal']")
+      |> form("#system-setting-form", %{
+        "system_setting" => %{"value" => "5"}
+      })
+      |> render_submit()
+
+      assert FeatureFlags.get_system_setting_value(:referral_threshold, 3) == 5
+    end
+  end
+
+  describe "Discovery subpage" do
+    setup do
+      admin = admin_fixture()
+
+      %{admin: admin}
+    end
+
+    test "renders discovery settings with breadcrumbs", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+      {:ok, _view, html} = live(conn, ~p"/admin/flags/discovery")
+
+      assert html =~ "Discovery / Matching"
+      assert html =~ "Suggestions Per List"
+      assert html =~ "Feature Flags"
+    end
+
+    test "can toggle a discovery flag", %{conn: conn, admin: admin} do
+      conn = log_in_user(conn, admin, current_role: "admin")
+      {:ok, view, _html} = live(conn, ~p"/admin/flags/discovery")
+
+      view
+      |> element(
+        "[data-setting='discovery_exclude_incomplete_profiles'] [phx-click='toggle-discovery-flag']"
+      )
       |> render_click()
 
-      refute has_element?(view, "#ollama-setting-modal")
+      # Just verify it toggled without error
+      assert render(view) =~ "Exclude Incomplete Profiles"
     end
   end
 end

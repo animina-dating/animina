@@ -30,15 +30,6 @@ defmodule Animina.FeatureFlags do
   alias Animina.FeatureFlags.FlagSetting
   alias Animina.Repo
 
-  @photo_flags [
-    %{
-      name: :photo_blacklist_check,
-      label: "Blacklist Check",
-      description: "Check photos against dhash blacklist",
-      default_auto_approve_value: nil
-    }
-  ]
-
   @ollama_settings [
     %{
       name: :photo_ollama_check,
@@ -195,14 +186,6 @@ defmodule Animina.FeatureFlags do
       default_value: 10,
       min_value: 1,
       max_value: 50
-    }
-  ]
-
-  @admin_flags [
-    %{
-      name: :admin_view_moodboards,
-      label: "Admin View Moodboards",
-      description: "Allow admins to view any user's moodboard (for moderation purposes)"
     }
   ]
 
@@ -590,72 +573,6 @@ defmodule Animina.FeatureFlags do
     enabled?(:photo_ollama_check)
   end
 
-  @doc """
-  Returns whether blacklist check is enabled.
-  """
-  def blacklist_check_enabled? do
-    enabled?(:photo_blacklist_check)
-  end
-
-  @doc """
-  Returns whether admins can view any user's moodboard.
-  Disabled by default for privacy.
-  """
-  def admin_can_view_moodboards? do
-    enabled?(:admin_view_moodboards)
-  end
-
-  # --- Photo Flags Listing ---
-
-  @doc """
-  Returns the list of photo processing flag definitions.
-  """
-  def photo_flag_definitions do
-    @photo_flags
-  end
-
-  @doc """
-  Returns all photo processing flags with their current states and settings.
-  """
-  def get_all_photo_flags do
-    Enum.map(@photo_flags, fn flag_def ->
-      setting = get_flag_setting(flag_def.name)
-
-      %{
-        name: flag_def.name,
-        label: flag_def.label,
-        description: flag_def.description,
-        default_auto_approve_value: flag_def.default_auto_approve_value,
-        enabled: enabled?(flag_def.name),
-        setting: setting
-      }
-    end)
-  end
-
-  @doc """
-  Initializes default flag states for photo processing.
-  Called during application startup. Enables all flags by default for safety.
-  """
-  def initialize_photo_flags do
-    Enum.each(@photo_flags, fn flag_def ->
-      # Enable flag if not already set (preserves existing settings)
-      unless FunWithFlags.enabled?(flag_def.name) do
-        FunWithFlags.enable(flag_def.name)
-        Logger.info("Feature flag #{flag_def.name} enabled by default")
-      end
-
-      # Create default settings if they don't exist
-      get_or_create_flag_setting(flag_def.name, %{
-        description: flag_def.description,
-        settings: %{
-          auto_approve: false,
-          auto_approve_value: flag_def.default_auto_approve_value,
-          delay_ms: 0
-        }
-      })
-    end)
-  end
-
   # --- Ollama Settings ---
 
   @doc """
@@ -744,43 +661,6 @@ defmodule Animina.FeatureFlags do
       FunWithFlags.enable(flag_name)
       Logger.info("Feature flag #{flag_name} enabled by default")
     end
-  end
-
-  # --- Admin Flags ---
-
-  @doc """
-  Returns the list of admin flag definitions.
-  """
-  def admin_flag_definitions do
-    @admin_flags
-  end
-
-  @doc """
-  Returns all admin flags with their current states.
-  """
-  def get_all_admin_flags do
-    Enum.map(@admin_flags, fn flag_def ->
-      %{
-        name: flag_def.name,
-        label: flag_def.label,
-        description: flag_def.description,
-        enabled: enabled?(flag_def.name)
-      }
-    end)
-  end
-
-  @doc """
-  Initializes default admin flag states.
-  Called during application startup. Admin flags are disabled by default.
-  """
-  def initialize_admin_flags do
-    Enum.each(@admin_flags, fn flag_def ->
-      # Create default settings if they don't exist
-      get_or_create_flag_setting(flag_def.name, %{
-        description: flag_def.description,
-        settings: %{}
-      })
-    end)
   end
 
   # --- System Settings ---

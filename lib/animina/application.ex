@@ -75,14 +75,10 @@ defmodule Animina.Application do
   end
 
   defp initialize_feature_flags do
-    # Enable all photo processing flags by default for safety
-    Animina.FeatureFlags.initialize_photo_flags()
     # Initialize system settings with defaults
     Animina.FeatureFlags.initialize_system_settings()
     # Initialize ollama settings (flags and values)
     Animina.FeatureFlags.initialize_ollama_settings()
-    # Initialize admin flags (disabled by default)
-    Animina.FeatureFlags.initialize_admin_flags()
     # Initialize discovery settings (includes chat slot settings)
     Animina.FeatureFlags.initialize_discovery_settings()
   rescue

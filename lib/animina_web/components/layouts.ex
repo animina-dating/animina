@@ -257,6 +257,13 @@ defmodule AniminaWeb.Layouts do
                         </div>
                       </a>
                     <% end %>
+                    <!-- My ANIMINA -->
+                    <a
+                      href="/my"
+                      class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                    >
+                      {gettext("My ANIMINA")}
+                    </a>
                     <!-- Settings -->
                     <a
                       href="/my/settings"
@@ -287,133 +294,15 @@ defmodule AniminaWeb.Layouts do
                         {gettext("Messages")}
                       </a>
                     </div>
-                    <!-- Moderation Section (only in moderator role) -->
-                    <%= if @current_scope.current_role == "moderator" do %>
+                    <!-- Administration (admin only) -->
+                    <%= if Scope.has_role?(@current_scope, "admin") do %>
                       <div class="border-t border-base-300 mt-1">
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Moderation")}
-                          </p>
-                        </div>
-                        <% pending_count =
-                          Photos.count_pending_appeals(viewer_id: @current_scope.user.id) %>
                         <a
-                          href="/admin/photo-reviews"
-                          class="flex items-center justify-between px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          <span>{gettext("Photo Reviews")}</span>
-                          <%= if pending_count > 0 do %>
-                            <span class="badge badge-sm badge-error">
-                              {format_count(pending_count)}
-                            </span>
-                          <% end %>
-                        </a>
-                      </div>
-                    <% end %>
-                    <!-- Administration Section (only in admin role) -->
-                    <%= if @current_scope.current_role == "admin" do %>
-                      <div class="border-t border-base-300 mt-1">
-                        <%!-- Photos --%>
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Photos")}
-                          </p>
-                        </div>
-                        <a
-                          href="/admin/photo-blacklist"
+                          href="/admin"
                           class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                         >
-                          {gettext("Photo Blacklist")}
+                          {gettext("Administration")}
                         </a>
-
-                        <%!-- Logs --%>
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Logs")}
-                          </p>
-                        </div>
-                        <a
-                          href="/admin/logs/emails"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Email Logs")}
-                        </a>
-                        <% ollama_queue_count = Photos.count_ollama_queue() %>
-                        <a
-                          href="/admin/logs/ollama"
-                          class={[
-                            "flex items-center justify-between px-4 py-2 text-sm transition-colors",
-                            if(ollama_queue_count > 0,
-                              do: "text-base-content/70 hover:bg-base-200 hover:text-primary",
-                              else:
-                                "text-base-content/40 hover:bg-base-200 hover:text-base-content/60"
-                            )
-                          ]}
-                        >
-                          <span>{gettext("Ollama Logs")}</span>
-                          <%= if ollama_queue_count > 0 do %>
-                            <span class="badge badge-sm badge-warning">
-                              {format_count(ollama_queue_count)}
-                            </span>
-                          <% end %>
-                        </a>
-
-                        <%!-- Users --%>
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Users")}
-                          </p>
-                        </div>
-                        <a
-                          href="/admin/roles"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Manage Roles")}
-                        </a>
-
-                        <%!-- System --%>
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("System")}
-                          </p>
-                        </div>
-                        <a
-                          href="/admin/feature-flags"
-                          class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                        >
-                          {gettext("Feature Flags")}
-                        </a>
-                      </div>
-                    <% end %>
-                    <!-- Role Switcher -->
-                    <%= if Scope.has_multiple_roles?(@current_scope) do %>
-                      <div class="border-t border-base-300 mt-1">
-                        <div class="px-4 py-1.5 pt-2">
-                          <p class="text-xs font-semibold text-base-content/40 uppercase tracking-wider">
-                            {gettext("Switch Role")}
-                          </p>
-                        </div>
-                        <%= for role <- @current_scope.roles do %>
-                          <%= if role == @current_scope.current_role do %>
-                            <div class="block w-full text-start px-4 py-2 text-sm bg-primary/10 text-primary font-medium cursor-default">
-                              {role_label(role)}
-                              <span class="text-xs text-base-content/50">
-                                ({gettext("active")})
-                              </span>
-                            </div>
-                          <% else %>
-                            <form action="/role/switch" method="post">
-                              <input type="hidden" name="_csrf_token" value={get_csrf_token()} />
-                              <input type="hidden" name="role" value={role} />
-                              <button
-                                type="submit"
-                                class="block w-full text-start px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
-                              >
-                                {role_label(role)}
-                              </button>
-                            </form>
-                          <% end %>
-                        <% end %>
                       </div>
                     <% end %>
                     <!-- Time Travel (dev only) -->
@@ -653,33 +542,6 @@ defmodule AniminaWeb.Layouts do
       </footer>
     </div>
     """
-  end
-
-  defp role_label("admin"), do: gettext("Admin")
-  defp role_label("moderator"), do: gettext("Moderator")
-  defp role_label("user"), do: gettext("User")
-  defp role_label(role), do: role
-
-  defp format_count(count) when count >= 1_000_000 do
-    value = count / 1_000_000
-    format_decimal(value) <> "m"
-  end
-
-  defp format_count(count) when count >= 1_000 do
-    value = count / 1_000
-    format_decimal(value) <> "k"
-  end
-
-  defp format_count(count), do: to_string(count)
-
-  defp format_decimal(value) do
-    rounded = Float.round(value, 1)
-
-    if rounded == trunc(rounded) do
-      to_string(trunc(rounded))
-    else
-      to_string(rounded)
-    end
   end
 
   @doc """

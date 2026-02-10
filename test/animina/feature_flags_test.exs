@@ -159,14 +159,6 @@ defmodule Animina.FeatureFlagsTest do
       FunWithFlags.disable(:photo_ollama_check)
       assert FeatureFlags.ollama_check_enabled?() == false
     end
-
-    test "blacklist_check_enabled?/0 returns flag state" do
-      FunWithFlags.enable(:photo_blacklist_check)
-      assert FeatureFlags.blacklist_check_enabled?() == true
-
-      FunWithFlags.disable(:photo_blacklist_check)
-      assert FeatureFlags.blacklist_check_enabled?() == false
-    end
   end
 
   describe "enable/1 and disable/1" do
@@ -180,19 +172,6 @@ defmodule Animina.FeatureFlagsTest do
       FunWithFlags.enable(:test_flag)
       assert {:ok, false} = FeatureFlags.disable(:test_flag)
       assert FeatureFlags.enabled?(:test_flag) == false
-    end
-  end
-
-  describe "get_all_photo_flags/0" do
-    test "returns photo processing flags with their states and settings" do
-      # Set specific states for testing
-      FunWithFlags.enable(:photo_blacklist_check)
-
-      flags = FeatureFlags.get_all_photo_flags()
-
-      # After reorganization, only blacklist_check remains in photo_flags
-      blacklist = Enum.find(flags, fn f -> f.name == :photo_blacklist_check end)
-      assert blacklist.enabled == true
     end
   end
 

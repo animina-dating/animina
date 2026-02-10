@@ -85,6 +85,9 @@ defmodule AniminaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
+      # My hub
+      live "/my", UserLive.MyHub, :index
+
       # Settings hub
       live "/my/settings", UserLive.SettingsHub, :index
 
@@ -129,9 +132,14 @@ defmodule AniminaWeb.Router do
 
     live_session :require_admin,
       on_mount: [{AniminaWeb.UserAuth, :require_admin}] do
+      live "/admin", Admin.AdminHub, :index
       live "/admin/roles", Admin.UserRolesLive
       live "/admin/photos/:id/history", Admin.PhotoHistoryLive
-      live "/admin/feature-flags", Admin.FeatureFlagsLive
+      live "/admin/feature-flags", Admin.FlagsIndexLive
+      live "/admin/flags", Admin.FlagsIndexLive
+      live "/admin/flags/ai", Admin.FlagsAiLive
+      live "/admin/flags/system", Admin.FlagsSystemLive
+      live "/admin/flags/discovery", Admin.FlagsDiscoveryLive
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
       live "/admin/logs", Admin.LogsIndexLive
       live "/admin/logs/emails", Admin.EmailLogsLive
