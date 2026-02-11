@@ -8,14 +8,12 @@ defmodule AniminaWeb.Admin.FlagsIndexLive do
   def mount(_params, _session, socket) do
     ollama_count = length(FeatureFlags.ollama_settings_definitions())
     system_count = length(FeatureFlags.system_setting_definitions())
-    discovery_count = length(FeatureFlags.discovery_settings_definitions())
 
     {:ok,
      assign(socket,
        page_title: gettext("Feature Flags"),
        ollama_count: ollama_count,
-       system_count: system_count,
-       discovery_count: discovery_count
+       system_count: system_count
      )}
   end
 
@@ -58,21 +56,6 @@ defmodule AniminaWeb.Admin.FlagsIndexLive do
             <:trailing>
               <span class="badge badge-lg badge-outline font-mono">
                 {@system_count}
-              </span>
-            </:trailing>
-          </.hub_card>
-
-          <.hub_card
-            navigate={~p"/admin/flags/discovery"}
-            title={gettext("Discovery / Matching")}
-            subtitle={gettext("Partner suggestion algorithm tuning")}
-            icon="hero-sparkles"
-            icon_class="h-8 w-8"
-            padding="p-5"
-          >
-            <:trailing>
-              <span class="badge badge-lg badge-outline font-mono">
-                {@discovery_count}
               </span>
             </:trailing>
           </.hub_card>

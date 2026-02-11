@@ -67,6 +67,12 @@ defmodule AniminaWeb.Admin.AdminHub do
             subtitle={gettext("Toggle features and system settings")}
           />
           <.hub_card
+            navigate={~p"/admin/discovery/funnel"}
+            icon="hero-funnel"
+            title={gettext("Discovery Funnel")}
+            subtitle={gettext("Analyze filter pipeline for any user")}
+          />
+          <.hub_card
             navigate={~p"/admin/logs"}
             icon="hero-clipboard-document-list"
             title={gettext("Logs")}

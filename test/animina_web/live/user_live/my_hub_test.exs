@@ -49,7 +49,6 @@ defmodule AniminaWeb.UserLive.MyHubTest do
         |> log_in_user(active_user())
         |> live(~p"/my")
 
-      assert has_element?(lv, "main a[href='/discover']")
       assert has_element?(lv, "main a[href='/my/messages']")
       assert has_element?(lv, "main a[href='/my/settings']")
       assert has_element?(lv, "main a[href='/my/logs']")

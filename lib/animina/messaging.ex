@@ -14,7 +14,7 @@ defmodule Animina.Messaging do
 
   alias Animina.ActivityLog
   alias Animina.Discovery
-  alias Animina.Discovery.Settings
+  alias Animina.FeatureFlags
 
   alias Animina.Messaging.Schemas.{
     Conversation,
@@ -748,7 +748,7 @@ defmodule Animina.Messaging do
   Returns whether the user has a free chat slot.
   """
   def has_available_chat_slot?(user_id) do
-    active_conversation_count(user_id) < Settings.max_active_slots()
+    active_conversation_count(user_id) < FeatureFlags.chat_max_active_slots()
   end
 
   @doc """
@@ -769,7 +769,7 @@ defmodule Animina.Messaging do
   Returns whether the user can start a new chat today.
   """
   def can_start_new_chat_today?(user_id) do
-    daily_new_chat_count(user_id) < Settings.daily_new_limit()
+    daily_new_chat_count(user_id) < FeatureFlags.chat_daily_new_limit()
   end
 
   @doc """
@@ -840,7 +840,7 @@ defmodule Animina.Messaging do
   The user must close exactly `love_emergency_cost` active conversations to reopen one.
   """
   def love_emergency_reopen(user_id, reopen_conv_id, close_conv_ids) do
-    cost = Settings.love_emergency_cost()
+    cost = FeatureFlags.chat_love_emergency_cost()
 
     if length(close_conv_ids) != cost do
       {:error, :wrong_cost}
@@ -913,9 +913,9 @@ defmodule Animina.Messaging do
   def chat_slot_status(user_id) do
     %{
       active: active_conversation_count(user_id),
-      max: Settings.max_active_slots(),
+      max: FeatureFlags.chat_max_active_slots(),
       daily_started: daily_new_chat_count(user_id),
-      daily_max: Settings.daily_new_limit()
+      daily_max: FeatureFlags.chat_daily_new_limit()
     }
   end
 

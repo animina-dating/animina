@@ -20,14 +20,13 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/flags")
     end
 
-    test "renders hub with 3 cards", %{conn: conn, admin: admin} do
+    test "renders hub with 2 cards", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
       {:ok, _view, html} = live(conn, ~p"/admin/flags")
 
       assert html =~ "Feature Flags"
       assert html =~ "AI / Ollama"
       assert html =~ "System Settings"
-      assert html =~ "Discovery / Matching"
     end
 
     test "backward compat: /admin/feature-flags shows hub", %{conn: conn, admin: admin} do
@@ -142,37 +141,6 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       |> render_submit()
 
       assert FeatureFlags.get_system_setting_value(:referral_threshold, 3) == 5
-    end
-  end
-
-  describe "Discovery subpage" do
-    setup do
-      admin = admin_fixture()
-
-      %{admin: admin}
-    end
-
-    test "renders discovery settings with breadcrumbs", %{conn: conn, admin: admin} do
-      conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, _view, html} = live(conn, ~p"/admin/flags/discovery")
-
-      assert html =~ "Discovery / Matching"
-      assert html =~ "Suggestions Per List"
-      assert html =~ "Feature Flags"
-    end
-
-    test "can toggle a discovery flag", %{conn: conn, admin: admin} do
-      conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/flags/discovery")
-
-      view
-      |> element(
-        "[data-setting='discovery_exclude_incomplete_profiles'] [phx-click='toggle-discovery-flag']"
-      )
-      |> render_click()
-
-      # Just verify it toggled without error
-      assert render(view) =~ "Exclude Incomplete Profiles"
     end
   end
 end

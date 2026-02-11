@@ -26,7 +26,6 @@ defmodule Animina.Discovery.Popularity do
   import Ecto.Query
 
   alias Animina.Discovery.Schemas.{Inquiry, PopularityStat}
-  alias Animina.Discovery.Settings
   alias Animina.Repo
   alias Animina.TimeMachine
 
@@ -98,9 +97,8 @@ defmodule Animina.Discovery.Popularity do
   to prevent overwhelming popular users.
   """
   def exceeded_daily_limit?(user_id) do
-    limit = Settings.daily_inquiry_limit()
     count = get_daily_count(user_id, TimeMachine.utc_today())
-    count >= limit
+    count >= 6
   end
 
   @doc """
@@ -109,13 +107,12 @@ defmodule Animina.Discovery.Popularity do
   This is used by the discovery filter to exclude these users from suggestions.
   """
   def users_exceeding_daily_limit do
-    limit = Settings.daily_inquiry_limit()
     today = TimeMachine.utc_today()
 
     Inquiry
     |> where([i], i.inquiry_date == ^today)
     |> group_by([i], i.receiver_id)
-    |> having([i], count(i.id) >= ^limit)
+    |> having([i], count(i.id) >= 6)
     |> select([i], i.receiver_id)
     |> Repo.all()
   end

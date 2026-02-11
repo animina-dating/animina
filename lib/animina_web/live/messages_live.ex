@@ -20,7 +20,7 @@ defmodule AniminaWeb.MessagesLive do
 
   import AniminaWeb.MessageComponents
 
-  alias Animina.Discovery.Settings
+  alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
   alias AniminaWeb.Helpers.AvatarHelpers
@@ -139,10 +139,6 @@ defmodule AniminaWeb.MessagesLive do
               <p class="text-sm mt-2">
                 {gettext("Start a conversation from a user's profile")}
               </p>
-              <.link navigate={~p"/discover"} class="btn btn-primary btn-sm mt-4">
-                <.icon name="hero-magnifying-glass" class="h-4 w-4" />
-                {gettext("Discover")}
-              </.link>
             </div>
           <% else %>
             <div class="divide-y divide-base-300">
@@ -644,7 +640,7 @@ defmodule AniminaWeb.MessagesLive do
         slot_status: Messaging.chat_slot_status(user.id),
         closed_conversations: [],
         closed_avatar_photos: %{},
-        love_emergency_cost: Settings.love_emergency_cost(),
+        love_emergency_cost: FeatureFlags.chat_love_emergency_cost(),
         confirm_let_go_conv_id: nil,
         show_love_emergency: false,
         love_emergency_conv_id: nil,
@@ -901,7 +897,7 @@ defmodule AniminaWeb.MessagesLive do
   def handle_event("love_emergency", %{"conversation-id" => conv_id}, socket) do
     user = socket.assigns.current_scope.user
     active_conversations = Messaging.list_conversations(user.id)
-    cost = Settings.love_emergency_cost()
+    cost = FeatureFlags.chat_love_emergency_cost()
 
     socket =
       assign(socket,

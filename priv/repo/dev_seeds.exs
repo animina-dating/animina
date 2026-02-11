@@ -3,13 +3,15 @@
 
 defmodule Animina.Seeds.DevUsers do
   @moduledoc """
-  Seeds 50 development test accounts with full profiles, traits, and moodboards.
+  Seeds development test accounts with full profiles, traits, and moodboards.
   All accounts use the password "password" and are located in Koblenz (56068).
+  Avatars are dynamically generated from this-person-does-not-exist.com and cached locally.
   """
 
   import Ecto.Query
 
   alias Animina.Accounts
+  alias Animina.Accounts.ContactBlacklist
   alias Animina.GeoData
   alias Animina.Moodboard
   alias Animina.Photos
@@ -241,65 +243,6 @@ defmodule Animina.Seeds.DevUsers do
     "sunset-01.jpg",
     "mountains-01.jpg",
     "food-01.jpg"
-  ]
-
-  # Avatar photos - gender-specific from priv/static/images/seeds/avatars/{male,female}/
-  # 25 unique male avatars (one per male user)
-  @male_avatar_photos [
-    "male/avatar-01.jpg",
-    "male/avatar-02.jpg",
-    "male/avatar-03.jpg",
-    "male/avatar-04.jpg",
-    "male/avatar-05.jpg",
-    "male/avatar-06.jpg",
-    "male/avatar-07.jpg",
-    "male/avatar-08.jpg",
-    "male/avatar-09.jpg",
-    "male/avatar-10.jpg",
-    "male/avatar-11.jpg",
-    "male/avatar-12.jpg",
-    "male/avatar-13.jpg",
-    "male/avatar-14.jpg",
-    "male/avatar-15.jpg",
-    "male/avatar-16.jpg",
-    "male/avatar-17.jpg",
-    "male/avatar-18.jpg",
-    "male/avatar-19.jpg",
-    "male/avatar-20.jpg",
-    "male/avatar-21.jpg",
-    "male/avatar-22.jpg",
-    "male/avatar-23.jpg",
-    "male/avatar-24.jpg",
-    "male/avatar-25.jpg"
-  ]
-
-  # 25 unique female avatars (one per female user)
-  @female_avatar_photos [
-    "female/avatar-01.jpg",
-    "female/avatar-02.jpg",
-    "female/avatar-03.jpg",
-    "female/avatar-04.jpg",
-    "female/avatar-05.jpg",
-    "female/avatar-06.jpg",
-    "female/avatar-07.jpg",
-    "female/avatar-08.jpg",
-    "female/avatar-09.jpg",
-    "female/avatar-10.jpg",
-    "female/avatar-11.jpg",
-    "female/avatar-12.jpg",
-    "female/avatar-13.jpg",
-    "female/avatar-14.jpg",
-    "female/avatar-15.jpg",
-    "female/avatar-16.jpg",
-    "female/avatar-17.jpg",
-    "female/avatar-18.jpg",
-    "female/avatar-19.jpg",
-    "female/avatar-20.jpg",
-    "female/avatar-21.jpg",
-    "female/avatar-22.jpg",
-    "female/avatar-23.jpg",
-    "female/avatar-24.jpg",
-    "female/avatar-25.jpg"
   ]
 
   # 10 personality profiles designed as 5 complementary pairs.
@@ -540,6 +483,69 @@ defmodule Animina.Seeds.DevUsers do
     }
   ]
 
+  # 40 additional female users for V2 discovery funnel testing.
+  # Grouped by which filter step should drop them from Thomas's perspective.
+  # Thomas: age 32, height 186, male, prefers female, Koblenz 56068,
+  #         search_radius 60, hard-red Vegan, white Hiking/Surfing/Camping/Rock
+  @v2_test_users [
+    # --- Group A: Good Matches — survive all filters (10 users) ---
+    %{group: :good, name: "Amelie", last: "Berger", zip: "56068", age: 30, height: 168},
+    %{group: :good, name: "Greta", last: "Franke", zip: "56068", age: 29, height: 170},
+    %{group: :good, name: "Hanna", last: "Dietrich", zip: "56068", age: 32, height: 165, search_radius: 80},
+    %{group: :good, name: "Ida", last: "Engel", zip: "56566", age: 28, height: 172},
+    %{group: :good, name: "Jana", last: "Fuchs", zip: "56566", age: 34, height: 163, search_radius: 150},
+    %{group: :good, name: "Johanna", last: "Gerber", zip: "56566", age: 31, height: 175},
+    %{group: :good, name: "Karla", last: "Haas", zip: "65556", age: 30, height: 162, search_radius: 80},
+    %{group: :good, name: "Leonie", last: "Jaeger", zip: "65556", age: 33, height: 170},
+    %{group: :good, name: "Mia", last: "Kaiser", zip: "53179", age: 29, height: 167, search_radius: 90},
+    %{group: :good, name: "Nora", last: "Lorenz", zip: "53179", age: 31, height: 174},
+
+    # --- Group B: Distance Drops — outside Thomas's 60km radius (8 users) ---
+    # Mainz ~62km, Siegen ~65km → just outside; Köln ~80km, Frankfurt ~82km, Trier ~96km → clearly outside
+    %{group: :distance, name: "Pia", last: "Moeller", zip: "55116", age: 30, height: 168, search_radius: 45},
+    %{group: :distance, name: "Romy", last: "Naumann", zip: "55116", age: 29, height: 170, search_radius: 40},
+    %{group: :distance, name: "Sofia", last: "Otto", zip: "57072", age: 31, height: 166, search_radius: 50},
+    %{group: :distance, name: "Theresa", last: "Peters", zip: "57072", age: 33, height: 172, search_radius: 45},
+    %{group: :distance, name: "Anja", last: "Reuter", zip: "50667", age: 30, height: 168, search_radius: 50},
+    %{group: :distance, name: "Bettina", last: "Seidel", zip: "50667", age: 28, height: 165, search_radius: 50},
+    %{group: :distance, name: "Carla", last: "Thiel", zip: "60311", age: 32, height: 170, search_radius: 50},
+    %{group: :distance, name: "Dina", last: "Ulrich", zip: "54290", age: 29, height: 167, search_radius: 50},
+
+    # --- Group C: Height Drops — partner height prefs exclude Thomas at 186cm (6 users) ---
+    %{group: :height, name: "Edith", last: "Vogt", zip: "56068", age: 30, height: 165, search_radius: 100, partner_height_min: 195},
+    %{group: :height, name: "Frieda", last: "Walther", zip: "56068", age: 29, height: 162, search_radius: 100, partner_height_min: 195},
+    %{group: :height, name: "Gisela", last: "Xander", zip: "56068", age: 31, height: 170, search_radius: 100, partner_height_min: 195},
+    %{group: :height, name: "Hedwig", last: "Yildiz", zip: "56068", age: 28, height: 168, search_radius: 100, partner_height_max: 175},
+    %{group: :height, name: "Irene", last: "Ziegler", zip: "56068", age: 33, height: 163, search_radius: 100, partner_height_max: 175},
+    %{group: :height, name: "Jutta", last: "Adler", zip: "56068", age: 30, height: 167, search_radius: 100, partner_height_max: 175},
+
+    # --- Group D: Blacklisted — blacklist Thomas's email or phone (5 users) ---
+    %{group: :blacklist, name: "Klara", last: "Bach", zip: "56068", age: 30, height: 168, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{group: :blacklist, name: "Lotte", last: "Conrad", zip: "56068", age: 29, height: 170, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{group: :blacklist, name: "Magda", last: "Dreyer", zip: "56068", age: 31, height: 165, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{group: :blacklist, name: "Nele", last: "Ebert", zip: "56068", age: 28, height: 172, search_radius: 100, blacklist: "+4915010000000"},
+    %{group: :blacklist, name: "Olivia", last: "Fink", zip: "56068", age: 33, height: 167, search_radius: 100, blacklist: "+4915010000000"},
+
+    # --- Group E: Hard-Red Conflicts (5 users) ---
+    # 3 have Vegan as white → Thomas's hard-red Vegan triggers Direction A
+    # 2 have hard-red Hiking → Thomas's white Hiking triggers Direction B
+    %{group: :red, name: "Paula", last: "Graf", zip: "56068", age: 30, height: 168, search_radius: 100, trait: {:white, "Diet", "Vegan"}},
+    %{group: :red, name: "Renate", last: "Horn", zip: "56068", age: 29, height: 170, search_radius: 100, trait: {:white, "Diet", "Vegan"}},
+    %{group: :red, name: "Svenja", last: "Iske", zip: "56068", age: 31, height: 165, search_radius: 100, trait: {:white, "Diet", "Vegan"}},
+    %{group: :red, name: "Thea", last: "Janssen", zip: "56068", age: 28, height: 172, search_radius: 100, trait: {:red, "Sports", "Hiking"}},
+    %{group: :red, name: "Ursula", last: "Keller", zip: "56068", age: 33, height: 167, search_radius: 100, trait: {:red, "Sports", "Hiking"}},
+
+    # --- Group F: Age Drops — outside Thomas's bidirectional age range (6 users) ---
+    # Young (21): Thomas accepts 26-34, so 21 is out; also 21+2=23 < Thomas's 32
+    # Older (44): Thomas accepts 26-34, so 44 is out; also 44-2=42 > Thomas's 32
+    %{group: :age, name: "Veronika", last: "Lang", zip: "56068", age: 21, height: 168, search_radius: 100, partner_maximum_age_offset: 2},
+    %{group: :age, name: "Wiebke", last: "Marx", zip: "56068", age: 21, height: 170, search_radius: 100, partner_maximum_age_offset: 2},
+    %{group: :age, name: "Xenia", last: "Nowak", zip: "56068", age: 21, height: 165, search_radius: 100, partner_maximum_age_offset: 2},
+    %{group: :age, name: "Yvonne", last: "Oswald", zip: "56068", age: 44, height: 167, search_radius: 100, partner_minimum_age_offset: 2},
+    %{group: :age, name: "Zara", last: "Pohl", zip: "56068", age: 44, height: 163, search_radius: 100, partner_minimum_age_offset: 2},
+    %{group: :age, name: "Astrid", last: "Ritter", zip: "56068", age: 44, height: 172, search_radius: 100, partner_minimum_age_offset: 2}
+  ]
+
   def seed_all do
     IO.puts("\n=== Seeding Development Users ===\n")
 
@@ -566,6 +572,101 @@ defmodule Animina.Seeds.DevUsers do
     IO.puts("\n=== Development Users Seeded Successfully ===")
     IO.puts("Total users created: 60")
     IO.puts("Password for all: #{@password}\n")
+  end
+
+  @doc """
+  Seeds 40 additional female users designed to exercise every V2 discovery
+  filter step when viewed from Thomas's perspective.
+  """
+  def seed_v2_test_users do
+    IO.puts("\n=== Seeding V2 Discovery Test Users ===\n")
+
+    country = GeoData.get_country_by_code("DE")
+
+    unless country do
+      raise "Germany (DE) not found in countries table. Run geo data seeds first."
+    end
+
+    lookup = build_flag_lookup()
+
+    for {user_data, idx} <- Enum.with_index(@v2_test_users) do
+      create_v2_user(user_data, country.id, idx, lookup)
+    end
+
+    IO.puts("\n=== V2 Test Users Seeded (#{length(@v2_test_users)} users) ===\n")
+  end
+
+  defp create_v2_user(data, country_id, idx, lookup) do
+    birthday = birthday_from_age(data.age)
+    phone = generate_phone(100 + idx)
+    email = "dev-v2-#{String.downcase(data.name)}@animina.test"
+
+    attrs =
+      %{
+        email: email,
+        password: @password,
+        first_name: data.name,
+        last_name: data.last,
+        display_name: data.name,
+        birthday: birthday,
+        gender: "female",
+        height: data.height,
+        mobile_phone: phone,
+        preferred_partner_gender: ["male"],
+        language: "de",
+        terms_accepted: true,
+        locations: [%{country_id: country_id, zip_code: data.zip}]
+      }
+      |> maybe_put(:search_radius, data[:search_radius])
+      |> maybe_put(:partner_height_min, data[:partner_height_min])
+      |> maybe_put(:partner_height_max, data[:partner_height_max])
+      |> maybe_put(:partner_minimum_age_offset, data[:partner_minimum_age_offset])
+      |> maybe_put(:partner_maximum_age_offset, data[:partner_maximum_age_offset])
+
+    case Accounts.register_user(attrs) do
+      {:ok, user} ->
+        user = confirm_and_activate_user(user)
+
+        if data[:blacklist], do: add_blacklist_entry(user, data.blacklist)
+        if data[:trait], do: add_conflict_trait(user, data.trait, lookup)
+
+        # Create avatar
+        cache_key = "avatar-" <> (email |> String.split("@") |> hd())
+        create_avatar(user, "female", data.age, cache_key)
+
+        IO.puts("  Created: #{data.name} #{data.last} (#{email}) [#{data.group}]")
+        {:ok, user}
+
+      {:error, reason} ->
+        IO.puts("  ERROR: #{data.name} #{data.last}: #{inspect(reason)}")
+        {:error, reason}
+    end
+  end
+
+  defp maybe_put(map, _key, nil), do: map
+  defp maybe_put(map, key, value), do: Map.put(map, key, value)
+
+  defp add_blacklist_entry(user, value) do
+    case ContactBlacklist.add_entry(user, %{value: value}) do
+      {:ok, _} -> :ok
+      {:error, reason} -> IO.puts("    Warning: blacklist entry failed: #{inspect(reason)}")
+    end
+  end
+
+  defp add_conflict_trait(user, {color, category_name, flag_name}, lookup) do
+    case get_in(lookup, [category_name, flag_name]) do
+      nil ->
+        IO.puts("    Warning: flag '#{flag_name}' not found in '#{category_name}'")
+
+      flag ->
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag.id,
+          color: to_string(color),
+          intensity: "hard",
+          position: 1
+        })
+    end
   end
 
   defp create_user(user_data, gender, country_id, index) do
@@ -605,7 +706,8 @@ defmodule Animina.Seeds.DevUsers do
         update_intro_story(user, index)
 
         # Create avatar and link to pinned item
-        create_avatar(user, gender, index)
+        cache_key = "avatar-" <> (user_data.email |> String.split("@") |> hd())
+        create_avatar(user, gender, user_data.age, cache_key)
 
         # Create moodboard items
         create_moodboard(user, index)
@@ -671,15 +773,12 @@ defmodule Animina.Seeds.DevUsers do
     end
   end
 
-  defp create_avatar(user, gender, seed_index) do
-    avatar_path = get_avatar_source_path(gender, seed_index)
+  defp create_avatar(user, gender, age, cache_key) do
+    avatar_path = generate_avatar(gender, age, cache_key)
 
     case Photos.upload_photo("User", user.id, avatar_path, type: "avatar", skip_enqueue: true) do
       {:ok, photo} ->
-        # Process the photo (resize, webp) and approve it
         Photos.process_for_seeding(photo)
-
-        # Link avatar to the pinned moodboard item
         Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
         {:ok, photo}
 
@@ -689,20 +788,60 @@ defmodule Animina.Seeds.DevUsers do
     end
   end
 
-  defp get_avatar_source_path(gender, seed_index) do
-    # Pick avatar based on gender and seed index
-    avatar_list = if gender == "male", do: @male_avatar_photos, else: @female_avatar_photos
-    avatar_filename = Enum.at(avatar_list, rem(seed_index, length(avatar_list)))
+  defp generate_avatar(gender, age, cache_key) do
+    avatar_dir = Path.join([:code.priv_dir(:animina), "static", "images", "seeds", "avatars", gender])
+    dest_path = Path.join(avatar_dir, "#{cache_key}.jpg")
 
-    Path.join([
-      :code.priv_dir(:animina),
-      "static",
-      "images",
-      "seeds",
-      "avatars",
-      avatar_filename
-    ])
+    if File.exists?(dest_path) do
+      dest_path
+    else
+      File.mkdir_p!(avatar_dir)
+      download_and_resize_avatar(gender, age, dest_path)
+      dest_path
+    end
   end
+
+  defp download_and_resize_avatar(gender, age, dest_path) do
+    :inets.start()
+    :ssl.start()
+
+    age_bracket = age_to_api_bracket(age)
+    ms = System.system_time(:millisecond)
+    api_url = "https://this-person-does-not-exist.com/new?time=#{ms}&gender=#{gender}&age=#{age_bracket}"
+
+    IO.puts("    Downloading avatar: #{gender}/#{Path.basename(dest_path)} (age #{age_bracket})...")
+
+    ssl_opts = [ssl: [verify: :verify_none]]
+
+    {:ok, {{_, 200, _}, _, json_body}} =
+      :httpc.request(:get, {String.to_charlist(api_url), []}, ssl_opts ++ [timeout: 15_000], [])
+
+    %{"src" => src} = Jason.decode!(List.to_string(json_body))
+    image_url = "https://this-person-does-not-exist.com#{src}"
+
+    {:ok, {{_, 200, _}, _, image_data}} =
+      :httpc.request(:get, {String.to_charlist(image_url), []}, ssl_opts ++ [timeout: 30_000], [])
+
+    File.write!(dest_path, IO.iodata_to_binary(image_data))
+
+    # Resize to 400x400 using sips (macOS) or convert (Linux)
+    case System.cmd("sips", ["-z", "400", "400", dest_path], stderr_to_stdout: true) do
+      {_, 0} -> :ok
+      _ ->
+        case System.cmd("convert", [dest_path, "-resize", "400x400!", dest_path], stderr_to_stdout: true) do
+          {_, 0} -> :ok
+          _ -> :ok
+        end
+    end
+
+    # Rate limit: 1.5s between API calls
+    Process.sleep(1_500)
+  end
+
+  defp age_to_api_bracket(age) when age <= 25, do: "19-25"
+  defp age_to_api_bracket(age) when age <= 35, do: "26-35"
+  defp age_to_api_bracket(age) when age <= 50, do: "35-50"
+  defp age_to_api_bracket(_age), do: "50+"
 
   defp assign_traits(user, gender, seed_index) do
     # Ensure default published categories are set

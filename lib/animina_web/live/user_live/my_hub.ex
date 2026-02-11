@@ -22,17 +22,17 @@ defmodule AniminaWeb.UserLive.MyHub do
         <div class="grid gap-3">
           <.hub_card
             :if={@user.state != "waitlisted"}
-            navigate={~p"/discover"}
-            icon="hero-sparkles"
-            title={gettext("Discover")}
-            subtitle={gettext("Find new people")}
-          />
-          <.hub_card
-            :if={@user.state != "waitlisted"}
             navigate={~p"/my/messages"}
             icon="hero-chat-bubble-left-right"
             title={gettext("Messages")}
             subtitle={gettext("Your conversations")}
+          />
+          <.hub_card
+            :if={@user.state != "waitlisted"}
+            navigate={~p"/my/discover"}
+            icon="hero-sparkles"
+            title={gettext("Discover")}
+            subtitle={gettext("Find new people")}
           />
           <.hub_card
             :if={@user.state == "waitlisted"}

@@ -75,12 +75,10 @@ defmodule Animina.Application do
   end
 
   defp initialize_feature_flags do
-    # Initialize system settings with defaults
+    # Initialize system settings with defaults (includes chat slot settings)
     Animina.FeatureFlags.initialize_system_settings()
     # Initialize ollama settings (flags and values)
     Animina.FeatureFlags.initialize_ollama_settings()
-    # Initialize discovery settings (includes chat slot settings)
-    Animina.FeatureFlags.initialize_discovery_settings()
   rescue
     # Don't crash on startup if this fails (e.g., during migrations)
     _ -> :ok

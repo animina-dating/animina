@@ -2,20 +2,14 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   @moduledoc """
   Shared helper functions for discovery filter strategies.
 
-  Contains all filter functions that are identical between StandardFilter
-  and RelaxedFilter, so each strategy only needs to define its pipeline
-  and any unique filters (e.g. distance logic).
+  Contains all bidirectional filter functions used by the V2 pipeline.
   """
 
   import Ecto.Query
 
   alias Animina.Accounts
   alias Animina.Accounts.ContactBlacklistEntry
-  alias Animina.Discovery.Popularity
-  alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
-  alias Animina.Discovery.Settings
   alias Animina.GeoData
-  alias Animina.Messaging.Schemas.ConversationClosure
   alias Animina.TimeMachine
 
   @doc """
@@ -163,89 +157,6 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
         [u],
         is_nil(u.partner_height_max) or ^viewer_height <= u.partner_height_max
       )
-    else
-      query
-    end
-  end
-
-  def exclude_dismissed(query, viewer) do
-    dismissed_subquery =
-      from(d in Dismissal,
-        where: d.user_id == ^viewer.id,
-        select: d.dismissed_id
-      )
-
-    where(query, [u], u.id not in subquery(dismissed_subquery))
-  end
-
-  def exclude_closed_conversations(query, viewer) do
-    # Exclude users from closed (not reopened) conversations — defense-in-depth
-    closed_subquery =
-      from(cc in ConversationClosure,
-        where:
-          (cc.closed_by_id == ^viewer.id or cc.other_user_id == ^viewer.id) and
-            is_nil(cc.reopened_at),
-        select:
-          fragment(
-            "CASE WHEN ? = ? THEN ? ELSE ? END",
-            cc.closed_by_id,
-            type(^viewer.id, :binary_id),
-            cc.other_user_id,
-            cc.closed_by_id
-          )
-      )
-
-    where(query, [u], u.id not in subquery(closed_subquery))
-  end
-
-  def exclude_recently_shown(query, viewer, list_type) do
-    cutoff = Settings.cooldown_cutoff_date()
-
-    recently_shown_subquery =
-      from(sv in SuggestionView,
-        where: sv.viewer_id == ^viewer.id,
-        where: sv.list_type == ^list_type,
-        where: sv.shown_at > ^cutoff,
-        select: sv.suggested_id
-      )
-
-    where(query, [u], u.id not in subquery(recently_shown_subquery))
-  end
-
-  def maybe_exclude_incomplete_profiles(query) do
-    if Settings.exclude_incomplete_profiles?() do
-      query
-      |> where([u], not is_nil(u.gender))
-      |> where([u], not is_nil(u.height) and u.height > 0)
-      |> has_approved_photo()
-    else
-      query
-    end
-  end
-
-  def has_approved_photo(query) do
-    # Check if user has at least one approved photo
-    approved_photo_subquery =
-      from(p in Animina.Photos.Photo,
-        where: p.owner_type == "user",
-        where: p.state == "approved",
-        select: %{owner_id: p.owner_id, count: 1}
-      )
-
-    query
-    |> join(:inner, [u], p in subquery(approved_photo_subquery), on: p.owner_id == u.id)
-    |> distinct([u], u.id)
-  end
-
-  def maybe_exclude_at_daily_limit(query) do
-    if Settings.popularity_enabled?() do
-      users_at_limit = Popularity.users_exceeding_daily_limit()
-
-      if Enum.empty?(users_at_limit) do
-        query
-      else
-        where(query, [u], u.id not in ^users_at_limit)
-      end
     else
       query
     end

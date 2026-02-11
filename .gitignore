@@ -53,5 +53,8 @@ npm-debug.log
 # User uploads (local development only)
 /uploads/
 
+# Generated seed avatars (downloaded at seed time, cached locally)
+/priv/static/images/seeds/avatars/**/*.jpg
+
 # macOS
 .DS_Store

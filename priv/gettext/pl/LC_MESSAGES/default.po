@@ -160,7 +160,7 @@ msgstr "Nazwa wyświetlana (2-50 znaków)"
 msgid "Diverse"
 msgstr "Inna"
 
-#: lib/animina_web/live/user_live/login.ex:20
+#: lib/animina_web/live/user_live/login.ex:22
 #, elixir-autogen, elixir-format
 msgid "Don't have an account?"
 msgstr "Nie masz konta?"
@@ -171,7 +171,7 @@ msgid "Email"
 msgstr "E-mail"
 
 #: lib/animina_web/live/user_live/forgot_password.ex:33
-#: lib/animina_web/live/user_live/login.ex:46
+#: lib/animina_web/live/user_live/login.ex:48
 #: lib/animina_web/live/user_live/registration.ex:220
 #, elixir-autogen, elixir-format
 msgid "Email address"
@@ -223,7 +223,7 @@ msgstr "System flag"
 msgid "Forgot your password"
 msgstr "Zapomniałeś/aś hasła"
 
-#: lib/animina_web/live/user_live/login.ex:90
+#: lib/animina_web/live/user_live/login.ex:92
 #, elixir-autogen, elixir-format
 msgid "Forgot your password?"
 msgstr "Zapomniałeś/aś hasła?"
@@ -303,8 +303,8 @@ msgid "Locations"
 msgstr "Lokalizacje"
 
 #: lib/animina_web/components/layouts.ex:452
-#: lib/animina_web/live/user_live/login.ex:17
-#: lib/animina_web/live/user_live/login.ex:65
+#: lib/animina_web/live/user_live/login.ex:19
+#: lib/animina_web/live/user_live/login.ex:67
 #, elixir-autogen, elixir-format
 msgid "Log in"
 msgstr "Zaloguj się"
@@ -422,7 +422,7 @@ msgstr "Nasz unikalny trójkolorowy system: białe flagi pokazują, kim jesteś.
 msgid "Partnership, affair or a good conversation – we don't judge."
 msgstr "Związek, przygoda czy dobra rozmowa – nie oceniamy."
 
-#: lib/animina_web/live/user_live/login.ex:54
+#: lib/animina_web/live/user_live/login.ex:56
 #, elixir-autogen, elixir-format
 msgid "Password"
 msgstr "Hasło"
@@ -462,7 +462,7 @@ msgstr "Osobowość się liczy"
 msgid "Please enter a valid 5-digit zip code"
 msgstr "Proszę wpisać prawidłowy 5-cyfrowy kod pocztowy"
 
-#: lib/animina_web/live/user_live/login.ex:29
+#: lib/animina_web/live/user_live/login.ex:31
 #, elixir-autogen, elixir-format
 msgid "Please re-authenticate to perform sensitive actions."
 msgstr "Proszę ponownie się uwierzytelnić, aby wykonać wrażliwe operacje."
@@ -509,7 +509,7 @@ msgid "Register"
 msgstr "Zarejestruj się"
 
 #: lib/animina_web/live/index_live.ex:366
-#: lib/animina_web/live/user_live/login.ex:25
+#: lib/animina_web/live/user_live/login.ex:27
 #, elixir-autogen, elixir-format
 msgid "Register now"
 msgstr "Zarejestruj się teraz"
@@ -1018,10 +1018,10 @@ msgstr "Dodaj rolę"
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/activity_logs_live.ex:232
 #: lib/animina_web/live/admin/admin_hub.ex:20
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:78
 #: lib/animina_web/live/admin/email_logs_live.ex:140
 #: lib/animina_web/live/admin/flags_ai_live.ex:164
-#: lib/animina_web/live/admin/flags_discovery_live.ex:98
-#: lib/animina_web/live/admin/flags_index_live.ex:31
+#: lib/animina_web/live/admin/flags_index_live.ex:29
 #: lib/animina_web/live/admin/flags_system_live.ex:76
 #: lib/animina_web/live/admin/logs_index_live.ex:30
 #: lib/animina_web/live/admin/ollama_logs_live.ex:341
@@ -1073,6 +1073,7 @@ msgstr "Usuń rolę"
 msgid "Role not found."
 msgstr "Rola nie została znaleziona."
 
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:87
 #: lib/animina_web/live/admin/user_roles_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Search users by email or name..."
@@ -1249,11 +1250,10 @@ msgstr "Aplikacja"
 #: lib/animina_web/components/love_emergency_component.ex:69
 #: lib/animina_web/components/moodboard_components.ex:556
 #: lib/animina_web/live/admin/flags_ai_live.ex:405
-#: lib/animina_web/live/admin/flags_discovery_live.ex:254
 #: lib/animina_web/live/admin/flags_system_live.ex:212
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
 #: lib/animina_web/live/admin/photo_reviews_live.ex:758
-#: lib/animina_web/live/messages_live.ex:209
+#: lib/animina_web/live/messages_live.ex:205
 #: lib/animina_web/live/user_live/avatar_upload.ex:267
 #: lib/animina_web/live/user_live/edit_locations.ex:54
 #: lib/animina_web/live/user_live/moodboard_editor.ex:507
@@ -1281,7 +1281,6 @@ msgstr "Lokalizacja zaktualizowana."
 
 #: lib/animina_web/components/moodboard_components.ex:559
 #: lib/animina_web/live/admin/flags_ai_live.ex:408
-#: lib/animina_web/live/admin/flags_discovery_live.ex:257
 #: lib/animina_web/live/admin/flags_system_live.ex:215
 #: lib/animina_web/live/user_live/edit_locations.ex:47
 #: lib/animina_web/live/user_live/moodboard_editor.ex:514
@@ -1290,7 +1289,7 @@ msgstr "Lokalizacja zaktualizowana."
 msgid "Save"
 msgstr "Zapisz"
 
-#: lib/animina_web/live/messages_live.ex:308
+#: lib/animina_web/live/messages_live.ex:304
 #: lib/animina_web/live/user_live/profile_moodboard.ex:64
 #: lib/animina_web/live/user_live/profile_moodboard.ex:275
 #, elixir-autogen, elixir-format
@@ -3342,7 +3341,7 @@ msgstr "Auto"
 msgid "Auto-approve"
 msgstr "Automatyczne zatwierdzanie"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:85
+#: lib/animina_web/live/admin/flags_index_live.ex:68
 #, elixir-autogen, elixir-format
 msgid "Auto-approve skips the check and returns a preset value"
 msgstr "Automatyczne zatwierdzanie pomija sprawdzenie i zwraca ustawioną wartość"
@@ -3362,34 +3361,31 @@ msgstr "Nie udało się zapisać ustawień."
 msgid "Delay (ms)"
 msgstr "Opóźnienie (ms)"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:86
+#: lib/animina_web/live/admin/flags_index_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Delays simulate slow processing for UX testing"
 msgstr "Opóźnienia symulują wolne przetwarzanie do testów UX"
 
 #: lib/animina_web/live/admin/admin_hub.ex:66
 #: lib/animina_web/live/admin/flags_ai_live.ex:167
-#: lib/animina_web/live/admin/flags_discovery_live.ex:101
-#: lib/animina_web/live/admin/flags_index_live.ex:15
-#: lib/animina_web/live/admin/flags_index_live.ex:28
+#: lib/animina_web/live/admin/flags_index_live.ex:14
+#: lib/animina_web/live/admin/flags_index_live.ex:26
 #: lib/animina_web/live/admin/flags_system_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "Feature Flags"
 msgstr "Flagi funkcji"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:82
+#: lib/animina_web/live/admin/flags_index_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "How it works"
 msgstr "Jak to działa"
 
 #: lib/animina_web/helpers/feature_flag_helpers.ex:37
-#: lib/animina_web/live/admin/flags_discovery_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "Off"
 msgstr "Wył."
 
 #: lib/animina_web/helpers/feature_flag_helpers.ex:30
-#: lib/animina_web/live/admin/flags_discovery_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "On"
 msgstr "Wł."
@@ -3404,7 +3400,7 @@ msgstr "Ustawienia zapisane."
 msgid "Skip this check and return a preset value"
 msgstr "Pomiń to sprawdzenie i zwróć ustawioną wartość"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:84
+#: lib/animina_web/live/admin/flags_index_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Toggle switches enable/disable processing steps"
 msgstr "Przełączniki włączają/wyłączają etapy przetwarzania"
@@ -3452,7 +3448,7 @@ msgstr "Nie udało się usunąć wpisu."
 
 #: lib/animina_web/components/chat_panel_component.ex:320
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:227
-#: lib/animina_web/live/messages_live.ex:427
+#: lib/animina_web/live/messages_live.ex:423
 #: lib/animina_web/live/user_live/moodboard_editor.ex:571
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -4027,8 +4023,6 @@ msgstr "Nie udało się zapisać ustawienia."
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:211
 #: lib/animina_web/live/admin/flags_ai_live.ex:392
-#: lib/animina_web/live/admin/flags_discovery_live.ex:145
-#: lib/animina_web/live/admin/flags_discovery_live.ex:242
 #: lib/animina_web/live/admin/flags_system_live.ex:116
 #: lib/animina_web/live/admin/flags_system_live.ex:200
 #, elixir-autogen, elixir-format
@@ -4040,7 +4034,7 @@ msgstr "Domyślnie: %{default}, Zakres: %{min}-%{max}"
 msgid "Setting saved."
 msgstr "Ustawienie zapisane."
 
-#: lib/animina_web/live/admin/flags_index_live.ex:52
+#: lib/animina_web/live/admin/flags_index_live.ex:50
 #: lib/animina_web/live/admin/flags_system_live.ex:14
 #: lib/animina_web/live/admin/flags_system_live.ex:81
 #: lib/animina_web/live/admin/flags_system_live.ex:85
@@ -4049,7 +4043,6 @@ msgid "System Settings"
 msgstr "Ustawienia systemowe"
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:365
-#: lib/animina_web/live/admin/flags_discovery_live.ex:215
 #: lib/animina_web/live/admin/flags_system_live.ex:173
 #, elixir-autogen, elixir-format
 msgid "Value"
@@ -4112,15 +4105,13 @@ msgstr "Sukces"
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:220
 #: lib/animina_web/live/admin/flags_ai_live.ex:376
-#: lib/animina_web/live/admin/flags_discovery_live.ex:154
-#: lib/animina_web/live/admin/flags_discovery_live.ex:226
 #: lib/animina_web/live/admin/flags_system_live.ex:112
 #: lib/animina_web/live/admin/flags_system_live.ex:184
 #, elixir-autogen, elixir-format
 msgid "Default: %{default}"
 msgstr "Domyślnie: %{default}"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:29
+#: lib/animina_web/live/admin/flags_index_live.ex:27
 #, elixir-autogen, elixir-format
 msgid "Control feature flags and system settings."
 msgstr "Zarządzaj flagami funkcji i ustawieniami systemowymi."
@@ -4205,26 +4196,25 @@ msgstr "prywatne"
 #: lib/animina_web/live/admin/flags_ai_live.ex:23
 #: lib/animina_web/live/admin/flags_ai_live.ex:169
 #: lib/animina_web/live/admin/flags_ai_live.ex:173
-#: lib/animina_web/live/admin/flags_index_live.ex:37
+#: lib/animina_web/live/admin/flags_index_live.ex:35
 #, elixir-autogen, elixir-format
 msgid "AI / Ollama"
 msgstr "AI / Ollama"
 
-#: lib/animina_web/live/admin/flags_index_live.ex:53
+#: lib/animina_web/live/admin/flags_index_live.ex:51
 #: lib/animina_web/live/admin/flags_system_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "Application configuration"
 msgstr "Konfiguracja aplikacji"
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:182
-#: lib/animina_web/live/admin/flags_discovery_live.ex:118
 #: lib/animina_web/live/admin/flags_system_live.ex:94
 #, elixir-autogen, elixir-format
 msgid "No results found for \"%{query}\""
 msgstr "Nie znaleziono wyników dla \"%{query}\""
 
 #: lib/animina_web/live/admin/flags_ai_live.ex:174
-#: lib/animina_web/live/admin/flags_index_live.ex:38
+#: lib/animina_web/live/admin/flags_index_live.ex:36
 #, elixir-autogen, elixir-format
 msgid "Photo analysis and debug settings"
 msgstr "Analiza zdjęć i ustawienia debugowania"
@@ -4235,50 +4225,30 @@ msgid "Search flags and settings..."
 msgstr "Szukaj flag i ustawień..."
 
 #: lib/animina_web/components/layouts.ex:288
-#: lib/animina_web/live/discover_live.ex:36
-#: lib/animina_web/live/messages_live.ex:144
-#: lib/animina_web/live/user_live/my_hub.ex:27
+#: lib/animina_web/live/discover_live.ex:26
+#: lib/animina_web/live/discover_live.ex:130
+#: lib/animina_web/live/user_live/my_hub.ex:34
 #, elixir-autogen, elixir-format
 msgid "Discover"
 msgstr "Odkrywaj"
-
-#: lib/animina_web/live/discover_live.ex:444
-#, elixir-autogen, elixir-format
-msgid "Failed to dismiss user"
-msgstr "Nie udało się odrzucić użytkownika"
-
-#: lib/animina_web/live/discover_live.ex:121
-#, elixir-autogen, elixir-format
-msgid "No suggestions available"
-msgstr "Brak dostępnych propozycji"
-
-#: lib/animina_web/live/discover_live.ex:370
-#, elixir-autogen, elixir-format
-msgid "Not interested"
-msgstr "Nie jestem zainteresowany/a"
-
-#: lib/animina_web/live/discover_live.ex:364
-#, elixir-autogen, elixir-format
-msgid "View Profile"
-msgstr "Zobacz profil"
 
 #: lib/animina_web/live/messages_live.ex:66
 #, elixir-autogen, elixir-format
 msgid "Blocked"
 msgstr "Zablokowany"
 
-#: lib/animina_web/live/messages_live.ex:700
+#: lib/animina_web/live/messages_live.ex:696
 #, elixir-autogen, elixir-format
 msgid "Conversation not found"
 msgstr "Nie znaleziono rozmowy"
 
-#: lib/animina_web/live/messages_live.ex:776
-#: lib/animina_web/live/messages_live.ex:786
+#: lib/animina_web/live/messages_live.ex:772
+#: lib/animina_web/live/messages_live.ex:782
 #, elixir-autogen, elixir-format
 msgid "Could not start conversation"
 msgstr "Nie udało się rozpocząć rozmowy"
 
-#: lib/animina_web/live/messages_live.ex:815
+#: lib/animina_web/live/messages_live.ex:811
 #, elixir-autogen, elixir-format
 msgid "Failed to send message"
 msgstr "Nie udało się wysłać wiadomości"
@@ -4287,9 +4257,9 @@ msgstr "Nie udało się wysłać wiadomości"
 #: lib/animina_web/live/messages_live.ex:39
 #: lib/animina_web/live/messages_live.ex:127
 #: lib/animina_web/live/messages_live.ex:131
-#: lib/animina_web/live/messages_live.ex:632
-#: lib/animina_web/live/messages_live.ex:680
-#: lib/animina_web/live/user_live/my_hub.ex:34
+#: lib/animina_web/live/messages_live.ex:628
+#: lib/animina_web/live/messages_live.ex:676
+#: lib/animina_web/live/user_live/my_hub.ex:27
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "Wiadomości"
@@ -4322,21 +4292,21 @@ msgstr "Napisz wiadomość..."
 
 #: lib/animina_web/components/chat_panel_component.ex:638
 #: lib/animina_web/components/chat_panel_component.ex:652
-#: lib/animina_web/live/messages_live.ex:498
-#: lib/animina_web/live/messages_live.ex:516
-#: lib/animina_web/live/messages_live.ex:613
+#: lib/animina_web/live/messages_live.ex:494
+#: lib/animina_web/live/messages_live.ex:512
+#: lib/animina_web/live/messages_live.ex:609
 #, elixir-autogen, elixir-format
 msgid "Yesterday"
 msgstr "Wczoraj"
 
 #: lib/animina_web/components/message_components.ex:48
-#: lib/animina_web/live/messages_live.ex:812
+#: lib/animina_web/live/messages_live.ex:808
 #, elixir-autogen, elixir-format
 msgid "You cannot send messages in this conversation"
 msgstr "Nie możesz wysyłać wiadomości w tej rozmowie"
 
 #: lib/animina_web/components/chat_panel_component.ex:293
-#: lib/animina_web/live/messages_live.ex:397
+#: lib/animina_web/live/messages_live.ex:393
 #, elixir-autogen, elixir-format
 msgid "edited"
 msgstr "edytowane"
@@ -4347,71 +4317,47 @@ msgstr "edytowane"
 msgid "typing..."
 msgstr "pisze..."
 
-#: lib/animina_web/live/messages_live.ex:855
+#: lib/animina_web/live/messages_live.ex:851
 #, elixir-autogen, elixir-format
 msgid "Cannot delete a message that has been read"
 msgstr "Nie można usunąć wiadomości, która została przeczytana"
 
 #: lib/animina_web/components/chat_panel_component.ex:318
-#: lib/animina_web/live/messages_live.ex:425
+#: lib/animina_web/live/messages_live.ex:421
 #, elixir-autogen, elixir-format
 msgid "Delete this message?"
 msgstr "Usunąć tę wiadomość?"
 
-#: lib/animina_web/live/messages_live.ex:858
+#: lib/animina_web/live/messages_live.ex:854
 #, elixir-autogen, elixir-format
 msgid "Failed to delete message"
 msgstr "Nie udało się usunąć wiadomości"
 
-#: lib/animina_web/live/messages_live.ex:600
+#: lib/animina_web/live/messages_live.ex:596
 #, elixir-autogen, elixir-format
 msgid "Read"
 msgstr "Przeczytane"
 
 #: lib/animina_web/components/chat_panel_component.ex:637
-#: lib/animina_web/live/messages_live.ex:515
+#: lib/animina_web/live/messages_live.ex:511
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr "Dzisiaj"
 
 #: lib/animina_web/components/chat_panel_component.ex:650
-#: lib/animina_web/live/messages_live.ex:611
+#: lib/animina_web/live/messages_live.ex:607
 #, elixir-autogen, elixir-format
 msgid "just now"
 msgstr "przed chwilą"
 
-#: lib/animina_web/live/admin/flags_discovery_live.ex:15
-#: lib/animina_web/live/admin/flags_discovery_live.ex:103
-#: lib/animina_web/live/admin/flags_discovery_live.ex:107
-#: lib/animina_web/live/admin/flags_index_live.ex:67
-#, elixir-autogen, elixir-format
-msgid "Discovery / Matching"
-msgstr "Odkrywanie / Dopasowywanie"
-
-#: lib/animina_web/live/admin/flags_discovery_live.ex:109
-#: lib/animina_web/live/admin/flags_index_live.ex:68
-#, elixir-autogen, elixir-format
-msgid "Partner suggestion algorithm tuning"
-msgstr "Dostrajanie algorytmu sugestii partnerów"
-
-#: lib/animina_web/live/discover_live.ex:316
-#, elixir-autogen, elixir-format
-msgid "Chat"
-msgstr "Czat"
-
-#: lib/animina_web/live/discover_live.ex:309
-#, elixir-autogen, elixir-format
-msgid "Visited"
-msgstr "Odwiedzony"
-
-#: lib/animina_web/live/messages_live.ex:603
+#: lib/animina_web/live/messages_live.ex:599
 #, elixir-autogen, elixir-format
 msgid "Read %{time}"
 msgstr "Przeczytane %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:304
 #: lib/animina_web/live/admin/email_logs_live.ex:198
-#: lib/animina_web/live/messages_live.ex:411
+#: lib/animina_web/live/messages_live.ex:407
 #: lib/animina_web/live/user_live/email_logs.ex:155
 #, elixir-autogen, elixir-format
 msgid "Sent"
@@ -4427,31 +4373,6 @@ msgstr "Wiadomość"
 msgid "Open full chat"
 msgstr "Otwórz pełny czat"
 
-#: lib/animina_web/live/discover_live.ex:302
-#, elixir-autogen, elixir-format
-msgid "Wildcard"
-msgstr "Dzika karta"
-
-#: lib/animina_web/live/discover_live.ex:153
-#, elixir-autogen, elixir-format
-msgid "Wildcards"
-msgstr "Dzikie karty"
-
-#: lib/animina_web/live/discover_live.ex:108
-#, elixir-autogen, elixir-format
-msgid "Your Matches"
-msgstr "Twoje dopasowania"
-
-#: lib/animina_web/live/discover_live.ex:164
-#, elixir-autogen, elixir-format
-msgid "No wildcards available right now"
-msgstr "Brak dzikich kart w tej chwili"
-
-#: lib/animina_web/live/discover_live.ex:156
-#, elixir-autogen, elixir-format
-msgid "Random picks from your area — no flag matching applied."
-msgstr "Losowe wybory z Twojej okolicy — bez dopasowywania flag."
-
 #: lib/animina_web/live/user_live/profile_moodboard.ex:54
 #, elixir-autogen, elixir-format
 msgid "This profile was suggested randomly and may not match your preferences."
@@ -4462,7 +4383,7 @@ msgstr "Ten profil został zaproponowany losowo i może nie odpowiadać Twoim pr
 msgid "Wildcard pick"
 msgstr "Losowy wybór"
 
-#: lib/animina_web/live/messages_live.ex:251
+#: lib/animina_web/live/messages_live.ex:247
 #, elixir-autogen, elixir-format
 msgid "Draft:"
 msgstr "Szkic:"
@@ -4616,73 +4537,53 @@ msgstr "Twoje prawo do usunięcia konta w dowolnym momencie"
 msgid "and the"
 msgstr "oraz"
 
-#: lib/animina_web/live/discover_live.ex:81
-#, elixir-autogen, elixir-format
-msgid "\"Let go\" of a conversation in your messages to see new discoveries."
-msgstr "\"Puść\" rozmowę w wiadomościach, aby zobaczyć nowe odkrycia."
-
 #: lib/animina_web/components/love_emergency_component.ex:61
 #, elixir-autogen, elixir-format
 msgid "%{selected}/%{cost} selected"
 msgstr "%{selected}/%{cost} wybranych"
 
-#: lib/animina_web/live/discover_live.ex:78
-#, elixir-autogen, elixir-format
-msgid "All chat slots are full"
-msgstr "Wszystkie miejsca czatu są zajęte"
-
-#: lib/animina_web/live/messages_live.ex:882
+#: lib/animina_web/live/messages_live.ex:878
 #, elixir-autogen, elixir-format
 msgid "Conversation closed"
 msgstr "Rozmowa zamknięta"
 
-#: lib/animina_web/live/messages_live.ex:1083
+#: lib/animina_web/live/messages_live.ex:1079
 #, elixir-autogen, elixir-format
 msgid "Conversation reopened!"
 msgstr "Rozmowa ponownie otwarta!"
 
-#: lib/animina_web/live/messages_live.ex:168
+#: lib/animina_web/live/messages_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Conversations you've let go of. You can reopen one via Love Emergency."
 msgstr "Rozmowy, które puściłeś/aś. Możesz je ponownie otworzyć przez Miłosny Alarm."
 
-#: lib/animina_web/live/messages_live.ex:896
+#: lib/animina_web/live/messages_live.ex:892
 #, elixir-autogen, elixir-format
 msgid "Failed to close conversation"
 msgstr "Nie udało się zamknąć rozmowy"
 
-#: lib/animina_web/live/messages_live.ex:1093
+#: lib/animina_web/live/messages_live.ex:1089
 #, elixir-autogen, elixir-format
 msgid "Failed to reopen conversation"
 msgstr "Nie udało się ponownie otworzyć rozmowy"
 
-#: lib/animina_web/live/discover_live.ex:84
-#, elixir-autogen, elixir-format
-msgid "Go to Messages"
-msgstr "Przejdź do wiadomości"
-
-#: lib/animina_web/live/discover_live.ex:42
-#, elixir-autogen, elixir-format
-msgid "How Discovery Works"
-msgstr "Jak działa odkrywanie"
-
-#: lib/animina_web/live/messages_live.ex:213
+#: lib/animina_web/live/messages_live.ex:209
 #, elixir-autogen, elixir-format
 msgid "Let Go"
 msgstr "Puść"
 
-#: lib/animina_web/live/messages_live.ex:164
+#: lib/animina_web/live/messages_live.ex:160
 #, elixir-autogen, elixir-format
 msgid "Let Go Archive"
 msgstr "Archiwum puszczeń"
 
 #: lib/animina_web/live/messages_live.ex:73
-#: lib/animina_web/live/messages_live.ex:277
+#: lib/animina_web/live/messages_live.ex:273
 #, elixir-autogen, elixir-format
 msgid "Let go"
 msgstr "Puść"
 
-#: lib/animina_web/live/messages_live.ex:202
+#: lib/animina_web/live/messages_live.ex:198
 #, elixir-autogen, elixir-format
 msgid "Let go of this conversation?"
 msgstr "Puścić tę rozmowę?"
@@ -4691,11 +4592,6 @@ msgstr "Puścić tę rozmowę?"
 #, elixir-autogen, elixir-format
 msgid "Love Emergency"
 msgstr "Miłosny alarm"
-
-#: lib/animina_web/live/discover_live.ex:98
-#, elixir-autogen, elixir-format
-msgid "New discoveries will be available tomorrow."
-msgstr "Nowe odkrycia będą dostępne jutro."
 
 #: lib/animina_web/live/user_live/profile_moodboard.ex:110
 #, elixir-autogen, elixir-format
@@ -4707,7 +4603,7 @@ msgstr "Brak wolnych miejsc czatu"
 msgid "No free slots"
 msgstr "Brak wolnych miejsc"
 
-#: lib/animina_web/live/messages_live.ex:320
+#: lib/animina_web/live/messages_live.ex:316
 #: lib/animina_web/live/user_live/profile_moodboard.ex:122
 #, elixir-autogen, elixir-format
 msgid "Reopen"
@@ -4718,23 +4614,18 @@ msgstr "Otwórz ponownie"
 msgid "Reopen Conversation"
 msgstr "Ponownie otwórz rozmowę"
 
-#: lib/animina_web/live/messages_live.ex:317
+#: lib/animina_web/live/messages_live.ex:313
 #, elixir-autogen, elixir-format
 msgid "Reopen by closing %{cost} other conversations"
 msgstr "Ponownie otwórz zamykając %{cost} innych rozmów"
 
-#: lib/animina_web/live/discover_live.ex:57
-#, elixir-autogen, elixir-format
-msgid "Take your time — choose who you really want to talk to."
-msgstr "Nie spiesz się — wybierz, z kim naprawdę chcesz rozmawiać."
-
 #: lib/animina_web/components/chat_panel_component.ex:449
-#: lib/animina_web/live/messages_live.ex:773
+#: lib/animina_web/live/messages_live.ex:769
 #, elixir-autogen, elixir-format
 msgid "This conversation was previously closed."
 msgstr "Ta rozmowa została wcześniej zamknięta."
 
-#: lib/animina_web/live/messages_live.ex:205
+#: lib/animina_web/live/messages_live.ex:201
 #, elixir-autogen, elixir-format
 msgid "This is permanent. Both of you will no longer see each other in discovery."
 msgstr "To jest trwałe. Żadne z was nie będzie już widziało drugiego w odkrywaniu."
@@ -4744,46 +4635,16 @@ msgstr "To jest trwałe. Żadne z was nie będzie już widziało drugiego w odkr
 msgid "To reopen this conversation, you must let go of %{cost} active conversations. Select exactly %{cost} below."
 msgstr "Aby ponownie otworzyć tę rozmowę, musisz puścić %{cost} aktywnych rozmów. Wybierz dokładnie %{cost} poniżej."
 
-#: lib/animina_web/live/discover_live.ex:59
-#, elixir-autogen, elixir-format
-msgid "You can \"Let go\" of a conversation in your messages to free a slot."
-msgstr "Możesz \"Puścić\" rozmowę w wiadomościach, aby zwolnić miejsce."
-
-#: lib/animina_web/live/discover_live.ex:51
-#, elixir-autogen, elixir-format
-msgid "You can have up to %{max} active conversations. Each day, you can start up to %{daily} new ones."
-msgstr "Możesz mieć do %{max} aktywnych rozmów. Każdego dnia możesz rozpocząć do %{daily} nowych."
-
 #: lib/animina_web/components/chat_panel_component.ex:443
-#: lib/animina_web/live/messages_live.ex:769
+#: lib/animina_web/live/messages_live.ex:765
 #, elixir-autogen, elixir-format
 msgid "You have no free chat slots. Let go of a conversation first."
 msgstr "Nie masz wolnych miejsc czatu. Najpierw puść rozmowę."
-
-#: lib/animina_web/live/discover_live.ex:95
-#, elixir-autogen, elixir-format
-msgid "You've reached today's limit"
-msgstr "Osiągnięto dzisiejszy limit"
-
-#: lib/animina_web/live/discover_live.ex:129
-#, elixir-autogen, elixir-format
-msgid "Adjust Preferences"
-msgstr "Dostosuj preferencje"
 
 #: lib/animina_web/components/live_unread_badge_component.ex:53
 #, elixir-autogen, elixir-format
 msgid "New chats available today"
 msgstr "Nowe czaty dostępne dzisiaj"
-
-#: lib/animina_web/live/discover_live.ex:166
-#, elixir-autogen, elixir-format
-msgid "New wildcards are generated daily — check back tomorrow."
-msgstr "Nowe dzikie karty są generowane codziennie — sprawdź jutro."
-
-#: lib/animina_web/live/discover_live.ex:123
-#, elixir-autogen, elixir-format
-msgid "Try adjusting your preferences to expand your search."
-msgstr "Spróbuj dostosować preferencje, aby poszerzyć wyszukiwanie."
 
 #: lib/animina_web/live/user_live/waitlist.ex:38
 #: lib/animina_web/live/user_live/waitlist.ex:54
@@ -4885,13 +4746,13 @@ msgstr "Klucze dostępu"
 msgid "Sign in with Face ID, Touch ID, or a security key — faster and more secure than passwords."
 msgstr "Zaloguj się za pomocą Face ID, Touch ID lub klucza bezpieczeństwa — szybciej i bezpieczniej niż hasła."
 
-#: lib/animina_web/live/user_live/login.ex:80
+#: lib/animina_web/live/user_live/login.ex:82
 #, elixir-autogen, elixir-format
 msgid "Sign in with passkey"
 msgstr "Zaloguj się kluczem dostępu"
 
 #: lib/animina_web/live/components/account_passkeys_component.ex:36
-#: lib/animina_web/live/user_live/login.ex:78
+#: lib/animina_web/live/user_live/login.ex:80
 #, elixir-autogen, elixir-format
 msgid "Waiting for device..."
 msgstr "Oczekiwanie na urządzenie..."
@@ -4901,7 +4762,7 @@ msgstr "Oczekiwanie na urządzenie..."
 msgid "Your browser does not support passkeys."
 msgstr "Twoja przeglądarka nie obsługuje kluczy dostępu."
 
-#: lib/animina_web/live/user_live/login.ex:70
+#: lib/animina_web/live/user_live/login.ex:72
 #, elixir-autogen, elixir-format
 msgid "or"
 msgstr "lub"
@@ -5387,7 +5248,7 @@ msgid "Log of all emails sent by the system"
 msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:235
-#: lib/animina_web/live/admin/admin_hub.ex:72
+#: lib/animina_web/live/admin/admin_hub.ex:78
 #: lib/animina_web/live/admin/email_logs_live.ex:143
 #: lib/animina_web/live/admin/logs_index_live.ex:17
 #: lib/animina_web/live/admin/logs_index_live.ex:29
@@ -5418,7 +5279,7 @@ msgstr ""
 msgid "Subject"
 msgstr ""
 
-#: lib/animina_web/live/admin/admin_hub.ex:73
+#: lib/animina_web/live/admin/admin_hub.ex:79
 #: lib/animina_web/live/admin/logs_index_live.ex:29
 #, elixir-autogen, elixir-format
 msgid "System log viewers"
@@ -5901,7 +5762,7 @@ msgstr ""
 msgid "Filter by this user"
 msgstr ""
 
-#: lib/animina_web/live/user_live/login.ex:79
+#: lib/animina_web/live/user_live/login.ex:81
 #, elixir-autogen, elixir-format
 msgid "Re-authenticate with passkey"
 msgstr ""
@@ -5922,7 +5783,7 @@ msgstr ""
 msgid "Assign admin and moderator roles"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:28
+#: lib/animina_web/live/user_live/my_hub.ex:35
 #, elixir-autogen, elixir-format
 msgid "Find new people"
 msgstr ""
@@ -5935,12 +5796,6 @@ msgstr ""
 #: lib/animina_web/live/admin/admin_hub.ex:34
 #, elixir-autogen, elixir-format
 msgid "Manage your ANIMINA instance"
-msgstr ""
-
-#: lib/animina_web/live/user_live/account_passkeys.ex:16
-#: lib/animina_web/live/user_live/logs_hub.ex:17
-#, elixir-autogen, elixir-format
-msgid "My ANIMINA"
 msgstr ""
 
 #: lib/animina_web/live/admin/admin_hub.ex:43
@@ -5969,7 +5824,7 @@ msgstr ""
 msgid "Your account is on the waitlist"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:35
+#: lib/animina_web/live/user_live/my_hub.ex:28
 #, elixir-autogen, elixir-format
 msgid "Your conversations"
 msgstr ""
@@ -6169,11 +6024,6 @@ msgstr ""
 msgid "Confirm Your PIN"
 msgstr "Potwierdź"
 
-#: lib/animina_web/live/discover_live.ex:387
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Discover People"
-msgstr "Odkrywaj"
-
 #: lib/animina_web/live/user_live/traits_wizard.ex:370
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Flags — About Me"
@@ -6199,7 +6049,7 @@ msgstr "Zapomniałeś/aś hasła"
 msgid "Language Settings"
 msgstr "Język"
 
-#: lib/animina_web/live/user_live/login.ex:177
+#: lib/animina_web/live/user_live/login.ex:182
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log In"
 msgstr "Zaloguj się"
@@ -6212,9 +6062,11 @@ msgstr "Zaloguj się"
 #: lib/animina_web/live/user_live/account_delete.ex:16
 #: lib/animina_web/live/user_live/account_email_password.ex:19
 #: lib/animina_web/live/user_live/account_hub.ex:22
+#: lib/animina_web/live/user_live/account_passkeys.ex:16
 #: lib/animina_web/live/user_live/account_sessions.ex:16
 #: lib/animina_web/live/user_live/email_logs.ex:106
 #: lib/animina_web/live/user_live/login_history.ex:190
+#: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
 #: lib/animina_web/live/user_live/my_hub.ex:17
 #: lib/animina_web/live/user_live/my_hub.ex:79
@@ -6254,4 +6106,53 @@ msgstr "Zresetuj hasło"
 #: lib/animina_web/live/user_live/registration.ex:542
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Secure Your Spot"
+msgstr ""
+
+#: lib/animina_web/live/discover_live.ex:37
+#, elixir-autogen, elixir-format
+msgid "Candidates"
+msgstr ""
+
+#: lib/animina_web/live/discover_live.ex:40
+#, elixir-autogen, elixir-format
+msgid "from %{count} in your area"
+msgstr ""
+
+#: lib/animina_web/live/admin/admin_hub.ex:73
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:76
+#, elixir-autogen, elixir-format
+msgid "Analyze filter pipeline for any user"
+msgstr ""
+
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:130
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Count"
+msgstr "Kraj"
+
+#: lib/animina_web/live/admin/admin_hub.ex:72
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:15
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:28
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:75
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Discovery Funnel"
+msgstr "Odkrywaj"
+
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:131
+#, elixir-autogen, elixir-format
+msgid "Drop"
+msgstr ""
+
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:132
+#, elixir-autogen, elixir-format
+msgid "Drop %"
+msgstr ""
+
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:158
+#, elixir-autogen, elixir-format
+msgid "Select a user to analyze their discovery funnel."
+msgstr ""
+
+#: lib/animina_web/live/admin/discovery_funnel_live.ex:129
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Step"
 msgstr ""

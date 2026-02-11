@@ -121,7 +121,9 @@ defmodule AniminaWeb.Router do
       live "/my/logs/logins", UserLive.LoginHistory, :index
 
       live "/my/waitlist", UserLive.Waitlist
-      live "/discover", DiscoverLive
+
+      live "/my/discover", DiscoverLive
+
       live "/my/messages", MessagesLive, :index
       live "/my/messages/:conversation_id", MessagesLive, :show
     end
@@ -140,7 +142,10 @@ defmodule AniminaWeb.Router do
       live "/admin/flags", Admin.FlagsIndexLive
       live "/admin/flags/ai", Admin.FlagsAiLive
       live "/admin/flags/system", Admin.FlagsSystemLive
-      live "/admin/flags/discovery", Admin.FlagsDiscoveryLive
+
+      live "/admin/discovery/funnel", Admin.DiscoveryFunnelLive
+      live "/admin/discovery/funnel/:user_id", Admin.DiscoveryFunnelLive
+
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
       live "/admin/logs", Admin.LogsIndexLive
       live "/admin/logs/emails", Admin.EmailLogsLive

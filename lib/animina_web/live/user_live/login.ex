@@ -3,6 +3,8 @@ defmodule AniminaWeb.UserLive.Login do
 
   import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1]
 
+  alias Animina.Discovery.CandidatePool
+
   @dev_routes Application.compile_env(:animina, :dev_routes)
   @dev_password "password12345"
 
@@ -108,7 +110,7 @@ defmodule AniminaWeb.UserLive.Login do
         <p class="text-xs text-base-content/60">Click to log in instantly</p>
       </div>
 
-      <div class="max-h-80 overflow-y-auto">
+      <div>
         <div class="grid grid-cols-2 gap-1">
           <.dev_user_button :for={user <- @dev_users} user={user} />
         </div>
@@ -133,6 +135,9 @@ defmodule AniminaWeb.UserLive.Login do
         <span class="flex-shrink-0">{gender_icon(@user.gender)}</span>
         <span class="truncate flex-1 font-medium">{@user.display_name}</span>
         <span class="text-base-content/60">{@user.age}</span>
+        <span class="px-1 py-0.5 text-[10px] bg-primary/15 text-primary rounded font-mono">
+          {@user.pool_size}
+        </span>
         <.role_badges roles={@user.roles} />
       </button>
     </form>
@@ -262,7 +267,7 @@ defmodule AniminaWeb.UserLive.Login do
         where: like(u.email, "dev-%@animina.test"),
         where: is_nil(u.deleted_at),
         left_join: r in assoc(u, :user_roles),
-        preload: [user_roles: r],
+        preload: [user_roles: r, locations: []],
         order_by: [asc: u.gender, asc: u.display_name]
       )
 
@@ -274,12 +279,20 @@ defmodule AniminaWeb.UserLive.Login do
         user.user_roles
         |> Enum.map(fn ur -> String.to_atom(ur.role) end)
 
+      pool_size =
+        try do
+          user |> CandidatePool.build() |> length()
+        rescue
+          _ -> 0
+        end
+
       %{
         email: user.email,
         display_name: user.display_name,
         gender: user.gender,
         age: age,
-        roles: roles
+        roles: roles,
+        pool_size: pool_size
       }
     end)
   end

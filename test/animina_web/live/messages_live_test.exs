@@ -29,18 +29,6 @@ defmodule AniminaWeb.MessagesLiveTest do
       assert html =~ "No conversations yet"
     end
 
-    test "empty state has a link to discover page", %{conn: conn} do
-      user = user_fixture(language: "en")
-
-      {:ok, _lv, html} =
-        conn
-        |> log_in_user(user)
-        |> live(~p"/my/messages")
-
-      assert html =~ ~s|href="/discover"|
-      assert html =~ "Discover"
-    end
-
     test "shows conversation list when conversations exist", %{conn: conn} do
       user1 = user_fixture(language: "en", display_name: "Alice")
       user2 = user_fixture(language: "en", display_name: "Bob")
