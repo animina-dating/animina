@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.AccountPasskeys do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
             </li>
             <li>
               <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
@@ -53,7 +53,7 @@ defmodule AniminaWeb.UserLive.AccountPasskeys do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Passkeys"))
+      |> assign(:page_title, gettext("Passkey Management"))
       |> assign(:user, user)
       |> assign(:passkeys, passkeys)
       |> assign(:registering, false)

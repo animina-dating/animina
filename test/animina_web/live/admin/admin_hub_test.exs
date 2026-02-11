@@ -33,7 +33,7 @@ defmodule AniminaWeb.Admin.AdminHubTest do
       conn = log_in_user(conn, admin, current_role: "admin")
       {:ok, lv, _html} = live(conn, ~p"/admin")
 
-      assert page_title(lv) == "Administration - ANIMINA"
+      assert page_title(lv) == "Admin - ANIMINA"
     end
 
     test "navigation links are present", %{conn: conn, admin: admin} do

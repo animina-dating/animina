@@ -17,7 +17,7 @@ defmodule AniminaWeb.Admin.AdminHub do
 
     {:ok,
      assign(socket,
-       page_title: gettext("Administration"),
+       page_title: gettext("Admin"),
        pending_reviews: pending_reviews,
        ollama_queue: ollama_queue
      )}

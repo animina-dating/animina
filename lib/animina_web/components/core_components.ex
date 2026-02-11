@@ -409,7 +409,7 @@ defmodule AniminaWeb.CoreComponents do
   def settings_header(assigns) do
     ~H"""
     <.page_header title={@title} subtitle={@subtitle}>
-      <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+      <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
       <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
     </.page_header>
     """
@@ -422,7 +422,7 @@ defmodule AniminaWeb.CoreComponents do
   def profile_header(assigns) do
     ~H"""
     <.page_header title={@title} subtitle={@subtitle}>
-      <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+      <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
       <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
       <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
     </.page_header>

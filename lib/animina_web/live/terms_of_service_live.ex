@@ -6,7 +6,7 @@ defmodule AniminaWeb.TermsOfServiceLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "AGB – ANIMINA")}
+    {:ok, assign(socket, page_title: "AGB")}
   end
 
   @impl true

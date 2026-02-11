@@ -18,7 +18,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
           title={gettext("Settings")}
           subtitle={gettext("Manage your account and app settings")}
         >
-          <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
         </.page_header>
 
         <div class="grid gap-3">

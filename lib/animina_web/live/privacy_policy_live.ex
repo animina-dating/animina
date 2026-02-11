@@ -6,7 +6,7 @@ defmodule AniminaWeb.PrivacyPolicyLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Datenschutzerklärung – ANIMINA")}
+    {:ok, assign(socket, page_title: "Datenschutzerklärung")}
   end
 
   @impl true

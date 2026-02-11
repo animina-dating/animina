@@ -28,7 +28,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           <div class="breadcrumbs text-sm">
             <ul>
               <li>
-                <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+                <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
               </li>
               <li>
                 <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>

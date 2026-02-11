@@ -384,7 +384,7 @@ defmodule AniminaWeb.DiscoverLive do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Discover"))
+      |> assign(:page_title, gettext("Discover People"))
       |> assign(:columns, ColumnPreferences.get_columns_for_user(user))
       |> assign(:loading, true)
       |> assign(:matches, [])

@@ -18,7 +18,7 @@ defmodule AniminaWeb.IndexLive do
     else
       {:ok,
        assign(socket,
-         page_title: gettext("Online-Dating 👫❤️"),
+         page_title: gettext("Online-Dating"),
          page_description:
            gettext(
              "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."

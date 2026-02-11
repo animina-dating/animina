@@ -103,7 +103,7 @@ defmodule AniminaWeb.UserLive.EmailLogs do
           <ul>
             <li>
               <.link navigate={~p"/my"} class="link link-hover">
-                {gettext("My ANIMINA")}
+                {gettext("My Hub")}
               </.link>
             </li>
             <li>

@@ -16,7 +16,7 @@ defmodule AniminaWeb.UserLive.AccountEmailPassword do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
             </li>
             <li>
               <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>

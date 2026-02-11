@@ -19,7 +19,7 @@ defmodule AniminaWeb.UserLive.AccountHub do
           title={gettext("Account & Security")}
           subtitle={gettext("Manage your email, password, passkeys, sessions, and account")}
         >
-          <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
           <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
         </.page_header>
 

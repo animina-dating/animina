@@ -17,7 +17,7 @@ defmodule AniminaWeb.IndexLiveTest do
       refute html =~ "Our Mission Statement"
     end
 
-    test "redirects waitlisted user to /users/waitlist", %{conn: conn} do
+    test "redirects waitlisted user to /my/waitlist", %{conn: conn} do
       user = user_fixture(%{language: "en", display_name: "Waitlisted User"})
       conn = log_in_user(conn, user)
 

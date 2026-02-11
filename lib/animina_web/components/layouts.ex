@@ -257,12 +257,12 @@ defmodule AniminaWeb.Layouts do
                         </div>
                       </a>
                     <% end %>
-                    <!-- My ANIMINA -->
+                    <!-- My Hub -->
                     <a
                       href="/my"
                       class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                     >
-                      {gettext("My ANIMINA")}
+                      {gettext("My Hub")}
                     </a>
                     <!-- Settings -->
                     <a

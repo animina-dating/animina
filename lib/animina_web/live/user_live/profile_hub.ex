@@ -17,7 +17,7 @@ defmodule AniminaWeb.UserLive.ProfileHub do
           title={gettext("My Profile")}
           subtitle={gettext("Build and manage your dating profile")}
         >
-          <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
           <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
         </.page_header>
 

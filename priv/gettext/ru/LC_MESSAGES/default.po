@@ -281,7 +281,6 @@ msgstr "Радость вместо зависимости"
 #: lib/animina_web/components/layouts.ex:132
 #: lib/animina_web/components/layouts.ex:414
 #: lib/animina_web/live/user_live/language_settings.ex:14
-#: lib/animina_web/live/user_live/language_settings.ex:51
 #: lib/animina_web/live/user_live/registration.ex:300
 #: lib/animina_web/live/user_live/settings_hub.ex:46
 #, elixir-autogen, elixir-format
@@ -297,7 +296,6 @@ msgstr[1] "Местоположения"
 msgstr[2] "Местоположений"
 
 #: lib/animina_web/live/user_live/edit_locations.ex:13
-#: lib/animina_web/live/user_live/edit_locations.ex:149
 #: lib/animina_web/live/user_live/profile_hub.ex:108
 #: lib/animina_web/live/user_live/registration.ex:494
 #, elixir-autogen, elixir-format
@@ -434,7 +432,7 @@ msgstr "Пароль"
 msgid "Password (min. 12 characters)"
 msgstr "Пароль (мин. 12 символов)"
 
-#: lib/animina_web/live/user_live/reset_password.ex:92
+#: lib/animina_web/live/user_live/reset_password.ex:99
 #, elixir-autogen, elixir-format
 msgid "Password has been reset successfully."
 msgstr "Пароль успешно сброшен."
@@ -607,8 +605,8 @@ msgstr "Истории вместо свайпов"
 msgid "That's a no-go"
 msgstr "Это неприемлемо"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:175
-#: lib/animina_web/live/user_live/pin_confirmation.ex:182
+#: lib/animina_web/live/user_live/pin_confirmation.ex:177
+#: lib/animina_web/live/user_live/pin_confirmation.ex:184
 #, elixir-autogen, elixir-format
 msgid "This confirmation link is invalid or expired."
 msgstr "Эта ссылка для подтверждения недействительна или истекла."
@@ -685,8 +683,8 @@ msgstr "На других платформах знакомств вы нико�
 msgid "Without labels"
 msgstr "Без ярлыков"
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:209
-#: lib/animina_web/live/user_live/pin_confirmation.ex:234
+#: lib/animina_web/live/user_live/pin_confirmation.ex:211
+#: lib/animina_web/live/user_live/pin_confirmation.ex:236
 #, elixir-autogen, elixir-format
 msgid "Wrong code. %{count} attempt remaining."
 msgid_plural "Wrong code. %{count} attempts remaining."
@@ -707,8 +705,8 @@ msgstr "Для доступа к этой странице необходимо 
 msgid "You must re-authenticate to access this page."
 msgstr "Для доступа к этой странице необходимо повторно авторизоваться."
 
-#: lib/animina_web/live/user_live/pin_confirmation.ex:200
-#: lib/animina_web/live/user_live/pin_confirmation.ex:247
+#: lib/animina_web/live/user_live/pin_confirmation.ex:202
+#: lib/animina_web/live/user_live/pin_confirmation.ex:249
 #, elixir-autogen, elixir-format
 msgid "Your account has been deleted. Please register again."
 msgstr "Ваш аккаунт был удалён. Пожалуйста, зарегистрируйтесь снова."
@@ -1019,6 +1017,7 @@ msgstr "Добавить роль"
 
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/activity_logs_live.ex:232
+#: lib/animina_web/live/admin/admin_hub.ex:20
 #: lib/animina_web/live/admin/email_logs_live.ex:140
 #: lib/animina_web/live/admin/flags_ai_live.ex:164
 #: lib/animina_web/live/admin/flags_discovery_live.ex:98
@@ -1241,21 +1240,6 @@ msgstr "Качества, которые ты хочешь видеть в па�
 #, elixir-autogen, elixir-format
 msgid "My Flags"
 msgstr "Мои флаги"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:370
-#, elixir-autogen, elixir-format
-msgid "My Flags — About Me"
-msgstr "Мои флаги — Обо мне"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:371
-#, elixir-autogen, elixir-format
-msgid "My Flags — I Like in a Partner"
-msgstr "Мои флаги — Что мне нравится в партнёре"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:372
-#, elixir-autogen, elixir-format
-msgid "My Flags — Partner Deal Breakers"
-msgstr "Мои флаги — Неприемлемое в партнёре"
 
 #: lib/animina_web/components/layouts.ex:281
 #, elixir-autogen, elixir-format
@@ -4252,7 +4236,6 @@ msgstr "Поиск флагов и настроек..."
 
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/live/discover_live.ex:36
-#: lib/animina_web/live/discover_live.ex:387
 #: lib/animina_web/live/messages_live.ex:144
 #: lib/animina_web/live/user_live/my_hub.ex:27
 #, elixir-autogen, elixir-format
@@ -4893,7 +4876,6 @@ msgstr "Ключ доступа удалён."
 #: lib/animina_web/live/user_live/account_hub.ex:36
 #: lib/animina_web/live/user_live/account_passkeys.ex:24
 #: lib/animina_web/live/user_live/account_passkeys.ex:30
-#: lib/animina_web/live/user_live/account_passkeys.ex:56
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr "Ключи доступа"
@@ -5358,11 +5340,6 @@ msgstr ""
 msgid "online"
 msgstr ""
 
-#: lib/animina_web/live/index_live.ex:21
-#, elixir-autogen, elixir-format
-msgid "Online-Dating 👫❤️"
-msgstr "Онлайн-знакомства 👫❤️"
-
 #: lib/animina_web/components/layouts/root.html.heex:14
 #: lib/animina_web/live/index_live.ex:23
 #, elixir-autogen, elixir-format
@@ -5418,7 +5395,6 @@ msgstr ""
 #: lib/animina_web/live/user_live/email_logs.ex:111
 #: lib/animina_web/live/user_live/login_history.ex:195
 #: lib/animina_web/live/user_live/logs_hub.ex:16
-#: lib/animina_web/live/user_live/logs_hub.ex:60
 #: lib/animina_web/live/user_live/my_hub.ex:53
 #, elixir-autogen, elixir-format
 msgid "Logs"
@@ -5936,7 +5912,6 @@ msgid "This passkey does not belong to your account."
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:304
-#: lib/animina_web/live/admin/admin_hub.ex:20
 #: lib/animina_web/live/admin/admin_hub.ex:33
 #, elixir-autogen, elixir-format
 msgid "Administration"
@@ -5962,26 +5937,8 @@ msgstr ""
 msgid "Manage your ANIMINA instance"
 msgstr ""
 
-#: lib/animina_web/components/core_components.ex:412
-#: lib/animina_web/components/core_components.ex:425
-#: lib/animina_web/components/layouts.ex:265
-#: lib/animina_web/live/messages_live.ex:36
-#: lib/animina_web/live/messages_live.ex:125
-#: lib/animina_web/live/user_live/account_delete.ex:16
-#: lib/animina_web/live/user_live/account_email_password.ex:19
-#: lib/animina_web/live/user_live/account_hub.ex:22
 #: lib/animina_web/live/user_live/account_passkeys.ex:16
-#: lib/animina_web/live/user_live/account_sessions.ex:16
-#: lib/animina_web/live/user_live/email_logs.ex:106
-#: lib/animina_web/live/user_live/login_history.ex:190
 #: lib/animina_web/live/user_live/logs_hub.ex:17
-#: lib/animina_web/live/user_live/moodboard_editor.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:17
-#: lib/animina_web/live/user_live/my_hub.ex:79
-#: lib/animina_web/live/user_live/profile_hub.ex:20
-#: lib/animina_web/live/user_live/settings_hub.ex:21
-#: lib/animina_web/live/user_live/traits_wizard.ex:17
-#: lib/animina_web/live/user_live/waitlist.ex:22
 #, elixir-autogen, elixir-format
 msgid "My ANIMINA"
 msgstr ""
@@ -6020,11 +5977,6 @@ msgstr ""
 #: lib/animina_web/live/user_live/my_hub.ex:18
 #, elixir-autogen, elixir-format
 msgid "Your personal hub"
-msgstr ""
-
-#: lib/animina_web/live/user_live/registration.ex:542
-#, elixir-autogen, elixir-format
-msgid "ANIMINA – Secure Your Spot"
 msgstr ""
 
 #: lib/animina_web/live/user_live/registration.ex:40
@@ -6209,4 +6161,97 @@ msgstr ""
 #: lib/animina_web/live/user_live/waitlist.ex:254
 #, elixir-autogen, elixir-format, fuzzy
 msgid "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you."
+msgstr ""
+
+#: lib/animina_web/live/user_live/pin_confirmation.ex:137
+#: lib/animina_web/live/user_live/pin_confirmation.ex:161
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Confirm Your PIN"
+msgstr "Подтвердить"
+
+#: lib/animina_web/live/discover_live.ex:387
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Discover People"
+msgstr "Знакомства"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:370
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Flags — About Me"
+msgstr "Мои флаги — Обо мне"
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:372
+#, elixir-autogen, elixir-format
+msgid "Flags — Deal Breakers"
+msgstr ""
+
+#: lib/animina_web/live/user_live/traits_wizard.ex:371
+#, elixir-autogen, elixir-format
+msgid "Flags — Partner Likes"
+msgstr ""
+
+#: lib/animina_web/live/user_live/forgot_password.ex:75
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Forgot Password"
+msgstr "Забыли пароль"
+
+#: lib/animina_web/live/user_live/language_settings.ex:51
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Language Settings"
+msgstr "Язык"
+
+#: lib/animina_web/live/user_live/login.ex:177
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Log In"
+msgstr "Войти"
+
+#: lib/animina_web/components/core_components.ex:412
+#: lib/animina_web/components/core_components.ex:425
+#: lib/animina_web/components/layouts.ex:265
+#: lib/animina_web/live/messages_live.ex:36
+#: lib/animina_web/live/messages_live.ex:125
+#: lib/animina_web/live/user_live/account_delete.ex:16
+#: lib/animina_web/live/user_live/account_email_password.ex:19
+#: lib/animina_web/live/user_live/account_hub.ex:22
+#: lib/animina_web/live/user_live/account_sessions.ex:16
+#: lib/animina_web/live/user_live/email_logs.ex:106
+#: lib/animina_web/live/user_live/login_history.ex:190
+#: lib/animina_web/live/user_live/moodboard_editor.ex:31
+#: lib/animina_web/live/user_live/my_hub.ex:17
+#: lib/animina_web/live/user_live/my_hub.ex:79
+#: lib/animina_web/live/user_live/profile_hub.ex:20
+#: lib/animina_web/live/user_live/settings_hub.ex:21
+#: lib/animina_web/live/user_live/traits_wizard.ex:17
+#: lib/animina_web/live/user_live/waitlist.ex:22
+#, elixir-autogen, elixir-format
+msgid "My Hub"
+msgstr ""
+
+#: lib/animina_web/live/user_live/edit_locations.ex:149
+#, elixir-autogen, elixir-format, fuzzy
+msgid "My Locations"
+msgstr "Местоположения"
+
+#: lib/animina_web/live/user_live/logs_hub.ex:60
+#, elixir-autogen, elixir-format
+msgid "My Logs"
+msgstr ""
+
+#: lib/animina_web/live/index_live.ex:21
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Online-Dating"
+msgstr "Онлайн-знакомства 👫❤️"
+
+#: lib/animina_web/live/user_live/account_passkeys.ex:56
+#, elixir-autogen, elixir-format
+msgid "Passkey Management"
+msgstr ""
+
+#: lib/animina_web/live/user_live/reset_password.ex:76
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Reset Password"
+msgstr "Сбросить пароль"
+
+#: lib/animina_web/live/user_live/registration.ex:542
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Secure Your Spot"
 msgstr ""

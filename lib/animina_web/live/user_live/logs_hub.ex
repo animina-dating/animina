@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.LogsHub do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
         <.page_header title={gettext("Logs")} subtitle={gettext("View your account activity logs")}>
-          <:crumb navigate={~p"/my"}>{gettext("My ANIMINA")}</:crumb>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
         </.page_header>
 
         <div class="grid gap-4">
@@ -57,7 +57,7 @@ defmodule AniminaWeb.UserLive.LogsHub do
 
     {:ok,
      assign(socket,
-       page_title: gettext("Logs"),
+       page_title: gettext("My Logs"),
        email_count: email_count,
        login_count: login_count
      )}

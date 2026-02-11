@@ -33,7 +33,7 @@ defmodule AniminaWeb.MessagesLive do
         <div class="breadcrumbs text-sm mb-2">
           <ul>
             <li>
-              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
             </li>
             <li>
               <.link navigate={~p"/my/messages"}>{gettext("Messages")}</.link>
@@ -122,7 +122,7 @@ defmodule AniminaWeb.MessagesLive do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
             </li>
             <li>{gettext("Messages")}</li>
           </ul>

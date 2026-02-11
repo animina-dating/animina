@@ -146,7 +146,7 @@ defmodule AniminaWeb.UserLive.EditLocations do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Locations"))
+      |> assign(:page_title, gettext("My Locations"))
       |> assign(:country_options, country_options)
       |> assign(:default_country_id, default_country_id)
       |> assign(:locations, locations)

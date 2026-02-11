@@ -48,7 +48,7 @@ defmodule AniminaWeb.UserLive.LanguageSettings do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Language"))
+      |> assign(:page_title, gettext("Language Settings"))
       |> assign(:languages, Languages.all())
       |> assign(:current_locale, current_locale)
 

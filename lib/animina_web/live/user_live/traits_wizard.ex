@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         <div class="breadcrumbs text-sm mb-6">
           <ul>
             <li>
-              <.link navigate={~p"/my"}>{gettext("My ANIMINA")}</.link>
+              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
             </li>
             <li>
               <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
@@ -367,9 +367,9 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp step_label(2), do: gettext("I Like in a Partner")
   defp step_label(3), do: gettext("Partner Deal Breakers")
 
-  defp step_page_title(1), do: gettext("My Flags — About Me")
-  defp step_page_title(2), do: gettext("My Flags — I Like in a Partner")
-  defp step_page_title(3), do: gettext("My Flags — Partner Deal Breakers")
+  defp step_page_title(1), do: gettext("Flags — About Me")
+  defp step_page_title(2), do: gettext("Flags — Partner Likes")
+  defp step_page_title(3), do: gettext("Flags — Deal Breakers")
 
   defp step_explanation(1),
     do:

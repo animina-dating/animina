@@ -134,6 +134,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
         {:ok,
          socket
          |> assign(
+           page_title: gettext("Confirm Your PIN"),
            phantom: true,
            email: email,
            delivery_failure: nil,
@@ -157,6 +158,7 @@ defmodule AniminaWeb.UserLive.PinConfirmation do
           {:ok,
            socket
            |> assign(
+             page_title: gettext("Confirm Your PIN"),
              phantom: false,
              user_id: user.id,
              email: user.email,

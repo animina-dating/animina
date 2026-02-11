@@ -70,7 +70,14 @@ defmodule AniminaWeb.UserLive.ResetPassword do
 
       user ->
         form = Accounts.change_user_password(user) |> to_form(as: "user")
-        {:ok, assign(socket, user: user, form: form, token: token)}
+
+        {:ok,
+         assign(socket,
+           page_title: gettext("Reset Password"),
+           user: user,
+           form: form,
+           token: token
+         )}
     end
   end
 

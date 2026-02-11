@@ -174,6 +174,7 @@ defmodule AniminaWeb.UserLive.Login do
 
     {:ok,
      assign(socket,
+       page_title: gettext("Log In"),
        form: form,
        trigger_submit: false,
        dev_routes: @dev_routes,

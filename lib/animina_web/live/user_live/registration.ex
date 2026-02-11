@@ -539,7 +539,7 @@ defmodule AniminaWeb.UserLive.Registration do
 
     socket =
       socket
-      |> assign(page_title: gettext("ANIMINA – Secure Your Spot"))
+      |> assign(page_title: gettext("Secure Your Spot"))
       |> assign(max_waitlist_days: Animina.FeatureFlags.waitlist_duration_days() + 1)
       |> assign(referral_threshold: Animina.FeatureFlags.referral_threshold())
       |> assign(country_options: country_options)

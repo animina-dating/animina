@@ -72,6 +72,7 @@ defmodule AniminaWeb.UserLive.ForgotPassword do
   def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
+       page_title: gettext("Forgot Password"),
        form: to_form(%{"email" => ""}, as: "user"),
        sent: false,
        dev_routes: @dev_routes

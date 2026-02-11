@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserLive.MyHub do
       <div class="max-w-2xl mx-auto">
         <div class="text-center mb-8">
           <.header>
-            {gettext("My ANIMINA")}
+            {gettext("My Hub")}
             <:subtitle>{gettext("Your personal hub")}</:subtitle>
           </.header>
         </div>
@@ -76,7 +76,7 @@ defmodule AniminaWeb.UserLive.MyHub do
 
     {:ok,
      assign(socket,
-       page_title: gettext("My ANIMINA"),
+       page_title: gettext("My Hub"),
        user: user,
        profile_preview: profile_preview
      )}

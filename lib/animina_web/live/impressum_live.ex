@@ -6,7 +6,7 @@ defmodule AniminaWeb.ImpressumLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, page_title: "Impressum – ANIMINA")}
+    {:ok, assign(socket, page_title: "Impressum")}
   end
 
   @impl true

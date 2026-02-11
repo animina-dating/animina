@@ -19,7 +19,7 @@ defmodule AniminaWeb.UserLive.MyHubTest do
         |> log_in_user(active_user())
         |> live(~p"/my")
 
-      assert html =~ "My ANIMINA"
+      assert html =~ "My Hub"
       assert html =~ "Discover"
       assert html =~ "Messages"
       assert html =~ "Settings"
@@ -32,7 +32,7 @@ defmodule AniminaWeb.UserLive.MyHubTest do
         |> log_in_user(active_user())
         |> live(~p"/my")
 
-      assert page_title(lv) == "My ANIMINA - ANIMINA"
+      assert page_title(lv) == "My Hub - ANIMINA"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
