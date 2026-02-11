@@ -181,12 +181,7 @@ defmodule AniminaWeb.Router do
     get "/users/security/undo/:token", SecurityEventController, :undo
     get "/users/security/confirm/:token", SecurityEventController, :confirm
 
-    # Legacy redirects (301 permanent) — must be before /users/:user_id catch-all
-    get "/users/settings", LegacyRedirectController, :settings_root
-    get "/users/settings/*path", LegacyRedirectController, :settings
-    get "/moodboard/:user_id", LegacyRedirectController, :moodboard
-
-    # User profile (after literal auth routes and legacy redirects so they match first)
+    # User profile (after literal auth routes so they match first)
     live_session :user_profile,
       on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}] do
       live "/users/:user_id", UserLive.ProfileMoodboard
