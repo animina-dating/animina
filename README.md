@@ -284,7 +284,6 @@ German DSGVO/GDPR compliant with:
 - [TRANSLATING.md](TRANSLATING.md) — i18n workflow for all 9 languages
 - [DESIGN.md](DESIGN.md) — design system ("Coastal Morning" theme, DaisyUI components)
 - [DISCOVERY_ALGORITHM.md](DISCOVERY_ALGORITHM.md) — how the matching algorithm works (filtering, scoring, examples)
-- [docs/features/](docs/features/) — detailed feature specifications
 
 ## License
 
