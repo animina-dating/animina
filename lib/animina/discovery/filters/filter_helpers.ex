@@ -10,6 +10,7 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   import Ecto.Query
 
   alias Animina.Accounts
+  alias Animina.Accounts.ContactBlacklistEntry
   alias Animina.Discovery.Popularity
   alias Animina.Discovery.Schemas.{Dismissal, SuggestionView}
   alias Animina.Discovery.Settings
@@ -45,6 +46,41 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   def filter_by_state(query) do
     # Only show users who have completed onboarding
     where(query, [u], u.state == "normal")
+  end
+
+  def exclude_contact_blacklisted(query, viewer) do
+    # Direction 1: viewer blacklisted candidate's email or phone
+    viewer_blacklist_subquery =
+      from(e in ContactBlacklistEntry,
+        where: e.user_id == ^viewer.id,
+        select: e.value
+      )
+
+    query =
+      where(
+        query,
+        [u],
+        (is_nil(u.email) or u.email not in subquery(viewer_blacklist_subquery)) and
+          (is_nil(u.mobile_phone) or u.mobile_phone not in subquery(viewer_blacklist_subquery))
+      )
+
+    # Direction 2: candidate blacklisted viewer's email or phone
+    viewer_identifiers =
+      [viewer.email, viewer.mobile_phone]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.map(&String.downcase/1)
+
+    if viewer_identifiers == [] do
+      query
+    else
+      blacklisters_subquery =
+        from(e in ContactBlacklistEntry,
+          where: e.value in ^viewer_identifiers,
+          select: e.user_id
+        )
+
+      where(query, [u], u.id not in subquery(blacklisters_subquery))
+    end
   end
 
   def filter_by_bidirectional_gender(query, viewer) do

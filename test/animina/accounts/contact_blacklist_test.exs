@@ -123,10 +123,19 @@ defmodule Animina.Accounts.ContactBlacklistTest do
   end
 
   describe "add_entry/2 limit enforcement" do
-    test "enforces 50-entry limit" do
+    test "enforces max-entry limit from feature flags" do
       user = user_fixture()
 
-      for i <- 1..50 do
+      # Set the limit to 10 for testing
+      {:ok, setting} =
+        Animina.FeatureFlags.get_or_create_flag_setting("system:contact_blacklist_max_entries", %{
+          description: "test",
+          settings: %{value: 10}
+        })
+
+      Animina.FeatureFlags.update_flag_setting(setting, %{settings: %{value: 10}})
+
+      for i <- 1..10 do
         {:ok, _} = ContactBlacklist.add_entry(user, %{value: "user#{i}@example.com"})
       end
 

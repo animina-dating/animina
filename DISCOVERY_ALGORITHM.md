@@ -36,15 +36,16 @@ Before any scoring happens, the filter stage removes candidates who can't possib
 1. **Exclude self**
 2. **Exclude soft-deleted users** — `deleted_at` must be nil
 3. **State filter** — only users in "normal" state
-4. **Distance** — haversine distance from viewer's primary location must be within `search_radius` (default: 60 km)
-5. **Bidirectional gender preference** — viewer must accept candidate's gender AND candidate must accept viewer's gender
-6. **Bidirectional age range** — viewer's age range must include candidate's age AND candidate's age range must include viewer's age (default offsets: -6 / +2 years)
-7. **Bidirectional height range** — same principle (defaults: 80–225 cm)
-8. **Exclude dismissed users** — users the viewer clicked "Not interested" on
-9. **Exclude closed conversation partners** — users from conversations the viewer "let go" of (permanent exclusion via `ConversationClosure` records)
-10. **Exclude recently shown** — users shown within the cooldown period (default: 30 days)
-11. **Exclude incomplete profiles** — if enabled, users without a photo, height, or gender (default: disabled)
-12. **Exclude users at daily inquiry limit** — if popularity protection is enabled, users who received 6+ inquiries today
+4. **Contact blacklist** — bidirectional: if the viewer has blacklisted a candidate's email/phone, or the candidate has blacklisted the viewer's email/phone, the candidate is excluded. Entries are stored in `contact_blacklist_entries` and managed at `/my/settings/blocked-contacts`.
+5. **Distance** — haversine distance from viewer's primary location must be within `search_radius` (default: 60 km)
+6. **Bidirectional gender preference** — viewer must accept candidate's gender AND candidate must accept viewer's gender
+7. **Bidirectional age range** — viewer's age range must include candidate's age AND candidate's age range must include viewer's age (default offsets: -6 / +2 years)
+8. **Bidirectional height range** — same principle (defaults: 80–225 cm)
+9. **Exclude dismissed users** — users the viewer clicked "Not interested" on
+10. **Exclude closed conversation partners** — users from conversations the viewer "let go" of (permanent exclusion via `ConversationClosure` records)
+11. **Exclude recently shown** — users shown within the cooldown period (default: 30 days)
+12. **Exclude incomplete profiles** — if enabled, users without a photo, height, or gender (default: disabled)
+13. **Exclude users at daily inquiry limit** — if popularity protection is enabled, users who received 6+ inquiries today
 
 **Bidirectional** means both sides must fit. If Alice (28) sets her age range to 25–35, she'll see Bob (31). But if Bob sets *his* range to 28–33, he'd also see Alice. If Bob had set his range to 20–27, neither would see the other — the filter is mutual.
 
@@ -253,6 +254,7 @@ All settings are controlled via feature flags at `/admin/feature-flags`:
 | Require mutual bookmark exclusion | `discovery_require_mutual_bookmark_exclusion` | true | — |
 | Popularity protection enabled | `discovery_popularity_enabled` | false | — |
 | Daily inquiry limit | `discovery_daily_inquiry_limit` | 6 | 1–50 |
+| Contact blacklist max entries | `contact_blacklist_max_entries` | 500 | 10–5000 |
 
 ## Worked Example
 
@@ -265,12 +267,13 @@ All settings are controlled via feature flags at `/admin/feature-flags`:
 1. Bob is not Alice — pass
 2. Bob is not deleted — pass
 3. Bob is in "normal" state — pass
-4. Berlin to Potsdam is ~35 km, within Alice's 50 km radius — pass
-5. Gender preferences match bidirectionally — pass
-6. Alice (28) is in Bob's range (26–34) and Bob (31) is in Alice's range (25–35) — pass
-7. Heights in range — pass
-8. Not dismissed — pass
-9. Not recently shown — pass
+4. Neither has blacklisted the other's email/phone — pass
+5. Berlin to Potsdam is ~35 km, within Alice's 50 km radius — pass
+6. Gender preferences match bidirectionally — pass
+7. Alice (28) is in Bob's range (26–34) and Bob (31) is in Alice's range (25–35) — pass
+8. Heights in range — pass
+9. Not dismissed — pass
+10. Not recently shown — pass
 
 Bob passes all filters.
 

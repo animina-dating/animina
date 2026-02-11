@@ -30,6 +30,7 @@ defmodule Animina.Discovery.Filters.RelaxedFilter do
     |> FilterHelpers.exclude_self(viewer)
     |> FilterHelpers.exclude_soft_deleted()
     |> FilterHelpers.filter_by_state()
+    |> FilterHelpers.exclude_contact_blacklisted(viewer)
     |> filter_by_distance_relaxed(viewer)
     |> FilterHelpers.filter_by_bidirectional_gender(viewer)
     |> FilterHelpers.filter_by_bidirectional_age(viewer)

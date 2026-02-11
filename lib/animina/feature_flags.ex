@@ -186,6 +186,15 @@ defmodule Animina.FeatureFlags do
       default_value: 10,
       min_value: 1,
       max_value: 50
+    },
+    %{
+      name: :contact_blacklist_max_entries,
+      label: "Contact Blacklist Max Entries",
+      description: "Maximum number of blocked phone/email entries per user",
+      type: :integer,
+      default_value: 500,
+      min_value: 10,
+      max_value: 5000
     }
   ]
 
@@ -766,6 +775,14 @@ defmodule Animina.FeatureFlags do
   """
   def photo_max_upload_size_mb do
     get_system_setting_value(:photo_max_upload_size_mb, 10)
+  end
+
+  @doc """
+  Returns the configured maximum number of contact blacklist entries per user.
+  Default: 500
+  """
+  def contact_blacklist_max_entries do
+    get_system_setting_value(:contact_blacklist_max_entries, 500)
   end
 
   @doc """

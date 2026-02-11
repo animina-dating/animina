@@ -10,11 +10,10 @@ defmodule Animina.Accounts.ContactBlacklist do
 
   alias Animina.Accounts.ContactBlacklistEntry
   alias Animina.Accounts.User
+  alias Animina.FeatureFlags
   alias Animina.Repo
 
-  @max_entries 50
-
-  def max_entries, do: @max_entries
+  def max_entries, do: FeatureFlags.contact_blacklist_max_entries()
 
   @doc """
   Lists all blacklist entries for a user, newest first.
@@ -45,7 +44,7 @@ defmodule Animina.Accounts.ContactBlacklist do
   Returns `{:error, :limit_reached}` if the user has reached the maximum.
   """
   def add_entry(%User{id: user_id} = user, attrs) do
-    if count_entries(user) >= @max_entries do
+    if count_entries(user) >= max_entries() do
       {:error, :limit_reached}
     else
       value = Map.get(attrs, :value) || Map.get(attrs, "value") || ""

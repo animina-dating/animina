@@ -6,14 +6,15 @@ defmodule Animina.Discovery.Filters.StandardFilter do
   1. Exclude self
   2. Exclude soft-deleted users
   3. State filter (only normal, not waitlisted)
-  4. Distance filter (haversine calculation)
-  5. Bidirectional gender preference
-  6. Bidirectional age range
-  7. Bidirectional height range
-  8. Exclude permanently dismissed users
-  9. Exclude users shown within cooldown period
-  10. Optionally exclude incomplete profiles
-  11. Exclude users at daily inquiry limit (if popularity protection enabled)
+  4. Contact blacklist filter (exclude users whose phone/email is blocked, bidirectional)
+  5. Distance filter (haversine calculation)
+  6. Bidirectional gender preference
+  7. Bidirectional age range
+  8. Bidirectional height range
+  9. Exclude permanently dismissed users
+  10. Exclude users shown within cooldown period
+  11. Optionally exclude incomplete profiles
+  12. Exclude users at daily inquiry limit (if popularity protection enabled)
   """
 
   @behaviour Animina.Discovery.Behaviours.Filter
@@ -31,6 +32,7 @@ defmodule Animina.Discovery.Filters.StandardFilter do
     |> FilterHelpers.exclude_self(viewer)
     |> FilterHelpers.exclude_soft_deleted()
     |> FilterHelpers.filter_by_state()
+    |> FilterHelpers.exclude_contact_blacklisted(viewer)
     |> filter_by_distance(viewer)
     |> FilterHelpers.filter_by_bidirectional_gender(viewer)
     |> FilterHelpers.filter_by_bidirectional_age(viewer)
