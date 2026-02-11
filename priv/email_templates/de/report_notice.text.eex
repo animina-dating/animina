@@ -1,0 +1,14 @@
+Hinweis zu deinem ANIMINA-Konto
+---
+
+Hallo <%= @greeting_name %>,
+
+ein anderer Nutzer hat eine Meldung zu deinem Konto eingereicht.
+Unser Moderationsteam prüft den Vorgang nun.
+
+Du musst derzeit nichts unternehmen. Falls weitere Schritte
+erforderlich sind, werden wir dich mit weiteren Details
+kontaktieren.
+
+Wir nehmen alle Meldungen ernst und prüfen jede einzelne
+sorgfältig, um eine sichere Community für alle zu gewährleisten.

@@ -1,0 +1,19 @@
+Verwarnung bezüglich deines ANIMINA-Kontos
+---
+
+Hallo <%= @greeting_name %>,
+
+nach Prüfung einer Meldung zu deinem Konto hat unser
+Moderationsteam eine Verwarnung ausgesprochen.
+
+Bitte beachte unsere Community-Richtlinien. Wiederholte
+Verstöße können zu einer vorübergehenden oder dauerhaften
+Sperrung deines Kontos führen.
+
+Wenn du der Meinung bist, dass diese Entscheidung
+fehlerhaft ist, kannst du einen Einspruch einlegen,
+indem du deine Kontoseite bei ANIMINA besuchst.
+
+Bitte überprüfe unsere Nutzungsbedingungen, um
+sicherzustellen, dass deine zukünftigen Interaktionen
+unseren Community-Standards entsprechen.

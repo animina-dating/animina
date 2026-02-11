@@ -137,24 +137,24 @@ msgstr "يجب أن يكون أكبر من أو يساوي %{number}"
 msgid "must be equal to %{number}"
 msgstr "يجب أن يساوي %{number}"
 
-#: lib/animina/accounts.ex:256
+#: lib/animina/accounts.ex:271
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr "لم يتم العثور على رمز الإحالة"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:53
 #: lib/animina/accounts/contact_blacklist_entry.ex:57
-#: lib/animina/accounts/user.ex:269
+#: lib/animina/accounts/user.ex:271
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "ليس رقم هاتف صالح"
 
-#: lib/animina/accounts/user.ex:167
+#: lib/animina/accounts/user.ex:169
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "يجب أن يتكون من 6 أحرف (حروف وأرقام)"
 
-#: lib/animina/accounts/user.ex:264
+#: lib/animina/accounts/user.ex:266
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "يجب أن يكون رقم هاتف محمول (ليس خط أرضي)"
@@ -234,12 +234,12 @@ msgstr "هذا كلب. يجب أن تُظهر صورة ملفك الشخصي و�
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "هذا حيوان. يجب أن تُظهر صورة ملفك الشخصي وجهك. يمكنك استخدام صور الحيوانات في لوحة المزاج بدلاً من ذلك."
 
-#: lib/animina/accounts/user.ex:416
+#: lib/animina/accounts/user.ex:418
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "لا يتطابق مع كلمة المرور"
 
-#: lib/animina/accounts/user.ex:352
+#: lib/animina/accounts/user.ex:354
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "يجب أن يحتوي على علامة @ وبدون مسافات"

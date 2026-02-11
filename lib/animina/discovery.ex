@@ -65,6 +65,16 @@ defmodule Animina.Discovery do
     |> Repo.aggregate(:count)
   end
 
+  @doc """
+  Returns a list of user IDs that the viewer has dismissed.
+  """
+  def dismissed_ids(viewer_id) do
+    Dismissal
+    |> where([d], d.user_id == ^viewer_id)
+    |> select([d], d.dismissed_id)
+    |> Repo.all()
+  end
+
   # --- Popularity Protection ---
 
   @doc """

@@ -25,6 +25,7 @@ defmodule Animina.Discovery.SpotlightPool do
 
   alias Animina.Accounts.User
   alias Animina.Discovery.Filters.FilterHelpers
+  alias Animina.Reports.ReportInvisibility
   alias Animina.Repo
   alias Animina.Traits.UserFlag
 
@@ -37,6 +38,7 @@ defmodule Animina.Discovery.SpotlightPool do
     base_query()
     |> exclude_self(viewer)
     |> exclude_blacklisted(viewer)
+    |> exclude_report_invisible(viewer)
     |> exclude_soft_deleted()
     |> filter_by_state()
     |> filter_by_distance(viewer)
@@ -62,6 +64,7 @@ defmodule Animina.Discovery.SpotlightPool do
        end},
       {"− Self", &exclude_self(&1, viewer)},
       {"− Blacklisted", &exclude_blacklisted(&1, viewer)},
+      {"− Report invisible", &exclude_report_invisible(&1, viewer)},
       {"− Distance", &filter_by_distance(&1, viewer)},
       {"− Gender", &filter_by_gender(&1, viewer)},
       {"− Age", &filter_by_age(&1, viewer)},
@@ -108,6 +111,7 @@ defmodule Animina.Discovery.SpotlightPool do
       base_query()
       |> exclude_self(viewer)
       |> exclude_blacklisted(viewer)
+      |> exclude_report_invisible(viewer)
       |> exclude_soft_deleted()
       |> filter_by_state()
       |> filter_by_distance(viewer)
@@ -137,6 +141,16 @@ defmodule Animina.Discovery.SpotlightPool do
 
   defp exclude_blacklisted(query, viewer),
     do: FilterHelpers.exclude_contact_blacklisted(query, viewer)
+
+  defp exclude_report_invisible(query, viewer) do
+    hidden_ids =
+      from(i in ReportInvisibility,
+        where: i.user_id == ^viewer.id and not is_nil(i.hidden_user_id),
+        select: i.hidden_user_id
+      )
+
+    where(query, [u], u.id not in subquery(hidden_ids))
+  end
 
   defp filter_by_gender(query, viewer),
     do: FilterHelpers.filter_by_bidirectional_gender(query, viewer)

@@ -67,6 +67,13 @@ defmodule AniminaWeb.MessagesLive do
             <% end %>
 
             <button
+              phx-click="open_report_modal"
+              class="btn btn-ghost btn-sm text-base-content/50 hover:text-error"
+              title={gettext("Report user")}
+            >
+              <.icon name="hero-flag" class="h-4 w-4" />
+            </button>
+            <button
               phx-click="let_go"
               phx-value-conversation-id={@conversation_data.conversation.id}
               class="btn btn-ghost btn-sm text-base-content/50 hover:text-warning"
@@ -110,6 +117,17 @@ defmodule AniminaWeb.MessagesLive do
           blocked={@conversation_data != nil && @conversation_data.blocked}
         />
       </div>
+
+      <.live_component
+        :if={@show_report_modal && @conversation_data}
+        module={AniminaWeb.ReportModalComponent}
+        id="report-modal"
+        show={@show_report_modal}
+        reported_user={@conversation_data.other_user}
+        context_type="chat"
+        context_id={@conversation_data.conversation.id}
+        current_scope={@current_scope}
+      />
     </Layouts.app>
     """
   end
@@ -645,7 +663,8 @@ defmodule AniminaWeb.MessagesLive do
         show_love_emergency: false,
         love_emergency_conv_id: nil,
         love_emergency_active_conversations: [],
-        love_emergency_selected: MapSet.new()
+        love_emergency_selected: MapSet.new(),
+        show_report_modal: false
       )
 
     # Handle start_with param to create/open a conversation
@@ -853,6 +872,16 @@ defmodule AniminaWeb.MessagesLive do
       {:error, _reason} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to delete message"))}
     end
+  end
+
+  @impl true
+  def handle_event("open_report_modal", _params, socket) do
+    {:noreply, assign(socket, :show_report_modal, true)}
+  end
+
+  @impl true
+  def handle_event("close_report_modal", _params, socket) do
+    {:noreply, assign(socket, :show_report_modal, false)}
   end
 
   @impl true
@@ -1095,6 +1124,23 @@ defmodule AniminaWeb.MessagesLive do
      socket
      |> assign(:show_love_emergency, false)
      |> assign(:love_emergency_conv_id, nil)}
+  end
+
+  @impl true
+  def handle_info({:report_submitted, _reported_user_id}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_report_modal, false)
+     |> put_flash(:info, gettext("Report submitted. Our team will review it."))
+     |> push_navigate(to: ~p"/my/messages")}
+  end
+
+  @impl true
+  def handle_info({:report_failed}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_report_modal, false)
+     |> put_flash(:error, gettext("Could not submit report. Please try again."))}
   end
 
   defp schedule_draft_save(socket, content) do

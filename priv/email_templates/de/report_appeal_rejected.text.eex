@@ -1,0 +1,12 @@
+Dein Einspruch wurde geprüft
+---
+
+Hallo <%= @greeting_name %>,
+
+nach sorgfältiger Prüfung deines Einspruchs hat unser
+Moderationsteam entschieden, die ursprüngliche Entscheidung
+aufrechtzuerhalten.
+
+Die gegen dein Konto ergriffene Maßnahme bleibt bestehen.
+
+Diese Entscheidung ist endgültig.

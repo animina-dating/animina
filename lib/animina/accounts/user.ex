@@ -58,6 +58,8 @@ defmodule Animina.Accounts.User do
     field :state, :string, default: "waitlisted"
     field :end_waitlist_at, :utc_datetime
     field :deleted_at, :utc_datetime
+    field :suspended_until, :utc_datetime
+    field :ban_reason, :string
 
     # Referral fields
     field :referral_code, :string
@@ -569,5 +571,14 @@ defmodule Animina.Accounts.User do
     user
     |> cast(attrs, [:hide_online_status])
     |> validate_required([:hide_online_status])
+  end
+
+  @doc """
+  A changeset for moderation actions (suspension, ban, unsuspension).
+  """
+  def moderation_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:state, :suspended_until, :ban_reason])
+    |> validate_inclusion(:state, ~w(waitlisted normal suspended banned))
   end
 end

@@ -19,11 +19,11 @@ defmodule Animina.ActivityLog.ActivityLogEntry do
     "auth" =>
       ~w(login_email login_passkey login_failed logout session_created session_destroyed sudo_mode),
     "social" =>
-      ~w(profile_visit message_sent conversation_created conversation_closed conversation_blocked conversation_reopened bookmark_added reaction_added dismissal_created),
+      ~w(profile_visit message_sent conversation_created conversation_closed conversation_blocked conversation_reopened bookmark_added reaction_added dismissal_created report_filed report_appeal_filed),
     "profile" =>
       ~w(profile_updated flags_changed moodboard_changed preferences_changed location_changed avatar_changed email_changed password_changed passkey_registered passkey_deleted account_registered account_deleted account_reactivated registration_step_completed referral_waitlist_reduced),
     "admin" =>
-      ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry blacklist_entry_added blacklist_entry_removed),
+      ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry blacklist_entry_added blacklist_entry_removed report_resolved report_appeal_resolved user_warned user_suspended user_banned user_unsuspended karen_auto_reported),
     "system" =>
       ~w(photo_uploaded photo_approved photo_rejected photo_processing email_sent email_bounced ollama_processed account_expired)
   }

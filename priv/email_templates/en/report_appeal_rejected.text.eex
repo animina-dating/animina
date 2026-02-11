@@ -1,0 +1,11 @@
+Your appeal has been reviewed
+---
+
+Hi <%= @greeting_name %>,
+
+After carefully reviewing your appeal, our moderation team
+has decided to uphold the original decision.
+
+The action taken against your account remains in effect.
+
+This decision is final.

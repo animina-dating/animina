@@ -85,6 +85,9 @@ defmodule AniminaWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}] do
+      # Suspended/banned info page
+      live "/my/suspended", UserLive.AccountSuspended
+
       # My hub
       live "/my", UserLive.MyHub, :index
 
@@ -131,6 +134,8 @@ defmodule AniminaWeb.Router do
     live_session :require_moderator,
       on_mount: [{AniminaWeb.UserAuth, :require_moderator}] do
       live "/admin/photo-reviews", Admin.PhotoReviewsLive
+      live "/admin/reports", Admin.ReportsLive
+      live "/admin/reports/appeals", Admin.ReportAppealsLive
     end
 
     live_session :require_admin,

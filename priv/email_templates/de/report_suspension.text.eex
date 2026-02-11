@@ -1,0 +1,17 @@
+Dein ANIMINA-Konto wurde vorübergehend gesperrt
+---
+
+Hallo <%= @greeting_name %>,
+
+nach Prüfung einer Meldung zu deinem Konto hat unser
+Moderationsteam entschieden, dein Konto vorübergehend
+zu sperren.
+
+Dein Konto ist gesperrt bis: <%= @suspended_until %>
+
+Während dieser Zeit kannst du dich nicht einloggen oder
+ANIMINA-Dienste nutzen.
+
+Wenn du der Meinung bist, dass diese Entscheidung
+fehlerhaft ist, kannst du nach Ablauf der Sperre einen
+Einspruch einlegen oder unser Support-Team kontaktieren.

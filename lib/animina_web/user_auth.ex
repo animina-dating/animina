@@ -82,24 +82,37 @@ defmodule AniminaWeb.UserAuth do
     with {token, conn} <- ensure_user_token(conn),
          {user, token_inserted_at} <- Accounts.get_user_by_session_token(token),
          false <- Accounts.user_deleted?(user) do
-      roles = Accounts.get_user_roles(user)
-      session_role = get_session(conn, :current_role)
-      effective_role = auto_role_for_path(conn.request_path, roles, session_role)
-      scope = Scope.for_user(user, roles, effective_role)
+      # Auto-unsuspend if suspension has expired
+      user = Animina.Reports.maybe_unsuspend(user)
 
-      # Update last_seen_at (throttled to every 5 min, very fast update_all)
-      Accounts.maybe_update_last_seen(token)
+      # Force-logout banned users
+      if user.state == "banned" do
+        user_token = get_session(conn, :user_token)
+        if user_token, do: Accounts.delete_user_session_token(user_token)
 
-      conn =
-        if effective_role != session_role do
-          put_session(conn, :current_role, effective_role)
-        else
-          conn
-        end
+        conn
+        |> delete_session(:user_token)
+        |> assign(:current_scope, Scope.for_user(nil))
+      else
+        roles = Accounts.get_user_roles(user)
+        session_role = get_session(conn, :current_role)
+        effective_role = auto_role_for_path(conn.request_path, roles, session_role)
+        scope = Scope.for_user(user, roles, effective_role)
 
-      conn
-      |> assign(:current_scope, scope)
-      |> maybe_reissue_user_session_token(user, token_inserted_at)
+        # Update last_seen_at (throttled to every 5 min, very fast update_all)
+        Accounts.maybe_update_last_seen(token)
+
+        conn =
+          if effective_role != session_role do
+            put_session(conn, :current_role, effective_role)
+          else
+            conn
+          end
+
+        conn
+        |> assign(:current_scope, scope)
+        |> maybe_reissue_user_session_token(user, token_inserted_at)
+      end
     else
       true ->
         # User is soft-deleted, clear session
@@ -426,6 +439,9 @@ defmodule AniminaWeb.UserAuth do
         end
       end)
 
+    # Redirect suspended/banned users to the suspended page (unless already there)
+    socket = maybe_redirect_suspended(socket)
+
     socket = Phoenix.Component.assign(socket, :current_session_token, user_token)
 
     default_locale =
@@ -452,6 +468,23 @@ defmodule AniminaWeb.UserAuth do
     |> subscribe_to_deployment_notifications()
     |> maybe_track_presence()
     |> maybe_subscribe_messages()
+  end
+
+  defp maybe_redirect_suspended(socket) do
+    case socket.assigns do
+      %{current_scope: %{user: %{state: state}}}
+      when state in ["suspended", "banned"] ->
+        view = socket.private[:live_view_module]
+
+        if view != AniminaWeb.UserLive.AccountSuspended do
+          Phoenix.LiveView.redirect(socket, to: ~p"/my/suspended")
+        else
+          socket
+        end
+
+      _ ->
+        socket
+    end
   end
 
   defp subscribe_to_deployment_notifications(socket) do

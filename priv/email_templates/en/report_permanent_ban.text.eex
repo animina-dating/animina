@@ -1,0 +1,12 @@
+Your ANIMINA account has been permanently banned
+---
+
+Hi <%= @greeting_name %>,
+
+After reviewing a report about your account, our moderation team
+has decided to permanently ban your account.
+
+You will no longer be able to access ANIMINA services.
+
+If you believe this decision was made in error, you may submit
+an appeal within 30 days by contacting our support team.

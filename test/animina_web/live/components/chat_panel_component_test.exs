@@ -3,6 +3,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
 
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
+  import Animina.DiscoveryFixtures
   import Animina.MessagingFixtures
 
   alias Animina.Messaging
@@ -11,6 +12,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "non-owner sees Message button", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, _lv, html} =
         conn
@@ -35,6 +37,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "clicking Message opens chat panel", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn
@@ -50,6 +53,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "toggling chat off hides the panel", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn
@@ -70,6 +74,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "close button in panel header closes the chat", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn
@@ -94,6 +99,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "chat panel starts below navbar (top-16) on all screen sizes", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn
@@ -109,6 +115,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "sending first message creates conversation lazily", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       # Verify no conversation exists
       assert is_nil(Messaging.get_conversation_by_participants(visitor.id, owner.id))
@@ -135,7 +142,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
 
-      # Create conversation with messages
+      # Create conversation with messages (conversation grants access)
       conversation = conversation_fixture(visitor, owner)
       _msg = message_fixture(conversation, visitor, %{content: "Pre-existing message"})
 
@@ -153,6 +160,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "textarea has data-draft-key with correct user IDs", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn
@@ -167,6 +175,7 @@ defmodule AniminaWeb.ChatPanelComponentTest do
     test "panel shows link to full messages page", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
 
       {:ok, lv, _html} =
         conn

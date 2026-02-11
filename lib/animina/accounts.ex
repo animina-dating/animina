@@ -174,6 +174,18 @@ defmodule Animina.Accounts do
   Registers a user.
   """
   def register_user(attrs, opts \\ []) do
+    # Check registration bans before proceeding
+    phone = Map.get(attrs, :mobile_phone) || Map.get(attrs, "mobile_phone")
+    email = Map.get(attrs, :email) || Map.get(attrs, "email")
+
+    if phone && email && Animina.Reports.registration_banned?(phone, email) do
+      {:error, :registration_banned}
+    else
+      do_register_user(attrs, opts)
+    end
+  end
+
+  defp do_register_user(attrs, opts) do
     locations_attrs = extract_locations(attrs)
     referral_code_input = extract_referral_code_input(attrs)
     pt_opts = PT.opts(opts)
@@ -188,6 +200,9 @@ defmodule Animina.Accounts do
       with {:ok, user} <- insert_with_referral_code_retry(changeset, 3, pt_opts),
            :ok <- insert_locations(user, locations_attrs),
            {:ok, _pinned_item} <- create_pinned_intro_item(user) do
+        # Restore any existing report invisibilities for re-registering users
+        Animina.Reports.restore_invisibilities_for_new_user(user)
+
         ActivityLog.log("profile", "account_registered", "#{user.display_name} registered",
           actor_id: user.id,
           subject_id: user.id
@@ -469,6 +484,16 @@ defmodule Animina.Accounts do
   """
   def delete_user_session_token(token) do
     Repo.delete_all(from(UserToken, where: [token: ^token, context: "session"]))
+    :ok
+  end
+
+  @doc """
+  Deletes all session tokens for a user. Used for forced logout (e.g., ban).
+  """
+  def delete_all_user_sessions(%User{id: user_id}) do
+    from(t in UserToken, where: t.user_id == ^user_id and t.context == "session")
+    |> Repo.delete_all()
+
     :ok
   end
 

@@ -1,0 +1,13 @@
+A concern has been raised about your ANIMINA account
+---
+
+Hi <%= @greeting_name %>,
+
+A concern has been raised about your account by another user.
+Our moderation team is now reviewing the matter.
+
+No action is required from you at this time. If further steps
+are needed, we will contact you with more details.
+
+We take all reports seriously and review each one carefully
+to ensure a safe community for everyone.

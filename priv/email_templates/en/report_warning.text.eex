@@ -1,0 +1,16 @@
+Warning regarding your ANIMINA account
+---
+
+Hi <%= @greeting_name %>,
+
+After reviewing a report about your account, our moderation team
+has issued a warning.
+
+Please be mindful of our community guidelines. Repeated violations
+may result in temporary or permanent suspension of your account.
+
+If you believe this decision was made in error, you can submit
+an appeal by visiting your account page at ANIMINA.
+
+Please review our terms of service to ensure your future
+interactions comply with our community standards.

@@ -93,7 +93,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       assert %{"error" => "This page doesn't exist or you don't have access."} = flash
     end
 
-    test "logged-in non-owner can view another user's moodboard", %{conn: conn} do
+    test "logged-in non-owner without spotlight/conversation sees restricted profile", %{
+      conn: conn
+    } do
       owner = user_fixture(language: "en")
       other_user = user_fixture(language: "en")
 
@@ -102,20 +104,23 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
         |> log_in_user(other_user)
         |> live(~p"/users/#{owner.id}")
 
-      assert html =~ "Moodboard"
       assert html =~ owner.display_name
+      assert html =~ "This profile is only visible"
+      refute html =~ "Edit Moodboard"
     end
 
-    test "logged-in non-owner does not see Edit Moodboard button", %{conn: conn} do
+    test "logged-in non-owner with conversation can view moodboard", %{conn: conn} do
       owner = user_fixture(language: "en")
       other_user = user_fixture(language: "en")
+      {:ok, _conv} = Animina.Messaging.get_or_create_conversation(other_user.id, owner.id)
 
       {:ok, _lv, html} =
         conn
         |> log_in_user(other_user)
         |> live(~p"/users/#{owner.id}")
 
-      refute html =~ "Edit Moodboard"
+      assert html =~ owner.display_name
+      refute html =~ "This profile is only visible"
     end
 
     test "non-existent user_id shows same vague denial (indistinguishable from non-owner)", %{

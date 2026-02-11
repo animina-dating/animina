@@ -23,6 +23,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
+  alias Animina.Reports
   alias Animina.Traits
   alias AniminaWeb.ColumnToggle
   alias AniminaWeb.Helpers.ColumnPreferences
@@ -179,6 +180,15 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
               </button>
             <% end %>
 
+            <button
+              :if={!@owner? && @current_scope.user}
+              phx-click="open_report_modal"
+              class="btn btn-ghost btn-sm text-error/60 hover:text-error"
+              title={gettext("Report user")}
+            >
+              <.icon name="hero-flag" class="h-4 w-4" />
+            </button>
+
             <.link
               :if={@owner?}
               navigate={~p"/my/settings/profile/moodboard"}
@@ -306,6 +316,17 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         profile_user={@profile_user}
         open={@chat_open}
         conversation_id={@chat_conversation_id}
+      />
+
+      <.live_component
+        :if={@show_report_modal}
+        module={AniminaWeb.ReportModalComponent}
+        id="report-modal"
+        show={@show_report_modal}
+        reported_user={@profile_user}
+        context_type="profile"
+        context_id={nil}
+        current_scope={@current_scope}
       />
     </Layouts.app>
     """
@@ -451,6 +472,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       is_nil(current_user) ->
         :denied
 
+      # Report invisibility check — mutually hidden users can't see each other
+      Reports.hidden?(current_user.id, profile_user.id) ->
+        :denied
+
       Spotlight.has_moodboard_access?(current_user, profile_user, current_scope) ->
         {:ok, false}
 
@@ -530,7 +555,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       last_seen_at: last_seen_at,
       hide_online_status: hide_online_status,
       activity_level_text: activity_level_text,
-      typical_times_text: typical_times_text
+      typical_times_text: typical_times_text,
+      show_report_modal: false
     )
   end
 
@@ -581,6 +607,16 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   @impl true
   def handle_event("device_type_detected", _params, socket) do
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("open_report_modal", _params, socket) do
+    {:noreply, assign(socket, :show_report_modal, true)}
+  end
+
+  @impl true
+  def handle_event("close_report_modal", _params, socket) do
+    {:noreply, assign(socket, :show_report_modal, false)}
   end
 
   @impl true
@@ -759,6 +795,23 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   @impl true
   def handle_info({:chat_panel_error, msg}, socket) do
     {:noreply, put_flash(socket, :error, msg)}
+  end
+
+  @impl true
+  def handle_info({:report_submitted, _reported_user_id}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_report_modal, false)
+     |> put_flash(:info, gettext("Report submitted. Our team will review it."))
+     |> redirect(to: ~p"/my/spotlight")}
+  end
+
+  @impl true
+  def handle_info({:report_failed}, socket) do
+    {:noreply,
+     socket
+     |> assign(:show_report_modal, false)
+     |> put_flash(:error, gettext("Could not submit report. Please try again."))}
   end
 
   @impl true

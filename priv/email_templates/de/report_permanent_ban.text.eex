@@ -1,0 +1,13 @@
+Dein ANIMINA-Konto wurde dauerhaft gesperrt
+---
+
+Hallo <%= @greeting_name %>,
+
+nach Prüfung einer Meldung zu deinem Konto hat unser
+Moderationsteam entschieden, dein Konto dauerhaft zu sperren.
+
+Du kannst ANIMINA-Dienste nicht mehr nutzen.
+
+Wenn du der Meinung bist, dass diese Entscheidung
+fehlerhaft ist, kannst du innerhalb von 30 Tagen einen
+Einspruch einlegen, indem du unser Support-Team kontaktierst.

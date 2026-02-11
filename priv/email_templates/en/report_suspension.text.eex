@@ -1,0 +1,16 @@
+Your ANIMINA account has been temporarily suspended
+---
+
+Hi <%= @greeting_name %>,
+
+After reviewing a report about your account, our moderation team
+has decided to temporarily suspend your account.
+
+Your account will be suspended until: <%= @suspended_until %>
+
+During this time, you will not be able to log in or use
+ANIMINA services.
+
+If you believe this decision was made in error, you can submit
+an appeal after logging in once your suspension ends, or by
+contacting our support team.
