@@ -13,6 +13,6 @@
   "dependencies": {
     "@toast-ui/editor": "^3.2.2",
     "cropperjs": "^1.6.2",
-    "sortablejs": "^1.15.0"
+    "sortablejs": "^1.15.6"
   }
 }
