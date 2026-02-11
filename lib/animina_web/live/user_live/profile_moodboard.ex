@@ -66,7 +66,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
                 · {format_height(@profile_user.height)}
               <% end %>
               <%= if @city do %>
-                · <span class="whitespace-nowrap">{@zip_code} {@city.name}</span>
+                · <span class="whitespace-nowrap">{@city.name}</span>
               <% end %>
             </p>
             <p :if={@profile_user.occupation} class="text-base-content/60">
