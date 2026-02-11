@@ -282,10 +282,10 @@ defmodule AniminaWeb.Layouts do
                         </p>
                       </div>
                       <a
-                        href="/my/discover"
+                        href="/my/spotlight"
                         class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
                       >
-                        {gettext("Discover")}
+                        {gettext("Spotlight")}
                       </a>
                       <a
                         href="/my/messages"

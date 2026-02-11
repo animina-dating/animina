@@ -593,7 +593,7 @@ defmodule AniminaWeb.UserAuthTest do
         conn
         |> put_session(:user_token, user_token)
         |> put_session(:current_role, "admin")
-        |> Map.put(:request_path, "/discover")
+        |> Map.put(:request_path, "/spotlight")
         |> UserAuth.fetch_current_scope_for_user([])
 
       assert conn.assigns.current_scope.current_role == "admin"

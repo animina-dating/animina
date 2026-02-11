@@ -1,8 +1,8 @@
-defmodule AniminaWeb.Admin.DiscoveryFunnelLive do
+defmodule AniminaWeb.Admin.SpotlightFunnelLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.Discovery.CandidatePool
+  alias Animina.Discovery.SpotlightPool
   alias AniminaWeb.Layouts
 
   @impl true
@@ -12,7 +12,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLive do
 
     {:ok,
      assign(socket,
-       page_title: gettext("Discovery Funnel"),
+       page_title: gettext("Spotlight Funnel"),
        search_query: "",
        search_results: [],
        selected_user: user,
@@ -25,7 +25,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLive do
   def mount(_params, _session, socket) do
     {:ok,
      assign(socket,
-       page_title: gettext("Discovery Funnel"),
+       page_title: gettext("Spotlight Funnel"),
        search_query: "",
        search_results: [],
        selected_user: nil,
@@ -56,7 +56,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLive do
 
   @impl true
   def handle_info({:load_funnel, user}, socket) do
-    {steps, candidates} = CandidatePool.build_with_funnel(user)
+    {steps, candidates} = SpotlightPool.build_with_funnel(user)
 
     {:noreply,
      assign(socket,
@@ -72,7 +72,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLive do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
         <.page_header
-          title={gettext("Discovery Funnel")}
+          title={gettext("Spotlight Funnel")}
           subtitle={gettext("Analyze filter pipeline for any user")}
         >
           <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>

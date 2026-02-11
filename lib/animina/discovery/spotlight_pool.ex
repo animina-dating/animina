@@ -1,6 +1,6 @@
-defmodule Animina.Discovery.CandidatePool do
+defmodule Animina.Discovery.SpotlightPool do
   @moduledoc """
-  Builds the candidate pool — the base filtered set of potential matches.
+  Builds the spotlight pool — the base filtered set of potential matches.
 
   A flat filter pipeline with no scoring, no daily sets, and no cooldowns.
   All filters are bidirectional (both users must satisfy each other's constraints).

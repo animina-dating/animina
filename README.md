@@ -217,23 +217,35 @@ Real-time 1:1 messaging between users at `/my/messages`.
 - **Message deletion** — trash icon on hover for own unread messages; deleting updates recipient's unread count
 - **Blocking** per conversation
 
-## Discovery System
+## Spotlight System
 
-The partner discovery system suggests compatible matches with a daily set model:
+The partner discovery system uses a **Daily Spotlight** model: each day, users see a curated set of 6 pool candidates + 2 wildcards, seeded once per day (Berlin midnight reset).
 
-- **Daily discovery sets**: A fixed set of suggestions generated once per day (Berlin time), no refresh
-- **Slot-aware gating**: Discovery hides suggestions when chat slots are full or daily new-chat limit is reached
+### Daily Spotlight
+
+- **6 pool picks**: From the full candidate pool (round-robin across days, no repeat until pool exhausted)
+- **2 wildcard picks**: From a relaxed pool (expanded distance +20%, expanded age +20%, no height/hard-red filters)
+- **Berlin midnight reset**: Same set shown all day, new set at midnight Berlin time
+- **Countdown timer**: Shows "New profiles in Xh Ym" with server-side timer
+
+### Moodboard Access Control
+
+Full moodboard profiles are restricted. A viewer can only see a user's moodboard if:
+- They are the profile owner
+- They are admin or moderator
+- They have an active (non-blocked) conversation
+- They appear in each other's daily spotlight (bidirectional)
+
+Non-authorized visitors see a minimal profile card (avatar placeholder, name, age, city) with an explanation.
 
 ### Features
 
 - **Bidirectional matching**: Both users must fit each other's criteria
 - **Static daily sets**: Suggestions persist across page reloads (generated once per Berlin calendar day)
-- **Profile visit tracking**: "Visited" badge on discover cards for profiles you've viewed
-- **Active chat indicator**: "Chat" badge on discover cards for users you have conversations with
-- **Privacy-safe conflict warnings**: Generic "Potential conflicts" without counts to prevent flag reverse-engineering
-- **Cooldown period**: Users reappear after 30 days (configurable)
+- **Profile visit tracking**: "Visited" badge on spotlight cards for profiles you've viewed
+- **Wildcard badges**: Accent border + bolt icon for wildcard picks
+- **Conversations sidebar**: Slide-in drawer with active conversations and unread badges
 - **Popular user protection**: Users receiving 6+ daily inquiries are temporarily hidden
-- **Scoring adjustments**: Low-popularity users get visibility boosts; high-popularity users get balanced exposure
 - **Closed conversation exclusion**: Users from closed conversations are permanently excluded from discovery
 
 ### Configuration

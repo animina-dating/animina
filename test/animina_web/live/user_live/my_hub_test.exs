@@ -20,7 +20,7 @@ defmodule AniminaWeb.UserLive.MyHubTest do
         |> live(~p"/my")
 
       assert html =~ "My Hub"
-      assert html =~ "Discover"
+      assert html =~ "Spotlight"
       assert html =~ "Messages"
       assert html =~ "Settings"
       assert html =~ "Logs"
@@ -62,7 +62,7 @@ defmodule AniminaWeb.UserLive.MyHubTest do
         |> log_in_user(user)
         |> live(~p"/my")
 
-      refute has_element?(lv, "main a[href='/discover']")
+      refute has_element?(lv, "main a[href='/my/spotlight']")
       refute has_element?(lv, "main a[href='/my/messages']")
       assert has_element?(lv, "main a[href='/my/waitlist']")
       assert html =~ "Waitlist"

@@ -29,9 +29,9 @@ defmodule AniminaWeb.UserLive.MyHub do
           />
           <.hub_card
             :if={@user.state != "waitlisted"}
-            navigate={~p"/my/discover"}
+            navigate={~p"/my/spotlight"}
             icon="hero-sparkles"
-            title={gettext("Discover")}
+            title={gettext("Spotlight")}
             subtitle={gettext("Find new people")}
           />
           <.hub_card

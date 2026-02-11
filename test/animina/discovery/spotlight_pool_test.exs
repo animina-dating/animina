@@ -1,10 +1,10 @@
-defmodule Animina.Discovery.CandidatePoolTest do
+defmodule Animina.Discovery.SpotlightPoolTest do
   use Animina.DataCase, async: true
 
   import Animina.AccountsFixtures
 
   alias Animina.Accounts.ContactBlacklist
-  alias Animina.Discovery.CandidatePool
+  alias Animina.Discovery.SpotlightPool
   alias Animina.Traits
   alias Animina.Traits.UserFlag
 
@@ -73,7 +73,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
     test "viewer blacklists candidate → excluded", %{viewer: viewer, candidate: candidate} do
       {:ok, _} = ContactBlacklist.add_entry(viewer, %{value: candidate.email})
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       refute candidate.id in ids
@@ -82,7 +82,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
     test "candidate blacklists viewer → excluded", %{viewer: viewer, candidate: candidate} do
       {:ok, _} = ContactBlacklist.add_entry(candidate, %{value: viewer.email})
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       refute candidate.id in ids
@@ -118,7 +118,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
       add_flag!(viewer, flag, "red", "hard")
       add_flag!(candidate, flag, "white")
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       refute candidate.id in ids
@@ -132,7 +132,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
       add_flag!(candidate, flag, "red", "hard")
       add_flag!(viewer, flag, "white")
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       refute candidate.id in ids
@@ -142,7 +142,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
       add_flag!(viewer, flag, "red", "soft")
       add_flag!(candidate, flag, "white")
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert candidate.id in ids
@@ -164,7 +164,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert candidate.id in ids
@@ -184,7 +184,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       # Candidate only wants females, viewer is male → excluded
       refute Enum.any?(results, fn u -> u.display_name == "No Match" end)
@@ -204,7 +204,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       # Viewer only wants females, candidate is male → excluded
       refute Enum.any?(results, fn u -> u.display_name == "Same Gender" end)
@@ -224,7 +224,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert candidate.id in ids
@@ -258,7 +258,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       assert Enum.any?(results, fn u -> u.display_name == "Age Match" end)
     end
@@ -287,7 +287,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Too Young" end)
     end
@@ -317,7 +317,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Narrow Range" end)
     end
@@ -347,7 +347,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert candidate.id in ids
@@ -376,7 +376,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Too Short" end)
     end
@@ -404,7 +404,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Wants Taller" end)
     end
@@ -431,7 +431,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert candidate.id in ids
@@ -460,7 +460,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Far Away" end)
     end
@@ -488,7 +488,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Small Radius" end)
     end
@@ -560,7 +560,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
 
       {:ok, _} = ContactBlacklist.add_entry(viewer, %{value: blacklisted.email})
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       assert good_match.id in ids
@@ -575,7 +575,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         |> activate_user()
         |> preload_locations()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
       ids = Enum.map(results, & &1.id)
 
       refute viewer.id in ids
@@ -600,7 +600,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
       |> Ecto.Changeset.change(deleted_at: DateTime.utc_now(:second))
       |> Repo.update!()
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Deleted" end)
     end
@@ -619,7 +619,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
           display_name: "Waitlisted"
         })
 
-      results = CandidatePool.build(viewer)
+      results = SpotlightPool.build(viewer)
 
       refute Enum.any?(results, fn u -> u.display_name == "Waitlisted" end)
     end
@@ -645,7 +645,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      {steps, candidates} = CandidatePool.build_with_funnel(viewer)
+      {steps, candidates} = SpotlightPool.build_with_funnel(viewer)
 
       assert is_list(steps)
       assert is_list(candidates)
@@ -682,7 +682,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      {steps, _candidates} = CandidatePool.build_with_funnel(viewer)
+      {steps, _candidates} = SpotlightPool.build_with_funnel(viewer)
 
       counts = Enum.map(steps, & &1.count)
 
@@ -714,7 +714,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      {steps, candidates} = CandidatePool.build_with_funnel(viewer)
+      {steps, candidates} = SpotlightPool.build_with_funnel(viewer)
 
       last_step = List.last(steps)
       assert last_step.count == length(candidates)
@@ -741,7 +741,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      {pool_count, results} = CandidatePool.build_with_pool_count(viewer)
+      {pool_count, results} = SpotlightPool.build_with_pool_count(viewer)
 
       # Pool count includes everyone through distance (before gender/age/height/red filters)
       assert is_integer(pool_count)
@@ -772,7 +772,7 @@ defmodule Animina.Discovery.CandidatePoolTest do
         })
         |> activate_user()
 
-      {pool_count, results} = CandidatePool.build_with_pool_count(viewer)
+      {pool_count, results} = SpotlightPool.build_with_pool_count(viewer)
 
       # Pool count should be >= final results since pool is before gender/age/height filters
       assert pool_count >= length(results)

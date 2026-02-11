@@ -3,7 +3,7 @@ defmodule AniminaWeb.UserLive.Login do
 
   import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1]
 
-  alias Animina.Discovery.CandidatePool
+  alias Animina.Discovery.SpotlightPool
 
   @dev_routes Application.compile_env(:animina, :dev_routes)
   @dev_password "password12345"
@@ -281,7 +281,7 @@ defmodule AniminaWeb.UserLive.Login do
 
       pool_size =
         try do
-          user |> CandidatePool.build() |> length()
+          user |> SpotlightPool.build() |> length()
         rescue
           _ -> 0
         end

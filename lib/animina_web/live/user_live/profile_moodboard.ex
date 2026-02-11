@@ -19,6 +19,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias Animina.Accounts.OnlineActivity
   alias Animina.Accounts.Scope
   alias Animina.Discovery
+  alias Animina.Discovery.Spotlight
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
@@ -28,6 +29,61 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias AniminaWeb.Presence
 
   import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
+
+  @impl true
+  def render(%{access_restricted: true} = assigns) do
+    ~H"""
+    <Layouts.app flash={@flash} current_scope={@current_scope}>
+      <div class="max-w-2xl mx-auto">
+        <div class="breadcrumbs text-sm mb-6">
+          <ul>
+            <li><.link navigate={~p"/my/spotlight"}>{gettext("Spotlight")}</.link></li>
+            <li>{@profile_user.display_name}</li>
+          </ul>
+        </div>
+
+        <div class="card bg-base-100 shadow-lg border border-base-300">
+          <div class="card-body text-center py-12">
+            <div class="mx-auto mb-4">
+              <div class="w-24 h-24 rounded-full bg-base-200 flex items-center justify-center mx-auto">
+                <.icon name="hero-user" class="h-12 w-12 text-base-content/30" />
+              </div>
+            </div>
+
+            <h2 class="text-2xl font-bold">{@profile_user.display_name}</h2>
+            <p class="text-base-content/60">
+              {gettext("%{age} years", age: @age)}
+              <%= if @profile_user.height do %>
+                · {format_height(@profile_user.height)}
+              <% end %>
+              <%= if @city do %>
+                · {@city.name}
+              <% end %>
+            </p>
+
+            <div class="divider"></div>
+
+            <div class="alert alert-info">
+              <.icon name="hero-lock-closed" class="h-5 w-5" />
+              <span>
+                {gettext(
+                  "This profile is only visible when you appear in each other's Daily Spotlight or have an active conversation."
+                )}
+              </span>
+            </div>
+
+            <div class="mt-4">
+              <.link navigate={~p"/my/spotlight"} class="btn btn-primary">
+                <.icon name="hero-sparkles" class="h-5 w-5 mr-2" />
+                {gettext("Back to Spotlight")}
+              </.link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layouts.app>
+    """
+  end
 
   @impl true
   def render(assigns) do
@@ -371,6 +427,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
         {:ok, mount_moodboard(socket, profile_user, current_user, owner?)}
 
+      {:access_restricted, profile_user} ->
+        {:ok, mount_minimal_profile(socket, profile_user)}
+
       :denied ->
         {:ok,
          socket
@@ -379,14 +438,24 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     end
   end
 
-  defp check_access(current_user, profile_user, _current_scope) do
+  defp check_access(current_user, profile_user, current_scope) do
     owner? = current_user && profile_user && current_user.id == profile_user.id
 
     cond do
-      is_nil(profile_user) -> :denied
-      owner? -> {:ok, true}
-      current_user != nil -> {:ok, false}
-      true -> :denied
+      is_nil(profile_user) ->
+        :denied
+
+      owner? ->
+        {:ok, true}
+
+      is_nil(current_user) ->
+        :denied
+
+      Spotlight.has_moodboard_access?(current_user, profile_user, current_scope) ->
+        {:ok, false}
+
+      true ->
+        {:access_restricted, profile_user}
     end
   end
 
@@ -441,6 +510,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       page_title: page_title,
       profile_user: profile_user,
       owner?: owner?,
+      access_restricted: false,
       items: items,
       current_user_id: current_user.id,
       columns: initial_columns,
@@ -461,6 +531,45 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       hide_online_status: hide_online_status,
       activity_level_text: activity_level_text,
       typical_times_text: typical_times_text
+    )
+  end
+
+  defp mount_minimal_profile(socket, profile_user) do
+    age = Accounts.compute_age(profile_user.birthday)
+    locations = Accounts.list_user_locations(profile_user)
+    primary_location = Enum.find(locations, &(&1.position == 1))
+
+    city =
+      if primary_location do
+        GeoData.get_city_by_zip_code(primary_location.zip_code)
+      end
+
+    assign(socket,
+      page_title: profile_user.display_name,
+      profile_user: profile_user,
+      owner?: false,
+      access_restricted: true,
+      age: age,
+      city: city,
+      # Dummy assigns required by handle_params and render
+      items: [],
+      columns: 1,
+      zip_code: nil,
+      white_flags: [],
+      private_white_flags_count: 0,
+      show_chat_toggle: false,
+      chat_blocked_reason: nil,
+      chat_open: false,
+      chat_conversation_id: nil,
+      chat_subscribed: false,
+      chat_typing_timer: nil,
+      wildcard?: false,
+      current_user_id: socket.assigns.current_scope.user.id,
+      is_online: false,
+      last_seen_at: nil,
+      hide_online_status: true,
+      activity_level_text: nil,
+      typical_times_text: nil
     )
   end
 

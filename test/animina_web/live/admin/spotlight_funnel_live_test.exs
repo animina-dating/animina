@@ -1,10 +1,10 @@
-defmodule AniminaWeb.Admin.DiscoveryFunnelLiveTest do
+defmodule AniminaWeb.Admin.SpotlightFunnelLiveTest do
   use AniminaWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
-  describe "Discovery Funnel page" do
+  describe "Spotlight Funnel page" do
     setup do
       admin = admin_fixture()
       %{admin: admin}
@@ -15,14 +15,14 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLiveTest do
       conn = log_in_user(conn, user)
 
       assert {:error, {:redirect, %{to: "/"}}} =
-               live(conn, ~p"/admin/discovery/funnel")
+               live(conn, ~p"/admin/spotlight/funnel")
     end
 
     test "renders page with search input", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, _view, html} = live(conn, ~p"/admin/discovery/funnel")
+      {:ok, _view, html} = live(conn, ~p"/admin/spotlight/funnel")
 
-      assert html =~ "Discovery Funnel"
+      assert html =~ "Spotlight Funnel"
       assert html =~ "Search users"
     end
 
@@ -30,7 +30,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLiveTest do
       target = user_fixture(%{display_name: "FunnelTarget"})
 
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/discovery/funnel")
+      {:ok, view, _html} = live(conn, ~p"/admin/spotlight/funnel")
 
       html =
         view
@@ -55,7 +55,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLiveTest do
       |> Animina.Repo.update!()
 
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/discovery/funnel")
+      {:ok, view, _html} = live(conn, ~p"/admin/spotlight/funnel")
 
       # Search first
       view
@@ -88,7 +88,7 @@ defmodule AniminaWeb.Admin.DiscoveryFunnelLiveTest do
       |> Animina.Repo.update!()
 
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, view, _html} = live(conn, ~p"/admin/discovery/funnel/#{target.id}")
+      {:ok, view, _html} = live(conn, ~p"/admin/spotlight/funnel/#{target.id}")
 
       # Wait for async handle_info to complete
       html = render(view)

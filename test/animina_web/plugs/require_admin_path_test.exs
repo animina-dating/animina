@@ -86,7 +86,7 @@ defmodule AniminaWeb.Plugs.RequireAdminPathTest do
       conn =
         conn
         |> assign(:current_scope, scope)
-        |> Map.put(:request_path, "/discover")
+        |> Map.put(:request_path, "/spotlight")
         |> RequireAdminPath.call([])
 
       refute conn.halted

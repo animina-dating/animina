@@ -3,7 +3,7 @@ defmodule AniminaWeb.Helpers.ColumnPreferences do
   Shared column preference logic for grid layouts (moodboard, discover, etc.).
 
   Provides functions for reading, persisting, and converting column preferences.
-  Used by MoodboardEditor, ProfileMoodboard, and DiscoverLive.
+  Used by MoodboardEditor, ProfileMoodboard, and SpotlightLive.
   """
 
   alias Animina.Accounts
