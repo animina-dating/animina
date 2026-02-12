@@ -1,14 +1,10 @@
-defmodule Animina.Photos.OllamaSemaphore do
+defmodule Animina.AI.Semaphore do
   @moduledoc """
-  Bounded concurrency semaphore for Ollama requests.
+  Bounded concurrency semaphore for AI requests.
 
   Limits the number of concurrent Ollama API calls to prevent overwhelming
-  the local LLM server. Callers acquire a slot before making a request and
-  release it when done. If all slots are occupied, callers block until a
-  slot becomes available or the timeout expires.
-
-  This is NOT batching — each photo is processed immediately as it arrives.
-  The semaphore only kicks in when all slots are occupied.
+  the AI server. Callers acquire a slot before making a request and
+  release it when done. Supports dynamic max adjustment via the Autoscaler.
   """
 
   use GenServer
@@ -25,7 +21,6 @@ defmodule Animina.Photos.OllamaSemaphore do
 
   @doc """
   Acquires a semaphore slot. Blocks until a slot is available or timeout expires.
-
   Returns `:ok` on success, `{:error, :timeout}` on timeout.
   """
   def acquire(timeout \\ 30_000, server \\ __MODULE__) do
@@ -41,11 +36,18 @@ defmodule Animina.Photos.OllamaSemaphore do
 
   @doc """
   Returns current semaphore status for monitoring.
-
   Returns `%{active: N, max: M, waiting: K}`.
   """
   def status(server \\ __MODULE__) do
     GenServer.call(server, :status)
+  end
+
+  @doc """
+  Dynamically updates the maximum concurrent slots.
+  Called by the Autoscaler to adjust concurrency based on response times.
+  """
+  def set_max(new_max, server \\ __MODULE__) do
+    GenServer.call(server, {:set_max, new_max})
   end
 
   # --- Server Callbacks ---
@@ -60,17 +62,15 @@ defmodule Animina.Photos.OllamaSemaphore do
       waiting: :queue.new()
     }
 
-    Logger.info("OllamaSemaphore started with max_concurrent=#{max}")
+    Logger.info("AI.Semaphore started with max_concurrent=#{max}")
     {:ok, state}
   end
 
   @impl true
   def handle_call({:acquire, timeout}, from, state) do
     if state.active < state.max do
-      # Slot available — grant immediately
       {:reply, :ok, %{state | active: state.active + 1}}
     else
-      # No slots — enqueue waiter with timer
       timer_ref = Process.send_after(self(), {:timeout, from}, timeout)
       {pid, _tag} = from
       monitor_ref = Process.monitor(pid)
@@ -93,13 +93,24 @@ defmodule Animina.Photos.OllamaSemaphore do
   end
 
   @impl true
+  def handle_call({:set_max, new_max}, _from, state) do
+    old_max = state.max
+    state = %{state | max: new_max}
+
+    # If we increased max and have waiters, grant slots
+    state = maybe_grant_waiting(state)
+
+    Logger.info("AI.Semaphore max adjusted: #{old_max} -> #{new_max}")
+    {:reply, :ok, state}
+  end
+
+  @impl true
   def handle_cast(:release, state) do
     {:noreply, release_slot(state)}
   end
 
   @impl true
   def handle_info({:timeout, from}, state) do
-    # Remove the timed-out waiter from the queue and reply with error
     {waiter, new_waiting} = remove_waiter(state.waiting, from)
 
     if waiter do
@@ -112,7 +123,6 @@ defmodule Animina.Photos.OllamaSemaphore do
 
   @impl true
   def handle_info({:DOWN, _ref, :process, pid, _reason}, state) do
-    # Clean up dead waiters
     new_waiting =
       :queue.filter(
         fn waiter ->
@@ -138,15 +148,30 @@ defmodule Animina.Photos.OllamaSemaphore do
 
     case grant_next_waiter(state.waiting) do
       {:granted, waiter, new_waiting} ->
-        # Cancel the waiter's timeout timer and demonitor
         Process.cancel_timer(waiter.timer_ref)
         Process.demonitor(waiter.monitor_ref, [:flush])
         GenServer.reply(waiter.from, :ok)
-        # Active count stays the same (one released, one granted)
         %{state | active: new_active + 1, waiting: new_waiting}
 
       :empty ->
         %{state | active: new_active}
+    end
+  end
+
+  defp maybe_grant_waiting(state) do
+    if state.active < state.max do
+      case grant_next_waiter(state.waiting) do
+        {:granted, waiter, new_waiting} ->
+          Process.cancel_timer(waiter.timer_ref)
+          Process.demonitor(waiter.monitor_ref, [:flush])
+          GenServer.reply(waiter.from, :ok)
+          maybe_grant_waiting(%{state | active: state.active + 1, waiting: new_waiting})
+
+        :empty ->
+          state
+      end
+    else
+      state
     end
   end
 

@@ -129,6 +129,80 @@ defmodule Animina.FeatureFlags do
       default_value: 5,
       min_value: 0,
       max_value: 50
+    },
+    # AI Scheduler settings
+    %{
+      name: :ai_scheduler_poll_interval,
+      label: "AI Scheduler Poll Interval (ms)",
+      description: "How often the AI scheduler polls for runnable jobs",
+      type: :integer,
+      default_value: 5_000,
+      min_value: 1_000,
+      max_value: 60_000
+    },
+    %{
+      name: :ai_scheduler_batch_size,
+      label: "AI Scheduler Batch Size",
+      description: "Maximum jobs to dispatch per poll cycle",
+      type: :integer,
+      default_value: 5,
+      min_value: 1,
+      max_value: 20
+    },
+    # AI Autoscaler settings
+    %{
+      name: :ai_autoscale_min,
+      label: "Autoscale Min Slots",
+      description: "Minimum concurrent AI slots",
+      type: :integer,
+      default_value: 2,
+      min_value: 1,
+      max_value: 10
+    },
+    %{
+      name: :ai_autoscale_max,
+      label: "Autoscale Max Slots",
+      description: "Maximum concurrent AI slots",
+      type: :integer,
+      default_value: 10,
+      min_value: 2,
+      max_value: 50
+    },
+    %{
+      name: :ai_autoscale_up_threshold_ms,
+      label: "Autoscale Up Threshold (ms)",
+      description: "Scale up when median response time is below this",
+      type: :integer,
+      default_value: 10_000,
+      min_value: 1_000,
+      max_value: 60_000
+    },
+    %{
+      name: :ai_autoscale_down_threshold_ms,
+      label: "Autoscale Down Threshold (ms)",
+      description: "Scale down when median response time exceeds this",
+      type: :integer,
+      default_value: 30_000,
+      min_value: 5_000,
+      max_value: 120_000
+    },
+    %{
+      name: :ai_autoscale_cooldown_ms,
+      label: "Autoscale Cooldown (ms)",
+      description: "Minimum time between autoscale adjustments",
+      type: :integer,
+      default_value: 30_000,
+      min_value: 5_000,
+      max_value: 120_000
+    },
+    %{
+      name: :ai_autoscale_window_size,
+      label: "Autoscale Window Size",
+      description: "Number of recent completions to consider for autoscaling",
+      type: :integer,
+      default_value: 20,
+      min_value: 5,
+      max_value: 100
     }
   ]
 

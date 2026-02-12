@@ -15,12 +15,9 @@ defmodule Animina.Photos.PhotoProcessor do
   use GenServer
   require Logger
 
-  alias Animina.FeatureFlags
+  alias Animina.AI
   alias Animina.Photos
-  alias Animina.Photos.OllamaClient
-  alias Animina.Photos.OllamaSemaphore
   alias Animina.Photos.Photo
-  alias Animina.Photos.PhotoFeedback
 
   # --- Client API ---
 
@@ -46,7 +43,7 @@ defmodule Animina.Photos.PhotoProcessor do
   and transitions them back to `pending` state so they can be re-processed.
 
   Note: Photos in `pending_ollama` states are NOT recovered here. They maintain
-  their retry schedule and will be processed by the OllamaRetryScheduler.
+  their retry schedule and will be processed by the AI.Scheduler.
 
   Returns `{:ok, count}` with the number of recovered photos.
   """
@@ -91,7 +88,7 @@ defmodule Animina.Photos.PhotoProcessor do
 
   @impl true
   def handle_cast({:process, photo_id}, state) do
-    Task.Supervisor.start_child(Animina.Photos.TaskSupervisor, fn ->
+    Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
       process_photo(photo_id)
     end)
 
@@ -151,97 +148,25 @@ defmodule Animina.Photos.PhotoProcessor do
   # Uses a simple prompt to check family_friendly, contains_person, and person_facing_camera_count
 
   defp run_ollama_check(photo) do
-    # Photo is already in ollama_checking state (transitioned by process_image)
-    # Apply configured delay for UX testing
-    FeatureFlags.apply_delay(:photo_ollama_check)
-
-    timeout = FeatureFlags.ollama_semaphore_timeout()
-
-    case OllamaSemaphore.acquire(timeout) do
-      :ok ->
-        try do
-          run_ollama_classification(photo)
-        after
-          OllamaSemaphore.release()
-        end
-
-      {:error, :timeout} ->
-        Logger.warning("Ollama semaphore timeout for photo #{photo.id}, queuing for retry")
-        Photos.queue_for_ollama_retry(photo)
-        {:error, :ollama_busy}
-    end
-  end
-
-  defp run_ollama_classification(photo) do
-    ollama_model = Photos.select_ollama_model()
-    thumbnail_path = Photos.processed_path(photo, :thumbnail)
-
-    image_data = File.read!(thumbnail_path) |> Base.encode64()
-
-    prompt = ollama_prompt()
-
+    # Enqueue an AI job for classification instead of running inline.
+    # The AI.Scheduler will pick it up and the Executor will handle
+    # classification, side effects, and state transitions.
     owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
 
-    {duration_us, result} =
-      :timer.tc(fn ->
-        OllamaClient.completion(
-          model: ollama_model,
-          prompt: prompt,
-          images: [image_data],
-          photo_id: photo.id,
-          owner_id: owner_id
-        )
-      end)
-
-    duration_ms = div(duration_us, 1000)
-
-    case result do
-      {:ok, %{"response" => response}, server_url} ->
-        # Log Ollama response in development
-        if Application.get_env(:animina, :env) == :dev do
-          Logger.info("Ollama response for photo #{photo.id}: #{response}")
-        end
-
-        parsed = parse_ollama_response(response)
-
-        Photos.log_event(
-          photo,
-          "ollama_checked",
-          "ai",
-          nil,
-          %{
-            model: ollama_model,
-            person_detection: parsed.person_detection,
-            content_safety: parsed.content_safety,
-            attire_assessment: parsed.attire_assessment,
-            animal_detection: parsed.animal_detection,
-            sex_scene: parsed.sex_scene,
-            raw_response: response
-          },
-          duration_ms: duration_ms,
-          ollama_server_url: server_url
-        )
-
-        finalize_ollama_result(photo, parsed)
+    case AI.enqueue("photo_classification", %{"photo_id" => photo.id},
+           subject_type: "Photo",
+           subject_id: photo.id,
+           requester_id: owner_id
+         ) do
+      {:ok, _job} ->
+        Logger.info("Photo #{photo.id} enqueued for AI classification")
+        # Return the photo as-is — it stays in ollama_checking until the AI job completes
+        {:ok, photo}
 
       {:error, reason} ->
-        Logger.warning("Ollama check failed for photo #{photo.id}: #{inspect(reason)}")
-
-        Photos.log_event(
-          photo,
-          "ollama_checked",
-          "ai",
-          nil,
-          %{
-            model: ollama_model,
-            result: "queued_for_retry",
-            error: inspect(reason)
-          },
-          duration_ms: duration_ms
-        )
-
-        # Queue for retry
+        Logger.error("Failed to enqueue AI classification for photo #{photo.id}: #{inspect(reason)}")
         Photos.queue_for_ollama_retry(photo)
+        {:error, :enqueue_failed}
     end
   end
 
@@ -468,46 +393,6 @@ defmodule Animina.Photos.PhotoProcessor do
     end
   end
 
-  defp finalize_ollama_result(photo, parsed) do
-    # Use PhotoFeedback to analyze the image based on photo type
-    analysis_result =
-      if moodboard_photo?(photo) do
-        PhotoFeedback.analyze_moodboard(parsed)
-      else
-        PhotoFeedback.analyze_avatar(parsed)
-      end
-
-    case analysis_result do
-      {:ok, :approved} ->
-        Photos.transition_photo(photo, "approved")
-
-      {:error, violation, message} ->
-        new_state = PhotoFeedback.violation_to_state(violation)
-
-        # Auto-blacklist if warranted
-        if PhotoFeedback.should_blacklist?(violation) do
-          maybe_auto_blacklist(photo)
-        end
-
-        Photos.log_event(photo, "photo_rejected", "system", nil, %{
-          reason: Atom.to_string(violation),
-          state: new_state,
-          person_detection: parsed.person_detection,
-          content_safety: parsed.content_safety
-        })
-
-        Photos.transition_photo(photo, new_state, %{
-          error_message: message
-        })
-
-        {:error, violation}
-    end
-  end
-
-  # Moodboard photos have owner_type "MoodboardItem" and skip face detection
-  defp moodboard_photo?(%Photo{owner_type: "MoodboardItem"}), do: true
-  defp moodboard_photo?(_), do: false
-
   defp transition_to_processing(photo) do
     Photos.log_event(photo, "processing_started", "system", nil, %{})
     Photos.transition_photo(photo, "processing")
@@ -679,29 +564,6 @@ defmodule Animina.Photos.PhotoProcessor do
         })
 
         {:error, :blacklisted}
-    end
-  end
-
-  defp maybe_auto_blacklist(%Photo{dhash: nil}), do: :ok
-
-  defp maybe_auto_blacklist(%Photo{dhash: dhash} = photo) do
-    # Check if already blacklisted
-    case Photos.get_blacklist_entry_by_dhash(dhash) do
-      nil ->
-        # Add to blacklist automatically
-        case Photos.add_to_blacklist(dhash, "Auto-blacklisted: not family friendly", nil, photo) do
-          {:ok, _entry} ->
-            Photos.log_event(photo, "blacklist_added", "ai", nil, %{
-              reason: "auto_not_family_friendly"
-            })
-
-          {:error, _} ->
-            :ok
-        end
-
-      _entry ->
-        # Already blacklisted
-        :ok
     end
   end
 

@@ -5,6 +5,7 @@ defmodule AniminaWeb.Admin.AdminHub do
 
   use AniminaWeb, :live_view
 
+  alias Animina.AI
   alias Animina.Photos
   alias Animina.Reports
   alias AniminaWeb.Layouts
@@ -14,7 +15,7 @@ defmodule AniminaWeb.Admin.AdminHub do
     pending_reviews =
       Photos.count_pending_appeals(viewer_id: socket.assigns.current_scope.user.id)
 
-    ollama_queue = Photos.count_ollama_queue()
+    pending_ai_jobs = AI.count_jobs(status: "pending") + AI.count_jobs(status: "running")
     pending_reports = Reports.count_pending_reports()
     pending_appeals = Reports.count_pending_appeals()
 
@@ -22,7 +23,7 @@ defmodule AniminaWeb.Admin.AdminHub do
      assign(socket,
        page_title: gettext("Admin"),
        pending_reviews: pending_reviews,
-       ollama_queue: ollama_queue,
+       pending_ai_jobs: pending_ai_jobs,
        pending_reports: pending_reports,
        pending_appeals: pending_appeals
      )}
@@ -108,8 +109,8 @@ defmodule AniminaWeb.Admin.AdminHub do
             subtitle={gettext("System log viewers")}
           >
             <:trailing>
-              <span :if={@ollama_queue > 0} class="badge badge-warning">
-                {@ollama_queue}
+              <span :if={@pending_ai_jobs > 0} class="badge badge-warning">
+                {@pending_ai_jobs}
               </span>
             </:trailing>
           </.hub_card>

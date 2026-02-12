@@ -1,4 +1,4 @@
-defmodule Animina.Photos.OllamaHealthTracker do
+defmodule Animina.AI.HealthTracker do
   @moduledoc """
   GenServer that tracks health of Ollama instances using a circuit breaker pattern.
 
@@ -8,13 +8,13 @@ defmodule Animina.Photos.OllamaHealthTracker do
   - :half_open - Testing if instance recovered (after cooldown period)
 
   The tracker maintains state for each configured Ollama instance URL and
-  transitions between states based on success/failure signals from the OllamaClient.
+  transitions between states based on success/failure signals from the Client.
   """
 
   use GenServer
   require Logger
 
-  alias Animina.Photos
+  alias Animina.AI
 
   defstruct [:state, :failure_count, :last_failure_at]
 
@@ -28,50 +28,26 @@ defmodule Animina.Photos.OllamaHealthTracker do
 
   # --- Client API ---
 
-  @doc """
-  Starts the OllamaHealthTracker.
-
-  Options:
-  - :name - Process registration name (default: __MODULE__)
-  - :threshold - Number of failures before opening circuit (default: from config)
-  - :reset_ms - Milliseconds before attempting half-open (default: from config)
-  - :instances - List of instance URLs to track (default: from config)
-  """
   def start_link(opts \\ []) do
     name = Keyword.get(opts, :name, __MODULE__)
     GenServer.start_link(__MODULE__, opts, name: name)
   end
 
-  @doc """
-  Records a successful request to an instance.
-  Resets failure count and closes the circuit.
-  """
   @spec record_success(GenServer.server(), String.t()) :: :ok
   def record_success(server \\ __MODULE__, url) do
     GenServer.cast(server, {:record_success, url})
   end
 
-  @doc """
-  Records a failed request to an instance.
-  Increments failure count and may open the circuit.
-  """
   @spec record_failure(GenServer.server(), String.t(), term()) :: :ok
   def record_failure(server \\ __MODULE__, url, reason) do
     GenServer.cast(server, {:record_failure, url, reason})
   end
 
-  @doc """
-  Returns URLs of instances with closed or half-open circuits.
-  Checks for instances that should transition from open to half-open.
-  """
   @spec get_healthy_instances(GenServer.server()) :: [String.t()]
   def get_healthy_instances(server \\ __MODULE__) do
     GenServer.call(server, :get_healthy_instances)
   end
 
-  @doc """
-  Returns the status of all instances for debugging/admin UI.
-  """
   @spec get_all_statuses(GenServer.server()) :: [{String.t(), instance_status()}]
   def get_all_statuses(server \\ __MODULE__) do
     GenServer.call(server, :get_all_statuses)
@@ -81,8 +57,8 @@ defmodule Animina.Photos.OllamaHealthTracker do
 
   @impl true
   def init(opts) do
-    threshold = Keyword.get_lazy(opts, :threshold, &Photos.ollama_circuit_breaker_threshold/0)
-    reset_ms = Keyword.get_lazy(opts, :reset_ms, &Photos.ollama_circuit_breaker_reset_ms/0)
+    threshold = Keyword.get(opts, :threshold, AI.config(:ollama_circuit_breaker_threshold, 3))
+    reset_ms = Keyword.get(opts, :reset_ms, AI.config(:ollama_circuit_breaker_reset_ms, 60_000))
     instances = Keyword.get_lazy(opts, :instances, fn -> get_instance_urls() end)
 
     initial_statuses =
@@ -99,7 +75,7 @@ defmodule Animina.Photos.OllamaHealthTracker do
     }
 
     Logger.info(
-      "OllamaHealthTracker started with #{length(instances)} instance(s), threshold=#{threshold}, reset_ms=#{reset_ms}"
+      "AI.HealthTracker started with #{length(instances)} instance(s), threshold=#{threshold}, reset_ms=#{reset_ms}"
     )
 
     {:ok, state}
@@ -113,7 +89,7 @@ defmodule Animina.Photos.OllamaHealthTracker do
 
   @impl true
   def handle_cast({:record_failure, url, reason}, state) do
-    Logger.debug("Ollama instance #{url} failed: #{inspect(reason)}")
+    Logger.debug("AI instance #{url} failed: #{inspect(reason)}")
     new_state = update_status(state, url, &increment_failure(&1, state.threshold))
     {:noreply, new_state}
   end
@@ -122,7 +98,6 @@ defmodule Animina.Photos.OllamaHealthTracker do
   def handle_call(:get_healthy_instances, _from, state) do
     now = DateTime.utc_now()
 
-    # Check for open circuits that should transition to half-open
     {updated_statuses, healthy_urls} =
       Enum.reduce(state.statuses, {%{}, []}, fn {url, status}, {statuses_acc, urls_acc} ->
         updated_status = maybe_transition_to_half_open(status, now, state.reset_ms)
@@ -135,7 +110,6 @@ defmodule Animina.Photos.OllamaHealthTracker do
         end
       end)
 
-    # Return URLs in consistent order (sorted) for predictability
     sorted_urls = Enum.sort(healthy_urls)
 
     {:reply, sorted_urls, %{state | statuses: updated_statuses}}
@@ -151,10 +125,7 @@ defmodule Animina.Photos.OllamaHealthTracker do
 
   defp update_status(state, url, update_fn) do
     case Map.get(state.statuses, url) do
-      nil ->
-        # Unknown URL, ignore
-        state
-
+      nil -> state
       status ->
         updated_status = update_fn.(status)
         %{state | statuses: Map.put(state.statuses, url, updated_status)}
@@ -171,23 +142,12 @@ defmodule Animina.Photos.OllamaHealthTracker do
 
     new_state =
       cond do
-        # Already open, stay open (reset timer)
-        status.state == :open ->
-          :open
-
-        # Half-open failed, reopen
-        status.state == :half_open ->
-          :open
-
-        # Threshold reached, open circuit
+        status.state == :open -> :open
+        status.state == :half_open -> :open
         new_count >= threshold ->
           Logger.warning("Circuit opened after #{new_count} failures (threshold: #{threshold})")
-
           :open
-
-        # Below threshold, stay closed
-        true ->
-          :closed
+        true -> :closed
       end
 
     %__MODULE__{
@@ -217,7 +177,7 @@ defmodule Animina.Photos.OllamaHealthTracker do
   defp maybe_transition_to_half_open(status, _now, _reset_ms), do: status
 
   defp get_instance_urls do
-    Photos.ollama_instances()
+    Animina.AI.Client.ollama_instances()
     |> Enum.sort_by(& &1.priority)
     |> Enum.map(& &1.url)
   end

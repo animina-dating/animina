@@ -1,9 +1,13 @@
 defmodule Animina.Accounts.GenderGuesserTest do
-  use Animina.DataCase, async: true
+  # Not async because guess_async spawns tasks that need DB sandbox access
+  use Animina.DataCase, async: false
 
   alias Animina.Accounts.FirstNameGender
   alias Animina.Accounts.GenderGuesser
   alias Animina.Repo
+
+  # With async: false, the sandbox is in shared mode by default,
+  # so spawned tasks can already access the DB connection.
 
   describe "guess/1" do
     test "returns cached gender on cache hit" do
@@ -76,8 +80,9 @@ defmodule Animina.Accounts.GenderGuesserTest do
     test "sends {:gender_guess_result, result} to caller for uncached name" do
       GenderGuesser.guess_async("Xyztestname", self())
 
-      # Result depends on whether Ollama is running — either a gender or nil
-      assert_receive {:gender_guess_result, result}, 10_000
+      # In test env, AI services are disabled so this will return nil (timeout/unknown)
+      # In dev with Ollama running, it may return a gender
+      assert_receive {:gender_guess_result, result}, 35_000
       assert result in ["male", "female", nil]
     end
   end

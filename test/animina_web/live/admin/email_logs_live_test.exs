@@ -153,7 +153,7 @@ defmodule AniminaWeb.Admin.EmailLogsLiveTest do
 
       assert html =~ "Logs"
       assert html =~ "Email Logs"
-      assert html =~ "Ollama Logs"
+      assert html =~ "AI Jobs"
     end
   end
 end

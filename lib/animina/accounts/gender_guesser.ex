@@ -5,15 +5,12 @@ defmodule Animina.Accounts.GenderGuesser do
   """
 
   alias Animina.Accounts.FirstNameGender
-  alias Animina.Photos
+  alias Animina.AI
   alias Animina.Repo
 
   import Ecto.Query
 
   require Logger
-
-  @model "qwen3:1.7b"
-  @timeout 15_000
 
   @doc """
   Synchronously guesses gender for a first name.
@@ -35,12 +32,15 @@ defmodule Animina.Accounts.GenderGuesser do
   end
 
   defp guess_via_ollama(name) do
-    case ask_ollama(name) do
-      {:ok, gender, needs_review} ->
-        insert_cache(name, gender, needs_review)
+    case AI.execute_sync("gender_guess", %{"name" => name},
+           subject_type: "User",
+           timeout: 30_000
+         ) do
+      {:ok, %{"gender" => gender}} ->
         {:ok, gender}
 
-      :error ->
+      {:error, reason} ->
+        Logger.warning("GenderGuesser: AI job failed for '#{name}': #{inspect(reason)}")
         :unknown
     end
   end
@@ -82,61 +82,4 @@ defmodule Animina.Accounts.GenderGuesser do
     end
   end
 
-  defp insert_cache(name, gender, needs_review) do
-    %FirstNameGender{}
-    |> FirstNameGender.changeset(%{
-      first_name: name,
-      gender: gender,
-      needs_human_review: needs_review
-    })
-    |> Repo.insert(on_conflict: :nothing)
-  end
-
-  defp ask_ollama(name) do
-    url = ollama_url()
-    client = Ollama.init(base_url: url, receive_timeout: @timeout)
-
-    prompt =
-      "For a dating platform: Is the first name '#{name}' more commonly male or female? " <>
-        "Respond with ONLY valid JSON: {\"gender\": \"male\"} or {\"gender\": \"female\"}."
-
-    case Ollama.completion(client, model: @model, prompt: prompt) do
-      {:ok, %{"response" => response}} ->
-        parse_response(response)
-
-      {:error, reason} ->
-        Logger.warning("GenderGuesser: Ollama error for '#{name}': #{inspect(reason)}")
-        :error
-    end
-  rescue
-    e ->
-      Logger.warning("GenderGuesser: Ollama exception for '#{name}': #{inspect(e)}")
-      :error
-  end
-
-  defp parse_response(response) do
-    # Extract JSON from response (model may include thinking tags or extra text)
-    case Regex.run(~r/\{(?:[^{}]|\{[^{}]*\})*\}/s, response) do
-      [json_str] ->
-        case Jason.decode(json_str) do
-          {:ok, %{"gender" => gender}} when gender in ["male", "female"] ->
-            {:ok, gender, false}
-
-          _ ->
-            Logger.warning("GenderGuesser: unexpected JSON: #{inspect(json_str)}")
-            {:ok, "male", true}
-        end
-
-      nil ->
-        Logger.warning("GenderGuesser: no JSON found in response: #{inspect(response)}")
-        {:ok, "male", true}
-    end
-  end
-
-  defp ollama_url do
-    case Photos.ollama_instances() do
-      [%{url: url} | _] -> url
-      _ -> "http://localhost:11434/api"
-    end
-  end
 end

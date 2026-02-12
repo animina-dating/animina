@@ -7,7 +7,7 @@ defmodule Animina.Photos do
   - `Animina.Photos.AuditLog` - Audit logging for photo events
   - `Animina.Photos.Blacklist` - Perceptual hash blacklist management
   - `Animina.Photos.FileManagement` - File upload and validation
-  - `Animina.Photos.OllamaQueue` - Ollama retry queue management
+  - `Animina.Photos.OllamaQueue` - Photo review queue management (retry, manual review)
   - `Animina.Photos.UrlSigning` - Signed URL generation and verification
   """
 
@@ -16,7 +16,6 @@ defmodule Animina.Photos do
   alias Animina.Photos.FileManagement
   alias Animina.Photos.Photo
   alias Animina.Repo
-  alias Animina.Repo.Paginator
 
   # --- Configuration helpers ---
 
@@ -39,19 +38,9 @@ defmodule Animina.Photos do
   def ollama_timeout, do: config(:ollama_timeout, 120_000)
   def ollama_model, do: Animina.FeatureFlags.ollama_model()
 
-  @doc """
-  Selects the Ollama model to use based on current queue pressure.
+  # Model selection is now handled by Animina.AI.Executor
 
-  When adaptive model selection is enabled, uses a three-tier system
-  that steps through 8b → 4b → 2b as queue pressure increases, with
-  hysteresis to prevent flapping near boundaries.
-
-  With defaults (downgrade_tier2=10, downgrade_tier3=20, upgrade=5):
-  - Queue 0–5:  Tier 1 (8b) — at or below upgrade threshold
-  - Queue 6–10: Tier 2 (4b) — hysteresis zone
-  - Queue 11–20: Tier 2 (4b) — above tier2 downgrade
-  - Queue 21+:  Tier 3 (2b) — above tier3 downgrade
-  """
+  # Kept for backward compatibility (used by OllamaQueue for adaptive retry logic)
   def select_ollama_model do
     alias Animina.FeatureFlags
 
@@ -397,78 +386,6 @@ defmodule Animina.Photos do
   defdelegate retry_from_manual_review(photo, reviewer), to: Animina.Photos.OllamaQueue
   defdelegate get_oldest_ollama_queue_photo(), to: Animina.Photos.OllamaQueue
 
-  # --- OllamaLog functions ---
-
-  alias Animina.Photos.OllamaLog
-
-  @doc """
-  Creates a new Ollama log entry.
-  """
-  def create_ollama_log(attrs) do
-    %OllamaLog{}
-    |> OllamaLog.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Updates an existing Ollama log entry.
-  """
-  def update_ollama_log(%OllamaLog{} = log, attrs) do
-    log
-    |> OllamaLog.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Gets a single Ollama log entry with preloaded associations.
-  """
-  def get_ollama_log(id) do
-    OllamaLog
-    |> Repo.get(id)
-    |> Repo.preload([:photo, :owner, :requester])
-  end
-
-  @doc """
-  Lists Ollama log entries with pagination, sorting, and filtering.
-
-  Options:
-    - `:page` - page number (default 1)
-    - `:per_page` - items per page (default 50)
-    - `:sort_by` - column to sort by (default :inserted_at)
-    - `:sort_dir` - sort direction :asc or :desc (default :desc)
-    - `:filter_model` - filter by model name
-    - `:filter_status` - filter by status ("success" or "error")
-  """
-  def list_ollama_logs(opts \\ []) do
-    sort_by = Keyword.get(opts, :sort_by, :inserted_at)
-    sort_dir = Keyword.get(opts, :sort_dir, :desc)
-
-    OllamaLog
-    |> maybe_filter_model(opts[:filter_model])
-    |> maybe_filter_status(opts[:filter_status])
-    |> order_by([l], [{^sort_dir, ^sort_by}])
-    |> Paginator.paginate(Keyword.merge(opts, preload: [:photo, :owner, :requester]))
-  end
-
-  @doc """
-  Returns a list of distinct model names used in Ollama logs.
-  """
-  def distinct_ollama_models do
-    OllamaLog
-    |> where([l], not is_nil(l.model))
-    |> distinct([l], l.model)
-    |> select([l], l.model)
-    |> order_by([l], asc: l.model)
-    |> Repo.all()
-  end
-
-  defp maybe_filter_model(query, nil), do: query
-  defp maybe_filter_model(query, ""), do: query
-  defp maybe_filter_model(query, model), do: where(query, [l], l.model == ^model)
-
-  defp maybe_filter_status(query, nil), do: query
-  defp maybe_filter_status(query, ""), do: query
-  defp maybe_filter_status(query, status), do: where(query, [l], l.status == ^status)
 
   # --- Seeding helpers ---
 

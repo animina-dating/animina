@@ -3,14 +3,14 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
 
   alias Animina.Accounts
   alias Animina.ActivityLog
+  alias Animina.AI
   alias Animina.Emails
-  alias Animina.Photos
   alias AniminaWeb.Layouts
 
   @impl true
   def mount(_params, _session, socket) do
     email_count = Emails.list_email_logs(per_page: 1).total_count
-    ollama_count = Photos.list_ollama_logs(per_page: 1).total_count
+    ai_jobs_count = AI.count_jobs()
     activity_count = ActivityLog.count()
     tos_count = Accounts.count_tos_acceptances()
 
@@ -18,7 +18,7 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
      assign(socket,
        page_title: gettext("Logs"),
        email_count: email_count,
-       ollama_count: ollama_count,
+       ai_jobs_count: ai_jobs_count,
        activity_count: activity_count,
        tos_count: tos_count
      )}
@@ -61,15 +61,15 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
           </.hub_card>
 
           <.hub_card
-            navigate={~p"/admin/logs/ollama"}
-            title={gettext("Ollama Logs")}
-            subtitle={gettext("Log of Ollama AI photo analysis runs")}
+            navigate={~p"/admin/logs/ai"}
+            title={gettext("AI Jobs")}
+            subtitle={gettext("Unified AI job queue and execution log")}
             icon="hero-cpu-chip"
             icon_class="h-8 w-8"
             padding="p-5"
           >
             <:trailing>
-              <span class="badge badge-lg badge-outline font-mono">{@ollama_count}</span>
+              <span class="badge badge-lg badge-outline font-mono">{@ai_jobs_count}</span>
             </:trailing>
           </.hub_card>
 

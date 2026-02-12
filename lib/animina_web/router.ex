@@ -154,7 +154,7 @@ defmodule AniminaWeb.Router do
       live "/admin/photo-blacklist", Admin.PhotoBlacklistLive
       live "/admin/logs", Admin.LogsIndexLive
       live "/admin/logs/emails", Admin.EmailLogsLive
-      live "/admin/logs/ollama", Admin.OllamaLogsLive
+      live "/admin/logs/ai", Admin.AIJobsLive
       live "/admin/logs/activity", Admin.ActivityLogsLive
       live "/admin/tos-acceptances", Admin.TosAcceptancesLive
     end

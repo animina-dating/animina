@@ -5,7 +5,7 @@ defmodule Animina.Application do
 
   use Application
 
-  alias Animina.Photos.OllamaWarmup
+  alias Animina.AI.Warmup
   alias Animina.Photos.PhotoProcessor
 
   @impl true
@@ -30,10 +30,7 @@ defmodule Animina.Application do
         maybe_start_hot_deploy() ++
         maybe_start_online_users_logger() ++
         maybe_start_session_tracker() ++
-        maybe_start_ollama_health_tracker() ++
-        maybe_start_photo_processor() ++
-        maybe_start_ollama_retry_scheduler() ++
-        maybe_start_photo_description_worker() ++
+        maybe_start_ai_services() ++
         maybe_start_mail_queue_checker() ++
         maybe_start_mail_log_checker()
 
@@ -48,24 +45,24 @@ defmodule Animina.Application do
     # Recover stuck photos after services are ready (delayed to ensure GenServers are up)
     recover_stuck_photos()
 
-    # Warm up Ollama model (delayed to ensure OllamaHealthTracker is ready)
+    # Warm up Ollama model (delayed to ensure AI.HealthTracker is ready)
     warmup_ollama()
 
     result
   end
 
   defp warmup_ollama do
-    if Application.get_env(:animina, :start_photo_processor, true) do
+    if Application.get_env(:animina, :start_ai_services, true) do
       Task.start(fn ->
-        # Wait for OllamaHealthTracker GenServer to be fully initialized
+        # Wait for AI.HealthTracker GenServer to be fully initialized
         Process.sleep(2000)
-        OllamaWarmup.warmup_all()
+        Warmup.warmup_all()
       end)
     end
   end
 
   defp recover_stuck_photos do
-    if Application.get_env(:animina, :start_photo_processor, true) do
+    if Application.get_env(:animina, :start_ai_services, true) do
       # Spawn a task to recover stuck photos after a short delay
       # This ensures the PhotoProcessor GenServer is fully started
       Task.start(fn ->
@@ -127,37 +124,16 @@ defmodule Animina.Application do
     end
   end
 
-  defp maybe_start_ollama_health_tracker do
-    if Application.get_env(:animina, :start_photo_processor, true) do
-      [Animina.Photos.OllamaHealthTracker]
-    else
-      []
-    end
-  end
-
-  defp maybe_start_photo_processor do
-    if Application.get_env(:animina, :start_photo_processor, true) do
+  defp maybe_start_ai_services do
+    if Application.get_env(:animina, :start_ai_services, true) do
       [
-        {Task.Supervisor, name: Animina.Photos.TaskSupervisor},
-        Animina.Photos.OllamaSemaphore,
+        {Task.Supervisor, name: Animina.AI.TaskSupervisor},
+        Animina.AI.HealthTracker,
+        Animina.AI.Semaphore,
+        Animina.AI.Autoscaler,
+        Animina.AI.Scheduler,
         Animina.Photos.PhotoProcessor
       ]
-    else
-      []
-    end
-  end
-
-  defp maybe_start_ollama_retry_scheduler do
-    if Application.get_env(:animina, :start_photo_processor, true) do
-      [Animina.Photos.OllamaRetryScheduler]
-    else
-      []
-    end
-  end
-
-  defp maybe_start_photo_description_worker do
-    if Application.get_env(:animina, :start_photo_processor, true) do
-      [Animina.Photos.PhotoDescriptionWorker]
     else
       []
     end

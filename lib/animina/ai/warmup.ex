@@ -1,4 +1,4 @@
-defmodule Animina.Photos.OllamaWarmup do
+defmodule Animina.AI.Warmup do
   @moduledoc """
   Warms up Ollama by preloading the configured model at application startup.
 
@@ -9,9 +9,9 @@ defmodule Animina.Photos.OllamaWarmup do
 
   require Logger
 
+  alias Animina.AI.Client
+  alias Animina.AI.HealthTracker
   alias Animina.FeatureFlags
-  alias Animina.Photos
-  alias Animina.Photos.OllamaHealthTracker
 
   @doc """
   Warms up all configured Ollama instances by sending a minimal prompt.
@@ -24,10 +24,10 @@ defmodule Animina.Photos.OllamaWarmup do
   @spec warmup_all() :: :ok
   def warmup_all do
     models = models_to_warm_up()
-    instances = Photos.ollama_instances()
+    instances = Client.ollama_instances()
 
     Logger.info(
-      "Ollama warmup: loading #{Enum.join(models, ", ")} on #{length(instances)} instance(s)"
+      "AI warmup: loading #{Enum.join(models, ", ")} on #{length(instances)} instance(s)"
     )
 
     Enum.each(instances, fn instance ->
@@ -40,7 +40,7 @@ defmodule Animina.Photos.OllamaWarmup do
   end
 
   defp models_to_warm_up do
-    primary = Photos.ollama_model()
+    primary = Client.default_model()
 
     if FeatureFlags.enabled?(:ollama_adaptive_model) do
       tier1 = FeatureFlags.ollama_model_tier1()
@@ -51,22 +51,21 @@ defmodule Animina.Photos.OllamaWarmup do
       [primary]
     end
   rescue
-    _ -> [Photos.ollama_model()]
+    _ -> [Client.default_model()]
   end
 
   defp warmup_instance(url, model, timeout) do
-    # Cap warmup timeout at 2 minutes to avoid blocking too long
     warmup_timeout = min(timeout, 120_000)
     client = Ollama.init(base_url: url, receive_timeout: warmup_timeout)
 
     case Ollama.completion(client, model: model, prompt: "hi", keep_alive: "60m") do
       {:ok, _} ->
-        Logger.info("Ollama warmup: #{url} ready")
-        OllamaHealthTracker.record_success(url)
+        Logger.info("AI warmup: #{url} ready with #{model}")
+        HealthTracker.record_success(url)
 
       {:error, reason} ->
-        Logger.warning("Ollama warmup failed for #{url}: #{inspect(reason)}")
-        OllamaHealthTracker.record_failure(url, reason)
+        Logger.warning("AI warmup failed for #{url} with #{model}: #{inspect(reason)}")
+        HealthTracker.record_failure(url, reason)
     end
   end
 end
