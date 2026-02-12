@@ -141,8 +141,30 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           published_category_ids={@published_category_ids}
         />
 
-        <%!-- Navigation buttons --%>
-        <div class="flex justify-between items-center mt-8 pt-4 border-t border-base-300">
+        <%!-- Delete all flags --%>
+        <div
+          :if={
+            flag_count(@user_flags, "white") + flag_count(@user_flags, "green") +
+              flag_count(@user_flags, "red") > 0
+          }
+          class="mt-8 flex justify-center"
+        >
+          <button
+            phx-click="delete_all_flags"
+            data-confirm={delete_all_confirmation(@user_flags)}
+            class="btn btn-sm btn-error btn-outline"
+          >
+            {gettext("Delete all flags")}
+          </button>
+        </div>
+
+        <%!-- Spacer for sticky nav --%>
+        <div class="h-20"></div>
+      </div>
+
+      <%!-- Sticky navigation bar --%>
+      <div class="sticky bottom-0 left-0 right-0 bg-base-100/95 backdrop-blur-sm border-t border-base-300 py-3 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 z-10">
+        <div class="max-w-2xl mx-auto flex justify-between items-center">
           <div>
             <button
               :if={@current_step > 1}
@@ -164,23 +186,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
               </.link>
             <% end %>
           </div>
-        </div>
-
-        <%!-- Delete all flags --%>
-        <div
-          :if={
-            flag_count(@user_flags, "white") + flag_count(@user_flags, "green") +
-              flag_count(@user_flags, "red") > 0
-          }
-          class="mt-6 flex justify-center"
-        >
-          <button
-            phx-click="delete_all_flags"
-            data-confirm={delete_all_confirmation(@user_flags)}
-            class="btn btn-sm btn-error btn-outline"
-          >
-            {gettext("Delete all flags")}
-          </button>
         </div>
       </div>
     </Layouts.app>
