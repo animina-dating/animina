@@ -286,6 +286,10 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Camping"),
       gettext("Cultural Trips"),
       gettext("Winter Sports"),
+      gettext("Luxury"),
+      gettext("Backpacking"),
+      gettext("Low-Budget"),
+      gettext("Adventure Travel"),
       # ── Favorite Destinations flags ──
       gettext("Europe"),
       gettext("Asia"),

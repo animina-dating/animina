@@ -3141,4 +3141,35 @@ defmodule Animina.TraitsTest do
       assert length(delete_versions) >= 2
     end
   end
+
+  describe "seeded category: Travels" do
+    test "category has all 14 flags including travel style flags" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Travels" end)
+      assert category != nil
+
+      flags = Traits.list_top_level_flags_by_category(category)
+      assert length(flags) == 14
+
+      flag_names = Enum.map(flags, & &1.name)
+
+      # Original 10 travel type flags
+      assert "Beach" in flag_names
+      assert "City Trips" in flag_names
+      assert "Hiking Vacation" in flag_names
+      assert "Cruises" in flag_names
+      assert "Bike Tours" in flag_names
+      assert "Wellness" in flag_names
+      assert "Active and Sports Vacation" in flag_names
+      assert "Camping" in flag_names
+      assert "Cultural Trips" in flag_names
+      assert "Winter Sports" in flag_names
+
+      # 4 new travel style flags
+      assert "Luxury" in flag_names
+      assert "Backpacking" in flag_names
+      assert "Low-Budget" in flag_names
+      assert "Adventure Travel" in flag_names
+    end
+  end
 end

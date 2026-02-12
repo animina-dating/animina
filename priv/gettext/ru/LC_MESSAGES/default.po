@@ -1332,17 +1332,17 @@ msgstr "Активный и спортивный отдых"
 msgid "Adventure"
 msgstr "Приключения"
 
-#: lib/animina_web/trait_translations.ex:322
+#: lib/animina_web/trait_translations.ex:326
 #, elixir-autogen, elixir-format
 msgid "AfD"
 msgstr "AfD"
 
-#: lib/animina_web/trait_translations.ex:292
+#: lib/animina_web/trait_translations.ex:296
 #, elixir-autogen, elixir-format
 msgid "Africa"
 msgstr "Африка"
 
-#: lib/animina_web/trait_translations.ex:334
+#: lib/animina_web/trait_translations.ex:338
 #, elixir-autogen, elixir-format
 msgid "Agnosticism"
 msgstr "Агностицизм"
@@ -1362,7 +1362,7 @@ msgstr "Альтернатива"
 msgid "American"
 msgstr "Американская"
 
-#: lib/animina_web/trait_translations.ex:296
+#: lib/animina_web/trait_translations.ex:300
 #, elixir-autogen, elixir-format
 msgid "Antarctica"
 msgstr "Антарктида"
@@ -1372,7 +1372,7 @@ msgstr "Антарктида"
 msgid "Art"
 msgstr "Искусство"
 
-#: lib/animina_web/trait_translations.ex:291
+#: lib/animina_web/trait_translations.ex:295
 #, elixir-autogen, elixir-format
 msgid "Asia"
 msgstr "Азия"
@@ -1382,7 +1382,7 @@ msgstr "Азия"
 msgid "At Home"
 msgstr "Дома"
 
-#: lib/animina_web/trait_translations.ex:333
+#: lib/animina_web/trait_translations.ex:337
 #, elixir-autogen, elixir-format
 msgid "Atheism"
 msgstr "Атеизм"
@@ -1397,12 +1397,12 @@ msgstr "Лёгкая атлетика"
 msgid "Audiobooks"
 msgstr "Аудиокниги"
 
-#: lib/animina_web/trait_translations.ex:295
+#: lib/animina_web/trait_translations.ex:299
 #, elixir-autogen, elixir-format
 msgid "Australia"
 msgstr "Австралия"
 
-#: lib/animina_web/trait_translations.ex:300
+#: lib/animina_web/trait_translations.ex:304
 #, elixir-autogen, elixir-format
 msgid "Austria"
 msgstr "Австрия"
@@ -1422,7 +1422,7 @@ msgstr "Бадминтон"
 msgid "Baking"
 msgstr "Выпечка"
 
-#: lib/animina_web/trait_translations.ex:313
+#: lib/animina_web/trait_translations.ex:317
 #, elixir-autogen, elixir-format
 msgid "Bali"
 msgstr "Бали"
@@ -1477,17 +1477,17 @@ msgstr "Настольные игры"
 msgid "Boxing"
 msgstr "Бокс"
 
-#: lib/animina_web/trait_translations.ex:331
+#: lib/animina_web/trait_translations.ex:335
 #, elixir-autogen, elixir-format
 msgid "Buddhism"
 msgstr "Буддизм"
 
-#: lib/animina_web/trait_translations.ex:318
+#: lib/animina_web/trait_translations.ex:322
 #, elixir-autogen, elixir-format
 msgid "CDU"
 msgstr "CDU"
 
-#: lib/animina_web/trait_translations.ex:324
+#: lib/animina_web/trait_translations.ex:328
 #, elixir-autogen, elixir-format
 msgid "CSU"
 msgstr "CSU"
@@ -1502,12 +1502,12 @@ msgstr "Кафе"
 msgid "Camping"
 msgstr "Кемпинг"
 
-#: lib/animina_web/trait_translations.ex:315
+#: lib/animina_web/trait_translations.ex:319
 #, elixir-autogen, elixir-format
 msgid "Canada"
 msgstr "Канада"
 
-#: lib/animina_web/trait_translations.ex:311
+#: lib/animina_web/trait_translations.ex:315
 #, elixir-autogen, elixir-format
 msgid "Canary Islands"
 msgstr "Канарские острова"
@@ -1602,7 +1602,7 @@ msgstr "Креативность"
 msgid "Crime"
 msgstr "Криминал"
 
-#: lib/animina_web/trait_translations.ex:303
+#: lib/animina_web/trait_translations.ex:307
 #, elixir-autogen, elixir-format
 msgid "Croatia"
 msgstr "Хорватия"
@@ -1657,7 +1657,7 @@ msgstr "Дизайн"
 msgid "Desserts"
 msgstr "Десерты"
 
-#: lib/animina_web/trait_translations.ex:320
+#: lib/animina_web/trait_translations.ex:324
 #, elixir-autogen, elixir-format
 msgid "Die Grünen"
 msgstr "Die Grünen"
@@ -1687,7 +1687,7 @@ msgstr "Дрэг-шоу"
 msgid "Drawing"
 msgstr "Рисование"
 
-#: lib/animina_web/trait_translations.ex:310
+#: lib/animina_web/trait_translations.ex:314
 #, elixir-autogen, elixir-format
 msgid "Egypt"
 msgstr "Египет"
@@ -1707,12 +1707,12 @@ msgstr "Эмпатия"
 msgid "Erotica"
 msgstr "Эротика"
 
-#: lib/animina_web/trait_translations.ex:290
+#: lib/animina_web/trait_translations.ex:294
 #, elixir-autogen, elixir-format
 msgid "Europe"
 msgstr "Европа"
 
-#: lib/animina_web/trait_translations.ex:321
+#: lib/animina_web/trait_translations.ex:325
 #, elixir-autogen, elixir-format
 msgid "FDP"
 msgstr "FDP"
@@ -1772,7 +1772,7 @@ msgstr "Народная музыка"
 msgid "Food"
 msgstr "Еда"
 
-#: lib/animina_web/trait_translations.ex:302
+#: lib/animina_web/trait_translations.ex:306
 #, elixir-autogen, elixir-format
 msgid "France"
 msgstr "Франция"
@@ -1797,7 +1797,7 @@ msgstr "Щедрость"
 msgid "German"
 msgstr "Немецкая"
 
-#: lib/animina_web/trait_translations.ex:304
+#: lib/animina_web/trait_translations.ex:308
 #, elixir-autogen, elixir-format
 msgid "Germany"
 msgstr "Германия"
@@ -1822,7 +1822,7 @@ msgstr "Гольф"
 msgid "Good Sleep"
 msgstr "Здоровый сон"
 
-#: lib/animina_web/trait_translations.ex:301
+#: lib/animina_web/trait_translations.ex:305
 #, elixir-autogen, elixir-format
 msgid "Greece"
 msgstr "Греция"
@@ -1892,7 +1892,7 @@ msgstr "Пешие прогулки"
 msgid "Hiking Vacation"
 msgstr "Пеший туризм"
 
-#: lib/animina_web/trait_translations.ex:332
+#: lib/animina_web/trait_translations.ex:336
 #, elixir-autogen, elixir-format
 msgid "Hinduism"
 msgstr "Индуизм"
@@ -1977,7 +1977,7 @@ msgstr "Инди"
 msgid "Intelligence"
 msgstr "Интеллект"
 
-#: lib/animina_web/trait_translations.ex:329
+#: lib/animina_web/trait_translations.ex:333
 #, elixir-autogen, elixir-format
 msgid "Islam"
 msgstr "Ислам"
@@ -1987,7 +1987,7 @@ msgstr "Ислам"
 msgid "Italian"
 msgstr "Итальянская"
 
-#: lib/animina_web/trait_translations.ex:298
+#: lib/animina_web/trait_translations.ex:302
 #, elixir-autogen, elixir-format
 msgid "Italy"
 msgstr "Италия"
@@ -2012,7 +2012,7 @@ msgstr "Бег трусцой"
 msgid "Journaling"
 msgstr "Ведение дневника"
 
-#: lib/animina_web/trait_translations.ex:330
+#: lib/animina_web/trait_translations.ex:334
 #, elixir-autogen, elixir-format
 msgid "Judaism"
 msgstr "Иудаизм"
@@ -2062,7 +2062,7 @@ msgstr "Макияж"
 msgid "Making Music"
 msgstr "Музицирование"
 
-#: lib/animina_web/trait_translations.ex:312
+#: lib/animina_web/trait_translations.ex:316
 #, elixir-autogen, elixir-format
 msgid "Mallorca"
 msgstr "Мальорка"
@@ -2132,7 +2132,7 @@ msgstr "Мои дети не живут со мной"
 msgid "My Children Live With Me"
 msgstr "Мои дети живут со мной"
 
-#: lib/animina_web/trait_translations.ex:309
+#: lib/animina_web/trait_translations.ex:313
 #, elixir-autogen, elixir-format
 msgid "Netherlands"
 msgstr "Нидерланды"
@@ -2142,12 +2142,12 @@ msgstr "Нидерланды"
 msgid "Non-Fiction"
 msgstr "Нон-фикшн"
 
-#: lib/animina_web/trait_translations.ex:293
+#: lib/animina_web/trait_translations.ex:297
 #, elixir-autogen, elixir-format
 msgid "North America"
 msgstr "Северная Америка"
 
-#: lib/animina_web/trait_translations.ex:314
+#: lib/animina_web/trait_translations.ex:318
 #, elixir-autogen, elixir-format
 msgid "Norway"
 msgstr "Норвегия"
@@ -2172,7 +2172,7 @@ msgstr "Онлайн-курсы"
 msgid "Optimism"
 msgstr "Оптимизм"
 
-#: lib/animina_web/trait_translations.ex:328
+#: lib/animina_web/trait_translations.ex:332
 #, elixir-autogen, elixir-format
 msgid "Orthodox Christianity"
 msgstr "Православие"
@@ -2222,12 +2222,12 @@ msgstr "Поэзия"
 msgid "Pop"
 msgstr "Поп"
 
-#: lib/animina_web/trait_translations.ex:307
+#: lib/animina_web/trait_translations.ex:311
 #, elixir-autogen, elixir-format
 msgid "Portugal"
 msgstr "Португалия"
 
-#: lib/animina_web/trait_translations.ex:327
+#: lib/animina_web/trait_translations.ex:331
 #, elixir-autogen, elixir-format
 msgid "Protestant"
 msgstr "Протестантизм"
@@ -2292,7 +2292,7 @@ msgstr "Стойкость"
 msgid "Rock"
 msgstr "Рок"
 
-#: lib/animina_web/trait_translations.ex:326
+#: lib/animina_web/trait_translations.ex:330
 #, elixir-autogen, elixir-format
 msgid "Roman Catholic"
 msgstr "Католицизм"
@@ -2307,7 +2307,7 @@ msgstr "Любовные романы"
 msgid "Rowing"
 msgstr "Гребля"
 
-#: lib/animina_web/trait_translations.ex:319
+#: lib/animina_web/trait_translations.ex:323
 #, elixir-autogen, elixir-format
 msgid "SPD"
 msgstr "SPD"
@@ -2407,12 +2407,12 @@ msgstr "Социальные сети"
 msgid "Soul"
 msgstr "Соул"
 
-#: lib/animina_web/trait_translations.ex:294
+#: lib/animina_web/trait_translations.ex:298
 #, elixir-autogen, elixir-format
 msgid "South America"
 msgstr "Южная Америка"
 
-#: lib/animina_web/trait_translations.ex:297
+#: lib/animina_web/trait_translations.ex:301
 #, elixir-autogen, elixir-format
 msgid "Spain"
 msgstr "Испания"
@@ -2422,7 +2422,7 @@ msgstr "Испания"
 msgid "Spanish"
 msgstr "Испанская"
 
-#: lib/animina_web/trait_translations.ex:335
+#: lib/animina_web/trait_translations.ex:339
 #, elixir-autogen, elixir-format
 msgid "Spirituality"
 msgstr "Духовность"
@@ -2452,7 +2452,7 @@ msgstr "Серфинг"
 msgid "Swimming"
 msgstr "Плавание"
 
-#: lib/animina_web/trait_translations.ex:308
+#: lib/animina_web/trait_translations.ex:312
 #, elixir-autogen, elixir-format
 msgid "Switzerland"
 msgstr "Швейцария"
@@ -2477,12 +2477,12 @@ msgstr "Теннис"
 msgid "Thai"
 msgstr "Тайская"
 
-#: lib/animina_web/trait_translations.ex:305
+#: lib/animina_web/trait_translations.ex:309
 #, elixir-autogen, elixir-format
 msgid "Thailand"
 msgstr "Таиланд"
 
-#: lib/animina_web/trait_translations.ex:323
+#: lib/animina_web/trait_translations.ex:327
 #, elixir-autogen, elixir-format
 msgid "The Left"
 msgstr "Левые"
@@ -2502,7 +2502,7 @@ msgstr "Триллер"
 msgid "Travels"
 msgstr "Путешествия"
 
-#: lib/animina_web/trait_translations.ex:299
+#: lib/animina_web/trait_translations.ex:303
 #, elixir-autogen, elixir-format
 msgid "Turkey"
 msgstr "Турция"
@@ -2512,12 +2512,12 @@ msgstr "Турция"
 msgid "Turkish"
 msgstr "Турецкая"
 
-#: lib/animina_web/trait_translations.ex:306
+#: lib/animina_web/trait_translations.ex:310
 #, elixir-autogen, elixir-format
 msgid "USA"
 msgstr "США"
 
-#: lib/animina_web/trait_translations.ex:316
+#: lib/animina_web/trait_translations.ex:320
 #, elixir-autogen, elixir-format
 msgid "United Kingdom"
 msgstr "Великобритания"
@@ -2577,32 +2577,32 @@ msgstr "Писательство"
 msgid "Yoga"
 msgstr "Йога"
 
-#: lib/animina_web/trait_translations.ex:382
+#: lib/animina_web/trait_translations.ex:386
 #, elixir-autogen, elixir-format
 msgid "69"
 msgstr "69"
 
-#: lib/animina_web/trait_translations.ex:384
+#: lib/animina_web/trait_translations.ex:388
 #, elixir-autogen, elixir-format
 msgid "Against the Wall"
 msgstr "У стены"
 
-#: lib/animina_web/trait_translations.ex:365
+#: lib/animina_web/trait_translations.ex:369
 #, elixir-autogen, elixir-format
 msgid "Anal Sex: Giving"
 msgstr "Анальный секс: активный"
 
-#: lib/animina_web/trait_translations.ex:366
+#: lib/animina_web/trait_translations.ex:370
 #, elixir-autogen, elixir-format
 msgid "Anal Sex: Receiving"
 msgstr "Анальный секс: пассивный"
 
-#: lib/animina_web/trait_translations.ex:341
+#: lib/animina_web/trait_translations.ex:345
 #, elixir-autogen, elixir-format
 msgid "Bondage"
 msgstr "Бондаж"
 
-#: lib/animina_web/trait_translations.ex:380
+#: lib/animina_web/trait_translations.ex:384
 #, elixir-autogen, elixir-format
 msgid "Cowgirl"
 msgstr "Наездница"
@@ -2612,17 +2612,17 @@ msgstr "Наездница"
 msgid "Dates"
 msgstr "Свидания"
 
-#: lib/animina_web/trait_translations.ex:375
+#: lib/animina_web/trait_translations.ex:379
 #, elixir-autogen, elixir-format
 msgid "Dirty Talk"
 msgstr "Грязные разговорчики"
 
-#: lib/animina_web/trait_translations.ex:379
+#: lib/animina_web/trait_translations.ex:383
 #, elixir-autogen, elixir-format
 msgid "Doggy Style"
 msgstr "Догги-стайл"
 
-#: lib/animina_web/trait_translations.ex:338
+#: lib/animina_web/trait_translations.ex:342
 #, elixir-autogen, elixir-format
 msgid "Dominant"
 msgstr "Доминант"
@@ -2632,22 +2632,22 @@ msgstr "Доминант"
 msgid "Don't Know Yet"
 msgstr "Ещё не знаю"
 
-#: lib/animina_web/trait_translations.ex:346
+#: lib/animina_web/trait_translations.ex:350
 #, elixir-autogen, elixir-format
 msgid "Exhibitionism"
 msgstr "Эксгибиционизм"
 
-#: lib/animina_web/trait_translations.ex:345
+#: lib/animina_web/trait_translations.ex:349
 #, elixir-autogen, elixir-format
 msgid "Fetish"
 msgstr "Фетиш"
 
-#: lib/animina_web/trait_translations.ex:367
+#: lib/animina_web/trait_translations.ex:371
 #, elixir-autogen, elixir-format
 msgid "Fingering: Giving"
 msgstr "Фингеринг: активный"
 
-#: lib/animina_web/trait_translations.ex:368
+#: lib/animina_web/trait_translations.ex:372
 #, elixir-autogen, elixir-format
 msgid "Fingering: Receiving"
 msgstr "Фингеринг: пассивный"
@@ -2657,7 +2657,7 @@ msgstr "Фингеринг: пассивный"
 msgid "Friendship"
 msgstr "Дружба"
 
-#: lib/animina_web/trait_translations.ex:348
+#: lib/animina_web/trait_translations.ex:352
 #, elixir-autogen, elixir-format
 msgid "Group Play"
 msgstr "Групповые практики"
@@ -2672,7 +2672,7 @@ msgstr "В отношениях"
 msgid "It's Complicated"
 msgstr "Всё сложно"
 
-#: lib/animina_web/trait_translations.ex:374
+#: lib/animina_web/trait_translations.ex:378
 #, elixir-autogen, elixir-format
 msgid "Kissing"
 msgstr "Поцелуи"
@@ -2692,17 +2692,17 @@ msgstr "Брак"
 msgid "Married"
 msgstr "В браке"
 
-#: lib/animina_web/trait_translations.ex:371
+#: lib/animina_web/trait_translations.ex:375
 #, elixir-autogen, elixir-format
 msgid "Massage: Giving"
 msgstr "Массаж: делать"
 
-#: lib/animina_web/trait_translations.ex:372
+#: lib/animina_web/trait_translations.ex:376
 #, elixir-autogen, elixir-format
 msgid "Massage: Receiving"
 msgstr "Массаж: получать"
 
-#: lib/animina_web/trait_translations.ex:378
+#: lib/animina_web/trait_translations.ex:382
 #, elixir-autogen, elixir-format
 msgid "Missionary"
 msgstr "Миссионерская"
@@ -2722,12 +2722,12 @@ msgstr "Часто"
 msgid "Open Relationship"
 msgstr "Открытые отношения"
 
-#: lib/animina_web/trait_translations.ex:363
+#: lib/animina_web/trait_translations.ex:367
 #, elixir-autogen, elixir-format
 msgid "Oral Sex: Giving"
 msgstr "Оральный секс: активный"
 
-#: lib/animina_web/trait_translations.ex:364
+#: lib/animina_web/trait_translations.ex:368
 #, elixir-autogen, elixir-format
 msgid "Oral Sex: Receiving"
 msgstr "Оральный секс: пассивный"
@@ -2737,7 +2737,7 @@ msgstr "Оральный секс: пассивный"
 msgid "Pets"
 msgstr "Домашние животные"
 
-#: lib/animina_web/trait_translations.ex:377
+#: lib/animina_web/trait_translations.ex:381
 #, elixir-autogen, elixir-format
 msgid "Phone Sex"
 msgstr "Секс по телефону"
@@ -2757,27 +2757,27 @@ msgstr "Редко"
 msgid "Relationship Status"
 msgstr "Семейное положение"
 
-#: lib/animina_web/trait_translations.ex:369
+#: lib/animina_web/trait_translations.ex:373
 #, elixir-autogen, elixir-format
 msgid "Rimming: Giving"
 msgstr "Римминг: активный"
 
-#: lib/animina_web/trait_translations.ex:370
+#: lib/animina_web/trait_translations.ex:374
 #, elixir-autogen, elixir-format
 msgid "Rimming: Receiving"
 msgstr "Римминг: пассивный"
 
-#: lib/animina_web/trait_translations.ex:343
+#: lib/animina_web/trait_translations.ex:347
 #, elixir-autogen, elixir-format
 msgid "Role Play"
 msgstr "Ролевые игры"
 
-#: lib/animina_web/trait_translations.ex:342
+#: lib/animina_web/trait_translations.ex:346
 #, elixir-autogen, elixir-format
 msgid "S&M"
 msgstr "С&М"
 
-#: lib/animina_web/trait_translations.ex:376
+#: lib/animina_web/trait_translations.ex:380
 #, elixir-autogen, elixir-format
 msgid "Sexting"
 msgstr "Секстинг"
@@ -2813,52 +2813,52 @@ msgstr "Ни к чему не обязывающее"
 msgid "Sometimes"
 msgstr "Иногда"
 
-#: lib/animina_web/trait_translations.ex:381
+#: lib/animina_web/trait_translations.ex:385
 #, elixir-autogen, elixir-format
 msgid "Spooning"
 msgstr "Ложечки"
 
-#: lib/animina_web/trait_translations.ex:383
+#: lib/animina_web/trait_translations.ex:387
 #, elixir-autogen, elixir-format
 msgid "Standing"
 msgstr "Стоя"
 
-#: lib/animina_web/trait_translations.ex:339
+#: lib/animina_web/trait_translations.ex:343
 #, elixir-autogen, elixir-format
 msgid "Submissive"
 msgstr "Сабмиссив"
 
-#: lib/animina_web/trait_translations.ex:350
+#: lib/animina_web/trait_translations.ex:354
 #, elixir-autogen, elixir-format
 msgid "Swinging"
 msgstr "Свинг"
 
-#: lib/animina_web/trait_translations.ex:340
+#: lib/animina_web/trait_translations.ex:344
 #, elixir-autogen, elixir-format
 msgid "Switch"
 msgstr "Свитч"
 
-#: lib/animina_web/trait_translations.ex:344
+#: lib/animina_web/trait_translations.ex:348
 #, elixir-autogen, elixir-format
 msgid "Tantra"
 msgstr "Тантра"
 
-#: lib/animina_web/trait_translations.ex:349
+#: lib/animina_web/trait_translations.ex:353
 #, elixir-autogen, elixir-format
 msgid "Toys"
 msgstr "Игрушки"
 
-#: lib/animina_web/trait_translations.ex:373
+#: lib/animina_web/trait_translations.ex:377
 #, elixir-autogen, elixir-format
 msgid "Vaginal Sex"
 msgstr "Вагинальный секс"
 
-#: lib/animina_web/trait_translations.ex:337
+#: lib/animina_web/trait_translations.ex:341
 #, elixir-autogen, elixir-format
 msgid "Vanilla"
 msgstr "Ванильный секс"
 
-#: lib/animina_web/trait_translations.ex:347
+#: lib/animina_web/trait_translations.ex:351
 #, elixir-autogen, elixir-format
 msgid "Voyeurism"
 msgstr "Вуайеризм"
@@ -2868,32 +2868,32 @@ msgstr "Вуайеризм"
 msgid "What I'm Looking For"
 msgstr "Что я ищу"
 
-#: lib/animina_web/trait_translations.ex:353
+#: lib/animina_web/trait_translations.ex:357
 #, elixir-autogen, elixir-format
 msgid "Deutsch"
 msgstr "Deutsch"
 
-#: lib/animina_web/trait_translations.ex:359
+#: lib/animina_web/trait_translations.ex:363
 #, elixir-autogen, elixir-format
 msgid "Español"
 msgstr "Español"
 
-#: lib/animina_web/trait_translations.ex:358
+#: lib/animina_web/trait_translations.ex:362
 #, elixir-autogen, elixir-format
 msgid "Français"
 msgstr "Français"
 
-#: lib/animina_web/trait_translations.ex:352
+#: lib/animina_web/trait_translations.ex:356
 #, elixir-autogen, elixir-format
 msgid "Languages"
 msgstr "Языки"
 
-#: lib/animina_web/trait_translations.ex:357
+#: lib/animina_web/trait_translations.ex:361
 #, elixir-autogen, elixir-format
 msgid "Polski"
 msgstr "Polski"
 
-#: lib/animina_web/trait_translations.ex:354
+#: lib/animina_web/trait_translations.ex:358
 #, elixir-autogen, elixir-format
 msgid "Türkçe"
 msgstr "Türkçe"
@@ -2903,17 +2903,17 @@ msgstr "Türkçe"
 msgid "Your current email is %{current_email}. A confirmation link has been sent to %{new_email}."
 msgstr "Ваш текущий e-mail: %{current_email}. Ссылка для подтверждения отправлена на %{new_email}."
 
-#: lib/animina_web/trait_translations.ex:355
+#: lib/animina_web/trait_translations.ex:359
 #, elixir-autogen, elixir-format
 msgid "Русский"
 msgstr "Русский"
 
-#: lib/animina_web/trait_translations.ex:360
+#: lib/animina_web/trait_translations.ex:364
 #, elixir-autogen, elixir-format
 msgid "Українська"
 msgstr "Українська"
 
-#: lib/animina_web/trait_translations.ex:356
+#: lib/animina_web/trait_translations.ex:360
 #, elixir-autogen, elixir-format
 msgid "العربية"
 msgstr "العربية"
@@ -6647,4 +6647,24 @@ msgstr ""
 #: lib/animina_web/trait_translations.ex:99
 #, elixir-autogen, elixir-format
 msgid "Slim"
+msgstr ""
+
+#: lib/animina_web/trait_translations.ex:292
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Adventure Travel"
+msgstr "Приключения"
+
+#: lib/animina_web/trait_translations.ex:290
+#, elixir-autogen, elixir-format
+msgid "Backpacking"
+msgstr ""
+
+#: lib/animina_web/trait_translations.ex:291
+#, elixir-autogen, elixir-format
+msgid "Low-Budget"
+msgstr ""
+
+#: lib/animina_web/trait_translations.ex:289
+#, elixir-autogen, elixir-format
+msgid "Luxury"
 msgstr ""
