@@ -14,7 +14,7 @@ defmodule AniminaWeb.UserAuth do
   alias AniminaWeb.Plugs.SetLocale
 
   # Date after which users must re-accept the ToS (AI features update).
-  @tos_updated_at ~U[2026-02-13 00:00:00Z]
+  @tos_updated_at ~U[2026-02-12 00:00:00Z]
 
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
