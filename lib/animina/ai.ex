@@ -211,7 +211,8 @@ defmodule Animina.AI do
   """
   def resume_queue do
     case FeatureFlags.get_flag_setting("system:ai_queue_paused") do
-      nil -> :ok
+      nil ->
+        :ok
 
       setting ->
         FeatureFlags.update_flag_setting(setting, %{settings: %{value: false}})
@@ -325,6 +326,29 @@ defmodule Animina.AI do
     |> Repo.all()
   end
 
+  # --- Bulk Operations ---
+
+  @doc """
+  Counts failed jobs since the given datetime.
+  """
+  def count_failed_since(since) do
+    Job
+    |> where([j], j.status == "failed")
+    |> where([j], j.inserted_at >= ^since)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Bulk-retries all failed jobs since the given datetime by resetting them to pending.
+  Returns `{count, nil}` tuple from `Repo.update_all`.
+  """
+  def retry_failed_since(since) do
+    Job
+    |> where([j], j.status == "failed")
+    |> where([j], j.inserted_at >= ^since)
+    |> Repo.update_all(set: [status: "pending", scheduled_at: nil, updated_at: DateTime.utc_now()])
+  end
+
   # --- Scheduler Queries ---
 
   @doc """
@@ -375,9 +399,7 @@ defmodule Animina.AI do
   """
   def mark_completed(job, attrs) do
     job
-    |> Job.update_changeset(
-      Map.merge(attrs, %{status: "completed"})
-    )
+    |> Job.update_changeset(Map.merge(attrs, %{status: "completed"}))
     |> Repo.update()
   end
 
@@ -387,9 +409,7 @@ defmodule Animina.AI do
   def mark_failed(job, error, attrs \\ %{}) do
     if job.attempt >= job.max_attempts do
       job
-      |> Job.update_changeset(
-        Map.merge(attrs, %{status: "failed", error: error})
-      )
+      |> Job.update_changeset(Map.merge(attrs, %{status: "failed", error: error}))
       |> Repo.update()
     else
       # Schedule retry with backoff: 15 * attempt minutes

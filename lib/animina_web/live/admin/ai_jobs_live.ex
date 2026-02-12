@@ -18,7 +18,10 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     {:ok,
      assign(socket,
        page_title: gettext("AI Jobs"),
-       auto_reload: false
+       auto_reload: false,
+       show_bulk_retry_modal: false,
+       bulk_retry_range: nil,
+       bulk_retry_count: 0
      )}
   end
 
@@ -114,8 +117,11 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   @impl true
   def handle_event("reprioritize", %{"id" => job_id, "priority" => priority}, socket) do
     case AI.reprioritize(job_id, String.to_integer(priority)) do
-      {:ok, _} -> {:noreply, reload_jobs(socket)}
-      {:error, _} -> {:noreply, put_flash(socket, :error, gettext("Cannot reprioritize this job."))}
+      {:ok, _} ->
+        {:noreply, reload_jobs(socket)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Cannot reprioritize this job."))}
     end
   end
 
@@ -140,6 +146,47 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   @impl true
   def handle_event("switch-view", %{"view" => view}, socket) do
     {:noreply, push_patch(socket, to: build_path(socket, page: 1, view_mode: view))}
+  end
+
+  @impl true
+  def handle_event("show-bulk-retry", %{"range" => range}, socket) do
+    since = bulk_retry_since(range)
+    count = AI.count_failed_since(since)
+
+    {:noreply,
+     assign(socket,
+       show_bulk_retry_modal: true,
+       bulk_retry_range: range,
+       bulk_retry_count: count
+     )}
+  end
+
+  @impl true
+  def handle_event("confirm-bulk-retry", _params, socket) do
+    since = bulk_retry_since(socket.assigns.bulk_retry_range)
+    {count, _} = AI.retry_failed_since(since)
+
+    socket =
+      socket
+      |> assign(show_bulk_retry_modal: false, bulk_retry_range: nil, bulk_retry_count: 0)
+      |> put_flash(
+        :info,
+        ngettext(
+          "%{count} failed job reset to pending.",
+          "%{count} failed jobs reset to pending.",
+          count,
+          count: count
+        )
+      )
+      |> reload_jobs()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close-bulk-retry-modal", _params, socket) do
+    {:noreply,
+     assign(socket, show_bulk_retry_modal: false, bulk_retry_range: nil, bulk_retry_count: 0)}
   end
 
   @impl true
@@ -195,9 +242,15 @@ defmodule AniminaWeb.Admin.AIJobsLive do
         sort_dir: Keyword.get(overrides, :sort_dir, socket.assigns.sort_dir),
         view: Keyword.get(overrides, :view_mode, socket.assigns.view_mode)
       }
-      |> maybe_put(:job_type, Keyword.get(overrides, :filter_job_type, socket.assigns.filter_job_type))
+      |> maybe_put(
+        :job_type,
+        Keyword.get(overrides, :filter_job_type, socket.assigns.filter_job_type)
+      )
       |> maybe_put(:status, Keyword.get(overrides, :filter_status, socket.assigns.filter_status))
-      |> maybe_put(:priority, Keyword.get(overrides, :filter_priority, socket.assigns.filter_priority))
+      |> maybe_put(
+        :priority,
+        Keyword.get(overrides, :filter_priority, socket.assigns.filter_priority)
+      )
       |> maybe_put(:model, Keyword.get(overrides, :filter_model, socket.assigns.filter_model))
 
     ~p"/admin/logs/ai?#{params}"
@@ -208,6 +261,21 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   rescue
     _ -> %{active: 0, max: 0, waiting: 0}
   end
+
+  defp bulk_retry_since("1h"), do: DateTime.utc_now() |> DateTime.add(-1, :hour)
+  defp bulk_retry_since("2h"), do: DateTime.utc_now() |> DateTime.add(-2, :hour)
+
+  defp bulk_retry_since("today") do
+    Date.utc_today()
+    |> DateTime.new!(~T[00:00:00], "Etc/UTC")
+  end
+
+  defp bulk_retry_since(_), do: DateTime.utc_now() |> DateTime.add(-1, :hour)
+
+  defp bulk_retry_range_label("1h"), do: gettext("last hour")
+  defp bulk_retry_range_label("2h"), do: gettext("last 2 hours")
+  defp bulk_retry_range_label("today"), do: gettext("today")
+  defp bulk_retry_range_label(_), do: ""
 
   # --- Render ---
 
@@ -316,6 +384,69 @@ defmodule AniminaWeb.Admin.AIJobsLive do
           <div class="alert alert-warning mb-4">
             <.icon name="hero-pause-circle" class="h-5 w-5" />
             <span>{gettext("AI queue is paused. No new jobs will be dispatched.")}</span>
+          </div>
+        <% end %>
+
+        <%!-- Bulk Retry --%>
+        <div class="flex items-center gap-2 mb-4">
+          <div class="dropdown">
+            <div
+              tabindex="0"
+              role="button"
+              class="btn btn-sm btn-outline btn-error gap-1"
+            >
+              <.icon name="hero-arrow-path" class="h-4 w-4" />
+              {gettext("Retry All Failed")}
+              <.icon name="hero-chevron-down" class="h-3 w-3" />
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-48"
+            >
+              <li>
+                <button phx-click="show-bulk-retry" phx-value-range="1h">
+                  {gettext("Last hour")}
+                </button>
+              </li>
+              <li>
+                <button phx-click="show-bulk-retry" phx-value-range="2h">
+                  {gettext("Last 2 hours")}
+                </button>
+              </li>
+              <li>
+                <button phx-click="show-bulk-retry" phx-value-range="today">
+                  {gettext("Today")}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <%!-- Bulk Retry Confirmation Modal --%>
+        <%= if @show_bulk_retry_modal do %>
+          <div class="modal modal-open">
+            <div class="modal-box">
+              <h3 class="text-lg font-bold">{gettext("Retry Failed Jobs")}</h3>
+              <p class="py-4">
+                {ngettext(
+                  "Are you sure you want to retry %{count} failed job from the %{range}?",
+                  "Are you sure you want to retry %{count} failed jobs from the %{range}?",
+                  @bulk_retry_count,
+                  count: @bulk_retry_count,
+                  range: bulk_retry_range_label(@bulk_retry_range)
+                )}
+              </p>
+              <div class="modal-action">
+                <button class="btn" phx-click="close-bulk-retry-modal">
+                  {gettext("Cancel")}
+                </button>
+                <button class="btn btn-error" phx-click="confirm-bulk-retry">
+                  <.icon name="hero-arrow-path" class="h-4 w-4" />
+                  {gettext("Retry")}
+                </button>
+              </div>
+            </div>
+            <div class="modal-backdrop" phx-click="close-bulk-retry-modal"></div>
           </div>
         <% end %>
 
@@ -483,11 +614,12 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                       {job.status}
                     </span>
                     <%= if job.error do %>
+                      <% {label, badge_class} = classify_error(job.error) %>
                       <span
-                        class="text-xs text-error ml-1 truncate inline-block max-w-[120px] align-middle"
+                        class={["badge badge-xs ml-1 cursor-help", badge_class]}
                         title={job.error}
                       >
-                        {String.slice(job.error, 0, 30)}
+                        {label}
                       </span>
                     <% end %>
                   </td>
@@ -584,7 +716,12 @@ defmodule AniminaWeb.Admin.AIJobsLive do
 
       <%= if @job.status in ~w(pending scheduled) do %>
         <div class="dropdown dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-xs btn-outline btn-primary" title={gettext("Reprioritize")}>
+          <div
+            tabindex="0"
+            role="button"
+            class="btn btn-xs btn-outline btn-primary"
+            title={gettext("Reprioritize")}
+          >
             <.icon name="hero-arrows-up-down" class="h-3 w-3" />
           </div>
           <ul tabindex="0" class="dropdown-content z-[1] menu p-1 shadow bg-base-100 rounded-box w-32">
@@ -606,6 +743,40 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     </div>
     """
   end
+
+  # --- Error classification ---
+
+  @error_patterns [
+    {["timeout", ":timeout"], "GPU Timeout", "badge-warning"},
+    {[":econnrefused", "econnrefused"], "GPU Offline", "badge-error"},
+    {["all_instances_unavailable"], "All GPUs Down", "badge-error"},
+    {["total_timeout_exceeded"], "Total Timeout", "badge-warning"},
+    {["Semaphore timeout"], "Queue Full", "badge-warning"},
+    {["http_error, 503", "http_error, 500"], "GPU Error", "badge-error"},
+    {["runner has unexpectedly stopped"], "GPU Crash", "badge-error"},
+    {["thumbnail_read_failed"], "File Error", "badge-ghost"}
+  ]
+
+  defp classify_error(nil), do: nil
+
+  defp classify_error(error) do
+    case Enum.find(@error_patterns, fn {patterns, _, _} ->
+           Enum.any?(patterns, &String.contains?(error, &1))
+         end) do
+      {_, label, badge} -> {error_label(label), badge}
+      nil -> {error_label("Error"), "badge-error"}
+    end
+  end
+
+  defp error_label("GPU Timeout"), do: gettext("GPU Timeout")
+  defp error_label("GPU Offline"), do: gettext("GPU Offline")
+  defp error_label("All GPUs Down"), do: gettext("All GPUs Down")
+  defp error_label("Total Timeout"), do: gettext("Total Timeout")
+  defp error_label("Queue Full"), do: gettext("Queue Full")
+  defp error_label("GPU Error"), do: gettext("GPU Error")
+  defp error_label("GPU Crash"), do: gettext("GPU Crash")
+  defp error_label("File Error"), do: gettext("File Error")
+  defp error_label("Error"), do: gettext("Error")
 
   # --- Formatting helpers ---
 

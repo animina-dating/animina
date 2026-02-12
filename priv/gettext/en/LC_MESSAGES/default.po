@@ -39,7 +39,7 @@ msgid "Account"
 msgstr "Account"
 
 #: lib/animina_web/components/core_components.ex:536
-#: lib/animina_web/live/admin/ai_jobs_live.ex:462
+#: lib/animina_web/live/admin/ai_jobs_live.ex:593
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Actions"
@@ -1018,7 +1018,7 @@ msgstr "Add Role"
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/activity_logs_live.ex:232
 #: lib/animina_web/live/admin/admin_hub.ex:24
-#: lib/animina_web/live/admin/ai_jobs_live.ex:223
+#: lib/animina_web/live/admin/ai_jobs_live.ex:291
 #: lib/animina_web/live/admin/email_logs_live.ex:140
 #: lib/animina_web/live/admin/flags_ai_live.ex:164
 #: lib/animina_web/live/admin/flags_index_live.ex:29
@@ -1252,7 +1252,8 @@ msgstr ""
 
 #: lib/animina_web/components/love_emergency_component.ex:69
 #: lib/animina_web/components/moodboard_components.ex:556
-#: lib/animina_web/live/admin/ai_jobs_live.ex:579
+#: lib/animina_web/live/admin/ai_jobs_live.ex:441
+#: lib/animina_web/live/admin/ai_jobs_live.ex:711
 #: lib/animina_web/live/admin/flags_ai_live.ex:405
 #: lib/animina_web/live/admin/flags_system_live.ex:212
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
@@ -3645,9 +3646,9 @@ msgstr "Age detection"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:321
 #: lib/animina_web/live/admin/activity_logs_live.ex:338
-#: lib/animina_web/live/admin/ai_jobs_live.ex:351
-#: lib/animina_web/live/admin/ai_jobs_live.ex:369
-#: lib/animina_web/live/admin/ai_jobs_live.ex:397
+#: lib/animina_web/live/admin/ai_jobs_live.ex:482
+#: lib/animina_web/live/admin/ai_jobs_live.ex:500
+#: lib/animina_web/live/admin/ai_jobs_live.ex:528
 #: lib/animina_web/live/admin/email_logs_live.ex:181
 #: lib/animina_web/live/admin/email_logs_live.ex:197
 #: lib/animina_web/live/admin/tos_acceptances_live.ex:205
@@ -4052,11 +4053,12 @@ msgstr "Add photos and text to present yourself. Drag to reorder."
 msgid "Close"
 msgstr "Close"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:450
+#: lib/animina_web/live/admin/ai_jobs_live.ex:581
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr "Duration"
 
+#: lib/animina_web/live/admin/ai_jobs_live.ex:778
 #: lib/animina_web/live/admin/email_logs_live.ex:203
 #: lib/animina_web/live/admin/email_logs_live.ex:234
 #: lib/animina_web/live/user_live/email_logs.ex:160
@@ -4064,14 +4066,14 @@ msgstr "Duration"
 msgid "Error"
 msgstr "Error"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:390
-#: lib/animina_web/live/admin/ai_jobs_live.ex:442
+#: lib/animina_web/live/admin/ai_jobs_live.ex:521
+#: lib/animina_web/live/admin/ai_jobs_live.ex:573
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr "Model"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:362
-#: lib/animina_web/live/admin/ai_jobs_live.ex:434
+#: lib/animina_web/live/admin/ai_jobs_live.ex:493
+#: lib/animina_web/live/admin/ai_jobs_live.ex:565
 #: lib/animina_web/live/admin/email_logs_live.ex:190
 #: lib/animina_web/live/admin/email_logs_live.ex:231
 #: lib/animina_web/live/user_live/email_logs.ex:147
@@ -4081,7 +4083,7 @@ msgid "Status"
 msgstr "Status"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:382
-#: lib/animina_web/live/admin/ai_jobs_live.ex:459
+#: lib/animina_web/live/admin/ai_jobs_live.ex:590
 #: lib/animina_web/live/admin/email_logs_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Time"
@@ -4316,6 +4318,7 @@ msgid "Read"
 msgstr "Read"
 
 #: lib/animina_web/components/chat_panel_component.ex:637
+#: lib/animina_web/live/admin/ai_jobs_live.ex:418
 #: lib/animina_web/live/messages_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Today"
@@ -4837,12 +4840,12 @@ msgstr ""
 msgid "Per page"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:336
+#: lib/animina_web/live/admin/ai_jobs_live.ex:467
 #, elixir-autogen, elixir-format
 msgid "Queue"
 msgstr "Queue"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:304
+#: lib/animina_web/live/admin/ai_jobs_live.ex:372
 #: lib/animina_web/live/admin/email_logs_live.ex:164
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Auto-reload"
@@ -5116,7 +5119,7 @@ msgstr "Log of all emails sent by the system"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:235
 #: lib/animina_web/live/admin/admin_hub.ex:108
-#: lib/animina_web/live/admin/ai_jobs_live.ex:226
+#: lib/animina_web/live/admin/ai_jobs_live.ex:294
 #: lib/animina_web/live/admin/email_logs_live.ex:143
 #: lib/animina_web/live/admin/logs_index_live.ex:19
 #: lib/animina_web/live/admin/logs_index_live.ex:32
@@ -5141,7 +5144,7 @@ msgid "Recipient"
 msgstr "Recipient"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:386
-#: lib/animina_web/live/admin/ai_jobs_live.ex:412
+#: lib/animina_web/live/admin/ai_jobs_live.ex:543
 #: lib/animina_web/live/admin/email_logs_live.ex:225
 #: lib/animina_web/live/user_live/email_logs.ex:173
 #, elixir-autogen, elixir-format
@@ -5154,7 +5157,7 @@ msgstr "Subject"
 msgid "System log viewers"
 msgstr "System log viewers"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:418
+#: lib/animina_web/live/admin/ai_jobs_live.ex:549
 #: lib/animina_web/live/admin/email_logs_live.ex:178
 #: lib/animina_web/live/admin/email_logs_live.ex:222
 #: lib/animina_web/live/user_live/email_logs.ex:135
@@ -6254,7 +6257,7 @@ msgstr "Original Resolution"
 msgid "Permanent ban"
 msgstr "Permanent ban"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:426
+#: lib/animina_web/live/admin/ai_jobs_live.ex:557
 #: lib/animina_web/live/admin/reports_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Priority"
@@ -6539,7 +6542,7 @@ msgstr ""
 msgid "Luxury"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:236
+#: lib/animina_web/live/admin/ai_jobs_live.ex:304
 #, elixir-autogen, elixir-format
 msgid "%{count} job"
 msgid_plural "%{count} jobs"
@@ -6547,97 +6550,98 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:20
-#: lib/animina_web/live/admin/ai_jobs_live.ex:228
-#: lib/animina_web/live/admin/ai_jobs_live.ex:234
+#: lib/animina_web/live/admin/ai_jobs_live.ex:296
+#: lib/animina_web/live/admin/ai_jobs_live.ex:302
 #: lib/animina_web/live/admin/logs_index_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "AI Jobs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:318
+#: lib/animina_web/live/admin/ai_jobs_live.ex:386
 #, elixir-autogen, elixir-format
 msgid "AI queue is paused. No new jobs will be dispatched."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:329
+#: lib/animina_web/live/admin/ai_jobs_live.ex:460
 #, elixir-autogen, elixir-format
 msgid "All Jobs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:453
+#: lib/animina_web/live/admin/ai_jobs_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "Attempt"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:383
+#: lib/animina_web/live/admin/ai_jobs_live.ex:514
 #, elixir-autogen, elixir-format
 msgid "Cancelled"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:102
+#: lib/animina_web/live/admin/ai_jobs_live.ex:105
 #, elixir-autogen, elixir-format
 msgid "Cannot cancel this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:118
+#: lib/animina_web/live/admin/ai_jobs_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Cannot reprioritize this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:110
+#: lib/animina_web/live/admin/ai_jobs_live.ex:113
 #, elixir-autogen, elixir-format
 msgid "Cannot retry this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:377
+#: lib/animina_web/live/admin/ai_jobs_live.ex:508
 #, elixir-autogen, elixir-format
 msgid "Completed"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:268
-#: lib/animina_web/live/admin/ai_jobs_live.ex:380
+#: lib/animina_web/live/admin/ai_jobs_live.ex:336
+#: lib/animina_web/live/admin/ai_jobs_live.ex:511
 #, elixir-autogen, elixir-format
 msgid "Failed"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:344
+#: lib/animina_web/live/admin/ai_jobs_live.ex:475
 #, elixir-autogen, elixir-format
 msgid "Job Type"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:299
+#: lib/animina_web/live/admin/ai_jobs_live.ex:367
 #, elixir-autogen, elixir-format
 msgid "Pause"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:248
-#: lib/animina_web/live/admin/ai_jobs_live.ex:371
+#: lib/animina_web/live/admin/ai_jobs_live.ex:316
+#: lib/animina_web/live/admin/ai_jobs_live.ex:502
 #, elixir-autogen, elixir-format
 msgid "Pending"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:587
+#: lib/animina_web/live/admin/ai_jobs_live.ex:723
 #, elixir-autogen, elixir-format
 msgid "Reprioritize"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:291
+#: lib/animina_web/live/admin/ai_jobs_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "Resume"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:568
+#: lib/animina_web/live/admin/ai_jobs_live.ex:445
+#: lib/animina_web/live/admin/ai_jobs_live.ex:700
 #, elixir-autogen, elixir-format
 msgid "Retry"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:258
-#: lib/animina_web/live/admin/ai_jobs_live.ex:374
+#: lib/animina_web/live/admin/ai_jobs_live.ex:326
+#: lib/animina_web/live/admin/ai_jobs_live.ex:505
 #, elixir-autogen, elixir-format
 msgid "Running"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:278
+#: lib/animina_web/live/admin/ai_jobs_live.ex:346
 #, elixir-autogen, elixir-format
 msgid "Slots"
 msgstr ""
@@ -6646,3 +6650,92 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Unified AI job queue and execution log"
 msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:174
+#, elixir-autogen, elixir-format
+msgid "%{count} failed job reset to pending."
+msgid_plural "%{count} failed jobs reset to pending."
+msgstr[0] "%{count} failed job reset to pending."
+msgstr[1] "%{count} failed jobs reset to pending."
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:760
+#, elixir-autogen, elixir-format
+msgid "All GPUs Down"
+msgstr "All GPUs Down"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:431
+#, elixir-autogen, elixir-format
+msgid "Are you sure you want to retry %{count} failed job from the %{range}?"
+msgid_plural "Are you sure you want to retry %{count} failed jobs from the %{range}?"
+msgstr[0] "Are you sure you want to retry %{count} failed job from the %{range}?"
+msgstr[1] "Are you sure you want to retry %{count} failed jobs from the %{range}?"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:775
+#, elixir-autogen, elixir-format
+msgid "File Error"
+msgstr "File Error"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:772
+#, elixir-autogen, elixir-format
+msgid "GPU Crash"
+msgstr "GPU Crash"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:769
+#, elixir-autogen, elixir-format
+msgid "GPU Error"
+msgstr "GPU Error"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:757
+#, elixir-autogen, elixir-format
+msgid "GPU Offline"
+msgstr "GPU Offline"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:754
+#, elixir-autogen, elixir-format
+msgid "GPU Timeout"
+msgstr "GPU Timeout"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:413
+#, elixir-autogen, elixir-format
+msgid "Last 2 hours"
+msgstr "Last 2 hours"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:408
+#, elixir-autogen, elixir-format
+msgid "Last hour"
+msgstr "Last hour"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:766
+#, elixir-autogen, elixir-format
+msgid "Queue Full"
+msgstr "Queue Full"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:399
+#, elixir-autogen, elixir-format
+msgid "Retry All Failed"
+msgstr "Retry All Failed"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:429
+#, elixir-autogen, elixir-format
+msgid "Retry Failed Jobs"
+msgstr "Retry Failed Jobs"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:763
+#, elixir-autogen, elixir-format
+msgid "Total Timeout"
+msgstr "Total Timeout"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:276
+#, elixir-autogen, elixir-format
+msgid "last 2 hours"
+msgstr "last 2 hours"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:275
+#, elixir-autogen, elixir-format
+msgid "last hour"
+msgstr "last hour"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:277
+#, elixir-autogen, elixir-format
+msgid "today"
+msgstr "today"
