@@ -346,7 +346,9 @@ defmodule Animina.AI do
     Job
     |> where([j], j.status == "failed")
     |> where([j], j.inserted_at >= ^since)
-    |> Repo.update_all(set: [status: "pending", scheduled_at: nil, updated_at: DateTime.utc_now()])
+    |> Repo.update_all(
+      set: [status: "pending", scheduled_at: nil, updated_at: DateTime.utc_now()]
+    )
   end
 
   # --- Scheduler Queries ---
