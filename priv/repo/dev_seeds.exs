@@ -659,6 +659,8 @@ defmodule Animina.Seeds.DevUsers do
         IO.puts("    Warning: flag '#{flag_name}' not found in '#{category_name}'")
 
       flag ->
+        ensure_category_optin(user, category_name)
+
         Traits.add_user_flag(%{
           user_id: user.id,
           flag_id: flag.id,
@@ -666,6 +668,21 @@ defmodule Animina.Seeds.DevUsers do
           intensity: "hard",
           position: 1
         })
+    end
+  end
+
+  defp ensure_category_optin(user, category_name) do
+    optin_names =
+      for c <- Traits.list_optin_categories(), into: %{}, do: {c.name, c.id}
+
+    case Map.get(optin_names, category_name) do
+      nil -> :ok
+      category_id ->
+        Animina.Traits.UserCategoryOptIn.changeset(
+          %Animina.Traits.UserCategoryOptIn{},
+          %{user_id: user.id, category_id: category_id}
+        )
+        |> Repo.insert(on_conflict: :nothing)
     end
   end
 
@@ -875,6 +892,26 @@ defmodule Animina.Seeds.DevUsers do
   end
 
   defp assign_profile_traits(user, profile, lookup) do
+    # Collect all category names used across white/green/red
+    all_category_names =
+      [Map.keys(profile.white), Map.keys(profile.green), Map.keys(profile.red)]
+      |> List.flatten()
+      |> Enum.uniq()
+
+    # Ensure opt-in records exist for non-core categories
+    optin_by_name =
+      for c <- Traits.list_optin_categories(), into: %{}, do: {c.name, c.id}
+
+    for category_name <- all_category_names,
+        category_id = Map.get(optin_by_name, category_name),
+        category_id != nil do
+      Animina.Traits.UserCategoryOptIn.changeset(
+        %Animina.Traits.UserCategoryOptIn{},
+        %{user_id: user.id, category_id: category_id}
+      )
+      |> Repo.insert(on_conflict: :nothing)
+    end
+
     # Assign white flags
     for {category_name, flag_names} <- profile.white do
       for {flag_name, pos} <- Enum.with_index(flag_names, 1) do
