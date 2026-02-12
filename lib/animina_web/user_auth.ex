@@ -87,35 +87,7 @@ defmodule AniminaWeb.UserAuth do
          false <- Accounts.user_deleted?(user) do
       # Auto-unsuspend if suspension has expired
       user = Animina.Reports.maybe_unsuspend(user)
-
-      # Force-logout banned users
-      if user.state == "banned" do
-        user_token = get_session(conn, :user_token)
-        if user_token, do: Accounts.delete_user_session_token(user_token)
-
-        conn
-        |> delete_session(:user_token)
-        |> assign(:current_scope, Scope.for_user(nil))
-      else
-        roles = Accounts.get_user_roles(user)
-        session_role = get_session(conn, :current_role)
-        effective_role = auto_role_for_path(conn.request_path, roles, session_role)
-        scope = Scope.for_user(user, roles, effective_role)
-
-        # Update last_seen_at (throttled to every 5 min, very fast update_all)
-        Accounts.maybe_update_last_seen(token)
-
-        conn =
-          if effective_role != session_role do
-            put_session(conn, :current_role, effective_role)
-          else
-            conn
-          end
-
-        conn
-        |> assign(:current_scope, scope)
-        |> maybe_reissue_user_session_token(user, token_inserted_at)
-      end
+      authenticate_active_user(conn, user, token, token_inserted_at)
     else
       true ->
         # User is soft-deleted, clear session
@@ -126,6 +98,36 @@ defmodule AniminaWeb.UserAuth do
       nil ->
         assign(conn, :current_scope, Scope.for_user(nil))
     end
+  end
+
+  defp authenticate_active_user(conn, %{state: "banned"} = _user, _token, _token_inserted_at) do
+    user_token = get_session(conn, :user_token)
+    if user_token, do: Accounts.delete_user_session_token(user_token)
+
+    conn
+    |> delete_session(:user_token)
+    |> assign(:current_scope, Scope.for_user(nil))
+  end
+
+  defp authenticate_active_user(conn, user, token, token_inserted_at) do
+    roles = Accounts.get_user_roles(user)
+    session_role = get_session(conn, :current_role)
+    effective_role = auto_role_for_path(conn.request_path, roles, session_role)
+    scope = Scope.for_user(user, roles, effective_role)
+
+    # Update last_seen_at (throttled to every 5 min, very fast update_all)
+    Accounts.maybe_update_last_seen(token)
+
+    conn =
+      if effective_role != session_role do
+        put_session(conn, :current_role, effective_role)
+      else
+        conn
+      end
+
+    conn
+    |> assign(:current_scope, scope)
+    |> maybe_reissue_user_session_token(user, token_inserted_at)
   end
 
   # Determines the effective role based on the URL path.

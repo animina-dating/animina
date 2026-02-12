@@ -111,7 +111,7 @@ msgstr ""
 msgid "must be equal to %{number}"
 msgstr ""
 
-#: lib/animina/accounts.ex:271
+#: lib/animina/accounts.ex:355
 #, elixir-autogen, elixir-format
 msgid "Referral code not found"
 msgstr ""

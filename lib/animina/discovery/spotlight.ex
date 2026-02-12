@@ -56,30 +56,25 @@ defmodule Animina.Discovery.Spotlight do
   4. They are in each other's today spotlight (bidirectional)
   """
   def has_moodboard_access?(viewer, profile_user, scope) do
-    cond do
-      # Owner
-      viewer && profile_user && viewer.id == profile_user.id ->
-        true
+    owner?(viewer, profile_user) ||
+      staff?(scope) ||
+      (both_present?(viewer, profile_user) &&
+         connected?(viewer.id, profile_user.id))
+  end
 
-      # Admin or moderator
-      Scope.admin?(scope) || Scope.moderator?(scope) ->
-        true
+  defp owner?(viewer, profile_user) do
+    viewer != nil && profile_user != nil && viewer.id == profile_user.id
+  end
 
-      # Must have both users
-      is_nil(viewer) || is_nil(profile_user) ->
-        false
+  defp staff?(scope), do: Scope.admin?(scope) || Scope.moderator?(scope)
 
-      # Active conversation (non-blocked)
-      has_active_conversation?(viewer.id, profile_user.id) ->
-        true
+  defp both_present?(viewer, profile_user) do
+    viewer != nil && profile_user != nil
+  end
 
-      # In today's spotlight (bidirectional)
-      in_todays_spotlight?(viewer.id, profile_user.id) ->
-        true
-
-      true ->
-        false
-    end
+  defp connected?(viewer_id, profile_user_id) do
+    has_active_conversation?(viewer_id, profile_user_id) ||
+      in_todays_spotlight?(viewer_id, profile_user_id)
   end
 
   @doc """

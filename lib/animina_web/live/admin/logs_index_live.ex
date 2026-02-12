@@ -1,6 +1,7 @@
 defmodule AniminaWeb.Admin.LogsIndexLive do
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts
   alias Animina.ActivityLog
   alias Animina.Emails
   alias Animina.Photos
@@ -11,13 +12,15 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
     email_count = Emails.list_email_logs(per_page: 1).total_count
     ollama_count = Photos.list_ollama_logs(per_page: 1).total_count
     activity_count = ActivityLog.count()
+    tos_count = Accounts.count_tos_acceptances()
 
     {:ok,
      assign(socket,
        page_title: gettext("Logs"),
        email_count: email_count,
        ollama_count: ollama_count,
-       activity_count: activity_count
+       activity_count: activity_count,
+       tos_count: tos_count
      )}
   end
 
@@ -67,6 +70,19 @@ defmodule AniminaWeb.Admin.LogsIndexLive do
           >
             <:trailing>
               <span class="badge badge-lg badge-outline font-mono">{@ollama_count}</span>
+            </:trailing>
+          </.hub_card>
+
+          <.hub_card
+            navigate={~p"/admin/tos-acceptances"}
+            title={gettext("ToS Acceptances")}
+            subtitle={gettext("Log of Terms of Service acceptance events")}
+            icon="hero-document-check"
+            icon_class="h-8 w-8"
+            padding="p-5"
+          >
+            <:trailing>
+              <span class="badge badge-lg badge-outline font-mono">{@tos_count}</span>
             </:trailing>
           </.hub_card>
         </div>

@@ -16,6 +16,7 @@ defmodule Animina.Accounts do
 
   alias Animina.Accounts.{
     AccountSecurityEvent,
+    TosAcceptance,
     User,
     UserLocation,
     UserNotifier,
@@ -25,6 +26,7 @@ defmodule Animina.Accounts do
 
   alias Animina.Moodboard
   alias Animina.Repo
+  alias Animina.Repo.Paginator
   alias Animina.TimeMachine
   alias Animina.Utils.PaperTrail, as: PT
 
@@ -158,15 +160,97 @@ defmodule Animina.Accounts do
 
   ## Terms of Service
 
+  # The current ToS version, derived from the @tos_updated_at date in UserAuth.
+  # Update this when the ToS changes.
+  @tos_version "2026-02-13"
+
+  @doc """
+  Returns the current ToS version string.
+  """
+  def tos_version, do: @tos_version
+
   @doc """
   Accepts the Terms of Service for an existing user (re-consent flow).
-  Sets `tos_accepted_at` to the current time.
+  Sets `tos_accepted_at` to the current time, records a TosAcceptance row,
+  and logs to ActivityLog.
   """
   def accept_terms_of_service(%User{} = user) do
-    user
-    |> User.tos_acceptance_changeset()
-    |> Repo.update()
+    Repo.transact(fn ->
+      with {:ok, updated_user} <-
+             user
+             |> User.tos_acceptance_changeset()
+             |> Repo.update(),
+           {:ok, _acceptance} <- record_tos_acceptance(updated_user, @tos_version) do
+        ActivityLog.log(
+          "profile",
+          "tos_accepted",
+          "#{updated_user.display_name} accepted ToS version #{@tos_version}",
+          actor_id: updated_user.id,
+          subject_id: updated_user.id,
+          metadata: %{"version" => @tos_version}
+        )
+
+        {:ok, updated_user}
+      end
+    end)
   end
+
+  @doc """
+  Records a ToS acceptance for a user with the given version.
+  """
+  def record_tos_acceptance(%User{} = user, version) do
+    %TosAcceptance{}
+    |> TosAcceptance.changeset(%{
+      user_id: user.id,
+      version: version,
+      accepted_at: DateTime.utc_now(:second)
+    })
+    |> Repo.insert()
+  end
+
+  @doc """
+  Lists ToS acceptances with filtering and pagination.
+
+  ## Options
+
+    * `:page` - page number (default: 1)
+    * `:per_page` - results per page (default: 50)
+    * `:filter_user_id` - filter by user_id
+    * `:filter_version` - filter by version
+  """
+  def list_tos_acceptances(opts \\ []) do
+    from(a in TosAcceptance,
+      join: u in assoc(a, :user),
+      preload: [user: u],
+      order_by: [desc: a.accepted_at]
+    )
+    |> maybe_filter_tos_user(Keyword.get(opts, :filter_user_id))
+    |> maybe_filter_tos_version(Keyword.get(opts, :filter_version))
+    |> Paginator.paginate(opts)
+  end
+
+  @doc """
+  Returns the total count of ToS acceptance records.
+  """
+  def count_tos_acceptances do
+    Repo.aggregate(TosAcceptance, :count)
+  end
+
+  @doc """
+  Returns a list of distinct ToS versions that have been accepted.
+  """
+  def list_tos_versions do
+    from(a in TosAcceptance, distinct: true, select: a.version, order_by: [desc: a.version])
+    |> Repo.all()
+  end
+
+  defp maybe_filter_tos_user(query, nil), do: query
+  defp maybe_filter_tos_user(query, ""), do: query
+  defp maybe_filter_tos_user(query, user_id), do: where(query, [a], a.user_id == ^user_id)
+
+  defp maybe_filter_tos_version(query, nil), do: query
+  defp maybe_filter_tos_version(query, ""), do: query
+  defp maybe_filter_tos_version(query, version), do: where(query, [a], a.version == ^version)
 
   ## User registration
 

@@ -156,6 +156,7 @@ defmodule AniminaWeb.Router do
       live "/admin/logs/emails", Admin.EmailLogsLive
       live "/admin/logs/ollama", Admin.OllamaLogsLive
       live "/admin/logs/activity", Admin.ActivityLogsLive
+      live "/admin/tos-acceptances", Admin.TosAcceptancesLive
     end
 
     post "/role/switch", RoleController, :switch
