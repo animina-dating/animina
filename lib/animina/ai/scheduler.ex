@@ -50,7 +50,11 @@ defmodule Animina.AI.Scheduler do
   @impl true
   def init(opts) do
     poll_interval =
-      Keyword.get(opts, :poll_interval_ms, read_setting(:ai_scheduler_poll_interval, @default_poll_interval_ms))
+      Keyword.get(
+        opts,
+        :poll_interval_ms,
+        read_setting(:ai_scheduler_poll_interval, @default_poll_interval_ms)
+      )
 
     batch_size =
       Keyword.get(opts, :batch_size, read_setting(:ai_scheduler_batch_size, @default_batch_size))
@@ -116,16 +120,12 @@ defmodule Animina.AI.Scheduler do
     semaphore_status = Semaphore.status()
     available = semaphore_status.max - semaphore_status.active - semaphore_status.waiting
 
-    if available > 0 do
+    if available <= 0 do
+      state
+    else
       batch = min(state.batch_size, available)
       jobs = AI.list_runnable_jobs(batch)
-
-      Enum.each(jobs, fn job ->
-        Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
-          Executor.run(job)
-        end)
-      end)
-
+      Enum.each(jobs, &dispatch_job/1)
       dispatched = length(jobs)
 
       if dispatched > 0 do
@@ -133,8 +133,6 @@ defmodule Animina.AI.Scheduler do
       end
 
       %{state | total_dispatched: state.total_dispatched + dispatched}
-    else
-      state
     end
   end
 
@@ -151,23 +149,28 @@ defmodule Animina.AI.Scheduler do
   end
 
   defp seed_photo_descriptions do
-    photos = Photos.list_photos_needing_description(3)
-
-    Enum.each(photos, fn photo ->
-      # Don't enqueue if there's already a pending job for this photo
-      unless AI.has_pending_job?("photo_description", "Photo", photo.id) do
-        owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
-
-        AI.enqueue("photo_description", %{"photo_id" => photo.id},
-          subject_type: "Photo",
-          subject_id: photo.id,
-          requester_id: owner_id
-        )
-      end
-    end)
+    Photos.list_photos_needing_description(3)
+    |> Enum.reject(&AI.has_pending_job?("photo_description", "Photo", &1.id))
+    |> Enum.each(&enqueue_description_job/1)
   rescue
     e ->
       Logger.warning("AI.Scheduler: Failed to seed photo descriptions: #{inspect(e)}")
+  end
+
+  defp dispatch_job(job) do
+    Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
+      Executor.run(job)
+    end)
+  end
+
+  defp enqueue_description_job(photo) do
+    owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
+
+    AI.enqueue("photo_description", %{"photo_id" => photo.id},
+      subject_type: "Photo",
+      subject_id: photo.id,
+      requester_id: owner_id
+    )
   end
 
   defp read_setting(name, default) do

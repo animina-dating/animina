@@ -125,7 +125,9 @@ defmodule Animina.AI.HealthTracker do
 
   defp update_status(state, url, update_fn) do
     case Map.get(state.statuses, url) do
-      nil -> state
+      nil ->
+        state
+
       status ->
         updated_status = update_fn.(status)
         %{state | statuses: Map.put(state.statuses, url, updated_status)}
@@ -142,12 +144,18 @@ defmodule Animina.AI.HealthTracker do
 
     new_state =
       cond do
-        status.state == :open -> :open
-        status.state == :half_open -> :open
+        status.state == :open ->
+          :open
+
+        status.state == :half_open ->
+          :open
+
         new_count >= threshold ->
           Logger.warning("Circuit opened after #{new_count} failures (threshold: #{threshold})")
           :open
-        true -> :closed
+
+        true ->
+          :closed
       end
 
     %__MODULE__{
@@ -177,7 +185,9 @@ defmodule Animina.AI.HealthTracker do
   defp maybe_transition_to_half_open(status, _now, _reset_ms), do: status
 
   defp get_instance_urls do
-    Animina.AI.Client.ollama_instances()
+    alias Animina.AI.Client
+
+    Client.ollama_instances()
     |> Enum.sort_by(& &1.priority)
     |> Enum.map(& &1.url)
   end

@@ -68,37 +68,38 @@ defmodule Animina.AI.JobTypes.PhotoDescription do
 
   @impl true
   def handle_result(job, raw_response) do
-    photo = Photos.get_photo(job.params["photo_id"])
+    case Photos.get_photo(job.params["photo_id"]) do
+      nil -> {:error, :photo_not_found}
+      photo -> save_description(job, photo, raw_response)
+    end
+  end
 
-    if is_nil(photo) do
-      {:error, :photo_not_found}
-    else
-      description = raw_response |> String.trim() |> String.slice(0, 2028)
+  defp save_description(job, photo, raw_response) do
+    description = raw_response |> String.trim() |> String.slice(0, 2028)
 
-      case Photos.update_photo_description(photo, %{
-             description: description,
-             description_generated_at: DateTime.utc_now(:second),
-             description_model: job.model || default_model()
-           }) do
-        {:ok, _updated} ->
-          owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
+    case Photos.update_photo_description(photo, %{
+           description: description,
+           description_generated_at: DateTime.utc_now(:second),
+           description_model: job.model || default_model()
+         }) do
+      {:ok, _updated} ->
+        owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
 
-          ActivityLog.log(
-            "system",
-            "photo_description_generated",
-            "Generated German description for photo #{photo.id}",
-            subject_id: owner_id,
-            metadata: %{
-              "model" => job.model || default_model(),
-              "description_length" => String.length(description)
-            }
-          )
+        ActivityLog.log(
+          "system",
+          "photo_description_generated",
+          "Generated German description for photo #{photo.id}",
+          subject_id: owner_id,
+          metadata: %{
+            "model" => job.model || default_model(),
+            "description_length" => String.length(description)
+          }
+        )
 
-          {:ok, %{"description_length" => String.length(description)}}
+        {:ok, %{"description_length" => String.length(description)}}
 
-        {:error, changeset} ->
-          {:error, {:save_failed, inspect(changeset.errors)}}
-      end
+      {:error, changeset} ->
+        {:error, {:save_failed, inspect(changeset.errors)}}
     end
   end
 end

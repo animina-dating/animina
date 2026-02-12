@@ -60,82 +60,74 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
 
   @impl true
   def handle_result(job, raw_response) do
-    photo = Photos.get_photo(job.params["photo_id"])
-
-    if is_nil(photo) do
-      {:error, :photo_not_found}
-    else
-      parsed = PhotoProcessor.parse_ollama_response(raw_response)
-
-      # Log the check event
-      Photos.log_event(
-        photo,
-        "ollama_checked",
-        "ai",
-        nil,
-        %{
-          model: job.model,
-          person_detection: parsed.person_detection,
-          content_safety: parsed.content_safety,
-          attire_assessment: parsed.attire_assessment,
-          sex_scene: parsed.sex_scene,
-          via: "ai_job_service"
-        },
-        duration_ms: job.duration_ms
-      )
-
-      # Analyze based on photo type
-      analysis_result =
-        if moodboard_photo?(photo) do
-          PhotoFeedback.analyze_moodboard(parsed)
-        else
-          PhotoFeedback.analyze_avatar(parsed)
-        end
-
-      result_map = %{
-        "person_detection" => stringify_keys(parsed.person_detection),
-        "content_safety" => stringify_keys(parsed.content_safety),
-        "attire_assessment" => stringify_keys(parsed.attire_assessment),
-        "animal_detection" => stringify_keys(parsed.animal_detection),
-        "sex_scene" => parsed.sex_scene
-      }
-
-      case analysis_result do
-        {:ok, :approved} ->
-          # Clear retry fields and approve
-          Photos.transition_photo(photo, "approved", %{
-            ollama_retry_count: 0,
-            ollama_retry_at: nil,
-            ollama_check_type: nil
-          })
-
-          {:ok, Map.put(result_map, "verdict", "approved")}
-
-        {:error, violation, message} ->
-          new_state = PhotoFeedback.violation_to_state(violation)
-
-          # Auto-blacklist if warranted
-          if PhotoFeedback.should_blacklist?(violation) do
-            maybe_auto_blacklist(photo)
-          end
-
-          Photos.log_event(photo, "photo_rejected", "system", nil, %{
-            reason: Atom.to_string(violation),
-            state: new_state,
-            person_detection: parsed.person_detection,
-            content_safety: parsed.content_safety
-          })
-
-          Photos.transition_photo(photo, new_state, %{
-            error_message: message,
-            ollama_retry_count: 0,
-            ollama_retry_at: nil,
-            ollama_check_type: nil
-          })
-
-          {:ok, Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
-      end
+    case Photos.get_photo(job.params["photo_id"]) do
+      nil -> {:error, :photo_not_found}
+      photo -> classify_photo(job, photo, raw_response)
     end
+  end
+
+  defp classify_photo(job, photo, raw_response) do
+    parsed = PhotoProcessor.parse_ollama_response(raw_response)
+
+    Photos.log_event(photo, "ollama_checked", "ai", nil, %{
+      model: job.model,
+      person_detection: parsed.person_detection,
+      content_safety: parsed.content_safety,
+      attire_assessment: parsed.attire_assessment,
+      sex_scene: parsed.sex_scene,
+      via: "ai_job_service"
+    }, duration_ms: job.duration_ms)
+
+    analysis_result =
+      if moodboard_photo?(photo) do
+        PhotoFeedback.analyze_moodboard(parsed)
+      else
+        PhotoFeedback.analyze_avatar(parsed)
+      end
+
+    result_map = %{
+      "person_detection" => stringify_keys(parsed.person_detection),
+      "content_safety" => stringify_keys(parsed.content_safety),
+      "attire_assessment" => stringify_keys(parsed.attire_assessment),
+      "animal_detection" => stringify_keys(parsed.animal_detection),
+      "sex_scene" => parsed.sex_scene
+    }
+
+    apply_classification(analysis_result, photo, parsed, result_map)
+  end
+
+  defp apply_classification({:ok, :approved}, photo, _parsed, result_map) do
+    Photos.transition_photo(photo, "approved", %{
+      ollama_retry_count: 0,
+      ollama_retry_at: nil,
+      ollama_check_type: nil
+    })
+
+    {:ok, Map.put(result_map, "verdict", "approved")}
+  end
+
+  defp apply_classification({:error, violation, message}, photo, parsed, result_map) do
+    new_state = PhotoFeedback.violation_to_state(violation)
+
+    if PhotoFeedback.should_blacklist?(violation) do
+      maybe_auto_blacklist(photo)
+    end
+
+    Photos.log_event(photo, "photo_rejected", "system", nil, %{
+      reason: Atom.to_string(violation),
+      state: new_state,
+      person_detection: parsed.person_detection,
+      content_safety: parsed.content_safety
+    })
+
+    Photos.transition_photo(photo, new_state, %{
+      error_message: message,
+      ollama_retry_count: 0,
+      ollama_retry_at: nil,
+      ollama_check_type: nil
+    })
+
+    {:ok, Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
   end
 
   # --- Private ---

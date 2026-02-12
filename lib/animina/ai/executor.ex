@@ -28,11 +28,11 @@ defmodule Animina.AI.Executor do
   def run(%AI.Job{} = job) do
     module = AI.job_type_module(job.job_type)
 
-    unless module do
+    if module do
+      execute_with_module(job, module)
+    else
       AI.mark_failed(job, "Unknown job type: #{job.job_type}")
       :error
-    else
-      execute_with_module(job, module)
     end
   end
 

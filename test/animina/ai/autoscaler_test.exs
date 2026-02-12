@@ -2,11 +2,12 @@ defmodule Animina.AI.AutoscalerTest do
   use ExUnit.Case, async: true
 
   alias Animina.AI.Autoscaler
+  alias Animina.AI.Semaphore
 
   setup do
     # Start a test semaphore
     {:ok, semaphore} =
-      Animina.AI.Semaphore.start_link(name: :"test_semaphore_#{System.unique_integer()}", max: 2)
+      Semaphore.start_link(name: :"test_semaphore_#{System.unique_integer()}", max: 2)
 
     {:ok, autoscaler} =
       Autoscaler.start_link(
@@ -43,7 +44,7 @@ defmodule Animina.AI.AutoscalerTest do
     assert state.current_max > 2
 
     # Verify semaphore was updated
-    sem_status = Animina.AI.Semaphore.status(semaphore)
+    sem_status = Semaphore.status(semaphore)
     assert sem_status.max == state.current_max
   end
 
