@@ -29,8 +29,6 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias AniminaWeb.Helpers.ColumnPreferences
   alias AniminaWeb.Presence
 
-  import AniminaWeb.MoodboardComponents, only: [distribute_to_columns: 2]
-
   @impl true
   def render(%{access_restricted: true} = assigns) do
     ~H"""
@@ -285,23 +283,16 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         <div :if={!Enum.empty?(@items)}>
           <ColumnToggle.column_toggle columns={@columns} />
           
-    <!-- Moodboard grid using Flexbox columns -->
-          <div class={[
-            "flex gap-4 md:gap-5 lg:gap-6 pt-6",
-            if(@columns == 1, do: "flex-col", else: "flex-row")
-          ]}>
-            <%= for {column_items, col_idx} <- distribute_to_columns(@items, @columns) do %>
-              <div class="flex-1 flex flex-col gap-4 md:gap-5 lg:gap-6">
-                <%= for item <- column_items do %>
-                  <div>
-                    <.live_component
-                      module={AniminaWeb.LiveMoodboardItemComponent}
-                      id={"moodboard-item-#{item.id}"}
-                      item={item}
-                      owner?={@owner?}
-                    />
-                  </div>
-                <% end %>
+    <!-- Moodboard grid using CSS columns for balanced height distribution -->
+          <div class={moodboard_columns_class(@columns)}>
+            <%= for item <- @items do %>
+              <div class="break-inside-avoid mb-4 md:mb-5 lg:mb-6">
+                <.live_component
+                  module={AniminaWeb.LiveMoodboardItemComponent}
+                  id={"moodboard-item-#{item.id}"}
+                  item={item}
+                  owner?={@owner?}
+                />
               </div>
             <% end %>
           </div>
@@ -828,6 +819,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       socket
     end
   end
+
+  defp moodboard_columns_class(1), do: "pt-6"
+  defp moodboard_columns_class(2), do: "columns-2 gap-4 md:gap-5 lg:gap-6 pt-6"
+  defp moodboard_columns_class(3), do: "columns-3 gap-4 md:gap-5 lg:gap-6 pt-6"
 
   defp reload_items(socket) do
     items = Moodboard.list_moodboard_with_hidden(socket.assigns.profile_user.id)
