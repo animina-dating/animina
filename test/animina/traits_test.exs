@@ -2936,6 +2936,75 @@ defmodule Animina.TraitsTest do
     end
   end
 
+  describe "seeded category: Body Type" do
+    test "category exists with correct attributes" do
+      categories = Traits.list_categories()
+
+      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
+
+      assert category != nil
+      assert category.selection_mode == "single"
+      assert category.core == true
+      assert category.sensitive == false
+      assert category.position == 7
+    end
+
+    test "category has all 5 flags" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
+      assert category != nil
+
+      flags = Traits.list_top_level_flags_by_category(category)
+      assert length(flags) == 5
+
+      flag_names = Enum.map(flags, & &1.name)
+      assert "Slim" in flag_names
+      assert "Average" in flag_names
+      assert "Athletic" in flag_names
+      assert "Curvy" in flag_names
+      assert "Plus-Size" in flag_names
+    end
+
+    test "flags have correct emojis and positions" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
+      flags = Traits.list_top_level_flags_by_category(category)
+
+      slim = Enum.find(flags, fn f -> f.name == "Slim" end)
+      assert slim.emoji == "🦊"
+      assert slim.position == 1
+
+      average = Enum.find(flags, fn f -> f.name == "Average" end)
+      assert average.emoji == "📏"
+      assert average.position == 2
+
+      athletic = Enum.find(flags, fn f -> f.name == "Athletic" end)
+      assert athletic.emoji == "🏋️"
+      assert athletic.position == 3
+
+      curvy = Enum.find(flags, fn f -> f.name == "Curvy" end)
+      assert curvy.emoji == "🧸"
+      assert curvy.position == 4
+
+      plus_size = Enum.find(flags, fn f -> f.name == "Plus-Size" end)
+      assert plus_size.emoji == "🐻"
+      assert plus_size.position == 5
+    end
+
+    test "category is visible by default as a core category" do
+      user = user_fixture()
+
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
+
+      assert category.core == true
+
+      visible = Traits.list_visible_categories(user)
+      visible_ids = Enum.map(visible, & &1.id)
+      assert category.id in visible_ids
+    end
+  end
+
   describe "PaperTrail audit trail" do
     test "adding a user flag creates a version; inherited flags do not" do
       user = user_fixture()

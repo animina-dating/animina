@@ -29,6 +29,7 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Have Children"),
       gettext("Want Children"),
       gettext("Children in Household"),
+      gettext("Body Type"),
       gettext("Diet"),
       gettext("Smoking"),
       gettext("Alcohol"),
@@ -94,8 +95,14 @@ defmodule AniminaWeb.TraitTranslations do
       # ── Children in Household flags ──
       gettext("My Children Live With Me"),
       gettext("My Children Don't Live With Me"),
+      # ── Body Type flags ──
+      gettext("Slim"),
+      gettext("Average"),
+      gettext("Athletic"),
+      gettext("Curvy"),
+      gettext("Plus-Size"),
       # ── Diet flags ──
-      gettext("Omnivore"),
+
       gettext("Flexitarian"),
       gettext("Pescatarian"),
       gettext("Vegetarian"),
