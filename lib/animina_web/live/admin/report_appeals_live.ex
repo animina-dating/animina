@@ -8,6 +8,8 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Reports
+  alias Animina.Reports.Category
+  alias Animina.Reports.Report
   alias AniminaWeb.Layouts
 
   @impl true
@@ -67,8 +69,8 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
                     {gettext("Deleted user")}
                   </span>
                 </td>
-                <td>{appeal.report.category}</td>
-                <td>{appeal.report.resolution}</td>
+                <td>{Category.label(appeal.report.category)}</td>
+                <td>{Report.resolution_label(appeal.report.resolution)}</td>
                 <td class="text-sm text-base-content/60">
                   {Calendar.strftime(appeal.inserted_at, "%Y-%m-%d %H:%M")}
                 </td>
@@ -108,8 +110,12 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
         <%!-- Original report info --%>
         <div class="mb-4">
           <h3 class="font-semibold mb-2">{gettext("Original Report")}</h3>
-          <p><strong>{gettext("Category")}:</strong> {@appeal.report.category}</p>
-          <p><strong>{gettext("Resolution")}:</strong> {@appeal.report.resolution}</p>
+          <p><strong>{gettext("Category")}:</strong> {Category.label(@appeal.report.category)}</p>
+          <p>
+            <strong>{gettext("Resolution")}:</strong> {Report.resolution_label(
+              @appeal.report.resolution
+            )}
+          </p>
           <p :if={@appeal.report.resolution_notes}>
             <strong>{gettext("Notes")}:</strong> {@appeal.report.resolution_notes}
           </p>
@@ -133,15 +139,16 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
 
         <%!-- Actions --%>
         <div :if={!@same_moderator} class="border-t border-base-300 pt-4">
-          <div class="form-control mb-3">
-            <textarea
-              class="textarea textarea-bordered w-full"
-              rows="2"
-              placeholder={gettext("Resolution notes...")}
-              phx-change="update_notes"
-              name="notes"
-            >{@resolution_notes}</textarea>
-          </div>
+          <form phx-change="update_notes" phx-submit="noop">
+            <div class="form-control mb-3">
+              <textarea
+                class="textarea textarea-bordered w-full"
+                rows="2"
+                placeholder={gettext("Resolution notes...")}
+                name="notes"
+              >{@resolution_notes}</textarea>
+            </div>
+          </form>
           <div class="flex gap-2">
             <button
               phx-click="resolve_appeal"
@@ -179,6 +186,8 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
   def handle_event("update_notes", %{"notes" => notes}, socket) do
     {:noreply, assign(socket, :resolution_notes, notes)}
   end
+
+  def handle_event("noop", _, socket), do: {:noreply, socket}
 
   def handle_event("resolve_appeal", %{"decision" => decision}, socket) do
     appeal = socket.assigns.selected_appeal

@@ -3,11 +3,28 @@ Dein ANIMINA-Konto wurde dauerhaft gesperrt
 
 Hallo <%= @greeting_name %>,
 
-nach Prüfung einer Meldung zu deinem Konto hat unser
-Moderationsteam entschieden, dein Konto dauerhaft zu sperren.
+nach sorgfaeltiger Pruefung einer Meldung zu deinem Konto hat
+unser Moderationsteam entschieden, dein Konto dauerhaft zu
+sperren.
 
-Du kannst ANIMINA-Dienste nicht mehr nutzen.
+Grund: <%= @category %>
 
-Wenn du der Meinung bist, dass diese Entscheidung
-fehlerhaft ist, kannst du innerhalb von 30 Tagen einen
-Einspruch einlegen, indem du unser Support-Team kontaktierst.
+Was bedeutet das?
+
+Du kannst dich nicht mehr bei ANIMINA einloggen oder die
+Dienste der Plattform nutzen.
+
+Wie kannst du Einspruch erheben?
+
+Wenn du der Meinung bist, dass diese Entscheidung zu Unrecht
+getroffen wurde, kannst du innerhalb von 30 Tagen Einspruch
+einlegen, indem du eine E-Mail schreibst an:
+
+<%= @support_email %>
+
+Bitte beschreibe, warum die Entscheidung ueberdacht werden
+sollte. Unser Team wird deinen Einspruch pruefen und sich
+bei dir melden.
+
+Viele Gruesse,
+Dein ANIMINA-Team

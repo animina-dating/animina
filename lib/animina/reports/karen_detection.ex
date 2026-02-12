@@ -1,17 +1,18 @@
 defmodule Animina.Reports.KarenDetection do
   @moduledoc """
-  Detects serial false reporters ("Karens").
+  Detects serial false reporters.
 
-  If a reporter has 5+ resolved reports and 70%+ are dismissed,
-  auto-creates a system report against them.
+  Called after each report resolution. If a reporter has filed 5+ reports
+  and 70%+ were dismissed, auto-creates a system report with category
+  `"serial_false_reporter"` against them. Only one such report per reporter.
   """
 
   import Ecto.Query
 
   alias Animina.ActivityLog
+  alias Animina.Repo
   alias Animina.Reports.Filing
   alias Animina.Reports.Report
-  alias Animina.Repo
 
   @min_reports 5
   @dismiss_threshold 0.70
@@ -23,9 +24,14 @@ defmodule Animina.Reports.KarenDetection do
   def check_reporter(reporter_id) do
     stats = reporter_resolution_stats(reporter_id)
 
-    if stats.total >= @min_reports && stats.dismiss_ratio >= @dismiss_threshold do
-      # Only create one karen report per reporter
-      unless karen_report_exists?(reporter_id) do
+    cond do
+      stats.total < @min_reports || stats.dismiss_ratio < @dismiss_threshold ->
+        :ok
+
+      karen_report_exists?(reporter_id) ->
+        :already_flagged
+
+      true ->
         reporter = Animina.Accounts.get_user!(reporter_id)
 
         {:ok, report} =
@@ -49,11 +55,6 @@ defmodule Animina.Reports.KarenDetection do
         )
 
         {:ok, report}
-      else
-        :already_flagged
-      end
-    else
-      :ok
     end
   end
 

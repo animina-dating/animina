@@ -2,15 +2,20 @@ defmodule Animina.Reports.Invisibility do
   @moduledoc """
   Manages bidirectional invisibility between users involved in reports.
 
-  Uses both user_id (fast lookup for active users) and phone_hash
-  (persists after account deletion) for each invisibility entry.
+  Each report creates two rows (A hidden from B, B hidden from A).
+  Uses both `user_id` (fast indexed lookup for active users) and
+  `phone_hash` (persists after account deletion via SHA-256).
+
+  On re-registration, `restore_invisibilities_for_new_user/1` fills
+  in the new user_id on existing hash-based rows, so the "delete account
+  to escape blocking" trick doesn't work.
   """
 
   import Ecto.Query
 
+  alias Animina.Repo
   alias Animina.Reports.IdentityHash
   alias Animina.Reports.ReportInvisibility
-  alias Animina.Repo
 
   @doc """
   Creates mutual invisibility entries (two rows) for a report.

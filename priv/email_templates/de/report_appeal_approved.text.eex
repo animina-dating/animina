@@ -1,12 +1,21 @@
-Dein Einspruch wurde genehmigt
+Gute Nachrichten: Dein Einspruch wurde genehmigt
 ---
 
 Hallo <%= @greeting_name %>,
 
-gute Nachrichten! Nach Prüfung deines Einspruchs hat unser
-Moderationsteam entschieden, dein Konto wiederherzustellen.
+wir haben deinen Einspruch sorgfaeltig geprueft und freuen
+uns, dir mitteilen zu koennen, dass wir zu deinen Gunsten
+entschieden haben. Dein Konto wurde vollstaendig
+wiederhergestellt.
 
-Dein Konto ist jetzt wieder aktiv und du kannst ANIMINA
-wie gewohnt nutzen.
+Du kannst dich jetzt wieder einloggen und ANIMINA wie
+gewohnt nutzen.
 
-Wir entschuldigen uns für die Unannehmlichkeiten.
+Wir entschuldigen uns aufrichtig fuer die entstandenen
+Unannehmlichkeiten.
+
+Bei Fragen kannst du dich jederzeit an uns wenden:
+<%= @support_email %>
+
+Viele Gruesse,
+Dein ANIMINA-Team

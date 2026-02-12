@@ -9,6 +9,8 @@ defmodule AniminaWeb.Admin.ReportsLive do
   use AniminaWeb, :live_view
 
   alias Animina.Reports
+  alias Animina.Reports.Category
+  alias Animina.Reports.Report
   alias AniminaWeb.Layouts
 
   @impl true
@@ -70,7 +72,7 @@ defmodule AniminaWeb.Admin.ReportsLive do
             <tbody>
               <tr :for={report <- @reports.entries} class="hover">
                 <td><.priority_badge priority={report.priority} /></td>
-                <td>{format_category(report.category)}</td>
+                <td>{Category.label(report.category)}</td>
                 <td>
                   <span :if={report.reported_user}>
                     {report.reported_user.display_name}
@@ -129,7 +131,7 @@ defmodule AniminaWeb.Admin.ReportsLive do
           <div>
             <p class="text-sm font-medium text-base-content/60">{gettext("Category")}</p>
             <p class="font-semibold">
-              <.priority_badge priority={@report.priority} /> {format_category(@report.category)}
+              <.priority_badge priority={@report.priority} /> {Category.label(@report.category)}
             </p>
           </div>
           <div>
@@ -155,7 +157,7 @@ defmodule AniminaWeb.Admin.ReportsLive do
           </div>
           <div :for={strike <- @strike_history} class="text-sm border-l-2 border-warning pl-3 mb-2">
             <span class="font-medium">{strike.resolution}</span>
-            — {format_category(strike.category)}
+            — {Category.label(strike.category)}
             <span class="text-base-content/50">
               ({Calendar.strftime(strike.resolved_at, "%Y-%m-%d")})
             </span>
@@ -167,7 +169,7 @@ defmodule AniminaWeb.Admin.ReportsLive do
           <.icon name="hero-light-bulb" class="h-5 w-5" />
           <span>
             {gettext("Recommended action:")}
-            <strong>{format_resolution(@recommended_action)}</strong>
+            <strong>{Report.resolution_label(@recommended_action)}</strong>
           </span>
         </div>
 
@@ -215,15 +217,16 @@ defmodule AniminaWeb.Admin.ReportsLive do
         <%!-- Resolution actions --%>
         <div class="border-t border-base-300 pt-4">
           <h3 class="font-semibold mb-3">{gettext("Resolve")}</h3>
-          <div class="form-control mb-3">
-            <textarea
-              class="textarea textarea-bordered w-full"
-              rows="2"
-              placeholder={gettext("Resolution notes (required)...")}
-              phx-change="update_notes"
-              name="notes"
-            >{@resolution_notes}</textarea>
-          </div>
+          <form phx-change="update_notes" phx-submit="noop">
+            <div class="form-control mb-3">
+              <textarea
+                class="textarea textarea-bordered w-full"
+                rows="2"
+                placeholder={gettext("Resolution notes (required)...")}
+                name="notes"
+              >{@resolution_notes}</textarea>
+            </div>
+          </form>
           <div class="flex flex-wrap gap-2">
             <button
               phx-click="resolve"
@@ -296,24 +299,6 @@ defmodule AniminaWeb.Admin.ReportsLive do
     """
   end
 
-  defp format_category("harassment"), do: "Harassment"
-  defp format_category("inappropriate_content"), do: "Inappropriate content"
-  defp format_category("fake_profile"), do: "Fake / misleading profile"
-  defp format_category("scam_spam"), do: "Scam / spam"
-  defp format_category("underage_suspicion"), do: "Underage suspicion"
-  defp format_category("threatening_behavior"), do: "Threatening behavior"
-  defp format_category("serial_false_reporter"), do: "Serial false reporter"
-  defp format_category("other"), do: "Other"
-  defp format_category(cat), do: cat
-
-  defp format_resolution("warning"), do: "Warning"
-  defp format_resolution("temp_ban_3"), do: "3-day temporary ban"
-  defp format_resolution("temp_ban_7"), do: "7-day temporary ban"
-  defp format_resolution("temp_ban_30"), do: "30-day temporary ban"
-  defp format_resolution("permanent_ban"), do: "Permanent ban"
-  defp format_resolution("dismissed"), do: "Dismissed"
-  defp format_resolution(r), do: r
-
   # --- Event Handlers ---
 
   @impl true
@@ -346,6 +331,8 @@ defmodule AniminaWeb.Admin.ReportsLive do
   def handle_event("update_notes", %{"notes" => notes}, socket) do
     {:noreply, assign(socket, :resolution_notes, notes)}
   end
+
+  def handle_event("noop", _, socket), do: {:noreply, socket}
 
   def handle_event("resolve", %{"resolution" => resolution}, socket) do
     report = socket.assigns.selected_report

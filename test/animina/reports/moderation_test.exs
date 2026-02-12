@@ -1,7 +1,9 @@
 defmodule Animina.Reports.ModerationTest do
   use Animina.DataCase, async: true
 
+  alias Animina.Accounts.User
   alias Animina.AccountsFixtures
+  alias Animina.Repo
   alias Animina.Reports
 
   describe "resolve_report/4" do
@@ -149,11 +151,11 @@ defmodule Animina.Reports.ModerationTest do
       # Manually set suspended state with past expiry
       {:ok, user} =
         user
-        |> Animina.Accounts.User.moderation_changeset(%{
+        |> User.moderation_changeset(%{
           state: "suspended",
           suspended_until: DateTime.add(DateTime.utc_now(), -1, :hour)
         })
-        |> Animina.Repo.update()
+        |> Repo.update()
 
       unsuspended = Reports.maybe_unsuspend(user)
       assert unsuspended.state == "normal"
@@ -165,11 +167,11 @@ defmodule Animina.Reports.ModerationTest do
 
       {:ok, user} =
         user
-        |> Animina.Accounts.User.moderation_changeset(%{
+        |> User.moderation_changeset(%{
           state: "suspended",
           suspended_until: DateTime.add(DateTime.utc_now(), 7, :day)
         })
-        |> Animina.Repo.update()
+        |> Repo.update()
 
       still_suspended = Reports.maybe_unsuspend(user)
       assert still_suspended.state == "suspended"

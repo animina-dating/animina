@@ -1,16 +1,25 @@
-Warning regarding your ANIMINA account
+Important notice about your ANIMINA account
 ---
 
 Hi <%= @greeting_name %>,
 
-After reviewing a report about your account, our moderation team
-has issued a warning.
+after reviewing a report about your account, our moderation
+team has issued a warning.
 
-Please be mindful of our community guidelines. Repeated violations
-may result in temporary or permanent suspension of your account.
+Reason: <%= @category %>
 
-If you believe this decision was made in error, you can submit
-an appeal by visiting your account page at ANIMINA.
+Your account remains fully active and you can continue using
+ANIMINA as usual. However, we kindly ask you to review our
+community guidelines. Repeated violations may lead to a
+temporary or permanent suspension of your account.
 
-Please review our terms of service to ensure your future
-interactions comply with our community standards.
+If you believe this warning was issued in error, you have
+two options to appeal:
+
+1. Log in to ANIMINA and visit your account page to submit
+   an appeal directly.
+2. Send us an email at <%= @support_email %> explaining
+   why you believe the decision should be reconsidered.
+
+Best regards,
+Your ANIMINA Team

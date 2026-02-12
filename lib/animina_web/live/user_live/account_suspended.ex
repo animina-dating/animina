@@ -5,7 +5,11 @@ defmodule AniminaWeb.UserLive.AccountSuspended do
 
   use AniminaWeb, :live_view
 
+  import Ecto.Query
+
+  alias Animina.Repo
   alias Animina.Reports
+  alias Animina.Reports.Report
   alias AniminaWeb.Layouts
 
   @impl true
@@ -149,16 +153,13 @@ defmodule AniminaWeb.UserLive.AccountSuspended do
   end
 
   defp find_latest_report(user_id) do
-    import Ecto.Query
+    report =
+      Report
+      |> where([r], r.reported_user_id == ^user_id and r.status == "resolved")
+      |> order_by([r], desc: r.resolved_at)
+      |> limit(1)
+      |> Repo.one()
 
-    Animina.Reports.Report
-    |> where([r], r.reported_user_id == ^user_id and r.status == "resolved")
-    |> order_by([r], desc: r.resolved_at)
-    |> limit(1)
-    |> Animina.Repo.one()
-    |> case do
-      nil -> nil
-      report -> Animina.Repo.preload(report, [:appeal])
-    end
+    if report, do: Repo.preload(report, [:appeal]), else: nil
   end
 end

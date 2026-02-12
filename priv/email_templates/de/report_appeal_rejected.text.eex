@@ -1,12 +1,19 @@
-Dein Einspruch wurde geprüft
+Aktualisierung zu deinem Einspruch
 ---
 
 Hallo <%= @greeting_name %>,
 
-nach sorgfältiger Prüfung deines Einspruchs hat unser
-Moderationsteam entschieden, die ursprüngliche Entscheidung
-aufrechtzuerhalten.
+nach sorgfaeltiger Pruefung deines Einspruchs hat unser
+Moderationsteam entschieden, die urspruengliche Entscheidung
+aufrechtzuerhalten. Die Massnahme bezueglich deines Kontos
+bleibt bestehen.
 
-Die gegen dein Konto ergriffene Maßnahme bleibt bestehen.
+Wir verstehen, dass dies nicht das Ergebnis ist, das du dir
+erhofft hast. Unser Team hat deinen Fall gruendlich geprueft,
+um eine faire Entscheidung zu treffen.
 
-Diese Entscheidung ist endgültig.
+Bei Fragen kannst du dich an uns wenden:
+<%= @support_email %>
+
+Viele Gruesse,
+Dein ANIMINA-Team

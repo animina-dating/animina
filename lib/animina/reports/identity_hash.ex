@@ -1,10 +1,13 @@
 defmodule Animina.Reports.IdentityHash do
   @moduledoc """
-  Hashing utility for identity-based persistence in the reporting system.
+  SHA-256 identity hashing for the reporting system.
 
-  All report-related persistence uses SHA-256 hashes of phone numbers and
-  email addresses — never plaintext. This ensures strikes, invisibilities,
-  and bans survive account deletion and follow users across re-registrations.
+  All report-related persistence (strikes, invisibilities, bans) uses
+  hashed phone numbers and emails — never plaintext. This ensures
+  data survives account deletion and follows users across re-registrations.
+
+  - Phone: normalized to E.164 format, then SHA-256 hex-encoded
+  - Email: downcased, then SHA-256 hex-encoded
   """
 
   @doc """

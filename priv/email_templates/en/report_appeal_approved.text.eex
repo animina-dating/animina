@@ -1,12 +1,19 @@
-Your appeal has been approved
+Great news: Your appeal has been approved
 ---
 
 Hi <%= @greeting_name %>,
 
-Good news! After reviewing your appeal, our moderation team
-has decided to restore your account.
+we have carefully reviewed your appeal and are happy to let
+you know that we have decided in your favor. Your account
+has been fully restored.
 
-Your account is now active again and you can use ANIMINA
-as normal.
+You can now log in and use ANIMINA as usual again.
 
-We apologize for any inconvenience.
+We sincerely apologize for any inconvenience this may have
+caused you.
+
+If you have any questions, feel free to reach out to us
+at <%= @support_email %>.
+
+Best regards,
+Your ANIMINA Team

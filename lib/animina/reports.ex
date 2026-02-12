@@ -2,14 +2,15 @@ defmodule Animina.Reports do
   @moduledoc """
   Context for the user reporting and moderation system.
 
-  This module acts as a facade, delegating to specialized sub-modules:
-  - `Animina.Reports.Filing` - Filing new reports
-  - `Animina.Reports.Evidence` - Evidence snapshot capture
-  - `Animina.Reports.Invisibility` - Mutual invisibility management
-  - `Animina.Reports.Moderation` - Report resolution, strikes, bans
-  - `Animina.Reports.Appeals` - Appeal workflow
-  - `Animina.Reports.KarenDetection` - Serial false reporter detection
-  - `Animina.Reports.IdentityHash` - SHA-256 identity hashing
+  Delegates to specialized sub-modules:
+
+  - `Filing` — filing new reports (creates report, captures evidence, establishes invisibility)
+  - `Moderation` — report resolution, 3-strike system, suspension/ban management
+  - `Appeals` — appeal workflow (one appeal per report, different reviewer required)
+  - `Invisibility` — bidirectional invisibility between users (survives account deletion)
+  - `KarenDetection` — auto-flags serial false reporters (70%+ dismissed after 5+ reports)
+  - `IdentityHash` — SHA-256 hashing of phone/email for persistent identity tracking
+  - `Category` — single source of truth for category keys, labels, and priorities
   """
 
   # --- Filing ---
@@ -48,13 +49,7 @@ defmodule Animina.Reports do
   defdelegate get_appeal!(id), to: Animina.Reports.Appeals
   defdelegate resolve_appeal(appeal, reviewer, decision, notes \\ ""), to: Animina.Reports.Appeals
 
-  # --- Karen Detection ---
+  # --- False Reporter Detection ---
 
   defdelegate check_reporter(reporter_id), to: Animina.Reports.KarenDetection
-
-  # --- Identity Hashing ---
-
-  defdelegate hash_phone(phone), to: Animina.Reports.IdentityHash
-  defdelegate hash_email(email), to: Animina.Reports.IdentityHash
-  defdelegate hash_pair(user), to: Animina.Reports.IdentityHash
 end

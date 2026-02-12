@@ -2,9 +2,9 @@ defmodule Animina.Reports.KarenDetectionTest do
   use Animina.DataCase, async: true
 
   alias Animina.AccountsFixtures
+  alias Animina.Repo
   alias Animina.Reports
   alias Animina.Reports.Report
-  alias Animina.Repo
 
   import Ecto.Query
 

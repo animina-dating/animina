@@ -1,12 +1,29 @@
-Your ANIMINA account has been permanently banned
+Your ANIMINA account has been permanently suspended
 ---
 
 Hi <%= @greeting_name %>,
 
-After reviewing a report about your account, our moderation team
-has decided to permanently ban your account.
+after a thorough review of a report about your account, our
+moderation team has decided to permanently suspend your
+account.
 
-You will no longer be able to access ANIMINA services.
+Reason: <%= @category %>
 
-If you believe this decision was made in error, you may submit
-an appeal within 30 days by contacting our support team.
+What does this mean?
+
+You will no longer be able to log in to ANIMINA or use any
+of the platform's services.
+
+How to appeal:
+
+If you believe this decision was made in error, you may
+submit an appeal within 30 days by sending an email to:
+
+<%= @support_email %>
+
+Please describe why you believe the decision should be
+reconsidered. Our team will review your appeal and get
+back to you.
+
+Best regards,
+Your ANIMINA Team

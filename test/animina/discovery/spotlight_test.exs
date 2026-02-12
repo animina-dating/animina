@@ -47,7 +47,7 @@ defmodule Animina.Discovery.SpotlightTest do
       {users, wildcard_ids} = Spotlight.get_or_seed_daily(viewer)
 
       # Should return some users (up to 6 pool + 2 wildcard)
-      assert length(users) > 0
+      assert users != []
       assert length(users) <= 8
 
       # wildcard_ids should be a MapSet
@@ -125,7 +125,7 @@ defmodule Animina.Discovery.SpotlightTest do
       # Seed spotlight for viewer (which will include some candidates)
       {users, _} = Spotlight.get_or_seed_daily(viewer)
 
-      if length(users) > 0 do
+      if users != [] do
         spotlight_user = hd(users)
         viewer_scope = Scope.for_user(viewer)
         candidate_scope = Scope.for_user(spotlight_user)

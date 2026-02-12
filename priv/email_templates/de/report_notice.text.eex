@@ -3,12 +3,20 @@ Hinweis zu deinem ANIMINA-Konto
 
 Hallo <%= @greeting_name %>,
 
-ein anderer Nutzer hat eine Meldung zu deinem Konto eingereicht.
-Unser Moderationsteam prüft den Vorgang nun.
+wir moechten dich darauf hinweisen, dass ein anderer Nutzer
+eine Meldung zu deinem Konto eingereicht hat. Unser
+Moderationsteam wird den Vorgang nun sorgfaeltig pruefen.
 
-Du musst derzeit nichts unternehmen. Falls weitere Schritte
-erforderlich sind, werden wir dich mit weiteren Details
-kontaktieren.
+Du musst im Moment nichts unternehmen. Falls wir weitere
+Informationen von dir benoetigen oder Massnahmen ergriffen
+werden, melden wir uns direkt bei dir.
 
-Wir nehmen alle Meldungen ernst und prüfen jede einzelne
-sorgfältig, um eine sichere Community für alle zu gewährleisten.
+Wir pruefen jede Meldung einzeln und fair. In vielen Faellen
+werden Meldungen ohne Konsequenzen fuer das betroffene
+Konto abgeschlossen.
+
+Bei Fragen kannst du dich jederzeit an uns wenden:
+<%= @support_email %>
+
+Viele Gruesse,
+Dein ANIMINA-Team

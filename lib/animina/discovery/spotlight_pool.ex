@@ -25,8 +25,8 @@ defmodule Animina.Discovery.SpotlightPool do
 
   alias Animina.Accounts.User
   alias Animina.Discovery.Filters.FilterHelpers
-  alias Animina.Reports.ReportInvisibility
   alias Animina.Repo
+  alias Animina.Reports.ReportInvisibility
   alias Animina.Traits.UserFlag
 
   @doc """

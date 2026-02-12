@@ -1,12 +1,15 @@
 defmodule Animina.Reports.Evidence do
   @moduledoc """
   Captures evidence snapshots at the time of a report.
+
+  Snapshots include conversation messages (if chat context), moodboard items,
+  and profile data. All stored as JSONB for moderator review.
   """
 
   alias Animina.Messaging
   alias Animina.Moodboard
-  alias Animina.Reports.ReportEvidence
   alias Animina.Repo
+  alias Animina.Reports.ReportEvidence
   alias Animina.TimeMachine
 
   @doc """

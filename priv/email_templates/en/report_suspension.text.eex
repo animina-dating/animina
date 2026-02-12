@@ -1,16 +1,35 @@
-Your ANIMINA account has been temporarily suspended
+Your ANIMINA account has been suspended for <%= @days %> days
 ---
 
 Hi <%= @greeting_name %>,
 
-After reviewing a report about your account, our moderation team
-has decided to temporarily suspend your account.
+after reviewing a report about your account, our moderation
+team has decided to temporarily suspend your account.
 
-Your account will be suspended until: <%= @suspended_until %>
+Reason: <%= @category %>
+Duration: <%= @days %> days
+Your account will be reactivated on: <%= @suspended_until %>
 
-During this time, you will not be able to log in or use
-ANIMINA services.
+What does this mean?
 
-If you believe this decision was made in error, you can submit
-an appeal after logging in once your suspension ends, or by
-contacting our support team.
+During the suspension period, you can still log in to
+ANIMINA, but you will not be able to use the platform's
+features (such as messaging, browsing profiles, or
+updating your profile). After the suspension period ends
+on <%= @suspended_until %>, your account will be
+automatically reactivated and you can use ANIMINA as usual
+again.
+
+How to appeal:
+
+If you believe this decision was made in error, you can
+submit an appeal right away:
+
+1. Log in to ANIMINA — you will be directed to your
+   account status page where you can submit an appeal.
+2. Alternatively, send us an email at <%= @support_email %>
+   explaining why you believe the decision should be
+   reconsidered.
+
+Best regards,
+Your ANIMINA Team

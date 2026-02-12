@@ -12,8 +12,8 @@ defmodule Animina.Discovery.Spotlight do
   alias Animina.Accounts.Scope
   alias Animina.Accounts.User
   alias Animina.Discovery
-  alias Animina.Discovery.SpotlightPool
   alias Animina.Discovery.Schemas.SpotlightEntry
+  alias Animina.Discovery.SpotlightPool
   alias Animina.Discovery.WildcardPool
   alias Animina.Messaging
   alias Animina.Repo

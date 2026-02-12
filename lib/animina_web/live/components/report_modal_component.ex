@@ -13,16 +13,7 @@ defmodule AniminaWeb.ReportModalComponent do
   use AniminaWeb, :live_component
 
   alias Animina.Reports
-
-  @categories [
-    {"harassment", "Harassment"},
-    {"inappropriate_content", "Inappropriate content"},
-    {"fake_profile", "Fake / misleading profile"},
-    {"scam_spam", "Scam / spam"},
-    {"underage_suspicion", "Underage suspicion"},
-    {"threatening_behavior", "Threatening behavior"},
-    {"other", "Other"}
-  ]
+  alias Animina.Reports.Category
 
   @impl true
   def update(assigns, socket) do
@@ -32,7 +23,7 @@ defmodule AniminaWeb.ReportModalComponent do
      |> assign_new(:category, fn -> nil end)
      |> assign_new(:description, fn -> "" end)
      |> assign_new(:submitting, fn -> false end)
-     |> assign(:categories, @categories)}
+     |> assign(:categories, Category.user_options())}
   end
 
   @impl true

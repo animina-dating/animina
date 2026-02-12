@@ -7,8 +7,9 @@ defmodule Animina.Reports.Report do
   import Ecto.Changeset
 
   alias Animina.Accounts.User
+  alias Animina.Reports.Category
 
-  @valid_categories ~w(harassment inappropriate_content fake_profile scam_spam underage_suspicion threatening_behavior serial_false_reporter other)
+  @valid_categories Category.keys()
   @valid_statuses ~w(pending under_review resolved)
   @valid_resolutions ~w(warning temp_ban_3 temp_ban_7 temp_ban_30 permanent_ban dismissed)
   @valid_priorities ~w(critical high medium low)
@@ -83,6 +84,13 @@ defmodule Animina.Reports.Report do
     |> validate_inclusion(:resolution, @valid_resolutions)
     |> put_change(:status, "resolved")
   end
+
+  @doc "Returns the display label for a resolution (for admin UI)."
+  def resolution_label("warning"), do: "Warning"
+  def resolution_label("temp_ban_" <> days), do: "#{days}-day ban"
+  def resolution_label("permanent_ban"), do: "Permanent ban"
+  def resolution_label("dismissed"), do: "Dismissed"
+  def resolution_label(other), do: other
 
   def valid_categories, do: @valid_categories
   def valid_resolutions, do: @valid_resolutions

@@ -1,11 +1,18 @@
-Your appeal has been reviewed
+Update on your appeal
 ---
 
 Hi <%= @greeting_name %>,
 
-After carefully reviewing your appeal, our moderation team
-has decided to uphold the original decision.
+after carefully reviewing your appeal, our moderation team
+has decided to uphold the original decision. The action
+taken regarding your account remains in effect.
 
-The action taken against your account remains in effect.
+We understand this may not be the outcome you were hoping
+for. Our team reviewed your case thoroughly to ensure a
+fair decision.
 
-This decision is final.
+If you have any questions, you can reach us at
+<%= @support_email %>.
+
+Best regards,
+Your ANIMINA Team

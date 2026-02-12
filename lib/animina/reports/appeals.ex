@@ -2,18 +2,22 @@ defmodule Animina.Reports.Appeals do
   @moduledoc """
   Handles report appeals.
 
-  One appeal per report. Must be reviewed by a different moderator
-  than the one who resolved the original report.
+  Constraints:
+  - One appeal per report (enforced by unique constraint)
+  - Only the reported user can file an appeal
+  - Must be reviewed by a different moderator than the original resolver
+  - Approved appeals restore the user's account and remove registration bans
   """
 
   import Ecto.Query
 
   alias Animina.Accounts.User
   alias Animina.ActivityLog
-  alias Animina.Reports.ReportAppeal
-  alias Animina.Reports.ReportNotifier
   alias Animina.Repo
   alias Animina.Repo.Paginator
+  alias Animina.Reports.RegistrationBan
+  alias Animina.Reports.ReportAppeal
+  alias Animina.Reports.ReportNotifier
   alias Animina.TimeMachine
 
   @doc """
@@ -37,29 +41,23 @@ defmodule Animina.Reports.Appeals do
         {:error, :report_not_resolved}
 
       true ->
-        result =
-          %ReportAppeal{}
-          |> ReportAppeal.changeset(%{
-            report_id: report.id,
-            appellant_id: user.id,
-            appeal_text: appeal_text
-          })
-          |> Repo.insert()
+        with {:ok, appeal} <-
+               %ReportAppeal{}
+               |> ReportAppeal.changeset(%{
+                 report_id: report.id,
+                 appellant_id: user.id,
+                 appeal_text: appeal_text
+               })
+               |> Repo.insert() do
+          ActivityLog.log(
+            "social",
+            "report_appeal_filed",
+            "#{user.display_name} appealed report decision",
+            actor_id: user.id,
+            metadata: %{"report_id" => report.id, "appeal_id" => appeal.id}
+          )
 
-        case result do
-          {:ok, appeal} ->
-            ActivityLog.log(
-              "social",
-              "report_appeal_filed",
-              "#{user.display_name} appealed report decision",
-              actor_id: user.id,
-              metadata: %{"report_id" => report.id, "appeal_id" => appeal.id}
-            )
-
-            {:ok, appeal}
-
-          error ->
-            error
+          {:ok, appeal}
         end
     end
   end
@@ -123,59 +121,53 @@ defmodule Animina.Reports.Appeals do
             })
             |> Repo.update()
 
-          reported_user = report.reported_user
-
-          if decision == "approved" && reported_user do
-            # Restore user state
-            {:ok, _} =
-              reported_user
-              |> User.moderation_changeset(%{
-                state: "normal",
-                suspended_until: nil,
-                ban_reason: nil
-              })
-              |> Repo.update()
-
-            # Remove registration bans if any
-            remove_registration_bans_for_report(report.id)
-
-            ReportNotifier.deliver_report_appeal_approved(reported_user)
-
-            ActivityLog.log(
-              "admin",
-              "user_unsuspended",
-              "#{reviewer.display_name} approved appeal for #{reported_user.display_name}",
-              actor_id: reviewer.id,
-              subject_id: reported_user.id,
-              metadata: %{"report_id" => report.id, "appeal_id" => appeal.id}
-            )
-          else
-            if reported_user do
-              ReportNotifier.deliver_report_appeal_rejected(reported_user)
-            end
-
-            ActivityLog.log(
-              "admin",
-              "report_appeal_resolved",
-              "#{reviewer.display_name} rejected appeal",
-              actor_id: reviewer.id,
-              subject_id: if(reported_user, do: reported_user.id),
-              metadata: %{
-                "report_id" => report.id,
-                "appeal_id" => appeal.id,
-                "decision" => decision
-              }
-            )
-          end
-
+          apply_appeal_decision(decision, report, appeal, reviewer)
           appeal
         end)
     end
   end
 
-  defp remove_registration_bans_for_report(report_id) do
-    alias Animina.Reports.RegistrationBan
+  defp apply_appeal_decision("approved", report, appeal, reviewer) do
+    reported_user = report.reported_user
 
+    if reported_user do
+      {:ok, _} =
+        reported_user
+        |> User.moderation_changeset(%{state: "normal", suspended_until: nil, ban_reason: nil})
+        |> Repo.update()
+
+      remove_registration_bans_for_report(report.id)
+      ReportNotifier.deliver_report_appeal_approved(reported_user)
+
+      ActivityLog.log(
+        "admin",
+        "user_unsuspended",
+        "#{reviewer.display_name} approved appeal for #{reported_user.display_name}",
+        actor_id: reviewer.id,
+        subject_id: reported_user.id,
+        metadata: %{"report_id" => report.id, "appeal_id" => appeal.id}
+      )
+    end
+  end
+
+  defp apply_appeal_decision(_decision, report, appeal, reviewer) do
+    reported_user = report.reported_user
+
+    if reported_user do
+      ReportNotifier.deliver_report_appeal_rejected(reported_user)
+    end
+
+    ActivityLog.log(
+      "admin",
+      "report_appeal_resolved",
+      "#{reviewer.display_name} rejected appeal",
+      actor_id: reviewer.id,
+      subject_id: if(reported_user, do: reported_user.id),
+      metadata: %{"report_id" => report.id, "appeal_id" => appeal.id, "decision" => "rejected"}
+    )
+  end
+
+  defp remove_registration_bans_for_report(report_id) do
     from(b in RegistrationBan, where: b.report_id == ^report_id)
     |> Repo.delete_all()
   end

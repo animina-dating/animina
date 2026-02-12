@@ -1,74 +1,59 @@
 defmodule Animina.Reports.ReportNotifier do
   @moduledoc """
   Sends report-related notification emails.
+
+  All emails use the user's preferred locale and include the support
+  email address for follow-up questions or appeals.
   """
 
   import Swoosh.Email
 
   alias Animina.Accounts.EmailTemplates
   alias Animina.Emails
+  alias Animina.Reports.Category
 
-  @doc """
-  Sends a generic notification when a report is filed.
-  """
   def deliver_report_notice(user) do
-    deliver_report_email(user, :report_notice)
+    render_and_deliver(user, :report_notice)
   end
 
-  @doc """
-  Sends a warning decision email with appeal instructions.
-  """
-  def deliver_report_warning(user) do
-    deliver_report_email(user, :report_warning)
+  def deliver_report_warning(user, category) do
+    render_and_deliver(user, :report_warning,
+      category: Category.label(category, user_locale(user))
+    )
   end
 
-  @doc """
-  Sends a suspension decision email.
-  """
-  def deliver_report_suspension(user) do
-    suspended_until =
-      if user.suspended_until do
-        format_date_for_locale(user.suspended_until, user_locale(user))
-      else
-        "N/A"
-      end
-
-    {subject, body} =
-      EmailTemplates.render(user_locale(user), :report_suspension,
-        greeting_name: greeting_name(user),
-        suspended_until: suspended_until
-      )
-
-    deliver(user, subject, body, email_type: :report_suspension)
+  def deliver_report_suspension(user, days, suspended_until, category) do
+    render_and_deliver(user, :report_suspension,
+      days: days,
+      suspended_until: format_date(suspended_until, user_locale(user)),
+      category: Category.label(category, user_locale(user))
+    )
   end
 
-  @doc """
-  Sends a permanent ban decision email.
-  """
-  def deliver_report_permanent_ban(user) do
-    deliver_report_email(user, :report_permanent_ban)
+  def deliver_report_permanent_ban(user, category) do
+    render_and_deliver(user, :report_permanent_ban,
+      category: Category.label(category, user_locale(user))
+    )
   end
 
-  @doc """
-  Sends an appeal approved email.
-  """
   def deliver_report_appeal_approved(user) do
-    deliver_report_email(user, :report_appeal_approved)
+    render_and_deliver(user, :report_appeal_approved)
   end
 
-  @doc """
-  Sends an appeal rejected email.
-  """
   def deliver_report_appeal_rejected(user) do
-    deliver_report_email(user, :report_appeal_rejected)
+    render_and_deliver(user, :report_appeal_rejected)
   end
 
   # --- Private ---
 
-  defp deliver_report_email(user, template) do
-    {subject, body} =
-      EmailTemplates.render(user_locale(user), template, greeting_name: greeting_name(user))
+  defp render_and_deliver(user, template, extra_assigns \\ []) do
+    assigns =
+      [
+        greeting_name: greeting_name(user),
+        support_email: Animina.FeatureFlags.support_email()
+      ] ++ extra_assigns
 
+    {subject, body} = EmailTemplates.render(user_locale(user), template, assigns)
     deliver(user, subject, body, email_type: template)
   end
 
@@ -93,8 +78,7 @@ defmodule Animina.Reports.ReportNotifier do
   defp user_recipient(user) do
     name =
       [user.first_name, user.last_name]
-      |> Enum.map(&to_string/1)
-      |> Enum.map(&String.trim/1)
+      |> Enum.map(&(to_string(&1) |> String.trim()))
       |> Enum.reject(&(&1 == ""))
       |> Enum.join(" ")
 
@@ -103,17 +87,11 @@ defmodule Animina.Reports.ReportNotifier do
   end
 
   defp greeting_name(user) do
-    [Map.get(user, :first_name), Map.get(user, :last_name), Map.get(user, :display_name)]
-    |> Enum.map(&to_string/1)
-    |> Enum.map(&String.trim/1)
+    [user.first_name, user.last_name, user.display_name]
+    |> Enum.map(&(to_string(&1) |> String.trim()))
     |> Enum.find("", &(&1 != ""))
   end
 
-  defp format_date_for_locale(datetime, "de") do
-    Calendar.strftime(datetime, "%d.%m.%Y %H:%M")
-  end
-
-  defp format_date_for_locale(datetime, _locale) do
-    Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
-  end
+  defp format_date(datetime, "de"), do: Calendar.strftime(datetime, "%d.%m.%Y %H:%M")
+  defp format_date(datetime, _), do: Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
 end

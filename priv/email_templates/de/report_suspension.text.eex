@@ -1,17 +1,35 @@
-Dein ANIMINA-Konto wurde vorübergehend gesperrt
+Dein ANIMINA-Konto wurde fuer <%= @days %> Tage gesperrt
 ---
 
 Hallo <%= @greeting_name %>,
 
-nach Prüfung einer Meldung zu deinem Konto hat unser
-Moderationsteam entschieden, dein Konto vorübergehend
+nach Pruefung einer Meldung zu deinem Konto hat unser
+Moderationsteam entschieden, dein Konto voruebergehend
 zu sperren.
 
-Dein Konto ist gesperrt bis: <%= @suspended_until %>
+Grund: <%= @category %>
+Dauer: <%= @days %> Tage
+Dein Konto wird wieder freigeschaltet am: <%= @suspended_until %>
 
-Während dieser Zeit kannst du dich nicht einloggen oder
-ANIMINA-Dienste nutzen.
+Was bedeutet das?
 
-Wenn du der Meinung bist, dass diese Entscheidung
-fehlerhaft ist, kannst du nach Ablauf der Sperre einen
-Einspruch einlegen oder unser Support-Team kontaktieren.
+Waehrend der Sperrzeit kannst du dich weiterhin bei ANIMINA
+einloggen, aber du kannst die Funktionen der Plattform nicht
+nutzen (z.B. Nachrichten schreiben, Profile ansehen oder
+dein Profil bearbeiten). Nach Ablauf der Sperrzeit am
+<%= @suspended_until %> wird dein Konto automatisch wieder
+freigeschaltet und du kannst ANIMINA wieder wie gewohnt nutzen.
+
+Wie kannst du Einspruch erheben?
+
+Wenn du der Meinung bist, dass diese Entscheidung zu Unrecht
+getroffen wurde, kannst du sofort einen Einspruch einreichen:
+
+1. Logge dich bei ANIMINA ein — du wirst auf deine
+   Kontostatus-Seite weitergeleitet, wo du einen Einspruch
+   einreichen kannst.
+2. Alternativ schreibe uns eine E-Mail an <%= @support_email %>
+   und erklaere, warum die Entscheidung ueberdacht werden sollte.
+
+Viele Gruesse,
+Dein ANIMINA-Team
