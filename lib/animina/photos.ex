@@ -169,6 +169,37 @@ defmodule Animina.Photos do
     end
   end
 
+  # --- Description generation ---
+
+  @doc """
+  Lists approved photos that don't have a description yet, oldest first.
+  """
+  def list_photos_needing_description(limit \\ 5) do
+    Photo
+    |> where([p], p.state == "approved" and is_nil(p.description))
+    |> order_by([p], asc: p.inserted_at)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
+  @doc """
+  Counts approved photos that still need a description.
+  """
+  def count_photos_needing_description do
+    Photo
+    |> where([p], p.state == "approved" and is_nil(p.description))
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Updates a photo's AI-generated description fields.
+  """
+  def update_photo_description(%Photo{} = photo, attrs) do
+    photo
+    |> Photo.description_changeset(attrs)
+    |> Repo.update()
+  end
+
   # --- Polymorphic queries ---
 
   @doc """

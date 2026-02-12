@@ -33,6 +33,7 @@ defmodule Animina.Application do
         maybe_start_ollama_health_tracker() ++
         maybe_start_photo_processor() ++
         maybe_start_ollama_retry_scheduler() ++
+        maybe_start_photo_description_worker() ++
         maybe_start_mail_queue_checker() ++
         maybe_start_mail_log_checker()
 
@@ -149,6 +150,14 @@ defmodule Animina.Application do
   defp maybe_start_ollama_retry_scheduler do
     if Application.get_env(:animina, :start_photo_processor, true) do
       [Animina.Photos.OllamaRetryScheduler]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_photo_description_worker do
+    if Application.get_env(:animina, :start_photo_processor, true) do
+      [Animina.Photos.PhotoDescriptionWorker]
     else
       []
     end

@@ -69,6 +69,11 @@ defmodule Animina.Photos.Photo do
     field :ollama_retry_at, :utc_datetime
     field :ollama_check_type, :string
 
+    # AI-generated description fields
+    field :description, :string
+    field :description_generated_at, :utc_datetime
+    field :description_model, :string
+
     timestamps(type: :utc_datetime)
   end
 
@@ -131,4 +136,16 @@ defmodule Animina.Photos.Photo do
   Returns the valid transitions map.
   """
   def valid_transitions, do: @valid_transitions
+
+  @doc """
+  Changeset for updating AI-generated description fields.
+
+  Bypasses the state machine — descriptions are added to already-approved photos.
+  """
+  def description_changeset(photo, attrs) do
+    photo
+    |> cast(attrs, [:description, :description_generated_at, :description_model])
+    |> validate_required([:description, :description_generated_at, :description_model])
+    |> validate_length(:description, max: 2028)
+  end
 end
