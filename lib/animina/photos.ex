@@ -386,7 +386,6 @@ defmodule Animina.Photos do
   defdelegate retry_from_manual_review(photo, reviewer), to: Animina.Photos.OllamaQueue
   defdelegate get_oldest_ollama_queue_photo(), to: Animina.Photos.OllamaQueue
 
-
   # --- Seeding helpers ---
 
   @doc """

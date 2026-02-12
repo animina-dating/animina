@@ -123,18 +123,18 @@ defmodule Animina.AI.Autoscaler do
     now - state.last_adjustment_at < state.cooldown_ms
   end
 
-  defp do_adjust(state, med, now) when med < state.up_threshold_ms and state.current_max < state.max_slots do
+  defp do_adjust(state, med, now)
+       when med < state.up_threshold_ms and state.current_max < state.max_slots do
     new_max = state.current_max + 1
     Semaphore.set_max(new_max, state.semaphore)
 
-    Logger.info(
-      "AI.Autoscaler: scaling UP #{state.current_max} -> #{new_max} (median: #{med}ms)"
-    )
+    Logger.info("AI.Autoscaler: scaling UP #{state.current_max} -> #{new_max} (median: #{med}ms)")
 
     %{state | current_max: new_max, last_adjustment_at: now}
   end
 
-  defp do_adjust(state, med, now) when med > state.down_threshold_ms and state.current_max > state.min_slots do
+  defp do_adjust(state, med, now)
+       when med > state.down_threshold_ms and state.current_max > state.min_slots do
     new_max = state.current_max - 1
     Semaphore.set_max(new_max, state.semaphore)
 

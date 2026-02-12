@@ -69,14 +69,21 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   defp classify_photo(job, photo, raw_response) do
     parsed = PhotoProcessor.parse_ollama_response(raw_response)
 
-    Photos.log_event(photo, "ollama_checked", "ai", nil, %{
-      model: job.model,
-      person_detection: parsed.person_detection,
-      content_safety: parsed.content_safety,
-      attire_assessment: parsed.attire_assessment,
-      sex_scene: parsed.sex_scene,
-      via: "ai_job_service"
-    }, duration_ms: job.duration_ms)
+    Photos.log_event(
+      photo,
+      "ollama_checked",
+      "ai",
+      nil,
+      %{
+        model: job.model,
+        person_detection: parsed.person_detection,
+        content_safety: parsed.content_safety,
+        attire_assessment: parsed.attire_assessment,
+        sex_scene: parsed.sex_scene,
+        via: "ai_job_service"
+      },
+      duration_ms: job.duration_ms
+    )
 
     analysis_result =
       if moodboard_photo?(photo) do
@@ -127,7 +134,8 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
       ollama_check_type: nil
     })
 
-    {:ok, Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
+    {:ok,
+     Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
   end
 
   # --- Private ---

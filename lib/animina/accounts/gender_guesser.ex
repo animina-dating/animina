@@ -81,5 +81,4 @@ defmodule Animina.Accounts.GenderGuesser do
       gender -> {:ok, gender}
     end
   end
-
 end

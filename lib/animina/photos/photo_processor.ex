@@ -164,7 +164,10 @@ defmodule Animina.Photos.PhotoProcessor do
         {:ok, photo}
 
       {:error, reason} ->
-        Logger.error("Failed to enqueue AI classification for photo #{photo.id}: #{inspect(reason)}")
+        Logger.error(
+          "Failed to enqueue AI classification for photo #{photo.id}: #{inspect(reason)}"
+        )
+
         Photos.queue_for_ollama_retry(photo)
         {:error, :enqueue_failed}
     end
