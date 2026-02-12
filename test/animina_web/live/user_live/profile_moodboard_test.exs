@@ -75,12 +75,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
         |> log_in_user(user)
         |> live(~p"/users/#{user.id}")
 
-      # Page title should include: Display Name · ♀ XX years · 1,72 m · XXXXX City
+      # Page title should include: Display Name · ♀ XX years · 1,72 m · City
       assert html =~ "<title"
       assert html =~ "Jane Doe"
       assert html =~ "♀"
       assert html =~ "1,72 m"
-      assert html =~ "10115"
+      assert html =~ "Berlin"
     end
 
     test "anonymous user sees vague denial and is redirected to /", %{conn: conn} do

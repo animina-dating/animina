@@ -1,16 +1,2 @@
 {
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && mix precommit",
-            "timeout": 300,
-            "statusMessage": "Running mix precommit..."
-          }
-        ]
-      }
-    ]
-  }
 }
