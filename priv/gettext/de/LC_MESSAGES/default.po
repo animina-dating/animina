@@ -383,7 +383,7 @@ msgstr "Keine Tricks, keine versteckten Kosten. Einfach Menschen treffen, die zu
 msgid "Not unlimited requests"
 msgstr "Nicht unbegrenzt Anfragen"
 
-#: lib/animina_web/live/admin/reports_live.ex:198
+#: lib/animina_web/live/admin/reports_live.ex:209
 #: lib/animina_web/live/user_live/edit_profile.ex:51
 #: lib/animina_web/live/user_live/registration.ex:295
 #, elixir-autogen, elixir-format
@@ -691,15 +691,15 @@ msgid_plural "Wrong code. %{count} attempts remaining."
 msgstr[0] "Falscher Code. Noch %{count} Versuch übrig."
 msgstr[1] "Falscher Code. Noch %{count} Versuche übrig."
 
-#: lib/animina_web/user_auth.ex:302
-#: lib/animina_web/user_auth.ex:316
-#: lib/animina_web/user_auth.ex:585
+#: lib/animina_web/user_auth.ex:305
+#: lib/animina_web/user_auth.ex:319
+#: lib/animina_web/user_auth.ex:593
 #, elixir-autogen, elixir-format
 msgid "You must log in to access this page."
 msgstr "Du musst dich anmelden, um auf diese Seite zuzugreifen."
 
-#: lib/animina_web/user_auth.ex:394
-#: lib/animina_web/user_auth.ex:415
+#: lib/animina_web/user_auth.ex:397
+#: lib/animina_web/user_auth.ex:418
 #, elixir-autogen, elixir-format
 msgid "You must re-authenticate to access this page."
 msgstr "Du musst dich erneut authentifizieren, um auf diese Seite zuzugreifen."
@@ -722,7 +722,7 @@ msgid "Zip code (5 digits)"
 msgstr "PLZ (5 Stellen)"
 
 #: lib/animina_web/components/core_components.ex:82
-#: lib/animina_web/live/components/report_modal_component.ex:107
+#: lib/animina_web/live/components/report_modal_component.ex:102
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "schließen"
@@ -987,14 +987,13 @@ msgstr "Sprache ändern"
 msgid "Choose your preferred language"
 msgstr "Wähle deine bevorzugte Sprache"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:59
 #: lib/animina_web/live/user_live/registration.ex:482
 #, elixir-autogen, elixir-format
 msgid "I accept the"
 msgstr "Ich akzeptiere die"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:43
-#: lib/animina_web/live/user_live/accept_terms.ex:64
+#: lib/animina_web/live/user_live/accept_terms.ex:59
+#: lib/animina_web/live/user_live/accept_terms.ex:80
 #: lib/animina_web/live/user_live/registration.ex:484
 #, elixir-autogen, elixir-format
 msgid "Privacy Policy"
@@ -1093,8 +1092,8 @@ msgid "User"
 msgstr "Benutzer"
 
 #: lib/animina_web/plugs/require_admin_path.ex:25
-#: lib/animina_web/user_auth.ex:347
-#: lib/animina_web/user_auth.ex:376
+#: lib/animina_web/user_auth.ex:350
+#: lib/animina_web/user_auth.ex:379
 #, elixir-autogen, elixir-format
 msgid "You are not authorized to access this page."
 msgstr "Du bist nicht berechtigt, auf diese Seite zuzugreifen."
@@ -1253,7 +1252,7 @@ msgstr "App"
 #: lib/animina_web/live/admin/flags_system_live.ex:212
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
 #: lib/animina_web/live/admin/photo_reviews_live.ex:758
-#: lib/animina_web/live/components/report_modal_component.ex:93
+#: lib/animina_web/live/components/report_modal_component.ex:88
 #: lib/animina_web/live/messages_live.ex:223
 #: lib/animina_web/live/user_live/avatar_upload.ex:267
 #: lib/animina_web/live/user_live/edit_locations.ex:54
@@ -2939,7 +2938,7 @@ msgstr "Ungültiger Dateityp. Bitte lade ein Bild hoch."
 msgid "Only one file at a time"
 msgstr "Nur eine Datei gleichzeitig"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:94
+#: lib/animina_web/live/user_live/account_suspended.ex:104
 #: lib/animina_web/live/user_live/avatar_upload.ex:463
 #, elixir-autogen, elixir-format
 msgid "Pending review"
@@ -3240,7 +3239,7 @@ msgstr "Eingereicht"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:415
 #: lib/animina_web/live/admin/photo_history_live.ex:178
-#: lib/animina_web/live/admin/reports_live.ex:87
+#: lib/animina_web/live/admin/reports_live.ex:89
 #, elixir-autogen, elixir-format
 msgid "System"
 msgstr "System"
@@ -3306,7 +3305,7 @@ msgid "NSFW escalated to Ollama"
 msgstr "NSFW-Prüfung an Ollama eskaliert"
 
 #: lib/animina_web/live/admin/photo_reviews_live.ex:783
-#: lib/animina_web/live/user_live/account_suspended.ex:96
+#: lib/animina_web/live/user_live/account_suspended.ex:110
 #, elixir-autogen, elixir-format
 msgid "Rejected"
 msgstr "Abgelehnt"
@@ -4455,7 +4454,7 @@ msgstr "**fett** *kursiv* `Code` — Enter zum Senden, Shift+Enter für neue Zei
 msgid "Accept Terms of Service"
 msgstr "Nutzungsbedingungen akzeptieren"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:70
+#: lib/animina_web/live/user_live/accept_terms.ex:86
 #, elixir-autogen, elixir-format
 msgid "Accept and continue"
 msgstr "Akzeptieren und fortfahren"
@@ -4470,7 +4469,7 @@ msgstr "Kontosperrung und Löschungsrichtlinien"
 msgid "Content moderation by administrators and moderators"
 msgstr "Inhaltsmoderation durch Administratoren und Moderatoren"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:73
+#: lib/animina_web/live/user_live/accept_terms.ex:89
 #, elixir-autogen, elixir-format
 msgid "Decline and log out"
 msgstr "Ablehnen und abmelden"
@@ -4485,20 +4484,19 @@ msgstr "Bitte akzeptiere unsere aktualisierten Nutzungsbedingungen, um ANIMINA w
 msgid "Rules for using the platform"
 msgstr "Regeln für die Nutzung der Plattform"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:95
+#: lib/animina_web/live/user_live/accept_terms.ex:111
 #, elixir-autogen, elixir-format
 msgid "Something went wrong. Please try again."
 msgstr "Etwas ist schiefgelaufen. Bitte versuche es erneut."
 
 #: lib/animina_web/components/layouts.ex:493
-#: lib/animina_web/live/user_live/accept_terms.ex:40
-#: lib/animina_web/live/user_live/accept_terms.ex:61
+#: lib/animina_web/live/user_live/accept_terms.ex:56
 #: lib/animina_web/live/user_live/registration.ex:487
 #, elixir-autogen, elixir-format
 msgid "Terms of Service"
 msgstr "Allgemeine Geschäftsbedingungen"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:91
+#: lib/animina_web/live/user_live/accept_terms.ex:107
 #, elixir-autogen, elixir-format
 msgid "Terms of Service accepted. Welcome back!"
 msgstr "Nutzungsbedingungen akzeptiert. Willkommen zurück!"
@@ -4508,12 +4506,7 @@ msgstr "Nutzungsbedingungen akzeptiert. Willkommen zurück!"
 msgid "Updated Terms of Service"
 msgstr "Aktualisierte Nutzungsbedingungen"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:29
-#, elixir-autogen, elixir-format
-msgid "We have introduced Terms of Service (AGB) that cover:"
-msgstr "Wir haben Allgemeine Geschäftsbedingungen (AGB) eingeführt, die Folgendes regeln:"
-
-#: lib/animina_web/live/user_live/accept_terms.ex:104
+#: lib/animina_web/live/user_live/accept_terms.ex:120
 #, elixir-autogen, elixir-format
 msgid "You can accept the Terms of Service the next time you log in."
 msgstr "Du kannst die Nutzungsbedingungen bei deiner nächsten Anmeldung akzeptieren."
@@ -4523,7 +4516,6 @@ msgstr "Du kannst die Nutzungsbedingungen bei deiner nächsten Anmeldung akzepti
 msgid "Your right to delete your account at any time"
 msgstr "Dein Recht, dein Konto jederzeit zu löschen"
 
-#: lib/animina_web/live/user_live/accept_terms.ex:63
 #: lib/animina_web/live/user_live/registration.ex:486
 #, elixir-autogen, elixir-format
 msgid "and the"
@@ -4958,7 +4950,7 @@ msgid "Auto-reload"
 msgstr "Auto-Aktualisierung"
 
 #: lib/animina_web/live/admin/ollama_logs_live.ex:675
-#: lib/animina_web/live/user_live/account_suspended.ex:95
+#: lib/animina_web/live/user_live/account_suspended.ex:107
 #, elixir-autogen, elixir-format
 msgid "Approved"
 msgstr "Genehmigt"
@@ -5556,10 +5548,10 @@ msgstr "Akteur"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:314
 #: lib/animina_web/live/admin/activity_logs_live.ex:383
-#: lib/animina_web/live/admin/report_appeals_live.ex:109
-#: lib/animina_web/live/admin/reports_live.ex:62
-#: lib/animina_web/live/admin/reports_live.ex:130
-#: lib/animina_web/live/components/report_modal_component.ex:51
+#: lib/animina_web/live/admin/report_appeals_live.ex:113
+#: lib/animina_web/live/admin/reports_live.ex:64
+#: lib/animina_web/live/admin/reports_live.ex:132
+#: lib/animina_web/live/components/report_modal_component.ex:42
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr "Kategorie"
@@ -6191,89 +6183,89 @@ msgstr "jetzt"
 msgid "Spotlight Funnel"
 msgstr "Spotlight-Trichter"
 
-#: lib/animina_web/live/admin/reports_live.ex:239
+#: lib/animina_web/live/admin/reports_live.ex:253
 #, elixir-autogen, elixir-format
 msgid "3-day ban"
 msgstr "3-Tage-Sperre"
 
-#: lib/animina_web/live/admin/reports_live.ex:255
+#: lib/animina_web/live/admin/reports_live.ex:269
 #, elixir-autogen, elixir-format
 msgid "30-day ban"
 msgstr "30-Tage-Sperre"
 
-#: lib/animina_web/live/admin/reports_live.ex:247
+#: lib/animina_web/live/admin/reports_live.ex:261
 #, elixir-autogen, elixir-format
 msgid "7-day ban"
 msgstr "7-Tage-Sperre"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:39
+#: lib/animina_web/live/user_live/account_suspended.ex:43
 #, elixir-autogen, elixir-format
 msgid "Account Permanently Banned"
 msgstr "Konto dauerhaft gesperrt"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:21
-#: lib/animina_web/live/user_live/account_suspended.ex:40
+#: lib/animina_web/live/user_live/account_suspended.ex:25
+#: lib/animina_web/live/user_live/account_suspended.ex:44
 #, elixir-autogen, elixir-format
 msgid "Account Suspended"
 msgstr "Konto gesperrt"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:129
+#: lib/animina_web/live/user_live/account_suspended.ex:144
 #, elixir-autogen, elixir-format
 msgid "An appeal has already been submitted for this report."
 msgstr "Für diese Meldung wurde bereits ein Einspruch eingereicht."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:194
+#: lib/animina_web/live/admin/report_appeals_live.ex:208
 #, elixir-autogen, elixir-format
 msgid "Another moderator must review this appeal."
 msgstr "Ein anderer Moderator muss diesen Einspruch prüfen."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:100
+#: lib/animina_web/live/admin/report_appeals_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Appeal Details"
 msgstr "Einspruchsdetails"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:92
+#: lib/animina_web/live/user_live/account_suspended.ex:101
 #, elixir-autogen, elixir-format
 msgid "Appeal Status"
 msgstr "Einspruchsstatus"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:118
+#: lib/animina_web/live/admin/report_appeals_live.ex:126
 #, elixir-autogen, elixir-format
 msgid "Appeal Text"
 msgstr "Einspruchstext"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:190
+#: lib/animina_web/live/admin/report_appeals_live.ex:203
 #, elixir-autogen, elixir-format
 msgid "Appeal resolved."
 msgstr "Einspruch bearbeitet."
 
-#: lib/animina_web/live/user_live/account_suspended.ex:123
+#: lib/animina_web/live/user_live/account_suspended.ex:138
 #, elixir-autogen, elixir-format
 msgid "Appeal submitted. We will review it shortly."
 msgstr "Einspruch eingereicht. Wir werden ihn in Kürze prüfen."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:55
+#: lib/animina_web/live/admin/report_appeals_live.ex:57
 #, elixir-autogen, elixir-format
 msgid "Appellant"
 msgstr "Einspruchsteller"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:147
+#: lib/animina_web/live/admin/report_appeals_live.ex:158
 #, elixir-autogen, elixir-format
 msgid "Approve (restore user)"
 msgstr "Genehmigen (Nutzer wiederherstellen)"
 
-#: lib/animina_web/live/admin/reports_live.ex:65
-#: lib/animina_web/live/admin/reports_live.ex:134
+#: lib/animina_web/live/admin/reports_live.ex:67
+#: lib/animina_web/live/admin/reports_live.ex:138
 #, elixir-autogen, elixir-format
 msgid "Context"
 msgstr "Kontext"
 
-#: lib/animina_web/live/admin/reports_live.ex:182
+#: lib/animina_web/live/admin/reports_live.ex:191
 #, elixir-autogen, elixir-format
 msgid "Conversation"
 msgstr "Unterhaltung"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:135
+#: lib/animina_web/live/user_live/account_suspended.ex:150
 #, elixir-autogen, elixir-format
 msgid "Could not submit appeal."
 msgstr "Einspruch konnte nicht eingereicht werden."
@@ -6284,130 +6276,130 @@ msgstr "Einspruch konnte nicht eingereicht werden."
 msgid "Could not submit report. Please try again."
 msgstr "Meldung konnte nicht eingereicht werden. Bitte versuche es erneut."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:66
-#: lib/animina_web/live/admin/reports_live.ex:79
+#: lib/animina_web/live/admin/report_appeals_live.ex:69
+#: lib/animina_web/live/admin/reports_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Deleted user"
 msgstr "Gelöschter Nutzer"
 
-#: lib/animina_web/live/admin/reports_live.ex:138
+#: lib/animina_web/live/admin/reports_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Description"
 msgstr "Beschreibung"
 
-#: lib/animina_web/live/components/report_modal_component.ex:71
+#: lib/animina_web/live/components/report_modal_component.ex:66
 #, elixir-autogen, elixir-format
 msgid "Description (optional)"
 msgstr "Beschreibung (optional)"
 
-#: lib/animina_web/live/admin/reports_live.ex:223
+#: lib/animina_web/live/admin/reports_live.ex:237
 #, elixir-autogen, elixir-format
 msgid "Dismiss"
 msgstr "Abweisen"
 
-#: lib/animina_web/live/admin/reports_live.ex:179
+#: lib/animina_web/live/admin/reports_live.ex:188
 #, elixir-autogen, elixir-format
 msgid "Evidence"
 msgstr "Beweise"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:70
+#: lib/animina_web/live/user_live/account_suspended.ex:78
 #, elixir-autogen, elixir-format
 msgid "Explain why you believe this decision should be reconsidered..."
 msgstr "Erkläre, warum du glaubst, dass diese Entscheidung überdacht werden sollte..."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:58
+#: lib/animina_web/live/admin/report_appeals_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "Filed At"
 msgstr "Eingereicht am"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:59
+#: lib/animina_web/live/user_live/account_suspended.ex:66
 #, elixir-autogen, elixir-format
 msgid "If you believe this decision was made in error, you may submit one appeal."
 msgstr "Wenn du glaubst, dass diese Entscheidung fehlerhaft war, kannst du einen Einspruch einlegen."
 
-#: lib/animina_web/live/admin/reports_live.ex:196
+#: lib/animina_web/live/admin/reports_live.ex:206
 #, elixir-autogen, elixir-format
 msgid "Name"
 msgstr "Name"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:48
+#: lib/animina_web/live/admin/report_appeals_live.ex:50
 #, elixir-autogen, elixir-format
 msgid "No pending appeals"
 msgstr "Keine ausstehenden Einsprüche"
 
-#: lib/animina_web/live/admin/reports_live.ex:54
+#: lib/animina_web/live/admin/reports_live.ex:56
 #, elixir-autogen, elixir-format
 msgid "No pending reports"
 msgstr "Keine ausstehenden Meldungen"
 
-#: lib/animina_web/live/admin/reports_live.ex:150
+#: lib/animina_web/live/admin/reports_live.ex:156
 #, elixir-autogen, elixir-format
 msgid "No prior strikes"
 msgstr "Keine früheren Verwarnungen"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:112
+#: lib/animina_web/live/admin/report_appeals_live.ex:120
 #, elixir-autogen, elixir-format
 msgid "Notes"
 msgstr "Notizen"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:56
+#: lib/animina_web/live/admin/report_appeals_live.ex:58
 #, elixir-autogen, elixir-format
 msgid "Original Category"
 msgstr "Ursprüngliche Kategorie"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:108
+#: lib/animina_web/live/admin/report_appeals_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "Original Report"
 msgstr "Ursprüngliche Meldung"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:57
+#: lib/animina_web/live/admin/report_appeals_live.ex:59
 #, elixir-autogen, elixir-format
 msgid "Original Resolution"
 msgstr "Ursprüngliche Entscheidung"
 
-#: lib/animina_web/live/admin/reports_live.ex:263
+#: lib/animina_web/live/admin/reports_live.ex:277
 #, elixir-autogen, elixir-format
 msgid "Permanent ban"
 msgstr "Dauerhafte Sperre"
 
-#: lib/animina_web/live/admin/reports_live.ex:61
+#: lib/animina_web/live/admin/reports_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Priority"
 msgstr "Priorität"
 
-#: lib/animina_web/live/admin/reports_live.ex:194
+#: lib/animina_web/live/admin/reports_live.ex:203
 #, elixir-autogen, elixir-format
 msgid "Profile Snapshot"
 msgstr "Profil-Momentaufnahme"
 
-#: lib/animina_web/live/components/report_modal_component.ex:78
+#: lib/animina_web/live/components/report_modal_component.ex:73
 #, elixir-autogen, elixir-format
 msgid "Provide additional details..."
 msgstr "Weitere Details angeben..."
 
-#: lib/animina_web/live/admin/reports_live.ex:163
+#: lib/animina_web/live/admin/reports_live.ex:171
 #, elixir-autogen, elixir-format
 msgid "Recommended action:"
 msgstr "Empfohlene Maßnahme:"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:154
+#: lib/animina_web/live/admin/report_appeals_live.ex:165
 #, elixir-autogen, elixir-format
 msgid "Reject (uphold decision)"
 msgstr "Ablehnen (Entscheidung bestätigen)"
 
 #: lib/animina_web/live/admin/admin_hub.ex:71
-#: lib/animina_web/live/admin/report_appeals_live.ex:19
-#: lib/animina_web/live/admin/report_appeals_live.ex:33
+#: lib/animina_web/live/admin/report_appeals_live.ex:21
+#: lib/animina_web/live/admin/report_appeals_live.ex:35
 #, elixir-autogen, elixir-format
 msgid "Report Appeals"
 msgstr "Einsprüche zu Meldungen"
 
-#: lib/animina_web/live/admin/reports_live.ex:120
+#: lib/animina_web/live/admin/reports_live.ex:122
 #, elixir-autogen, elixir-format
 msgid "Report Details"
 msgstr "Meldungsdetails"
 
-#: lib/animina_web/live/admin/reports_live.ex:350
+#: lib/animina_web/live/admin/reports_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "Report resolved."
 msgstr "Meldung bearbeitet."
@@ -6418,134 +6410,164 @@ msgstr "Meldung bearbeitet."
 msgid "Report submitted. Our team will review it."
 msgstr "Meldung eingereicht. Unser Team wird sie prüfen."
 
-#: lib/animina_web/live/components/report_modal_component.ex:45
+#: lib/animina_web/live/components/report_modal_component.ex:36
 #: lib/animina_web/live/messages_live.ex:72
 #: lib/animina_web/live/user_live/profile_moodboard.ex:187
 #, elixir-autogen, elixir-format
 msgid "Report user"
 msgstr "Nutzer melden"
 
-#: lib/animina_web/live/admin/reports_live.ex:66
+#: lib/animina_web/live/admin/reports_live.ex:68
 #, elixir-autogen, elixir-format
 msgid "Reported At"
 msgstr "Gemeldet am"
 
-#: lib/animina_web/live/admin/reports_live.ex:63
+#: lib/animina_web/live/admin/reports_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "Reported User"
 msgstr "Gemeldeter Nutzer"
 
-#: lib/animina_web/live/admin/reports_live.ex:64
+#: lib/animina_web/live/admin/reports_live.ex:66
 #, elixir-autogen, elixir-format
 msgid "Reporter"
 msgstr "Melder"
 
-#: lib/animina_web/live/admin/reports_live.ex:170
+#: lib/animina_web/live/admin/reports_live.ex:178
 #, elixir-autogen, elixir-format
 msgid "Reporter Credibility"
 msgstr "Glaubwürdigkeit des Melders"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:110
+#: lib/animina_web/live/admin/report_appeals_live.ex:115
 #, elixir-autogen, elixir-format
 msgid "Resolution"
 msgstr "Entscheidung"
 
-#: lib/animina_web/live/admin/reports_live.ex:211
+#: lib/animina_web/live/admin/reports_live.ex:225
 #, elixir-autogen, elixir-format
 msgid "Resolution notes (required)..."
 msgstr "Begründung (erforderlich)..."
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:136
+#: lib/animina_web/live/admin/report_appeals_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Resolution notes..."
 msgstr "Begründung..."
 
-#: lib/animina_web/live/admin/reports_live.ex:206
+#: lib/animina_web/live/admin/reports_live.ex:219
 #, elixir-autogen, elixir-format
 msgid "Resolve"
 msgstr "Bearbeiten"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:79
-#: lib/animina_web/live/admin/reports_live.ex:102
+#: lib/animina_web/live/admin/report_appeals_live.ex:83
+#: lib/animina_web/live/admin/reports_live.ex:104
 #, elixir-autogen, elixir-format
 msgid "Review"
 msgstr "Prüfen"
 
 #: lib/animina_web/live/admin/admin_hub.ex:60
-#: lib/animina_web/live/admin/reports_live.ex:38
+#: lib/animina_web/live/admin/reports_live.ex:40
 #, elixir-autogen, elixir-format
 msgid "Review and resolve user reports"
 msgstr "Nutzermeldungen prüfen und bearbeiten"
 
 #: lib/animina_web/live/admin/admin_hub.ex:72
-#: lib/animina_web/live/admin/report_appeals_live.ex:34
+#: lib/animina_web/live/admin/report_appeals_live.ex:36
 #, elixir-autogen, elixir-format
 msgid "Review appeals from reported users"
 msgstr "Einsprüche von gemeldeten Nutzern prüfen"
 
-#: lib/animina_web/live/components/report_modal_component.ex:61
+#: lib/animina_web/live/components/report_modal_component.ex:52
 #, elixir-autogen, elixir-format
 msgid "Select a reason..."
 msgstr "Grund auswählen..."
 
-#: lib/animina_web/live/admin/reports_live.ex:146
+#: lib/animina_web/live/admin/reports_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Strike History"
 msgstr "Verwarnungshistorie"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:83
+#: lib/animina_web/live/user_live/account_suspended.ex:92
 #, elixir-autogen, elixir-format
 msgid "Submit Appeal"
 msgstr "Einspruch einreichen"
 
-#: lib/animina_web/live/user_live/account_suspended.ex:57
+#: lib/animina_web/live/user_live/account_suspended.ex:64
 #, elixir-autogen, elixir-format
 msgid "Submit an Appeal"
 msgstr "Einspruch einlegen"
 
-#: lib/animina_web/live/components/report_modal_component.ex:101
+#: lib/animina_web/live/components/report_modal_component.ex:96
 #, elixir-autogen, elixir-format
 msgid "Submit report"
 msgstr "Meldung absenden"
 
 #: lib/animina_web/live/admin/admin_hub.ex:59
-#: lib/animina_web/live/admin/reports_live.ex:20
-#: lib/animina_web/live/admin/reports_live.ex:37
+#: lib/animina_web/live/admin/reports_live.ex:22
+#: lib/animina_web/live/admin/reports_live.ex:39
 #, elixir-autogen, elixir-format
 msgid "User Reports"
 msgstr "Nutzermeldungen"
 
-#: lib/animina_web/live/admin/reports_live.ex:231
+#: lib/animina_web/live/admin/reports_live.ex:245
 #, elixir-autogen, elixir-format
 msgid "Warn"
 msgstr "Verwarnen"
 
-#: lib/animina_web/live/admin/report_appeals_live.ex:127
+#: lib/animina_web/live/admin/report_appeals_live.ex:136
 #, elixir-autogen, elixir-format
 msgid "You resolved the original report. Another moderator must review this appeal."
 msgstr "Du hast die ursprüngliche Meldung bearbeitet. Ein anderer Moderator muss diesen Einspruch prüfen."
 
-#: lib/animina_web/live/user_live/account_suspended.ex:50
+#: lib/animina_web/live/user_live/account_suspended.ex:57
 #, elixir-autogen, elixir-format
 msgid "Your account has been permanently banned."
 msgstr "Dein Konto wurde dauerhaft gesperrt."
 
-#: lib/animina_web/live/user_live/account_suspended.ex:44
+#: lib/animina_web/live/user_live/account_suspended.ex:51
 #, elixir-autogen, elixir-format
 msgid "Your account is suspended until %{date}."
 msgstr "Dein Konto ist bis %{date} gesperrt."
 
-#: lib/animina_web/live/admin/reports_live.ex:147
+#: lib/animina_web/live/admin/reports_live.ex:152
 #, elixir-autogen, elixir-format
 msgid "prior strike(s)"
 msgstr "frühere Verwarnung(en)"
 
-#: lib/animina_web/live/admin/reports_live.ex:172
+#: lib/animina_web/live/admin/reports_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "reports filed"
 msgstr "Meldungen eingereicht"
 
-#: lib/animina_web/live/admin/reports_live.ex:173
+#: lib/animina_web/live/admin/reports_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "upheld"
 msgstr "bestätigt"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:47
+#, elixir-autogen, elixir-format
+msgid "AI Features & Training:"
+msgstr "KI-Funktionen & Training:"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:36
+#, elixir-autogen, elixir-format
+msgid "AI-powered matching, chat assistance, and moodboard features"
+msgstr "KI-gestütztes Matching, Chat-Unterstützung und Moodboard-Funktionen"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:48
+#, elixir-autogen, elixir-format
+msgid "ANIMINA uses AI to power matching, assist with chat, and help with moodboard content. Your photos, texts, messages, and flag selections are also used to train these AI models. All AI processing happens exclusively on our own servers in Germany."
+msgstr "ANIMINA nutzt KI für Matching, Chat-Unterstützung und Moodboard-Inhalte. Deine Fotos, Texte, Nachrichten und Flag-Auswahl werden auch zum Training dieser KI-Modelle verwendet. Die gesamte KI-Verarbeitung findet ausschließlich auf unseren eigenen Servern in Deutschland statt."
+
+#: lib/animina_web/live/user_live/accept_terms.ex:75
+#, elixir-autogen, elixir-format
+msgid "I accept the Terms of Service, including the use of AI features and AI training of my content, and the Privacy Policy."
+msgstr "Ich akzeptiere die AGB, einschließlich der Nutzung von KI-Funktionen und des KI-Trainings mit meinen Inhalten, sowie die Datenschutzerklärung."
+
+#: lib/animina_web/live/user_live/accept_terms.ex:29
+#, elixir-autogen, elixir-format
+msgid "Our Terms of Service cover:"
+msgstr "Unsere AGB umfassen:"
+
+#: lib/animina_web/live/user_live/accept_terms.ex:38
+#, elixir-autogen, elixir-format
+msgid "Use of your uploaded content (photos, texts, messages, flag selections) to train AI models on our own servers in Germany"
+msgstr "Nutzung deiner hochgeladenen Inhalte (Fotos, Texte, Nachrichten, Flag-Auswahl) zum Training von KI-Modellen auf unseren eigenen Servern in Deutschland"

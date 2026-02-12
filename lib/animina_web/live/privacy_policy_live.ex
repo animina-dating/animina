@@ -20,7 +20,7 @@ defmodule AniminaWeb.PrivacyPolicyLive do
             <h1 class="text-3xl sm:text-4xl font-light tracking-tight text-base-content">
               Datenschutzerklärung
             </h1>
-            <p class="text-base-content/50 text-sm">Stand: 6. Februar 2026</p>
+            <p class="text-base-content/50 text-sm">Stand: 12. Februar 2026</p>
           </header>
 
           <%!-- ===== PRÄAMBEL ===== --%>
@@ -104,6 +104,9 @@ defmodule AniminaWeb.PrivacyPolicyLive do
                   Matching und Profiling
                 </a>
                 <a href="#mReferral" class="block text-primary hover:underline">Empfehlungssystem</a>
+                <a href="#mAITraining" class="block text-primary hover:underline">
+                  KI-gestützte Funktionen und KI-Training
+                </a>
               </div>
 
               <div class="space-y-1">
@@ -226,6 +229,7 @@ defmodule AniminaWeb.PrivacyPolicyLive do
                   <li>IT-Infrastruktur</li>
                   <li>Geschäftsprozesse</li>
                   <li>Partnervorschläge/Matching</li>
+                  <li>KI-gestützte Dienste und KI-Training</li>
                 </ul>
               </div>
             </div>
@@ -739,27 +743,37 @@ defmodule AniminaWeb.PrivacyPolicyLive do
               <h3 class="font-semibold text-base-content">Art der automatisierten Verarbeitung</h3>
               <p class="text-sm text-base-content/70">
                 Auf Basis dieser Angaben und Ihrer Profildaten (Standort, Alter, Geschlecht,
-                Größe) erstellen wir regelbasierte Partnervorschläge. Es handelt sich um ein
-                rein regelbasiertes System – es kommen <strong>keine KI-Modelle, kein
-                  Machine Learning</strong> und keine intransparenten Algorithmen zum Einsatz.
+                Größe) erstellen wir Partnervorschläge. Das Matching-System verwendet eine
+                Kombination aus:
               </p>
-              <h3 class="font-semibold text-base-content text-sm mt-3">Matching-Regeln</h3>
               <ul class="text-sm text-base-content/70 list-disc list-inside space-y-1">
-                <li>Übereinstimmung der Geschlechtspräferenzen (gegenseitig)</li>
-                <li>Alter innerhalb des jeweils angegebenen Bereichs (gegenseitig)</li>
-                <li>Größe innerhalb des jeweils angegebenen Bereichs (gegenseitig)</li>
-                <li>Entfernung innerhalb des angegebenen Suchradius</li>
+                <li>
+                  Regelbasierten Filtern auf Grundlage Ihrer Präferenzen und Flag-Auswahl
+                </li>
+                <li>
+                  KI-gestützter Bewertung und Vorschlägen, trainiert auf Plattformdaten
+                </li>
+                <li>Zufallselementen für Vielfalt</li>
               </ul>
+              <h3 class="font-semibold text-base-content text-sm mt-3">Eingabedaten</h3>
+              <ul class="text-sm text-base-content/70 list-disc list-inside space-y-1">
+                <li>Ihre Präferenzen (Geschlecht, Altersbereich, Größenbereich, Suchradius)</li>
+                <li>Profildaten (Standort, Alter, Größe)</li>
+                <li>Flag-Auswahl (Weiß/Grün/Rot)</li>
+              </ul>
+              <p class="text-sm text-base-content/70 mt-2">
+                Die endgültige Kontaktentscheidung liegt stets bei Ihnen.
+              </p>
             </div>
 
             <div class="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
               <p class="text-sm text-base-content/80">
                 <strong>Art.&nbsp;22 DSGVO (automatisierte Entscheidung):</strong>
-                Das Matching stellt eine automatisierte Vorauswahl dar, die bestimmt, welche
-                Profile Ihnen angezeigt werden. Es handelt sich jedoch nicht um eine
-                Entscheidung mit rechtlicher Wirkung oder vergleichbar erheblicher
-                Beeinträchtigung, da lediglich die Anzeige von Profilen gesteuert wird.
-                Die endgültige Kontaktentscheidung liegt stets bei Ihnen.
+                Das KI-gestützte Matching beeinflusst, welche Profile Ihnen angezeigt werden.
+                Es handelt sich jedoch nicht um eine Entscheidung mit rechtlicher Wirkung
+                oder vergleichbar erheblicher Beeinträchtigung, da lediglich die Anzeige
+                von Profilen gesteuert wird. Die endgültige Kontaktentscheidung liegt stets
+                bei Ihnen. Sie können eine Überprüfung durch einen Menschen verlangen.
               </p>
               <p class="text-sm text-base-content/80">
                 <strong>Rechtsgrundlage:</strong>
@@ -885,6 +899,130 @@ defmodule AniminaWeb.PrivacyPolicyLive do
               Berechtigte Interessen (Art.&nbsp;6 Abs.&nbsp;1 S.&nbsp;1 lit.&nbsp;f DSGVO) – Schutz der
               Plattform und der Nutzer vor unangemessenen Inhalten.
             </p>
+          </section>
+
+          <%!-- ===== KI-GESTÜTZTE FUNKTIONEN UND KI-TRAINING ===== --%>
+          <section id="mAITraining" class="space-y-4">
+            <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
+              KI-gestützte Funktionen und KI-Training
+            </h2>
+
+            <div class="bg-base-200/50 rounded-lg p-4 space-y-3">
+              <h3 class="font-semibold text-base-content">KI-gestützte Plattformfunktionen</h3>
+              <p class="text-sm text-base-content/70">
+                ANIMINA setzt Künstliche Intelligenz als wesentlichen Bestandteil der
+                Plattform ein. KI-Technologien werden insbesondere für folgende Funktionen
+                verwendet:
+              </p>
+              <ul class="text-sm text-base-content/70 list-disc list-inside space-y-1">
+                <li>
+                  <strong>KI-gestütztes Matching:</strong> Ergänzung der regelbasierten
+                  Partnervorschläge durch KI-gestützte Bewertung und Ranking
+                </li>
+                <li>
+                  <strong>KI-gestützte Kommunikation:</strong> Unterstützung bei der
+                  Kommunikation, z.&nbsp;B. durch Textvorschläge und Übersetzungen
+                </li>
+                <li>
+                  <strong>KI-gestützte Moodboard-Inhalte:</strong> Unterstützung bei der
+                  Erstellung und Verbesserung von Texten und der Verarbeitung/Verbesserung
+                  von Fotos
+                </li>
+                <li>
+                  <strong>Automatisierte Fotomoderation:</strong>
+                  Prüfung hochgeladener
+                  Fotos auf Einhaltung der Nutzungsrichtlinien (siehe <a
+                    href="#mPhotoAI"
+                    class="text-primary hover:underline"
+                  >
+                    Automatisierte Fotomoderation</a>)
+                </li>
+              </ul>
+              <p class="text-sm text-base-content/70">
+                Sämtliche KI-Verarbeitung findet ausschließlich auf unseren eigenen Servern
+                in Deutschland statt. Es werden keine Nutzerdaten an externe KI-Anbieter
+                übermittelt.
+              </p>
+            </div>
+
+            <div class="bg-base-200/50 rounded-lg p-4 space-y-3">
+              <h3 class="font-semibold text-base-content">Betroffene Daten für KI-Training</h3>
+              <p class="text-sm text-base-content/70">
+                Zur Bereitstellung und Verbesserung der KI-gestützten Funktionen werden
+                folgende Nutzerdaten für das Training von KI-Modellen verwendet:
+              </p>
+              <ul class="text-sm text-base-content/70 list-disc list-inside space-y-1">
+                <li>Profilfotos</li>
+                <li>Moodboard-Fotos und -Texte</li>
+                <li>
+                  Nachrichten (nur wenn beide Gesprächsteilnehmer die aktuellen
+                  Nutzungsbedingungen akzeptiert haben)
+                </li>
+                <li>Flag-Auswahl (Weiß/Grün/Rot)</li>
+                <li>Profilmetadaten (Alter, Geschlecht, Standort, Größe, Präferenzen)</li>
+              </ul>
+            </div>
+
+            <dl class="bg-base-200/50 rounded-lg p-4 space-y-3 text-sm">
+              <div>
+                <dt class="font-semibold text-base-content">Zweck</dt>
+                <dd class="text-base-content/70 mt-1">
+                  Bereitstellung KI-gestützter Plattformfunktionen (Matching, Kommunikation,
+                  Moodboard-Unterstützung); Training und Verbesserung von KI-Modellen zur
+                  Weiterentwicklung der Plattform und ggf. weiterer Produkte des Betreibers.
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-base-content">Rechtsgrundlage</dt>
+                <dd class="text-base-content/70 mt-1">
+                  Vertragserfüllung (Art.&nbsp;6 Abs.&nbsp;1 S.&nbsp;1 lit.&nbsp;b DSGVO) – KI-Funktionen
+                  sind integraler Bestandteil des Dienstes. Für besondere Kategorien
+                  personenbezogener Daten: Ausdrückliche Einwilligung
+                  (Art.&nbsp;9 Abs.&nbsp;2 lit.&nbsp;a DSGVO).
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-base-content">
+                  Art.&nbsp;22 DSGVO (automatisierte Entscheidungen)
+                </dt>
+                <dd class="text-base-content/70 mt-1">
+                  Das KI-gestützte Matching beeinflusst, welche Profile Ihnen angezeigt
+                  werden. Die endgültige Kontaktentscheidung liegt jedoch stets bei Ihnen.
+                  Sie können jederzeit eine Überprüfung durch einen Menschen verlangen.
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-base-content">Verarbeitungsort</dt>
+                <dd class="text-base-content/70 mt-1">
+                  Ausschließlich auf eigenen physischen Servern des Betreibers in Deutschland.
+                  Keine Übermittlung an externe KI-Anbieter oder Drittländer.
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-base-content">Speicherdauer</dt>
+                <dd class="text-base-content/70 mt-1">
+                  Nutzerdaten werden für das KI-Training verwendet, solange das Konto
+                  besteht. Nach Kontolöschung werden die Daten aus den aktiven
+                  Trainingsdatensätzen entfernt. Bereits trainierte Modelle können erlernte
+                  Muster in anonymisierter, aggregierter Form beibehalten.
+                </dd>
+              </div>
+            </dl>
+
+            <div class="bg-primary/5 border border-primary/20 rounded-lg p-4 space-y-2">
+              <p class="text-sm text-base-content/80">
+                <strong>Nachrichten-Hinweis:</strong>
+                Nachrichten zwischen Nutzern werden nur dann für das KI-Training verwendet,
+                wenn beide Gesprächsteilnehmer die aktuellen Nutzungsbedingungen akzeptiert
+                haben.
+              </p>
+              <p class="text-sm text-base-content/80">
+                <strong>Widerruf:</strong>
+                Die Einwilligung in die KI-Verarbeitung und das KI-Training kann durch
+                Löschung des Kontos widerrufen werden. Die bis zum Widerruf erfolgte
+                Verarbeitung bleibt rechtmäßig.
+              </p>
+            </div>
           </section>
 
           <%!-- ===== KONTOSTATUS ===== --%>
@@ -1020,7 +1158,7 @@ defmodule AniminaWeb.PrivacyPolicyLive do
               Durchsetzung der Nutzungsbedingungen.
               Siehe auch unsere
               <a href="/agb" class="text-primary hover:underline">Allgemeinen Geschäftsbedingungen</a>
-              (§ 5, § 6, § 7).
+              (§ 5, § 6, § 7, § 8).
             </p>
           </section>
 

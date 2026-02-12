@@ -13,6 +13,9 @@ defmodule AniminaWeb.UserAuth do
   alias Animina.Accounts.Scope
   alias AniminaWeb.Plugs.SetLocale
 
+  # Date after which users must re-accept the ToS (AI features update).
+  @tos_updated_at ~U[2026-02-13 00:00:00Z]
+
   # Make the remember me cookie valid for 14 days. This should match
   # the session validity setting in UserToken.
   @max_cookie_age_in_days 14
@@ -43,7 +46,7 @@ defmodule AniminaWeb.UserAuth do
 
     redirect_to =
       cond do
-        is_nil(user.tos_accepted_at) -> ~p"/users/accept-terms"
+        needs_tos_acceptance?(user) -> ~p"/users/accept-terms"
         user_return_to -> user_return_to
         user.state == "waitlisted" -> ~p"/my/waitlist"
         true -> signed_in_path(conn)
@@ -318,7 +321,7 @@ defmodule AniminaWeb.UserAuth do
 
         {:halt, socket}
 
-      is_nil(socket.assigns.current_scope.user.tos_accepted_at) ->
+      needs_tos_acceptance?(socket.assigns.current_scope.user) ->
         socket = Phoenix.LiveView.redirect(socket, to: ~p"/users/accept-terms")
         {:halt, socket}
 
@@ -564,6 +567,11 @@ defmodule AniminaWeb.UserAuth do
     else
       _ -> socket
     end
+  end
+
+  defp needs_tos_acceptance?(user) do
+    is_nil(user.tos_accepted_at) or
+      DateTime.compare(user.tos_accepted_at, @tos_updated_at) == :lt
   end
 
   @doc "Returns the path to redirect to after log in."

@@ -20,7 +20,7 @@ defmodule AniminaWeb.TermsOfServiceLive do
             <h1 class="text-3xl sm:text-4xl font-light tracking-tight text-base-content">
               Allgemeine Geschäftsbedingungen (AGB)
             </h1>
-            <p class="text-base-content/50 text-sm">Stand: 6. Februar 2026</p>
+            <p class="text-base-content/50 text-sm">Stand: 12. Februar 2026</p>
           </header>
 
           <%!-- ===== § 1 GELTUNGSBEREICH ===== --%>
@@ -49,7 +49,22 @@ defmodule AniminaWeb.TermsOfServiceLive do
               ANIMINA stellt eine Plattform bereit, auf der volljährige Personen ein Profil
               erstellen, andere Nutzerprofile einsehen und über ein internes
               Nachrichtensystem miteinander kommunizieren können, mit dem Ziel, einen Partner
-              zu finden.
+              zu finden. Die Plattform setzt dabei Künstliche Intelligenz (KI) als
+              wesentlichen Bestandteil ihrer Dienste ein, insbesondere für:
+            </p>
+            <ul class="list-disc list-inside space-y-1 text-base-content/80 leading-relaxed">
+              <li>KI-gestütztes Matching und Partnervorschläge</li>
+              <li>
+                KI-gestützte Kommunikationsfunktionen (z.&nbsp;B. Textvorschläge, Übersetzungen)
+              </li>
+              <li>
+                KI-gestützte Erstellung und Verbesserung von Moodboard-Inhalten (Texte und Fotos)
+              </li>
+              <li>Automatisierte Fotomoderation</li>
+            </ul>
+            <p class="text-base-content/80 leading-relaxed mt-2">
+              Darüber hinaus werden Nutzerinhalte zur Weiterentwicklung und zum Training
+              dieser KI-Funktionen verwendet (siehe § 6).
             </p>
             <p class="text-base-content/80 leading-relaxed">
               Die Plattform bietet keine Garantie für den Erfolg der Partnersuche. Der
@@ -136,10 +151,66 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </ol>
           </section>
 
-          <%!-- ===== § 6 NACHRICHTEN UND KOMMUNIKATION ===== --%>
+          <%!-- ===== § 6 EINSATZ KÜNSTLICHER INTELLIGENZ UND KI-TRAINING ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 6 Nachrichten und Kommunikation
+              § 6 Einsatz Künstlicher Intelligenz und KI-Training
+            </h2>
+            <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
+              <li>
+                Die Plattform setzt KI-Technologien als wesentlichen Bestandteil ihrer
+                Dienste ein, insbesondere für:
+                <ul class="list-disc list-inside ml-4 mt-1 space-y-1">
+                  <li>KI-gestütztes Matching und Profilvorschläge</li>
+                  <li>
+                    KI-gestützte Kommunikationsfunktionen (z.&nbsp;B. Textvorschläge,
+                    Übersetzungen)
+                  </li>
+                  <li>
+                    KI-gestützte Inhaltserstellung und -verbesserung für Moodboard-Einträge
+                    (Texte und Fotos)
+                  </li>
+                  <li>Automatisierte Fotomoderation (siehe auch Datenschutzerklärung)</li>
+                </ul>
+              </li>
+              <li>
+                Zur Bereitstellung und Verbesserung dieser KI-Funktionen werden alle vom
+                Nutzer hochgeladenen Inhalte für das KI-Training verwendet: Profilfotos,
+                Moodboard-Texte und -Fotos, Flag-Auswahl (Weiß/Grün/Rot) sowie Profildaten.
+              </li>
+              <li>
+                Nachrichten zwischen Nutzern werden nur dann für das KI-Training verwendet,
+                wenn beide Gesprächsteilnehmer die aktuellen AGB akzeptiert haben.
+              </li>
+              <li>
+                Sämtliche KI-Verarbeitung und sämtliches KI-Training finden ausschließlich
+                auf den eigenen Servern des Betreibers in Deutschland statt. Es werden keine
+                Nutzerdaten an externe KI-Anbieter übermittelt.
+              </li>
+              <li>
+                Die trainierten Modelle können zur Verbesserung der Plattform oder für
+                andere Produkte des Betreibers eingesetzt werden.
+              </li>
+              <li>
+                Die Zustimmung zur KI-Verarbeitung und zum KI-Training ist Voraussetzung
+                für die Nutzung der Plattform. Ein Widerruf ist durch Löschung des Kontos
+                möglich. Bereits trainierte Modelle können erlernte Muster in anonymisierter,
+                aggregierter Form beibehalten.
+              </li>
+              <li>
+                Weitere datenschutzrechtliche Details sind der
+                <a href="/datenschutz" class="text-primary hover:underline">
+                  Datenschutzerklärung
+                </a>
+                zu entnehmen.
+              </li>
+            </ol>
+          </section>
+
+          <%!-- ===== § 7 NACHRICHTEN UND KOMMUNIKATION ===== --%>
+          <section class="space-y-3">
+            <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
+              § 7 Nachrichten und Kommunikation
             </h2>
             <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
               <li>
@@ -158,10 +229,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </ol>
           </section>
 
-          <%!-- ===== § 7 KONTOSPERRUNG UND -LÖSCHUNG DURCH BETREIBER ===== --%>
+          <%!-- ===== § 8 KONTOSPERRUNG UND -LÖSCHUNG DURCH BETREIBER ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 7 Kontosperrung und -löschung durch den Betreiber
+              § 8 Kontosperrung und -löschung durch den Betreiber
             </h2>
             <p class="text-base-content/80 leading-relaxed">
               Der Betreiber ist berechtigt, Nutzerkonten vorübergehend zu sperren oder
@@ -180,10 +251,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </p>
           </section>
 
-          <%!-- ===== § 8 RECHT AUF KONTOLÖSCHUNG ===== --%>
+          <%!-- ===== § 9 RECHT AUF KONTOLÖSCHUNG ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 8 Recht auf Kontolöschung
+              § 9 Recht auf Kontolöschung
             </h2>
             <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
               <li>
@@ -211,10 +282,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </ol>
           </section>
 
-          <%!-- ===== § 9 DATENSCHUTZ ===== --%>
+          <%!-- ===== § 10 DATENSCHUTZ ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 9 Datenschutz
+              § 10 Datenschutz
             </h2>
             <p class="text-base-content/80 leading-relaxed">
               Der Umgang mit personenbezogenen Daten richtet sich nach unserer <a
@@ -225,10 +296,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </p>
           </section>
 
-          <%!-- ===== § 10 HAFTUNGSBESCHRÄNKUNG ===== --%>
+          <%!-- ===== § 11 HAFTUNGSBESCHRÄNKUNG ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 10 Haftungsbeschränkung
+              § 11 Haftungsbeschränkung
             </h2>
             <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
               <li>
@@ -252,10 +323,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </ol>
           </section>
 
-          <%!-- ===== § 11 ÄNDERUNG DER AGB ===== --%>
+          <%!-- ===== § 12 ÄNDERUNG DER AGB ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 11 Änderung der AGB
+              § 12 Änderung der AGB
             </h2>
             <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
               <li>
@@ -271,10 +342,10 @@ defmodule AniminaWeb.TermsOfServiceLive do
             </ol>
           </section>
 
-          <%!-- ===== § 12 SCHLUSSBESTIMMUNGEN ===== --%>
+          <%!-- ===== § 13 SCHLUSSBESTIMMUNGEN ===== --%>
           <section class="space-y-3">
             <h2 class="text-2xl font-medium text-base-content border-b border-base-300 pb-2">
-              § 12 Schlussbestimmungen
+              § 13 Schlussbestimmungen
             </h2>
             <ol class="list-decimal list-inside space-y-2 text-base-content/80 leading-relaxed">
               <li>

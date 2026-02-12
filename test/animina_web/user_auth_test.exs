@@ -7,6 +7,7 @@ defmodule AniminaWeb.UserAuthTest do
   alias Phoenix.LiveView
 
   import Animina.AccountsFixtures
+  import Ecto.Query, warn: false
 
   @remember_me_cookie "_animina_web_user_remember_me"
   @remember_me_cookie_max_age 60 * 60 * 24 * 14
@@ -692,6 +693,97 @@ defmodule AniminaWeb.UserAuthTest do
 
       assert {:halt, _updated_socket} =
                UserAuth.on_mount(:require_moderator, %{}, session, socket)
+    end
+  end
+
+  describe "re-consent enforcement (needs_tos_acceptance?)" do
+    test "redirects to accept-terms when tos_accepted_at is nil", %{conn: conn} do
+      user = user_fixture()
+
+      Animina.Repo.update_all(
+        Ecto.Query.from(u in Accounts.User, where: u.id == ^user.id),
+        set: [tos_accepted_at: nil]
+      )
+
+      user = Animina.Repo.get!(Accounts.User, user.id)
+      conn = UserAuth.log_in_user(conn, user)
+      assert redirected_to(conn) == ~p"/users/accept-terms"
+    end
+
+    test "redirects to accept-terms when tos_accepted_at is before cutoff", %{conn: conn} do
+      user = user_fixture()
+      old_date = ~U[2026-01-01 00:00:00Z]
+
+      Animina.Repo.update_all(
+        Ecto.Query.from(u in Accounts.User, where: u.id == ^user.id),
+        set: [tos_accepted_at: old_date]
+      )
+
+      user = Animina.Repo.get!(Accounts.User, user.id)
+      conn = UserAuth.log_in_user(conn, user)
+      assert redirected_to(conn) == ~p"/users/accept-terms"
+    end
+
+    test "does not redirect when tos_accepted_at is after cutoff", %{conn: conn} do
+      user = user_fixture()
+      recent_date = ~U[2026-02-14 00:00:00Z]
+
+      Animina.Repo.update_all(
+        Ecto.Query.from(u in Accounts.User, where: u.id == ^user.id),
+        set: [tos_accepted_at: recent_date]
+      )
+
+      user = Animina.Repo.get!(Accounts.User, user.id)
+      conn = UserAuth.log_in_user(conn, user)
+      assert redirected_to(conn) == ~p"/my/waitlist"
+    end
+
+    test "on_mount redirects to accept-terms when tos_accepted_at is before cutoff", %{
+      conn: conn
+    } do
+      user = user_fixture()
+      old_date = ~U[2026-01-01 00:00:00Z]
+
+      Animina.Repo.update_all(
+        Ecto.Query.from(u in Accounts.User, where: u.id == ^user.id),
+        set: [tos_accepted_at: old_date]
+      )
+
+      user = Animina.Repo.get!(Accounts.User, user.id)
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:halt, updated_socket} =
+               UserAuth.on_mount(:require_authenticated_with_tos, %{}, session, socket)
+
+      assert {:redirect, %{to: "/users/accept-terms"}} = updated_socket.redirected
+    end
+
+    test "on_mount allows access when tos_accepted_at is after cutoff", %{conn: conn} do
+      user = user_fixture()
+      recent_date = ~U[2026-02-14 00:00:00Z]
+
+      Animina.Repo.update_all(
+        Ecto.Query.from(u in Accounts.User, where: u.id == ^user.id),
+        set: [tos_accepted_at: recent_date]
+      )
+
+      user = Animina.Repo.get!(Accounts.User, user.id)
+      user_token = Accounts.generate_user_session_token(user)
+      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      socket = %LiveView.Socket{
+        endpoint: AniminaWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}}
+      }
+
+      assert {:cont, _updated_socket} =
+               UserAuth.on_mount(:require_authenticated_with_tos, %{}, session, socket)
     end
   end
 

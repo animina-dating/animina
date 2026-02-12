@@ -26,15 +26,31 @@ defmodule AniminaWeb.UserLive.AcceptTerms do
           <div class="space-y-4 mb-6">
             <div class="bg-base-200/50 rounded-lg p-4 space-y-2">
               <p class="text-base-content/80 leading-relaxed text-sm">
-                {gettext("We have introduced Terms of Service (AGB) that cover:")}
+                {gettext("Our Terms of Service cover:")}
               </p>
               <ul class="list-disc list-inside text-sm text-base-content/70 space-y-1">
                 <li>{gettext("Rules for using the platform")}</li>
                 <li>{gettext("Content moderation by administrators and moderators")}</li>
                 <li>{gettext("Account suspension and deletion policies")}</li>
                 <li>{gettext("Your right to delete your account at any time")}</li>
+                <li>{gettext("AI-powered matching, chat assistance, and moodboard features")}</li>
+                <li>
+                  {gettext(
+                    "Use of your uploaded content (photos, texts, messages, flag selections) to train AI models on our own servers in Germany"
+                  )}
+                </li>
               </ul>
             </div>
+
+            <div class="bg-info/10 border border-info/30 rounded-lg p-4">
+              <p class="text-sm text-base-content/80 leading-relaxed">
+                <strong>{gettext("AI Features & Training:")}</strong>
+                {gettext(
+                  "ANIMINA uses AI to power matching, assist with chat, and help with moodboard content. Your photos, texts, messages, and flag selections are also used to train these AI models. All AI processing happens exclusively on our own servers in Germany."
+                )}
+              </p>
+            </div>
+
             <div class="flex gap-4 text-sm">
               <a href="/agb" target="_blank" class="text-primary hover:underline">
                 {gettext("Terms of Service")} &rarr;
@@ -56,12 +72,14 @@ defmodule AniminaWeb.UserLive.AcceptTerms do
                 class="checkbox checkbox-sm mt-1"
               />
               <label for="tos_accepted" class="text-sm text-base-content/70">
-                {gettext("I accept the")}
-                <a href="/agb" class="text-primary hover:underline" target="_blank">
-                  {gettext("Terms of Service")}
-                </a>
-                {gettext("and the")}
-                <a href="/datenschutz" class="text-primary hover:underline" target="_blank">{gettext("Privacy Policy")}</a>.
+                {gettext(
+                  "I accept the Terms of Service, including the use of AI features and AI training of my content, and the Privacy Policy."
+                )} (<a href="/agb" class="text-primary hover:underline" target="_blank">AGB</a>, <a
+                  href="/datenschutz"
+                  class="text-primary hover:underline"
+                  target="_blank"
+                >
+                  {gettext("Privacy Policy")}</a>)
               </label>
             </div>
 
