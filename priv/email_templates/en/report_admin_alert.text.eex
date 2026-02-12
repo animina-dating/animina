@@ -1,0 +1,16 @@
+New report: <%= @reported_user_name %> [<%= @priority %>]
+---
+
+Hi <%= @greeting_name %>,
+
+a new report has been filed on ANIMINA.
+
+Reporter:      <%= @reporter_name %>
+Reported user: <%= @reported_user_name %>
+Category:      <%= @category %>
+Priority:      <%= @priority %>
+Context:       <%= @context_type %>
+Description:   <%= @description %>
+
+Review and take action:
+<%= @reports_url %>

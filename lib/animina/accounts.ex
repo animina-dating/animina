@@ -1218,6 +1218,7 @@ defmodule Animina.Accounts do
 
   # --- Delegations to Roles ---
 
+  defdelegate list_admins(), to: Animina.Accounts.Roles
   defdelegate get_user_roles(user), to: Animina.Accounts.Roles
   defdelegate assign_role(user, role, opts \\ []), to: Animina.Accounts.Roles
   defdelegate remove_role(user, role, opts \\ []), to: Animina.Accounts.Roles

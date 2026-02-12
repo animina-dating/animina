@@ -1,0 +1,16 @@
+Neue Meldung: <%= @reported_user_name %> [<%= @priority %>]
+---
+
+Hallo <%= @greeting_name %>,
+
+auf ANIMINA wurde eine neue Meldung eingereicht.
+
+Melder:              <%= @reporter_name %>
+Gemeldeter Nutzer:   <%= @reported_user_name %>
+Kategorie:           <%= @category %>
+Prioritaet:          <%= @priority %>
+Kontext:             <%= @context_type %>
+Beschreibung:        <%= @description %>
+
+Meldung pruefen und bearbeiten:
+<%= @reports_url %>

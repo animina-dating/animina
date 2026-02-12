@@ -104,6 +104,19 @@ defmodule Animina.Accounts.Roles do
   end
 
   @doc """
+  Returns all users with the "admin" role.
+  """
+  def list_admins do
+    from(u in User,
+      join: r in UserRole,
+      on: r.user_id == u.id,
+      where: r.role == "admin",
+      select: u
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Returns true if the user has the given role.
   The "user" role is always true.
   """

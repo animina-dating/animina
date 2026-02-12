@@ -44,6 +44,21 @@ defmodule Animina.Reports.ReportNotifier do
     render_and_deliver(user, :report_appeal_rejected)
   end
 
+  def deliver_new_report_admin_alert(admin, report, %{
+        reporter: reporter,
+        reported_user: reported_user
+      }) do
+    render_and_deliver(admin, :report_admin_alert,
+      reporter_name: reporter.display_name,
+      reported_user_name: reported_user.display_name,
+      category: Category.label(report.category, user_locale(admin)),
+      priority: report.priority,
+      context_type: report.context_type,
+      description: report.description || "-",
+      reports_url: AniminaWeb.Endpoint.url() <> "/admin/reports"
+    )
+  end
+
   # --- Private ---
 
   defp render_and_deliver(user, template, extra_assigns \\ []) do

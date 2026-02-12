@@ -59,6 +59,14 @@ defmodule Animina.Reports.Filing do
 
       ReportNotifier.deliver_report_notice(reported_user)
 
+      Animina.Accounts.list_admins()
+      |> Enum.each(
+        &ReportNotifier.deliver_new_report_admin_alert(&1, report, %{
+          reporter: reporter,
+          reported_user: reported_user
+        })
+      )
+
       ActivityLog.log(
         "social",
         "report_filed",
