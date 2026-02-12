@@ -337,12 +337,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     end
   end
 
-  defp build_page_title(user, age, city, zip_code) do
+  defp build_page_title(user, age, city) do
     parts = [
       user.display_name,
       gender_symbol(user.gender) <> " " <> gettext("%{age} years", age: age),
       if(user.height, do: format_height(user.height)),
-      if(city, do: "#{zip_code}\u00A0#{city.name}")
+      if(city, do: city.name)
     ]
 
     parts
@@ -501,7 +501,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     private_white_flags_count = Traits.count_private_white_flags(profile_user)
 
     # Build page title with profile info
-    page_title = build_page_title(profile_user, age, city, zip_code)
+    page_title = build_page_title(profile_user, age, city)
 
     # Chat panel assigns
     show_chat_toggle = !owner? && current_user != nil
