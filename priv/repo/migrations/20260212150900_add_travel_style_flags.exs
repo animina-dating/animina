@@ -8,9 +8,7 @@ defmodule Animina.Repo.Migrations.AddTravelStyleFlags do
 
     # Get the Travels category ID
     cat_id =
-      repo().one(
-        from(c in "trait_categories", where: c.name == "Travels", select: c.id)
-      )
+      repo().one(from(c in "trait_categories", where: c.name == "Travels", select: c.id))
 
     flags =
       [
@@ -43,9 +41,7 @@ defmodule Animina.Repo.Migrations.AddTravelStyleFlags do
     import Ecto.Query
 
     cat_id =
-      repo().one(
-        from(c in "trait_categories", where: c.name == "Travels", select: c.id)
-      )
+      repo().one(from(c in "trait_categories", where: c.name == "Travels", select: c.id))
 
     flag_ids =
       repo().all(
