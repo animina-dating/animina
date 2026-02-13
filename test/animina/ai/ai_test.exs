@@ -257,4 +257,62 @@ defmodule Animina.AITest do
       refute AI.has_pending_job?("photo_description", "Photo", Ecto.UUID.generate())
     end
   end
+
+  describe "enqueue_all_photo_descriptions/1" do
+    import Animina.PhotosFixtures
+
+    test "enqueues jobs for all approved photos" do
+      photo1 = approved_photo_fixture()
+      photo2 = approved_photo_fixture()
+
+      {enqueued, skipped} = AI.enqueue_all_photo_descriptions()
+
+      assert enqueued == 2
+      assert skipped == 0
+
+      assert AI.has_pending_job?("photo_description", "Photo", photo1.id)
+      assert AI.has_pending_job?("photo_description", "Photo", photo2.id)
+    end
+
+    test "skips photos that already have a pending job" do
+      photo1 = approved_photo_fixture()
+      photo2 = approved_photo_fixture()
+
+      # Pre-enqueue a job for photo1
+      AI.enqueue("photo_description", %{"photo_id" => photo1.id},
+        subject_type: "Photo",
+        subject_id: photo1.id
+      )
+
+      {enqueued, skipped} = AI.enqueue_all_photo_descriptions()
+
+      assert enqueued == 1
+      assert skipped == 1
+
+      # photo2 should have gotten a new job
+      assert AI.has_pending_job?("photo_description", "Photo", photo2.id)
+    end
+
+    test "uses background priority (5) by default" do
+      approved_photo_fixture()
+
+      {1, 0} = AI.enqueue_all_photo_descriptions()
+
+      result = AI.list_jobs(filter_job_type: "photo_description")
+      job = hd(result.entries)
+      assert job.priority == 5
+    end
+
+    test "ignores non-approved photos" do
+      # Create a pending photo (not approved)
+      _pending = photo_fixture(%{state: "pending"})
+      approved = approved_photo_fixture()
+
+      {enqueued, skipped} = AI.enqueue_all_photo_descriptions()
+
+      assert enqueued == 1
+      assert skipped == 0
+      assert AI.has_pending_job?("photo_description", "Photo", approved.id)
+    end
+  end
 end

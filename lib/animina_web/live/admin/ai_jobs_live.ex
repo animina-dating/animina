@@ -22,6 +22,8 @@ defmodule AniminaWeb.Admin.AIJobsLive do
        show_bulk_retry_modal: false,
        bulk_retry_range: nil,
        bulk_retry_count: 0,
+       show_regenerate_modal: false,
+       regenerate_count: 0,
        detail_job: nil,
        detail_tab: "result",
        enlarged_photo: nil
@@ -217,6 +219,38 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   def handle_event("close-bulk-retry-modal", _params, socket) do
     {:noreply,
      assign(socket, show_bulk_retry_modal: false, bulk_retry_range: nil, bulk_retry_count: 0)}
+  end
+
+  @impl true
+  def handle_event("show-regenerate-modal", _params, socket) do
+    count = Photos.count_approved_photos()
+    {:noreply, assign(socket, show_regenerate_modal: true, regenerate_count: count)}
+  end
+
+  @impl true
+  def handle_event("confirm-regenerate", _params, socket) do
+    requester_id = socket.assigns.current_scope.user.id
+    {enqueued, skipped} = AI.enqueue_all_photo_descriptions(requester_id: requester_id)
+
+    socket =
+      socket
+      |> assign(show_regenerate_modal: false, regenerate_count: 0)
+      |> put_flash(
+        :info,
+        gettext(
+          "Regeneration started: %{enqueued} jobs enqueued, %{skipped} skipped (already queued).",
+          enqueued: enqueued,
+          skipped: skipped
+        )
+      )
+      |> reload_jobs()
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close-regenerate-modal", _params, socket) do
+    {:noreply, assign(socket, show_regenerate_modal: false, regenerate_count: 0)}
   end
 
   @impl true
@@ -417,7 +451,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
           </div>
         <% end %>
 
-        <%!-- Bulk Retry --%>
+        <%!-- Bulk Actions --%>
         <div class="flex items-center gap-2 mb-4">
           <div class="dropdown">
             <div
@@ -450,6 +484,14 @@ defmodule AniminaWeb.Admin.AIJobsLive do
               </li>
             </ul>
           </div>
+
+          <button
+            class="btn btn-sm btn-outline btn-accent gap-1"
+            phx-click="show-regenerate-modal"
+          >
+            <.icon name="hero-sparkles" class="h-4 w-4" />
+            {gettext("Regenerate Descriptions")}
+          </button>
         </div>
 
         <%!-- Bulk Retry Confirmation Modal --%>
@@ -477,6 +519,33 @@ defmodule AniminaWeb.Admin.AIJobsLive do
               </div>
             </div>
             <div class="modal-backdrop" phx-click="close-bulk-retry-modal"></div>
+          </div>
+        <% end %>
+
+        <%!-- Regenerate Descriptions Confirmation Modal --%>
+        <%= if @show_regenerate_modal do %>
+          <div class="modal modal-open">
+            <div class="modal-box">
+              <h3 class="text-lg font-bold">{gettext("Regenerate All Descriptions")}</h3>
+              <p class="py-4">
+                {ngettext(
+                  "This will enqueue description jobs for %{count} approved photo at background priority. Photos with pending jobs will be skipped.",
+                  "This will enqueue description jobs for %{count} approved photos at background priority. Photos with pending jobs will be skipped.",
+                  @regenerate_count,
+                  count: @regenerate_count
+                )}
+              </p>
+              <div class="modal-action">
+                <button class="btn" phx-click="close-regenerate-modal">
+                  {gettext("Cancel")}
+                </button>
+                <button class="btn btn-accent" phx-click="confirm-regenerate">
+                  <.icon name="hero-sparkles" class="h-4 w-4" />
+                  {gettext("Regenerate")}
+                </button>
+              </div>
+            </div>
+            <div class="modal-backdrop" phx-click="close-regenerate-modal"></div>
           </div>
         <% end %>
 

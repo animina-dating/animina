@@ -181,6 +181,25 @@ defmodule Animina.Photos do
   end
 
   @doc """
+  Counts all approved photos.
+  """
+  def count_approved_photos do
+    Photo
+    |> where([p], p.state == "approved")
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Returns all approved photo IDs.
+  """
+  def list_approved_photo_ids do
+    Photo
+    |> where([p], p.state == "approved")
+    |> select([p], p.id)
+    |> Repo.all()
+  end
+
+  @doc """
   Updates a photo's AI-generated description fields.
   """
   def update_photo_description(%Photo{} = photo, attrs) do

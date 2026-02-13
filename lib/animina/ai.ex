@@ -345,6 +345,36 @@ defmodule Animina.AI do
   # --- Bulk Operations ---
 
   @doc """
+  Enqueues photo_description jobs for all approved photos.
+
+  Skips photos that already have a pending/running description job.
+  Jobs are enqueued at the given priority (default: 5 = background).
+
+  Returns `{enqueued_count, skipped_count}`.
+  """
+  def enqueue_all_photo_descriptions(opts \\ []) do
+    priority = Keyword.get(opts, :priority, 5)
+    requester_id = Keyword.get(opts, :requester_id)
+
+    photo_ids = Animina.Photos.list_approved_photo_ids()
+
+    Enum.reduce(photo_ids, {0, 0}, fn photo_id, {enqueued, skipped} ->
+      if has_pending_job?("photo_description", "Photo", photo_id) do
+        {enqueued, skipped + 1}
+      else
+        enqueue("photo_description", %{"photo_id" => photo_id},
+          subject_type: "Photo",
+          subject_id: photo_id,
+          requester_id: requester_id,
+          priority: priority
+        )
+
+        {enqueued + 1, skipped}
+      end
+    end)
+  end
+
+  @doc """
   Counts failed jobs since the given datetime.
   """
   def count_failed_since(since) do

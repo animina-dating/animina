@@ -14,11 +14,10 @@ defmodule Animina.AI.JobTypes.PhotoDescription do
   alias Animina.Photos
 
   @description_prompt """
-  Beschreibe dieses Foto in maximal 2028 Zeichen auf Deutsch.
-  Der Kontext ist eine Online-Dating-Plattform.
-  Die Beschreibung soll das Foto so beschreiben, dass eine Person, die das Foto nicht sehen kann,
-  sich ein gutes Bild davon machen kann. Beschreibe was du siehst: die Person(en),
-  die Umgebung, die Stimmung, die Aktivität. Sei freundlich und positiv.
+  Beschreibe dieses Foto sachlich in maximal 500 Zeichen auf Deutsch.
+  Kontext: Online-Dating-Plattform. Die Beschreibung ist für Personen, die das Foto nicht sehen können.
+  Beschreibe kurz und knapp: wer ist zu sehen, was tut die Person, wo wurde das Foto aufgenommen.
+  Keine blumige oder romantische Sprache. Sei neutral und präzise.
   Antworte NUR mit der Beschreibung, ohne Anführungszeichen oder Erklärungen.
   """
 
@@ -75,7 +74,7 @@ defmodule Animina.AI.JobTypes.PhotoDescription do
   end
 
   defp save_description(job, photo, raw_response) do
-    description = raw_response |> String.trim() |> String.slice(0, 2028)
+    description = raw_response |> String.trim() |> String.slice(0, 500)
 
     case Photos.update_photo_description(photo, %{
            description: description,
