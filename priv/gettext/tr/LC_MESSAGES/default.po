@@ -39,7 +39,7 @@ msgid "Account"
 msgstr "Hesap"
 
 #: lib/animina_web/components/core_components.ex:536
-#: lib/animina_web/live/admin/ai_jobs_live.ex:593
+#: lib/animina_web/live/admin/ai_jobs_live.ex:624
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "İşlemler"
@@ -1018,7 +1018,7 @@ msgstr "Rol Ekle"
 #: lib/animina_web/components/layouts.ex:214
 #: lib/animina_web/live/admin/activity_logs_live.ex:232
 #: lib/animina_web/live/admin/admin_hub.ex:24
-#: lib/animina_web/live/admin/ai_jobs_live.ex:291
+#: lib/animina_web/live/admin/ai_jobs_live.ex:321
 #: lib/animina_web/live/admin/email_logs_live.ex:140
 #: lib/animina_web/live/admin/flags_ai_live.ex:164
 #: lib/animina_web/live/admin/flags_index_live.ex:29
@@ -1252,8 +1252,8 @@ msgstr "Uygulama"
 
 #: lib/animina_web/components/love_emergency_component.ex:69
 #: lib/animina_web/components/moodboard_components.ex:556
-#: lib/animina_web/live/admin/ai_jobs_live.ex:441
-#: lib/animina_web/live/admin/ai_jobs_live.ex:711
+#: lib/animina_web/live/admin/ai_jobs_live.ex:471
+#: lib/animina_web/live/admin/ai_jobs_live.ex:911
 #: lib/animina_web/live/admin/flags_ai_live.ex:405
 #: lib/animina_web/live/admin/flags_system_live.ex:212
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
@@ -3634,6 +3634,8 @@ msgstr "Dosya çok büyük (maks 6MB)"
 msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr "JPG, PNG, WEBP veya HEIC. Maks 6MB."
 
+#: lib/animina_web/live/admin/ai_jobs_live.ex:606
+#: lib/animina_web/live/admin/ai_jobs_live.ex:796
 #: lib/animina_web/live/admin/photo_reviews_live.ex:666
 #, elixir-autogen, elixir-format
 msgid "Server"
@@ -3646,9 +3648,9 @@ msgstr "Yaş algılama"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:321
 #: lib/animina_web/live/admin/activity_logs_live.ex:338
-#: lib/animina_web/live/admin/ai_jobs_live.ex:482
-#: lib/animina_web/live/admin/ai_jobs_live.ex:500
-#: lib/animina_web/live/admin/ai_jobs_live.ex:528
+#: lib/animina_web/live/admin/ai_jobs_live.ex:512
+#: lib/animina_web/live/admin/ai_jobs_live.ex:530
+#: lib/animina_web/live/admin/ai_jobs_live.ex:558
 #: lib/animina_web/live/admin/email_logs_live.ex:181
 #: lib/animina_web/live/admin/email_logs_live.ex:197
 #: lib/animina_web/live/admin/tos_acceptances_live.ex:205
@@ -4053,12 +4055,14 @@ msgstr "Kendinizi tanıtmak için fotoğraf ve metin ekleyin. Sıralamak için s
 msgid "Close"
 msgstr "Kapat"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:581
+#: lib/animina_web/live/admin/ai_jobs_live.ex:612
+#: lib/animina_web/live/admin/ai_jobs_live.ex:803
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr "Süre"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:778
+#: lib/animina_web/live/admin/ai_jobs_live.ex:772
+#: lib/animina_web/live/admin/ai_jobs_live.ex:979
 #: lib/animina_web/live/admin/email_logs_live.ex:203
 #: lib/animina_web/live/admin/email_logs_live.ex:234
 #: lib/animina_web/live/user_live/email_logs.ex:160
@@ -4066,14 +4070,15 @@ msgstr "Süre"
 msgid "Error"
 msgstr "Hata"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:521
-#: lib/animina_web/live/admin/ai_jobs_live.ex:573
+#: lib/animina_web/live/admin/ai_jobs_live.ex:551
+#: lib/animina_web/live/admin/ai_jobs_live.ex:603
+#: lib/animina_web/live/admin/ai_jobs_live.ex:800
 #, elixir-autogen, elixir-format
 msgid "Model"
 msgstr "Model"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:493
-#: lib/animina_web/live/admin/ai_jobs_live.ex:565
+#: lib/animina_web/live/admin/ai_jobs_live.ex:523
+#: lib/animina_web/live/admin/ai_jobs_live.ex:595
 #: lib/animina_web/live/admin/email_logs_live.ex:190
 #: lib/animina_web/live/admin/email_logs_live.ex:231
 #: lib/animina_web/live/user_live/email_logs.ex:147
@@ -4083,7 +4088,7 @@ msgid "Status"
 msgstr "Durum"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:382
-#: lib/animina_web/live/admin/ai_jobs_live.ex:590
+#: lib/animina_web/live/admin/ai_jobs_live.ex:621
 #: lib/animina_web/live/admin/email_logs_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Time"
@@ -4318,7 +4323,7 @@ msgid "Read"
 msgstr "Okundu"
 
 #: lib/animina_web/components/chat_panel_component.ex:637
-#: lib/animina_web/live/admin/ai_jobs_live.ex:418
+#: lib/animina_web/live/admin/ai_jobs_live.ex:448
 #: lib/animina_web/live/messages_live.ex:529
 #, elixir-autogen, elixir-format
 msgid "Today"
@@ -4840,12 +4845,12 @@ msgstr "%{count}sn önce"
 msgid "Per page"
 msgstr "Sayfa başına"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:467
+#: lib/animina_web/live/admin/ai_jobs_live.ex:497
 #, elixir-autogen, elixir-format
 msgid "Queue"
 msgstr "Kuyruk"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:372
+#: lib/animina_web/live/admin/ai_jobs_live.ex:402
 #: lib/animina_web/live/admin/email_logs_live.ex:164
 #, elixir-autogen, elixir-format
 msgid "Auto-reload"
@@ -5119,7 +5124,7 @@ msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:235
 #: lib/animina_web/live/admin/admin_hub.ex:108
-#: lib/animina_web/live/admin/ai_jobs_live.ex:294
+#: lib/animina_web/live/admin/ai_jobs_live.ex:324
 #: lib/animina_web/live/admin/email_logs_live.ex:143
 #: lib/animina_web/live/admin/logs_index_live.ex:19
 #: lib/animina_web/live/admin/logs_index_live.ex:32
@@ -5144,7 +5149,7 @@ msgid "Recipient"
 msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:386
-#: lib/animina_web/live/admin/ai_jobs_live.ex:543
+#: lib/animina_web/live/admin/ai_jobs_live.ex:573
 #: lib/animina_web/live/admin/email_logs_live.ex:225
 #: lib/animina_web/live/user_live/email_logs.ex:173
 #, elixir-autogen, elixir-format
@@ -5157,7 +5162,7 @@ msgstr ""
 msgid "System log viewers"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:549
+#: lib/animina_web/live/admin/ai_jobs_live.ex:579
 #: lib/animina_web/live/admin/email_logs_live.ex:178
 #: lib/animina_web/live/admin/email_logs_live.ex:222
 #: lib/animina_web/live/user_live/email_logs.ex:135
@@ -6177,6 +6182,7 @@ msgstr "İtiraz gönderilemedi. Lütfen tekrar deneyin."
 msgid "Deleted user"
 msgstr "Sil"
 
+#: lib/animina_web/live/admin/ai_jobs_live.ex:706
 #: lib/animina_web/live/admin/reports_live.ex:142
 #, elixir-autogen, elixir-format
 msgid "Description"
@@ -6257,7 +6263,7 @@ msgstr "Orijinal"
 msgid "Permanent ban"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:557
+#: lib/animina_web/live/admin/ai_jobs_live.ex:587
 #: lib/animina_web/live/admin/reports_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Priority"
@@ -6542,7 +6548,7 @@ msgstr ""
 msgid "Luxury"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:304
+#: lib/animina_web/live/admin/ai_jobs_live.ex:334
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} job"
 msgid_plural "%{count} jobs"
@@ -6550,98 +6556,99 @@ msgstr[0] "%{count}sn önce"
 msgstr[1] "%{count}sn önce"
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:20
-#: lib/animina_web/live/admin/ai_jobs_live.ex:296
-#: lib/animina_web/live/admin/ai_jobs_live.ex:302
+#: lib/animina_web/live/admin/ai_jobs_live.ex:326
+#: lib/animina_web/live/admin/ai_jobs_live.ex:332
 #: lib/animina_web/live/admin/logs_index_live.ex:65
 #, elixir-autogen, elixir-format
 msgid "AI Jobs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:386
+#: lib/animina_web/live/admin/ai_jobs_live.ex:416
 #, elixir-autogen, elixir-format
 msgid "AI queue is paused. No new jobs will be dispatched."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:460
+#: lib/animina_web/live/admin/ai_jobs_live.ex:490
 #, elixir-autogen, elixir-format, fuzzy
 msgid "All Jobs"
 msgstr "Tüm Kayıtlar"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:584
+#: lib/animina_web/live/admin/ai_jobs_live.ex:615
+#: lib/animina_web/live/admin/ai_jobs_live.ex:807
 #, elixir-autogen, elixir-format
 msgid "Attempt"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:514
+#: lib/animina_web/live/admin/ai_jobs_live.ex:544
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Cancelled"
 msgstr "İptal"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:105
+#: lib/animina_web/live/admin/ai_jobs_live.ex:108
 #, elixir-autogen, elixir-format
 msgid "Cannot cancel this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:124
+#: lib/animina_web/live/admin/ai_jobs_live.ex:127
 #, elixir-autogen, elixir-format
 msgid "Cannot reprioritize this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:113
+#: lib/animina_web/live/admin/ai_jobs_live.ex:116
 #, elixir-autogen, elixir-format
 msgid "Cannot retry this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:508
+#: lib/animina_web/live/admin/ai_jobs_live.ex:538
 #, elixir-autogen, elixir-format
 msgid "Completed"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:336
-#: lib/animina_web/live/admin/ai_jobs_live.ex:511
+#: lib/animina_web/live/admin/ai_jobs_live.ex:366
+#: lib/animina_web/live/admin/ai_jobs_live.ex:541
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Failed"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:475
+#: lib/animina_web/live/admin/ai_jobs_live.ex:505
 #, elixir-autogen, elixir-format
 msgid "Job Type"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:367
+#: lib/animina_web/live/admin/ai_jobs_live.ex:397
 #, elixir-autogen, elixir-format
 msgid "Pause"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:316
-#: lib/animina_web/live/admin/ai_jobs_live.ex:502
+#: lib/animina_web/live/admin/ai_jobs_live.ex:346
+#: lib/animina_web/live/admin/ai_jobs_live.ex:532
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Pending"
 msgstr "İnceleme bekliyor"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:723
+#: lib/animina_web/live/admin/ai_jobs_live.ex:923
 #, elixir-autogen, elixir-format
 msgid "Reprioritize"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:359
+#: lib/animina_web/live/admin/ai_jobs_live.ex:389
 #, elixir-autogen, elixir-format
 msgid "Resume"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:445
-#: lib/animina_web/live/admin/ai_jobs_live.ex:700
+#: lib/animina_web/live/admin/ai_jobs_live.ex:475
+#: lib/animina_web/live/admin/ai_jobs_live.ex:900
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Retry"
 msgstr "Şiir"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:326
-#: lib/animina_web/live/admin/ai_jobs_live.ex:505
+#: lib/animina_web/live/admin/ai_jobs_live.ex:356
+#: lib/animina_web/live/admin/ai_jobs_live.ex:535
 #, elixir-autogen, elixir-format
 msgid "Running"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:346
+#: lib/animina_web/live/admin/ai_jobs_live.ex:376
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Slots"
 msgstr "Spor"
@@ -6651,91 +6658,156 @@ msgstr "Spor"
 msgid "Unified AI job queue and execution log"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:174
+#: lib/animina_web/live/admin/ai_jobs_live.ex:204
 #, elixir-autogen, elixir-format
 msgid "%{count} failed job reset to pending."
 msgid_plural "%{count} failed jobs reset to pending."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:760
+#: lib/animina_web/live/admin/ai_jobs_live.ex:973
 #, elixir-autogen, elixir-format
 msgid "All GPUs Down"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:431
+#: lib/animina_web/live/admin/ai_jobs_live.ex:461
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to retry %{count} failed job from the %{range}?"
 msgid_plural "Are you sure you want to retry %{count} failed jobs from the %{range}?"
 msgstr[0] "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 msgstr[1] "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:775
+#: lib/animina_web/live/admin/ai_jobs_live.ex:978
 #, elixir-autogen, elixir-format
 msgid "File Error"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:772
+#: lib/animina_web/live/admin/ai_jobs_live.ex:977
 #, elixir-autogen, elixir-format
 msgid "GPU Crash"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:769
+#: lib/animina_web/live/admin/ai_jobs_live.ex:976
 #, elixir-autogen, elixir-format
 msgid "GPU Error"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:757
+#: lib/animina_web/live/admin/ai_jobs_live.ex:972
 #, elixir-autogen, elixir-format, fuzzy
 msgid "GPU Offline"
 msgstr "Kapalı"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:754
+#: lib/animina_web/live/admin/ai_jobs_live.ex:971
 #, elixir-autogen, elixir-format
 msgid "GPU Timeout"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:413
+#: lib/animina_web/live/admin/ai_jobs_live.ex:443
 #, elixir-autogen, elixir-format
 msgid "Last 2 hours"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:408
+#: lib/animina_web/live/admin/ai_jobs_live.ex:438
 #, elixir-autogen, elixir-format
 msgid "Last hour"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:766
+#: lib/animina_web/live/admin/ai_jobs_live.ex:975
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Queue Full"
 msgstr "Kuyruk"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:399
+#: lib/animina_web/live/admin/ai_jobs_live.ex:429
 #, elixir-autogen, elixir-format
 msgid "Retry All Failed"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:429
+#: lib/animina_web/live/admin/ai_jobs_live.ex:459
 #, elixir-autogen, elixir-format
 msgid "Retry Failed Jobs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:763
+#: lib/animina_web/live/admin/ai_jobs_live.ex:974
 #, elixir-autogen, elixir-format
 msgid "Total Timeout"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:276
+#: lib/animina_web/live/admin/ai_jobs_live.ex:306
 #, elixir-autogen, elixir-format
 msgid "last 2 hours"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:275
+#: lib/animina_web/live/admin/ai_jobs_live.ex:305
 #, elixir-autogen, elixir-format
 msgid "last hour"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:277
+#: lib/animina_web/live/admin/ai_jobs_live.ex:307
 #, elixir-autogen, elixir-format, fuzzy
 msgid "today"
 msgstr "Bugün"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:694
+#, elixir-autogen, elixir-format
+msgid "Checks if photo is family-friendly, detects faces, counts people"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:692
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Classification"
+msgstr "Klasik"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:889
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Details"
+msgstr "Buluşmalar"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:699
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Gender Guess"
+msgstr "Cinsiyet"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:708
+#, elixir-autogen, elixir-format
+msgid "Generates an AI text description of a photo"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:701
+#, elixir-autogen, elixir-format
+msgid "Guesses gender from a first name (used for discovery)"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:727
+#, elixir-autogen, elixir-format
+msgid "Job Details"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:689
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Job Types"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:789
+#, elixir-autogen, elixir-format
+msgid "No data available."
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:752
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Prompt"
+msgstr "Pop"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:762
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Response"
+msgstr "Yeniden Aç"
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:742
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Result"
+msgstr ""
+
+#: lib/animina_web/live/admin/ai_jobs_live.ex:835
+#, elixir-autogen, elixir-format
+msgid "View photo history"
+msgstr ""

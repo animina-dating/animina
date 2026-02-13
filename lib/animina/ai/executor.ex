@@ -56,8 +56,15 @@ defmodule Animina.AI.Executor do
 
       {:error, reason} ->
         error_msg = "Input preparation failed: #{inspect(reason)}"
-        AI.mark_failed(job, error_msg)
-        Logger.warning("AI.Executor: #{error_msg} for job #{job.id}")
+
+        if terminal_input_error?(reason) do
+          AI.cancel_with_error(job.id, error_msg)
+          Logger.info("AI.Executor: Cancelled job #{job.id} (terminal): #{error_msg}")
+        else
+          AI.mark_failed(job, error_msg)
+          Logger.warning("AI.Executor: #{error_msg} for job #{job.id}")
+        end
+
         :error
     end
   end
@@ -150,6 +157,10 @@ defmodule Animina.AI.Executor do
         module.default_model()
     end
   end
+
+  defp terminal_input_error?(:photo_not_found), do: true
+  defp terminal_input_error?({:thumbnail_read_failed, :enoent}), do: true
+  defp terminal_input_error?(_), do: false
 
   defp select_vision_model(module) do
     if FeatureFlags.enabled?(:ollama_adaptive_model) do

@@ -21,7 +21,10 @@ defmodule AniminaWeb.Admin.AIJobsLive do
        auto_reload: false,
        show_bulk_retry_modal: false,
        bulk_retry_range: nil,
-       bulk_retry_count: 0
+       bulk_retry_count: 0,
+       detail_job: nil,
+       detail_tab: "result",
+       enlarged_photo: nil
      )}
   end
 
@@ -146,6 +149,33 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   @impl true
   def handle_event("switch-view", %{"view" => view}, socket) do
     {:noreply, push_patch(socket, to: build_path(socket, page: 1, view_mode: view))}
+  end
+
+  @impl true
+  def handle_event("show-detail", %{"id" => job_id}, socket) do
+    job = AI.get_job(job_id)
+    {:noreply, assign(socket, detail_job: job, detail_tab: "result")}
+  end
+
+  @impl true
+  def handle_event("close-detail", _params, socket) do
+    {:noreply, assign(socket, detail_job: nil)}
+  end
+
+  @impl true
+  def handle_event("detail-tab", %{"tab" => tab}, socket) do
+    {:noreply, assign(socket, detail_tab: tab)}
+  end
+
+  @impl true
+  def handle_event("enlarge-photo", %{"id" => photo_id}, socket) do
+    photo = Photos.get_photo(photo_id)
+    {:noreply, assign(socket, enlarged_photo: photo)}
+  end
+
+  @impl true
+  def handle_event("close-photo", _params, socket) do
+    {:noreply, assign(socket, enlarged_photo: nil)}
   end
 
   @impl true
@@ -573,6 +603,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                   {gettext("Model")}
                   <.sort_indicator sort_by={@sort_by} sort_dir={@sort_dir} column={:model} />
                 </th>
+                <th>{gettext("Server")}</th>
                 <th
                   class="cursor-pointer hover:bg-base-200"
                   phx-click="sort"
@@ -627,6 +658,11 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                     <span class="badge badge-sm badge-ghost font-mono">{job.model || "-"}</span>
                   </td>
                   <td>
+                    <span class="text-xs font-mono text-base-content/60">
+                      {extract_hostname(job.server_url)}
+                    </span>
+                  </td>
+                  <td>
                     <span class="font-mono text-sm">{format_duration(job.duration_ms)}</span>
                   </td>
                   <td>
@@ -648,8 +684,161 @@ defmodule AniminaWeb.Admin.AIJobsLive do
           </table>
         </div>
 
+        <%!-- Job Type Legend --%>
+        <div class="flex flex-wrap gap-4 mt-4 mb-4 p-3 bg-base-200 rounded-lg text-sm">
+          <span class="font-semibold text-base-content/70">{gettext("Job Types")}:</span>
+          <div class="flex items-center gap-1">
+            <span class="badge badge-xs badge-primary"></span>
+            <span class="font-medium">{gettext("Classification")}</span>
+            <span class="text-base-content/50">
+              &mdash; {gettext("Checks if photo is family-friendly, detects faces, counts people")}
+            </span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="badge badge-xs badge-secondary"></span>
+            <span class="font-medium">{gettext("Gender Guess")}</span>
+            <span class="text-base-content/50">
+              &mdash; {gettext("Guesses gender from a first name (used for discovery)")}
+            </span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="badge badge-xs badge-accent"></span>
+            <span class="font-medium">{gettext("Description")}</span>
+            <span class="text-base-content/50">
+              &mdash; {gettext("Generates an AI text description of a photo")}
+            </span>
+          </div>
+        </div>
+
         <%!-- Pagination --%>
         <.pagination page={@page} total_pages={@total_pages} />
+
+        <%!-- Detail Modal --%>
+        <%= if @detail_job do %>
+          <div class="modal modal-open">
+            <div class="modal-box max-w-3xl">
+              <button
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                phx-click="close-detail"
+              >
+                &times;
+              </button>
+              <h3 class="text-lg font-bold mb-4">
+                {gettext("Job Details")}
+                <span class="badge badge-sm badge-ghost font-mono ml-2">
+                  {String.slice(@detail_job.id, 0, 8)}
+                </span>
+              </h3>
+
+              <%!-- Tabs --%>
+              <div role="tablist" class="tabs tabs-bordered mb-4">
+                <%= if @detail_job.result do %>
+                  <button
+                    role="tab"
+                    class={["tab", if(@detail_tab == "result", do: "tab-active")]}
+                    phx-click="detail-tab"
+                    phx-value-tab="result"
+                  >
+                    {gettext("Result")}
+                  </button>
+                <% end %>
+                <%= if @detail_job.prompt do %>
+                  <button
+                    role="tab"
+                    class={["tab", if(@detail_tab == "prompt", do: "tab-active")]}
+                    phx-click="detail-tab"
+                    phx-value-tab="prompt"
+                  >
+                    {gettext("Prompt")}
+                  </button>
+                <% end %>
+                <%= if @detail_job.raw_response do %>
+                  <button
+                    role="tab"
+                    class={["tab", if(@detail_tab == "response", do: "tab-active")]}
+                    phx-click="detail-tab"
+                    phx-value-tab="response"
+                  >
+                    {gettext("Response")}
+                  </button>
+                <% end %>
+                <%= if @detail_job.error do %>
+                  <button
+                    role="tab"
+                    class={["tab", if(@detail_tab == "error", do: "tab-active")]}
+                    phx-click="detail-tab"
+                    phx-value-tab="error"
+                  >
+                    {gettext("Error")}
+                  </button>
+                <% end %>
+              </div>
+
+              <%!-- Tab Content --%>
+              <div class="bg-base-200 rounded-lg p-4 max-h-96 overflow-auto">
+                <%= cond do %>
+                  <% @detail_tab == "result" && @detail_job.result -> %>
+                    <pre class="text-xs font-mono whitespace-pre-wrap break-words">{format_json(@detail_job.result)}</pre>
+                  <% @detail_tab == "prompt" && @detail_job.prompt -> %>
+                    <pre class="text-xs font-mono whitespace-pre-wrap break-words">{@detail_job.prompt}</pre>
+                  <% @detail_tab == "response" && @detail_job.raw_response -> %>
+                    <pre class="text-xs font-mono whitespace-pre-wrap break-words">{@detail_job.raw_response}</pre>
+                  <% @detail_tab == "error" && @detail_job.error -> %>
+                    <pre class="text-xs font-mono whitespace-pre-wrap break-words text-error">{@detail_job.error}</pre>
+                  <% true -> %>
+                    <p class="text-base-content/50 text-sm">{gettext("No data available.")}</p>
+                <% end %>
+              </div>
+
+              <%!-- Meta info --%>
+              <div class="flex flex-wrap gap-4 mt-4 text-xs text-base-content/60">
+                <span>
+                  <span class="font-semibold">{gettext("Server")}:</span>
+                  {extract_hostname(@detail_job.server_url)}
+                </span>
+                <span>
+                  <span class="font-semibold">{gettext("Model")}:</span> {@detail_job.model || "-"}
+                </span>
+                <span>
+                  <span class="font-semibold">{gettext("Duration")}:</span>
+                  {format_duration(@detail_job.duration_ms)}
+                </span>
+                <span>
+                  <span class="font-semibold">{gettext("Attempt")}:</span>
+                  {@detail_job.attempt}/{@detail_job.max_attempts}
+                </span>
+              </div>
+            </div>
+            <div class="modal-backdrop" phx-click="close-detail"></div>
+          </div>
+        <% end %>
+
+        <%!-- Photo Enlargement Modal --%>
+        <%= if @enlarged_photo do %>
+          <div class="modal modal-open" phx-click="close-photo">
+            <div class="modal-box max-w-2xl p-2">
+              <button
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10"
+                phx-click="close-photo"
+              >
+                &times;
+              </button>
+              <img
+                src={Photos.signed_url(@enlarged_photo, :normal)}
+                class="w-full h-auto rounded"
+              />
+              <div class="text-center mt-2">
+                <.link
+                  navigate={~p"/admin/photos/#{@enlarged_photo.id}/history"}
+                  class="link link-primary text-sm"
+                >
+                  {gettext("View photo history")}
+                </.link>
+              </div>
+            </div>
+            <div class="modal-backdrop" phx-click="close-photo"></div>
+          </div>
+        <% end %>
       </div>
     </Layouts.app>
     """
@@ -676,13 +865,13 @@ defmodule AniminaWeb.Admin.AIJobsLive do
 
     ~H"""
     <%= if @photo do %>
-      <a href={~p"/admin/photos/#{@photo.id}/history"} class="block">
+      <button phx-click="enlarge-photo" phx-value-id={@photo.id} class="block cursor-zoom-in">
         <img
           src={Photos.signed_url(@photo, :thumbnail)}
           class="w-10 h-10 object-cover rounded"
           loading="lazy"
         />
-      </a>
+      </button>
     <% else %>
       <span class="text-xs text-base-content/40">{String.slice(@photo_id, 0, 8)}...</span>
     <% end %>
@@ -692,6 +881,17 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   defp action_buttons(assigns) do
     ~H"""
     <div class="flex gap-1">
+      <%= if @job.status in ~w(completed failed cancelled) do %>
+        <button
+          class="btn btn-xs btn-outline btn-info"
+          phx-click="show-detail"
+          phx-value-id={@job.id}
+          title={gettext("Details")}
+        >
+          <.icon name="hero-eye" class="h-3 w-3" />
+        </button>
+      <% end %>
+
       <%= if @job.status in ~w(failed cancelled) do %>
         <button
           class="btn btn-xs btn-outline btn-success"
@@ -779,6 +979,18 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   defp error_label("Error"), do: gettext("Error")
 
   # --- Formatting helpers ---
+
+  defp extract_hostname(nil), do: "-"
+
+  defp extract_hostname(url) do
+    case URI.parse(url) do
+      %URI{host: host} when is_binary(host) -> host
+      _ -> url
+    end
+  end
+
+  defp format_json(map) when is_map(map), do: Jason.encode!(map, pretty: true)
+  defp format_json(other), do: inspect(other)
 
   defp format_job_type("photo_classification"), do: "Classification"
   defp format_job_type("gender_guess"), do: "Gender Guess"

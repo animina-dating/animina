@@ -122,6 +122,22 @@ defmodule Animina.AI do
   # --- Job Management ---
 
   @doc """
+  Cancels a job with a terminal error (e.g. deleted photo).
+  Bypasses retry logic — sets status to cancelled immediately.
+  """
+  def cancel_with_error(job_id, error) do
+    case Repo.get(Job, job_id) do
+      nil ->
+        {:error, :not_found}
+
+      job ->
+        job
+        |> Job.admin_changeset(%{status: "cancelled", error: error})
+        |> Repo.update()
+    end
+  end
+
+  @doc """
   Cancels a pending or paused job.
   """
   def cancel(job_id) do

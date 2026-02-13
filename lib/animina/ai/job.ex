@@ -93,7 +93,7 @@ defmodule Animina.AI.Job do
   """
   def admin_changeset(job, attrs) do
     job
-    |> cast(attrs, [:status, :priority, :scheduled_at])
+    |> cast(attrs, [:status, :priority, :scheduled_at, :error])
     |> validate_inclusion(:status, @valid_statuses)
     |> validate_number(:priority, greater_than: 0, less_than_or_equal_to: 5)
   end
