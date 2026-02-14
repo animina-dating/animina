@@ -122,7 +122,8 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   @impl true
   def handle_event("force-cancel-job", %{"id" => job_id}, socket) do
     case AI.force_cancel(job_id) do
-      {:ok, _} -> {:noreply, reload_jobs(socket)}
+      {:ok, _} ->
+        {:noreply, reload_jobs(socket)}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Cannot cancel this job."))}
@@ -132,7 +133,8 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   @impl true
   def handle_event("force-restart-job", %{"id" => job_id}, socket) do
     case AI.force_restart(job_id) do
-      {:ok, _} -> {:noreply, reload_jobs(socket)}
+      {:ok, _} ->
+        {:noreply, reload_jobs(socket)}
 
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Cannot restart this job."))}
@@ -916,7 +918,13 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                 src={Photos.signed_url(@enlarged_photo, :normal)}
                 class="w-full h-auto rounded"
               />
-              <div class="text-center mt-2">
+              <div class="text-center mt-2 flex justify-center gap-4">
+                <.link
+                  navigate={~p"/admin/photos/#{@enlarged_photo.id}"}
+                  class="link link-primary text-sm"
+                >
+                  {gettext("View photo details")}
+                </.link>
                 <.link
                   navigate={~p"/admin/photos/#{@enlarged_photo.id}/history"}
                   class="link link-primary text-sm"

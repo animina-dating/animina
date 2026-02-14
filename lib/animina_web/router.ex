@@ -142,6 +142,8 @@ defmodule AniminaWeb.Router do
       on_mount: [{AniminaWeb.UserAuth, :require_admin}] do
       live "/admin", Admin.AdminHub, :index
       live "/admin/roles", Admin.UserRolesLive
+      live "/admin/photos", Admin.PhotoExplorerLive
+      live "/admin/photos/:id", Admin.PhotoDetailLive
       live "/admin/photos/:id/history", Admin.PhotoHistoryLive
       live "/admin/feature-flags", Admin.FlagsIndexLive
       live "/admin/flags", Admin.FlagsIndexLive

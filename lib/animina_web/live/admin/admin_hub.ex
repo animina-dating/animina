@@ -79,6 +79,12 @@ defmodule AniminaWeb.Admin.AdminHub do
             </:trailing>
           </.hub_card>
           <.hub_card
+            navigate={~p"/admin/photos"}
+            icon="hero-magnifying-glass-circle"
+            title={gettext("Photo Explorer")}
+            subtitle={gettext("Search and inspect any photo")}
+          />
+          <.hub_card
             navigate={~p"/admin/photo-blacklist"}
             icon="hero-no-symbol"
             title={gettext("Photo Blacklist")}

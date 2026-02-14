@@ -208,6 +208,64 @@ defmodule Animina.Photos do
     |> Repo.update()
   end
 
+  # --- Search ---
+
+  @doc """
+  Searches photos across user display_name, email, mobile_phone, and photo description.
+
+  Returns a paginated result map with entries containing photo + owner info.
+
+  ## Options
+
+    * `:page` - Page number (default 1)
+    * `:per_page` - Results per page (default 25)
+    * `:state` - Filter by photo state (nil = all)
+  """
+  def search_photos(query, opts \\ []) do
+    page = Keyword.get(opts, :page, 1)
+    per_page = Keyword.get(opts, :per_page, 25)
+    state = Keyword.get(opts, :state)
+    search_term = "%#{query}%"
+
+    base =
+      from(p in Photo,
+        join: u in Animina.Accounts.User,
+        on: p.owner_type == "User" and p.owner_id == u.id,
+        where:
+          ilike(u.display_name, ^search_term) or
+            ilike(u.email, ^search_term) or
+            ilike(u.mobile_phone, ^search_term) or
+            ilike(p.description, ^search_term),
+        select: %{
+          photo: p,
+          user_display_name: u.display_name,
+          user_email: u.email,
+          user_id: u.id
+        },
+        order_by: [desc: p.inserted_at]
+      )
+
+    base = if state, do: where(base, [p], p.state == ^state), else: base
+
+    total_count = Repo.aggregate(base, :count)
+    total_pages = max(ceil(total_count / per_page), 1)
+    offset = (page - 1) * per_page
+
+    entries =
+      base
+      |> limit(^per_page)
+      |> offset(^offset)
+      |> Repo.all()
+
+    %{
+      entries: entries,
+      total_count: total_count,
+      page: page,
+      per_page: per_page,
+      total_pages: total_pages
+    }
+  end
+
   # --- Polymorphic queries ---
 
   @doc """

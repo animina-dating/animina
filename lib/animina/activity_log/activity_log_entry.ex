@@ -23,7 +23,7 @@ defmodule Animina.ActivityLog.ActivityLogEntry do
     "profile" =>
       ~w(profile_updated flags_changed moodboard_changed preferences_changed location_changed avatar_changed email_changed password_changed passkey_registered passkey_deleted account_registered account_deleted account_reactivated registration_step_completed referral_waitlist_reduced tos_accepted),
     "admin" =>
-      ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry blacklist_entry_added blacklist_entry_removed report_resolved report_appeal_resolved user_warned user_suspended user_banned user_unsuspended karen_auto_reported),
+      ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry photo_description_regenerated blacklist_entry_added blacklist_entry_removed report_resolved report_appeal_resolved user_warned user_suspended user_banned user_unsuspended karen_auto_reported),
     "system" =>
       ~w(photo_uploaded photo_approved photo_rejected photo_processing photo_description_generated email_sent email_bounced ollama_processed account_expired)
   }
