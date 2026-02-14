@@ -69,9 +69,6 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
 
   ## Examples
 
-      iex> humanize_key(:nsfw_score)
-      "Nsfw score"
-
       iex> humanize_key("confidence_level")
       "Confidence level"
   """

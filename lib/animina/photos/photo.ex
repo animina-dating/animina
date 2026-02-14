@@ -58,9 +58,7 @@ defmodule Animina.Photos.Photo do
     field :height, :integer
     field :position, :integer, default: 0
     field :nsfw, :boolean, default: false
-    field :nsfw_score, :float
     field :has_face, :boolean
-    field :face_score, :float
     field :error_message, :string
     field :dhash, :binary
 
@@ -110,9 +108,7 @@ defmodule Animina.Photos.Photo do
         :width,
         :height,
         :nsfw,
-        :nsfw_score,
         :has_face,
-        :face_score,
         :error_message,
         :dhash,
         :ollama_retry_count,

@@ -61,8 +61,7 @@ defmodule Animina.PhotosFixtures do
       state: "approved",
       width: 800,
       height: 600,
-      nsfw: true,
-      nsfw_score: 0.95
+      nsfw: true
     })
     |> Repo.update!()
   end
@@ -91,7 +90,6 @@ defmodule Animina.PhotosFixtures do
       height: 600,
       nsfw: false,
       has_face: false,
-      face_score: 0.1,
       error_message: "No face detected in photo"
     })
     |> Repo.update!()
@@ -110,7 +108,6 @@ defmodule Animina.PhotosFixtures do
         height: 600,
         nsfw: false,
         has_face: false,
-        face_score: 0.1,
         error_message: "No face detected in photo"
       }
       |> maybe_add_dhash(attrs)
