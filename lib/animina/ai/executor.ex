@@ -125,22 +125,49 @@ defmodule Animina.AI.Executor do
   defp handle_success(job, module, response, attrs) do
     case module.handle_result(job, response) do
       {:ok, result_map} ->
-        AI.mark_completed(job, Map.merge(attrs, %{result: result_map}))
-        Logger.info("AI job #{job.id} (#{job.job_type}) completed in #{attrs.duration_ms}ms")
-        :ok
+        case AI.mark_completed(job, Map.merge(attrs, %{result: result_map})) do
+          {:ok, _} ->
+            Logger.info("AI job #{job.id} (#{job.job_type}) completed in #{attrs.duration_ms}ms")
+            :ok
+
+          {:error, :job_not_running} ->
+            Logger.info(
+              "AI.Executor: Job #{job.id} was cancelled/restarted while running; result discarded"
+            )
+
+            :ok
+        end
 
       {:error, reason} ->
         error_msg = "Result handling failed: #{inspect(reason)}"
-        AI.mark_failed(job, error_msg, attrs)
-        Logger.warning("AI.Executor: #{error_msg} for job #{job.id}")
+
+        case AI.mark_failed(job, error_msg, attrs) do
+          {:error, :job_not_running} ->
+            Logger.info(
+              "AI.Executor: Job #{job.id} was cancelled/restarted while running; failure discarded"
+            )
+
+          _ ->
+            Logger.warning("AI.Executor: #{error_msg} for job #{job.id}")
+        end
+
         :error
     end
   end
 
   defp handle_failure(job, reason, attrs) do
     error_msg = inspect(reason)
-    AI.mark_failed(job, error_msg, attrs)
-    Logger.warning("AI.Executor: Job #{job.id} failed: #{error_msg}")
+
+    case AI.mark_failed(job, error_msg, attrs) do
+      {:error, :job_not_running} ->
+        Logger.info(
+          "AI.Executor: Job #{job.id} was cancelled/restarted while running; failure discarded"
+        )
+
+      _ ->
+        Logger.warning("AI.Executor: Job #{job.id} failed: #{error_msg}")
+    end
+
     :error
   end
 

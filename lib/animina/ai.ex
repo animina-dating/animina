@@ -156,6 +156,44 @@ defmodule Animina.AI do
   end
 
   @doc """
+  Force-cancels a running job. Sets status to "cancelled" with an admin error message.
+  Only works on running jobs.
+  """
+  def force_cancel(job_id) do
+    case Repo.get(Job, job_id) do
+      nil ->
+        {:error, :not_found}
+
+      %Job{status: "running"} = job ->
+        job
+        |> Job.admin_changeset(%{status: "cancelled", error: "Force cancelled by admin"})
+        |> Repo.update()
+
+      _ ->
+        {:error, :not_cancellable}
+    end
+  end
+
+  @doc """
+  Force-restarts a running job by resetting it to "pending".
+  Only works on running jobs.
+  """
+  def force_restart(job_id) do
+    case Repo.get(Job, job_id) do
+      nil ->
+        {:error, :not_found}
+
+      %Job{status: "running"} = job ->
+        job
+        |> Job.admin_changeset(%{status: "pending", scheduled_at: nil})
+        |> Repo.update()
+
+      _ ->
+        {:error, :not_restartable}
+    end
+  end
+
+  @doc """
   Retries a failed or cancelled job by resetting it to pending.
   """
   def retry(job_id, opts \\ []) do
@@ -430,6 +468,42 @@ defmodule Animina.AI do
     count
   end
 
+  @stuck_error_prefix "Reset: job stuck running"
+
+  @doc """
+  Resets jobs that have been running longer than `timeout_seconds` back to "scheduled".
+
+  This catches stuck jobs (e.g., Ollama hangs, Task process crashes without cleanup).
+  Each job is only auto-reset once — jobs whose error already starts with the
+  stuck prefix are skipped to prevent infinite restart loops.
+  Runs as a single efficient SQL query, usually matching 0 rows.
+  """
+  def reset_stuck_jobs(timeout_seconds \\ 180) do
+    cutoff = DateTime.utc_now() |> DateTime.add(-timeout_seconds, :second)
+    prefix = @stuck_error_prefix <> "%"
+
+    {count, _} =
+      Job
+      |> where(
+        [j],
+        j.status == "running" and j.updated_at < ^cutoff and
+          (is_nil(j.error) or not like(j.error, ^prefix))
+      )
+      |> Repo.update_all(
+        set: [
+          status: "scheduled",
+          error: "#{@stuck_error_prefix} for over #{timeout_seconds}s",
+          updated_at: DateTime.utc_now()
+        ]
+      )
+
+    if count > 0 do
+      Logger.warning("AI: Reset #{count} stuck job(s) running longer than #{timeout_seconds}s")
+    end
+
+    count
+  end
+
   @doc """
   Marks a job as running with the given attempt number.
   """
@@ -444,35 +518,68 @@ defmodule Animina.AI do
 
   @doc """
   Marks a job as completed with its result.
+
+  Uses a conditional UPDATE (WHERE status = 'running') to prevent overwriting
+  a job that was cancelled or restarted by an admin while executing.
+  Returns `{:error, :job_not_running}` if the job is no longer running.
   """
   def mark_completed(job, attrs) do
-    job
-    |> Job.update_changeset(Map.merge(attrs, %{status: "completed"}))
-    |> Repo.update()
+    merged = Map.merge(attrs, %{status: "completed"})
+    conditional_update(job, merged)
   end
 
   @doc """
   Marks a job as failed. If max attempts not reached, schedules retry.
+
+  Uses a conditional UPDATE (WHERE status = 'running') to prevent overwriting
+  a job that was cancelled or restarted by an admin while executing.
+  Returns `{:error, :job_not_running}` if the job is no longer running.
   """
   def mark_failed(job, error, attrs \\ %{}) do
-    if job.attempt >= job.max_attempts do
-      job
-      |> Job.update_changeset(Map.merge(attrs, %{status: "failed", error: error}))
-      |> Repo.update()
-    else
-      # Schedule retry with backoff: 15 * attempt minutes
-      retry_minutes = 15 * job.attempt
-      scheduled_at = DateTime.utc_now() |> DateTime.add(retry_minutes, :minute)
+    merged =
+      if job.attempt >= job.max_attempts do
+        Map.merge(attrs, %{status: "failed", error: error})
+      else
+        # Schedule retry with backoff: 15 * attempt minutes
+        retry_minutes = 15 * job.attempt
+        scheduled_at = DateTime.utc_now() |> DateTime.add(retry_minutes, :minute)
 
-      job
-      |> Job.update_changeset(
         Map.merge(attrs, %{
           status: "scheduled",
           error: error,
           scheduled_at: scheduled_at
         })
-      )
-      |> Repo.update()
+      end
+
+    conditional_update(job, merged)
+  end
+
+  # Applies an update only if the job is still in "running" status.
+  # Returns {:ok, job} or {:error, :job_not_running}.
+  defp conditional_update(job, attrs) do
+    changeset = Job.update_changeset(job, attrs)
+
+    if changeset.valid? do
+      changes = changeset.changes
+      now = DateTime.utc_now()
+
+      set_fields =
+        changes
+        |> Map.put(:updated_at, now)
+        |> Enum.map(fn {k, v} -> {k, v} end)
+
+      {count, updated} =
+        Job
+        |> where([j], j.id == ^job.id and j.status == "running")
+        |> select([j], j)
+        |> Repo.update_all(set: set_fields)
+
+      case {count, updated} do
+        {1, [updated_job]} -> {:ok, updated_job}
+        {0, []} -> {:error, :job_not_running}
+      end
+    else
+      {:error, changeset}
     end
   end
 

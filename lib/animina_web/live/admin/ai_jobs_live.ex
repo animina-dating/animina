@@ -120,6 +120,26 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   end
 
   @impl true
+  def handle_event("force-cancel-job", %{"id" => job_id}, socket) do
+    case AI.force_cancel(job_id) do
+      {:ok, _} -> {:noreply, reload_jobs(socket)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Cannot cancel this job."))}
+    end
+  end
+
+  @impl true
+  def handle_event("force-restart-job", %{"id" => job_id}, socket) do
+    case AI.force_restart(job_id) do
+      {:ok, _} -> {:noreply, reload_jobs(socket)}
+
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, gettext("Cannot restart this job."))}
+    end
+  end
+
+  @impl true
   def handle_event("reprioritize", %{"id" => job_id, "priority" => priority}, socket) do
     case AI.reprioritize(job_id, String.to_integer(priority)) do
       {:ok, _} ->
@@ -977,6 +997,35 @@ defmodule AniminaWeb.Admin.AIJobsLive do
           class="btn btn-xs btn-outline btn-error"
           phx-click="cancel-job"
           phx-value-id={@job.id}
+          title={gettext("Cancel")}
+        >
+          <.icon name="hero-x-mark" class="h-3 w-3" />
+        </button>
+      <% end %>
+
+      <%= if @job.status == "running" do %>
+        <button
+          class="btn btn-xs btn-outline btn-info"
+          phx-click="show-detail"
+          phx-value-id={@job.id}
+          title={gettext("Details")}
+        >
+          <.icon name="hero-eye" class="h-3 w-3" />
+        </button>
+        <button
+          class="btn btn-xs btn-warning"
+          phx-click="force-restart-job"
+          phx-value-id={@job.id}
+          data-confirm={gettext("Restart this running job?")}
+          title={gettext("Restart")}
+        >
+          <.icon name="hero-arrow-path" class="h-3 w-3" />
+        </button>
+        <button
+          class="btn btn-xs btn-error"
+          phx-click="force-cancel-job"
+          phx-value-id={@job.id}
+          data-confirm={gettext("Cancel this running job?")}
           title={gettext("Cancel")}
         >
           <.icon name="hero-x-mark" class="h-3 w-3" />

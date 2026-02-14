@@ -23,6 +23,7 @@ defmodule Animina.AI.Scheduler do
   @default_poll_interval_ms 5_000
   @default_batch_size 5
   @description_seed_interval_ms 60_000
+  @stuck_job_timeout_seconds 180
 
   # --- Client API ---
 
@@ -106,6 +107,8 @@ defmodule Animina.AI.Scheduler do
   # --- Private ---
 
   defp do_poll(state) do
+    AI.reset_stuck_jobs(@stuck_job_timeout_seconds)
+
     if AI.queue_paused?() do
       state
     else

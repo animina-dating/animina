@@ -258,6 +258,135 @@ defmodule Animina.AITest do
     end
   end
 
+  describe "force_cancel/1" do
+    test "cancels a running job" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, running} = AI.mark_running(job)
+
+      assert {:ok, cancelled} = AI.force_cancel(running.id)
+      assert cancelled.status == "cancelled"
+      assert cancelled.error =~ "Force cancelled by admin"
+    end
+
+    test "rejects non-running job" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+
+      assert {:error, :not_cancellable} = AI.force_cancel(job.id)
+    end
+
+    test "returns not_found for missing job" do
+      assert {:error, :not_found} = AI.force_cancel(Ecto.UUID.generate())
+    end
+  end
+
+  describe "force_restart/1" do
+    test "resets a running job to pending" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, running} = AI.mark_running(job)
+
+      assert {:ok, restarted} = AI.force_restart(running.id)
+      assert restarted.status == "pending"
+      assert is_nil(restarted.scheduled_at)
+    end
+
+    test "rejects non-running job" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+
+      assert {:error, :not_restartable} = AI.force_restart(job.id)
+    end
+
+    test "returns not_found for missing job" do
+      assert {:error, :not_found} = AI.force_restart(Ecto.UUID.generate())
+    end
+  end
+
+  describe "conditional mark_completed/2" do
+    test "does not overwrite a cancelled job" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, running} = AI.mark_running(job)
+
+      # Admin cancels while job is "running" — simulate race
+      {:ok, _} = AI.force_cancel(running.id)
+
+      # Executor tries to mark completed with stale struct
+      assert {:error, :job_not_running} =
+               AI.mark_completed(running, %{result: %{"gender" => "female"}, duration_ms: 100})
+    end
+  end
+
+  describe "conditional mark_failed/3" do
+    test "does not overwrite a cancelled job" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"}, max_attempts: 1)
+      {:ok, running} = AI.mark_running(job)
+
+      # Admin cancels while job is "running"
+      {:ok, _} = AI.force_cancel(running.id)
+
+      # Executor tries to mark failed with stale struct
+      assert {:error, :job_not_running} = AI.mark_failed(running, "some error")
+    end
+  end
+
+  describe "reset_stuck_jobs/1" do
+    test "resets jobs running longer than timeout" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, _running} = AI.mark_running(job)
+
+      # Backdate updated_at to simulate stuck job (5 minutes ago)
+      Repo.update_all(
+        from(j in Job, where: j.id == ^job.id),
+        set: [updated_at: DateTime.utc_now() |> DateTime.add(-300, :second)]
+      )
+
+      count = AI.reset_stuck_jobs(180)
+      assert count == 1
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "scheduled"
+      assert updated.error =~ "stuck"
+    end
+
+    test "leaves recently started jobs alone" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, _running} = AI.mark_running(job)
+
+      count = AI.reset_stuck_jobs(180)
+      assert count == 0
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "running"
+    end
+
+    test "only auto-resets a stuck job once" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+      {:ok, _running} = AI.mark_running(job)
+
+      # Backdate to simulate stuck
+      Repo.update_all(
+        from(j in Job, where: j.id == ^job.id),
+        set: [updated_at: DateTime.utc_now() |> DateTime.add(-300, :second)]
+      )
+
+      # First reset works
+      assert AI.reset_stuck_jobs(180) == 1
+      updated = AI.get_job(job.id)
+      assert updated.status == "scheduled"
+
+      # Simulate it getting picked up and running again, then getting stuck again
+      updated
+      |> Job.update_changeset(%{status: "running"})
+      |> Repo.update!()
+
+      Repo.update_all(
+        from(j in Job, where: j.id == ^job.id),
+        set: [updated_at: DateTime.utc_now() |> DateTime.add(-300, :second)]
+      )
+
+      # Second reset should NOT pick it up (already has stuck error)
+      assert AI.reset_stuck_jobs(180) == 0
+    end
+  end
+
   describe "enqueue_all_photo_descriptions/1" do
     import Animina.PhotosFixtures
 
