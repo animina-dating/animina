@@ -99,6 +99,8 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_value(value) when is_float(value), do: Float.round(value, 3) |> to_string()
   def format_value(value) when is_boolean(value), do: to_string(value)
   def format_value(nil), do: "-"
+  def format_value(value) when is_map(value), do: Jason.encode!(value)
+  def format_value(value) when is_list(value), do: Jason.encode!(value)
   def format_value(value), do: to_string(value)
 
   @doc """

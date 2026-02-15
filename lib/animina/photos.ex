@@ -305,12 +305,26 @@ defmodule Animina.Photos do
 
   @doc """
   Lists photos in any of the given states.
+
+  Accepts an optional `older_than_seconds` parameter to only return photos
+  whose `updated_at` is older than the given threshold. This prevents
+  recovering photos that are legitimately in-progress.
   """
-  def list_photos_by_states(states) when is_list(states) do
-    Photo
-    |> where([p], p.state in ^states)
-    |> order_by([p], asc: p.inserted_at)
-    |> Repo.all()
+  def list_photos_by_states(states, older_than_seconds \\ 0) when is_list(states) do
+    query =
+      Photo
+      |> where([p], p.state in ^states)
+      |> order_by([p], asc: p.inserted_at)
+
+    query =
+      if older_than_seconds > 0 do
+        cutoff = DateTime.add(DateTime.utc_now(), -older_than_seconds, :second)
+        where(query, [p], p.updated_at < ^cutoff)
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 
   @doc """

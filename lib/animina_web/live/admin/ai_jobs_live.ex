@@ -722,17 +722,23 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                     <.subject_cell job={job} />
                   </td>
                   <td>
-                    <span class={["badge badge-sm", job_type_badge_class(job.job_type)]}>
+                    <span class={[
+                      "badge badge-sm whitespace-nowrap",
+                      job_type_badge_class(job.job_type)
+                    ]}>
                       {format_job_type(job.job_type)}
                     </span>
                   </td>
                   <td>
-                    <span class={["badge badge-sm", priority_badge_class(job.priority)]}>
+                    <span class={[
+                      "badge badge-sm whitespace-nowrap",
+                      priority_badge_class(job.priority)
+                    ]}>
                       {format_priority(job.priority)}
                     </span>
                   </td>
                   <td>
-                    <span class={["badge badge-sm", status_badge_class(job.status)]}>
+                    <span class={["badge badge-sm whitespace-nowrap", status_badge_class(job.status)]}>
                       {job.status}
                     </span>
                     <%= if job.error do %>
@@ -962,13 +968,13 @@ defmodule AniminaWeb.Admin.AIJobsLive do
 
     ~H"""
     <%= if @photo do %>
-      <button phx-click="enlarge-photo" phx-value-id={@photo.id} class="block cursor-zoom-in">
+      <.link navigate={~p"/admin/photos/#{@photo.id}"} class="block">
         <img
           src={Photos.signed_url(@photo, :thumbnail)}
           class="w-10 h-10 object-cover rounded"
           loading="lazy"
         />
-      </button>
+      </.link>
     <% else %>
       <span class="text-xs text-base-content/40">{String.slice(@photo_id, 0, 8)}...</span>
     <% end %>

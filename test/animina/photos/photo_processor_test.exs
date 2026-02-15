@@ -8,12 +8,25 @@ defmodule Animina.Photos.PhotoProcessorTest do
   import Animina.PhotosFixtures
 
   describe "recover_stuck_photos/0" do
+    # Backdate updated_at so the photo appears stuck (older than the threshold)
+    defp make_stuck(photo) do
+      old_time = DateTime.add(DateTime.utc_now(), -300, :second)
+      {:ok, bin_id} = Ecto.UUID.dump(photo.id)
+
+      Repo.query!("UPDATE photos SET updated_at = $1 WHERE id = $2", [
+        old_time,
+        bin_id
+      ])
+    end
+
     test "recovers photos in processing state" do
       photo = photo_fixture()
 
       photo
       |> Ecto.Changeset.change(%{state: "processing"})
       |> Repo.update!()
+
+      make_stuck(photo)
 
       assert {:ok, 1} = PhotoProcessor.recover_stuck_photos()
 
@@ -28,10 +41,25 @@ defmodule Animina.Photos.PhotoProcessorTest do
       |> Ecto.Changeset.change(%{state: "ollama_checking", width: 800, height: 600})
       |> Repo.update!()
 
+      make_stuck(photo)
+
       assert {:ok, 1} = PhotoProcessor.recover_stuck_photos()
 
       updated = Photos.get_photo!(photo.id)
       assert updated.state == "pending"
+    end
+
+    test "does not recover recently-updated photos that are still in progress" do
+      photo = photo_fixture()
+
+      photo
+      |> Ecto.Changeset.change(%{state: "processing"})
+      |> Repo.update!()
+
+      # Don't backdate — photo is freshly updated (legitimately in progress)
+      assert {:ok, 0} = PhotoProcessor.recover_stuck_photos()
+
+      assert Photos.get_photo!(photo.id).state == "processing"
     end
 
     test "recovers multiple stuck photos" do
@@ -43,6 +71,9 @@ defmodule Animina.Photos.PhotoProcessorTest do
       photo2
       |> Ecto.Changeset.change(%{state: "ollama_checking", width: 800, height: 600})
       |> Repo.update!()
+
+      make_stuck(photo1)
+      make_stuck(photo2)
 
       assert {:ok, 2} = PhotoProcessor.recover_stuck_photos()
 
@@ -68,6 +99,8 @@ defmodule Animina.Photos.PhotoProcessorTest do
       photo
       |> Ecto.Changeset.change(%{state: "processing"})
       |> Repo.update!()
+
+      make_stuck(photo)
 
       PhotoProcessor.recover_stuck_photos()
 

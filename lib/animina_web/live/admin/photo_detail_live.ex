@@ -11,7 +11,7 @@ defmodule AniminaWeb.Admin.PhotoDetailLive do
   @impl true
   def mount(%{"id" => photo_id}, _session, socket) do
     photo = Photos.get_photo!(photo_id)
-    owner = Accounts.get_user!(photo.owner_id)
+    owner = Accounts.get_user(photo.owner_id)
     history = Photos.get_photo_history(photo_id)
 
     {:ok,
@@ -100,13 +100,17 @@ defmodule AniminaWeb.Admin.PhotoDetailLive do
             <div class="text-sm text-base-content/60 space-y-1">
               <p>
                 <span class="font-medium">{gettext("Owner")}:</span>
-                <.link
-                  navigate={~p"/users/#{@owner.id}"}
-                  class="link link-primary"
-                >
-                  {@owner.display_name}
-                </.link>
-                <span class="text-base-content/40 ml-1">({@owner.email})</span>
+                <%= if @owner do %>
+                  <.link
+                    navigate={~p"/users/#{@owner.id}"}
+                    class="link link-primary"
+                  >
+                    {@owner.display_name}
+                  </.link>
+                  <span class="text-base-content/40 ml-1">({@owner.email})</span>
+                <% else %>
+                  <span class="text-base-content/40">{gettext("Deleted user")}</span>
+                <% end %>
               </p>
               <p>
                 <span class="font-medium">{gettext("ID")}:</span>

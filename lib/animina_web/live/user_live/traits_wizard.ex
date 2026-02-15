@@ -164,11 +164,20 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
       </div>
 
       <%!-- Flag limit modal --%>
-      <dialog :if={@show_flag_limit_modal} class="modal modal-open" phx-window-keydown="close_flag_limit_modal" phx-key="Escape">
+      <dialog
+        :if={@show_flag_limit_modal}
+        class="modal modal-open"
+        phx-window-keydown="close_flag_limit_modal"
+        phx-key="Escape"
+      >
         <div class="modal-box">
           <h3 class="text-lg font-bold">{gettext("Flag limit reached")}</h3>
           <p class="py-4">
-            {gettext("You have reached the maximum number of %{color} flags (%{limit}). Please remove some flags before adding new ones.", color: flag_limit_color_label(@current_step), limit: @flag_limit_max)}
+            {gettext(
+              "You have reached the maximum number of %{color} flags (%{limit}). Please remove some flags before adding new ones.",
+              color: flag_limit_color_label(@current_step),
+              limit: @flag_limit_max
+            )}
           </p>
           <div class="modal-action">
             <button phx-click="close_flag_limit_modal" class="btn btn-primary">

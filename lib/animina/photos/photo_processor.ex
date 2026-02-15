@@ -600,5 +600,4 @@ defmodule Animina.Photos.PhotoProcessor do
       {:photo_state_changed, photo}
     )
   end
-
 end
