@@ -36,10 +36,16 @@ defmodule Animina.Photos.PhotoProcessor do
   # Note: pending_ollama state is NOT included as it has its own retry schedule
   @stuck_states ~w(processing ollama_checking)
 
+  # Only recover photos stuck for longer than this threshold (in seconds).
+  # This prevents recovering photos that are legitimately in-progress,
+  # e.g. during dev seeding when many photos are enqueued at boot time.
+  @stuck_threshold_seconds 120
+
   @doc """
   Recovers photos stuck in intermediate processing states after a server restart.
 
   This function finds all photos in intermediate states (processing, ollama_checking)
+  that have been in that state for more than #{@stuck_threshold_seconds} seconds,
   and transitions them back to `pending` state so they can be re-processed.
 
   Note: Photos in `pending_ollama` states are NOT recovered here. They maintain
@@ -48,7 +54,7 @@ defmodule Animina.Photos.PhotoProcessor do
   Returns `{:ok, count}` with the number of recovered photos.
   """
   def recover_stuck_photos do
-    stuck_photos = Photos.list_photos_by_states(@stuck_states)
+    stuck_photos = Photos.list_photos_by_states(@stuck_states, @stuck_threshold_seconds)
     count = length(stuck_photos)
 
     if count > 0 do
@@ -121,10 +127,6 @@ defmodule Animina.Photos.PhotoProcessor do
          {:ok, photo} <- run_ollama_check(photo) do
       # Log final approval
       Photos.log_event(photo, "photo_approved", "system", nil, %{via: "automated_processing"})
-
-      # Delete original file after successful processing to save disk space
-      # and ensure no unprocessed EXIF data remains
-      cleanup_original_file(photo)
 
       broadcast_approved(photo)
 
@@ -599,27 +601,4 @@ defmodule Animina.Photos.PhotoProcessor do
     )
   end
 
-  # Delete original file after successful processing to save disk space
-  # and prevent any unprocessed EXIF data from remaining on disk
-  defp cleanup_original_file(%Photo{} = photo) do
-    case Photos.original_path(photo) do
-      {:ok, path} ->
-        case File.rm(path) do
-          :ok ->
-            Logger.debug("Cleaned up original file for photo #{photo.id}")
-            :ok
-
-          {:error, reason} ->
-            Logger.warning(
-              "Failed to clean up original file for photo #{photo.id}: #{inspect(reason)}"
-            )
-
-            :ok
-        end
-
-      {:error, :not_found} ->
-        # Already deleted or never existed
-        :ok
-    end
-  end
 end
