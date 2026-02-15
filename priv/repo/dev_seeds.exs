@@ -584,23 +584,8 @@ defmodule Animina.Seeds.DevUsers do
       create_user(user_data, "female", country.id, index + 30)
     end
 
-    IO.puts("\n=== Development Users Seeded Successfully ===")
-    IO.puts("Total users created: 60")
-    IO.puts("Password for all: #{@password}\n")
-  end
-
-  @doc """
-  Seeds 40 additional female users designed to exercise every V2 discovery
-  filter step when viewed from Thomas's perspective.
-  """
-  def seed_v2_test_users do
-    IO.puts("\n=== Seeding V2 Discovery Test Users ===\n")
-
-    country = GeoData.get_country_by_code("DE")
-
-    unless country do
-      raise "Germany (DE) not found in countries table. Run geo data seeds first."
-    end
+    # Seed V2 discovery test users
+    IO.puts("\nCreating V2 discovery test users...")
 
     lookup = build_flag_lookup()
 
@@ -608,7 +593,11 @@ defmodule Animina.Seeds.DevUsers do
       create_v2_user(user_data, country.id, idx, lookup)
     end
 
-    IO.puts("\n=== V2 Test Users Seeded (#{length(@v2_test_users)} users) ===\n")
+    total = length(@male_users) + length(@female_users) + length(@v2_test_users)
+
+    IO.puts("\n=== Development Users Seeded Successfully ===")
+    IO.puts("Total users created: #{total}")
+    IO.puts("Password for all: #{@password}\n")
   end
 
   defp create_v2_user(data, country_id, idx, lookup) do

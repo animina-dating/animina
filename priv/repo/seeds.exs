@@ -14,5 +14,4 @@
 if Mix.env() == :dev do
   Code.require_file("dev_seeds.exs", __DIR__)
   Animina.Seeds.DevUsers.seed_all()
-  Animina.Seeds.DevUsers.seed_v2_test_users()
 end
