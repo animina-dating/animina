@@ -155,6 +155,7 @@ defmodule Animina.Traits do
     with :ok <- Validations.validate_single_select(attrs),
          :ok <- Validations.validate_exclusive_hard(attrs),
          :ok <- Validations.validate_no_mixing(attrs),
+         :ok <- validate_flag_limit(attrs),
          {:ok, user_flag} <- PaperTrail.insert(changeset, pt_opts) |> PT.unwrap() do
       expand_on_write(user_flag)
       maybe_broadcast_white_flags(user_flag)
@@ -162,6 +163,25 @@ defmodule Animina.Traits do
       {:ok, user_flag}
     end
   end
+
+  defp validate_flag_limit(%{user_id: user_id, color: color}) when is_binary(color) do
+    max = max_flags_for_color(color)
+    user = %{id: user_id}
+    current = count_flags_by_single_color(user, color)
+
+    if current >= max do
+      {:error, :flag_limit_reached}
+    else
+      :ok
+    end
+  end
+
+  defp validate_flag_limit(_attrs), do: :ok
+
+  defp max_flags_for_color("white"), do: Animina.FeatureFlags.max_white_flags()
+  defp max_flags_for_color("green"), do: Animina.FeatureFlags.max_green_flags()
+  defp max_flags_for_color("red"), do: Animina.FeatureFlags.max_red_flags()
+  defp max_flags_for_color(_), do: :infinity
 
   defp maybe_broadcast_white_flags(%{color: "white", user_id: user_id}) do
     broadcast_white_flags_updated(user_id)

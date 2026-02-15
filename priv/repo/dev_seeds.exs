@@ -248,21 +248,19 @@ defmodule Animina.Seeds.DevUsers do
   # 10 personality profiles designed as 5 complementary pairs.
   # Males cycle 0..9, females cycle 1..9,0 (offset by 1) so complementary
   # profiles land on opposite genders for high discovery scores.
+  # Each profile has max 15 white flags (+1 Deutsch = 16, the configured limit).
   @trait_profiles [
-    # Profile 0: Adventurer — loves outdoor action, travel, rock music
+    # Profile 0: Adventurer — loves outdoor action, travel, rock music (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Love of Adventure", "Courage", "Active", "Self-Confidence", "Humor"],
-        "Sports" => ["Hiking", "Climbing", "Surfing", "Cycling"],
-        "Travels" => ["Hiking Vacation", "Active and Sports Vacation", "Camping"],
-        "Favorite Destinations" => ["Norway", "Australia", "Canada"],
-        "Music" => ["Rock", "Indie", "Alternative"],
-        "At Home" => ["Fitness Exercises", "Podcasts", "Cooking"],
-        "Going Out" => ["Festivals", "Concerts"],
-        "Food" => ["BBQ", "Street Food", "Mexican"],
-        "Creativity" => ["Photography", "Video Production"]
+        "Character" => ["Love of Adventure", "Courage", "Active"],
+        "Sports" => ["Hiking", "Climbing", "Surfing"],
+        "Travels" => ["Hiking Vacation", "Camping"],
+        "Music" => ["Rock", "Indie"],
+        "At Home" => ["Fitness Exercises", "Podcasts"],
+        "Going Out" => ["Festivals", "Concerts"]
       },
       green: %{
         "Character" => ["Love of Adventure", "Active", "Humor"],
@@ -273,21 +271,17 @@ defmodule Animina.Seeds.DevUsers do
         "Diet" => ["Vegan"]
       }
     },
-    # Profile 1: Nature Soul — calm outdoors lover, wellness, folk music
+    # Profile 1: Nature Soul — calm outdoors lover, wellness, folk music (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Empathy", "Caring", "Modesty", "Active", "Love of Adventure"],
-        "Sports" => ["Hiking", "Yoga", "Swimming", "Jogging"],
-        "Travels" => ["Hiking Vacation", "Wellness", "Beach"],
-        "Favorite Destinations" => ["Austria", "Switzerland", "Norway"],
-        "Music" => ["Folk", "Indie", "Classical"],
-        "At Home" => ["Gardening", "Reading", "Meditation", "Cooking"],
-        "Going Out" => ["Cafes", "Museums & Galleries"],
-        "Food" => ["Healthy Food", "Mediterranean", "Italian"],
-        "Self Care" => ["Mindfulness", "Good Sleep", "Nutrition"],
-        "Pets" => ["Dog", "Cat"]
+        "Character" => ["Empathy", "Caring", "Modesty"],
+        "Sports" => ["Hiking", "Yoga", "Swimming"],
+        "Travels" => ["Hiking Vacation", "Wellness"],
+        "Music" => ["Folk", "Classical"],
+        "At Home" => ["Gardening", "Reading", "Meditation"],
+        "Self Care" => ["Mindfulness", "Good Sleep"]
       },
       green: %{
         "Character" => ["Love of Adventure", "Active", "Empathy", "Caring"],
@@ -298,21 +292,16 @@ defmodule Animina.Seeds.DevUsers do
         "Substance Use" => ["Hard Drugs"]
       }
     },
-    # Profile 2: Creative — artistic, music-loving, design-focused
+    # Profile 2: Creative — artistic, music-loving, design-focused (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship", "Dates"],
-        "Character" => ["Creativity", "Intelligence", "Empathy", "Optimism", "Being Romantic"],
-        "Sports" => ["Yoga", "Pilates", "Swimming"],
-        "Travels" => ["City Trips", "Cultural Trips"],
-        "Favorite Destinations" => ["Italy", "France", "Spain"],
-        "Music" => ["Jazz", "Soul", "Classical", "Indie"],
-        "At Home" => ["Drawing", "Music", "Reading", "Movies"],
-        "Going Out" => ["Museums & Galleries", "Theater", "Concerts"],
-        "Food" => ["French", "Italian", "Japanese"],
-        "Creativity" => ["Painting", "Photography", "Design", "Making Music"],
-        "Literature" => ["Novels", "Poetry", "Philosophy"]
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Creativity", "Intelligence", "Empathy"],
+        "Sports" => ["Yoga", "Swimming"],
+        "Music" => ["Jazz", "Soul", "Classical"],
+        "Going Out" => ["Museums & Galleries", "Theater"],
+        "Creativity" => ["Painting", "Photography", "Design"]
       },
       green: %{
         "Character" => ["Intelligence", "Creativity", "Empathy"],
@@ -321,22 +310,17 @@ defmodule Animina.Seeds.DevUsers do
       },
       red: %{}
     },
-    # Profile 3: Intellectual — reader, thinker, deep conversations
+    # Profile 3: Intellectual — reader, thinker, deep conversations (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship", "Friendship"],
-        "Character" => ["Intelligence", "Honesty", "Empathy", "Creativity", "Sense of Justice"],
-        "Sports" => ["Swimming", "Jogging", "Cycling"],
-        "Travels" => ["Cultural Trips", "City Trips"],
-        "Favorite Destinations" => ["United Kingdom", "France", "Germany"],
-        "Music" => ["Classical", "Jazz", "Blues", "Folk"],
-        "At Home" => ["Reading", "Online Courses", "Podcasts", "Board Games"],
-        "Going Out" => ["Museums & Galleries", "Theater", "Stand-Up Comedy"],
-        "Food" => ["Indian", "Japanese", "Mediterranean"],
-        "Creativity" => ["Writing", "Photography"],
-        "Literature" => ["Science", "Philosophy", "Non-Fiction", "Biographies"],
-        "Self Care" => ["Deep Conversations", "Mindfulness"]
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Intelligence", "Honesty", "Empathy"],
+        "Sports" => ["Swimming", "Jogging"],
+        "Music" => ["Classical", "Jazz"],
+        "At Home" => ["Reading", "Online Courses", "Podcasts"],
+        "Literature" => ["Science", "Philosophy", "Non-Fiction"],
+        "Self Care" => ["Deep Conversations"]
       },
       green: %{
         "Character" => ["Intelligence", "Empathy", "Creativity", "Honesty"],
@@ -344,20 +328,17 @@ defmodule Animina.Seeds.DevUsers do
       },
       red: %{}
     },
-    # Profile 4: Family Person — caring, home-loving, traditional values
+    # Profile 4: Family Person — caring, home-loving, traditional values (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
-        "Character" => ["Family-Oriented", "Honesty", "Caring", "Sense of Responsibility", "Generosity"],
+        "Character" => ["Family-Oriented", "Honesty", "Caring"],
         "Want Children" => ["I Want (More) Children"],
-        "Sports" => ["Swimming", "Cycling", "Jogging"],
-        "Travels" => ["Beach", "Camping", "Wellness"],
-        "Favorite Destinations" => ["Spain", "Italy", "Croatia"],
-        "Music" => ["Pop", "Schlager", "Folk Music"],
-        "At Home" => ["Cooking", "Baking", "Gardening", "Board Games", "Movies"],
-        "Going Out" => ["Cafes", "Theater"],
-        "Food" => ["German", "Italian", "BBQ", "Pastries"],
+        "Sports" => ["Swimming", "Cycling"],
+        "Travels" => ["Beach", "Camping"],
+        "Music" => ["Pop", "Schlager"],
+        "At Home" => ["Cooking", "Baking", "Gardening"],
         "Pets" => ["Dog"]
       },
       green: %{
@@ -368,22 +349,18 @@ defmodule Animina.Seeds.DevUsers do
         "Want Children" => ["I Don't Want (More) Children"]
       }
     },
-    # Profile 5: Caring Partner — nurturing, empathetic, family-ready
+    # Profile 5: Caring Partner — nurturing, empathetic, family-ready (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
-        "Character" => ["Caring", "Empathy", "Family-Oriented", "Honesty", "Modesty"],
+        "Character" => ["Caring", "Empathy", "Family-Oriented"],
         "Want Children" => ["I Want (More) Children"],
-        "Sports" => ["Yoga", "Pilates", "Swimming"],
-        "Travels" => ["Beach", "Wellness", "Cultural Trips"],
-        "Favorite Destinations" => ["Greece", "Italy", "Portugal"],
-        "Music" => ["Pop", "Soul", "R&B"],
-        "At Home" => ["Cooking", "Baking", "Reading", "Handicrafts", "Series"],
-        "Going Out" => ["Cafes", "Karaoke"],
-        "Food" => ["Italian", "Greek", "Healthy Food", "Desserts"],
-        "Self Care" => ["Deep Conversations", "Good Sleep"],
-        "Pets" => ["Cat", "Dog"]
+        "Sports" => ["Yoga", "Swimming"],
+        "Travels" => ["Beach", "Wellness"],
+        "Music" => ["Pop", "Soul"],
+        "At Home" => ["Cooking", "Reading"],
+        "Self Care" => ["Deep Conversations", "Good Sleep"]
       },
       green: %{
         "Character" => ["Family-Oriented", "Caring", "Honesty", "Empathy"],
@@ -393,20 +370,16 @@ defmodule Animina.Seeds.DevUsers do
         "Want Children" => ["I Don't Want (More) Children"]
       }
     },
-    # Profile 6: Social Star — party-loving, outgoing, sporty
+    # Profile 6: Social Star — party-loving, outgoing, sporty (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship", "Something Casual"],
-        "Character" => ["Humor", "Self-Confidence", "Active", "Optimism", "Social Awareness"],
-        "Sports" => ["Soccer", "Basketball", "Gym", "Boxing"],
-        "Travels" => ["City Trips", "Beach", "Active and Sports Vacation"],
-        "Favorite Destinations" => ["USA", "Spain", "Thailand"],
-        "Music" => ["Hip-Hop", "Rap", "Techno", "House"],
-        "At Home" => ["Video Games", "Fitness Exercises", "Cooking"],
-        "Going Out" => ["Clubbing", "Bars", "Concerts", "Stand-Up Comedy"],
-        "Food" => ["American", "Mexican", "Fast Food", "Street Food"],
-        "Creativity" => ["Video Production", "Social Media"]
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Humor", "Self-Confidence", "Active"],
+        "Sports" => ["Soccer", "Basketball", "Gym"],
+        "Travels" => ["City Trips", "Beach"],
+        "Music" => ["Hip-Hop", "Techno"],
+        "Going Out" => ["Clubbing", "Bars", "Concerts"]
       },
       green: %{
         "Character" => ["Humor", "Self-Confidence", "Active"],
@@ -415,21 +388,17 @@ defmodule Animina.Seeds.DevUsers do
       },
       red: %{}
     },
-    # Profile 7: Free Spirit — independent, spontaneous, travel-loving
+    # Profile 7: Free Spirit — independent, spontaneous, travel-loving (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship", "Dates"],
-        "Character" => ["Self-Confidence", "Humor", "Love of Adventure", "Active", "Courage"],
-        "Sports" => ["Surfing", "Yoga", "Cycling", "Jogging"],
-        "Travels" => ["Beach", "City Trips", "Camping", "Bike Tours"],
-        "Favorite Destinations" => ["Bali", "Thailand", "Portugal", "South America"],
-        "Music" => ["Reggae", "Electronic", "Latin", "Indie"],
-        "At Home" => ["Cooking", "Podcasts", "Meditation", "Music"],
-        "Going Out" => ["Festivals", "Bars", "Concerts"],
-        "Food" => ["Thai", "Vietnamese", "Street Food", "Healthy Food"],
-        "Creativity" => ["Photography", "Making Music", "Dancing"],
-        "Self Care" => ["Mindfulness", "Going Offline"]
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Character" => ["Self-Confidence", "Humor", "Love of Adventure"],
+        "Sports" => ["Surfing", "Yoga", "Cycling"],
+        "Travels" => ["Beach", "City Trips", "Camping"],
+        "Music" => ["Reggae", "Electronic"],
+        "Going Out" => ["Festivals", "Bars"],
+        "Self Care" => ["Mindfulness"]
       },
       green: %{
         "Character" => ["Humor", "Active", "Self-Confidence", "Love of Adventure"],
@@ -437,21 +406,18 @@ defmodule Animina.Seeds.DevUsers do
       },
       red: %{}
     },
-    # Profile 8: Quiet Thinker — introverted, deep, book-loving
+    # Profile 8: Quiet Thinker — introverted, deep, book-loving (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Honesty", "Intelligence", "Empathy", "Modesty", "Resilience"],
-        "Sports" => ["Hiking", "Swimming", "Yoga"],
+        "Character" => ["Honesty", "Intelligence", "Empathy"],
+        "Sports" => ["Hiking", "Swimming"],
         "Travels" => ["Cultural Trips", "Hiking Vacation"],
-        "Favorite Destinations" => ["Germany", "Austria", "United Kingdom"],
-        "Music" => ["Classical", "Folk", "Blues", "Jazz"],
-        "At Home" => ["Reading", "Puzzles", "Meditation", "Audiobooks", "Journaling"],
-        "Going Out" => ["Museums & Galleries", "Cafes"],
-        "Food" => ["Japanese", "Indian", "Mediterranean"],
-        "Literature" => ["Philosophy", "Science Fiction", "Classics", "Psychology"],
-        "Self Care" => ["Deep Conversations", "Mindfulness", "Good Sleep"]
+        "Music" => ["Classical", "Folk"],
+        "At Home" => ["Reading", "Meditation"],
+        "Literature" => ["Philosophy", "Science Fiction"],
+        "Self Care" => ["Deep Conversations"]
       },
       green: %{
         "Character" => ["Honesty", "Empathy", "Intelligence"],
@@ -459,21 +425,17 @@ defmodule Animina.Seeds.DevUsers do
       },
       red: %{}
     },
-    # Profile 9: Romantic — loving, sentimental, partner-focused
+    # Profile 9: Romantic — loving, sentimental, partner-focused (15 white)
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship", "Marriage"],
-        "Character" => ["Being Romantic", "Empathy", "Honesty", "Caring", "Intelligence"],
-        "Sports" => ["Yoga", "Swimming", "Pilates"],
-        "Travels" => ["Beach", "Wellness", "Cruises"],
-        "Favorite Destinations" => ["Italy", "Greece", "France", "Mallorca"],
-        "Music" => ["Pop", "Soul", "Classical", "R&B"],
-        "At Home" => ["Cooking", "Movies", "Series", "Reading", "Baking"],
-        "Going Out" => ["Theater", "Cafes", "Concerts"],
-        "Food" => ["Italian", "French", "Desserts", "Mediterranean"],
-        "Creativity" => ["Photography", "Writing"],
-        "Literature" => ["Romance Novels", "Novels", "Poetry"]
+        "Character" => ["Being Romantic", "Empathy", "Honesty"],
+        "Sports" => ["Yoga", "Swimming"],
+        "Travels" => ["Beach", "Wellness"],
+        "Music" => ["Pop", "Soul", "Classical"],
+        "At Home" => ["Cooking", "Movies", "Reading"],
+        "Literature" => ["Romance Novels", "Poetry"]
       },
       green: %{
         "Character" => ["Honesty", "Empathy", "Being Romantic", "Intelligence"],
@@ -793,9 +755,8 @@ defmodule Animina.Seeds.DevUsers do
   defp create_avatar(user, gender, age, cache_key) do
     avatar_path = generate_avatar(gender, age, cache_key)
 
-    case Photos.upload_photo("User", user.id, avatar_path, type: "avatar", skip_enqueue: true) do
+    case Photos.upload_photo("User", user.id, avatar_path, type: "avatar") do
       {:ok, photo} ->
-        Photos.process_for_seeding(photo)
         Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
         {:ok, photo}
 
@@ -1030,36 +991,16 @@ defmodule Animina.Seeds.DevUsers do
   end
 
   defp create_photo_moodboard_item(user, source_path) do
-    case Moodboard.create_photo_item(user, source_path, skip_enqueue: true) do
-      {:ok, item} ->
-        # Process the photo (resize, webp) and approve it
-        item = Repo.preload(item, moodboard_photo: :photo)
-
-        if item.moodboard_photo && item.moodboard_photo.photo do
-          Photos.process_for_seeding(item.moodboard_photo.photo)
-        end
-
-        {:ok, item}
-
-      error ->
-        error
+    case Moodboard.create_photo_item(user, source_path) do
+      {:ok, item} -> {:ok, item}
+      error -> error
     end
   end
 
   defp create_combined_moodboard_item(user, source_path, story) do
-    case Moodboard.create_combined_item(user, source_path, story, skip_enqueue: true) do
-      {:ok, item} ->
-        # Process the photo (resize, webp) and approve it
-        item = Repo.preload(item, moodboard_photo: :photo)
-
-        if item.moodboard_photo && item.moodboard_photo.photo do
-          Photos.process_for_seeding(item.moodboard_photo.photo)
-        end
-
-        {:ok, item}
-
-      error ->
-        error
+    case Moodboard.create_combined_item(user, source_path, story) do
+      {:ok, item} -> {:ok, item}
+      error -> error
     end
   end
 

@@ -71,6 +71,12 @@ In prod/test these compile to direct passthroughs with zero overhead. In dev, th
 - Ollama debug/timing tools
 - Presence tracking (`System.system_time`)
 
+### Validation Convention
+
+**Always enforce business rules at the context level**, not only in LiveViews or controllers. UI-level checks are an optimisation for user experience (e.g. showing a modal), but the context must be the single source of truth. This ensures that seeds, IEx sessions, background jobs, and future code paths all respect the same constraints.
+
+Example: flag limits are validated inside `Traits.add_user_flag/2` so every caller is protected. The LiveView then pattern-matches on the `{:error, :flag_limit_reached}` tuple to show a friendly modal.
+
 ### Bug Fix Conventions
 
 When fixing bugs, always verify that the fix doesn't break related functionality. Run relevant tests and manually verify the feature still works end-to-end before considering the task complete.

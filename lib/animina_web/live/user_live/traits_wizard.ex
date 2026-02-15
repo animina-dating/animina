@@ -665,20 +665,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
   # Not selected — add as soft for green/red, hard for white
   defp do_toggle_flag(socket, user, nil, flag_id, step, color) do
-    max = max_flags_for_color(color)
-    current = Traits.count_flags_by_single_color(user, color)
-
-    if current >= max do
-      {:noreply,
-       socket
-       |> assign(:show_flag_limit_modal, true)
-       |> assign(:flag_limit_max, max)}
-    else
-      do_add_flag(socket, user, flag_id, step, color)
-    end
-  end
-
-  defp do_add_flag(socket, user, flag_id, step, color) do
     initial_intensity = if step in [2, 3], do: "soft", else: "hard"
 
     case Traits.find_existing_flag_in_category(user.id, flag_id, color) do
@@ -698,6 +684,14 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
          ) do
       {:ok, _user_flag} ->
         {:noreply, reload_user_flags(socket, user)}
+
+      {:error, :flag_limit_reached} ->
+        max = max_flags_for_color(color)
+
+        {:noreply,
+         socket
+         |> assign(:show_flag_limit_modal, true)
+         |> assign(:flag_limit_max, max)}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, gettext("Could not add flag."))}

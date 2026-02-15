@@ -3277,4 +3277,61 @@ defmodule Animina.TraitsTest do
       assert Traits.count_flags_by_single_color(user, "green") == 1
     end
   end
+
+  describe "add_user_flag/2 flag limit validation" do
+    test "rejects adding a flag when the limit is reached" do
+      user = user_fixture()
+      # Default white limit is 16 — create 16 flags, then try a 17th
+      category = category_fixture(%{selection_mode: "multi"})
+
+      flags =
+        for i <- 1..17 do
+          flag_fixture(%{category_id: category.id, name: "Limit #{i}", position: i})
+        end
+
+      # Add 16 flags successfully
+      for {flag, i} <- Enum.zip(Enum.take(flags, 16), 1..16) do
+        assert {:ok, _} =
+                 Traits.add_user_flag(%{
+                   user_id: user.id,
+                   flag_id: flag.id,
+                   color: "white",
+                   intensity: "hard",
+                   position: i
+                 })
+      end
+
+      # The 17th should be rejected
+      assert {:error, :flag_limit_reached} =
+               Traits.add_user_flag(%{
+                 user_id: user.id,
+                 flag_id: List.last(flags).id,
+                 color: "white",
+                 intensity: "hard",
+                 position: 17
+               })
+    end
+
+    test "allows adding flags up to the limit" do
+      user = user_fixture()
+      category = category_fixture(%{selection_mode: "multi"})
+
+      flags =
+        for i <- 1..10 do
+          flag_fixture(%{category_id: category.id, name: "Green #{i}", position: i})
+        end
+
+      # Default green limit is 10 — all 10 should succeed
+      for {flag, i} <- Enum.zip(flags, 1..10) do
+        assert {:ok, _} =
+                 Traits.add_user_flag(%{
+                   user_id: user.id,
+                   flag_id: flag.id,
+                   color: "green",
+                   intensity: "soft",
+                   position: i
+                 })
+      end
+    end
+  end
 end
