@@ -3172,4 +3172,109 @@ defmodule Animina.TraitsTest do
       assert "Adventure Travel" in flag_names
     end
   end
+
+  describe "seeded category: Love Languages" do
+    test "category exists with correct attributes" do
+      categories = Traits.list_categories()
+
+      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
+
+      assert category != nil
+      assert category.selection_mode == "single_white"
+      assert category.core == false
+      assert category.sensitive == false
+      assert category.picker_group == "lifestyle"
+      assert category.position == 30
+    end
+
+    test "category has all 5 flags" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
+      assert category != nil
+
+      flags = Traits.list_top_level_flags_by_category(category)
+      assert length(flags) == 5
+
+      flag_names = Enum.map(flags, & &1.name)
+      assert "Words of Affirmation" in flag_names
+      assert "Quality Time" in flag_names
+      assert "Acts of Service" in flag_names
+      assert "Receiving Gifts" in flag_names
+      assert "Physical Touch" in flag_names
+    end
+
+    test "flags have correct emojis and positions" do
+      categories = Traits.list_categories()
+      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
+      flags = Traits.list_top_level_flags_by_category(category)
+
+      words = Enum.find(flags, fn f -> f.name == "Words of Affirmation" end)
+      assert words.emoji == "💬"
+      assert words.position == 1
+
+      quality = Enum.find(flags, fn f -> f.name == "Quality Time" end)
+      assert quality.emoji == "⏰"
+      assert quality.position == 2
+
+      acts = Enum.find(flags, fn f -> f.name == "Acts of Service" end)
+      assert acts.emoji == "🤝"
+      assert acts.position == 3
+
+      gifts = Enum.find(flags, fn f -> f.name == "Receiving Gifts" end)
+      assert gifts.emoji == "🎁"
+      assert gifts.position == 4
+
+      touch = Enum.find(flags, fn f -> f.name == "Physical Touch" end)
+      assert touch.emoji == "🫂"
+      assert touch.position == 5
+    end
+  end
+
+  describe "count_flags_by_single_color/2" do
+    test "counts non-inherited flags for a single color" do
+      user = user_fixture()
+      category = category_fixture(%{selection_mode: "multi"})
+      flag1 = flag_fixture(%{category_id: category.id, name: "Count Flag 1"})
+      flag2 = flag_fixture(%{category_id: category.id, name: "Count Flag 2"})
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag1.id,
+          color: "white",
+          intensity: "hard",
+          position: 1
+        })
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: flag2.id,
+          color: "white",
+          intensity: "hard",
+          position: 2
+        })
+
+      assert Traits.count_flags_by_single_color(user, "white") == 2
+      assert Traits.count_flags_by_single_color(user, "green") == 0
+      assert Traits.count_flags_by_single_color(user, "red") == 0
+    end
+
+    test "does not count inherited flags" do
+      user = user_fixture()
+      {parent, _children} = flag_with_children_fixture()
+
+      {:ok, _} =
+        Traits.add_user_flag(%{
+          user_id: user.id,
+          flag_id: parent.id,
+          color: "green",
+          intensity: "soft",
+          position: 1
+        })
+
+      # Parent + 3 children exist, but only 1 non-inherited
+      assert Traits.count_flags_by_single_color(user, "green") == 1
+    end
+  end
 end

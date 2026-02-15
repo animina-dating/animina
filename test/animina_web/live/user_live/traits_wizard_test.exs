@@ -805,4 +805,71 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
              )
     end
   end
+
+  describe "flag limit modal" do
+    setup %{user: user} do
+      category = category_fixture(%{name: "Limit Test Cat", position: 100, core: true})
+
+      flags =
+        for i <- 1..17 do
+          flag_fixture(%{
+            name: "Limit Flag #{i}",
+            emoji: "🏷️",
+            category_id: category.id,
+            position: i
+          })
+        end
+
+      # Pre-fill 16 white flags for the user
+      for flag <- Enum.take(flags, 16) do
+        {:ok, _} =
+          Animina.Traits.add_user_flag(%{
+            user_id: user.id,
+            flag_id: flag.id,
+            color: "white",
+            intensity: "hard",
+            position: flag.position
+          })
+      end
+
+      %{category: category, flags: flags, seventeenth_flag: List.last(flags)}
+    end
+
+    test "modal appears when white flag limit is reached", %{
+      conn: conn,
+      seventeenth_flag: flag17
+    } do
+      {:ok, view, _html} = live(conn, ~p"/my/settings/profile/traits")
+
+      # Try to add the 17th white flag
+      html =
+        view
+        |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag17.id}\"]")
+        |> render_click()
+
+      assert html =~ "Flag limit reached"
+      # Verify the limit number is shown in the modal body
+      assert html =~ "(16)"
+    end
+
+    test "modal is dismissable with OK button", %{
+      conn: conn,
+      seventeenth_flag: flag17
+    } do
+      {:ok, view, _html} = live(conn, ~p"/my/settings/profile/traits")
+
+      # Trigger the modal
+      view
+      |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag17.id}\"]")
+      |> render_click()
+
+      # Close the modal via the OK button
+      html =
+        view
+        |> element("button[phx-click=close_flag_limit_modal]")
+        |> render_click()
+
+      refute html =~ "Flag limit reached"
+    end
+  end
 end

@@ -385,7 +385,14 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Spooning"),
       gettext("69"),
       gettext("Standing"),
-      gettext("Against the Wall")
+      gettext("Against the Wall"),
+      # ── Love Languages flags ──
+      gettext("Love Languages"),
+      gettext("Words of Affirmation"),
+      gettext("Quality Time"),
+      gettext("Acts of Service"),
+      gettext("Receiving Gifts"),
+      gettext("Physical Touch")
     ]
   end
 end

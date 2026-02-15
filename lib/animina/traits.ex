@@ -366,6 +366,16 @@ defmodule Animina.Traits do
     |> Map.new()
   end
 
+  @doc """
+  Counts non-inherited user flags for a single color.
+  """
+  def count_flags_by_single_color(user, color) do
+    from(uf in UserFlag,
+      where: uf.user_id == ^user.id and uf.inherited == false and uf.color == ^color
+    )
+    |> Repo.aggregate(:count)
+  end
+
   def delete_all_user_flags(user, opts \\ []) do
     pt_opts = PT.opts(opts)
 

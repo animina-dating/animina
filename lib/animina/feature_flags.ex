@@ -296,6 +296,33 @@ defmodule Animina.FeatureFlags do
       default_value: 4,
       min_value: 1,
       max_value: 10
+    },
+    %{
+      name: :max_white_flags,
+      label: "Max White Flags",
+      description: "Maximum number of white (About Me) flags a user can select",
+      type: :integer,
+      default_value: 16,
+      min_value: 1,
+      max_value: 50
+    },
+    %{
+      name: :max_green_flags,
+      label: "Max Green Flags",
+      description: "Maximum number of green (Partner Likes) flags a user can select",
+      type: :integer,
+      default_value: 10,
+      min_value: 1,
+      max_value: 50
+    },
+    %{
+      name: :max_red_flags,
+      label: "Max Red Flags",
+      description: "Maximum number of red (Deal Breaker) flags a user can select",
+      type: :integer,
+      default_value: 10,
+      min_value: 1,
+      max_value: 50
     }
   ]
 
@@ -757,5 +784,31 @@ defmodule Animina.FeatureFlags do
   """
   def chat_love_emergency_cost do
     get_system_setting_value(:chat_love_emergency_cost, 4)
+  end
+
+  # --- Flag Limit Settings ---
+
+  @doc """
+  Returns the maximum number of white flags a user can select.
+  Default: 16
+  """
+  def max_white_flags do
+    get_system_setting_value(:max_white_flags, 16)
+  end
+
+  @doc """
+  Returns the maximum number of green flags a user can select.
+  Default: 10
+  """
+  def max_green_flags do
+    get_system_setting_value(:max_green_flags, 10)
+  end
+
+  @doc """
+  Returns the maximum number of red flags a user can select.
+  Default: 10
+  """
+  def max_red_flags do
+    get_system_setting_value(:max_red_flags, 10)
   end
 end

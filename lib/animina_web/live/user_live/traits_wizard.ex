@@ -1,6 +1,7 @@
 defmodule AniminaWeb.UserLive.TraitsWizard do
   use AniminaWeb, :live_view
 
+  alias Animina.FeatureFlags
   alias Animina.Traits
   alias AniminaWeb.TraitTranslations
 
@@ -161,6 +162,22 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         <%!-- Spacer for sticky nav --%>
         <div class="h-20"></div>
       </div>
+
+      <%!-- Flag limit modal --%>
+      <dialog :if={@show_flag_limit_modal} class="modal modal-open" phx-window-keydown="close_flag_limit_modal" phx-key="Escape">
+        <div class="modal-box">
+          <h3 class="text-lg font-bold">{gettext("Flag limit reached")}</h3>
+          <p class="py-4">
+            {gettext("You have reached the maximum number of %{color} flags (%{limit}). Please remove some flags before adding new ones.", color: flag_limit_color_label(@current_step), limit: @flag_limit_max)}
+          </p>
+          <div class="modal-action">
+            <button phx-click="close_flag_limit_modal" class="btn btn-primary">
+              {gettext("OK")}
+            </button>
+          </div>
+        </div>
+        <div class="modal-backdrop" phx-click="close_flag_limit_modal"></div>
+      </dialog>
 
       <%!-- Sticky navigation bar --%>
       <div class="sticky bottom-0 left-0 right-0 bg-base-100/95 backdrop-blur-sm border-t border-base-300 py-3 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 z-10">
@@ -519,6 +536,8 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
     {:ok,
      socket
+     |> assign(:show_flag_limit_modal, false)
+     |> assign(:flag_limit_max, 0)
      |> assign(:finish_path, finish_path)
      |> assign(:core_categories, core_categories)
      |> assign(:optin_categories, optin_categories)
@@ -606,6 +625,10 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     {:noreply, assign(socket, :published_category_ids, published_category_ids)}
   end
 
+  def handle_event("close_flag_limit_modal", _params, socket) do
+    {:noreply, assign(socket, :show_flag_limit_modal, false)}
+  end
+
   def handle_event("delete_all_flags", _params, socket) do
     user = socket.assigns.current_scope.user
     {:ok, _count} = Traits.delete_all_user_flags(user, originator: user)
@@ -642,6 +665,20 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
 
   # Not selected — add as soft for green/red, hard for white
   defp do_toggle_flag(socket, user, nil, flag_id, step, color) do
+    max = max_flags_for_color(color)
+    current = Traits.count_flags_by_single_color(user, color)
+
+    if current >= max do
+      {:noreply,
+       socket
+       |> assign(:show_flag_limit_modal, true)
+       |> assign(:flag_limit_max, max)}
+    else
+      do_add_flag(socket, user, flag_id, step, color)
+    end
+  end
+
+  defp do_add_flag(socket, user, flag_id, step, color) do
     initial_intensity = if step in [2, 3], do: "soft", else: "hard"
 
     case Traits.find_existing_flag_in_category(user.id, flag_id, color) do
@@ -713,6 +750,14 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp traits_path(step) do
     ~p"/my/settings/profile/traits?step=#{@step_params[step]}"
   end
+
+  defp max_flags_for_color("white"), do: FeatureFlags.max_white_flags()
+  defp max_flags_for_color("green"), do: FeatureFlags.max_green_flags()
+  defp max_flags_for_color("red"), do: FeatureFlags.max_red_flags()
+
+  defp flag_limit_color_label(1), do: gettext("white")
+  defp flag_limit_color_label(2), do: gettext("green")
+  defp flag_limit_color_label(3), do: gettext("red")
 
   defp step_from_param("green"), do: 2
   defp step_from_param("red"), do: 3
