@@ -248,69 +248,91 @@ defmodule Animina.Seeds.DevUsers do
   # 10 personality profiles designed as 5 complementary pairs.
   # Males cycle 0..9, females cycle 1..9,0 (offset by 1) so complementary
   # profiles land on opposite genders for high discovery scores.
-  # Each profile has max 15 white flags (+1 Deutsch = 16, the configured limit).
+  #
+  # Flag counts are deliberately varied to test the per-color limits
+  # (white: 16, green: 10, red: 10 — configured via admin settings).
+  # Each white count below is BEFORE the automatic +1 Deutsch flag.
+  #
+  # Profile  | White (+1) | Green | Red  | Test purpose
+  # ---------|------------|-------|------|-------------------------------
+  # 0 Adven  |  5  (= 6)  |   3   |  1   | Minimal user, lots of room
+  # 1 Nature |  8  (= 9)  |   4   |  2   | Moderate, filters out 6
+  # 2 Create | 11  (=12)  |   5   |  2   | Active, filters out 4
+  # 3 Intell | 14  (=15)  |   5   |  2   | Near white limit, filters 4,6
+  # 4 Family | 15  (=16)  |   9   |  1   | At white limit, near green
+  # 5 Caring | 15  (=16)  |  10   |  1   | At white + green limits
+  # 6 Social |  8  (= 9)  |  10   |  2   | At green limit, filters 1,3,9
+  # 7 Free   | 10  (=11)  |   5   |  9   | Near red limit, filters 1,3,4,5,9
+  # 8 Quiet  |  3  (= 4)  |   4   |  2   | Very minimal, filters out 6
+  # 9 Romant | 15  (=16)  |  10   | 10   | Maxed all colors, filters 4,6,7
+  #
+  # IMPORTANT: No flag appears in more than one color within the same profile
+  # (validate_no_mixing would reject it).
   @trait_profiles [
-    # Profile 0: Adventurer — loves outdoor action, travel, rock music (15 white)
+    # Profile 0: Adventurer — loves outdoor action, travel (5 white, 3 green, 1 red)
+    # Green flags chosen to match Profile 1's white (Empathy, Caring, Hiking)
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Love of Adventure", "Courage", "Active"],
-        "Sports" => ["Hiking", "Climbing", "Surfing"],
-        "Travels" => ["Hiking Vacation", "Camping"],
-        "Music" => ["Rock", "Indie"],
-        "At Home" => ["Fitness Exercises", "Podcasts"],
-        "Going Out" => ["Festivals", "Concerts"]
+        "Character" => ["Love of Adventure", "Courage"],
+        "Sports" => ["Hiking", "Surfing"]
       },
       green: %{
-        "Character" => ["Love of Adventure", "Active", "Humor"],
-        "What I'm Looking For" => ["Long-term Relationship", "Shared Activities"],
-        "Sports" => ["Hiking", "Climbing"]
+        "Character" => ["Empathy"],
+        "What I'm Looking For" => ["Long-term Relationship"],
+        "Sports" => ["Yoga"]
       },
       red: %{
         "Diet" => ["Vegan"]
       }
     },
-    # Profile 1: Nature Soul — calm outdoors lover, wellness, folk music (15 white)
+    # Profile 1: Nature Soul — calm outdoors lover, wellness (8 white, 4 green, 2 red)
+    # Green flags chosen to match Profile 0's white (Love of Adventure, Courage, Hiking, Surfing)
+    # Red conflicts: Hip-Hop → filters out Profile 6; Soccer → filters out Profile 6
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Empathy", "Caring", "Modesty"],
-        "Sports" => ["Hiking", "Yoga", "Swimming"],
-        "Travels" => ["Hiking Vacation", "Wellness"],
-        "Music" => ["Folk", "Classical"],
-        "At Home" => ["Gardening", "Reading", "Meditation"],
-        "Self Care" => ["Mindfulness", "Good Sleep"]
+        "Character" => ["Empathy", "Caring"],
+        "Sports" => ["Hiking", "Yoga"],
+        "Music" => ["Folk", "Classical"]
       },
       green: %{
-        "Character" => ["Love of Adventure", "Active", "Empathy", "Caring"],
-        "What I'm Looking For" => ["Long-term Relationship"],
-        "Sports" => ["Hiking", "Yoga"]
+        "Character" => ["Love of Adventure", "Courage"],
+        "Sports" => ["Surfing"],
+        "Self Care" => ["Mindfulness"]
       },
       red: %{
-        "Substance Use" => ["Hard Drugs"]
+        "Music" => ["Hip-Hop"],
+        "Sports" => ["Soccer"]
       }
     },
-    # Profile 2: Creative — artistic, music-loving, design-focused (15 white)
+    # Profile 2: Creative — artistic, music-loving, design-focused (11 white, 5 green, 2 red)
+    # Green flags chosen to match Profile 3's white (Intelligence, Honesty, Classical, Reading)
+    # Red conflicts: Schlager → filters out Profile 4; Camping → filters out Profile 4
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
         "Character" => ["Creativity", "Intelligence", "Empathy"],
         "Sports" => ["Yoga", "Swimming"],
-        "Music" => ["Jazz", "Soul", "Classical"],
-        "Going Out" => ["Museums & Galleries", "Theater"],
-        "Creativity" => ["Painting", "Photography", "Design"]
+        "Music" => ["Jazz", "Soul"],
+        "Creativity" => ["Painting", "Photography"]
       },
       green: %{
-        "Character" => ["Intelligence", "Creativity", "Empathy"],
-        "What I'm Looking For" => ["Long-term Relationship"],
-        "Sports" => ["Yoga"]
+        "Character" => ["Honesty"],
+        "Music" => ["Classical"],
+        "At Home" => ["Reading", "Podcasts"],
+        "Literature" => ["Philosophy"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Schlager"],
+        "Travels" => ["Camping"]
+      }
     },
-    # Profile 3: Intellectual — reader, thinker, deep conversations (15 white)
+    # Profile 3: Intellectual — reader, thinker, deep conversations (14 white, 5 green, 2 red)
+    # Green flags chosen to match Profile 2's white (Creativity, Empathy, Jazz, Yoga, Painting)
+    # Red conflicts: Schlager → filters out Profile 4; Hip-Hop → filters out Profile 6
     %{
       white: %{
         "Relationship Status" => ["Single"],
@@ -319,16 +341,20 @@ defmodule Animina.Seeds.DevUsers do
         "Sports" => ["Swimming", "Jogging"],
         "Music" => ["Classical", "Jazz"],
         "At Home" => ["Reading", "Online Courses", "Podcasts"],
-        "Literature" => ["Science", "Philosophy", "Non-Fiction"],
-        "Self Care" => ["Deep Conversations"]
+        "Literature" => ["Science", "Philosophy"]
       },
       green: %{
-        "Character" => ["Intelligence", "Empathy", "Creativity", "Honesty"],
-        "What I'm Looking For" => ["Long-term Relationship"]
+        "Character" => ["Creativity"],
+        "Sports" => ["Yoga"],
+        "Music" => ["Soul"],
+        "Creativity" => ["Painting", "Photography"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Schlager", "Hip-Hop"]
+      }
     },
-    # Profile 4: Family Person — caring, home-loving, traditional values (15 white)
+    # Profile 4: Family Person — caring, home-loving, traditional (15 white, 9 green, 1 red)
+    # Green flags chosen to match Profile 5's white (Caring, Empathy, Yoga, Swimming, Pop, Cooking)
     %{
       white: %{
         "Relationship Status" => ["Single"],
@@ -338,18 +364,23 @@ defmodule Animina.Seeds.DevUsers do
         "Sports" => ["Swimming", "Cycling"],
         "Travels" => ["Beach", "Camping"],
         "Music" => ["Pop", "Schlager"],
-        "At Home" => ["Cooking", "Baking", "Gardening"],
-        "Pets" => ["Dog"]
+        "At Home" => ["Cooking", "Baking"]
       },
       green: %{
-        "Character" => ["Family-Oriented", "Honesty", "Caring"],
-        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+        "Character" => ["Empathy", "Sense of Responsibility"],
+        "Sports" => ["Yoga"],
+        "Music" => ["Soul"],
+        "At Home" => ["Reading", "Gardening"],
+        "Travels" => ["Wellness"],
+        "Pets" => ["Dog"],
+        "Self Care" => ["Good Sleep"]
       },
       red: %{
         "Want Children" => ["I Don't Want (More) Children"]
       }
     },
-    # Profile 5: Caring Partner — nurturing, empathetic, family-ready (15 white)
+    # Profile 5: Caring Partner — nurturing, empathetic, family-ready (15 white, 10 green, 1 red)
+    # Green flags chosen to match Profile 4's white (Family-Oriented, Honesty, Swimming, Beach, Pop, Cooking, Baking)
     %{
       white: %{
         "Relationship Status" => ["Single"],
@@ -359,73 +390,87 @@ defmodule Animina.Seeds.DevUsers do
         "Sports" => ["Yoga", "Swimming"],
         "Travels" => ["Beach", "Wellness"],
         "Music" => ["Pop", "Soul"],
-        "At Home" => ["Cooking", "Reading"],
-        "Self Care" => ["Deep Conversations", "Good Sleep"]
+        "At Home" => ["Cooking", "Reading"]
       },
       green: %{
-        "Character" => ["Family-Oriented", "Caring", "Honesty", "Empathy"],
-        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+        "Character" => ["Honesty", "Generosity", "Sense of Responsibility"],
+        "Sports" => ["Cycling"],
+        "Travels" => ["Camping"],
+        "Music" => ["Schlager"],
+        "At Home" => ["Baking", "Gardening"],
+        "Self Care" => ["Deep Conversations", "Good Sleep"]
       },
       red: %{
         "Want Children" => ["I Don't Want (More) Children"]
       }
     },
-    # Profile 6: Social Star — party-loving, outgoing, sporty (15 white)
+    # Profile 6: Social Star — party-loving, outgoing, sporty (8 white, 10 green, 2 red)
+    # Green flags chosen to match Profile 7's white (Self-Confidence, Humor, Love of Adventure, Surfing, Yoga, Reggae)
+    # Red conflicts: Classical → filters out Profiles 1, 3, 9; Folk → filters out Profile 1
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
         "Character" => ["Humor", "Self-Confidence", "Active"],
-        "Sports" => ["Soccer", "Basketball", "Gym"],
-        "Travels" => ["City Trips", "Beach"],
-        "Music" => ["Hip-Hop", "Techno"],
-        "Going Out" => ["Clubbing", "Bars", "Concerts"]
+        "Sports" => ["Soccer", "Basketball"],
+        "Music" => ["Hip-Hop"]
       },
       green: %{
-        "Character" => ["Humor", "Self-Confidence", "Active"],
-        "What I'm Looking For" => ["Long-term Relationship"],
-        "Sports" => ["Gym"]
+        "Character" => ["Love of Adventure", "Courage"],
+        "Sports" => ["Surfing", "Yoga", "Cycling"],
+        "Music" => ["Reggae", "Electronic"],
+        "What I'm Looking For" => ["Shared Activities", "Dates"],
+        "Going Out" => ["Bars"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Classical", "Folk"]
+      }
     },
-    # Profile 7: Free Spirit — independent, spontaneous, travel-loving (15 white)
+    # Profile 7: Free Spirit — independent, spontaneous, travel-loving (10 white, 5 green, 9 red)
+    # Green flags chosen to match Profile 6's white (Humor, Active, Soccer, Basketball, Hip-Hop)
+    # Red conflicts: Schlager → 4; Pop → 4,5,9; Classical → 1,3,9; Cooking → 4,5,9
     %{
       white: %{
         "Relationship Status" => ["Single"],
         "What I'm Looking For" => ["Long-term Relationship"],
         "Character" => ["Self-Confidence", "Humor", "Love of Adventure"],
         "Sports" => ["Surfing", "Yoga", "Cycling"],
-        "Travels" => ["Beach", "City Trips", "Camping"],
-        "Music" => ["Reggae", "Electronic"],
-        "Going Out" => ["Festivals", "Bars"],
-        "Self Care" => ["Mindfulness"]
+        "Music" => ["Reggae", "Electronic"]
       },
       green: %{
-        "Character" => ["Humor", "Active", "Self-Confidence", "Love of Adventure"],
-        "What I'm Looking For" => ["Long-term Relationship"]
+        "Character" => ["Active"],
+        "Sports" => ["Soccer", "Basketball"],
+        "Music" => ["Hip-Hop"],
+        "What I'm Looking For" => ["Something Casual"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Schlager", "Pop", "Classical"],
+        "At Home" => ["Cooking", "Puzzles", "Handicrafts"],
+        "Going Out" => ["Karaoke"],
+        "Literature" => ["Guidebooks", "Romance Novels"]
+      }
     },
-    # Profile 8: Quiet Thinker — introverted, deep, book-loving (15 white)
+    # Profile 8: Quiet Thinker — introverted, deep, book-loving (3 white, 4 green, 2 red)
+    # Green flags chosen to match Profile 9's white (Empathy, Honesty, Yoga, Swimming, Classical)
+    # Red conflicts: Hip-Hop → filters out Profile 6; Soccer → filters out Profile 6
     %{
       white: %{
         "Relationship Status" => ["Single"],
-        "What I'm Looking For" => ["Long-term Relationship"],
-        "Character" => ["Honesty", "Intelligence", "Empathy"],
-        "Sports" => ["Hiking", "Swimming"],
-        "Travels" => ["Cultural Trips", "Hiking Vacation"],
-        "Music" => ["Classical", "Folk"],
-        "At Home" => ["Reading", "Meditation"],
-        "Literature" => ["Philosophy", "Science Fiction"],
-        "Self Care" => ["Deep Conversations"]
+        "Character" => ["Honesty", "Intelligence"]
       },
       green: %{
-        "Character" => ["Honesty", "Empathy", "Intelligence"],
-        "What I'm Looking For" => ["Long-term Relationship"]
+        "Character" => ["Empathy", "Being Romantic"],
+        "Music" => ["Classical"],
+        "Sports" => ["Yoga"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Hip-Hop"],
+        "Sports" => ["Soccer"]
+      }
     },
-    # Profile 9: Romantic — loving, sentimental, partner-focused (15 white)
+    # Profile 9: Romantic — loving, sentimental, partner-focused (15 white, 10 green, 10 red)
+    # Green flags chosen to match Profile 8's white (Honesty, Intelligence)
+    # Red conflicts: Hip-Hop/Soccer/Basketball → 6; Electronic/Self-Confidence → 6,7; Camping → 4
     %{
       white: %{
         "Relationship Status" => ["Single"],
@@ -434,14 +479,22 @@ defmodule Animina.Seeds.DevUsers do
         "Sports" => ["Yoga", "Swimming"],
         "Travels" => ["Beach", "Wellness"],
         "Music" => ["Pop", "Soul", "Classical"],
-        "At Home" => ["Cooking", "Movies", "Reading"],
-        "Literature" => ["Romance Novels", "Poetry"]
+        "At Home" => ["Cooking", "Movies"]
       },
       green: %{
-        "Character" => ["Honesty", "Empathy", "Being Romantic", "Intelligence"],
-        "What I'm Looking For" => ["Long-term Relationship", "Marriage"]
+        "Character" => ["Intelligence", "Caring", "Family-Oriented"],
+        "What I'm Looking For" => ["Friendship", "Shared Activities"],
+        "At Home" => ["Reading", "Baking"],
+        "Self Care" => ["Deep Conversations", "Good Sleep"],
+        "Literature" => ["Poetry"]
       },
-      red: %{}
+      red: %{
+        "Music" => ["Hip-Hop", "Electronic", "Heavy Metal", "Rap"],
+        "Character" => ["Self-Confidence"],
+        "Sports" => ["Soccer", "Basketball", "Boxing"],
+        "Travels" => ["Camping"],
+        "Going Out" => ["Karaoke"]
+      }
     }
   ]
 
