@@ -82,9 +82,7 @@ defmodule AniminaWeb.WaitlistComponents do
             {gettext("Prepare your profile")}
           </h2>
           <p class="text-sm text-base-content/60">
-            {gettext(
-              "Use the waiting time to set up your profile so you can get started right away."
-            )}
+            {gettext("Use the waiting time to set up your profile so you can get started right away.")}
           </p>
         </div>
         <div class="hidden sm:block">
@@ -172,9 +170,7 @@ defmodule AniminaWeb.WaitlistComponents do
             {gettext("Add photos and stories to make a great first impression.")}
           </:description>
           <:completed_description>
-            {ngettext("%{count} item", "%{count} items", @moodboard_count,
-              count: @moodboard_count
-            )}
+            {ngettext("%{count} item", "%{count} items", @moodboard_count, count: @moodboard_count)}
           </:completed_description>
         </.waitlist_card>
 
