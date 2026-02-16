@@ -54,18 +54,87 @@ defmodule AniminaWeb.UserLive.MyHubTest do
       assert has_element?(lv, "main a[href='/my/logs']")
     end
 
-    test "hides discover and messages for waitlisted user, shows waitlist card", %{conn: conn} do
+    test "does not show waitlist content for active user", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(active_user())
+        |> live(~p"/my")
+
+      refute html =~ "on the waitlist"
+      refute html =~ "Prepare your profile"
+    end
+
+    test "shows waitlist status banner inline for waitlisted user", %{conn: conn} do
       user = user_fixture(language: "en")
 
-      {:ok, lv, html} =
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my")
+
+      assert html =~ "on the waitlist"
+      assert html =~ "until your account is activated"
+    end
+
+    test "shows preparation section inline for waitlisted user", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my")
+
+      assert html =~ "Prepare your profile"
+      assert html =~ "Profile Photo"
+      assert html =~ "Set up your flags"
+      assert html =~ "Edit Moodboard"
+    end
+
+    test "shows referral code inline for waitlisted user", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my")
+
+      assert html =~ user.referral_code
+      assert html =~ "Skip the waitlist"
+    end
+
+    test "still shows Settings and Logs cards for waitlisted user", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my")
+
+      assert has_element?(lv, "main a[href='/my/settings']")
+      assert has_element?(lv, "main a[href='/my/logs']")
+    end
+
+    test "does not show waitlist as a hub card link for waitlisted user", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my")
+
+      refute has_element?(lv, "main a[href='/my/waitlist']")
+    end
+
+    test "hides Messages and Spotlight for waitlisted user", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, lv, _html} =
         conn
         |> log_in_user(user)
         |> live(~p"/my")
 
       refute has_element?(lv, "main a[href='/my/spotlight']")
       refute has_element?(lv, "main a[href='/my/messages']")
-      assert has_element?(lv, "main a[href='/my/waitlist']")
-      assert html =~ "Waitlist"
     end
   end
 end

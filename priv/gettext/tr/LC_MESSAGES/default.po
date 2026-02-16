@@ -70,7 +70,7 @@ msgid "At ANIMINA everything is different."
 msgstr "ANIMINA'da her şey farklı."
 
 #: lib/animina_web/live/user_live/registration.ex:106
-#: lib/animina_web/live/user_live/traits_wizard.ex:191
+#: lib/animina_web/live/user_live/traits_wizard.ex:200
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Geri"
@@ -369,7 +369,7 @@ msgid "New password"
 msgstr "Yeni şifre"
 
 #: lib/animina_web/live/user_live/registration.ex:117
-#: lib/animina_web/live/user_live/traits_wizard.ex:198
+#: lib/animina_web/live/user_live/traits_wizard.ex:207
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr "İleri"
@@ -582,7 +582,7 @@ msgstr "Yeni şifre belirle"
 #: lib/animina_web/live/user_live/account_passkeys.ex:19
 #: lib/animina_web/live/user_live/account_sessions.ex:19
 #: lib/animina_web/live/user_live/moodboard_editor.ex:34
-#: lib/animina_web/live/user_live/my_hub.ex:47
+#: lib/animina_web/live/user_live/my_hub.ex:68
 #: lib/animina_web/live/user_live/profile_hub.ex:21
 #: lib/animina_web/live/user_live/settings_hub.ex:18
 #: lib/animina_web/live/user_live/settings_hub.ex:73
@@ -1118,27 +1118,27 @@ msgid "Cannot remove the last admin. Assign another admin first."
 msgstr "Son yönetici kaldırılamaz. Önce başka bir yönetici atayın."
 
 #: lib/animina_web/components/moodboard_components.ex:287
-#: lib/animina_web/live/user_live/traits_wizard.ex:388
+#: lib/animina_web/live/user_live/traits_wizard.ex:397
 #, elixir-autogen, elixir-format
 msgid "About Me"
 msgstr "Hakkımda"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:703
+#: lib/animina_web/live/user_live/traits_wizard.ex:706
 #, elixir-autogen, elixir-format
 msgid "Could not add flag."
 msgstr "Bayrak eklenemedi."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:202
+#: lib/animina_web/live/user_live/traits_wizard.ex:211
 #, elixir-autogen, elixir-format
 msgid "Finish"
 msgstr "Bitir"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:638
+#: lib/animina_web/live/user_live/traits_wizard.ex:647
 #, elixir-autogen, elixir-format
 msgid "All flags have been deleted."
 msgstr "Tüm bayraklar silindi."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:771
+#: lib/animina_web/live/user_live/traits_wizard.ex:774
 #, elixir-autogen, elixir-format
 msgid "Are you sure that you want to delete all %{white} white, %{green} green and %{red} red flags of yours?"
 msgstr "Tüm %{white} beyaz, %{green} yeşil ve %{red} kırmızı bayraklarını silmek istediğinden emin misin?"
@@ -1153,22 +1153,22 @@ msgstr "Tüm bayrakları sil"
 msgid "Click to cycle:"
 msgstr "Değiştirmek için tıkla:"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:415
+#: lib/animina_web/live/user_live/traits_wizard.ex:424
 #, elixir-autogen, elixir-format
 msgid "Traits that describe who you are"
 msgstr "Seni tanımlayan özellikler"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:424
+#: lib/animina_web/live/user_live/traits_wizard.ex:433
 #, elixir-autogen, elixir-format
 msgid "deal breaker"
 msgstr "kabul edilemez"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:423
+#: lib/animina_web/live/user_live/traits_wizard.ex:432
 #, elixir-autogen, elixir-format
 msgid "must have"
 msgstr "olmazsa olmaz"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:426
+#: lib/animina_web/live/user_live/traits_wizard.ex:435
 #, elixir-autogen, elixir-format
 msgid "nice to have"
 msgstr "olsa iyi olur"
@@ -1178,47 +1178,47 @@ msgstr "olsa iyi olur"
 msgid "off"
 msgstr "kapalı"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:427
+#: lib/animina_web/live/user_live/traits_wizard.ex:436
 #, elixir-autogen, elixir-format
 msgid "prefer not"
 msgstr "tercih etmem"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:655
+#: lib/animina_web/live/user_live/traits_wizard.ex:664
 #, elixir-autogen, elixir-format
 msgid "Could not update flag."
 msgstr "Bayrak güncellenemedi."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:216
+#: lib/animina_web/live/user_live/traits_wizard.ex:225
 #, elixir-autogen, elixir-format
 msgid "Optional Categories"
 msgstr "İsteğe Bağlı Kategoriler"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:344
+#: lib/animina_web/live/user_live/traits_wizard.ex:353
 #, elixir-autogen, elixir-format
 msgid "Going Out & Travels"
 msgstr "Dışarı Çıkma & Seyahat"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:343
+#: lib/animina_web/live/user_live/traits_wizard.ex:352
 #, elixir-autogen, elixir-format
 msgid "Interests"
 msgstr "İlgi Alanları"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:342
+#: lib/animina_web/live/user_live/traits_wizard.ex:351
 #, elixir-autogen, elixir-format
 msgid "Lifestyle"
 msgstr "Yaşam Tarzı"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:345
+#: lib/animina_web/live/user_live/traits_wizard.ex:354
 #, elixir-autogen, elixir-format
 msgid "Sensitive"
 msgstr "Hassas"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:389
+#: lib/animina_web/live/user_live/traits_wizard.ex:398
 #, elixir-autogen, elixir-format
 msgid "I Like in a Partner"
 msgstr "Partnerde Sevdiğim"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:390
+#: lib/animina_web/live/user_live/traits_wizard.ex:399
 #, elixir-autogen, elixir-format
 msgid "Partner Deal Breakers"
 msgstr "Partner Kabul Edilemezleri"
@@ -1233,12 +1233,12 @@ msgstr "Partner Tercihleri"
 msgid "Partner No-Go"
 msgstr "Partner Red Çizgileri"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:421
+#: lib/animina_web/live/user_live/traits_wizard.ex:430
 #, elixir-autogen, elixir-format
 msgid "Traits that are deal-breakers in a partner"
 msgstr "Bir partnerde kabul edilemez olan özellikler"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:418
+#: lib/animina_web/live/user_live/traits_wizard.ex:427
 #, elixir-autogen, elixir-format
 msgid "Traits you'd like your partner to have"
 msgstr "Partnerinin sahip olmasını istediğin özellikler"
@@ -1259,8 +1259,8 @@ msgstr "Uygulama"
 #: lib/animina_web/components/moodboard_components.ex:556
 #: lib/animina_web/live/admin/ai_jobs_live.ex:535
 #: lib/animina_web/live/admin/ai_jobs_live.ex:562
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1008
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1037
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1014
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1043
 #: lib/animina_web/live/admin/flags_ai_live.ex:405
 #: lib/animina_web/live/admin/flags_system_live.ex:212
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:219
@@ -2969,11 +2969,11 @@ msgstr "Fotoğraf yüklendi! Kısa süre içinde incelenecek."
 msgid "Processing"
 msgstr "İşleniyor"
 
+#: lib/animina_web/components/waitlist_components.ex:121
 #: lib/animina_web/live/user_live/avatar_upload.ex:19
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
 #: lib/animina_web/live/user_live/profile_hub.ex:60
-#: lib/animina_web/live/user_live/waitlist.ex:111
 #, elixir-autogen, elixir-format
 msgid "Profile Photo"
 msgstr "Profil Fotoğrafı"
@@ -3666,7 +3666,7 @@ msgid "JPG, PNG, WEBP or HEIC. Max 6MB."
 msgstr "JPG, PNG, WEBP veya HEIC. Maks 6MB."
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:697
-#: lib/animina_web/live/admin/ai_jobs_live.ex:887
+#: lib/animina_web/live/admin/ai_jobs_live.ex:893
 #: lib/animina_web/live/admin/photo_reviews_live.ex:666
 #, elixir-autogen, elixir-format
 msgid "Server"
@@ -4006,10 +4006,10 @@ msgstr "Metni Düzenle"
 msgid "Add photos and text to your moodboard to share with others."
 msgstr "Başkalarıyla paylaşmak için moodboard'unuza fotoğraf ve metin ekleyin."
 
+#: lib/animina_web/components/waitlist_components.ex:170
 #: lib/animina_web/live/user_live/moodboard_editor.ex:68
 #: lib/animina_web/live/user_live/moodboard_editor.ex:658
 #: lib/animina_web/live/user_live/profile_moodboard.ex:210
-#: lib/animina_web/live/user_live/waitlist.ex:160
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Moodboard'u Düzenle"
@@ -4087,13 +4087,13 @@ msgid "Close"
 msgstr "Kapat"
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:703
-#: lib/animina_web/live/admin/ai_jobs_live.ex:894
+#: lib/animina_web/live/admin/ai_jobs_live.ex:900
 #, elixir-autogen, elixir-format
 msgid "Duration"
 msgstr "Süre"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:863
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1105
+#: lib/animina_web/live/admin/ai_jobs_live.ex:869
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1111
 #: lib/animina_web/live/admin/email_logs_live.ex:203
 #: lib/animina_web/live/admin/email_logs_live.ex:234
 #: lib/animina_web/live/admin/photo_detail_live.ex:145
@@ -4104,7 +4104,7 @@ msgstr "Hata"
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:642
 #: lib/animina_web/live/admin/ai_jobs_live.ex:694
-#: lib/animina_web/live/admin/ai_jobs_live.ex:891
+#: lib/animina_web/live/admin/ai_jobs_live.ex:897
 #: lib/animina_web/live/admin/photo_detail_live.ex:175
 #, elixir-autogen, elixir-format
 msgid "Model"
@@ -4181,13 +4181,13 @@ msgstr "İnceleniyor"
 msgid "Under review"
 msgstr "İnceleme altında"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:307
+#: lib/animina_web/live/user_live/traits_wizard.ex:316
 #, elixir-autogen, elixir-format
 msgid "Private"
 msgstr "Gizli"
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:45
-#: lib/animina_web/live/user_live/traits_wizard.ex:306
+#: lib/animina_web/live/user_live/traits_wizard.ex:315
 #, elixir-autogen, elixir-format
 msgid "Visible"
 msgstr "Görünür"
@@ -4202,7 +4202,7 @@ msgstr "Boşanmış"
 msgid "Separated"
 msgstr "Ayrılmış"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:398
+#: lib/animina_web/live/user_live/traits_wizard.ex:407
 #, elixir-autogen, elixir-format
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
 msgstr "Seni tanımlayan özellikleri seç. Bazı kategoriler profilinde varsayılan olarak görünür, diğerleri gizlidir. Görünürlüğü değiştirmek için tıkla."
@@ -4275,7 +4275,7 @@ msgstr "Mesaj gönderilemedi"
 #: lib/animina_web/live/messages_live.ex:149
 #: lib/animina_web/live/messages_live.ex:646
 #: lib/animina_web/live/messages_live.ex:695
-#: lib/animina_web/live/user_live/my_hub.ex:27
+#: lib/animina_web/live/user_live/my_hub.ex:55
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "Mesajlar"
@@ -4406,22 +4406,22 @@ msgstr "Joker seçimi"
 msgid "Draft:"
 msgstr "Taslak:"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:429
+#: lib/animina_web/live/user_live/traits_wizard.ex:438
 #, elixir-autogen, elixir-format
 msgid "+10 pts"
 msgstr "+10 puan"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:431
+#: lib/animina_web/live/user_live/traits_wizard.ex:440
 #, elixir-autogen, elixir-format
 msgid "-50 pts"
 msgstr "-50 puan"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:460
+#: lib/animina_web/live/user_live/traits_wizard.ex:469
 #, elixir-autogen, elixir-format
 msgid "click to set as nice to have (+10 pts)"
 msgstr "olsa iyi olur (+10 puan) olarak ayarlamak için tıkla"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:461
+#: lib/animina_web/live/user_live/traits_wizard.ex:470
 #, elixir-autogen, elixir-format
 msgid "click to set as prefer not (-50 pts)"
 msgstr "tercih etmem (-50 puan) olarak ayarlamak için tıkla"
@@ -4431,42 +4431,42 @@ msgstr "tercih etmem (-50 puan) olarak ayarlamak için tıkla"
 msgid "0 pts"
 msgstr "0 puan"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:432
+#: lib/animina_web/live/user_live/traits_wizard.ex:441
 #, elixir-autogen, elixir-format
 msgid "Excluded"
 msgstr "Hariç Tutulmuş"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:430
+#: lib/animina_web/live/user_live/traits_wizard.ex:439
 #, elixir-autogen, elixir-format
 msgid "Required"
 msgstr "Zorunlu"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:410
+#: lib/animina_web/live/user_live/traits_wizard.ex:419
 #, elixir-autogen, elixir-format
 msgid "Select traits you don't want in a partner. Click once for prefer not (-50 pts, still visible), again for deal breaker (excluded — hides profiles with this trait). These flags are always private."
 msgstr "Bir partnerde istemediğin özellikleri seç. Bir kez tıkla tercih etmem (-50 puan, yine de görünür), tekrar tıkla kabul edilemez (hariç tutulmuş — bu özelliğe sahip profilleri gizler). Bu bayraklar her zaman gizlidir."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:404
+#: lib/animina_web/live/user_live/traits_wizard.ex:413
 #, elixir-autogen, elixir-format
 msgid "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
 msgstr "Partnerinin sahip olmasını istediğin özellikleri seç. Bir kez tıkla olsa iyi olur (+10 puan), tekrar tıkla olmazsa olmaz (zorunlu — sadece bu özelliğe sahip profilleri gösterir). Bu bayraklar her zaman gizlidir."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:471
+#: lib/animina_web/live/user_live/traits_wizard.ex:480
 #, elixir-autogen, elixir-format
 msgid "deal breaker (excluded) — click to remove"
 msgstr "kabul edilemez (hariç tutulmuş) — kaldırmak için tıkla"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:470
+#: lib/animina_web/live/user_live/traits_wizard.ex:479
 #, elixir-autogen, elixir-format
 msgid "must have (required) — click to remove"
 msgstr "olmazsa olmaz (zorunlu) — kaldırmak için tıkla"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:465
+#: lib/animina_web/live/user_live/traits_wizard.ex:474
 #, elixir-autogen, elixir-format
 msgid "nice to have (+10 pts) — click to change to must have (required)"
 msgstr "olsa iyi olur (+10 puan) — olmazsa olmaz (zorunlu) olarak değiştirmek için tıkla"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:466
+#: lib/animina_web/live/user_live/traits_wizard.ex:475
 #, elixir-autogen, elixir-format
 msgid "prefer not (-50 pts) — click to change to deal breaker (excluded)"
 msgstr "tercih etmem (-50 puan) — kabul edilemez (hariç tutulmuş) olarak değiştirmek için tıkla"
@@ -4657,28 +4657,28 @@ msgstr "Boş sohbet slotunuz yok. Önce bir konuşmayı bırakın."
 msgid "New chats available today"
 msgstr "Bugün yeni sohbetler mevcut"
 
-#: lib/animina_web/live/user_live/waitlist.ex:38
-#: lib/animina_web/live/user_live/waitlist.ex:54
+#: lib/animina_web/components/waitlist_components.ex:30
+#: lib/animina_web/components/waitlist_components.ex:46
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
 msgstr "Aktivasyonunuz işleniyor"
 
-#: lib/animina_web/live/user_live/waitlist.ex:162
+#: lib/animina_web/components/waitlist_components.ex:172
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr "Harika bir ilk izlenim bırakmak için fotoğraf ve hikayeler ekleyin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:133
+#: lib/animina_web/components/waitlist_components.ex:143
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr "Kendiniz ve ne aradığınız hakkında bilgi verin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:72
+#: lib/animina_web/components/waitlist_components.ex:82
 #, elixir-autogen, elixir-format
 msgid "Prepare your profile"
 msgstr "Profilinizi hazırlayın"
 
-#: lib/animina_web/live/user_live/waitlist.ex:131
+#: lib/animina_web/components/waitlist_components.ex:141
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr "Bayraklarınızı ayarlayın"
@@ -4778,12 +4778,12 @@ msgstr "Tarayıcınız geçiş anahtarlarını desteklemiyor."
 msgid "or"
 msgstr "veya"
 
-#: lib/animina_web/live/user_live/waitlist.ex:192
+#: lib/animina_web/components/waitlist_components.ex:202
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr "Geçiş anahtarı kur"
 
-#: lib/animina_web/live/user_live/waitlist.ex:194
+#: lib/animina_web/components/waitlist_components.ex:204
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr "Geçiş anahtarı ile daha hızlı ve güvenli giriş yapın."
@@ -4843,12 +4843,12 @@ msgstr "Kişilik bayraklarınızı ayarlayın"
 msgid "Upload your main profile photo"
 msgstr "Ana profil fotoğrafınızı yükleyin"
 
-#: lib/animina_web/live/user_live/waitlist.ex:112
+#: lib/animina_web/components/waitlist_components.ex:122
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo."
 msgstr "Ana profil fotoğrafınızı yükleyin."
 
-#: lib/animina_web/live/user_live/waitlist.ex:327
+#: lib/animina_web/components/waitlist_components.ex:338
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "İsteğe Bağlı Kategoriler"
@@ -4899,7 +4899,7 @@ msgstr "Onaylandı"
 msgid "Animal photo detected"
 msgstr "Hayvan fotoğrafı algılandı"
 
-#: lib/animina_web/live/user_live/waitlist.ex:75
+#: lib/animina_web/components/waitlist_components.ex:85
 #, elixir-autogen, elixir-format
 msgid "Use the waiting time to set up your profile so you can get started right away."
 msgstr "Bekleme süresini profilinizi kurmak için kullanın, böylece hemen başlayabilirsiniz."
@@ -4986,7 +4986,7 @@ msgstr ""
 msgid "Are you sure you want to unblock this contact?"
 msgstr "Bu geçiş anahtarını kaldırmak istediğinizden emin misiniz?"
 
-#: lib/animina_web/live/user_live/waitlist.ex:219
+#: lib/animina_web/components/waitlist_components.ex:229
 #, elixir-autogen, elixir-format
 msgid "Block contacts"
 msgstr ""
@@ -5038,7 +5038,7 @@ msgstr ""
 msgid "Phone number or email"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:221
+#: lib/animina_web/components/waitlist_components.ex:231
 #, elixir-autogen, elixir-format
 msgid "Prevent ex-partners or acquaintances from seeing your profile."
 msgstr ""
@@ -5083,28 +5083,28 @@ msgstr "Önce saygı"
 msgid "Z–A"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:224
+#: lib/animina_web/components/waitlist_components.ex:234
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} contact blocked"
 msgid_plural "%{count} contacts blocked"
 msgstr[0] "%{count} toplam"
 msgstr[1] "%{count} toplam"
 
-#: lib/animina_web/live/user_live/waitlist.ex:136
+#: lib/animina_web/components/waitlist_components.ex:146
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} flag set"
 msgid_plural "%{count} flags set"
 msgstr[0] "%{count}dk önce"
 msgstr[1] "%{count}dk önce"
 
-#: lib/animina_web/live/user_live/waitlist.ex:165
+#: lib/animina_web/components/waitlist_components.ex:175
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} item"
 msgid_plural "%{count} items"
 msgstr[0] "%{count} kayıt"
 msgstr[1] "%{count} kayıt"
 
-#: lib/animina_web/live/user_live/waitlist.ex:30
+#: lib/animina_web/components/waitlist_components.ex:22
 #, elixir-autogen, elixir-format
 msgid "Your account is on the waitlist."
 msgstr ""
@@ -5165,7 +5165,7 @@ msgstr ""
 #: lib/animina_web/live/user_live/email_logs.ex:111
 #: lib/animina_web/live/user_live/login_history.ex:195
 #: lib/animina_web/live/user_live/logs_hub.ex:16
-#: lib/animina_web/live/user_live/my_hub.ex:53
+#: lib/animina_web/live/user_live/my_hub.ex:74
 #, elixir-autogen, elixir-format
 msgid "Logs"
 msgstr ""
@@ -5300,31 +5300,31 @@ msgstr ""
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:373
+#: lib/animina_web/live/user_live/waitlist.ex:73
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlisted"
 msgstr "Bekleme Listesinde"
 
-#: lib/animina_web/live/user_live/waitlist.ex:366
+#: lib/animina_web/live/user_live/waitlist.ex:66
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:381
+#: lib/animina_web/live/user_live/waitlist.ex:83
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Your account is on the waitlist. Prepare your profile while you wait."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:48
-#: lib/animina_web/live/user_live/waitlist.ex:63
+#: lib/animina_web/components/waitlist_components.ex:40
+#: lib/animina_web/components/waitlist_components.ex:55
 #, elixir-autogen, elixir-format
 msgid "until your account is activated"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:41
-#: lib/animina_web/live/user_live/waitlist.ex:60
+#: lib/animina_web/components/waitlist_components.ex:33
+#: lib/animina_web/components/waitlist_components.ex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "approximately 2 weeks"
 msgstr "yaklaşık 4 hafta"
@@ -5538,7 +5538,7 @@ msgstr ""
 msgid "Manage your account and app settings"
 msgstr "Hesap ayarlarını yönet"
 
-#: lib/animina_web/live/user_live/my_hub.ex:69
+#: lib/animina_web/live/user_live/my_hub.ex:91
 #: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "%{completed}/%{total} complete"
@@ -5581,7 +5581,7 @@ msgstr ""
 msgid "Privacy & Blocking"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:74
+#: lib/animina_web/live/user_live/my_hub.ex:96
 #: lib/animina_web/live/user_live/settings_hub.ex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile complete"
@@ -5642,12 +5642,12 @@ msgstr ""
 msgid "Sign in with Face ID, Touch ID, or a security key"
 msgstr "Face ID, Touch ID veya güvenlik anahtarı ile giriş yapın — şifrelerden daha hızlı ve daha güvenli."
 
-#: lib/animina_web/live/user_live/waitlist.ex:241
+#: lib/animina_web/components/waitlist_components.ex:251
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:247
+#: lib/animina_web/components/waitlist_components.ex:257
 #, elixir-autogen, elixir-format
 msgid "Share the code"
 msgstr ""
@@ -5696,7 +5696,7 @@ msgstr ""
 msgid "Assign admin and moderator roles"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:35
+#: lib/animina_web/live/user_live/my_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "Find new people"
 msgstr ""
@@ -5721,28 +5721,22 @@ msgstr ""
 msgid "Toggle features and system settings"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:41
-#: lib/animina_web/live/user_live/waitlist.ex:24
+#: lib/animina_web/live/user_live/waitlist.ex:20
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlist"
 msgstr "Bekleme Listesinde"
 
-#: lib/animina_web/live/user_live/my_hub.ex:54
+#: lib/animina_web/live/user_live/my_hub.ex:75
 #, elixir-autogen, elixir-format
 msgid "Your account activity logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:42
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Your account is on the waitlist"
-msgstr ""
-
-#: lib/animina_web/live/user_live/my_hub.ex:28
+#: lib/animina_web/live/user_live/my_hub.ex:56
 #, elixir-autogen, elixir-format
 msgid "Your conversations"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:18
+#: lib/animina_web/live/user_live/my_hub.ex:23
 #, elixir-autogen, elixir-format
 msgid "Your personal hub"
 msgstr ""
@@ -5923,7 +5917,7 @@ msgstr ""
 msgid "Wed"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:254
+#: lib/animina_web/components/waitlist_components.ex:264
 #, elixir-autogen, elixir-format, fuzzy
 msgid "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you."
 msgstr ""
@@ -5934,17 +5928,17 @@ msgstr ""
 msgid "Confirm Your PIN"
 msgstr "Onayla"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:392
+#: lib/animina_web/live/user_live/traits_wizard.ex:401
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Flags — About Me"
 msgstr "Bayraklarım — Hakkımda"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:394
+#: lib/animina_web/live/user_live/traits_wizard.ex:403
 #, elixir-autogen, elixir-format
 msgid "Flags — Deal Breakers"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:393
+#: lib/animina_web/live/user_live/traits_wizard.ex:402
 #, elixir-autogen, elixir-format
 msgid "Flags — Partner Likes"
 msgstr ""
@@ -5978,12 +5972,12 @@ msgstr "Giriş yap"
 #: lib/animina_web/live/user_live/login_history.ex:190
 #: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:17
-#: lib/animina_web/live/user_live/my_hub.ex:79
+#: lib/animina_web/live/user_live/my_hub.ex:22
+#: lib/animina_web/live/user_live/my_hub.ex:101
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/settings_hub.ex:21
 #: lib/animina_web/live/user_live/traits_wizard.ex:18
-#: lib/animina_web/live/user_live/waitlist.ex:22
+#: lib/animina_web/live/user_live/waitlist.ex:18
 #, elixir-autogen, elixir-format
 msgid "My Hub"
 msgstr ""
@@ -6082,7 +6076,7 @@ msgstr ""
 
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/live/spotlight_live.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:34
+#: lib/animina_web/live/user_live/my_hub.ex:62
 #: lib/animina_web/live/user_live/profile_moodboard.ex:40
 #, elixir-autogen, elixir-format
 msgid "Spotlight"
@@ -6217,7 +6211,7 @@ msgstr "İtiraz gönderilemedi. Lütfen tekrar deneyin."
 msgid "Deleted user"
 msgstr "Sil"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:797
+#: lib/animina_web/live/admin/ai_jobs_live.ex:803
 #: lib/animina_web/live/admin/photo_explorer_live.ex:142
 #: lib/animina_web/live/admin/reports_live.ex:142
 #, elixir-autogen, elixir-format
@@ -6610,7 +6604,7 @@ msgid "All Jobs"
 msgstr "Tüm Kayıtlar"
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:706
-#: lib/animina_web/live/admin/ai_jobs_live.ex:898
+#: lib/animina_web/live/admin/ai_jobs_live.ex:904
 #, elixir-autogen, elixir-format
 msgid "Attempt"
 msgstr ""
@@ -6663,7 +6657,7 @@ msgstr ""
 msgid "Pending"
 msgstr "İnceleme bekliyor"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1049
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1055
 #, elixir-autogen, elixir-format
 msgid "Reprioritize"
 msgstr ""
@@ -6674,7 +6668,7 @@ msgid "Resume"
 msgstr ""
 
 #: lib/animina_web/live/admin/ai_jobs_live.ex:539
-#: lib/animina_web/live/admin/ai_jobs_live.ex:997
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1003
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Retry"
 msgstr "Şiir"
@@ -6702,7 +6696,7 @@ msgid_plural "%{count} failed jobs reset to pending."
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1099
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1105
 #, elixir-autogen, elixir-format
 msgid "All GPUs Down"
 msgstr ""
@@ -6714,27 +6708,27 @@ msgid_plural "Are you sure you want to retry %{count} failed jobs from the %{ran
 msgstr[0] "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 msgstr[1] "Profil fotoğrafınızı silmek istediğinizden emin misiniz?"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1104
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1110
 #, elixir-autogen, elixir-format
 msgid "File Error"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1103
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1109
 #, elixir-autogen, elixir-format
 msgid "GPU Crash"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1102
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1108
 #, elixir-autogen, elixir-format
 msgid "GPU Error"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1098
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1104
 #, elixir-autogen, elixir-format, fuzzy
 msgid "GPU Offline"
 msgstr "Kapalı"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1097
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1103
 #, elixir-autogen, elixir-format
 msgid "GPU Timeout"
 msgstr ""
@@ -6749,7 +6743,7 @@ msgstr ""
 msgid "Last hour"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1101
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1107
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Queue Full"
 msgstr "Kuyruk"
@@ -6764,7 +6758,7 @@ msgstr ""
 msgid "Retry Failed Jobs"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1100
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1106
 #, elixir-autogen, elixir-format
 msgid "Total Timeout"
 msgstr ""
@@ -6784,68 +6778,68 @@ msgstr ""
 msgid "today"
 msgstr "Bugün"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:785
+#: lib/animina_web/live/admin/ai_jobs_live.ex:791
 #, elixir-autogen, elixir-format
 msgid "Checks if photo is family-friendly, detects faces, counts people"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:783
+#: lib/animina_web/live/admin/ai_jobs_live.ex:789
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Classification"
 msgstr "Klasik"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:986
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1019
+#: lib/animina_web/live/admin/ai_jobs_live.ex:992
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1025
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Details"
 msgstr "Buluşmalar"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:790
+#: lib/animina_web/live/admin/ai_jobs_live.ex:796
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Gender Guess"
 msgstr "Cinsiyet"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:799
+#: lib/animina_web/live/admin/ai_jobs_live.ex:805
 #, elixir-autogen, elixir-format
 msgid "Generates an AI text description of a photo"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:792
+#: lib/animina_web/live/admin/ai_jobs_live.ex:798
 #, elixir-autogen, elixir-format
 msgid "Guesses gender from a first name (used for discovery)"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:818
+#: lib/animina_web/live/admin/ai_jobs_live.ex:824
 #, elixir-autogen, elixir-format
 msgid "Job Details"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:780
+#: lib/animina_web/live/admin/ai_jobs_live.ex:786
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Job Types"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:880
+#: lib/animina_web/live/admin/ai_jobs_live.ex:886
 #, elixir-autogen, elixir-format
 msgid "No data available."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:843
+#: lib/animina_web/live/admin/ai_jobs_live.ex:849
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Prompt"
 msgstr "Pop"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:853
+#: lib/animina_web/live/admin/ai_jobs_live.ex:859
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Response"
 msgstr "Yeniden Aç"
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:833
+#: lib/animina_web/live/admin/ai_jobs_live.ex:839
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Result"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:932
+#: lib/animina_web/live/admin/ai_jobs_live.ex:938
 #, elixir-autogen, elixir-format
 msgid "View photo history"
 msgstr ""
@@ -6877,7 +6871,7 @@ msgid_plural "This will enqueue description jobs for %{count} approved photos at
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1036
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1042
 #, elixir-autogen, elixir-format
 msgid "Cancel this running job?"
 msgstr ""
@@ -6887,12 +6881,12 @@ msgstr ""
 msgid "Cannot restart this job."
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1028
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1034
 #, elixir-autogen, elixir-format
 msgid "Restart"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:1027
+#: lib/animina_web/live/admin/ai_jobs_live.ex:1033
 #, elixir-autogen, elixir-format
 msgid "Restart this running job?"
 msgstr ""
@@ -7062,7 +7056,7 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: lib/animina_web/live/admin/ai_jobs_live.ex:926
+#: lib/animina_web/live/admin/ai_jobs_live.ex:932
 #, elixir-autogen, elixir-format, fuzzy
 msgid "View photo details"
 msgstr ""
@@ -7102,32 +7096,32 @@ msgstr ""
 msgid "Words of Affirmation"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:169
+#: lib/animina_web/live/user_live/traits_wizard.ex:174
 #, elixir-autogen, elixir-format
 msgid "Flag limit reached"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:175
+#: lib/animina_web/live/user_live/traits_wizard.ex:184
 #, elixir-autogen, elixir-format
 msgid "OK"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:759
+#: lib/animina_web/live/user_live/traits_wizard.ex:762
 #, elixir-autogen, elixir-format
 msgid "green"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:760
+#: lib/animina_web/live/user_live/traits_wizard.ex:763
 #, elixir-autogen, elixir-format
 msgid "red"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:758
+#: lib/animina_web/live/user_live/traits_wizard.ex:761
 #, elixir-autogen, elixir-format
 msgid "white"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:171
+#: lib/animina_web/live/user_live/traits_wizard.ex:176
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You have reached the maximum number of %{color} flags (%{limit}). Please remove some flags before adding new ones."
 msgstr ""
