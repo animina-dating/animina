@@ -17,11 +17,11 @@ defmodule AniminaWeb.IndexLiveTest do
       refute html =~ "Our Mission Statement"
     end
 
-    test "redirects waitlisted user to /my/waitlist", %{conn: conn} do
+    test "redirects waitlisted user to /my", %{conn: conn} do
       user = user_fixture(%{language: "en", display_name: "Waitlisted User"})
       conn = log_in_user(conn, user)
 
-      assert {:error, {:redirect, %{to: "/my/waitlist"}}} = live(conn, ~p"/")
+      assert {:error, {:redirect, %{to: "/my"}}} = live(conn, ~p"/")
     end
 
     test "does not redirect non-waitlisted user", %{conn: conn} do

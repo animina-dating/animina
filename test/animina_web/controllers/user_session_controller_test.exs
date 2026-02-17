@@ -17,7 +17,7 @@ defmodule AniminaWeb.UserSessionControllerTest do
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
@@ -33,7 +33,7 @@ defmodule AniminaWeb.UserSessionControllerTest do
         })
 
       assert conn.resp_cookies["_animina_web_user_remember_me"]
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
     end
 
     test "logs the user in with return to", %{conn: conn, user: user} do

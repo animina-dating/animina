@@ -17,51 +17,57 @@ defmodule AniminaWeb.WaitlistComponents do
 
   def waitlist_status_banner(assigns) do
     ~H"""
-    <div class="max-w-2xl mx-auto text-center">
-      <p class="text-base-content/70">
-        {gettext("Your account is on the waitlist.")}
-      </p>
-      <p
-        :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
-        id="waitlist-countdown"
-        phx-hook="WaitlistCountdown"
-        data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
-        data-locale={@current_scope.user.language}
-        data-expired-text={gettext("Your activation is being processed")}
-        class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
-      >
-        {gettext("approximately 2 weeks")}
-      </p>
-      <p
-        :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
-        id="waitlist-subtext"
-        class="text-base-content/70 mt-1"
-      >
-        {gettext("until your account is activated")}
-      </p>
-      <p
-        :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) != :gt}
-        class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
-      >
-        {gettext("Your activation is being processed")}
-      </p>
-      <p
-        :if={is_nil(@end_waitlist_at)}
-        class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
-      >
-        {gettext("approximately 2 weeks")}
-      </p>
-      <p :if={is_nil(@end_waitlist_at)} class="text-base-content/70 mt-1">
-        {gettext("until your account is activated")}
-      </p>
+    <div class="max-w-2xl mx-auto">
+      <div class="bg-primary/5 border border-primary/10 rounded-lg p-6 text-center">
+        <p class="text-base-content/70">
+          {gettext("You're on the waitlist — hang tight!")}
+        </p>
+        <p
+          :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
+          id="waitlist-countdown"
+          phx-hook="WaitlistCountdown"
+          data-end-waitlist-at={DateTime.to_iso8601(@end_waitlist_at)}
+          data-locale={@current_scope.user.language}
+          data-expired-text={gettext("Your activation is being processed")}
+          class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+        >
+          {gettext("approximately 2 weeks")}
+        </p>
+        <p
+          :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) == :gt}
+          id="waitlist-subtext"
+          class="text-base-content/70 mt-1"
+        >
+          {gettext("until you can start connecting")}
+        </p>
+        <p
+          :if={@end_waitlist_at && DateTime.compare(@end_waitlist_at, DateTime.utc_now()) != :gt}
+          class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+        >
+          {gettext("Your activation is being processed")}
+        </p>
+        <p
+          :if={is_nil(@end_waitlist_at)}
+          class="text-2xl sm:text-3xl font-semibold text-base-content mt-2"
+        >
+          {gettext("approximately 2 weeks")}
+        </p>
+        <p :if={is_nil(@end_waitlist_at)} class="text-base-content/70 mt-1">
+          {gettext("until you can start connecting")}
+        </p>
+      </div>
     </div>
     """
   end
 
   @doc """
-  Renders the "Prepare your profile" section with all waitlist cards and referral card.
+  Renders the profile preparation section with profile cards.
+
+  When `waitlisted` is true, shows "Prepare your profile" title with description
+  and the referral card. When false, shows "Your profile" title without description
+  and no referral card.
   """
-  attr :columns, :integer, required: true
+  attr :columns, :integer, default: nil
   attr :profile_completeness, :any, required: true
   attr :avatar_photo, :any, required: true
   attr :flag_count, :integer, required: true
@@ -69,31 +75,42 @@ defmodule AniminaWeb.WaitlistComponents do
   attr :has_passkeys, :boolean, required: true
   attr :has_blocked_contacts, :boolean, required: true
   attr :blocked_contacts_count, :integer, required: true
-  attr :referral_code, :string, required: true
-  attr :referral_count, :integer, required: true
-  attr :referral_threshold, :integer, required: true
+  attr :waitlisted, :boolean, default: false
+  attr :referral_code, :string, default: nil
+  attr :referral_count, :integer, default: 0
+  attr :referral_threshold, :integer, default: 1
 
   def waitlist_preparation_section(assigns) do
     ~H"""
     <div>
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h2 class="text-lg font-medium text-base-content">
-            {gettext("Prepare your profile")}
-          </h2>
-          <p class="text-sm text-base-content/60">
-            {gettext("Use the waiting time to set up your profile so you can get started right away.")}
-          </p>
+          <%= if @waitlisted do %>
+            <h2 class="text-lg font-medium text-base-content">
+              {gettext("Prepare your profile")}
+            </h2>
+            <p class="text-sm text-base-content/60">
+              {gettext(
+                "Use the waiting time to set up your profile so you can get started right away."
+              )}
+            </p>
+          <% else %>
+            <h2 class="text-lg font-medium text-base-content">
+              {gettext("Your profile")}
+            </h2>
+          <% end %>
         </div>
-        <div class="hidden sm:block">
+        <div :if={@columns} class="hidden sm:block">
           <ColumnToggle.column_toggle columns={@columns} />
         </div>
       </div>
 
       <div class={[
         "grid gap-3 grid-cols-1",
-        ColumnPreferences.sm_grid_class(@columns),
-        ColumnPreferences.md_grid_class(@columns)
+        if(@columns,
+          do: [ColumnPreferences.sm_grid_class(@columns), ColumnPreferences.md_grid_class(@columns)],
+          else: "sm:grid-cols-2"
+        )
       ]}>
         <.waitlist_card
           navigate={~p"/my/settings/profile/photo"}
@@ -236,9 +253,9 @@ defmodule AniminaWeb.WaitlistComponents do
           </:completed_description>
         </.waitlist_card>
 
-        <%!-- Invite friends (referral card) --%>
-        <div class="rounded-lg border border-base-300 p-4">
-          <div class="flex items-center gap-3">
+        <%!-- Invite friends (referral card) — waitlisted users only --%>
+        <div :if={@waitlisted} class="rounded-lg border border-base-300 p-4">
+          <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0 text-accent">
               <.icon name="hero-share" class="w-5 h-5" />
             </div>
@@ -249,29 +266,31 @@ defmodule AniminaWeb.WaitlistComponents do
                   {@referral_count}/{@referral_threshold}
                 </span>
               </div>
-              <p class="text-xs text-base-content/60">
-                {gettext("Share the code")}
-                <strong
-                  id="referral-code"
-                  class="font-bold text-base-content select-all"
-                >
-                  {@referral_code}
-                </strong>
-                — {gettext(
-                  "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you.",
+              <p class="text-sm text-base-content/60 mt-1">
+                {gettext(
+                  "Each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you.",
                   threshold: @referral_threshold
                 )}
+              </p>
+              <div class="flex items-center gap-2 mt-2">
+                <code
+                  id="referral-code"
+                  class="px-3 py-1.5 bg-base-200 rounded text-sm font-bold text-base-content select-all"
+                >
+                  {@referral_code}
+                </code>
                 <button
                   type="button"
-                  class="inline-flex items-center text-base-content/40 hover:text-base-content/60 align-middle ml-0.5"
+                  class="btn btn-sm btn-ghost"
                   phx-click={JS.dispatch("phx:copy", to: "#referral-code")}
                 >
-                  <.icon name="hero-clipboard-document" class="w-3.5 h-3.5" />
+                  <.icon name="hero-clipboard-document" class="w-4 h-4" />
+                  {gettext("Copy")}
                 </button>
-              </p>
+              </div>
               <progress
                 :if={@referral_count > 0}
-                class="progress progress-accent w-full mt-2"
+                class="progress progress-accent w-full mt-3"
                 value={@referral_count}
                 max={@referral_threshold}
               >
@@ -318,7 +337,7 @@ defmodule AniminaWeb.WaitlistComponents do
       <% end %>
       <div class="flex-1 min-w-0">
         <p class="font-medium text-base-content">{render_slot(@title)}</p>
-        <p class="text-xs text-base-content/60">
+        <p class="text-sm text-base-content/60">
           <%= if @complete && @completed_description != [] do %>
             {render_slot(@completed_description)}
           <% else %>
@@ -331,7 +350,7 @@ defmodule AniminaWeb.WaitlistComponents do
           <.icon name="hero-check-circle-solid" class="size-5 text-success" />
         <% else %>
           <%= if @optional do %>
-            <span class="text-xs text-base-content/40 font-medium">{gettext("Optional")}</span>
+            <span class="text-sm text-base-content/40 font-medium">{gettext("Optional")}</span>
           <% else %>
             <span class="inline-block size-5 rounded-full border-2 border-base-content/20" />
           <% end %>

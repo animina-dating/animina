@@ -26,7 +26,7 @@ defmodule AniminaWeb.UserAuthTest do
       conn = UserAuth.log_in_user(conn, user)
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
       assert Accounts.get_user_by_session_token(token)
     end
 
@@ -84,7 +84,7 @@ defmodule AniminaWeb.UserAuthTest do
         |> assign(:current_scope, Scope.for_user(user))
         |> UserAuth.log_in_user(user)
 
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
     end
 
     test "writes a cookie if remember_me was set in previous session", %{conn: conn, user: user} do
@@ -735,7 +735,7 @@ defmodule AniminaWeb.UserAuthTest do
 
       user = Animina.Repo.get!(Accounts.User, user.id)
       conn = UserAuth.log_in_user(conn, user)
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
     end
 
     test "on_mount redirects to accept-terms when tos_accepted_at is before cutoff", %{

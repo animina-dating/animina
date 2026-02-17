@@ -48,7 +48,7 @@ defmodule AniminaWeb.UserAuth do
       cond do
         needs_tos_acceptance?(user) -> ~p"/users/accept-terms"
         user_return_to -> user_return_to
-        user.state == "waitlisted" -> ~p"/my/waitlist"
+        user.state == "waitlisted" -> ~p"/my"
         true -> signed_in_path(conn)
       end
 

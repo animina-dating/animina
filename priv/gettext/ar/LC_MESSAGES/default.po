@@ -586,7 +586,7 @@ msgstr "تعيين كلمة مرور جديدة"
 #: lib/animina_web/live/user_live/account_passkeys.ex:19
 #: lib/animina_web/live/user_live/account_sessions.ex:19
 #: lib/animina_web/live/user_live/moodboard_editor.ex:34
-#: lib/animina_web/live/user_live/my_hub.ex:68
+#: lib/animina_web/live/user_live/my_hub.ex:85
 #: lib/animina_web/live/user_live/profile_hub.ex:21
 #: lib/animina_web/live/user_live/settings_hub.ex:18
 #: lib/animina_web/live/user_live/settings_hub.ex:73
@@ -721,6 +721,7 @@ msgstr "تم حذف حسابك. يرجى التسجيل مرة أخرى."
 
 #: lib/animina_web/components/layouts.ex:176
 #: lib/animina_web/components/layouts.ex:377
+#: lib/animina_web/components/waitlist_components.ex:97
 #, elixir-autogen, elixir-format
 msgid "Your profile"
 msgstr "ملفك الشخصي"
@@ -2977,7 +2978,7 @@ msgstr "تم رفع الصورة! ستتم مراجعتها قريباً."
 msgid "Processing"
 msgstr "جارٍ المعالجة"
 
-#: lib/animina_web/components/waitlist_components.ex:121
+#: lib/animina_web/components/waitlist_components.ex:134
 #: lib/animina_web/live/user_live/avatar_upload.ex:19
 #: lib/animina_web/live/user_live/avatar_upload.ex:29
 #: lib/animina_web/live/user_live/avatar_upload.ex:298
@@ -4038,7 +4039,7 @@ msgstr "تعديل النص"
 msgid "Add photos and text to your moodboard to share with others."
 msgstr "أضف صوراً ونصوصاً إلى لوحة مزاجك لمشاركتها مع الآخرين."
 
-#: lib/animina_web/components/waitlist_components.ex:170
+#: lib/animina_web/components/waitlist_components.ex:183
 #: lib/animina_web/live/user_live/moodboard_editor.ex:68
 #: lib/animina_web/live/user_live/moodboard_editor.ex:658
 #: lib/animina_web/live/user_live/profile_moodboard.ex:210
@@ -4307,7 +4308,7 @@ msgstr "فشل إرسال الرسالة"
 #: lib/animina_web/live/messages_live.ex:149
 #: lib/animina_web/live/messages_live.ex:646
 #: lib/animina_web/live/messages_live.ex:695
-#: lib/animina_web/live/user_live/my_hub.ex:55
+#: lib/animina_web/live/user_live/my_hub.ex:54
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "الرسائل"
@@ -4689,28 +4690,28 @@ msgstr "ليس لديك فتحات دردشة متاحة. تخلَّ عن محا
 msgid "New chats available today"
 msgstr "دردشات جديدة متاحة اليوم"
 
-#: lib/animina_web/components/waitlist_components.ex:30
-#: lib/animina_web/components/waitlist_components.ex:46
+#: lib/animina_web/components/waitlist_components.ex:31
+#: lib/animina_web/components/waitlist_components.ex:47
 #, elixir-autogen, elixir-format
 msgid "Your activation is being processed"
 msgstr "يتم معالجة تفعيل حسابك"
 
-#: lib/animina_web/components/waitlist_components.ex:172
+#: lib/animina_web/components/waitlist_components.ex:185
 #, elixir-autogen, elixir-format
 msgid "Add photos and stories to make a great first impression."
 msgstr "أضف صوراً وقصصاً لترك انطباع أول رائع."
 
-#: lib/animina_web/components/waitlist_components.ex:143
+#: lib/animina_web/components/waitlist_components.ex:156
 #, elixir-autogen, elixir-format
 msgid "Define what you're about and what you're looking for."
 msgstr "حدد ما يميّزك وما تبحث عنه."
 
-#: lib/animina_web/components/waitlist_components.ex:82
+#: lib/animina_web/components/waitlist_components.ex:90
 #, elixir-autogen, elixir-format
 msgid "Prepare your profile"
 msgstr "جهّز ملفك الشخصي"
 
-#: lib/animina_web/components/waitlist_components.ex:141
+#: lib/animina_web/components/waitlist_components.ex:154
 #, elixir-autogen, elixir-format
 msgid "Set up your flags"
 msgstr "أعدّ علاماتك"
@@ -4810,12 +4811,12 @@ msgstr "متصفحك لا يدعم مفاتيح المرور."
 msgid "or"
 msgstr "أو"
 
-#: lib/animina_web/components/waitlist_components.ex:202
+#: lib/animina_web/components/waitlist_components.ex:213
 #, elixir-autogen, elixir-format
 msgid "Set up a passkey"
 msgstr "إعداد مفتاح مرور"
 
-#: lib/animina_web/components/waitlist_components.ex:204
+#: lib/animina_web/components/waitlist_components.ex:215
 #, elixir-autogen, elixir-format
 msgid "Sign in faster and more securely with a passkey."
 msgstr "سجّل الدخول بشكل أسرع وأكثر أماناً باستخدام مفتاح مرور."
@@ -4875,12 +4876,12 @@ msgstr "أعدّ علامات شخصيتك"
 msgid "Upload your main profile photo"
 msgstr "ارفع صورتك الشخصية الرئيسية"
 
-#: lib/animina_web/components/waitlist_components.ex:122
+#: lib/animina_web/components/waitlist_components.ex:135
 #, elixir-autogen, elixir-format
 msgid "Upload your main profile photo."
 msgstr "ارفع صورتك الشخصية الرئيسية."
 
-#: lib/animina_web/components/waitlist_components.ex:338
+#: lib/animina_web/components/waitlist_components.ex:351
 #, elixir-autogen, elixir-format
 msgid "Optional"
 msgstr "فئات اختيارية"
@@ -4931,7 +4932,7 @@ msgstr "تمت الموافقة"
 msgid "Animal photo detected"
 msgstr "تم اكتشاف صورة حيوان"
 
-#: lib/animina_web/components/waitlist_components.ex:85
+#: lib/animina_web/components/waitlist_components.ex:93
 #, elixir-autogen, elixir-format
 msgid "Use the waiting time to set up your profile so you can get started right away."
 msgstr "استغل وقت الانتظار لإعداد ملفك الشخصي حتى تتمكن من البدء فوراً."
@@ -5018,7 +5019,7 @@ msgstr ""
 msgid "Are you sure you want to unblock this contact?"
 msgstr "هل أنت متأكد أنك تريد إزالة مفتاح المرور هذا؟"
 
-#: lib/animina_web/components/waitlist_components.ex:229
+#: lib/animina_web/components/waitlist_components.ex:240
 #, elixir-autogen, elixir-format
 msgid "Block contacts"
 msgstr ""
@@ -5070,7 +5071,7 @@ msgstr ""
 msgid "Phone number or email"
 msgstr ""
 
-#: lib/animina_web/components/waitlist_components.ex:231
+#: lib/animina_web/components/waitlist_components.ex:242
 #, elixir-autogen, elixir-format
 msgid "Prevent ex-partners or acquaintances from seeing your profile."
 msgstr ""
@@ -5115,7 +5116,7 @@ msgstr "الاحترام أولاً"
 msgid "Z–A"
 msgstr ""
 
-#: lib/animina_web/components/waitlist_components.ex:234
+#: lib/animina_web/components/waitlist_components.ex:245
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} contact blocked"
 msgid_plural "%{count} contacts blocked"
@@ -5126,7 +5127,7 @@ msgstr[3] "%{count} إجمالي"
 msgstr[4] "%{count} إجمالي"
 msgstr[5] "%{count} إجمالي"
 
-#: lib/animina_web/components/waitlist_components.ex:146
+#: lib/animina_web/components/waitlist_components.ex:159
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} flag set"
 msgid_plural "%{count} flags set"
@@ -5137,7 +5138,7 @@ msgstr[3] "منذ %{count} دقيقة"
 msgstr[4] "منذ %{count} دقيقة"
 msgstr[5] "منذ %{count} دقيقة"
 
-#: lib/animina_web/components/waitlist_components.ex:175
+#: lib/animina_web/components/waitlist_components.ex:188
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} item"
 msgid_plural "%{count} items"
@@ -5147,11 +5148,6 @@ msgstr[2] "%{count} إدخالان"
 msgstr[3] "%{count} إدخالات"
 msgstr[4] "%{count} إدخالاً"
 msgstr[5] "%{count} إدخال"
-
-#: lib/animina_web/components/waitlist_components.ex:22
-#, elixir-autogen, elixir-format
-msgid "Your account is on the waitlist."
-msgstr ""
 
 #: lib/animina_web/components/live_online_count_component.ex:44
 #: lib/animina_web/components/live_online_count_component.ex:55
@@ -5213,7 +5209,7 @@ msgstr ""
 #: lib/animina_web/live/user_live/email_logs.ex:111
 #: lib/animina_web/live/user_live/login_history.ex:195
 #: lib/animina_web/live/user_live/logs_hub.ex:16
-#: lib/animina_web/live/user_live/my_hub.ex:74
+#: lib/animina_web/live/user_live/my_hub.ex:91
 #, elixir-autogen, elixir-format
 msgid "Logs"
 msgstr ""
@@ -5348,12 +5344,12 @@ msgstr ""
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:73
+#: lib/animina_web/live/user_live/my_hub.ex:136
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlisted"
 msgstr "في قائمة الانتظار"
 
-#: lib/animina_web/live/user_live/waitlist.ex:66
+#: lib/animina_web/live/user_live/my_hub.ex:129
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
@@ -5364,19 +5360,8 @@ msgstr[3] ""
 msgstr[4] ""
 msgstr[5] ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:83
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Your account is on the waitlist. Prepare your profile while you wait."
-msgstr ""
-
-#: lib/animina_web/components/waitlist_components.ex:40
-#: lib/animina_web/components/waitlist_components.ex:55
-#, elixir-autogen, elixir-format
-msgid "until your account is activated"
-msgstr ""
-
-#: lib/animina_web/components/waitlist_components.ex:33
-#: lib/animina_web/components/waitlist_components.ex:52
+#: lib/animina_web/components/waitlist_components.ex:34
+#: lib/animina_web/components/waitlist_components.ex:53
 #, elixir-autogen, elixir-format, fuzzy
 msgid "approximately 2 weeks"
 msgstr "حوالي 4 أسابيع"
@@ -5602,7 +5587,7 @@ msgstr ""
 msgid "Manage your account and app settings"
 msgstr "أدِر إعدادات حسابك"
 
-#: lib/animina_web/live/user_live/my_hub.ex:91
+#: lib/animina_web/live/user_live/my_hub.ex:107
 #: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "%{completed}/%{total} complete"
@@ -5645,7 +5630,7 @@ msgstr ""
 msgid "Privacy & Blocking"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:96
+#: lib/animina_web/live/user_live/my_hub.ex:112
 #: lib/animina_web/live/user_live/settings_hub.ex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile complete"
@@ -5706,14 +5691,9 @@ msgstr ""
 msgid "Sign in with Face ID, Touch ID, or a security key"
 msgstr "سجّل الدخول باستخدام Face ID أو Touch ID أو مفتاح أمان — أسرع وأكثر أماناً من كلمات المرور."
 
-#: lib/animina_web/components/waitlist_components.ex:251
+#: lib/animina_web/components/waitlist_components.ex:262
 #, elixir-autogen, elixir-format
 msgid "Skip the waitlist"
-msgstr ""
-
-#: lib/animina_web/components/waitlist_components.ex:257
-#, elixir-autogen, elixir-format
-msgid "Share the code"
 msgstr ""
 
 #: lib/animina_web/live/user_live/pin_confirmation.ex:50
@@ -5760,7 +5740,7 @@ msgstr ""
 msgid "Assign admin and moderator roles"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:63
+#: lib/animina_web/live/user_live/my_hub.ex:61
 #, elixir-autogen, elixir-format
 msgid "Find new people"
 msgstr ""
@@ -5785,24 +5765,14 @@ msgstr ""
 msgid "Toggle features and system settings"
 msgstr ""
 
-#: lib/animina_web/live/user_live/waitlist.ex:20
-#, elixir-autogen, elixir-format, fuzzy
-msgid "Waitlist"
-msgstr "في قائمة الانتظار"
-
-#: lib/animina_web/live/user_live/my_hub.ex:75
+#: lib/animina_web/live/user_live/my_hub.ex:92
 #, elixir-autogen, elixir-format
 msgid "Your account activity logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:56
+#: lib/animina_web/live/user_live/my_hub.ex:55
 #, elixir-autogen, elixir-format
 msgid "Your conversations"
-msgstr ""
-
-#: lib/animina_web/live/user_live/my_hub.ex:23
-#, elixir-autogen, elixir-format
-msgid "Your personal hub"
 msgstr ""
 
 #: lib/animina_web/live/user_live/registration.ex:40
@@ -5993,11 +5963,6 @@ msgstr ""
 msgid "Wed"
 msgstr ""
 
-#: lib/animina_web/components/waitlist_components.ex:264
-#, elixir-autogen, elixir-format, fuzzy
-msgid "each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you."
-msgstr ""
-
 #: lib/animina_web/live/user_live/pin_confirmation.ex:137
 #: lib/animina_web/live/user_live/pin_confirmation.ex:161
 #, elixir-autogen, elixir-format, fuzzy
@@ -6029,7 +5994,7 @@ msgstr "نسيت كلمة المرور"
 msgid "Language Settings"
 msgstr "اللغة"
 
-#: lib/animina_web/live/user_live/login.ex:182
+#: lib/animina_web/live/user_live/login.ex:188
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Log In"
 msgstr "تسجيل الدخول"
@@ -6048,12 +6013,10 @@ msgstr "تسجيل الدخول"
 #: lib/animina_web/live/user_live/login_history.ex:190
 #: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:22
-#: lib/animina_web/live/user_live/my_hub.ex:101
+#: lib/animina_web/live/user_live/my_hub.ex:139
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/settings_hub.ex:21
 #: lib/animina_web/live/user_live/traits_wizard.ex:18
-#: lib/animina_web/live/user_live/waitlist.ex:18
 #, elixir-autogen, elixir-format
 msgid "My Hub"
 msgstr ""
@@ -6152,7 +6115,7 @@ msgstr ""
 
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/live/spotlight_live.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:62
+#: lib/animina_web/live/user_live/my_hub.ex:60
 #: lib/animina_web/live/user_live/profile_moodboard.ex:40
 #, elixir-autogen, elixir-format
 msgid "Spotlight"
@@ -7220,4 +7183,35 @@ msgstr ""
 #: lib/animina_web/live/user_live/traits_wizard.ex:176
 #, elixir-autogen, elixir-format, fuzzy
 msgid "You have reached the maximum number of %{color} flags (%{limit}). Please remove some flags before adding new ones."
+msgstr ""
+
+#: lib/animina_web/components/waitlist_components.ex:286
+#, elixir-autogen, elixir-format
+msgid "Copy"
+msgstr ""
+
+#: lib/animina_web/components/waitlist_components.ex:268
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Each confirmed signup reduces your waitlist time by 1/%{threshold} for both of you."
+msgstr ""
+
+#: lib/animina_web/live/user_live/my_hub.ex:21
+#, elixir-autogen, elixir-format
+msgid "Hey %{name}!"
+msgstr ""
+
+#: lib/animina_web/live/user_live/my_hub.ex:28
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Profile progress"
+msgstr "الملف الشخصي"
+
+#: lib/animina_web/components/waitlist_components.ex:23
+#, elixir-autogen, elixir-format
+msgid "You're on the waitlist — hang tight!"
+msgstr ""
+
+#: lib/animina_web/components/waitlist_components.ex:41
+#: lib/animina_web/components/waitlist_components.ex:56
+#, elixir-autogen, elixir-format, fuzzy
+msgid "until you can start connecting"
 msgstr ""

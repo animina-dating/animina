@@ -62,7 +62,7 @@ defmodule AniminaWeb.LayoutsTest do
 
       assert html =~ "waitlist-badge"
       assert html =~ "Waitlist"
-      assert html =~ "/my/waitlist"
+      assert html =~ "/my"
     end
 
     test "hides waitlist badge for normal user", %{conn: conn, user: user} do

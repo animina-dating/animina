@@ -244,7 +244,7 @@ defmodule AniminaWeb.Layouts do
                     <!-- Waitlist Banner (only shown in user role) -->
                     <%= if @current_scope.user.state == "waitlisted" && @current_scope.current_role == "user" do %>
                       <a
-                        href="/my/waitlist"
+                        href="/my"
                         class="waitlist-badge block px-4 py-2 bg-amber-50 border-b border-base-300 hover:bg-amber-100 transition-colors"
                       >
                         <div class="flex items-center gap-2">

@@ -370,7 +370,7 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
       assert view
              |> element("a", "Finish")
              |> render_click()
-             |> follow_redirect(conn, ~p"/my/waitlist")
+             |> follow_redirect(conn, ~p"/my")
     end
 
     test "clicking step dot navigates directly to that step", %{conn: conn} do

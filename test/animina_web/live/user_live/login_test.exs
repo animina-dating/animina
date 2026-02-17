@@ -48,7 +48,7 @@ defmodule AniminaWeb.UserLive.LoginTest do
 
       conn = submit_form(form, conn)
 
-      assert redirected_to(conn) == ~p"/my/waitlist"
+      assert redirected_to(conn) == ~p"/my"
     end
 
     test "redirects to login page with a flash error if credentials are invalid", %{

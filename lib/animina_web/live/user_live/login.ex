@@ -139,6 +139,12 @@ defmodule AniminaWeb.UserLive.Login do
           {@user.pool_size}
         </span>
         <.role_badges roles={@user.roles} />
+        <span
+          :if={@user.state == "waitlisted"}
+          class="px-1 py-0.5 text-[10px] bg-amber-500/20 text-amber-700 rounded font-semibold"
+        >
+          WL
+        </span>
       </button>
     </form>
     """
@@ -290,6 +296,7 @@ defmodule AniminaWeb.UserLive.Login do
         email: user.email,
         display_name: user.display_name,
         gender: user.gender,
+        state: user.state,
         age: age,
         roles: roles,
         pool_size: pool_size

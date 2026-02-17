@@ -82,7 +82,7 @@ defmodule AniminaWeb.UserLive.AccountPasskeys do
       |> put_flash(:info, gettext("Passkey added successfully!"))
 
     if user.state == "waitlisted" do
-      {:noreply, push_navigate(socket, to: ~p"/my/waitlist")}
+      {:noreply, push_navigate(socket, to: ~p"/my")}
     else
       {:noreply, socket}
     end

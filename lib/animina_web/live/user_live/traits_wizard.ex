@@ -541,7 +541,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     user_flags = load_all_user_flags(user)
 
     finish_path =
-      if user.state == "waitlisted", do: ~p"/my/waitlist", else: ~p"/my/settings/profile"
+      if user.state == "waitlisted", do: ~p"/my", else: ~p"/my/settings/profile"
 
     {:ok,
      socket

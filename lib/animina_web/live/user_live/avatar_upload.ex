@@ -435,7 +435,7 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
         socket =
           socket
           |> put_flash(:info, gettext("Your profile photo has been approved!"))
-          |> push_navigate(to: ~p"/my/waitlist")
+          |> push_navigate(to: ~p"/my")
 
         {:noreply, socket}
       else

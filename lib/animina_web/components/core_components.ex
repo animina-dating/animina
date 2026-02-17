@@ -482,7 +482,7 @@ defmodule AniminaWeb.CoreComponents do
         ]}>
           {@title}
         </div>
-        <div :if={@subtitle} class="text-xs text-base-content/60 truncate mt-0.5">
+        <div :if={@subtitle} class="text-sm text-base-content/60 truncate mt-0.5">
           {@subtitle}
         </div>
       </div>

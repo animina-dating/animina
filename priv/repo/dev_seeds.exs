@@ -41,17 +41,17 @@ defmodule Animina.Seeds.DevUsers do
     %{first_name: "Philipp", last_name: "Neumann", email: "dev-philipp@animina.test", age: 34, roles: []},
     %{first_name: "Dominik", last_name: "Schwarz", email: "dev-dominik@animina.test", age: 27, roles: []},
     %{first_name: "Marcel", last_name: "Zimmermann", email: "dev-marcel@animina.test", age: 40, roles: []},
-    %{first_name: "Tim", last_name: "Braun", email: "dev-tim@animina.test", age: 26, roles: []},
+    %{first_name: "Tim", last_name: "Braun", email: "dev-tim@animina.test", age: 26, roles: [], waitlisted: true},
     %{first_name: "Lukas", last_name: "Krüger", email: "dev-lukas@animina.test", age: 31, roles: []},
     %{first_name: "Maximilian", last_name: "Hartmann", email: "dev-maximilian@animina.test", age: 36, roles: []},
     %{first_name: "Jens", last_name: "Lange", email: "dev-jens@animina.test", age: 43, roles: []},
     %{first_name: "Dennis", last_name: "Werner", email: "dev-dennis@animina.test", age: 28, roles: []},
-    %{first_name: "Nico", last_name: "Lehmann", email: "dev-nico@animina.test", age: 25, roles: []},
+    %{first_name: "Nico", last_name: "Lehmann", email: "dev-nico@animina.test", age: 25, roles: [], waitlisted: true},
     %{first_name: "Oliver", last_name: "Schmitt", email: "dev-oliver@animina.test", age: 34, roles: []},
     %{first_name: "Robert", last_name: "Schulz", email: "dev-robert@animina.test", age: 39, roles: []},
     %{first_name: "Konstantin", last_name: "Maier", email: "dev-konstantin@animina.test", age: 30, roles: []},
     %{first_name: "Benjamin", last_name: "Köhler", email: "dev-benjamin@animina.test", age: 27, roles: []},
-    %{first_name: "Moritz", last_name: "Herrmann", email: "dev-moritz@animina.test", age: 33, roles: []}
+    %{first_name: "Moritz", last_name: "Herrmann", email: "dev-moritz@animina.test", age: 33, roles: [], waitlisted: true}
   ]
 
   @female_users [
@@ -66,7 +66,7 @@ defmodule Animina.Seeds.DevUsers do
     %{first_name: "Stefanie", last_name: "Hoffmann", email: "dev-stefanie@animina.test", age: 27, roles: []},
     %{first_name: "Christina", last_name: "Schäfer", email: "dev-christina@animina.test", age: 39, roles: []},
     %{first_name: "Nicole", last_name: "Koch", email: "dev-nicole@animina.test", age: 31, roles: []},
-    %{first_name: "Melanie", last_name: "Bauer", email: "dev-melanie@animina.test", age: 26, roles: []},
+    %{first_name: "Melanie", last_name: "Bauer", email: "dev-melanie@animina.test", age: 26, roles: [], waitlisted: true},
     %{first_name: "Sabrina", last_name: "Richter", email: "dev-sabrina@animina.test", age: 35, roles: []},
     %{first_name: "Jennifer", last_name: "Klein", email: "dev-jennifer@animina.test", age: 29, roles: []},
     %{first_name: "Nadine", last_name: "Wolf", email: "dev-nadine@animina.test", age: 32, roles: []},
@@ -77,7 +77,7 @@ defmodule Animina.Seeds.DevUsers do
     %{first_name: "Susanne", last_name: "Braun", email: "dev-susanne@animina.test", age: 44, roles: []},
     %{first_name: "Martina", last_name: "Krüger", email: "dev-martina@animina.test", age: 37, roles: []},
     %{first_name: "Kerstin", last_name: "Hartmann", email: "dev-kerstin@animina.test", age: 33, roles: []},
-    %{first_name: "Bianca", last_name: "Lange", email: "dev-bianca@animina.test", age: 26, roles: []},
+    %{first_name: "Bianca", last_name: "Lange", email: "dev-bianca@animina.test", age: 26, roles: [], waitlisted: true},
     %{first_name: "Simone", last_name: "Werner", email: "dev-simone@animina.test", age: 40, roles: []},
     %{first_name: "Petra", last_name: "Lehmann", email: "dev-petra@animina.test", age: 45, roles: []},
     %{first_name: "Elena", last_name: "Schmitt", email: "dev-elena@animina.test", age: 31, roles: []},
@@ -714,8 +714,13 @@ defmodule Animina.Seeds.DevUsers do
 
     case Accounts.register_user(attrs) do
       {:ok, user} ->
-        # Confirm and activate the user
-        user = confirm_and_activate_user(user)
+        # Confirm email; activate unless flagged as waitlisted
+        user =
+          if Map.get(user_data, :waitlisted, false) do
+            confirm_only_user(user)
+          else
+            confirm_and_activate_user(user)
+          end
 
         # Assign roles
         assign_roles(user, user_data.roles)
@@ -733,7 +738,8 @@ defmodule Animina.Seeds.DevUsers do
         # Create moodboard items
         create_moodboard(user, index)
 
-        IO.puts("  Created: #{user_data.first_name} #{user_data.last_name} (#{user_data.email})")
+        state_label = if Map.get(user_data, :waitlisted, false), do: " [waitlisted]", else: ""
+        IO.puts("  Created: #{user_data.first_name} #{user_data.last_name} (#{user_data.email})#{state_label}")
         {:ok, user}
 
       {:error, reason} ->
@@ -767,6 +773,20 @@ defmodule Animina.Seeds.DevUsers do
       Repo.update_all(
         from(u in Animina.Accounts.User, where: u.id == ^user.id),
         set: [confirmed_at: now, state: "normal"]
+      )
+
+    Repo.get!(Animina.Accounts.User, user.id)
+  end
+
+  defp confirm_only_user(user) do
+    # Confirm email but keep user on the waitlist with end_waitlist_at in the future
+    now = DateTime.utc_now(:second)
+    end_waitlist_at = DateTime.add(now, 14 * 86_400, :second)
+
+    {1, _} =
+      Repo.update_all(
+        from(u in Animina.Accounts.User, where: u.id == ^user.id),
+        set: [confirmed_at: now, end_waitlist_at: end_waitlist_at]
       )
 
     Repo.get!(Animina.Accounts.User, user.id)

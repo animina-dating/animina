@@ -84,7 +84,7 @@ defmodule AniminaWeb.UserSessionController do
       %Accounts.User{confirmed_at: confirmed_at} = user when not is_nil(confirmed_at) ->
         conn
         |> put_flash(:info, gettext("Email address confirmed successfully."))
-        |> put_session(:user_return_to, ~p"/my/waitlist")
+        |> put_session(:user_return_to, ~p"/my")
         |> UserAuth.log_in_user(user, user_params)
 
       _ ->
