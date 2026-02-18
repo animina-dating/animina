@@ -228,8 +228,9 @@ defmodule Animina.AI.Executor do
     _ -> module.default_model()
   end
 
-  defp maybe_put_photo_id(metadata, %{params: %{"photo_id" => photo_id}}) when is_binary(photo_id),
-    do: Map.put(metadata, "photo_id", photo_id)
+  defp maybe_put_photo_id(metadata, %{params: %{"photo_id" => photo_id}})
+       when is_binary(photo_id),
+       do: Map.put(metadata, "photo_id", photo_id)
 
   defp maybe_put_photo_id(metadata, _job), do: metadata
 

@@ -282,7 +282,10 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
 
         <%!-- Live toggle --%>
         <div class="flex flex-wrap gap-3 mb-6">
-          <div class="flex items-center gap-2 bg-base-200 rounded-lg px-4 py-2 cursor-pointer" phx-click="toggle-live">
+          <div
+            class="flex items-center gap-2 bg-base-200 rounded-lg px-4 py-2 cursor-pointer"
+            phx-click="toggle-live"
+          >
             <span class="text-sm text-base-content/60">{gettext("Live")}</span>
             <input
               type="checkbox"

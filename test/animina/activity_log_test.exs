@@ -373,7 +373,7 @@ defmodule Animina.ActivityLogTest do
           "AI job photo_classification completed in 21277ms",
           metadata: %{
             "job_type" => "photo_classification",
-            "duration_ms" => 21277,
+            "duration_ms" => 21_277,
             "model" => "llava:13b",
             "job_id" => Ecto.UUID.generate()
           }
@@ -382,7 +382,7 @@ defmodule Animina.ActivityLogTest do
       assert entry.category == "system"
       assert entry.event == "ollama_processed"
       assert entry.metadata["job_type"] == "photo_classification"
-      assert entry.metadata["duration_ms"] == 21277
+      assert entry.metadata["duration_ms"] == 21_277
     end
 
     test "ollama_processed broadcasts via PubSub for live mode" do
