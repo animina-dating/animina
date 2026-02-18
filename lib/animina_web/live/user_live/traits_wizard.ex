@@ -12,23 +12,13 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
-            </li>
-            <li>
-              <.link patch={traits_path(1)}>{gettext("My Flags")}</.link>
-            </li>
-            <li>{step_label(@current_step)}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+          <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
+          <:crumb patch={traits_path(1)}>{gettext("My Flags")}</:crumb>
+          <:crumb>{step_label(@current_step)}</:crumb>
+        </.breadcrumb_nav>
 
         <div class="text-center mb-8">
           <.header>

@@ -7,7 +7,13 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1, email_status_badge_class: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers, sort: true, expand: true
+  use AniminaWeb.Helpers.PaginationHelpers,
+    sort: true,
+    expand: true,
+    filter_events: [
+      {"filter-type", "type", :filter_type},
+      {"filter-status", "status", :filter_status}
+    ]
 
   @default_per_page 50
 
@@ -66,18 +72,6 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
   end
 
   @impl true
-  def handle_event("filter-type", %{"type" => type}, socket) do
-    filter = if type == "", do: nil, else: type
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_type: filter))}
-  end
-
-  @impl true
-  def handle_event("filter-status", %{"status" => status}, socket) do
-    filter = if status == "", do: nil, else: status
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_status: filter))}
-  end
-
-  @impl true
   def handle_info(:auto_reload, socket) do
     if socket.assigns.auto_reload do
       Process.send_after(self(), :auto_reload, 1000)
@@ -133,18 +127,11 @@ defmodule AniminaWeb.Admin.EmailLogsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumb --%>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
-            </li>
-            <li>{gettext("Email Logs")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("Email Logs")}</:crumb>
+        </.breadcrumb_nav>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Email Logs")}</h1>

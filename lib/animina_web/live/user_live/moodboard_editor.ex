@@ -25,20 +25,12 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
       <div id="moodboard-editor-container" phx-hook="DeviceType">
         <!-- Header -->
         <div class="flex items-center justify-between mb-8">
-          <div class="breadcrumbs text-sm">
-            <ul>
-              <li>
-                <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
-              </li>
-              <li>
-                <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-              </li>
-              <li>
-                <.link navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</.link>
-              </li>
-              <li>{gettext("Moodboard")}</li>
-            </ul>
-          </div>
+          <.breadcrumb_nav class="">
+            <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+            <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+            <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
+            <:crumb>{gettext("Moodboard")}</:crumb>
+          </.breadcrumb_nav>
 
           <.link navigate={~p"/users/#{@user.id}"} class="btn btn-ghost btn-sm">
             <svg

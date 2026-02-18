@@ -24,17 +24,11 @@ defmodule AniminaWeb.Admin.PhotoHistoryLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/photo-reviews"}>{gettext("Photo Reviews")}</.link>
-            </li>
-            <li>{gettext("History")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/photo-reviews"}>{gettext("Photo Reviews")}</:crumb>
+          <:crumb>{gettext("History")}</:crumb>
+        </.breadcrumb_nav>
 
         <div class="flex items-start gap-6 mb-8">
           <%!-- Photo Preview --%>

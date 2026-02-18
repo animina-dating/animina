@@ -359,6 +359,47 @@ defmodule AniminaWeb.CoreComponents do
   end
 
   @doc """
+  Renders a breadcrumb navigation trail.
+
+  The last item is rendered as plain text (current page) when neither
+  `navigate` nor `patch` is provided. All preceding items are links.
+
+  ## Examples
+
+      <.breadcrumb_nav>
+        <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+        <:crumb navigate={~p"/admin/logs"}>{gettext("Logs")}</:crumb>
+        <:crumb>{gettext("Email Logs")}</:crumb>
+      </.breadcrumb_nav>
+  """
+  attr :class, :string, default: "mb-6"
+
+  slot :crumb do
+    attr :navigate, :string
+    attr :patch, :string
+  end
+
+  def breadcrumb_nav(assigns) do
+    ~H"""
+    <div class={["breadcrumbs text-sm", @class]}>
+      <ul>
+        <li :for={crumb <- @crumb}>
+          <.link :if={Map.get(crumb, :navigate)} navigate={crumb.navigate}>
+            {render_slot(crumb)}
+          </.link>
+          <.link :if={Map.get(crumb, :patch)} patch={crumb.patch}>
+            {render_slot(crumb)}
+          </.link>
+          <span :if={!Map.get(crumb, :navigate) && !Map.get(crumb, :patch)}>
+            {render_slot(crumb)}
+          </span>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a page header with breadcrumb trail and centered title.
 
   Replaces the old `settings_header/1` and `profile_header/1` with a single
@@ -384,14 +425,10 @@ defmodule AniminaWeb.CoreComponents do
 
   def page_header(assigns) do
     ~H"""
-    <div class="breadcrumbs text-sm mb-6">
-      <ul>
-        <li :for={crumb <- @crumb}>
-          <.link navigate={crumb.navigate}>{render_slot(crumb)}</.link>
-        </li>
-        <li>{@title}</li>
-      </ul>
-    </div>
+    <.breadcrumb_nav>
+      <:crumb :for={crumb <- @crumb} navigate={crumb.navigate}>{render_slot(crumb)}</:crumb>
+      <:crumb>{@title}</:crumb>
+    </.breadcrumb_nav>
 
     <div class="text-center mb-8">
       <.header>
@@ -401,6 +438,47 @@ defmodule AniminaWeb.CoreComponents do
     </div>
     """
   end
+
+  @doc """
+  Renders an empty state placeholder with icon, title, and optional subtitle.
+
+  ## Examples
+
+      <.empty_state icon="hero-chat-bubble-left-right" title={gettext("No messages yet")} />
+
+      <.empty_state
+        icon="hero-magnifying-glass"
+        title={gettext("No results")}
+        subtitle={gettext("Try adjusting your filters.")}
+        size={:sm}
+      />
+  """
+  attr :icon, :string, required: true
+  attr :title, :string, required: true
+  attr :subtitle, :string, default: nil
+  attr :size, :atom, default: :md, values: [:sm, :md, :lg]
+
+  def empty_state(assigns) do
+    ~H"""
+    <div class={["text-center text-base-content/50", empty_state_padding(@size)]}>
+      <.icon name={@icon} class={["mx-auto mb-4 opacity-50", empty_state_icon_size(@size)]} />
+      <p class={empty_state_title_class(@size)}>{@title}</p>
+      <p :if={@subtitle} class="text-sm mt-2">{@subtitle}</p>
+    </div>
+    """
+  end
+
+  defp empty_state_padding(:sm), do: "py-8"
+  defp empty_state_padding(:md), do: "py-12"
+  defp empty_state_padding(:lg), do: "py-16"
+
+  defp empty_state_icon_size(:sm), do: "h-8 w-8"
+  defp empty_state_icon_size(:md), do: "h-12 w-12"
+  defp empty_state_icon_size(:lg), do: "h-16 w-16"
+
+  defp empty_state_title_class(:sm), do: "text-sm"
+  defp empty_state_title_class(:md), do: ""
+  defp empty_state_title_class(:lg), do: "text-lg"
 
   @doc false
   attr :title, :string, required: true

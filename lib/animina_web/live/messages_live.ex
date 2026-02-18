@@ -30,16 +30,10 @@ defmodule AniminaWeb.MessagesLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-3xl mx-auto flex flex-col h-[calc(100vh-12rem)]">
-        <div class="breadcrumbs text-sm mb-2">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/messages"}>{gettext("Messages")}</.link>
-            </li>
-          </ul>
-        </div>
+        <.breadcrumb_nav class="mb-2">
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb navigate={~p"/my/messages"}>{gettext("Messages")}</:crumb>
+        </.breadcrumb_nav>
         <%!-- Conversation Header --%>
         <div class="flex items-center gap-3 pb-4 border-b border-base-300">
           <.link navigate={~p"/my/messages"} class="btn btn-ghost btn-sm btn-circle">
@@ -137,14 +131,10 @@ defmodule AniminaWeb.MessagesLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
-            </li>
-            <li>{gettext("Messages")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb>{gettext("Messages")}</:crumb>
+        </.breadcrumb_nav>
         <.header>
           {gettext("Messages")}
         </.header>

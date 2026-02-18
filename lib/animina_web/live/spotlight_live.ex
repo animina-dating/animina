@@ -24,12 +24,9 @@ defmodule AniminaWeb.SpotlightLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-4xl mx-auto">
-        <%!-- Breadcrumbs --%>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>{gettext("Spotlight")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb>{gettext("Spotlight")}</:crumb>
+        </.breadcrumb_nav>
 
         <%!-- Header with conversations toggle --%>
         <div class="flex items-center justify-between mb-2">

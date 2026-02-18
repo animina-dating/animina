@@ -158,17 +158,11 @@ defmodule AniminaWeb.Admin.FlagsAiLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/flags"}>{gettext("Feature Flags")}</.link>
-            </li>
-            <li>{gettext("AI / Ollama")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/flags"}>{gettext("Feature Flags")}</:crumb>
+          <:crumb>{gettext("AI / Ollama")}</:crumb>
+        </.breadcrumb_nav>
 
         <h1 class="text-2xl font-bold text-base-content mb-2">{gettext("AI / Ollama")}</h1>
         <p class="text-base-content/70 mb-6">{gettext("Photo analysis and debug settings")}</p>

@@ -66,14 +66,10 @@ defmodule AniminaWeb.Admin.PhotoExplorerLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>{gettext("Photo Explorer")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb>{gettext("Photo Explorer")}</:crumb>
+        </.breadcrumb_nav>
 
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Photo Explorer")}</h1>
@@ -118,19 +114,17 @@ defmodule AniminaWeb.Admin.PhotoExplorerLive do
         <%!-- Results --%>
         <%= cond do %>
           <% is_nil(@results) -> %>
-            <div class="text-center py-16">
-              <.icon name="hero-magnifying-glass" class="h-16 w-16 mx-auto text-base-content/20 mb-4" />
-              <p class="text-lg text-base-content/50">
-                {gettext("Enter a search term to find photos.")}
-              </p>
-            </div>
+            <.empty_state
+              icon="hero-magnifying-glass"
+              title={gettext("Enter a search term to find photos.")}
+              size={:lg}
+            />
           <% @results == [] -> %>
-            <div class="text-center py-16">
-              <.icon name="hero-photo" class="h-16 w-16 mx-auto text-base-content/20 mb-4" />
-              <p class="text-lg text-base-content/50">
-                {gettext("No photos found matching your search.")}
-              </p>
-            </div>
+            <.empty_state
+              icon="hero-photo"
+              title={gettext("No photos found matching your search.")}
+              size={:lg}
+            />
           <% true -> %>
             <div class="overflow-x-auto">
               <table class="table table-sm">

@@ -10,29 +10,14 @@ defmodule AniminaWeb.UserLive.AccountDelete do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"}>{gettext("My Hub")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/settings"}>{gettext("Settings")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/settings/account"}>{gettext("Account & Security")}</.link>
-            </li>
-            <li>{gettext("Delete Account")}</li>
-          </ul>
-        </div>
-
-        <div class="text-center mb-8">
-          <.header>
-            {gettext("Delete Account")}
-            <:subtitle>
-              {gettext("Permanently delete your account and all your data")}
-            </:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("Delete Account")}
+          subtitle={gettext("Permanently delete your account and all your data")}
+        >
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
+          <:crumb navigate={~p"/my/settings/account"}>{gettext("Account & Security")}</:crumb>
+        </.page_header>
 
         <.live_component
           module={AniminaWeb.AccountDeleteComponent}

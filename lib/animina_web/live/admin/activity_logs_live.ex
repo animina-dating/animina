@@ -9,7 +9,12 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers
+  use AniminaWeb.Helpers.PaginationHelpers,
+    filter_events: [
+      {"filter-event", "event", :filter_event},
+      {"filter-date-from", "date_from", :date_from},
+      {"filter-date-to", "date_to", :date_to}
+    ]
 
   @default_per_page 50
 
@@ -115,24 +120,6 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
      push_patch(socket,
        to: build_path(socket, page: 1, filter_category: filter, filter_event: nil)
      )}
-  end
-
-  @impl true
-  def handle_event("filter-event", %{"event" => event}, socket) do
-    filter = if event == "", do: nil, else: event
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_event: filter))}
-  end
-
-  @impl true
-  def handle_event("filter-date-from", %{"date_from" => date}, socket) do
-    val = if date == "", do: nil, else: date
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, date_from: val))}
-  end
-
-  @impl true
-  def handle_event("filter-date-to", %{"date_to" => date}, socket) do
-    val = if date == "", do: nil, else: date
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, date_to: val))}
   end
 
   @impl true
@@ -255,18 +242,11 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumb --%>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
-            </li>
-            <li>{gettext("Activity Logs")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("Activity Logs")}</:crumb>
+        </.breadcrumb_nav>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("Activity Logs")}</h1>

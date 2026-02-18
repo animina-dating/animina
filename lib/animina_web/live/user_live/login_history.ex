@@ -8,7 +8,11 @@ defmodule AniminaWeb.UserLive.LoginHistory do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers, sort: true
+  use AniminaWeb.Helpers.PaginationHelpers,
+    sort: true,
+    filter_events: [
+      {"filter-event", "event", :filter_event}
+    ]
 
   @default_per_page 50
 
@@ -50,12 +54,6 @@ defmodule AniminaWeb.UserLive.LoginHistory do
        filter_event: filter_event,
        heatmap_data: heatmap_data
      )}
-  end
-
-  @impl true
-  def handle_event("filter-event", %{"event" => event}, socket) do
-    filter = if event == "", do: nil, else: event
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_event: filter))}
   end
 
   # --- Helpers ---
@@ -182,22 +180,11 @@ defmodule AniminaWeb.UserLive.LoginHistory do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumbs --%>
-        <div class="text-sm breadcrumbs mb-4">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"} class="link link-hover">
-                {gettext("My Hub")}
-              </.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/logs"} class="link link-hover">
-                {gettext("Logs")}
-              </.link>
-            </li>
-            <li>{gettext("Login History")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav class="mb-4">
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb navigate={~p"/my/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("Login History")}</:crumb>
+        </.breadcrumb_nav>
 
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">

@@ -19,11 +19,54 @@ defmodule AniminaWeb.Helpers.PaginationHelpers do
   The calling module must define a private `build_path(socket, overrides)`
   function. For the `"sort"` handler, it must also define
   `parse_sort_by(column_string)`.
+
+  ## Options
+
+    * `:sort` — generates a `"sort"` event handler (default `false`)
+    * `:expand` — generates a `"toggle-expand"` event handler (default `false`)
+    * `:filter_events` — list of `{event_name, param_key, build_path_key}`
+      tuples that generate filter event handlers. Each tuple generates a
+      `handle_event` that reads the param, converts `""` to `nil`, and
+      calls `push_patch` with `page: 1` and the given `build_path_key`.
+
+      Example:
+
+          use AniminaWeb.Helpers.PaginationHelpers,
+            filter_events: [
+              {"filter-type", "type", :filter_type},
+              {"filter-status", "status", :filter_status}
+            ]
   """
 
   defmacro __using__(opts) do
     sort? = Keyword.get(opts, :sort, false)
     expand? = Keyword.get(opts, :expand, false)
+
+    filter_events =
+      opts
+      |> Keyword.get(:filter_events, [])
+      |> Enum.map(fn
+        {:{}, _, [event_name, param_key, build_path_key]} ->
+          {event_name, param_key, build_path_key}
+
+        {event_name, param_key} ->
+          {event_name, param_key}
+      end)
+
+    filter_handlers =
+      for {event_name, param_key, build_path_key} <- filter_events do
+        quote do
+          @impl true
+          def handle_event(unquote(event_name), %{unquote(param_key) => value}, socket) do
+            filter = if value == "", do: nil, else: value
+
+            {:noreply,
+             push_patch(socket,
+               to: build_path(socket, [{:page, 1}, {unquote(build_path_key), filter}])
+             )}
+          end
+        end
+      end
 
     quote do
       import AniminaWeb.Helpers.PaginationHelpers
@@ -70,6 +113,8 @@ defmodule AniminaWeb.Helpers.PaginationHelpers do
           {:noreply, assign(socket, expanded: expanded)}
         end
       end
+
+      unquote_splicing(filter_handlers)
     end
   end
 

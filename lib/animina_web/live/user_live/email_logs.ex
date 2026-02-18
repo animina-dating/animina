@@ -7,7 +7,13 @@ defmodule AniminaWeb.UserLive.EmailLogs do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1, email_status_badge_class: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers, sort: true, expand: true
+  use AniminaWeb.Helpers.PaginationHelpers,
+    sort: true,
+    expand: true,
+    filter_events: [
+      {"filter-type", "type", :filter_type},
+      {"filter-status", "status", :filter_status}
+    ]
 
   @default_per_page 50
 
@@ -58,18 +64,6 @@ defmodule AniminaWeb.UserLive.EmailLogs do
      )}
   end
 
-  @impl true
-  def handle_event("filter-type", %{"type" => type}, socket) do
-    filter = if type == "", do: nil, else: type
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_type: filter))}
-  end
-
-  @impl true
-  def handle_event("filter-status", %{"status" => status}, socket) do
-    filter = if status == "", do: nil, else: status
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_status: filter))}
-  end
-
   # --- Helpers ---
 
   defp parse_sort_by("email_type"), do: :email_type
@@ -98,22 +92,11 @@ defmodule AniminaWeb.UserLive.EmailLogs do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumbs --%>
-        <div class="text-sm breadcrumbs mb-4">
-          <ul>
-            <li>
-              <.link navigate={~p"/my"} class="link link-hover">
-                {gettext("My Hub")}
-              </.link>
-            </li>
-            <li>
-              <.link navigate={~p"/my/logs"} class="link link-hover">
-                {gettext("Logs")}
-              </.link>
-            </li>
-            <li>{gettext("Email History")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav class="mb-4">
+          <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
+          <:crumb navigate={~p"/my/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("Email History")}</:crumb>
+        </.breadcrumb_nav>
 
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">

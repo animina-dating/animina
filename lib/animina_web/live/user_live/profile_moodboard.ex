@@ -35,12 +35,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li><.link navigate={~p"/my/spotlight"}>{gettext("Spotlight")}</.link></li>
-            <li>{@profile_user.display_name}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/my/spotlight"}>{gettext("Spotlight")}</:crumb>
+          <:crumb>{@profile_user.display_name}</:crumb>
+        </.breadcrumb_nav>
 
         <div class="card bg-base-100 shadow-lg border border-base-300">
           <div class="card-body text-center py-12">

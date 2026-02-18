@@ -7,7 +7,10 @@ defmodule AniminaWeb.Admin.TosAcceptancesLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers
+  use AniminaWeb.Helpers.PaginationHelpers,
+    filter_events: [
+      {"filter-version", "version", :filter_version}
+    ]
 
   @default_per_page 50
 
@@ -68,12 +71,6 @@ defmodule AniminaWeb.Admin.TosAcceptancesLive do
   # --- Event Handlers ---
 
   @impl true
-  def handle_event("filter-version", %{"version" => version}, socket) do
-    filter = if version == "", do: nil, else: version
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_version: filter))}
-  end
-
-  @impl true
   def handle_event("search-user", %{"user_search" => query}, socket) do
     results = if String.length(query) >= 2, do: Accounts.search_users(query), else: []
     {:noreply, assign(socket, user_search: query, user_results: results)}
@@ -122,18 +119,11 @@ defmodule AniminaWeb.Admin.TosAcceptancesLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumb --%>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
-            </li>
-            <li>{gettext("ToS Acceptances")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("ToS Acceptances")}</:crumb>
+        </.breadcrumb_nav>
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
           <h1 class="text-2xl font-bold text-base-content">{gettext("ToS Acceptances")}</h1>

@@ -9,7 +9,13 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   import AniminaWeb.Helpers.AdminHelpers,
     only: [parse_int: 2, format_datetime: 1]
 
-  use AniminaWeb.Helpers.PaginationHelpers, sort: true
+  use AniminaWeb.Helpers.PaginationHelpers,
+    sort: true,
+    filter_events: [
+      {"filter-job-type", "job_type", :filter_job_type},
+      {"filter-status", "status", :filter_status},
+      {"filter-model", "model", :filter_model}
+    ]
 
   @default_per_page 50
 
@@ -159,24 +165,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
       {:error, _} ->
         {:noreply, put_flash(socket, :error, gettext("Cannot reprioritize this job."))}
     end
-  end
-
-  @impl true
-  def handle_event("filter-job-type", %{"job_type" => type}, socket) do
-    filter = if type == "", do: nil, else: type
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_job_type: filter))}
-  end
-
-  @impl true
-  def handle_event("filter-status", %{"status" => status}, socket) do
-    filter = if status == "", do: nil, else: status
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_status: filter))}
-  end
-
-  @impl true
-  def handle_event("filter-model", %{"model" => model}, socket) do
-    filter = if model == "", do: nil, else: model
-    {:noreply, push_patch(socket, to: build_path(socket, page: 1, filter_model: filter))}
   end
 
   @impl true
@@ -379,18 +367,11 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <%!-- Breadcrumb --%>
-        <div class="breadcrumbs text-sm mb-6">
-          <ul>
-            <li>
-              <.link navigate={~p"/admin"}>{gettext("Admin")}</.link>
-            </li>
-            <li>
-              <.link navigate={~p"/admin/logs"}>{gettext("Logs")}</.link>
-            </li>
-            <li>{gettext("AI Jobs")}</li>
-          </ul>
-        </div>
+        <.breadcrumb_nav>
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/logs"}>{gettext("Logs")}</:crumb>
+          <:crumb>{gettext("AI Jobs")}</:crumb>
+        </.breadcrumb_nav>
 
         <%!-- Header --%>
         <div class="flex items-center justify-between mb-6">
