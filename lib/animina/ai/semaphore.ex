@@ -10,7 +10,7 @@ defmodule Animina.AI.Semaphore do
   use GenServer
   require Logger
 
-  alias Animina.FeatureFlags
+  alias Animina.AI.Client
 
   # --- Client API ---
 
@@ -203,7 +203,7 @@ defmodule Animina.AI.Semaphore do
   end
 
   defp read_max_concurrent do
-    FeatureFlags.ollama_max_concurrent()
+    length(Client.ollama_instances())
   rescue
     _ -> 2
   end

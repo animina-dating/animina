@@ -25,9 +25,10 @@ config :animina, AniminaWeb.Endpoint,
 
 # Ollama multi-instance configuration via environment variable
 # Format: semicolons separate priority groups, commas separate instances within a group
-#   "gpu1,gpu2"      → both priority 1 (round-robin)
-#   "gpu1,gpu2;cpu"  → GPUs at priority 1 (round-robin), CPU at priority 2 (overflow)
-#   "url1;url2"      → strict failover (different priorities)
+# Optional @tags suffix per URL for instance-aware routing (default: gpu)
+#   "gpu1,gpu2"               → both priority 1 (round-robin), tagged as gpu
+#   "gpu1@gpu,gpu2@gpu;cpu@cpu" → GPUs priority 1, CPU priority 2 with tags
+#   "url1;url2"               → strict failover (different priorities)
 if ollama_urls = System.get_env("OLLAMA_URLS") do
   default_timeout = String.to_integer(System.get_env("OLLAMA_TIMEOUT", "120000"))
 
@@ -40,8 +41,18 @@ if ollama_urls = System.get_env("OLLAMA_URLS") do
       |> String.split(",")
       |> Enum.map(&String.trim/1)
       |> Enum.filter(&(&1 != ""))
-      |> Enum.map(fn url ->
-        %{url: url, timeout: default_timeout, priority: priority}
+      |> Enum.map(fn raw ->
+        {url, tags} =
+          case String.split(raw, "@", parts: 2) do
+            [url_part, tags_str] ->
+              tag_list = tags_str |> String.split(",") |> Enum.map(&String.trim/1)
+              {url_part, tag_list}
+
+            [url_part] ->
+              {url_part, ["gpu"]}
+          end
+
+        %{url: url, timeout: default_timeout, priority: priority, tags: tags}
       end)
     end)
 

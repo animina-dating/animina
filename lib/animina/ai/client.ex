@@ -7,9 +7,8 @@ defmodule Animina.AI.Client do
   the request falls through to remaining instances in the group, then to lower-
   priority groups (overflow/failover).
 
-  Example with `OLLAMA_URLS="gpu1,gpu2;cpu"`:
-  - Priority 1 (gpu1, gpu2): round-robin distribution
-  - Priority 2 (cpu): overflow failover only
+  Supports instance filtering for job-type-aware routing (e.g., vision → GPU,
+  text → CPU) via the `instance_filter` option.
 
   Uses circuit breaker pattern via HealthTracker to skip unhealthy instances.
   Does NOT create log entries — logging is at the Executor level via ai_jobs.
@@ -24,7 +23,8 @@ defmodule Animina.AI.Client do
           model: String.t(),
           prompt: String.t(),
           images: [String.t()],
-          target_server: String.t()
+          target_server: String.t(),
+          instance_filter: (map() -> boolean())
         ]
 
   @failover_eligible_errors [
@@ -43,6 +43,13 @@ defmodule Animina.AI.Client do
   @doc """
   Sends a completion request to Ollama with automatic failover.
 
+  Options:
+  - `:model` — model name (default from feature flags)
+  - `:prompt` — the prompt text (required)
+  - `:images` — list of base64-encoded images
+  - `:target_server` — pin to a specific server URL
+  - `:instance_filter` — function `(instance_map) -> boolean` to pre-filter instances
+
   Returns:
   - `{:ok, response, server_url}` on success
   - `{:error, :all_instances_unavailable}` if all instances failed
@@ -57,12 +64,13 @@ defmodule Animina.AI.Client do
     prompt = Keyword.fetch!(opts, :prompt)
     images = Keyword.get(opts, :images, [])
     target_server = Keyword.get(opts, :target_server)
+    instance_filter = Keyword.get(opts, :instance_filter)
 
     instances = ollama_instances()
     total_timeout = AI.config(:ollama_total_timeout, 300_000)
     deadline = System.monotonic_time(:millisecond) + total_timeout
 
-    instances_to_try = resolve_instances(instances, target_server)
+    instances_to_try = resolve_instances(instances, target_server, instance_filter)
 
     try_instances(instances_to_try, model, prompt, images, deadline, [])
   end
@@ -71,14 +79,18 @@ defmodule Animina.AI.Client do
   Returns the list of configured Ollama instances.
   """
   def ollama_instances do
+    default_tags = AI.config(:ollama_default_tags, ["gpu"])
+
     case AI.config(:ollama_instances, nil) do
       instances when is_list(instances) ->
-        instances
+        Enum.map(instances, fn inst ->
+          Map.put_new(inst, :tags, default_tags)
+        end)
 
       nil ->
         url = AI.config(:ollama_url, "http://localhost:11434/api")
         timeout = AI.config(:ollama_timeout, 120_000)
-        [%{url: url, timeout: timeout, priority: 1}]
+        [%{url: url, timeout: timeout, priority: 1, tags: default_tags}]
     end
   end
 
@@ -183,13 +195,35 @@ defmodule Animina.AI.Client do
 
   # --- Private Functions ---
 
-  defp resolve_instances(instances, nil),
+  defp resolve_instances(instances, nil, nil),
     do: get_instances_to_try(instances, HealthTracker)
 
-  defp resolve_instances(instances, target_server) do
+  defp resolve_instances(instances, nil, filter) when is_function(filter, 1) do
+    filtered = Enum.filter(instances, filter)
+
+    if filtered == [] do
+      # Fall back to all instances if filter eliminates everything
+      Logger.debug("Instance filter matched no instances, falling back to all")
+      get_instances_to_try(instances, HealthTracker)
+    else
+      get_instances_to_try(filtered, HealthTracker)
+    end
+  end
+
+  defp resolve_instances(instances, target_server, _filter) do
     case Enum.find(instances, fn inst -> inst.url == target_server end) do
-      nil -> [%{url: target_server, timeout: AI.config(:ollama_timeout, 120_000), priority: 1}]
-      inst -> [inst]
+      nil ->
+        [
+          %{
+            url: target_server,
+            timeout: AI.config(:ollama_timeout, 120_000),
+            priority: 1,
+            tags: ["gpu"]
+          }
+        ]
+
+      inst ->
+        [inst]
     end
   end
 
@@ -208,12 +242,15 @@ defmodule Animina.AI.Client do
       timeout = calculate_request_timeout(instance, deadline)
 
       Logger.debug(
-        "Trying AI instance #{instance.url} (priority: #{instance.priority}, timeout: #{timeout}ms)"
+        "Trying AI instance #{instance.url} (priority: #{instance.priority}, timeout: #{timeout}ms, tags: #{inspect(Map.get(instance, :tags, []))})"
       )
+
+      start_ms = System.monotonic_time(:millisecond)
 
       case do_request(instance.url, model, prompt, images, timeout) do
         {:ok, response} ->
-          HealthTracker.record_success(instance.url)
+          duration_ms = System.monotonic_time(:millisecond) - start_ms
+          HealthTracker.record_success(instance.url, duration_ms)
           {:ok, response, instance.url}
 
         {:error, reason} ->

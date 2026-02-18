@@ -114,6 +114,7 @@ config :animina, Animina.Photos,
   #   "gpu1,gpu2"      → round-robin (same priority)
   #   "gpu1,gpu2;cpu"  → round-robin GPUs + CPU overflow
   ollama_url: "http://localhost:11434/api",
+  ollama_default_tags: ["gpu"],
   ollama_model: "qwen3-vl:8b",
   ollama_timeout: 120_000,
   ollama_total_timeout: 300_000,

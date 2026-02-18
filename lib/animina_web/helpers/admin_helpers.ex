@@ -106,7 +106,7 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   @doc """
   Formats a datetime for display in Europe/Berlin timezone.
 
-  Shows just "HH:MM" for today's entries, full "YYYY-MM-DD HH:MM" otherwise.
+  Shows "HH:MM:SS" for today's entries, full "YYYY-MM-DD HH:MM:SS" otherwise.
 
   ## Examples
 
@@ -126,9 +126,9 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
     today = DateTime.to_date(now_berlin)
 
     if berlin_date == today do
-      Calendar.strftime(berlin_dt, "%H:%M")
+      Calendar.strftime(berlin_dt, "%H:%M:%S")
     else
-      Calendar.strftime(berlin_dt, "%Y-%m-%d %H:%M")
+      Calendar.strftime(berlin_dt, "%Y-%m-%d %H:%M:%S")
     end
   end
 

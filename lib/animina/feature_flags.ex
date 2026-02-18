@@ -47,15 +47,6 @@ defmodule Animina.FeatureFlags do
     },
     # Concurrency settings
     %{
-      name: :ollama_max_concurrent,
-      label: "Max Concurrent Requests",
-      description: "Maximum concurrent Ollama requests (fresh uploads + retries)",
-      type: :integer,
-      default_value: 2,
-      min_value: 1,
-      max_value: 10
-    },
-    %{
       name: :ollama_semaphore_timeout,
       label: "Semaphore Timeout (ms)",
       description: "How long a photo waits for an Ollama slot before queuing for retry",
@@ -631,14 +622,6 @@ defmodule Animina.FeatureFlags do
   """
   def ollama_model do
     get_system_setting_value(:ollama_model, "qwen3-vl:4b")
-  end
-
-  @doc """
-  Returns the maximum number of concurrent Ollama requests.
-  Default: 2
-  """
-  def ollama_max_concurrent do
-    get_system_setting_value(:ollama_max_concurrent, 2)
   end
 
   @doc """

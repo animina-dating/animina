@@ -1,10 +1,13 @@
 defmodule Animina.AI.Warmup do
   @moduledoc """
-  Warms up Ollama by preloading the configured model at application startup.
+  Warms up Ollama by preloading models at application startup.
 
   Ollama loads models into GPU/memory on first use. By sending a minimal request
-  with a long `keep_alive` at startup, we ensure the model is loaded before real
+  with a long `keep_alive` at startup, we ensure models are loaded before real
   traffic arrives, avoiding the slow first-request penalty.
+
+  Instance-tag-aware: GPU instances warm all tier models (for adaptive quality
+  selection). CPU instances only warm the smallest vision + text models.
   """
 
   require Logger
@@ -13,24 +16,30 @@ defmodule Animina.AI.Warmup do
   alias Animina.AI.HealthTracker
   alias Animina.FeatureFlags
 
+  # Models suitable for CPU instances (small enough for no-GPU inference)
+  @cpu_vision_model "qwen3-vl:2b"
+  @cpu_text_model "qwen3:1.7b"
+
   @doc """
   Warms up all configured Ollama instances by sending a minimal prompt.
 
-  When adaptive model selection is enabled, warms up all three tier
-  models to ensure quick switching under load.
+  GPU instances get all tier models loaded. CPU instances get only the
+  smallest vision + text models to avoid memory pressure.
 
   Returns :ok regardless of success/failure (warmup is best-effort).
   """
   @spec warmup_all() :: :ok
   def warmup_all do
-    models = models_to_warm_up()
     instances = Client.ollama_instances()
 
-    Logger.info(
-      "AI warmup: loading #{Enum.join(models, ", ")} on #{length(instances)} instance(s)"
-    )
-
     Enum.each(instances, fn instance ->
+      tags = Map.get(instance, :tags, ["gpu"])
+      models = models_for_instance(tags)
+
+      Logger.info(
+        "AI warmup: loading #{Enum.join(models, ", ")} on #{instance.url} (tags: #{inspect(tags)})"
+      )
+
       Enum.each(models, fn model ->
         warmup_instance(instance.url, model, instance.timeout)
       end)
@@ -39,7 +48,17 @@ defmodule Animina.AI.Warmup do
     :ok
   end
 
-  defp models_to_warm_up do
+  defp models_for_instance(tags) do
+    if "cpu" in tags do
+      # CPU instances: only load smallest models
+      Enum.uniq([@cpu_vision_model, @cpu_text_model])
+    else
+      # GPU instances: load all tier models for adaptive selection
+      gpu_models()
+    end
+  end
+
+  defp gpu_models do
     primary = Client.default_model()
 
     if FeatureFlags.enabled?(:ollama_adaptive_model) do

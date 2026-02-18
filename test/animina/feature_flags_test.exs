@@ -208,11 +208,6 @@ defmodule Animina.FeatureFlagsTest do
       assert ollama_model.type == :string
       assert ollama_model.default_value == "qwen3-vl:4b"
 
-      # Check integer type setting
-      max_concurrent = Enum.find(settings, fn s -> s.name == :ollama_max_concurrent end)
-      assert max_concurrent.type == :integer
-      assert max_concurrent.default_value == 2
-
       # Check another flag type
       adaptive = Enum.find(settings, fn s -> s.name == :ollama_adaptive_model end)
       assert adaptive.type == :flag
