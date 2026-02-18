@@ -192,7 +192,8 @@ defmodule Animina.Photos.PhotoProcessor do
           "person_count": number,
           "persons_facing_camera": number,
           "children_present": true/false,
-          "adult_present": true/false
+          "adult_present": true/false,
+          "sunglasses_detected": true/false
         },
         "content_safety": {
           "family_friendly": true/false,
@@ -230,6 +231,7 @@ defmodule Animina.Photos.PhotoProcessor do
     - appropriate_attire: false if underwear visible or inappropriate for context
     - swimwear_detected: true if wearing swimsuit/bikini
     - beach_context: true if clearly at beach, pool, or similar outdoor water setting
+    - sunglasses_detected: true if the person is wearing sunglasses or dark glasses that hide their eyes
     - is_an_animal: true if the main subject is an animal (not a human)
     - is_a_dog: true if a dog is the main subject of the photo
     - is_a_cat: true if a cat is the main subject of the photo
@@ -283,7 +285,8 @@ defmodule Animina.Photos.PhotoProcessor do
             get_int(parsed, "person_facing_camera_count", 0)
           ),
         children_present: get_bool(person, "children_present", false),
-        adult_present: get_bool(person, "adult_present", true)
+        adult_present: get_bool(person, "adult_present", true),
+        sunglasses_detected: get_bool(person, "sunglasses_detected", false)
       },
       content_safety: %{
         family_friendly:
@@ -342,7 +345,8 @@ defmodule Animina.Photos.PhotoProcessor do
         person_count: if(contains_person, do: max(person_count, 1), else: 0),
         persons_facing_camera: person_count,
         children_present: false,
-        adult_present: contains_person
+        adult_present: contains_person,
+        sunglasses_detected: false
       },
       content_safety: %{
         family_friendly: family_friendly,

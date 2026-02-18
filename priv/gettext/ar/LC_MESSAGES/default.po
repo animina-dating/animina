@@ -586,7 +586,7 @@ msgstr "تعيين كلمة مرور جديدة"
 #: lib/animina_web/live/user_live/account_passkeys.ex:19
 #: lib/animina_web/live/user_live/account_sessions.ex:19
 #: lib/animina_web/live/user_live/moodboard_editor.ex:34
-#: lib/animina_web/live/user_live/my_hub.ex:214
+#: lib/animina_web/live/user_live/my_hub.ex:222
 #: lib/animina_web/live/user_live/profile_hub.ex:21
 #: lib/animina_web/live/user_live/settings_hub.ex:18
 #: lib/animina_web/live/user_live/settings_hub.ex:73
@@ -4308,7 +4308,7 @@ msgstr "فشل إرسال الرسالة"
 #: lib/animina_web/live/messages_live.ex:149
 #: lib/animina_web/live/messages_live.ex:646
 #: lib/animina_web/live/messages_live.ex:695
-#: lib/animina_web/live/user_live/my_hub.ex:183
+#: lib/animina_web/live/user_live/my_hub.ex:191
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "الرسائل"
@@ -4345,7 +4345,7 @@ msgstr "اكتب رسالة..."
 #: lib/animina_web/live/messages_live.ex:512
 #: lib/animina_web/live/messages_live.ex:530
 #: lib/animina_web/live/messages_live.ex:627
-#: lib/animina_web/live/user_live/my_hub.ex:633
+#: lib/animina_web/live/user_live/my_hub.ex:648
 #, elixir-autogen, elixir-format
 msgid "Yesterday"
 msgstr "أمس"
@@ -5210,7 +5210,7 @@ msgstr ""
 #: lib/animina_web/live/user_live/email_logs.ex:111
 #: lib/animina_web/live/user_live/login_history.ex:195
 #: lib/animina_web/live/user_live/logs_hub.ex:16
-#: lib/animina_web/live/user_live/my_hub.ex:220
+#: lib/animina_web/live/user_live/my_hub.ex:228
 #, elixir-autogen, elixir-format
 msgid "Logs"
 msgstr ""
@@ -5345,12 +5345,12 @@ msgstr ""
 msgid "For your security, a recent account change is pending review. We sent you an email to confirm or undo it. Until then, further email and password changes are paused for up to 48 hours to protect your account."
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:371
+#: lib/animina_web/live/user_live/my_hub.ex:382
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Waitlisted"
 msgstr "في قائمة الانتظار"
 
-#: lib/animina_web/live/user_live/my_hub.ex:364
+#: lib/animina_web/live/user_live/my_hub.ex:375
 #, elixir-autogen, elixir-format
 msgid "Waitlisted — %{count} day left"
 msgid_plural "Waitlisted — %{count} days left"
@@ -5588,7 +5588,7 @@ msgstr ""
 msgid "Manage your account and app settings"
 msgstr "أدِر إعدادات حسابك"
 
-#: lib/animina_web/live/user_live/my_hub.ex:351
+#: lib/animina_web/live/user_live/my_hub.ex:362
 #: lib/animina_web/live/user_live/settings_hub.ex:63
 #, elixir-autogen, elixir-format
 msgid "%{completed}/%{total} complete"
@@ -5631,7 +5631,7 @@ msgstr ""
 msgid "Privacy & Blocking"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:356
+#: lib/animina_web/live/user_live/my_hub.ex:367
 #: lib/animina_web/live/user_live/settings_hub.ex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile complete"
@@ -5741,7 +5741,7 @@ msgstr ""
 msgid "Assign admin and moderator roles"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:190
+#: lib/animina_web/live/user_live/my_hub.ex:198
 #, elixir-autogen, elixir-format
 msgid "Find new people"
 msgstr ""
@@ -5766,12 +5766,12 @@ msgstr ""
 msgid "Toggle features and system settings"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:221
+#: lib/animina_web/live/user_live/my_hub.ex:229
 #, elixir-autogen, elixir-format
 msgid "Your account activity logs"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:184
+#: lib/animina_web/live/user_live/my_hub.ex:192
 #, elixir-autogen, elixir-format
 msgid "Your conversations"
 msgstr ""
@@ -6014,8 +6014,8 @@ msgstr "تسجيل الدخول"
 #: lib/animina_web/live/user_live/login_history.ex:190
 #: lib/animina_web/live/user_live/logs_hub.ex:17
 #: lib/animina_web/live/user_live/moodboard_editor.ex:31
-#: lib/animina_web/live/user_live/my_hub.ex:327
-#: lib/animina_web/live/user_live/my_hub.ex:374
+#: lib/animina_web/live/user_live/my_hub.ex:338
+#: lib/animina_web/live/user_live/my_hub.ex:385
 #: lib/animina_web/live/user_live/profile_hub.ex:20
 #: lib/animina_web/live/user_live/settings_hub.ex:21
 #: lib/animina_web/live/user_live/traits_wizard.ex:18
@@ -6080,8 +6080,8 @@ msgid "Step"
 msgstr ""
 
 #: lib/animina_web/live/components/conversations_sidebar_component.ex:95
-#: lib/animina_web/live/user_live/my_hub.ex:110
-#: lib/animina_web/live/user_live/my_hub.ex:125
+#: lib/animina_web/live/user_live/my_hub.ex:115
+#: lib/animina_web/live/user_live/my_hub.ex:133
 #, elixir-autogen, elixir-format, fuzzy
 msgid "All messages"
 msgstr "الرسائل"
@@ -6110,14 +6110,14 @@ msgid "New profiles in %{time}"
 msgstr ""
 
 #: lib/animina_web/live/spotlight_live.ex:66
-#: lib/animina_web/live/user_live/my_hub.ex:81
+#: lib/animina_web/live/user_live/my_hub.ex:82
 #, elixir-autogen, elixir-format
 msgid "No candidates found. Try adjusting your search settings."
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:288
 #: lib/animina_web/live/spotlight_live.ex:30
-#: lib/animina_web/live/user_live/my_hub.ex:189
+#: lib/animina_web/live/user_live/my_hub.ex:197
 #: lib/animina_web/live/user_live/profile_moodboard.ex:40
 #, elixir-autogen, elixir-format
 msgid "Spotlight"
@@ -7198,12 +7198,12 @@ msgid "Each confirmed signup reduces your waitlist time by 1/%{threshold} for bo
 msgstr ""
 
 #: lib/animina_web/live/user_live/my_hub.ex:36
-#: lib/animina_web/live/user_live/my_hub.ex:150
+#: lib/animina_web/live/user_live/my_hub.ex:158
 #, elixir-autogen, elixir-format
 msgid "Hey %{name}!"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:157
+#: lib/animina_web/live/user_live/my_hub.ex:165
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile progress"
 msgstr "الملف الشخصي"
@@ -7219,7 +7219,7 @@ msgstr ""
 msgid "until you can start connecting"
 msgstr ""
 
-#: lib/animina_web/live/user_live/my_hub.ex:102
+#: lib/animina_web/live/user_live/my_hub.ex:107
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} conversation"
 msgid_plural "%{count} conversations"
@@ -7230,7 +7230,7 @@ msgstr[3] "%{count} إدخالات"
 msgstr[4] "%{count} إدخالاً"
 msgstr[5] "%{count} إدخال"
 
-#: lib/animina_web/live/user_live/my_hub.ex:117
+#: lib/animina_web/live/user_live/my_hub.ex:125
 #, elixir-autogen, elixir-format
 msgid "%{count} conversation total"
 msgid_plural "%{count} conversations total"

@@ -141,7 +141,8 @@ defmodule Animina.Photos.PhotoProcessorTest do
             "person_count": 1,
             "persons_facing_camera": 1,
             "children_present": false,
-            "adult_present": true
+            "adult_present": true,
+            "sunglasses_detected": false
           },
           "content_safety": {
             "family_friendly": true,
@@ -170,6 +171,7 @@ defmodule Animina.Photos.PhotoProcessorTest do
       assert result.content_safety.family_friendly == true
       assert result.person_detection.contains_person == true
       assert result.person_detection.persons_facing_camera == 1
+      assert result.person_detection.sunglasses_detected == false
       assert result.content_safety.nudity_detected == false
       assert result.content_safety.firearms_visible == false
     end
@@ -281,6 +283,58 @@ defmodule Animina.Photos.PhotoProcessorTest do
       assert result.content_safety.family_friendly == false
       assert result.content_safety.nudity_detected == true
       assert result.attire_assessment.appropriate_attire == false
+    end
+
+    test "parses sunglasses_detected true from AI response" do
+      response = ~s|{
+        "photo_analysis": {
+          "person_detection": {
+            "contains_person": true,
+            "person_count": 1,
+            "persons_facing_camera": 1,
+            "children_present": false,
+            "adult_present": true,
+            "sunglasses_detected": true
+          },
+          "content_safety": {
+            "family_friendly": true,
+            "nudity_detected": false,
+            "explicit_content": false,
+            "illegal_activity": false,
+            "drug_use": false,
+            "violence": false,
+            "firearms_visible": false,
+            "hunting_scene": false
+          },
+          "attire_assessment": {
+            "appropriate_attire": true,
+            "swimwear_detected": false,
+            "underwear_detected": false,
+            "shirtless": false,
+            "outdoor_context": false,
+            "beach_context": false
+          },
+          "animal_detection": {
+            "is_an_animal": false,
+            "is_a_dog": false,
+            "is_a_cat": false
+          },
+          "sex_scene": false
+        }
+      }|
+
+      result = PhotoProcessor.parse_ollama_response(response)
+
+      assert result.person_detection.sunglasses_detected == true
+      assert result.person_detection.contains_person == true
+    end
+
+    test "legacy parser defaults sunglasses_detected to false" do
+      response = "This is not JSON at all"
+
+      result = PhotoProcessor.parse_ollama_response(response)
+
+      assert result.person_detection.sunglasses_detected == false
     end
   end
 

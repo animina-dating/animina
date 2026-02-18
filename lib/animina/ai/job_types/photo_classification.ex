@@ -79,6 +79,7 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
         person_detection: parsed.person_detection,
         content_safety: parsed.content_safety,
         attire_assessment: parsed.attire_assessment,
+        animal_detection: parsed.animal_detection,
         sex_scene: parsed.sex_scene,
         via: "ai_job_service"
       },

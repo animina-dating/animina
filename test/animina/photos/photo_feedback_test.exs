@@ -11,7 +11,8 @@ defmodule Animina.Photos.PhotoFeedbackTest do
         person_count: 1,
         persons_facing_camera: 1,
         children_present: false,
-        adult_present: true
+        adult_present: true,
+        sunglasses_detected: false
       },
       content_safety: %{
         family_friendly: true,
@@ -164,6 +165,12 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       assert {:error, :animal, message} = PhotoFeedback.analyze_avatar(parsed)
       assert message =~ "a cat"
     end
+
+    test "rejects photo with sunglasses detected" do
+      parsed = put_in(valid_parsed(), [:person_detection, :sunglasses_detected], true)
+      assert {:error, :sunglasses, message} = PhotoFeedback.analyze_avatar(parsed)
+      assert message =~ "sunglasses"
+    end
   end
 
   describe "analyze_moodboard/1" do
@@ -214,6 +221,7 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       assert PhotoFeedback.violation_to_state(:multiple_faces) == "no_face_error"
       assert PhotoFeedback.violation_to_state(:child_only) == "no_face_error"
       assert PhotoFeedback.violation_to_state(:animal) == "no_face_error"
+      assert PhotoFeedback.violation_to_state(:sunglasses) == "no_face_error"
     end
 
     test "returns error for content violations" do
@@ -237,6 +245,7 @@ defmodule Animina.Photos.PhotoFeedbackTest do
       assert PhotoFeedback.should_blacklist?(:multiple_faces) == false
       assert PhotoFeedback.should_blacklist?(:child_only) == false
       assert PhotoFeedback.should_blacklist?(:animal) == false
+      assert PhotoFeedback.should_blacklist?(:sunglasses) == false
     end
 
     test "returns false for attire violations" do

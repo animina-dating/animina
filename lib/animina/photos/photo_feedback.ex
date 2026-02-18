@@ -20,7 +20,8 @@ defmodule Animina.Photos.PhotoFeedback do
          :ok <- check_animal_detection(parsed),
          :ok <- check_attire(parsed),
          :ok <- check_avatar_attire_context(parsed),
-         :ok <- check_face_detection(parsed) do
+         :ok <- check_face_detection(parsed),
+         :ok <- check_sunglasses(parsed) do
       {:ok, :approved}
     end
   end
@@ -118,6 +119,14 @@ defmodule Animina.Photos.PhotoFeedback do
     end
   end
 
+  defp check_sunglasses(parsed) do
+    if parsed.person_detection[:sunglasses_detected] do
+      {:error, :sunglasses, sunglasses_message()}
+    else
+      :ok
+    end
+  end
+
   @doc """
   Analyzes parsed Ollama response for moodboard photos.
 
@@ -138,6 +147,7 @@ defmodule Animina.Photos.PhotoFeedback do
   def violation_to_state(:multiple_faces), do: "no_face_error"
   def violation_to_state(:child_only), do: "no_face_error"
   def violation_to_state(:animal), do: "no_face_error"
+  def violation_to_state(:sunglasses), do: "no_face_error"
   def violation_to_state(_), do: "error"
 
   @doc """
@@ -148,6 +158,7 @@ defmodule Animina.Photos.PhotoFeedback do
   def should_blacklist?(:sex_scene), do: true
   def should_blacklist?(:illegal_content), do: true
   def should_blacklist?(:animal), do: false
+  def should_blacklist?(:sunglasses), do: false
   def should_blacklist?(_), do: false
 
   # User-friendly error messages
@@ -233,6 +244,13 @@ defmodule Animina.Photos.PhotoFeedback do
     dgettext(
       "errors",
       "Shirtless photos are only appropriate for outdoor beach or pool settings. Please upload a different photo or one taken at the beach/pool."
+    )
+  end
+
+  defp sunglasses_message do
+    dgettext(
+      "errors",
+      "We detected sunglasses in your profile photo. Please upload a photo where your eyes are clearly visible — it helps others connect with you."
     )
   end
 
