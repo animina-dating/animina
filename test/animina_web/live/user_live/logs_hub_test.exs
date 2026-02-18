@@ -20,7 +20,7 @@ defmodule AniminaWeb.UserLive.LogsHubTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/logs")
 
-      assert page_title(lv) == "My Logs - ANIMINA"
+      assert page_title(lv) == "My Logs · ANIMINA"
     end
 
     test "has breadcrumb to My Hub", %{conn: conn} do

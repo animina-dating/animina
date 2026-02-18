@@ -18,7 +18,7 @@ defmodule AniminaWeb.IndexLive do
     else
       {:ok,
        assign(socket,
-         page_title: gettext("Online-Dating"),
+         page_title: gettext("Online-Dating? Online-Dating!"),
          page_description:
            gettext(
              "Kostenloses Online-Dating mit persönlichkeitsbasiertem Matching. Open Source, werbefinanziert und fair für alle."
@@ -75,6 +75,15 @@ defmodule AniminaWeb.IndexLive do
               </div>
             </div>
 
+            <div class="mb-10">
+              <p class="text-2xl sm:text-3xl font-light text-base-content/70">
+                {gettext("Online-Dating?")}
+              </p>
+              <p class="text-2xl sm:text-3xl font-semibold text-base-content">
+                {gettext("Online-Dating!")}
+              </p>
+            </div>
+
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
               <.mission_card
                 icon="hero-currency-euro"
@@ -83,7 +92,7 @@ defmodule AniminaWeb.IndexLive do
               />
               <.mission_card
                 icon="hero-arrows-right-left"
-                title={gettext("Without labels")}
+                title={gettext("Labels?")}
                 description={gettext("Partnership, affair or a good conversation – we don't judge.")}
               />
               <.mission_card
@@ -96,19 +105,19 @@ defmodule AniminaWeb.IndexLive do
                 }
               />
               <.mission_card
+                icon="hero-face-smile"
+                title={gettext("Joy instead of addiction")}
+                description={
+                  gettext("Dating should be joyful, not addictive – quality over sensory overload.")
+                }
+              />
+              <.mission_card
                 icon="hero-shield-check"
                 title={gettext("Respect first")}
                 description={
                   gettext(
                     "Blacklist for unwanted contacts. Those who cross boundaries will be excluded."
                   )
-                }
-              />
-              <.mission_card
-                icon="hero-face-smile"
-                title={gettext("Joy instead of addiction")}
-                description={
-                  gettext("Dating should be joyful, not addictive – quality over sensory overload.")
                 }
               />
               <.mission_card

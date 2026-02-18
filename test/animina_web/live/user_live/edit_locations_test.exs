@@ -25,7 +25,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/profile/locations")
 
-      assert page_title(lv) == "My Locations - ANIMINA"
+      assert page_title(lv) == "My Locations · ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

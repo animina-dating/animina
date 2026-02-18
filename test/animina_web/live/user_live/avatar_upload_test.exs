@@ -24,7 +24,7 @@ defmodule AniminaWeb.UserLive.AvatarUploadTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/profile/photo")
 
-      assert page_title(lv) == "Profile Photo - ANIMINA"
+      assert page_title(lv) == "Profile Photo · ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

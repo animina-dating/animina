@@ -29,7 +29,7 @@ defmodule AniminaWeb.UserLive.LanguageSettingsTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/language")
 
-      assert page_title(lv) == "Language Settings - ANIMINA"
+      assert page_title(lv) == "Language Settings · ANIMINA"
     end
 
     test "has breadcrumbs", %{conn: conn} do

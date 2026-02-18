@@ -25,7 +25,7 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/profile")
 
-      assert page_title(lv) == "My Profile - ANIMINA"
+      assert page_title(lv) == "My Profile · ANIMINA"
     end
 
     test "profile summary shows display name and email", %{conn: conn} do

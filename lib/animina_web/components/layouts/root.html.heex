@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang={assigns[:locale] || "de"} dir={if assigns[:locale] == "ar", do: "rtl", else: "ltr"}>
+  <!--
+  Wer hier liest, datet richtig. ;-)
+  Open Source. Made with ♥ and Elixir.
+  https://github.com/animina-dating/animina
+-->
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="ANIMINA" suffix=" - ANIMINA">
+    <.live_title default="Online-Dating? Online-Dating! · ANIMINA" suffix=" · ANIMINA">
       {assigns[:page_title]}
     </.live_title>
     <meta
