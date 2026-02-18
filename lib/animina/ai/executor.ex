@@ -10,15 +10,13 @@ defmodule Animina.AI.Executor do
   5. Call Client.completion, measure duration
   6. On success: call handle_result, mark completed
   7. On failure: schedule retry with backoff or mark failed
-  8. Report duration to Autoscaler
-  9. Release semaphore
+  8. Release semaphore
   """
 
   require Logger
 
   alias Animina.ActivityLog
   alias Animina.AI
-  alias Animina.AI.Autoscaler
   alias Animina.AI.Client
   alias Animina.AI.Semaphore
   alias Animina.FeatureFlags
@@ -100,9 +98,6 @@ defmodule Animina.AI.Executor do
 
     {duration_us, result} = :timer.tc(fn -> Client.completion(completion_opts) end)
     duration_ms = div(duration_us, 1000)
-
-    # Report to autoscaler
-    Autoscaler.report_duration(duration_ms)
 
     case result do
       {:ok, %{"response" => response}, server_url} ->

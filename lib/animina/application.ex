@@ -5,6 +5,7 @@ defmodule Animina.Application do
 
   use Application
 
+  alias Animina.AI.Client, as: AIClient
   alias Animina.AI.Warmup
   alias Animina.Photos.PhotoProcessor
 
@@ -126,11 +127,12 @@ defmodule Animina.Application do
 
   defp maybe_start_ai_services do
     if Application.get_env(:animina, :start_ai_services, true) do
+      AIClient.init_counter()
+
       [
         {Task.Supervisor, name: Animina.AI.TaskSupervisor},
         Animina.AI.HealthTracker,
         Animina.AI.Semaphore,
-        Animina.AI.Autoscaler,
         Animina.AI.Scheduler,
         Animina.Photos.PhotoProcessor
       ]

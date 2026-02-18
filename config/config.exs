@@ -108,18 +108,16 @@ config :animina, Animina.Photos,
   max_dimension: 1200,
   thumbnail_dimension: 768,
   webp_quality: 80,
-  # Ollama configuration - supports multiple instances with failover
+  # Ollama configuration - supports multiple instances with round-robin + failover
   # If ollama_instances is not set, ollama_url is used as a single instance
+  # Set OLLAMA_URLS env var for multi-instance (see runtime.exs):
+  #   "gpu1,gpu2"      → round-robin (same priority)
+  #   "gpu1,gpu2;cpu"  → round-robin GPUs + CPU overflow
   ollama_url: "http://localhost:11434/api",
   ollama_model: "qwen3-vl:8b",
   ollama_timeout: 120_000,
   ollama_total_timeout: 300_000,
   ollama_circuit_breaker_threshold: 3,
-  # Example multi-instance config (uncomment to enable):
-  # ollama_instances: [
-  #   %{url: "http://localhost:11434/api", timeout: 120_000, priority: 1},
-  #   %{url: "http://192.168.1.100:11434/api", timeout: 120_000, priority: 2}
-  # ],
   ollama_circuit_breaker_reset_ms: 60_000
 
 # Timezone database for proper CET/CEST handling

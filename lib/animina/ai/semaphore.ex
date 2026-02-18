@@ -4,7 +4,7 @@ defmodule Animina.AI.Semaphore do
 
   Limits the number of concurrent Ollama API calls to prevent overwhelming
   the AI server. Callers acquire a slot before making a request and
-  release it when done. Supports dynamic max adjustment via the Autoscaler.
+  release it when done. Supports dynamic max adjustment via the admin panel.
   """
 
   use GenServer
@@ -44,7 +44,7 @@ defmodule Animina.AI.Semaphore do
 
   @doc """
   Dynamically updates the maximum concurrent slots.
-  Called by the Autoscaler to adjust concurrency based on response times.
+  Can be used to manually adjust concurrency.
   """
   def set_max(new_max, server \\ __MODULE__) do
     GenServer.call(server, {:set_max, new_max})

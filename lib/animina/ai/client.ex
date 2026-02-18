@@ -1,13 +1,18 @@
 defmodule Animina.AI.Client do
   @moduledoc """
-  Unified Ollama client with cascading failover support.
+  Unified Ollama client with round-robin load balancing and cascading failover.
 
-  Tries configured Ollama instances in priority order, failing over to the
-  next instance on connection errors or server issues. Uses circuit breaker
-  pattern via HealthTracker to avoid repeatedly trying unhealthy instances.
+  Instances are grouped by priority. Within each priority group, requests are
+  distributed round-robin using an atomic counter. If the chosen instance fails,
+  the request falls through to remaining instances in the group, then to lower-
+  priority groups (overflow/failover).
 
-  Unlike the old Photos.OllamaClient, this module does NOT create log entries.
-  Logging is handled at the Executor level via the ai_jobs table.
+  Example with `OLLAMA_URLS="gpu1,gpu2;cpu"`:
+  - Priority 1 (gpu1, gpu2): round-robin distribution
+  - Priority 2 (cpu): overflow failover only
+
+  Uses circuit breaker pattern via HealthTracker to skip unhealthy instances.
+  Does NOT create log entries — logging is at the Executor level via ai_jobs.
   """
 
   require Logger
@@ -87,7 +92,8 @@ defmodule Animina.AI.Client do
   end
 
   @doc """
-  Returns instances to try, filtering by health status and sorting by priority.
+  Returns instances to try, filtering by health status, sorting by priority,
+  and applying round-robin rotation within each priority group.
   """
   @spec get_instances_to_try([map()], GenServer.server()) :: [map()]
   def get_instances_to_try(instances, tracker) do
@@ -98,12 +104,61 @@ defmodule Animina.AI.Client do
       |> Enum.filter(fn inst -> inst.url in healthy_urls end)
       |> Enum.sort_by(& &1.priority)
 
-    if healthy_instances == [] do
-      Logger.warning("All AI circuits open, trying all instances as last resort")
-      Enum.sort_by(instances, & &1.priority)
+    candidates =
+      if healthy_instances == [] do
+        Logger.warning("All AI circuits open, trying all instances as last resort")
+        Enum.sort_by(instances, & &1.priority)
+      else
+        healthy_instances
+      end
+
+    rotate_instances(candidates, next_counter())
+  end
+
+  @doc """
+  Initializes the atomic counter for round-robin distribution.
+  Called once during application startup.
+  """
+  def init_counter do
+    counter = :atomics.new(1, signed: false)
+    :persistent_term.put({__MODULE__, :counter}, counter)
+    :ok
+  end
+
+  @doc """
+  Rotates instances within each priority group using the given counter value.
+  Higher-priority groups (lower number) come first. Within each group,
+  instances are rotated so different requests start with different instances.
+
+  Public for testability.
+  """
+  @spec rotate_instances([map()], non_neg_integer()) :: [map()]
+  def rotate_instances(instances, counter) do
+    instances
+    |> Enum.group_by(& &1.priority)
+    |> Enum.sort_by(fn {priority, _} -> priority end)
+    |> Enum.flat_map(fn {_priority, group} ->
+      len = length(group)
+
+      if len <= 1 do
+        group
+      else
+        offset = rem(counter, len)
+        Enum.drop(group, offset) ++ Enum.take(group, offset)
+      end
+    end)
+  end
+
+  defp next_counter do
+    counter = :persistent_term.get({__MODULE__, :counter}, nil)
+
+    if counter do
+      :atomics.add_get(counter, 1, 1)
     else
-      healthy_instances
+      0
     end
+  rescue
+    _ -> 0
   end
 
   @spec calculate_request_timeout(map(), integer()) :: pos_integer()
