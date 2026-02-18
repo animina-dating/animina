@@ -16,13 +16,17 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-     assign(socket,
+     socket
+     |> assign(
        page_title: gettext("Activity Logs"),
        live_mode: false,
        user_search: "",
        user_results: [],
-       selected_user: nil
-     )}
+       selected_user: nil,
+       new_log_ids: MapSet.new(),
+       modal_photo_id: nil
+     )
+     |> stream(:logs, [])}
   end
 
   @impl true
@@ -69,8 +73,8 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
       end
 
     {:noreply,
-     assign(socket,
-       logs: result.entries,
+     socket
+     |> assign(
        page: result.page,
        per_page: result.per_page,
        total_count: result.total_count,
@@ -82,8 +86,10 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
        date_from: date_from,
        date_to: date_to,
        available_events: available_events,
-       selected_user: selected_user
-     )}
+       selected_user: selected_user,
+       new_log_ids: MapSet.new()
+     )
+     |> stream(:logs, result.entries, reset: true)}
   end
 
   # --- Event Handlers ---
@@ -98,7 +104,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
       Phoenix.PubSub.unsubscribe(Animina.PubSub, ActivityLog.pubsub_topic())
     end
 
-    {:noreply, assign(socket, live_mode: new_state)}
+    {:noreply, assign(socket, live_mode: new_state, new_log_ids: MapSet.new())}
   end
 
   @impl true
@@ -159,13 +165,27 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
      |> push_patch(to: build_path(socket, page: 1, filter_user_id: nil))}
   end
 
+  @impl true
+  def handle_event("show-photo", %{"photo-id" => photo_id}, socket) do
+    {:noreply, assign(socket, modal_photo_id: photo_id)}
+  end
+
+  @impl true
+  def handle_event("close-photo", _params, socket) do
+    {:noreply, assign(socket, modal_photo_id: nil)}
+  end
+
   # --- PubSub ---
 
   @impl true
   def handle_info({:new_activity_log, entry}, socket) do
     if socket.assigns.live_mode && matches_filters?(entry, socket.assigns) do
-      logs = [entry | socket.assigns.logs]
-      {:noreply, assign(socket, logs: logs, total_count: socket.assigns.total_count + 1)}
+      new_ids = MapSet.put(socket.assigns.new_log_ids, entry.id)
+
+      {:noreply,
+       socket
+       |> assign(total_count: socket.assigns.total_count + 1, new_log_ids: new_ids)
+       |> stream_insert(:logs, entry, at: 0)}
     else
       {:noreply, socket}
     end
@@ -211,6 +231,16 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
     ~p"/admin/logs/activity?#{params}"
   end
 
+  defp photo_thumbnail_url(photo_id) do
+    signature = Animina.Photos.compute_signature(photo_id)
+    "/photos/#{signature}/#{photo_id}_thumb.webp"
+  end
+
+  defp photo_full_url(photo_id) do
+    signature = Animina.Photos.compute_signature(photo_id)
+    "/photos/#{signature}/#{photo_id}.webp"
+  end
+
   defp category_badge_class("auth"), do: "badge-primary"
   defp category_badge_class("social"), do: "badge-secondary"
   defp category_badge_class("profile"), do: "badge-accent"
@@ -252,15 +282,15 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
 
         <%!-- Live toggle --%>
         <div class="flex flex-wrap gap-3 mb-6">
-          <label class="flex items-center gap-2 bg-base-200 rounded-lg px-4 py-2 cursor-pointer">
+          <div class="flex items-center gap-2 bg-base-200 rounded-lg px-4 py-2 cursor-pointer" phx-click="toggle-live">
             <span class="text-sm text-base-content/60">{gettext("Live")}</span>
             <input
               type="checkbox"
               class="toggle toggle-sm toggle-primary"
               checked={@live_mode}
-              phx-click="toggle-live"
+              tabindex="-1"
             />
-          </label>
+          </div>
         </div>
 
         <%!-- Filters --%>
@@ -387,49 +417,74 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
                 <th>{gettext("Summary")}</th>
               </tr>
             </thead>
-            <tbody>
-              <%= for log <- @logs do %>
-                <tr class="hover:bg-base-200/50">
-                  <td>
-                    <span class="text-xs" title={format_datetime(log.inserted_at)}>
-                      {relative_time(log.inserted_at)}
-                    </span>
-                  </td>
-                  <td>
-                    <span class={["badge badge-sm", category_badge_class(log.category)]}>
-                      {log.category}
-                    </span>
-                  </td>
-                  <td><span class="badge badge-sm badge-ghost">{log.event}</span></td>
-                  <td class="text-xs">
-                    <%= if log.actor do %>
-                      <a
-                        phx-click="filter-by-actor"
-                        phx-value-id={log.actor_id}
-                        class="link link-hover cursor-pointer"
-                        title={gettext("Filter by this user")}
+            <tbody id="logs" phx-update="stream">
+              <tr
+                :for={{dom_id, log} <- @streams.logs}
+                id={dom_id}
+                class={[
+                  "hover:bg-base-200/50",
+                  log.id in @new_log_ids && "animate-highlight-row"
+                ]}
+              >
+                <td>
+                  <span class="text-xs">{format_datetime(log.inserted_at)}</span>
+                </td>
+                <td>
+                  <span class={["badge badge-sm", category_badge_class(log.category)]}>
+                    {log.category}
+                  </span>
+                </td>
+                <td><span class="badge badge-sm badge-ghost">{log.event}</span></td>
+                <td class="text-xs">
+                  <%= if log.actor do %>
+                    <a
+                      phx-click="filter-by-actor"
+                      phx-value-id={log.actor_id}
+                      class="link link-hover cursor-pointer"
+                      title={gettext("Filter by this user")}
+                    >
+                      {log.actor.display_name}
+                    </a>
+                  <% else %>
+                    <span class="text-base-content/40">{gettext("System")}</span>
+                  <% end %>
+                </td>
+                <td class="text-xs">
+                  <%= if log.subject do %>
+                    <a
+                      phx-click="filter-by-actor"
+                      phx-value-id={log.subject_id}
+                      class="link link-hover cursor-pointer"
+                      title={gettext("Filter by this user")}
+                    >
+                      {log.subject.display_name}
+                    </a>
+                  <% end %>
+                </td>
+                <td class="max-w-md text-sm">
+                  <div class="flex items-center gap-2">
+                    <%= if photo_id = log.metadata["photo_id"] do %>
+                      <img
+                        src={photo_thumbnail_url(photo_id)}
+                        class="w-8 h-8 rounded object-cover flex-shrink-0 cursor-pointer hover:opacity-80"
+                        loading="lazy"
+                        phx-click="show-photo"
+                        phx-value-photo-id={photo_id}
+                      />
+                    <% end %>
+                    <%= if job_id = log.metadata["job_id"] do %>
+                      <.link
+                        navigate={~p"/admin/logs/ai?job_id=#{job_id}"}
+                        class="link link-hover truncate"
                       >
-                        {log.actor.display_name}
-                      </a>
+                        {log.summary}
+                      </.link>
                     <% else %>
-                      <span class="text-base-content/40">{gettext("System")}</span>
+                      <span class="truncate">{log.summary}</span>
                     <% end %>
-                  </td>
-                  <td class="text-xs">
-                    <%= if log.subject do %>
-                      <a
-                        phx-click="filter-by-actor"
-                        phx-value-id={log.subject_id}
-                        class="link link-hover cursor-pointer"
-                        title={gettext("Filter by this user")}
-                      >
-                        {log.subject.display_name}
-                      </a>
-                    <% end %>
-                  </td>
-                  <td class="max-w-md truncate text-sm">{log.summary}</td>
-                </tr>
-              <% end %>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -437,6 +492,26 @@ defmodule AniminaWeb.Admin.ActivityLogsLive do
         <%!-- Pagination (hidden in live mode) --%>
         <%= unless @live_mode do %>
           <.pagination page={@page} total_pages={@total_pages} />
+        <% end %>
+
+        <%!-- Photo modal --%>
+        <%= if @modal_photo_id do %>
+          <div class="modal modal-open">
+            <div class="modal-box max-w-2xl p-2">
+              <button
+                type="button"
+                phx-click="close-photo"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 z-10"
+              >
+                <.icon name="hero-x-mark" class="h-4 w-4" />
+              </button>
+              <img
+                src={photo_full_url(@modal_photo_id)}
+                class="w-full h-auto rounded"
+              />
+            </div>
+            <div class="modal-backdrop" phx-click="close-photo"></div>
+          </div>
         <% end %>
       </div>
     </Layouts.app>

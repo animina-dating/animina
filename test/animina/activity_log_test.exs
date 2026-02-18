@@ -360,6 +360,46 @@ defmodule Animina.ActivityLogTest do
     end
   end
 
+  describe "ollama_processed event" do
+    test "ollama_processed is a valid system event" do
+      assert "ollama_processed" in ActivityLogEntry.events_for_category("system")
+    end
+
+    test "can log an ollama_processed event with job metadata" do
+      {:ok, entry} =
+        ActivityLog.log(
+          "system",
+          "ollama_processed",
+          "AI job photo_classification completed in 21277ms",
+          metadata: %{
+            "job_type" => "photo_classification",
+            "duration_ms" => 21277,
+            "model" => "llava:13b",
+            "job_id" => Ecto.UUID.generate()
+          }
+        )
+
+      assert entry.category == "system"
+      assert entry.event == "ollama_processed"
+      assert entry.metadata["job_type"] == "photo_classification"
+      assert entry.metadata["duration_ms"] == 21277
+    end
+
+    test "ollama_processed broadcasts via PubSub for live mode" do
+      Phoenix.PubSub.subscribe(Animina.PubSub, ActivityLog.pubsub_topic())
+
+      {:ok, entry} =
+        ActivityLog.log(
+          "system",
+          "ollama_processed",
+          "AI job photo_classification completed in 5000ms",
+          metadata: %{"job_type" => "photo_classification", "duration_ms" => 5000}
+        )
+
+      assert_receive {:new_activity_log, ^entry}
+    end
+  end
+
   describe "moodboard_changed logging via Items context" do
     test "logs when a story moodboard item is created" do
       user = user_fixture()

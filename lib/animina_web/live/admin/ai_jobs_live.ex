@@ -61,6 +61,14 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     models = AI.distinct_models()
     job_types = AI.distinct_job_types()
 
+    # Auto-open detail modal if job_id is in query params (deep-link from activity logs)
+    detail_job =
+      case params["job_id"] do
+        nil -> socket.assigns[:detail_job]
+        "" -> socket.assigns[:detail_job]
+        id -> AI.get_job(id) || socket.assigns[:detail_job]
+      end
+
     {:noreply,
      assign(socket,
        jobs: result.entries,
@@ -79,7 +87,8 @@ defmodule AniminaWeb.Admin.AIJobsLive do
        semaphore: semaphore,
        paused: paused,
        available_models: models,
-       available_job_types: job_types
+       available_job_types: job_types,
+       detail_job: detail_job
      )}
   end
 

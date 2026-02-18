@@ -352,3 +352,13 @@
   transition: all 150ms ease-in-out;
   animation: fids-flip 200ms ease-in-out;
 }
+
+/* Highlight animation for new live activity log entries */
+@keyframes highlight-row {
+  0% { background-color: oklch(0.75 0.12 145 / 0.3); }
+  100% { background-color: transparent; }
+}
+
+.animate-highlight-row {
+  animation: highlight-row 2s ease-out;
+}

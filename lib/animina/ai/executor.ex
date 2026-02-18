@@ -16,6 +16,7 @@ defmodule Animina.AI.Executor do
 
   require Logger
 
+  alias Animina.ActivityLog
   alias Animina.AI
   alias Animina.AI.Autoscaler
   alias Animina.AI.Client
@@ -128,6 +129,22 @@ defmodule Animina.AI.Executor do
         case AI.mark_completed(job, Map.merge(attrs, %{result: result_map})) do
           {:ok, _} ->
             Logger.info("AI job #{job.id} (#{job.job_type}) completed in #{attrs.duration_ms}ms")
+
+            ActivityLog.log(
+              "system",
+              "ollama_processed",
+              "AI job #{job.job_type} completed in #{format_ms(attrs.duration_ms)}",
+              actor_id: job.requester_id,
+              metadata:
+                %{
+                  "job_id" => job.id,
+                  "job_type" => job.job_type,
+                  "duration_ms" => attrs.duration_ms,
+                  "model" => attrs.model
+                }
+                |> maybe_put_photo_id(job)
+            )
+
             :ok
 
           {:error, :job_not_running} ->
@@ -209,5 +226,19 @@ defmodule Animina.AI.Executor do
     end
   rescue
     _ -> module.default_model()
+  end
+
+  defp maybe_put_photo_id(metadata, %{params: %{"photo_id" => photo_id}}) when is_binary(photo_id),
+    do: Map.put(metadata, "photo_id", photo_id)
+
+  defp maybe_put_photo_id(metadata, _job), do: metadata
+
+  defp format_ms(ms) when is_integer(ms) do
+    ms
+    |> Integer.to_string()
+    |> String.reverse()
+    |> String.replace(~r/.{3}(?=.)/, "\\0.")
+    |> String.reverse()
+    |> Kernel.<>("ms")
   end
 end

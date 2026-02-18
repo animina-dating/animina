@@ -104,12 +104,11 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_value(value), do: to_string(value)
 
   @doc """
-  Formats a datetime for display.
+  Formats a datetime for display in Europe/Berlin timezone.
+
+  Shows just "HH:MM" for today's entries, full "YYYY-MM-DD HH:MM" otherwise.
 
   ## Examples
-
-      iex> format_datetime(~U[2024-01-15 10:30:00Z])
-      "2024-01-15 10:30"
 
       iex> format_datetime(nil)
       ""
@@ -117,7 +116,20 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def format_datetime(nil), do: ""
 
   def format_datetime(datetime) do
-    Calendar.strftime(datetime, "%Y-%m-%d %H:%M")
+    berlin_dt = DateTime.shift_zone!(datetime, "Europe/Berlin", Tz.TimeZoneDatabase)
+    berlin_date = DateTime.to_date(berlin_dt)
+
+    now_berlin =
+      Animina.TimeMachine.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    today = DateTime.to_date(now_berlin)
+
+    if berlin_date == today do
+      Calendar.strftime(berlin_dt, "%H:%M")
+    else
+      Calendar.strftime(berlin_dt, "%Y-%m-%d %H:%M")
+    end
   end
 
   @doc """
