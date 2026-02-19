@@ -435,6 +435,23 @@ defmodule Animina.AI do
     )
   end
 
+  @doc """
+  Reschedules a running job back to scheduled without incrementing the attempt counter.
+
+  Used when a semaphore timeout occurs — the job never actually ran,
+  so it shouldn't count against max_attempts.
+  """
+  def reschedule_running_job(job_id) do
+    scheduled_at = DateTime.utc_now() |> DateTime.add(5, :second)
+
+    from(j in Job,
+      where: j.id == ^job_id and j.status == "running"
+    )
+    |> Repo.update_all(
+      set: [status: "scheduled", scheduled_at: scheduled_at, updated_at: DateTime.utc_now()]
+    )
+  end
+
   # --- Scheduler Queries ---
 
   @doc """

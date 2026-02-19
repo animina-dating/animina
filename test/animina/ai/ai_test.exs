@@ -387,6 +387,33 @@ defmodule Animina.AITest do
     end
   end
 
+  describe "reschedule_running_job/1" do
+    test "resets a running job to scheduled without incrementing attempt" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"}, max_attempts: 3)
+      {:ok, running} = AI.mark_running(job)
+
+      assert running.attempt == 1
+      assert running.status == "running"
+
+      assert {1, _} = AI.reschedule_running_job(running.id)
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "scheduled"
+      # Attempt stays at 1 — not incremented
+      assert updated.attempt == 1
+      assert updated.scheduled_at != nil
+    end
+
+    test "does not affect non-running jobs" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+
+      assert {0, _} = AI.reschedule_running_job(job.id)
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "pending"
+    end
+  end
+
   describe "enqueue_all_photo_descriptions/1" do
     import Animina.PhotosFixtures
 

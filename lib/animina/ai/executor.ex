@@ -73,7 +73,25 @@ defmodule Animina.AI.Executor do
   end
 
   defp execute_with_input(job, module, input_opts) do
-    prompt = module.build_prompt(job.params)
+    prompt =
+      try do
+        module.build_prompt(job.params)
+      rescue
+        e -> {:error, Exception.message(e)}
+      end
+
+    case prompt do
+      {:error, msg} ->
+        AI.cancel_with_error(job.id, "build_prompt failed: #{msg}")
+        Logger.warning("AI.Executor: build_prompt failed for job #{job.id}: #{msg}")
+        :error
+
+      prompt ->
+        execute_with_prompt(job, module, input_opts, prompt)
+    end
+  end
+
+  defp execute_with_prompt(job, module, input_opts, prompt) do
     model_family = module.model_family()
     model = select_model(job, module)
     {instance_filter, model} = build_instance_filter(model_family, model)
@@ -93,7 +111,7 @@ defmodule Animina.AI.Executor do
 
       {:error, :timeout} ->
         Logger.debug("AI.Executor: Semaphore busy, rescheduling job #{job.id}")
-        AI.mark_failed(job, "Semaphore timeout", %{prompt: prompt, model: model})
+        AI.reschedule_running_job(job.id)
         :retry
     end
   end
