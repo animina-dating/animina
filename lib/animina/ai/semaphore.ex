@@ -154,6 +154,7 @@ defmodule Animina.AI.Semaphore do
         %{state | active: new_active + 1, waiting: new_waiting}
 
       :empty ->
+        Phoenix.PubSub.broadcast(Animina.PubSub, "ai:slot_available", :slot_available)
         %{state | active: new_active}
     end
   end

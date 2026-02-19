@@ -70,6 +70,9 @@ defmodule Animina.AI.Scheduler do
     # Crash recovery: reset any running jobs
     AI.reset_running_jobs()
 
+    # Wake up immediately when a semaphore slot frees with no waiter
+    Phoenix.PubSub.subscribe(Animina.PubSub, "ai:slot_available")
+
     # Schedule first poll after startup delay
     Process.send_after(self(), :poll, 3_000)
 
@@ -85,6 +88,11 @@ defmodule Animina.AI.Scheduler do
     state = do_poll(state)
     Process.send_after(self(), :poll, state.poll_interval)
     {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(:slot_available, state) do
+    {:noreply, do_poll(state)}
   end
 
   @impl true
