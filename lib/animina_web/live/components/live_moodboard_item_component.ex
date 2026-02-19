@@ -75,6 +75,9 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         :if={@has_photo && !@has_story}
         item={@item}
         owner?={@owner?}
+        can_rate?={@can_rate?}
+        my_rating={@my_rating}
+        rating_aggregates={@rating_aggregates}
       />
 
       <!-- Story-only card -->
@@ -82,6 +85,9 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         :if={!@has_photo && @has_story}
         item={@item}
         owner?={@owner?}
+        can_rate?={@can_rate?}
+        my_rating={@my_rating}
+        rating_aggregates={@rating_aggregates}
       />
 
       <!-- Combined card (photo + caption) -->
@@ -89,18 +95,8 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         :if={@has_photo && @has_story}
         item={@item}
         owner?={@owner?}
-      />
-
-      <!-- Rating bar for visitors — attached to bottom of card -->
-      <.rating_bar
-        :if={@can_rate? && !@owner?}
-        item={@item}
+        can_rate?={@can_rate?}
         my_rating={@my_rating}
-      />
-
-      <!-- Aggregate counts for owners — attached to bottom of card -->
-      <.rating_aggregates
-        :if={@owner?}
         rating_aggregates={@rating_aggregates}
       />
     </div>
@@ -134,7 +130,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
 
     ~H"""
     <div class="editorial-photo-card">
-      <div class="rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300">
+      <div class="relative rounded-2xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(0,0,0,0.15)] hover:shadow-[0_8px_30px_-4px_rgba(0,0,0,0.2)] transition-shadow duration-300">
         <%= if @owner? do %>
           <.owner_photo_view
             photo={@photo}
@@ -148,6 +144,17 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
             approved?={@approved?}
           />
         <% end %>
+        <!-- Rating pill for visitors -->
+        <div
+          :if={@can_rate? && !@owner?}
+          class="absolute bottom-3 left-0 right-0 z-10 flex justify-center"
+        >
+          <div class="flex items-center gap-1 rounded-full bg-black/60 backdrop-blur-sm px-2 py-1 shadow-lg">
+            <.rating_buttons item={@item} my_rating={@my_rating} variant={:overlay} />
+          </div>
+        </div>
+        <!-- Aggregate pill for owners -->
+        <.overlay_aggregates :if={@owner?} rating_aggregates={@rating_aggregates} />
       </div>
     </div>
     """
@@ -164,6 +171,15 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-headings:text-base-content">
           {raw(@rendered_content)}
         </div>
+        <!-- Rating for visitors -->
+        <div
+          :if={@can_rate? && !@owner?}
+          class="flex items-center justify-center gap-3 pt-4 mt-4 border-t border-base-content/10"
+        >
+          <.rating_buttons item={@item} my_rating={@my_rating} variant={:inline} />
+        </div>
+        <!-- Aggregates for owners -->
+        <.inline_aggregates rating_aggregates={@rating_aggregates} owner?={@owner?} />
       </div>
     </div>
     """
@@ -214,13 +230,21 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
             approved?={@approved?}
           />
         <% end %>
-        
-    <!-- Caption below photo (only if user wrote custom content) -->
+        <!-- Caption below photo (only if user wrote custom content) -->
         <div :if={@has_custom_content} class="p-5 sm:p-6">
           <div class="prose prose-sm max-w-none prose-p:text-base-content/70 prose-p:leading-relaxed prose-p:my-0">
             {raw(@rendered_content)}
           </div>
         </div>
+        <!-- Rating for visitors -->
+        <div
+          :if={@can_rate? && !@owner?}
+          class="flex items-center justify-center gap-3 px-5 pb-4 pt-2 border-t border-base-content/10"
+        >
+          <.rating_buttons item={@item} my_rating={@my_rating} variant={:inline} />
+        </div>
+        <!-- Aggregates for owners -->
+        <.inline_aggregates rating_aggregates={@rating_aggregates} owner?={@owner?} />
       </div>
     </div>
     """
@@ -294,55 +318,68 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     """
   end
 
-  defp rating_bar(assigns) do
+  # Reusable rating buttons — rendered inside each card's own container.
+  # `variant` controls colors: `:overlay` for dark photo backgrounds, `:inline` for card backgrounds.
+  defp rating_buttons(assigns) do
+    overlay? = assigns.variant == :overlay
+    assigns = assign(assigns, :overlay?, overlay?)
+
     ~H"""
-    <div class="-mt-4 relative z-10 mx-2 flex items-center justify-center gap-2 rounded-b-xl bg-base-200/80 backdrop-blur-sm border border-t-0 border-base-300/50 px-3 py-1.5 shadow-sm">
-      <button
-        phx-click="rate_item"
-        phx-value-item-id={@item.id}
-        phx-value-rating="-1"
-        class={[
-          "btn btn-circle btn-xs btn-ghost",
-          if(@my_rating == -1, do: "text-error bg-error/15", else: "text-base-content/40 hover:text-error hover:bg-error/10")
-        ]}
-        title={gettext("Dislike")}
-      >
-        <.icon name="hero-hand-thumb-down-mini" class="h-4 w-4" />
-      </button>
+    <button
+      phx-click="rate_item"
+      phx-value-item-id={@item.id}
+      phx-value-rating="-1"
+      class={[
+        "btn btn-circle btn-sm btn-ghost",
+        if(@my_rating == -1,
+          do: "text-error bg-error/20",
+          else: if(@overlay?, do: "text-white/70 hover:text-error hover:bg-error/20", else: "text-base-content/40 hover:text-error hover:bg-error/10")
+        )
+      ]}
+      title={gettext("Dislike")}
+    >
+      <.icon name="hero-hand-thumb-down-mini" class="h-4 w-4" />
+    </button>
 
-      <button
-        phx-click="rate_item"
-        phx-value-item-id={@item.id}
-        phx-value-rating="1"
-        class={[
-          "btn btn-circle btn-xs btn-ghost",
-          if(@my_rating == 1, do: "text-success bg-success/15", else: "text-base-content/40 hover:text-success hover:bg-success/10")
-        ]}
-        title={gettext("Like")}
-      >
+    <button
+      phx-click="rate_item"
+      phx-value-item-id={@item.id}
+      phx-value-rating="1"
+      class={[
+        "btn btn-circle btn-sm btn-ghost",
+        if(@my_rating == 1,
+          do: "text-success bg-success/20",
+          else: if(@overlay?, do: "text-white/70 hover:text-success hover:bg-success/20", else: "text-base-content/40 hover:text-success hover:bg-success/10")
+        )
+      ]}
+      title={gettext("Like")}
+    >
+      <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
+    </button>
+
+    <button
+      phx-click="rate_item"
+      phx-value-item-id={@item.id}
+      phx-value-rating="2"
+      class={[
+        "btn btn-sm btn-ghost px-1",
+        if(@my_rating == 2,
+          do: "text-warning bg-warning/20",
+          else: if(@overlay?, do: "text-white/70 hover:text-warning hover:bg-warning/20", else: "text-base-content/40 hover:text-warning hover:bg-warning/10")
+        )
+      ]}
+      title={gettext("Love")}
+    >
+      <span class="inline-flex items-center">
+        <span class="overflow-hidden" style="width:10px"><.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" /></span>
         <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
-      </button>
-
-      <button
-        phx-click="rate_item"
-        phx-value-item-id={@item.id}
-        phx-value-rating="2"
-        class={[
-          "btn btn-xs btn-ghost px-1",
-          if(@my_rating == 2, do: "text-warning bg-warning/15", else: "text-base-content/40 hover:text-warning hover:bg-warning/10")
-        ]}
-        title={gettext("Love")}
-      >
-        <span class="inline-flex items-center">
-          <span class="overflow-hidden" style="width:10px"><.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" /></span>
-          <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
-        </span>
-      </button>
-    </div>
+      </span>
+    </button>
     """
   end
 
-  defp rating_aggregates(assigns) do
+  # Overlay aggregates for photo cards (owner view)
+  defp overlay_aggregates(assigns) do
     agg = assigns.rating_aggregates
     has_any = map_size(agg) > 0
 
@@ -354,7 +391,45 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       |> assign(:love_count, Map.get(agg, 2, 0))
 
     ~H"""
-    <div :if={@has_any} class="-mt-4 relative z-10 mx-2 flex items-center justify-center gap-3 rounded-b-xl bg-base-200/60 border border-t-0 border-base-300/30 px-3 py-1.5 text-xs text-base-content/40">
+    <div :if={@has_any} class="absolute bottom-3 left-0 right-0 z-10 flex justify-center">
+    <div class="flex items-center gap-3 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 shadow-lg text-xs text-white/70">
+      <span :if={@dislike_count > 0} class="flex items-center gap-1" title={gettext("Dislike")}>
+        <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
+        {@dislike_count}
+      </span>
+      <span :if={@like_count > 0} class="flex items-center gap-1" title={gettext("Like")}>
+        <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+        {@like_count}
+      </span>
+      <span :if={@love_count > 0} class="flex items-center gap-1" title={gettext("Love")}>
+        <span class="inline-flex items-center">
+          <span class="overflow-hidden" style="width:8px"><.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" /></span>
+          <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+        </span>
+        {@love_count}
+      </span>
+    </div>
+    </div>
+    """
+  end
+
+  # Inline aggregates for story/combined cards (owner view)
+  defp inline_aggregates(assigns) do
+    agg = assigns.rating_aggregates
+    has_any = map_size(agg) > 0 && assigns.owner?
+
+    assigns =
+      assigns
+      |> assign(:has_any, has_any)
+      |> assign(:dislike_count, Map.get(agg, -1, 0))
+      |> assign(:like_count, Map.get(agg, 1, 0))
+      |> assign(:love_count, Map.get(agg, 2, 0))
+
+    ~H"""
+    <div
+      :if={@has_any}
+      class="flex items-center justify-center gap-3 px-5 pb-4 pt-2 border-t border-base-content/10 text-xs text-base-content/40"
+    >
       <span :if={@dislike_count > 0} class="flex items-center gap-1" title={gettext("Dislike")}>
         <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
         {@dislike_count}
