@@ -26,6 +26,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
+  alias Animina.Photos
   alias Animina.Reports
   alias Animina.Traits
   alias AniminaWeb.ColumnToggle
@@ -335,6 +336,27 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         context_id={nil}
         current_scope={@current_scope}
       />
+
+      <div
+        :if={@lightbox_url}
+        id="photo-lightbox"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
+        phx-click="close_lightbox"
+        phx-window-keydown="close_lightbox"
+        phx-key="Escape"
+      >
+        <button
+          class="absolute top-4 right-4 btn btn-circle btn-ghost text-white/70 hover:text-white hover:bg-white/10"
+          phx-click="close_lightbox"
+        >
+          <.icon name="hero-x-mark" class="h-6 w-6" />
+        </button>
+        <img
+          src={@lightbox_url}
+          alt=""
+          class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+        />
+      </div>
     </Layouts.app>
     """
   end
@@ -575,6 +597,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       typical_times_text: typical_times_text,
       heatmap_data: heatmap_data,
       show_report_modal: false,
+      lightbox_url: nil,
       my_ratings: my_ratings,
       rating_aggregates: rating_aggregates
     )
@@ -617,6 +640,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       activity_level_text: nil,
       typical_times_text: nil,
       heatmap_data: %{},
+      lightbox_url: nil,
       my_ratings: %{},
       rating_aggregates: %{}
     )
@@ -714,6 +738,23 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       {:error, _reason} ->
         {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("enlarge_photo", %{"item-id" => photo_id}, socket) do
+    photo = Photos.get_photo(photo_id)
+
+    url =
+      if photo && AniminaWeb.PhotoStatus.servable?(photo) do
+        Photos.signed_url(photo, :main)
+      end
+
+    {:noreply, assign(socket, :lightbox_url, url)}
+  end
+
+  @impl true
+  def handle_event("close_lightbox", _params, socket) do
+    {:noreply, assign(socket, :lightbox_url, nil)}
   end
 
   # Handle moodboard PubSub messages - all trigger a reload

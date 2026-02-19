@@ -69,8 +69,8 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       >
         {gettext("Hidden")}
       </div>
-
-      <!-- Photo-only card -->
+      
+    <!-- Photo-only card -->
       <.photo_card
         :if={@has_photo && !@has_story}
         item={@item}
@@ -79,8 +79,8 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         my_rating={@my_rating}
         rating_aggregates={@rating_aggregates}
       />
-
-      <!-- Story-only card -->
+      
+    <!-- Story-only card -->
       <.story_card
         :if={!@has_photo && @has_story}
         item={@item}
@@ -89,8 +89,8 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         my_rating={@my_rating}
         rating_aggregates={@rating_aggregates}
       />
-
-      <!-- Combined card (photo + caption) -->
+      
+    <!-- Combined card (photo + caption) -->
       <.combined_card
         :if={@has_photo && @has_story}
         item={@item}
@@ -140,6 +140,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
           />
         <% else %>
           <.visitor_photo_view
+            photo={@photo}
             url={@url}
             approved?={@approved?}
           />
@@ -226,6 +227,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
           />
         <% else %>
           <.visitor_photo_view
+            photo={@photo}
             url={@url}
             approved?={@approved?}
           />
@@ -258,7 +260,14 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     <div>
       <%= if @servable? do %>
         <div class="relative">
-          <img src={@url} alt="" class="w-full h-auto block" loading="lazy" />
+          <img
+            src={@url}
+            alt=""
+            class="w-full h-auto block cursor-pointer"
+            loading="lazy"
+            phx-click="enlarge_photo"
+            phx-value-item-id={@photo.id}
+          />
           <.status_overlay :if={@badge} badge={@badge} />
         </div>
       <% else %>
@@ -272,7 +281,14 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
     ~H"""
     <div>
       <%= if @approved? do %>
-        <img src={@url} alt="" class="w-full h-auto block" loading="lazy" />
+        <img
+          src={@url}
+          alt=""
+          class="w-full h-auto block cursor-pointer"
+          loading="lazy"
+          phx-click="enlarge_photo"
+          phx-value-item-id={@photo.id}
+        />
       <% else %>
         <.review_placeholder />
       <% end %>
@@ -333,7 +349,11 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         "btn btn-circle btn-sm btn-ghost",
         if(@my_rating == -1,
           do: "text-error bg-error/20",
-          else: if(@overlay?, do: "text-white/70 hover:text-error hover:bg-error/20", else: "text-base-content/40 hover:text-error hover:bg-error/10")
+          else:
+            if(@overlay?,
+              do: "text-white/70 hover:text-error hover:bg-error/20",
+              else: "text-base-content/40 hover:text-error hover:bg-error/10"
+            )
         )
       ]}
       title={gettext("Dislike")}
@@ -349,7 +369,11 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         "btn btn-circle btn-sm btn-ghost",
         if(@my_rating == 1,
           do: "text-success bg-success/20",
-          else: if(@overlay?, do: "text-white/70 hover:text-success hover:bg-success/20", else: "text-base-content/40 hover:text-success hover:bg-success/10")
+          else:
+            if(@overlay?,
+              do: "text-white/70 hover:text-success hover:bg-success/20",
+              else: "text-base-content/40 hover:text-success hover:bg-success/10"
+            )
         )
       ]}
       title={gettext("Like")}
@@ -364,14 +388,20 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       class={[
         "btn btn-sm btn-ghost px-1",
         if(@my_rating == 2,
-          do: "text-warning bg-warning/20",
-          else: if(@overlay?, do: "text-white/70 hover:text-warning hover:bg-warning/20", else: "text-base-content/40 hover:text-warning hover:bg-warning/10")
+          do: "text-info bg-info/20",
+          else:
+            if(@overlay?,
+              do: "text-white/70 hover:text-info hover:bg-info/20",
+              else: "text-base-content/40 hover:text-info hover:bg-info/10"
+            )
         )
       ]}
       title={gettext("Love")}
     >
       <span class="inline-flex items-center">
-        <span class="overflow-hidden" style="width:10px"><.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" /></span>
+        <span class="overflow-hidden" style="width:10px">
+          <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
+        </span>
         <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
       </span>
     </button>
@@ -392,23 +422,25 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
 
     ~H"""
     <div :if={@has_any} class="absolute bottom-3 left-0 right-0 z-10 flex justify-center">
-    <div class="flex items-center gap-3 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 shadow-lg text-xs text-white/70">
-      <span :if={@dislike_count > 0} class="flex items-center gap-1" title={gettext("Dislike")}>
-        <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
-        {@dislike_count}
-      </span>
-      <span :if={@like_count > 0} class="flex items-center gap-1" title={gettext("Like")}>
-        <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
-        {@like_count}
-      </span>
-      <span :if={@love_count > 0} class="flex items-center gap-1" title={gettext("Love")}>
-        <span class="inline-flex items-center">
-          <span class="overflow-hidden" style="width:8px"><.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" /></span>
-          <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+      <div class="flex items-center gap-3 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 shadow-lg text-xs text-white/70">
+        <span :if={@dislike_count > 0} class="flex items-center gap-1" title={gettext("Dislike")}>
+          <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
+          {@dislike_count}
         </span>
-        {@love_count}
-      </span>
-    </div>
+        <span :if={@like_count > 0} class="flex items-center gap-1" title={gettext("Like")}>
+          <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+          {@like_count}
+        </span>
+        <span :if={@love_count > 0} class="flex items-center gap-1" title={gettext("Love")}>
+          <span class="inline-flex items-center">
+            <span class="overflow-hidden" style="width:8px">
+              <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+            </span>
+            <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+          </span>
+          {@love_count}
+        </span>
+      </div>
     </div>
     """
   end
@@ -440,7 +472,9 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       </span>
       <span :if={@love_count > 0} class="flex items-center gap-1" title={gettext("Love")}>
         <span class="inline-flex items-center">
-          <span class="overflow-hidden" style="width:8px"><.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" /></span>
+          <span class="overflow-hidden" style="width:8px">
+            <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+          </span>
           <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
         </span>
         {@love_count}

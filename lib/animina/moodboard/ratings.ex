@@ -37,32 +37,30 @@ defmodule Animina.Moodboard.Ratings do
          :ok <- verify_not_owner(user_id, item) do
       existing = get_rating(user_id, item_id)
 
-      result =
-        cond do
-          is_nil(existing) ->
-            create_rating(user_id, item_id, value)
-
-          existing.value == value ->
-            remove_rating(existing)
-
-          true ->
-            switch_rating(existing, value)
-        end
-
-      case result do
-        {:ok, action, _rating} = success ->
-          broadcast_rating_changed(item_id, item.user_id)
-          if action in [:created, :switched], do: success, else: success
-
-        {:ok, :removed} = success ->
-          broadcast_rating_changed(item_id, item.user_id)
-          success
-
-        error ->
-          error
-      end
+      existing
+      |> apply_toggle(user_id, item_id, value)
+      |> broadcast_on_success(item_id, item.user_id)
     end
   end
+
+  defp apply_toggle(nil, user_id, item_id, value), do: create_rating(user_id, item_id, value)
+
+  defp apply_toggle(%{value: v} = existing, _user_id, _item_id, value) when v == value,
+    do: remove_rating(existing)
+
+  defp apply_toggle(existing, _user_id, _item_id, value), do: switch_rating(existing, value)
+
+  defp broadcast_on_success({:ok, _action, _rating} = success, item_id, owner_id) do
+    broadcast_rating_changed(item_id, owner_id)
+    success
+  end
+
+  defp broadcast_on_success({:ok, :removed} = success, item_id, owner_id) do
+    broadcast_rating_changed(item_id, owner_id)
+    success
+  end
+
+  defp broadcast_on_success(error, _item_id, _owner_id), do: error
 
   @doc """
   Gets a user's rating for a specific moodboard item.
