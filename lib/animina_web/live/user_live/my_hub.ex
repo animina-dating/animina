@@ -16,7 +16,6 @@ defmodule AniminaWeb.UserLive.MyHub do
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
-  alias Animina.Photos
   alias AniminaWeb.Helpers.AvatarHelpers
   alias AniminaWeb.Helpers.ColumnPreferences
   alias AniminaWeb.Helpers.WaitlistData
@@ -53,7 +52,9 @@ defmodule AniminaWeb.UserLive.MyHub do
             <.conversation_row
               :for={conv <- @unread_conversations}
               conversation={conv}
-              avatar={Map.get(@conversation_avatars, conv.other_user.id)}
+              avatar_photos={@conversation_avatars}
+              online_user_ids={@online_user_ids}
+              current_scope={@current_scope}
               unread={true}
             />
           </div>
@@ -237,7 +238,9 @@ defmodule AniminaWeb.UserLive.MyHub do
   # --- Conversation row component ---
 
   attr :conversation, :map, required: true
-  attr :avatar, :map, default: nil
+  attr :avatar_photos, :map, default: %{}
+  attr :online_user_ids, :any, default: MapSet.new()
+  attr :current_scope, :any, default: nil
   attr :unread, :boolean, default: false
 
   defp conversation_row(assigns) do
@@ -253,19 +256,13 @@ defmodule AniminaWeb.UserLive.MyHub do
       ]}
     >
       <%!-- Avatar --%>
-      <%= if @avatar do %>
-        <img
-          src={Photos.signed_url(@avatar)}
-          alt={@conversation.other_user.display_name}
-          class="w-10 h-10 rounded-full object-cover flex-shrink-0"
-        />
-      <% else %>
-        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-          <span class="text-primary text-sm font-semibold">
-            {String.first(@conversation.other_user.display_name)}
-          </span>
-        </div>
-      <% end %>
+      <.user_avatar
+        user={@conversation.other_user}
+        photos={@avatar_photos}
+        size={:sm}
+        online={MapSet.member?(@online_user_ids, @conversation.other_user.id)}
+        current_scope={@current_scope}
+      />
 
       <%!-- Name + preview --%>
       <div class="flex-1 min-w-0">

@@ -8,7 +8,6 @@ defmodule AniminaWeb.RelationshipsLive do
   import AniminaWeb.RelationshipComponents
 
   alias Animina.Accounts
-  alias Animina.Photos
   alias Animina.Relationships
   alias AniminaWeb.Helpers.AvatarHelpers
 
@@ -51,6 +50,8 @@ defmodule AniminaWeb.RelationshipsLive do
                 avatar_photos={@avatar_photos}
                 expanded_timeline={@expanded_timeline}
                 milestones={@milestones}
+                online_user_ids={@online_user_ids}
+                current_scope={@current_scope}
               />
             </div>
           </div>
@@ -70,6 +71,8 @@ defmodule AniminaWeb.RelationshipsLive do
                 avatar_photos={@avatar_photos}
                 expanded_timeline={@expanded_timeline}
                 milestones={@milestones}
+                online_user_ids={@online_user_ids}
+                current_scope={@current_scope}
               />
             </div>
           </div>
@@ -85,6 +88,8 @@ defmodule AniminaWeb.RelationshipsLive do
   attr :avatar_photos, :map, required: true
   attr :expanded_timeline, :string, default: nil
   attr :milestones, :list, default: []
+  attr :online_user_ids, :any, default: MapSet.new()
+  attr :current_scope, :any, default: nil
 
   defp relationship_row(assigns) do
     other_id = Relationships.other_user_id(assigns.relationship, assigns.current_user_id)
@@ -99,7 +104,12 @@ defmodule AniminaWeb.RelationshipsLive do
     ~H"""
     <div :if={@other_user}>
       <div class="flex items-center gap-3 py-3">
-        <.avatar user={@other_user} photos={@avatar_photos} />
+        <.user_avatar
+          user={@other_user}
+          photos={@avatar_photos}
+          online={MapSet.member?(@online_user_ids, @other_user.id)}
+          current_scope={@current_scope}
+        />
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
@@ -147,27 +157,6 @@ defmodule AniminaWeb.RelationshipsLive do
     """
   end
 
-  attr :user, :map, required: true
-  attr :photos, :map, required: true
-
-  defp avatar(assigns) do
-    avatar_photo = Map.get(assigns.photos, assigns.user.id)
-    assigns = assign(assigns, :avatar_photo, avatar_photo)
-
-    ~H"""
-    <%= if @avatar_photo do %>
-      <img
-        src={Photos.signed_url(@avatar_photo)}
-        alt={@user.display_name}
-        class="w-12 h-12 rounded-full object-cover"
-      />
-    <% else %>
-      <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-        <span class="text-primary font-semibold">{String.first(@user.display_name)}</span>
-      </div>
-    <% end %>
-    """
-  end
 
   defp format_relative(nil), do: ""
 

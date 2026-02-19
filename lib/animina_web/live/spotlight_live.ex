@@ -85,6 +85,8 @@ defmodule AniminaWeb.SpotlightLive do
         current_user_id={@current_scope.user.id}
         conversations={@conversations}
         avatar_photos={@conversation_avatars}
+        online_user_ids={@online_user_ids}
+        current_scope={@current_scope}
       />
     </Layouts.app>
     """

@@ -21,6 +21,16 @@ defmodule AniminaWeb.Presence do
   end
 
   @doc """
+  Returns a MapSet of all currently online user IDs.
+  """
+  def online_user_ids do
+    @topic
+    |> list()
+    |> Map.keys()
+    |> MapSet.new()
+  end
+
+  @doc """
   Returns true if the given user has at least one tracked presence.
   """
   def user_online?(user_id) do

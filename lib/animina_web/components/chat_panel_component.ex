@@ -29,7 +29,7 @@ defmodule AniminaWeb.ChatPanelComponent do
        other_last_read_at: nil,
        last_read_message_id: nil,
        blocked: false,
-       avatar_photo: nil,
+       avatar_photos: %{},
        loaded: false
      )}
   end
@@ -157,19 +157,11 @@ defmodule AniminaWeb.ChatPanelComponent do
             navigate={~p"/users/#{@profile_user.id}"}
             class="flex items-center gap-2 flex-1 min-w-0"
           >
-            <%= if @avatar_photo do %>
-              <img
-                src={Photos.signed_url(@avatar_photo)}
-                alt={@profile_user.display_name}
-                class="w-8 h-8 rounded-full object-cover"
-              />
-            <% else %>
-              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                <span class="text-primary text-sm font-semibold">
-                  {String.first(@profile_user.display_name)}
-                </span>
-              </div>
-            <% end %>
+            <.user_avatar
+              user={@profile_user}
+              photos={@avatar_photos}
+              size={:xs}
+            />
             <span class="font-semibold truncate">{@profile_user.display_name}</span>
           </.link>
 
@@ -548,8 +540,10 @@ defmodule AniminaWeb.ChatPanelComponent do
   end
 
   defp maybe_load_avatar(socket, assigns) do
-    if is_nil(socket.assigns.avatar_photo) do
-      assign(socket, :avatar_photo, Photos.get_user_avatar(assigns.profile_user.id))
+    if socket.assigns.avatar_photos == %{} do
+      photo = Photos.get_user_avatar(assigns.profile_user.id)
+      photos = if photo, do: %{assigns.profile_user.id => photo}, else: %{}
+      assign(socket, :avatar_photos, photos)
     else
       socket
     end

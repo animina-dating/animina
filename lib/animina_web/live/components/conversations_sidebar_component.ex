@@ -8,8 +8,6 @@ defmodule AniminaWeb.ConversationsSidebarComponent do
 
   use AniminaWeb, :live_component
 
-  alias Animina.Photos
-
   @impl true
   def render(assigns) do
     ~H"""
@@ -47,24 +45,21 @@ defmodule AniminaWeb.ConversationsSidebarComponent do
             ]}
           >
             <%!-- Avatar --%>
-            <div class="flex-shrink-0 relative">
-              <%= if photo = Map.get(@avatar_photos, conv.other_user && conv.other_user.id) do %>
-                <img
-                  src={Photos.signed_url(photo)}
-                  class="w-10 h-10 rounded-full object-cover"
-                  alt=""
+            <.user_avatar
+              :if={conv.other_user}
+              user={conv.other_user}
+              photos={@avatar_photos}
+              size={:sm}
+              online={MapSet.member?(@online_user_ids, conv.other_user && conv.other_user.id)}
+              current_scope={@current_scope}
+            >
+              <:badge>
+                <span
+                  :if={conv.unread}
+                  class="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-error border-2 border-base-100"
                 />
-              <% else %>
-                <div class="w-10 h-10 rounded-full bg-base-200 flex items-center justify-center">
-                  <.icon name="hero-user" class="h-5 w-5 text-base-content/30" />
-                </div>
-              <% end %>
-              <span
-                :if={conv.unread}
-                class="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-error border-2 border-base-100"
-              >
-              </span>
-            </div>
+              </:badge>
+            </.user_avatar>
 
             <%!-- Content --%>
             <div class="flex-1 min-w-0">

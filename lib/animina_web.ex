@@ -86,6 +86,7 @@ defmodule AniminaWeb do
       import Phoenix.HTML
       # Core UI components
       import AniminaWeb.CoreComponents
+      import AniminaWeb.AvatarComponents
 
       # Common modules used in templates
       alias AniminaWeb.Layouts

@@ -519,17 +519,51 @@ defmodule AniminaWeb.UserAuth do
 
       socket
       |> Phoenix.Component.assign(:presence_tracked, true)
+      |> Phoenix.Component.assign(:online_user_ids, AniminaWeb.Presence.online_user_ids())
       |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
         %Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, sock ->
           maybe_refresh_online_count(sock)
-          {:halt, maybe_refresh_profile_online_status(sock, diff)}
+
+          sock =
+            sock
+            |> update_online_user_ids(diff)
+            |> maybe_refresh_profile_online_status(diff)
+
+          {:halt, sock}
 
         _other, sock ->
           {:cont, sock}
       end)
     else
-      _ -> socket
+      _ ->
+        if socket.assigns[:online_user_ids] do
+          socket
+        else
+          Phoenix.Component.assign(socket, :online_user_ids, MapSet.new())
+        end
     end
+  end
+
+  defp update_online_user_ids(sock, diff) do
+    ids = sock.assigns[:online_user_ids] || MapSet.new()
+
+    # Add users who joined
+    ids =
+      Enum.reduce(Map.keys(diff.joins), ids, fn user_id, acc ->
+        MapSet.put(acc, user_id)
+      end)
+
+    # Remove users who left (only if they have no remaining presences)
+    ids =
+      Enum.reduce(Map.keys(diff.leaves), ids, fn user_id, acc ->
+        if AniminaWeb.Presence.user_online?(user_id) do
+          acc
+        else
+          MapSet.delete(acc, user_id)
+        end
+      end)
+
+    Phoenix.Component.assign(sock, :online_user_ids, ids)
   end
 
   defp maybe_refresh_online_count(sock) do

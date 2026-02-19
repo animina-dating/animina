@@ -9,7 +9,6 @@ defmodule AniminaWeb.LoveEmergencyComponent do
   use AniminaWeb, :live_component
 
   alias Animina.Messaging
-  alias Animina.Photos
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
@@ -43,7 +42,7 @@ defmodule AniminaWeb.LoveEmergencyComponent do
             phx-value-conversation-id={conv.conversation.id}
             phx-target={@myself}
           >
-            <.avatar user={conv.other_user} photos={@avatar_photos} />
+            <.user_avatar user={conv.other_user} photos={@avatar_photos} size={:sm} />
             <div class="flex-1 min-w-0">
               <div class="font-medium truncate">{conv.other_user.display_name}</div>
             </div>
@@ -86,27 +85,6 @@ defmodule AniminaWeb.LoveEmergencyComponent do
     """
   end
 
-  attr :user, :map, required: true
-  attr :photos, :map, required: true
-
-  defp avatar(assigns) do
-    avatar_photo = Map.get(assigns.photos, assigns.user.id)
-    assigns = assign(assigns, :avatar_photo, avatar_photo)
-
-    ~H"""
-    <%= if @avatar_photo do %>
-      <img
-        src={Photos.signed_url(@avatar_photo)}
-        alt={@user.display_name}
-        class="w-10 h-10 rounded-full object-cover"
-      />
-    <% else %>
-      <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-        <span class="text-primary font-semibold">{String.first(@user.display_name)}</span>
-      </div>
-    <% end %>
-    """
-  end
 
   @impl true
   def update(assigns, socket) do

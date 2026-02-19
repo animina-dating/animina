@@ -47,7 +47,13 @@ defmodule AniminaWeb.MessagesLive do
               navigate={~p"/users/#{@conversation_data.other_user.id}"}
               class="flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
-              <.avatar user={@conversation_data.other_user} photos={@avatar_photos} size={:sm} />
+              <.user_avatar
+                user={@conversation_data.other_user}
+                photos={@avatar_photos}
+                size={:sm}
+                online={MapSet.member?(@online_user_ids, @conversation_data.other_user.id)}
+                current_scope={@current_scope}
+              />
               <div>
                 <div class="font-semibold flex items-center gap-2">
                   {@conversation_data.other_user.display_name}
@@ -279,6 +285,8 @@ defmodule AniminaWeb.MessagesLive do
                 conversation={conv}
                 avatar_photos={@avatar_photos}
                 relationship_status={Map.get(@relationship_map, conv.other_user.id)}
+                online_user_ids={@online_user_ids}
+                current_scope={@current_scope}
               />
             </div>
           <% end %>
@@ -354,6 +362,8 @@ defmodule AniminaWeb.MessagesLive do
   attr :conversation, :map, required: true
   attr :avatar_photos, :map, required: true
   attr :relationship_status, :string, default: nil
+  attr :online_user_ids, :any, default: MapSet.new()
+  attr :current_scope, :any, default: nil
 
   defp conversation_row(assigns) do
     ~H"""
@@ -365,7 +375,13 @@ defmodule AniminaWeb.MessagesLive do
         navigate={~p"/my/messages/#{@conversation.conversation.id}"}
         class="flex items-center gap-3 flex-1 min-w-0 hover:opacity-80 transition-opacity"
       >
-        <.avatar user={@conversation.other_user} photos={@avatar_photos} size={:md} />
+        <.user_avatar
+          user={@conversation.other_user}
+          photos={@avatar_photos}
+          size={:md}
+          online={MapSet.member?(@online_user_ids, @conversation.other_user.id)}
+          current_scope={@current_scope}
+        />
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
@@ -437,7 +453,7 @@ defmodule AniminaWeb.MessagesLive do
       :if={@other_user}
       class="flex items-center gap-3 p-3 rounded-lg border border-base-300/50 bg-base-100/50"
     >
-      <.avatar user={@other_user} photos={@avatar_photos} size={:md} />
+      <.user_avatar user={@other_user} photos={@avatar_photos} size={:md} />
       <div class="flex-1 min-w-0">
         <div class="font-medium truncate">{@other_user.display_name}</div>
         <div class="text-xs text-base-content/50">
@@ -584,41 +600,6 @@ defmodule AniminaWeb.MessagesLive do
 
   defp bubble_radius(side, _corner, false, false), do: "rounded-2xl rounded-#{side}-sm"
 
-  # --- Avatar component ---
-
-  attr :user, :map, required: true
-  attr :photos, :map, required: true
-  attr :size, :atom, default: :md
-
-  defp avatar(assigns) do
-    avatar_photo = Map.get(assigns.photos, assigns.user.id)
-
-    size_class =
-      case assigns.size do
-        :sm -> "w-10 h-10"
-        :md -> "w-12 h-12"
-        :lg -> "w-16 h-16"
-      end
-
-    assigns =
-      assigns
-      |> assign(:avatar_photo, avatar_photo)
-      |> assign(:size_class, size_class)
-
-    ~H"""
-    <%= if @avatar_photo do %>
-      <img
-        src={Photos.signed_url(@avatar_photo)}
-        alt={@user.display_name}
-        class={[@size_class, "rounded-full object-cover"]}
-      />
-    <% else %>
-      <div class={[@size_class, "rounded-full bg-primary/10 flex items-center justify-center"]}>
-        <span class="text-primary font-semibold">{String.first(@user.display_name)}</span>
-      </div>
-    <% end %>
-    """
-  end
 
   # --- Proposal banner component ---
 
