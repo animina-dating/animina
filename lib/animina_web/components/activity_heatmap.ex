@@ -22,10 +22,21 @@ defmodule AniminaWeb.ActivityHeatmap do
     weeks = heatmap_weeks(assigns.data)
     month_labels = month_labels(weeks)
 
+    day_labels = [
+      {0, gettext("Mon")},
+      {1, gettext("Tue")},
+      {2, gettext("Wed")},
+      {3, gettext("Thu")},
+      {4, gettext("Fri")},
+      {5, gettext("Sat")},
+      {6, gettext("Sun")}
+    ]
+
     assigns =
       assigns
       |> assign(:weeks, weeks)
       |> assign(:month_labels, month_labels)
+      |> assign(:day_labels, day_labels)
       |> assign_new(:label, fn -> gettext("Activity") end)
 
     ~H"""
@@ -33,8 +44,8 @@ defmodule AniminaWeb.ActivityHeatmap do
       <h2 :if={@label} class="text-sm font-semibold text-base-content/70 mb-3">{@label}</h2>
       <div class="overflow-x-auto">
         <svg
-          viewBox={"0 0 #{length(@weeks) * 15 + 40} 130"}
-          class="w-full max-w-3xl"
+          viewBox={"0 0 #{length(@weeks) * 15 + 32} 130"}
+          class="w-full max-w-md"
           role="img"
           aria-label={@label || gettext("Activity")}
         >
@@ -42,7 +53,7 @@ defmodule AniminaWeb.ActivityHeatmap do
           <g>
             <%= for {col, label} <- @month_labels do %>
               <text
-                x={col * 15 + 40}
+                x={col * 15 + 32}
                 y="10"
                 class="fill-base-content/50"
                 font-size="10"
@@ -53,21 +64,23 @@ defmodule AniminaWeb.ActivityHeatmap do
             <% end %>
           </g>
           <%!-- Day-of-week labels --%>
-          <text x="0" y="35" class="fill-base-content/50" font-size="9" font-family="sans-serif">
-            {gettext("Mon")}
-          </text>
-          <text x="0" y="57" class="fill-base-content/50" font-size="9" font-family="sans-serif">
-            {gettext("Wed")}
-          </text>
-          <text x="0" y="79" class="fill-base-content/50" font-size="9" font-family="sans-serif">
-            {gettext("Fri")}
-          </text>
+          <%= for {row, label} <- @day_labels do %>
+            <text
+              x="0"
+              y={row * 15 + 31}
+              class="fill-base-content/50"
+              font-size="9"
+              font-family="sans-serif"
+            >
+              {label}
+            </text>
+          <% end %>
           <%!-- Cells --%>
           <g>
             <%= for {week, col} <- Enum.with_index(@weeks) do %>
               <%= for {{date, count}, row} <- Enum.with_index(week) do %>
                 <rect
-                  x={col * 15 + 40}
+                  x={col * 15 + 32}
                   y={row * 15 + 20}
                   width="12"
                   height="12"
@@ -106,7 +119,7 @@ defmodule AniminaWeb.ActivityHeatmap do
 
   defp heatmap_weeks(heatmap_data) do
     today = Date.utc_today()
-    start_date = Date.add(today, -364)
+    start_date = Date.add(today, -120)
     day_of_week = Date.day_of_week(start_date)
     start_monday = Date.add(start_date, -(day_of_week - 1))
 

@@ -19,6 +19,7 @@ defmodule AniminaWeb.AvatarComponents do
 
   alias Animina.Accounts.Scope
   alias Animina.Photos
+  alias AniminaWeb.PhotoStatus
 
   @size_classes %{
     xs: "w-8 h-8",
@@ -51,6 +52,8 @@ defmodule AniminaWeb.AvatarComponents do
 
   def user_avatar(assigns) do
     avatar_photo = Map.get(assigns.photos, assigns.user.id)
+    # Only show the image if the photo is approved; otherwise fall back to initials
+    avatar_photo = if avatar_photo && PhotoStatus.approved?(avatar_photo), do: avatar_photo
     size = assigns.size
     show_dot = show_online_dot?(assigns)
 

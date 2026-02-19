@@ -113,7 +113,7 @@ defmodule AniminaWeb.UserLive.LoginHistory do
 
   # --- Render ---
 
-@impl true
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>

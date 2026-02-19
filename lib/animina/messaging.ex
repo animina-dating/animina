@@ -418,8 +418,8 @@ defmodule Animina.Messaging do
 
   defp other_was_online_since?(user_id, since) do
     # Currently online via Presence
+    # Or had a session overlapping with the window since the message was sent
     AniminaWeb.Presence.user_online?(user_id) ||
-      # Or had a session overlapping with the window since the message was sent
       Animina.Accounts.UserOnlineSession
       |> where([s], s.user_id == ^user_id)
       |> where([s], s.started_at <= ^DateTime.utc_now())

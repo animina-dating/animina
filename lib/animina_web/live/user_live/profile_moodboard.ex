@@ -138,15 +138,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
                 <span class="font-medium text-success">{gettext("Online")}</span>
               <% else %>
                 <span class="inline-block w-2.5 h-2.5 rounded-full bg-base-content/30"></span>
-                <span>{format_last_seen(@last_seen_at)}</span>
-              <% end %>
-              <%= if @activity_level_text do %>
-                <span class="text-base-content/30">&middot;</span>
-                <span>{@activity_level_text}</span>
-              <% end %>
-              <%= if @typical_times_text do %>
-                <span class="text-base-content/30">&middot;</span>
-                <span>{@typical_times_text}</span>
+                <a href="#activity-heatmap" class="hover:underline">
+                  {format_last_seen(@last_seen_at)}
+                </a>
               <% end %>
             </p>
           </div>
@@ -301,10 +295,20 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
             <% end %>
           </div>
         </div>
-
+        
     <!-- Activity heatmap (only when online status is visible) -->
         <div :if={!@hide_online_status} class="mt-12">
           <.activity_heatmap data={@heatmap_data} label={gettext("Activity")} />
+          <p
+            :if={@activity_level_text || @typical_times_text}
+            class="text-sm text-base-content/60 mt-2"
+          >
+            <span :if={@activity_level_text}>{@activity_level_text}</span>
+            <span :if={@activity_level_text && @typical_times_text} class="text-base-content/30">
+              &middot;
+            </span>
+            <span :if={@typical_times_text}>{@typical_times_text}</span>
+          </p>
         </div>
       </div>
 
@@ -528,9 +532,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
     # Heatmap data (only load when online status is visible)
     heatmap_data =
-      if !hide_online_status,
-        do: ActivityLog.login_heatmap_data(profile_user.id),
-        else: %{}
+      if hide_online_status,
+        do: %{},
+        else: ActivityLog.login_heatmap_data(profile_user.id)
 
     initial_columns =
       if owner?,

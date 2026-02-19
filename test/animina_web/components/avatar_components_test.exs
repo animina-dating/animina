@@ -112,7 +112,7 @@ defmodule AniminaWeb.AvatarComponentsTest do
 
     photos =
       if has_photo do
-        %{user_id => %Photo{id: Ecto.UUID.generate(), filename: "test.jpg"}}
+        %{user_id => %Photo{id: Ecto.UUID.generate(), filename: "test.jpg", state: "approved"}}
       else
         %{}
       end

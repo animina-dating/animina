@@ -1312,7 +1312,7 @@ msgstr "Zapisz"
 #: lib/animina_web/live/messages_live.ex:464
 #: lib/animina_web/live/user_live/profile_moodboard.ex:56
 #: lib/animina_web/live/user_live/profile_moodboard.ex:121
-#: lib/animina_web/live/user_live/profile_moodboard.ex:352
+#: lib/animina_web/live/user_live/profile_moodboard.ex:354
 #, elixir-autogen, elixir-format
 msgid "%{age} years"
 msgstr "%{age} lat"
@@ -4016,7 +4016,7 @@ msgstr "Prześlij zdjęcie profilowe, aby uzupełnić sekcję O mnie"
 msgid "Edit Text"
 msgstr "Edytuj tekst"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:280
+#: lib/animina_web/live/user_live/profile_moodboard.ex:272
 #, elixir-autogen, elixir-format
 msgid "Add photos and text to your moodboard to share with others."
 msgstr "Dodaj zdjęcia i tekst do swojego moodboardu, aby dzielić się z innymi."
@@ -4024,7 +4024,7 @@ msgstr "Dodaj zdjęcia i tekst do swojego moodboardu, aby dzielić się z innymi
 #: lib/animina_web/components/waitlist_components.ex:185
 #: lib/animina_web/live/user_live/moodboard_editor.ex:60
 #: lib/animina_web/live/user_live/moodboard_editor.ex:650
-#: lib/animina_web/live/user_live/profile_moodboard.ex:211
+#: lib/animina_web/live/user_live/profile_moodboard.ex:203
 #, elixir-autogen, elixir-format
 msgid "Edit Moodboard"
 msgstr "Edytuj moodboard"
@@ -4044,7 +4044,7 @@ msgstr "Moodboard"
 msgid "My Moodboard"
 msgstr "Mój moodboard"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:277
+#: lib/animina_web/live/user_live/profile_moodboard.ex:269
 #, elixir-autogen, elixir-format
 msgid "No moodboard items yet"
 msgstr "Brak elementów moodboardu"
@@ -4175,7 +4175,7 @@ msgstr "Wykryto wiele osób"
 msgid "Photo not allowed"
 msgstr "Zdjęcie niedozwolone"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:457
+#: lib/animina_web/live/user_live/profile_moodboard.ex:459
 #, elixir-autogen, elixir-format
 msgid "This page doesn't exist or you don't have access."
 msgstr "Ta strona nie istnieje lub nie masz do niej dostępu."
@@ -4224,12 +4224,12 @@ msgstr "W separacji"
 msgid "Select traits that describe who you are. Some categories are visible on your profile by default, others are private. Click to toggle visibility."
 msgstr "Wybierz cechy, które Cię opisują. Niektóre kategorie są domyślnie widoczne na Twoim profilu, inne są prywatne. Kliknij, aby przełączyć widoczność."
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:239
+#: lib/animina_web/live/user_live/profile_moodboard.ex:231
 #, elixir-autogen, elixir-format
 msgid "Private flags not shown on profile"
 msgstr "Prywatne flagi nie są wyświetlane na profilu"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:255
+#: lib/animina_web/live/user_live/profile_moodboard.ex:247
 #, elixir-autogen, elixir-format
 msgid "private"
 msgstr "prywatne"
@@ -4406,7 +4406,7 @@ msgid "Sent"
 msgstr "Wysłane"
 
 #: lib/animina_web/live/relationships_live.ex:143
-#: lib/animina_web/live/user_live/profile_moodboard.ex:161
+#: lib/animina_web/live/user_live/profile_moodboard.ex:153
 #, elixir-autogen, elixir-format
 msgid "Message"
 msgstr "Wiadomość"
@@ -4628,18 +4628,18 @@ msgstr "Puścić tę rozmowę?"
 msgid "Love Emergency"
 msgstr "Miłosny alarm"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:167
+#: lib/animina_web/live/user_live/profile_moodboard.ex:159
 #, elixir-autogen, elixir-format
 msgid "No free chat slots"
 msgstr "Brak wolnych miejsc czatu"
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:170
+#: lib/animina_web/live/user_live/profile_moodboard.ex:162
 #, elixir-autogen, elixir-format
 msgid "No free slots"
 msgstr "Brak wolnych miejsc"
 
 #: lib/animina_web/live/messages_live.ex:476
-#: lib/animina_web/live/user_live/profile_moodboard.ex:179
+#: lib/animina_web/live/user_live/profile_moodboard.ex:171
 #, elixir-autogen, elixir-format
 msgid "Reopen"
 msgstr "Otwórz ponownie"
@@ -5350,7 +5350,7 @@ msgstr "Nie udało się zaktualizować flagi."
 msgid "Hide online status"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:398
+#: lib/animina_web/live/user_live/profile_moodboard.ex:400
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Just now"
 msgstr "przed chwilą"
@@ -5365,7 +5365,7 @@ msgstr "Zarządzaj ustawieniami konta"
 msgid "Note: Admins and moderators can always see your online status."
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:387
+#: lib/animina_web/live/user_live/profile_moodboard.ex:389
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Offline"
 msgstr "Wył."
@@ -5375,7 +5375,7 @@ msgstr "Wył."
 msgid "Online"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:415
+#: lib/animina_web/live/user_live/profile_moodboard.ex:417
 #, elixir-autogen, elixir-format
 msgid "Online %{count} day ago"
 msgid_plural "Online %{count} days ago"
@@ -5383,7 +5383,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:408
+#: lib/animina_web/live/user_live/profile_moodboard.ex:410
 #, elixir-autogen, elixir-format
 msgid "Online %{count} hour ago"
 msgid_plural "Online %{count} hours ago"
@@ -5391,7 +5391,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:401
+#: lib/animina_web/live/user_live/profile_moodboard.ex:403
 #, elixir-autogen, elixir-format
 msgid "Online %{count} minute ago"
 msgid_plural "Online %{count} minutes ago"
@@ -5404,7 +5404,7 @@ msgstr[2] ""
 msgid "Online daily"
 msgstr ""
 
-#: lib/animina_web/live/user_live/profile_moodboard.ex:422
+#: lib/animina_web/live/user_live/profile_moodboard.ex:424
 #, elixir-autogen, elixir-format
 msgid "Online more than a week ago"
 msgstr ""
@@ -5766,7 +5766,7 @@ msgstr[0] "%{count} wpis"
 msgstr[1] "%{count} wpisy"
 msgstr[2] "%{count} wpisów"
 
-#: lib/animina_web/components/activity_heatmap.ex:78
+#: lib/animina_web/components/activity_heatmap.ex:91
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} login"
 msgid_plural "%{count} logins"
@@ -5774,17 +5774,17 @@ msgstr[0] "%{count} uruchomienie"
 msgstr[1] "%{count} uruchomienia"
 msgstr[2] "%{count} uruchomień"
 
-#: lib/animina_web/components/activity_heatmap.ex:144
+#: lib/animina_web/components/activity_heatmap.ex:157
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Apr"
 msgstr "Zatwierdź"
 
-#: lib/animina_web/components/activity_heatmap.ex:148
+#: lib/animina_web/components/activity_heatmap.ex:161
 #, elixir-autogen, elixir-format
 msgid "Aug"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:152
+#: lib/animina_web/components/activity_heatmap.ex:165
 #, elixir-autogen, elixir-format
 msgid "Dec"
 msgstr ""
@@ -5806,32 +5806,32 @@ msgstr "E-mail"
 msgid "Failed Login"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:142
+#: lib/animina_web/components/activity_heatmap.ex:155
 #, elixir-autogen, elixir-format
 msgid "Feb"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:63
+#: lib/animina_web/components/activity_heatmap.ex:30
 #, elixir-autogen, elixir-format
 msgid "Fri"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:141
+#: lib/animina_web/components/activity_heatmap.ex:154
 #, elixir-autogen, elixir-format
 msgid "Jan"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:147
+#: lib/animina_web/components/activity_heatmap.ex:160
 #, elixir-autogen, elixir-format
 msgid "Jul"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:146
+#: lib/animina_web/components/activity_heatmap.ex:159
 #, elixir-autogen, elixir-format
 msgid "Jun"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:93
+#: lib/animina_web/components/activity_heatmap.ex:106
 #, elixir-autogen, elixir-format
 msgid "Less"
 msgstr ""
@@ -5860,22 +5860,22 @@ msgstr ""
 msgid "Logout"
 msgstr "Wyloguj się"
 
-#: lib/animina_web/components/activity_heatmap.ex:143
+#: lib/animina_web/components/activity_heatmap.ex:156
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Mar"
 msgstr "Żonaty/Zamężna"
 
-#: lib/animina_web/components/activity_heatmap.ex:145
+#: lib/animina_web/components/activity_heatmap.ex:158
 #, elixir-autogen, elixir-format
 msgid "May"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:57
+#: lib/animina_web/components/activity_heatmap.ex:26
 #, elixir-autogen, elixir-format
 msgid "Mon"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:99
+#: lib/animina_web/components/activity_heatmap.ex:112
 #, elixir-autogen, elixir-format, fuzzy
 msgid "More"
 msgstr "lub"
@@ -5885,12 +5885,12 @@ msgstr "lub"
 msgid "No login events found."
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:151
+#: lib/animina_web/components/activity_heatmap.ex:164
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Nov"
 msgstr "Powieści"
 
-#: lib/animina_web/components/activity_heatmap.ex:150
+#: lib/animina_web/components/activity_heatmap.ex:163
 #, elixir-autogen, elixir-format
 msgid "Oct"
 msgstr ""
@@ -5901,7 +5901,7 @@ msgstr ""
 msgid "Passkey Login"
 msgstr "Klucz dostępu"
 
-#: lib/animina_web/components/activity_heatmap.ex:149
+#: lib/animina_web/components/activity_heatmap.ex:162
 #, elixir-autogen, elixir-format
 msgid "Sep"
 msgstr ""
@@ -5912,7 +5912,7 @@ msgstr ""
 msgid "Unknown"
 msgstr ""
 
-#: lib/animina_web/components/activity_heatmap.ex:60
+#: lib/animina_web/components/activity_heatmap.ex:28
 #, elixir-autogen, elixir-format
 msgid "Wed"
 msgstr ""
@@ -6194,7 +6194,7 @@ msgid "Could not submit appeal."
 msgstr "Nie udało się złożyć odwołania. Spróbuj ponownie."
 
 #: lib/animina_web/live/messages_live.ex:1740
-#: lib/animina_web/live/user_live/profile_moodboard.ex:822
+#: lib/animina_web/live/user_live/profile_moodboard.ex:824
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not submit report. Please try again."
 msgstr "Nie udało się złożyć odwołania. Spróbuj ponownie."
@@ -6333,13 +6333,13 @@ msgid "Report resolved."
 msgstr ""
 
 #: lib/animina_web/live/messages_live.ex:1731
-#: lib/animina_web/live/user_live/profile_moodboard.ex:813
+#: lib/animina_web/live/user_live/profile_moodboard.ex:815
 #, elixir-autogen, elixir-format
 msgid "Report submitted. Our team will review it."
 msgstr ""
 
 #: lib/animina_web/live/components/report_modal_component.ex:36
-#: lib/animina_web/live/user_live/profile_moodboard.ex:187
+#: lib/animina_web/live/user_live/profile_moodboard.ex:179
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Report user"
 msgstr "Zgłoś błąd"
@@ -7550,9 +7550,29 @@ msgstr ""
 msgid "Cannot delete a message — the other person has been online since you sent it"
 msgstr "Nie można usunąć wiadomości, która została przeczytana"
 
-#: lib/animina_web/components/activity_heatmap.ex:29
-#: lib/animina_web/components/activity_heatmap.ex:39
-#: lib/animina_web/live/user_live/profile_moodboard.ex:307
+#: lib/animina_web/components/activity_heatmap.ex:40
+#: lib/animina_web/components/activity_heatmap.ex:50
+#: lib/animina_web/live/user_live/profile_moodboard.ex:299
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Activity"
 msgstr ""
+
+#: lib/animina_web/components/activity_heatmap.ex:31
+#, elixir-autogen, elixir-format
+msgid "Sat"
+msgstr ""
+
+#: lib/animina_web/components/activity_heatmap.ex:32
+#, elixir-autogen, elixir-format
+msgid "Sun"
+msgstr ""
+
+#: lib/animina_web/components/activity_heatmap.ex:29
+#, elixir-autogen, elixir-format
+msgid "Thu"
+msgstr ""
+
+#: lib/animina_web/components/activity_heatmap.ex:27
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Tue"
+msgstr "Turcja"

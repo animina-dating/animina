@@ -82,7 +82,7 @@ defmodule AniminaWeb.SpotlightComponents do
           <.icon name="hero-map-pin-mini" class="h-3 w-3" />
           {@city_name}
         </p>
-        <p :if={@truncated_story} class="text-xs text-base-content/60 mt-1 line-clamp-2">
+        <p :if={@truncated_story} class="text-xs text-base-content/60 mt-1 line-clamp-3">
           {@truncated_story}
         </p>
       </div>
@@ -107,6 +107,6 @@ defmodule AniminaWeb.SpotlightComponents do
     text
     |> String.replace(~r/[#*_~`>\[\]()]/, "")
     |> String.trim()
-    |> String.slice(0, 80)
+    |> String.slice(0, 160)
   end
 end

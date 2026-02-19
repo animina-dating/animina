@@ -13,6 +13,7 @@ defmodule Animina.Seeds.DevUsers do
 
   alias Animina.Accounts
   alias Animina.Accounts.ContactBlacklist
+  alias Animina.ActivityLog.ActivityLogEntry
   alias Animina.GeoData
   alias Animina.Moodboard
   alias Animina.Photos
@@ -40,15 +41,20 @@ defmodule Animina.Seeds.DevUsers do
   # ==========================================================================
   @personas [
     # Thomas first — V2 discovery test anchor (profile 0 = Adventurer with Hiking/Surfing/Camping/Rock + hard-red Vegan)
-    %{name: "Thomas", last_name: "Friedrich", gender: "male", age: 32, avatar: "thomas", profile: 0, topics: [:hiking, :books, :mountains], roles: [:admin], height: 186},
+    # Activity :daily_active = logs in almost every day, multiple times
+    %{name: "Thomas", last_name: "Friedrich", gender: "male", age: 32, avatar: "thomas", profile: 0, topics: [:hiking, :books, :mountains], roles: [:admin], height: 186, activity: :daily_active},
     # --- Males (29 more) ---
-    %{name: "Karim", last_name: "Hassan", gender: "male", age: 26, avatar: "karim", profile: 6, topics: [:music, :travel, :coffee]},
+    # Activity :weekend_warrior = mainly logs in on weekends
+    %{name: "Karim", last_name: "Hassan", gender: "male", age: 26, avatar: "karim", profile: 6, topics: [:music, :travel, :coffee], activity: :weekend_warrior},
     %{name: "Raj", last_name: "Sharma", gender: "male", age: 25, avatar: "raj", profile: 16, topics: [:coffee, :books, :music]},
     %{name: "Wei", last_name: "Chen", gender: "male", age: 24, avatar: "wei", profile: 3, topics: [:books, :coffee, :art]},
-    %{name: "Marko", last_name: "Petrovic", gender: "male", age: 25, avatar: "marko", profile: 10, topics: [:cycling, :hiking, :nature]},
-    %{name: "Fynn", last_name: "Scholz", gender: "male", age: 27, avatar: "fynn", profile: 0, topics: [:hiking, :beach, :travel]},
+    # Activity :sporadic = logs in a few times a month, irregularly
+    %{name: "Marko", last_name: "Petrovic", gender: "male", age: 25, avatar: "marko", profile: 10, topics: [:cycling, :hiking, :nature], activity: :sporadic},
+    # Activity :evening_regular = logs in most evenings (weekdays)
+    %{name: "Fynn", last_name: "Scholz", gender: "male", age: 27, avatar: "fynn", profile: 0, topics: [:hiking, :beach, :travel], activity: :evening_regular},
     %{name: "Nico", last_name: "Bauer", gender: "male", age: 24, avatar: "nico", profile: 7, topics: [:music, :travel, :beach]},
-    %{name: "Björn", last_name: "Lindqvist", gender: "male", age: 33, avatar: "bjoern", profile: 0, topics: [:hiking, :mountains, :nature]},
+    # Activity :new_user = only started logging in recently (last 2 weeks)
+    %{name: "Björn", last_name: "Lindqvist", gender: "male", age: 33, avatar: "bjoern", profile: 0, topics: [:hiking, :mountains, :nature], activity: :new_user},
     %{name: "Samuel", last_name: "Adeyemi", gender: "male", age: 32, avatar: "samuel", profile: 11, topics: [:music, :art, :coffee]},
     %{name: "Torsten", last_name: "Krüger", gender: "male", age: 34, avatar: "torsten", profile: 12, topics: [:cooking, :food, :coffee]},
     %{name: "Jörg", last_name: "Hauser", gender: "male", age: 43, avatar: "joerg", profile: 19, topics: [:cooking, :garden, :nature]},
@@ -72,12 +78,17 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Alessandro", last_name: "Martini", gender: "male", age: 26, avatar: "alessandro", profile: 9, topics: [:sunset, :cooking, :coffee]},
     %{name: "Daniel", last_name: "Park", gender: "male", age: 21, avatar: "daniel", profile: 0, topics: [:hiking, :beach, :nature]},
     # --- Females (45) ---
-    %{name: "Sabine", last_name: "Hartmann", gender: "female", age: 32, avatar: "sabine", profile: 18, topics: [:coffee, :books, :travel], roles: [:moderator]},
-    %{name: "Nina", last_name: "Schulz", gender: "female", age: 24, avatar: "nina", profile: 0, topics: [:hiking, :beach, :nature]},
+    # Activity :daily_active = very active user
+    %{name: "Sabine", last_name: "Hartmann", gender: "female", age: 32, avatar: "sabine", profile: 18, topics: [:coffee, :books, :travel], roles: [:moderator], activity: :daily_active},
+    # Activity :morning_routine = logs in most mornings
+    %{name: "Nina", last_name: "Schulz", gender: "female", age: 24, avatar: "nina", profile: 0, topics: [:hiking, :beach, :nature], activity: :morning_routine},
     %{name: "Mei", last_name: "Tanaka", gender: "female", age: 26, avatar: "mei", profile: 2, topics: [:art, :coffee, :music]},
-    %{name: "Claudia", last_name: "Richter", gender: "female", age: 34, avatar: "claudia", profile: 18, topics: [:books, :coffee, :yoga]},
-    %{name: "Amara", last_name: "Okafor", gender: "female", age: 25, avatar: "amara", profile: 6, topics: [:music, :travel, :coffee]},
-    %{name: "Ronja", last_name: "Lindgren", gender: "female", age: 23, avatar: "ronja", profile: 13, topics: [:pets, :nature, :garden]},
+    # Activity :fading = was active weeks ago, now barely logs in
+    %{name: "Claudia", last_name: "Richter", gender: "female", age: 34, avatar: "claudia", profile: 18, topics: [:books, :coffee, :yoga], activity: :fading},
+    # Activity :weekend_warrior
+    %{name: "Amara", last_name: "Okafor", gender: "female", age: 25, avatar: "amara", profile: 6, topics: [:music, :travel, :coffee], activity: :weekend_warrior},
+    # Activity :sporadic
+    %{name: "Ronja", last_name: "Lindgren", gender: "female", age: 23, avatar: "ronja", profile: 13, topics: [:pets, :nature, :garden], activity: :sporadic},
     %{name: "Hannah", last_name: "Weber", gender: "female", age: 22, avatar: "hannah", profile: 15, topics: [:yoga, :nature, :coffee]},
     %{name: "Svenja", last_name: "Brandt", gender: "female", age: 24, avatar: "svenja", profile: 1, topics: [:hiking, :nature, :yoga]},
     %{name: "Mia", last_name: "Schröder", gender: "female", age: 21, avatar: "mia", profile: 2, topics: [:art, :music, :books], waitlisted: true},
@@ -918,6 +929,10 @@ defmodule Animina.Seeds.DevUsers do
           update_persona_intro(user, persona.profile, index)
           create_persona_moodboard(user, persona, index)
 
+          # Seed login activity for heatmap display
+          activity_pattern = persona[:activity] || auto_activity_pattern(index)
+          seed_login_activity(user, activity_pattern, index)
+
           state = if Map.get(persona, :waitlisted, false), do: " [waitlisted]", else: ""
           IO.puts("  Created: #{persona.name} #{persona.last_name} (#{email})#{state}")
         end
@@ -1155,6 +1170,136 @@ defmodule Animina.Seeds.DevUsers do
           flag -> Traits.add_user_flag(%{user_id: user.id, flag_id: flag.id, color: "red", intensity: "hard", position: pos})
         end
       end
+    end
+  end
+
+  # ==========================================================================
+  # LOGIN ACTIVITY SEEDING (for heatmap display)
+  # ==========================================================================
+
+  @activity_patterns [:daily_active, :evening_regular, :morning_routine, :weekend_warrior, :sporadic, :new_user, :fading]
+
+  defp auto_activity_pattern(index) do
+    Enum.at(@activity_patterns, rem(index, length(@activity_patterns)))
+  end
+
+  # Activity patterns for different user types:
+  #   :daily_active    — logs in almost every day, 1-4 times per day
+  #   :evening_regular — logs in most weekday evenings, ~80% of weekdays
+  #   :morning_routine — logs in most mornings, ~70% of days
+  #   :weekend_warrior — mainly logs in on Sat/Sun, occasionally weekdays
+  #   :sporadic        — a few times per month, irregular
+  #   :new_user        — only active in the last ~2 weeks
+  #   :fading          — was active weeks ago, now barely logs in
+
+  defp seed_login_activity(user, pattern, seed_index) do
+    :rand.seed(:exsss, {seed_index * 31, seed_index * 37, seed_index * 41})
+    today = Date.utc_today()
+
+    days =
+      case pattern do
+        :new_user -> generate_new_user_days(today)
+        :fading -> generate_fading_days(today)
+        other -> generate_pattern_days(today, other)
+      end
+
+    entries =
+      Enum.flat_map(days, fn {date, count} ->
+        for _ <- 1..count do
+          hour = Enum.random(6..23)
+          minute = Enum.random(0..59)
+          {:ok, dt} = DateTime.new(date, Time.new!(hour, minute, 0), "Etc/UTC")
+          event = Enum.random(["login_email", "login_passkey"])
+
+          %{
+            id: Ecto.UUID.generate(),
+            actor_id: user.id,
+            category: "auth",
+            event: event,
+            summary: "#{user.display_name} logged in",
+            metadata: %{},
+            inserted_at: DateTime.truncate(dt, :second)
+          }
+        end
+      end)
+
+    # Bulk insert in chunks of 500
+    Enum.chunk_every(entries, 500)
+    |> Enum.each(fn chunk ->
+      Repo.insert_all(ActivityLogEntry, chunk)
+    end)
+  end
+
+  # Last 120 days, pattern-based
+  defp generate_pattern_days(today, pattern) do
+    for offset <- 0..120,
+        date = Date.add(today, -offset),
+        count = day_login_count(date, pattern),
+        count > 0 do
+      {date, count}
+    end
+  end
+
+  # New user: only last ~14 days, active daily
+  defp generate_new_user_days(today) do
+    for offset <- 0..14,
+        date = Date.add(today, -offset),
+        count = Enum.random(1..3),
+        :rand.uniform() < 0.85 do
+      {date, count}
+    end
+  end
+
+  # Fading user: active 60-120 days ago, tapers off, almost nothing recent
+  defp generate_fading_days(today) do
+    for offset <- 0..120,
+        date = Date.add(today, -offset),
+        count = fading_count(offset),
+        count > 0 do
+      {date, count}
+    end
+  end
+
+  defp fading_count(offset) do
+    cond do
+      # Recent 2 weeks: almost nothing
+      offset < 14 -> if :rand.uniform() < 0.05, do: 1, else: 0
+      # 2-4 weeks ago: rare
+      offset < 30 -> if :rand.uniform() < 0.15, do: 1, else: 0
+      # 4-8 weeks ago: moderate
+      offset < 60 -> if :rand.uniform() < 0.5, do: Enum.random(1..2), else: 0
+      # 8-16 weeks ago: was quite active
+      true -> if :rand.uniform() < 0.75, do: Enum.random(1..3), else: 0
+    end
+  end
+
+  defp day_login_count(date, pattern) do
+    dow = Date.day_of_week(date)
+    weekend? = dow in [6, 7]
+
+    case pattern do
+      :daily_active ->
+        if :rand.uniform() < 0.9, do: Enum.random(1..4), else: 0
+
+      :evening_regular ->
+        if weekend? do
+          if :rand.uniform() < 0.3, do: 1, else: 0
+        else
+          if :rand.uniform() < 0.8, do: Enum.random(1..2), else: 0
+        end
+
+      :morning_routine ->
+        if :rand.uniform() < 0.7, do: 1, else: 0
+
+      :weekend_warrior ->
+        if weekend? do
+          Enum.random(1..3)
+        else
+          if :rand.uniform() < 0.1, do: 1, else: 0
+        end
+
+      :sporadic ->
+        if :rand.uniform() < 0.12, do: Enum.random(1..2), else: 0
     end
   end
 

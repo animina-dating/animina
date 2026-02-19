@@ -12,7 +12,7 @@ defmodule AniminaWeb.Helpers.AvatarHelpers do
   """
   def load_avatars(user_ids) do
     for uid <- Enum.uniq(user_ids),
-        photo = Photos.get_user_avatar(uid),
+        photo = Photos.get_user_avatar_any_state(uid),
         photo != nil,
         into: %{} do
       {uid, photo}

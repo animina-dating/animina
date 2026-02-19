@@ -40,7 +40,11 @@ defmodule AniminaWeb.MessagesLive do
         </.breadcrumb_nav>
         <%!-- Conversation Header --%>
         <div class="flex items-center gap-3 pb-4 border-b border-base-300">
-          <.link navigate={~p"/my/messages"} class="btn btn-ghost btn-sm btn-circle" aria-label={gettext("Back to messages")}>
+          <.link
+            navigate={~p"/my/messages"}
+            class="btn btn-ghost btn-sm btn-circle"
+            aria-label={gettext("Back to messages")}
+          >
             <.icon name="hero-arrow-left" class="h-5 w-5" />
           </.link>
 
@@ -158,7 +162,10 @@ defmodule AniminaWeb.MessagesLive do
               other_user={@conversation_data && @conversation_data.other_user}
               other_last_read_at={@other_last_read_at}
               last_read_message_id={@last_read_message_id}
-              other_user_online={@conversation_data != nil && MapSet.member?(@online_user_ids, @conversation_data.other_user.id)}
+              other_user_online={
+                @conversation_data != nil &&
+                  MapSet.member?(@online_user_ids, @conversation_data.other_user.id)
+              }
               other_last_online_at={@other_last_online_at}
             />
           <% end %>
