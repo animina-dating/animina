@@ -15,9 +15,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
   import AniminaWeb.Helpers.UserHelpers, only: [gender_icon: 1, gender_symbol: 1]
 
+  import AniminaWeb.ActivityHeatmap
+
   alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.Accounts.Scope
+  alias Animina.ActivityLog
   alias Animina.Discovery
   alias Animina.Discovery.Spotlight
   alias Animina.GeoData
@@ -298,6 +301,11 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
             <% end %>
           </div>
         </div>
+
+    <!-- Activity heatmap (only when online status is visible) -->
+        <div :if={!@hide_online_status} class="mt-12">
+          <.activity_heatmap data={@heatmap_data} label={gettext("Activity")} />
+        </div>
       </div>
 
       <.live_component
@@ -518,6 +526,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     {is_online, hide_online_status, last_seen_at, activity_level_text, typical_times_text} =
       compute_online_assigns(socket, profile_user, owner?)
 
+    # Heatmap data (only load when online status is visible)
+    heatmap_data =
+      if !hide_online_status,
+        do: ActivityLog.login_heatmap_data(profile_user.id),
+        else: %{}
+
     initial_columns =
       if owner?,
         do: ColumnPreferences.get_columns_for_user(current_user),
@@ -548,6 +562,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       hide_online_status: hide_online_status,
       activity_level_text: activity_level_text,
       typical_times_text: typical_times_text,
+      heatmap_data: heatmap_data,
       show_report_modal: false
     )
   end
@@ -587,7 +602,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       last_seen_at: nil,
       hide_online_status: true,
       activity_level_text: nil,
-      typical_times_text: nil
+      typical_times_text: nil,
+      heatmap_data: %{}
     )
   end
 

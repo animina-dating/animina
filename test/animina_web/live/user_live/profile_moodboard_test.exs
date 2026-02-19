@@ -4,6 +4,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
+  alias Animina.Accounts
   alias Animina.Accounts.Roles
 
   describe "ProfileMoodboard access control" do
@@ -147,6 +148,62 @@ defmodule AniminaWeb.UserLive.ProfileMoodboardTest do
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/"
       assert %{"error" => "This page doesn't exist or you don't have access."} = flash
+    end
+  end
+
+  describe "ProfileMoodboard activity heatmap" do
+    test "owner sees activity heatmap when online status is visible", %{conn: conn} do
+      user = user_fixture(language: "en")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/#{user.id}")
+
+      assert html =~ "Activity"
+      assert html =~ "<svg"
+      assert html =~ "Less"
+      assert html =~ "More"
+    end
+
+    test "heatmap is hidden when user has hide_online_status enabled", %{conn: conn} do
+      user = user_fixture(language: "en")
+      {:ok, user} = Accounts.update_online_status_visibility(user, %{hide_online_status: true})
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/users/#{user.id}")
+
+      # The heatmap section should not be present
+      refute html =~ "activity-heatmap"
+    end
+
+    test "non-owner sees heatmap when profile user allows online status", %{conn: conn} do
+      owner = user_fixture(language: "en")
+      viewer = user_fixture(language: "en")
+      {:ok, _conv} = Animina.Messaging.get_or_create_conversation(viewer.id, owner.id)
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(viewer)
+        |> live(~p"/users/#{owner.id}")
+
+      assert html =~ "activity-heatmap"
+    end
+
+    test "non-owner does not see heatmap when profile user hides online status", %{conn: conn} do
+      owner = user_fixture(language: "en")
+      {:ok, _owner} = Accounts.update_online_status_visibility(owner, %{hide_online_status: true})
+      viewer = user_fixture(language: "en")
+      {:ok, _conv} = Animina.Messaging.get_or_create_conversation(viewer.id, owner.id)
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(viewer)
+        |> live(~p"/users/#{owner.id}")
+
+      refute html =~ "activity-heatmap"
     end
   end
 
