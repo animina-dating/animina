@@ -409,11 +409,22 @@ defmodule Animina.Messaging do
   defp verify_other_not_online(message) do
     other_user_id = get_other_participant_id(message.conversation_id, message.sender_id)
 
-    if other_user_id && AniminaWeb.Presence.user_online?(other_user_id) do
+    if other_user_id && other_was_online_since?(other_user_id, message.inserted_at) do
       {:error, :other_user_online}
     else
       :ok
     end
+  end
+
+  defp other_was_online_since?(user_id, since) do
+    # Currently online via Presence
+    AniminaWeb.Presence.user_online?(user_id) ||
+      # Or had a session overlapping with the window since the message was sent
+      Animina.Accounts.UserOnlineSession
+      |> where([s], s.user_id == ^user_id)
+      |> where([s], s.started_at <= ^DateTime.utc_now())
+      |> where([s], is_nil(s.ended_at) or s.ended_at >= ^since)
+      |> Repo.exists?()
   end
 
   defp verify_not_read(message) do

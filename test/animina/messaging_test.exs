@@ -175,6 +175,31 @@ defmodule Animina.MessagingTest do
 
       assert {:error, :other_user_online} = Messaging.delete_message(message.id, user1.id)
     end
+
+    test "cannot delete message when other user was online since it was sent" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+
+      # Backdate message to 5 minutes ago
+      {:ok, message} = Messaging.send_message(conversation.id, user1.id, "To delete")
+
+      Animina.Repo.update_all(
+        from(m in Message, where: m.id == ^message.id),
+        set: [inserted_at: DateTime.add(DateTime.utc_now(), -5, :minute)]
+      )
+
+      # Create an online session for user2 that started after the message was sent
+      # (simulates them having been online 2 minutes ago but now offline)
+      Animina.Repo.insert!(%Animina.Accounts.UserOnlineSession{
+        user_id: user2.id,
+        started_at: DateTime.add(DateTime.utc_now(), -3, :minute) |> DateTime.truncate(:second),
+        ended_at: DateTime.add(DateTime.utc_now(), -2, :minute) |> DateTime.truncate(:second),
+        duration_minutes: 1
+      })
+
+      assert {:error, :other_user_online} = Messaging.delete_message(message.id, user1.id)
+    end
   end
 
   describe "list_messages/3" do

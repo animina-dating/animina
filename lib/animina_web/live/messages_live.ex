@@ -21,6 +21,7 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.MessageComponents
   import AniminaWeb.RelationshipComponents
 
+  alias Animina.Accounts.OnlineActivity
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -158,6 +159,7 @@ defmodule AniminaWeb.MessagesLive do
               other_last_read_at={@other_last_read_at}
               last_read_message_id={@last_read_message_id}
               other_user_online={@conversation_data != nil && MapSet.member?(@online_user_ids, @conversation_data.other_user.id)}
+              other_last_online_at={@other_last_online_at}
             />
           <% end %>
         </div>
@@ -485,6 +487,7 @@ defmodule AniminaWeb.MessagesLive do
   attr :other_last_read_at, :any, default: nil
   attr :last_read_message_id, :string, default: nil
   attr :other_user_online, :boolean, default: false
+  attr :other_last_online_at, :any, default: nil
 
   defp message_group(assigns) do
     ~H"""
@@ -509,6 +512,7 @@ defmodule AniminaWeb.MessagesLive do
         other_user={@other_user}
         current_user_id={@current_user_id}
         other_user_online={@other_user_online}
+        other_last_online_at={@other_last_online_at}
       />
     </div>
     """
@@ -526,6 +530,7 @@ defmodule AniminaWeb.MessagesLive do
   attr :other_user, :map, default: nil
   attr :current_user_id, :string, default: nil
   attr :other_user_online, :boolean, default: false
+  attr :other_last_online_at, :any, default: nil
 
   defp message_bubble(assigns) do
     assigns = assign(assigns, :deletable, message_deletable?(assigns))
@@ -595,8 +600,21 @@ defmodule AniminaWeb.MessagesLive do
   defp message_deletable?(assigns) do
     assigns.is_sender &&
       !assigns.is_read &&
-      !assigns.other_user_online &&
-      within_delete_window?(assigns.message)
+      within_delete_window?(assigns.message) &&
+      !other_was_online_since_message?(assigns)
+  end
+
+  defp other_was_online_since_message?(assigns) do
+    # Currently online → definitely was online since message sent
+    if assigns.other_user_online do
+      true
+    else
+      # Check if the other user was online at any point after the message was sent
+      case assigns.other_last_online_at do
+        nil -> false
+        last_at -> DateTime.compare(last_at, assigns.message.inserted_at) != :lt
+      end
+    end
   end
 
   defp within_delete_window?(message) do
@@ -1004,6 +1022,7 @@ defmodule AniminaWeb.MessagesLive do
         typing_timer: nil,
         draft_save_timer: nil,
         other_last_read_at: nil,
+        other_last_online_at: nil,
         last_read_message_id: nil,
         form: to_form(%{"content" => ""}, as: :message),
         slot_status: Messaging.chat_slot_status(user.id),
@@ -1065,6 +1084,7 @@ defmodule AniminaWeb.MessagesLive do
       grouped_messages: [],
       avatar_photos: AvatarHelpers.load_from_conversations(conversations),
       other_last_read_at: nil,
+      other_last_online_at: nil,
       last_read_message_id: nil,
       slot_status: Messaging.chat_slot_status(user.id),
       closed_conversations: closed,
@@ -1098,6 +1118,8 @@ defmodule AniminaWeb.MessagesLive do
     other_user = conversation_data.other_user
     {relationship, override} = load_relationship_data(socket, user.id, other_user.id)
 
+    other_last_online_at = compute_other_last_online_at(other_user.id)
+
     {draft_content, draft_updated_at} = Messaging.get_draft(conversation_id, user.id)
     form_content = draft_content || ""
 
@@ -1110,6 +1132,7 @@ defmodule AniminaWeb.MessagesLive do
         avatar_photos: %{other_user.id => Photos.get_user_avatar(other_user.id)},
         other_last_read_at: other_last_read_at,
         last_read_message_id: last_read_message_id,
+        other_last_online_at: other_last_online_at,
         form: to_form(%{"content" => form_content}, as: :message),
         relationship: relationship,
         override: override,
@@ -1143,6 +1166,14 @@ defmodule AniminaWeb.MessagesLive do
         else: nil
 
     {relationship, override}
+  end
+
+  defp compute_other_last_online_at(other_user_id) do
+    case OnlineActivity.last_seen(other_user_id) do
+      :online -> DateTime.utc_now()
+      %DateTime{} = dt -> dt
+      nil -> nil
+    end
   end
 
   defp maybe_push_server_draft(socket, draft_content, draft_updated_at) do
@@ -1279,7 +1310,7 @@ defmodule AniminaWeb.MessagesLive do
          put_flash(
            socket,
            :error,
-           gettext("Cannot delete a message while the other person is online")
+           gettext("Cannot delete a message — the other person has been online since you sent it")
          )}
 
       {:error, _reason} ->
