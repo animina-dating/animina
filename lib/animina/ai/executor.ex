@@ -29,13 +29,13 @@ defmodule Animina.AI.Executor do
   Executes a single AI job. Called from Task.Supervisor.
   """
   def run(%AI.Job{} = job) do
-    module = AI.job_type_module(job.job_type)
+    case AI.job_type_module(job.job_type) do
+      {:ok, module} ->
+        execute_with_module(job, module)
 
-    if module do
-      execute_with_module(job, module)
-    else
-      AI.mark_failed(job, "Unknown job type: #{job.job_type}")
-      :error
+      :error ->
+        AI.mark_failed(job, "Unknown job type: #{job.job_type}")
+        :error
     end
   end
 

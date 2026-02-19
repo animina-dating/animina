@@ -8,8 +8,6 @@ defmodule Animina.AI.JobTypes.PhotoDescription do
 
   @behaviour Animina.AI.JobType
 
-  require Logger
-
   alias Animina.ActivityLog
   alias Animina.Photos
 

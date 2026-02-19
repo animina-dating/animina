@@ -38,8 +38,6 @@ defmodule Mix.Tasks.Benchmark.Ollama do
   alias Animina.AI.Client, as: AIClient
   alias Animina.Photos.PhotoProcessor
 
-  require Logger
-
   @default_count 20
   @default_concurrency [1, 2, 4, 6, 8]
   @default_warmup 2

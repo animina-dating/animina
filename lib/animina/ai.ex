@@ -27,7 +27,7 @@ defmodule Animina.AI do
   Returns the module implementing a given job type string.
   """
   def job_type_module(job_type) do
-    Map.get(@job_type_modules, job_type)
+    Map.fetch(@job_type_modules, job_type)
   end
 
   # --- Enqueue ---
@@ -46,27 +46,27 @@ defmodule Animina.AI do
     * `:model` - Override the default model
   """
   def enqueue(job_type, params, opts \\ []) do
-    module = job_type_module(job_type)
+    case job_type_module(job_type) do
+      :error ->
+        raise ArgumentError, "Unknown job type: #{inspect(job_type)}"
 
-    unless module do
-      raise ArgumentError, "Unknown job type: #{inspect(job_type)}"
+      {:ok, module} ->
+        attrs = %{
+          job_type: job_type,
+          priority: Keyword.get(opts, :priority, module.default_priority()),
+          max_attempts: Keyword.get(opts, :max_attempts, module.max_attempts()),
+          scheduled_at: Keyword.get(opts, :scheduled_at),
+          params: params,
+          subject_type: Keyword.get(opts, :subject_type),
+          subject_id: Keyword.get(opts, :subject_id),
+          requester_id: Keyword.get(opts, :requester_id),
+          model: Keyword.get(opts, :model)
+        }
+
+        %Job{}
+        |> Job.create_changeset(attrs)
+        |> Repo.insert()
     end
-
-    attrs = %{
-      job_type: job_type,
-      priority: Keyword.get(opts, :priority, module.default_priority()),
-      max_attempts: Keyword.get(opts, :max_attempts, module.max_attempts()),
-      scheduled_at: Keyword.get(opts, :scheduled_at),
-      params: params,
-      subject_type: Keyword.get(opts, :subject_type),
-      subject_id: Keyword.get(opts, :subject_id),
-      requester_id: Keyword.get(opts, :requester_id),
-      model: Keyword.get(opts, :model)
-    }
-
-    %Job{}
-    |> Job.create_changeset(attrs)
-    |> Repo.insert()
   end
 
   @doc """
