@@ -15,6 +15,7 @@ defmodule Animina.Messaging do
   alias Animina.ActivityLog
   alias Animina.Discovery
   alias Animina.FeatureFlags
+  alias Animina.Relationships
 
   alias Animina.Messaging.Schemas.{
     Conversation,
@@ -103,6 +104,9 @@ defmodule Animina.Messaging do
           user_id: user2_id
         })
         |> Repo.insert()
+
+      # Create a "chatting" relationship between the two users
+      Relationships.create_relationship(user1_id, user2_id, "chatting")
 
       conversation
     end)
@@ -516,6 +520,12 @@ defmodule Animina.Messaging do
           {:ok, _} ->
             other_id = get_other_participant_id(conversation_id, blocker_id)
 
+            # Transition relationship to "blocked"
+            case Relationships.get_relationship(blocker_id, other_id) do
+              nil -> :ok
+              rel -> Relationships.transition_status(rel, "blocked", blocker_id)
+            end
+
             ActivityLog.log("social", "conversation_blocked", "User blocked in conversation",
               actor_id: blocker_id,
               subject_id: other_id,
@@ -823,6 +833,12 @@ defmodule Animina.Messaging do
       Discovery.dismiss_user_by_id(closed_by_id, other_participant.user_id)
       Discovery.dismiss_user_by_id(other_participant.user_id, closed_by_id)
 
+      # Transition relationship to "ended"
+      case Relationships.get_relationship(closed_by_id, other_participant.user_id) do
+        nil -> :ok
+        rel -> Relationships.transition_status(rel, "ended", closed_by_id)
+      end
+
       # Broadcast closure to both users
       broadcast_conversation_closed(conversation_id, closed_by_id, other_participant.user_id)
 
@@ -862,7 +878,7 @@ defmodule Animina.Messaging do
     else
       Repo.transaction(fn ->
         close_sacrificed_conversations(close_conv_ids, user_id)
-        reopen_conversation_participants(reopen_conv_id)
+        reopen_conversation_participants(reopen_conv_id, user_id)
         mark_closure_reopened(reopen_conv_id, user_id)
         broadcast_reopen(reopen_conv_id, user_id)
         :ok
@@ -879,13 +895,31 @@ defmodule Animina.Messaging do
     end)
   end
 
-  defp reopen_conversation_participants(conv_id) do
-    ConversationParticipant
-    |> where([p], p.conversation_id == ^conv_id)
-    |> Repo.all()
-    |> Enum.each(fn p ->
+  defp reopen_conversation_participants(conv_id, user_id) do
+    participants =
+      ConversationParticipant
+      |> where([p], p.conversation_id == ^conv_id)
+      |> Repo.all()
+
+    Enum.each(participants, fn p ->
       {:ok, _} = p |> ConversationParticipant.reopen_changeset() |> Repo.update()
     end)
+
+    # Reopen the relationship back to "chatting"
+    other = Enum.find(participants, fn p -> p.user_id != user_id end)
+
+    if other do
+      case Relationships.get_relationship(user_id, other.user_id) do
+        nil ->
+          Relationships.create_relationship(user_id, other.user_id, "chatting")
+
+        %{status: status} = rel when status in ["ended", "blocked"] ->
+          Relationships.reopen_relationship(rel, user_id)
+
+        _rel ->
+          :ok
+      end
+    end
   end
 
   defp mark_closure_reopened(conv_id, user_id) do

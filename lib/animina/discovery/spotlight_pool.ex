@@ -25,6 +25,8 @@ defmodule Animina.Discovery.SpotlightPool do
 
   alias Animina.Accounts.User
   alias Animina.Discovery.Filters.FilterHelpers
+  alias Animina.Relationships
+  alias Animina.Relationships.Schemas.{Relationship, RelationshipOverride}
   alias Animina.Repo
   alias Animina.Reports.ReportInvisibility
   alias Animina.Traits.UserFlag
@@ -39,6 +41,7 @@ defmodule Animina.Discovery.SpotlightPool do
     |> exclude_self(viewer)
     |> exclude_blacklisted(viewer)
     |> exclude_report_invisible(viewer)
+    |> exclude_relationship_hidden(viewer)
     |> exclude_soft_deleted()
     |> filter_by_state()
     |> filter_by_distance(viewer)
@@ -65,6 +68,7 @@ defmodule Animina.Discovery.SpotlightPool do
       {"− Self", &exclude_self(&1, viewer)},
       {"− Blacklisted", &exclude_blacklisted(&1, viewer)},
       {"− Report invisible", &exclude_report_invisible(&1, viewer)},
+      {"− Relationship hidden", &exclude_relationship_hidden(&1, viewer)},
       {"− Distance", &filter_by_distance(&1, viewer)},
       {"− Gender", &filter_by_gender(&1, viewer)},
       {"− Age", &filter_by_age(&1, viewer)},
@@ -112,6 +116,7 @@ defmodule Animina.Discovery.SpotlightPool do
       |> exclude_self(viewer)
       |> exclude_blacklisted(viewer)
       |> exclude_report_invisible(viewer)
+      |> exclude_relationship_hidden(viewer)
       |> exclude_soft_deleted()
       |> filter_by_state()
       |> filter_by_distance(viewer)
@@ -150,6 +155,41 @@ defmodule Animina.Discovery.SpotlightPool do
       )
 
     where(query, [u], u.id not in subquery(hidden_ids))
+  end
+
+  # Excludes users where the relationship status says visible_in_discovery: false
+  # AND the viewer hasn't overridden it to true.
+  # Uses two subqueries to avoid UUID casting issues with fragments.
+  defp exclude_relationship_hidden(query, viewer) do
+    hidden_statuses = Relationships.hidden_in_discovery_statuses()
+
+    # When viewer is user_a, the other user is user_b
+    hidden_as_a =
+      from(r in Relationship,
+        left_join: o in RelationshipOverride,
+          on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        where:
+          r.user_a_id == ^viewer.id and
+            r.status in ^hidden_statuses and
+            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
+        select: r.user_b_id
+      )
+
+    # When viewer is user_b, the other user is user_a
+    hidden_as_b =
+      from(r in Relationship,
+        left_join: o in RelationshipOverride,
+          on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        where:
+          r.user_b_id == ^viewer.id and
+            r.status in ^hidden_statuses and
+            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
+        select: r.user_a_id
+      )
+
+    query
+    |> where([u], u.id not in subquery(hidden_as_a))
+    |> where([u], u.id not in subquery(hidden_as_b))
   end
 
   defp filter_by_gender(query, viewer),

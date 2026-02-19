@@ -649,7 +649,7 @@ defmodule Animina.Discovery.SpotlightPoolTest do
 
       assert is_list(steps)
       assert is_list(candidates)
-      assert length(steps) == 9
+      assert length(steps) == 10
 
       # Each step has the expected keys
       for step <- steps do

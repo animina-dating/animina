@@ -19,10 +19,12 @@ defmodule AniminaWeb.MessagesLive do
   use AniminaWeb, :live_view
 
   import AniminaWeb.MessageComponents
+  import AniminaWeb.RelationshipComponents
 
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
+  alias Animina.Relationships
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
@@ -47,7 +49,15 @@ defmodule AniminaWeb.MessagesLive do
             >
               <.avatar user={@conversation_data.other_user} photos={@avatar_photos} size={:sm} />
               <div>
-                <div class="font-semibold">{@conversation_data.other_user.display_name}</div>
+                <div class="font-semibold flex items-center gap-2">
+                  {@conversation_data.other_user.display_name}
+                  <span
+                    :if={@relationship}
+                    class={["badge badge-sm", relationship_badge_class(@relationship.status)]}
+                  >
+                    {relationship_status_label(@relationship.status)}
+                  </span>
+                </div>
                 <div :if={@typing} class="text-xs text-primary animate-pulse">
                   {gettext("typing...")}
                 </div>
@@ -56,26 +66,68 @@ defmodule AniminaWeb.MessagesLive do
 
             <div class="flex-1" />
 
-            <%= if @conversation_data.blocked do %>
-              <span class="badge badge-error badge-sm">{gettext("Blocked")}</span>
-            <% end %>
-
-            <button
-              phx-click="open_report_modal"
-              class="btn btn-ghost btn-sm text-base-content/50 hover:text-error"
-              title={gettext("Report user")}
-            >
-              <.icon name="hero-flag" class="h-4 w-4" />
-            </button>
-            <button
-              phx-click="let_go"
-              phx-value-conversation-id={@conversation_data.conversation.id}
-              class="btn btn-ghost btn-sm text-base-content/50 hover:text-warning"
-              title={gettext("Let go")}
-            >
-              <.icon name="hero-hand-raised" class="h-4 w-4" />
-            </button>
+            <%!-- Kebab menu --%>
+            <div class="relative">
+              <button
+                phx-click={JS.toggle(to: "#relationship-menu", in: "fade-in", out: "fade-out")}
+                class="btn btn-ghost btn-sm btn-circle"
+                title={gettext("Actions")}
+              >
+                <.icon name="hero-ellipsis-vertical" class="h-5 w-5" />
+              </button>
+              <div
+                id="relationship-menu"
+                class="hidden absolute right-0 top-full mt-1 w-56 bg-base-100 rounded-lg shadow-xl border border-base-300 z-50 py-1"
+                phx-click-away={JS.hide(to: "#relationship-menu")}
+              >
+                <%= for {action, label, icon, style} <- available_actions(@relationship, @current_scope.user.id) do %>
+                  <%= if action == :divider do %>
+                    <div class="border-t border-base-300 my-1" />
+                  <% else %>
+                    <button
+                      phx-click="relationship_action"
+                      phx-value-action={action}
+                      class={[
+                        "flex items-center gap-2 w-full px-4 py-2 text-sm hover:bg-base-200 transition-colors",
+                        action_text_class(style)
+                      ]}
+                    >
+                      <.icon name={icon} class="h-4 w-4" />
+                      {label}
+                    </button>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
           <% end %>
+        </div>
+
+        <%!-- Proposal Banner --%>
+        <.proposal_banner
+          :if={@relationship && @relationship.pending_status}
+          relationship={@relationship}
+          current_user_id={@current_scope.user.id}
+          other_user_name={@conversation_data && @conversation_data.other_user.display_name}
+        />
+
+        <%!-- Timeline Panel --%>
+        <div
+          :if={@show_timeline && @relationship}
+          class="bg-base-100 rounded-lg border border-base-300 p-4 mb-2 max-h-48 overflow-y-auto"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-semibold text-base-content/70">
+              {gettext("Relationship Timeline")}
+            </h3>
+            <button phx-click="close_timeline" class="btn btn-ghost btn-xs btn-circle">
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <.relationship_timeline
+            milestones={@milestones}
+            users={timeline_users(assigns)}
+            current_user_id={@current_scope.user.id}
+          />
         </div>
 
         <%!-- Messages --%>
@@ -112,6 +164,7 @@ defmodule AniminaWeb.MessagesLive do
         />
       </div>
 
+      <%!-- Report Modal --%>
       <.live_component
         :if={@show_report_modal && @conversation_data}
         module={AniminaWeb.ReportModalComponent}
@@ -122,6 +175,77 @@ defmodule AniminaWeb.MessagesLive do
         context_id={@conversation_data.conversation.id}
         current_scope={@current_scope}
       />
+
+      <%!-- Confirmation Dialog --%>
+      <div
+        :if={@confirm_action}
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        phx-click="cancel_confirm"
+      >
+        <div
+          class="bg-base-100 rounded-lg p-6 max-w-sm mx-4 shadow-xl"
+          phx-click-away="cancel_confirm"
+        >
+          <h3 class="text-lg font-semibold">{elem(@confirm_action, 0)}</h3>
+          <p class="text-base-content/70 mt-2 text-sm">{elem(@confirm_action, 1)}</p>
+          <div class="mt-6 flex gap-3 justify-end">
+            <button phx-click="cancel_confirm" class="btn btn-ghost btn-sm">
+              {gettext("Cancel")}
+            </button>
+            <button phx-click="execute_relationship_action" class="btn btn-error btn-sm">
+              {elem(@confirm_action, 2)}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <%!-- Override Settings Modal --%>
+      <div
+        :if={@show_override_modal && @relationship}
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+        phx-click="close_override_modal"
+      >
+        <div
+          class="bg-base-100 rounded-lg p-6 max-w-md mx-4 shadow-xl"
+          phx-click-away="close_override_modal"
+        >
+          <h3 class="text-lg font-semibold mb-4">
+            {gettext("Custom Permissions for %{name}",
+              name: @conversation_data && @conversation_data.other_user.display_name
+            )}
+          </h3>
+          <form phx-submit="save_overrides">
+            <div class="space-y-4">
+              <.override_toggle
+                field="can_see_profile"
+                label={gettext("Can see my profile")}
+                checked={override_value(@override, :can_see_profile, @relationship.status)}
+                default={status_default(@relationship.status, :can_see_profile)}
+              />
+              <.override_toggle
+                field="can_message_me"
+                label={gettext("Can message me")}
+                checked={override_value(@override, :can_message_me, @relationship.status)}
+                default={status_default(@relationship.status, :can_message)}
+              />
+              <.override_toggle
+                field="visible_in_discovery"
+                label={gettext("Show in my discovery")}
+                checked={override_value(@override, :visible_in_discovery, @relationship.status)}
+                default={status_default(@relationship.status, :visible_in_discovery)}
+              />
+            </div>
+            <div class="mt-6 flex gap-3 justify-end">
+              <button type="button" phx-click="close_override_modal" class="btn btn-ghost btn-sm">
+                {gettext("Cancel")}
+              </button>
+              <button type="submit" class="btn btn-primary btn-sm">
+                {gettext("Save")}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </Layouts.app>
     """
   end
@@ -154,6 +278,7 @@ defmodule AniminaWeb.MessagesLive do
                 :for={conv <- @conversations}
                 conversation={conv}
                 avatar_photos={@avatar_photos}
+                relationship_status={Map.get(@relationship_map, conv.other_user.id)}
               />
             </div>
           <% end %>
@@ -228,6 +353,7 @@ defmodule AniminaWeb.MessagesLive do
 
   attr :conversation, :map, required: true
   attr :avatar_photos, :map, required: true
+  attr :relationship_status, :string, default: nil
 
   defp conversation_row(assigns) do
     ~H"""
@@ -245,6 +371,12 @@ defmodule AniminaWeb.MessagesLive do
           <div class="flex items-center gap-2">
             <span class={["font-medium truncate", @conversation.unread && "font-semibold"]}>
               {@conversation.other_user.display_name}
+            </span>
+            <span
+              :if={@relationship_status && @relationship_status != "chatting"}
+              class={["badge badge-xs", relationship_badge_class(@relationship_status)]}
+            >
+              {relationship_status_label(@relationship_status)}
             </span>
             <%= if @conversation.unread do %>
               <span class="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
@@ -488,6 +620,226 @@ defmodule AniminaWeb.MessagesLive do
     """
   end
 
+  # --- Proposal banner component ---
+
+  attr :relationship, :map, required: true
+  attr :current_user_id, :string, required: true
+  attr :other_user_name, :string, default: nil
+
+  defp proposal_banner(assigns) do
+    ~H"""
+    <%= if @relationship.pending_proposed_by == @current_user_id do %>
+      <div class="mx-0 mb-2 p-3 bg-primary/10 rounded-lg text-sm flex items-center justify-between">
+        <span>
+          {gettext("You proposed %{status}. Waiting for response.",
+            status: relationship_status_label(@relationship.pending_status)
+          )}
+        </span>
+        <button phx-click="cancel_proposal" class="btn btn-ghost btn-xs">
+          {gettext("Cancel")}
+        </button>
+      </div>
+    <% else %>
+      <div class="mx-0 mb-2 p-3 bg-primary/10 rounded-lg text-sm flex items-center justify-between">
+        <span>
+          {gettext("%{name} proposed %{status}!",
+            name: @other_user_name,
+            status: relationship_status_label(@relationship.pending_status)
+          )}
+        </span>
+        <div class="flex gap-2">
+          <button phx-click="accept_proposal" class="btn btn-primary btn-xs">
+            {gettext("Accept")}
+          </button>
+          <button phx-click="decline_proposal" class="btn btn-ghost btn-xs">
+            {gettext("Decline")}
+          </button>
+        </div>
+      </div>
+    <% end %>
+    """
+  end
+
+  # --- Override toggle component ---
+
+  attr :field, :string, required: true
+  attr :label, :string, required: true
+  attr :checked, :boolean, required: true
+  attr :default, :boolean, required: true
+
+  defp override_toggle(assigns) do
+    ~H"""
+    <label class="flex items-center justify-between cursor-pointer">
+      <div>
+        <span class="text-sm font-medium">{@label}</span>
+        <span class="text-xs text-base-content/50 block">
+          {if @default, do: gettext("Default: allowed"), else: gettext("Default: not allowed")}
+        </span>
+      </div>
+      <input
+        type="checkbox"
+        name={@field}
+        value="true"
+        checked={@checked}
+        class="toggle toggle-primary"
+      />
+    </label>
+    """
+  end
+
+  defp action_text_class(:danger), do: "text-error"
+  defp action_text_class(:warning), do: "text-warning"
+  defp action_text_class(_), do: "text-base-content/70"
+
+  defp available_actions(nil, _user_id), do: []
+
+  defp available_actions(relationship, user_id) do
+    status = relationship.status
+    has_pending = relationship.pending_status != nil
+    is_proposer = relationship.pending_proposed_by == user_id
+
+    # Upgrade action (or cancel if already proposed)
+    upgrade_actions =
+      cond do
+        has_pending && is_proposer ->
+          [{:cancel_proposal, gettext("Cancel Proposal"), "hero-x-mark", :normal}]
+
+        has_pending ->
+          []
+
+        true ->
+          case upgrade_action_for_status(status) do
+            nil -> []
+            {action, label, icon} -> [{action, label, icon, :normal}]
+          end
+      end
+
+    # Override settings (for active statuses)
+    override_action =
+      if status in ~w(chatting dating couple married friend separated) do
+        [{:open_override_modal, gettext("Override Settings"), "hero-adjustments-horizontal", :normal}]
+      else
+        []
+      end
+
+    # Destructive/other actions
+    other_actions = destructive_actions_for_status(status)
+
+    # Report (always available unless blocked)
+    report_action =
+      if status != "blocked" do
+        [{:open_report_modal, gettext("Report"), "hero-flag", :danger}]
+      else
+        []
+      end
+
+    # Timeline action (available when relationship exists)
+    timeline_action =
+      [{:toggle_timeline, gettext("Timeline"), "hero-clock", :normal}]
+
+    # Combine with dividers
+    sections = [upgrade_actions, timeline_action, override_action, other_actions, report_action]
+    |> Enum.reject(&(&1 == []))
+    |> Enum.intersperse([{:divider, "", "", :normal}])
+    |> List.flatten()
+
+    sections
+  end
+
+  defp upgrade_action_for_status("chatting"),
+    do: {:propose_dating, gettext("Propose Dating"), "hero-heart"}
+  defp upgrade_action_for_status("dating"),
+    do: {:propose_couple, gettext("Propose Couple"), "hero-users"}
+  defp upgrade_action_for_status("couple"),
+    do: {:propose_marriage, gettext("Propose Marriage"), "hero-sparkles"}
+  defp upgrade_action_for_status("separated"),
+    do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+  defp upgrade_action_for_status("divorced"),
+    do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+  defp upgrade_action_for_status("ex"),
+    do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+  defp upgrade_action_for_status("ended"),
+    do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+  defp upgrade_action_for_status(_), do: nil
+
+  defp destructive_actions_for_status("chatting") do
+    [
+      {:end_conversation, gettext("End Conversation"), "hero-x-circle", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("dating") do
+    [
+      {:end_relationship, gettext("End Relationship"), "hero-x-circle", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("couple") do
+    [
+      {:separate, gettext("Separate"), "hero-arrows-pointing-out", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("married") do
+    [
+      {:separate, gettext("Separate"), "hero-arrows-pointing-out", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("separated") do
+    [
+      {:divorce, gettext("Divorce"), "hero-document-text", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("divorced") do
+    [{:block, gettext("Block"), "hero-no-symbol", :danger}]
+  end
+
+  defp destructive_actions_for_status("ex") do
+    [{:block, gettext("Block"), "hero-no-symbol", :danger}]
+  end
+
+  defp destructive_actions_for_status("friend") do
+    [
+      {:end_friendship, gettext("End Friendship"), "hero-x-circle", :warning},
+      {:block, gettext("Block"), "hero-no-symbol", :danger}
+    ]
+  end
+
+  defp destructive_actions_for_status("blocked") do
+    [{:unblock, gettext("Unblock"), "hero-lock-open", :normal}]
+  end
+
+  defp destructive_actions_for_status("ended"), do: []
+  defp destructive_actions_for_status(_), do: []
+
+  defp override_value(nil, field, status) do
+    defaults = Relationships.status_defaults()
+    defaults_for_status = Map.get(defaults, status, %{})
+    # Map field names: :can_message_me in override -> :can_message in defaults
+    default_key = if field == :can_message_me, do: :can_message, else: field
+    Map.get(defaults_for_status, default_key, true)
+  end
+
+  defp override_value(override, field, status) do
+    case Map.get(override, field) do
+      nil -> override_value(nil, field, status)
+      value -> value
+    end
+  end
+
+  defp status_default(status, field) do
+    defaults = Relationships.status_defaults()
+    defaults_for_status = Map.get(defaults, status, %{})
+    Map.get(defaults_for_status, field, true)
+  end
+
   # --- Time formatting helpers ---
 
   defp format_time(datetime) do
@@ -654,7 +1006,14 @@ defmodule AniminaWeb.MessagesLive do
         love_emergency_conv_id: nil,
         love_emergency_active_conversations: [],
         love_emergency_selected: MapSet.new(),
-        show_report_modal: false
+        show_report_modal: false,
+        relationship: nil,
+        relationship_map: %{},
+        show_override_modal: false,
+        override: nil,
+        confirm_action: nil,
+        show_timeline: false,
+        milestones: []
       )
 
     # Handle start_with param to create/open a conversation
@@ -681,6 +1040,14 @@ defmodule AniminaWeb.MessagesLive do
     closed_users = closed |> Enum.map(& &1.other_user) |> Enum.reject(&is_nil/1)
     closed_avatar_photos = AvatarHelpers.load_from_users(closed_users)
 
+    # Batch-load relationship statuses for conversation partners
+    other_user_ids = Enum.map(conversations, & &1.other_user.id)
+
+    relationship_map =
+      user.id
+      |> Relationships.get_relationships_for_user(other_user_ids)
+      |> Map.new(fn rel -> {Relationships.other_user_id(rel, user.id), rel.status} end)
+
     assign(socket,
       page_title: gettext("Messages"),
       conversations: conversations,
@@ -692,7 +1059,8 @@ defmodule AniminaWeb.MessagesLive do
       last_read_message_id: nil,
       slot_status: Messaging.chat_slot_status(user.id),
       closed_conversations: closed,
-      closed_avatar_photos: closed_avatar_photos
+      closed_avatar_photos: closed_avatar_photos,
+      relationship_map: relationship_map
     )
   end
 
@@ -721,6 +1089,20 @@ defmodule AniminaWeb.MessagesLive do
 
         other_user = conversation_data.other_user
 
+        # Load relationship data
+        relationship = Relationships.get_relationship(user.id, other_user.id)
+
+        # Subscribe to relationship PubSub topic
+        if connected?(socket) && relationship do
+          Phoenix.PubSub.subscribe(Animina.PubSub, Relationships.relationship_topic(relationship.id))
+        end
+
+        # Load override settings
+        override =
+          if relationship,
+            do: Relationships.get_override(user.id, relationship.id),
+            else: nil
+
         # Load server-side draft
         {draft_content, draft_updated_at} = Messaging.get_draft(conversation_id, user.id)
         form_content = draft_content || ""
@@ -734,7 +1116,11 @@ defmodule AniminaWeb.MessagesLive do
             avatar_photos: %{other_user.id => Photos.get_user_avatar(other_user.id)},
             other_last_read_at: other_last_read_at,
             last_read_message_id: last_read_message_id,
-            form: to_form(%{"content" => form_content}, as: :message)
+            form: to_form(%{"content" => form_content}, as: :message),
+            relationship: relationship,
+            override: override,
+            show_override_modal: false,
+            confirm_action: nil
           )
 
         # Push server draft to JS for timestamp comparison
@@ -909,6 +1295,218 @@ defmodule AniminaWeb.MessagesLive do
          socket
          |> assign(:confirm_let_go_conv_id, nil)
          |> put_flash(:error, gettext("Failed to close conversation"))}
+    end
+  end
+
+  # --- Timeline events ---
+
+  @impl true
+  def handle_event("close_timeline", _params, socket) do
+    {:noreply, assign(socket, :show_timeline, false)}
+  end
+
+  # --- Relationship action events ---
+
+  @impl true
+  def handle_event("relationship_action", %{"action" => action}, socket) do
+    case action do
+      # Upgrade proposals
+      "propose_dating" -> do_propose_upgrade(socket, "dating")
+      "propose_couple" -> do_propose_upgrade(socket, "couple")
+      "propose_marriage" -> do_propose_upgrade(socket, "married")
+      "propose_friend" -> do_propose_upgrade(socket, "friend")
+
+      # Actions requiring confirmation
+      "end_conversation" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("End this conversation?"),
+              gettext("This will end the conversation. You will no longer see each other in discovery."),
+              gettext("End Conversation"), "ended"}
+         )}
+
+      "end_relationship" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("End this relationship?"),
+              gettext("This will end the relationship."),
+              gettext("End Relationship"), "ex"}
+         )}
+
+      "separate" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("Separate?"),
+              gettext("This will change your status to separated."),
+              gettext("Separate"), "separated"}
+         )}
+
+      "divorce" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("Divorce?"),
+              gettext("This will finalize the divorce."),
+              gettext("Divorce"), "divorced"}
+         )}
+
+      "end_friendship" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("End this friendship?"),
+              gettext("This will end the friendship."),
+              gettext("End Friendship"), "ended"}
+         )}
+
+      "block" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("Block this user?"),
+              gettext("They will not be able to contact you or see your profile."),
+              gettext("Block"), "blocked"}
+         )}
+
+      "unblock" ->
+        {:noreply,
+         assign(socket,
+           confirm_action:
+             {gettext("Unblock this user?"),
+              gettext("This will end the relationship. You can start a new conversation later."),
+              gettext("Unblock"), "ended"}
+         )}
+
+      # Direct actions (no confirmation)
+      "toggle_timeline" ->
+        if socket.assigns.show_timeline do
+          {:noreply, assign(socket, :show_timeline, false)}
+        else
+          milestones =
+            if socket.assigns.relationship,
+              do: Relationships.list_milestones(socket.assigns.relationship.id),
+              else: []
+
+          {:noreply, assign(socket, show_timeline: true, milestones: milestones)}
+        end
+
+      "open_override_modal" ->
+        {:noreply, assign(socket, :show_override_modal, true)}
+
+      "open_report_modal" ->
+        {:noreply, assign(socket, :show_report_modal, true)}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("cancel_confirm", _params, socket) do
+    {:noreply, assign(socket, :confirm_action, nil)}
+  end
+
+  @impl true
+  def handle_event("execute_relationship_action", _params, socket) do
+    {_title, _desc, _btn_label, target_status} = socket.assigns.confirm_action
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.transition_status(relationship, target_status, user_id) do
+      {:ok, updated} ->
+        socket =
+          socket
+          |> assign(relationship: updated, confirm_action: nil)
+          |> put_flash(:info, gettext("Relationship updated"))
+
+        # Redirect to index if conversation is now ended/blocked
+        if target_status in ["ended", "blocked"] do
+          {:noreply, push_navigate(socket, to: ~p"/my/messages")}
+        else
+          {:noreply, socket}
+        end
+
+      {:error, _reason} ->
+        {:noreply,
+         socket
+         |> assign(:confirm_action, nil)
+         |> put_flash(:error, gettext("Could not update relationship"))}
+    end
+  end
+
+  @impl true
+  def handle_event("cancel_proposal", _params, socket) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.cancel_proposal(relationship, user_id) do
+      {:ok, updated} ->
+        {:noreply, assign(socket, :relationship, updated)}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not cancel proposal"))}
+    end
+  end
+
+  @impl true
+  def handle_event("accept_proposal", _params, socket) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.accept_proposal(relationship, user_id) do
+      {:ok, updated} ->
+        {:noreply,
+         socket
+         |> assign(:relationship, updated)
+         |> put_flash(:info, gettext("Proposal accepted!"))}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not accept proposal"))}
+    end
+  end
+
+  @impl true
+  def handle_event("decline_proposal", _params, socket) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.decline_proposal(relationship, user_id) do
+      {:ok, updated} ->
+        {:noreply, assign(socket, :relationship, updated)}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not decline proposal"))}
+    end
+  end
+
+  @impl true
+  def handle_event("close_override_modal", _params, socket) do
+    {:noreply, assign(socket, :show_override_modal, false)}
+  end
+
+  @impl true
+  def handle_event("save_overrides", params, socket) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    attrs = %{
+      can_see_profile: params["can_see_profile"] == "true",
+      can_message_me: params["can_message_me"] == "true",
+      visible_in_discovery: params["visible_in_discovery"] == "true"
+    }
+
+    case Relationships.set_override(user_id, relationship.id, attrs) do
+      {:ok, override} ->
+        {:noreply,
+         socket
+         |> assign(override: override, show_override_modal: false)
+         |> put_flash(:info, gettext("Permissions saved"))}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not save permissions"))}
     end
   end
 
@@ -1117,6 +1715,30 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   @impl true
+  def handle_info({:relationship_changed, relationship}, socket) do
+    if socket.assigns.relationship && socket.assigns.relationship.id == relationship.id do
+      socket = assign(socket, :relationship, relationship)
+
+      # Refresh milestones if timeline is open
+      socket =
+        if socket.assigns.show_timeline do
+          assign(socket, :milestones, Relationships.list_milestones(relationship.id))
+        else
+          socket
+        end
+
+      {:noreply, socket}
+    else
+      # On index page, refresh the relationship map
+      if socket.assigns.live_action == :index do
+        {:noreply, apply_action(socket, :index, %{})}
+      else
+        {:noreply, socket}
+      end
+    end
+  end
+
+  @impl true
   def handle_info({:report_submitted, _reported_user_id}, socket) do
     {:noreply,
      socket
@@ -1131,6 +1753,29 @@ defmodule AniminaWeb.MessagesLive do
      socket
      |> assign(:show_report_modal, false)
      |> put_flash(:error, gettext("Could not submit report. Please try again."))}
+  end
+
+  defp timeline_users(assigns) do
+    user = assigns.current_scope.user
+    other = assigns.conversation_data && assigns.conversation_data.other_user
+    map = %{user.id => user}
+    if other, do: Map.put(map, other.id, other), else: map
+  end
+
+  defp do_propose_upgrade(socket, target_status) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.propose_upgrade(relationship, target_status, user_id) do
+      {:ok, updated} ->
+        {:noreply, assign(socket, :relationship, updated)}
+
+      {:error, :proposal_already_pending} ->
+        {:noreply, put_flash(socket, :error, gettext("A proposal is already pending"))}
+
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, gettext("Could not send proposal"))}
+    end
   end
 
   defp schedule_draft_save(socket, content) do

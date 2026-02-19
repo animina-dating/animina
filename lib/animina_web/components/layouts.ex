@@ -293,6 +293,12 @@ defmodule AniminaWeb.Layouts do
                       >
                         {gettext("Messages")}
                       </a>
+                      <a
+                        href="/my/relationships"
+                        class="block px-4 py-2 text-sm text-base-content/70 hover:bg-base-200 hover:text-primary transition-colors"
+                      >
+                        {gettext("Relationships")}
+                      </a>
                     </div>
                     <!-- Administration (admin only) -->
                     <%= if Scope.has_role?(@current_scope, "admin") do %>

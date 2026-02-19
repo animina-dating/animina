@@ -129,6 +129,7 @@ defmodule AniminaWeb.Router do
 
       live "/my/messages", MessagesLive, :index
       live "/my/messages/:conversation_id", MessagesLive, :show
+      live "/my/relationships", RelationshipsLive, :index
     end
 
     live_session :require_moderator,
