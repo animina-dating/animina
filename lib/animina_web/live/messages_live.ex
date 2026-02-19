@@ -472,7 +472,7 @@ defmodule AniminaWeb.MessagesLive do
     <%!-- Date separator --%>
     <div class="flex items-center gap-3 my-4">
       <div class="flex-1 border-t border-base-300" />
-      <span class="text-xs text-base-content/40 font-medium">{@group.date_label}</span>
+      <span class="text-xs text-base-content/60 font-medium">{@group.date_label}</span>
       <div class="flex-1 border-t border-base-300" />
     </div>
 
@@ -525,7 +525,7 @@ defmodule AniminaWeb.MessagesLive do
             :if={@show_time}
             class={[
               "text-xs mt-1 flex items-center gap-1",
-              if(@is_sender, do: "text-primary-content/60 justify-end", else: "text-base-content/40")
+              if(@is_sender, do: "text-primary-content/80 justify-end", else: "text-base-content/60")
             ]}
           >
             {format_message_time(@message.inserted_at)}
@@ -717,7 +717,10 @@ defmodule AniminaWeb.MessagesLive do
     # Override settings (for active statuses)
     override_action =
       if status in ~w(chatting dating couple married friend separated) do
-        [{:open_override_modal, gettext("Override Settings"), "hero-adjustments-horizontal", :normal}]
+        [
+          {:open_override_modal, gettext("Override Settings"), "hero-adjustments-horizontal",
+           :normal}
+        ]
       else
         []
       end
@@ -738,28 +741,36 @@ defmodule AniminaWeb.MessagesLive do
       [{:toggle_timeline, gettext("Timeline"), "hero-clock", :normal}]
 
     # Combine with dividers
-    sections = [upgrade_actions, timeline_action, override_action, other_actions, report_action]
-    |> Enum.reject(&(&1 == []))
-    |> Enum.intersperse([{:divider, "", "", :normal}])
-    |> List.flatten()
+    sections =
+      [upgrade_actions, timeline_action, override_action, other_actions, report_action]
+      |> Enum.reject(&(&1 == []))
+      |> Enum.intersperse([{:divider, "", "", :normal}])
+      |> List.flatten()
 
     sections
   end
 
   defp upgrade_action_for_status("chatting"),
     do: {:propose_dating, gettext("Propose Dating"), "hero-heart"}
+
   defp upgrade_action_for_status("dating"),
     do: {:propose_couple, gettext("Propose Couple"), "hero-users"}
+
   defp upgrade_action_for_status("couple"),
     do: {:propose_marriage, gettext("Propose Marriage"), "hero-sparkles"}
+
   defp upgrade_action_for_status("separated"),
     do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+
   defp upgrade_action_for_status("divorced"),
     do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+
   defp upgrade_action_for_status("ex"),
     do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+
   defp upgrade_action_for_status("ended"),
     do: {:propose_friend, gettext("Propose Friend"), "hero-hand-raised"}
+
   defp upgrade_action_for_status(_), do: nil
 
   defp destructive_actions_for_status("chatting") do
@@ -1074,64 +1085,76 @@ defmodule AniminaWeb.MessagesLive do
         |> redirect(to: ~p"/my/messages")
 
       conversation_data ->
-        # Subscribe to conversation updates
-        if connected?(socket) do
-          Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.conversation_topic(conversation_id))
-          Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.typing_topic(conversation_id))
-        end
+        setup_conversation_view(socket, conversation_data, conversation_id, user)
+    end
+  end
 
-        # Mark as read
-        Messaging.mark_as_read(conversation_id, user.id)
+  defp setup_conversation_view(socket, conversation_data, conversation_id, user) do
+    subscribe_to_conversation(socket, conversation_id)
+    Messaging.mark_as_read(conversation_id, user.id)
 
-        messages = Messaging.list_messages(conversation_id, user.id)
-        other_last_read_at = Messaging.get_other_participant_last_read(conversation_id, user.id)
-        last_read_message_id = find_last_read_message_id(messages, user.id, other_last_read_at)
+    messages = Messaging.list_messages(conversation_id, user.id)
+    other_last_read_at = Messaging.get_other_participant_last_read(conversation_id, user.id)
+    last_read_message_id = find_last_read_message_id(messages, user.id, other_last_read_at)
 
-        other_user = conversation_data.other_user
+    other_user = conversation_data.other_user
+    {relationship, override} = load_relationship_data(socket, user.id, other_user.id)
 
-        # Load relationship data
-        relationship = Relationships.get_relationship(user.id, other_user.id)
+    {draft_content, draft_updated_at} = Messaging.get_draft(conversation_id, user.id)
+    form_content = draft_content || ""
 
-        # Subscribe to relationship PubSub topic
-        if connected?(socket) && relationship do
-          Phoenix.PubSub.subscribe(Animina.PubSub, Relationships.relationship_topic(relationship.id))
-        end
+    socket =
+      assign(socket,
+        page_title: other_user.display_name,
+        conversation_data: conversation_data,
+        messages: messages,
+        grouped_messages: group_messages(messages),
+        avatar_photos: %{other_user.id => Photos.get_user_avatar(other_user.id)},
+        other_last_read_at: other_last_read_at,
+        last_read_message_id: last_read_message_id,
+        form: to_form(%{"content" => form_content}, as: :message),
+        relationship: relationship,
+        override: override,
+        show_override_modal: false,
+        confirm_action: nil
+      )
 
-        # Load override settings
-        override =
-          if relationship,
-            do: Relationships.get_override(user.id, relationship.id),
-            else: nil
+    maybe_push_server_draft(socket, draft_content, draft_updated_at)
+  end
 
-        # Load server-side draft
-        {draft_content, draft_updated_at} = Messaging.get_draft(conversation_id, user.id)
-        form_content = draft_content || ""
+  defp subscribe_to_conversation(socket, conversation_id) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.conversation_topic(conversation_id))
+      Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.typing_topic(conversation_id))
+    end
+  end
 
-        socket =
-          assign(socket,
-            page_title: other_user.display_name,
-            conversation_data: conversation_data,
-            messages: messages,
-            grouped_messages: group_messages(messages),
-            avatar_photos: %{other_user.id => Photos.get_user_avatar(other_user.id)},
-            other_last_read_at: other_last_read_at,
-            last_read_message_id: last_read_message_id,
-            form: to_form(%{"content" => form_content}, as: :message),
-            relationship: relationship,
-            override: override,
-            show_override_modal: false,
-            confirm_action: nil
-          )
+  defp load_relationship_data(socket, user_id, other_user_id) do
+    relationship = Relationships.get_relationship(user_id, other_user_id)
 
-        # Push server draft to JS for timestamp comparison
-        if connected?(socket) && draft_content do
-          push_event(socket, "server_draft", %{
-            content: draft_content,
-            timestamp: DateTime.to_unix(draft_updated_at)
-          })
-        else
-          socket
-        end
+    if connected?(socket) && relationship do
+      Phoenix.PubSub.subscribe(
+        Animina.PubSub,
+        Relationships.relationship_topic(relationship.id)
+      )
+    end
+
+    override =
+      if relationship,
+        do: Relationships.get_override(user_id, relationship.id),
+        else: nil
+
+    {relationship, override}
+  end
+
+  defp maybe_push_server_draft(socket, draft_content, draft_updated_at) do
+    if connected?(socket) && draft_content do
+      push_event(socket, "server_draft", %{
+        content: draft_content,
+        timestamp: DateTime.to_unix(draft_updated_at)
+      })
+    else
+      socket
     end
   end
 
@@ -1309,98 +1332,15 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_event("relationship_action", %{"action" => action}, socket) do
-    case action do
-      # Upgrade proposals
-      "propose_dating" -> do_propose_upgrade(socket, "dating")
-      "propose_couple" -> do_propose_upgrade(socket, "couple")
-      "propose_marriage" -> do_propose_upgrade(socket, "married")
-      "propose_friend" -> do_propose_upgrade(socket, "friend")
+    cond do
+      proposal_status = proposal_target_status(action) ->
+        do_propose_upgrade(socket, proposal_status)
 
-      # Actions requiring confirmation
-      "end_conversation" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("End this conversation?"),
-              gettext("This will end the conversation. You will no longer see each other in discovery."),
-              gettext("End Conversation"), "ended"}
-         )}
+      confirm = confirmation_dialog(action) ->
+        {:noreply, assign(socket, :confirm_action, confirm)}
 
-      "end_relationship" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("End this relationship?"),
-              gettext("This will end the relationship."),
-              gettext("End Relationship"), "ex"}
-         )}
-
-      "separate" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("Separate?"),
-              gettext("This will change your status to separated."),
-              gettext("Separate"), "separated"}
-         )}
-
-      "divorce" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("Divorce?"),
-              gettext("This will finalize the divorce."),
-              gettext("Divorce"), "divorced"}
-         )}
-
-      "end_friendship" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("End this friendship?"),
-              gettext("This will end the friendship."),
-              gettext("End Friendship"), "ended"}
-         )}
-
-      "block" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("Block this user?"),
-              gettext("They will not be able to contact you or see your profile."),
-              gettext("Block"), "blocked"}
-         )}
-
-      "unblock" ->
-        {:noreply,
-         assign(socket,
-           confirm_action:
-             {gettext("Unblock this user?"),
-              gettext("This will end the relationship. You can start a new conversation later."),
-              gettext("Unblock"), "ended"}
-         )}
-
-      # Direct actions (no confirmation)
-      "toggle_timeline" ->
-        if socket.assigns.show_timeline do
-          {:noreply, assign(socket, :show_timeline, false)}
-        else
-          milestones =
-            if socket.assigns.relationship,
-              do: Relationships.list_milestones(socket.assigns.relationship.id),
-              else: []
-
-          {:noreply, assign(socket, show_timeline: true, milestones: milestones)}
-        end
-
-      "open_override_modal" ->
-        {:noreply, assign(socket, :show_override_modal, true)}
-
-      "open_report_modal" ->
-        {:noreply, assign(socket, :show_report_modal, true)}
-
-      _ ->
-        {:noreply, socket}
+      true ->
+        handle_direct_action(socket, action)
     end
   end
 
@@ -1760,6 +1700,77 @@ defmodule AniminaWeb.MessagesLive do
     other = assigns.conversation_data && assigns.conversation_data.other_user
     map = %{user.id => user}
     if other, do: Map.put(map, other.id, other), else: map
+  end
+
+  defp proposal_target_status("propose_dating"), do: "dating"
+  defp proposal_target_status("propose_couple"), do: "couple"
+  defp proposal_target_status("propose_marriage"), do: "married"
+  defp proposal_target_status("propose_friend"), do: "friend"
+  defp proposal_target_status(_action), do: nil
+
+  defp confirmation_dialog("end_conversation") do
+    {gettext("End this conversation?"),
+     gettext("This will end the conversation. You will no longer see each other in discovery."),
+     gettext("End Conversation"), "ended"}
+  end
+
+  defp confirmation_dialog("end_relationship") do
+    {gettext("End this relationship?"), gettext("This will end the relationship."),
+     gettext("End Relationship"), "ex"}
+  end
+
+  defp confirmation_dialog("separate") do
+    {gettext("Separate?"), gettext("This will change your status to separated."),
+     gettext("Separate"), "separated"}
+  end
+
+  defp confirmation_dialog("divorce") do
+    {gettext("Divorce?"), gettext("This will finalize the divorce."), gettext("Divorce"),
+     "divorced"}
+  end
+
+  defp confirmation_dialog("end_friendship") do
+    {gettext("End this friendship?"), gettext("This will end the friendship."),
+     gettext("End Friendship"), "ended"}
+  end
+
+  defp confirmation_dialog("block") do
+    {gettext("Block this user?"),
+     gettext("They will not be able to contact you or see your profile."), gettext("Block"),
+     "blocked"}
+  end
+
+  defp confirmation_dialog("unblock") do
+    {gettext("Unblock this user?"),
+     gettext("This will end the relationship. You can start a new conversation later."),
+     gettext("Unblock"), "ended"}
+  end
+
+  defp confirmation_dialog(_action), do: nil
+
+  defp handle_direct_action(socket, "toggle_timeline") do
+    if socket.assigns.show_timeline do
+      {:noreply, assign(socket, :show_timeline, false)}
+    else
+      milestones =
+        if socket.assigns.relationship,
+          do: Relationships.list_milestones(socket.assigns.relationship.id),
+          else: []
+
+      {:noreply, assign(socket, show_timeline: true, milestones: milestones)}
+    end
+  end
+
+  defp handle_direct_action(socket, "open_override_modal") do
+    {:noreply, assign(socket, :show_override_modal, true)}
+  end
+
+  defp handle_direct_action(socket, "open_report_modal") do
+    {:noreply, assign(socket, :show_report_modal, true)}
+  end
+
+  defp handle_direct_action(socket, _action) do
+    {:noreply, socket}
   end
 
   defp do_propose_upgrade(socket, target_status) do

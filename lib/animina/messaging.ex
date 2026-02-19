@@ -517,27 +517,27 @@ defmodule Animina.Messaging do
           |> Repo.update()
 
         case result do
-          {:ok, _} ->
-            other_id = get_other_participant_id(conversation_id, blocker_id)
-
-            # Transition relationship to "blocked"
-            case Relationships.get_relationship(blocker_id, other_id) do
-              nil -> :ok
-              rel -> Relationships.transition_status(rel, "blocked", blocker_id)
-            end
-
-            ActivityLog.log("social", "conversation_blocked", "User blocked in conversation",
-              actor_id: blocker_id,
-              subject_id: other_id,
-              metadata: %{"conversation_id" => conversation_id}
-            )
-
-          _ ->
-            :ok
+          {:ok, _} -> handle_block_success(conversation_id, blocker_id)
+          _ -> :ok
         end
 
         result
     end
+  end
+
+  defp handle_block_success(conversation_id, blocker_id) do
+    other_id = get_other_participant_id(conversation_id, blocker_id)
+
+    case Relationships.get_relationship(blocker_id, other_id) do
+      nil -> :ok
+      rel -> Relationships.transition_status(rel, "blocked", blocker_id)
+    end
+
+    ActivityLog.log("social", "conversation_blocked", "User blocked in conversation",
+      actor_id: blocker_id,
+      subject_id: other_id,
+      metadata: %{"conversation_id" => conversation_id}
+    )
   end
 
   @doc """

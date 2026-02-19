@@ -28,7 +28,13 @@ defmodule Animina.Relationships.Schemas.RelationshipOverride do
 
   def changeset(override, attrs) do
     override
-    |> cast(attrs, [:relationship_id, :user_id, :can_see_profile, :can_message_me, :visible_in_discovery])
+    |> cast(attrs, [
+      :relationship_id,
+      :user_id,
+      :can_see_profile,
+      :can_message_me,
+      :visible_in_discovery
+    ])
     |> validate_required([:relationship_id, :user_id])
     |> foreign_key_constraint(:relationship_id)
     |> foreign_key_constraint(:user_id)

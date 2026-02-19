@@ -18,6 +18,12 @@ const MessageInput = {
             new Event("submit", { bubbles: true, cancelable: true })
           )
         }
+        // Clear textarea immediately after submit captures the value.
+        // This prevents the debounced phx-change from restoring old content.
+        this.el.value = ""
+        this.autoGrow()
+        // Sync empty value with LiveView's form tracking
+        this.el.dispatchEvent(new Event("input", { bubbles: true }))
       }
     })
     this.el.addEventListener("input", () => {
@@ -41,6 +47,8 @@ const MessageInput = {
     // Handle clear_draft event from server (after successful send)
     this.handleEvent("clear_draft", () => {
       this.clearDraft()
+      this.el.value = ""
+      this.autoGrow()
     })
 
     // Save draft to server before full page unload or LiveView navigation

@@ -167,7 +167,7 @@ defmodule Animina.Discovery.SpotlightPool do
     hidden_as_a =
       from(r in Relationship,
         left_join: o in RelationshipOverride,
-          on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
         where:
           r.user_a_id == ^viewer.id and
             r.status in ^hidden_statuses and
@@ -179,7 +179,7 @@ defmodule Animina.Discovery.SpotlightPool do
     hidden_as_b =
       from(r in Relationship,
         left_join: o in RelationshipOverride,
-          on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
         where:
           r.user_b_id == ^viewer.id and
             r.status in ^hidden_statuses and

@@ -126,7 +126,9 @@ defmodule AniminaWeb.RelationshipsLive do
         </button>
 
         <.link
-          navigate={~p"/my/messages?start_with=#{Relationships.other_user_id(@relationship, @current_user_id)}"}
+          navigate={
+            ~p"/my/messages?start_with=#{Relationships.other_user_id(@relationship, @current_user_id)}"
+          }
           class="btn btn-ghost btn-sm btn-circle"
           title={gettext("Message")}
         >

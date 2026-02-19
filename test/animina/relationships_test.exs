@@ -574,7 +574,8 @@ defmodule Animina.RelationshipsTest do
 
       # Full event history
       events = Relationships.list_events(rel.id)
-      assert length(events) == 7  # created + 3x(proposal + accepted)
+      # created + 3x(proposal + accepted)
+      assert length(events) == 7
     end
 
     test "married -> separated -> divorced -> friend via mixed transitions" do

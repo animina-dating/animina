@@ -145,9 +145,10 @@ defmodule Animina.Relationships do
       []
     else
       Relationship
-      |> where([r],
+      |> where(
+        [r],
         (r.user_a_id == ^user_id and r.user_b_id in ^other_user_ids) or
-        (r.user_b_id == ^user_id and r.user_a_id in ^other_user_ids)
+          (r.user_b_id == ^user_id and r.user_a_id in ^other_user_ids)
       )
       |> Repo.all()
     end
@@ -191,8 +192,7 @@ defmodule Animina.Relationships do
         %{
           can_see_profile:
             resolve_permission(other_override, :can_see_profile, defaults.can_see_profile),
-          can_message:
-            resolve_permission(other_override, :can_message_me, defaults.can_message),
+          can_message: resolve_permission(other_override, :can_message_me, defaults.can_message),
           visible_in_discovery:
             resolve_permission(my_override, :visible_in_discovery, defaults.visible_in_discovery)
         }
@@ -221,6 +221,7 @@ defmodule Animina.Relationships do
   end
 
   defp resolve_permission(nil, _field, default), do: default
+
   defp resolve_permission(override, field, default) do
     case Map.get(override, field) do
       nil -> default
@@ -236,44 +237,51 @@ defmodule Animina.Relationships do
   Returns `{:ok, relationship}` or `{:error, changeset}`.
   If a relationship already exists, returns it unchanged.
   """
-  def create_relationship(user1_id, user2_id, initial_status \\ "chatting") do
-    if user1_id == user2_id do
-      {:error, :cannot_relate_to_self}
-    else
-      {user_a_id, user_b_id} = canonical_pair(user1_id, user2_id)
+  def create_relationship(user1_id, user2_id, initial_status \\ "chatting")
 
-      case get_relationship(user1_id, user2_id) do
-        nil ->
-          Repo.transaction(fn ->
-            attrs = %{
-              user_a_id: user_a_id,
-              user_b_id: user_b_id,
-              status: initial_status,
-              status_changed_at: TimeMachine.utc_now(:second),
-              status_changed_by: user1_id
-            }
+  def create_relationship(user_id, user_id, _initial_status) when is_binary(user_id) do
+    {:error, :cannot_relate_to_self}
+  end
 
-            case %Relationship{} |> Relationship.changeset(attrs) |> Repo.insert() do
-              {:ok, relationship} ->
-                log_event(relationship.id, user1_id, nil, initial_status, "created")
-                relationship
+  def create_relationship(user1_id, user2_id, initial_status) do
+    case get_relationship(user1_id, user2_id) do
+      nil -> insert_new_relationship(user1_id, user2_id, initial_status)
+      existing -> {:ok, existing}
+    end
+  end
 
-              {:error, %Ecto.Changeset{errors: errors} = changeset} ->
-                # Handle race condition: another process created it concurrently
-                if Keyword.has_key?(errors, :user_a_id) || Keyword.has_key?(errors, :user_b_id) do
-                  case get_relationship(user1_id, user2_id) do
-                    nil -> Repo.rollback(changeset)
-                    existing -> existing
-                  end
-                else
-                  Repo.rollback(changeset)
-                end
-            end
-          end)
+  defp insert_new_relationship(user1_id, user2_id, initial_status) do
+    {user_a_id, user_b_id} = canonical_pair(user1_id, user2_id)
 
-        existing ->
-          {:ok, existing}
+    attrs = %{
+      user_a_id: user_a_id,
+      user_b_id: user_b_id,
+      status: initial_status,
+      status_changed_at: TimeMachine.utc_now(:second),
+      status_changed_by: user1_id
+    }
+
+    Repo.transaction(fn ->
+      case %Relationship{} |> Relationship.changeset(attrs) |> Repo.insert() do
+        {:ok, relationship} ->
+          log_event(relationship.id, user1_id, nil, initial_status, "created")
+          relationship
+
+        {:error, changeset} ->
+          handle_insert_conflict(changeset, user1_id, user2_id)
       end
+    end)
+  end
+
+  defp handle_insert_conflict(%Ecto.Changeset{errors: errors} = changeset, user1_id, user2_id) do
+    unique_conflict? =
+      Keyword.has_key?(errors, :user_a_id) || Keyword.has_key?(errors, :user_b_id)
+
+    # Handle race condition: another process created it concurrently
+    if unique_conflict? do
+      get_relationship(user1_id, user2_id) || Repo.rollback(changeset)
+    else
+      Repo.rollback(changeset)
     end
   end
 
@@ -333,8 +341,10 @@ defmodule Animina.Relationships do
              |> Relationship.transition_changeset("chatting", actor_id)
              |> Repo.update() do
           {:ok, updated} ->
-            log_event(updated.id, actor_id, old_status, "chatting", "transition",
-              %{"reason" => "reopened"})
+            log_event(updated.id, actor_id, old_status, "chatting", "transition", %{
+              "reason" => "reopened"
+            })
+
             broadcast_relationship_changed(updated)
             log_activity(old_status, "chatting", actor_id, updated)
             {:ok, updated}
@@ -373,7 +383,9 @@ defmodule Animina.Relationships do
 
             other_id = other_user_id(updated, proposer_id)
 
-            ActivityLog.log("social", "relationship_proposed",
+            ActivityLog.log(
+              "social",
+              "relationship_proposed",
               "Relationship upgrade proposed: #{relationship.status} -> #{proposed_status}",
               actor_id: proposer_id,
               subject_id: other_id,
@@ -421,7 +433,9 @@ defmodule Animina.Relationships do
 
             proposer_id = relationship.pending_proposed_by
 
-            ActivityLog.log("social", "relationship_accepted",
+            ActivityLog.log(
+              "social",
+              "relationship_accepted",
               "Relationship upgrade accepted: #{old_status} -> #{new_status}",
               actor_id: accepter_id,
               subject_id: proposer_id,
@@ -463,7 +477,14 @@ defmodule Animina.Relationships do
              |> Relationship.clear_proposal_changeset()
              |> Repo.update() do
           {:ok, updated} ->
-            log_event(updated.id, canceller_id, relationship.status, proposed_status, "proposal_cancelled")
+            log_event(
+              updated.id,
+              canceller_id,
+              relationship.status,
+              proposed_status,
+              "proposal_cancelled"
+            )
+
             broadcast_relationship_changed(updated)
             {:ok, updated}
 
@@ -496,12 +517,21 @@ defmodule Animina.Relationships do
              |> Relationship.clear_proposal_changeset()
              |> Repo.update() do
           {:ok, updated} ->
-            log_event(updated.id, decliner_id, relationship.status, proposed_status, "proposal_declined")
+            log_event(
+              updated.id,
+              decliner_id,
+              relationship.status,
+              proposed_status,
+              "proposal_declined"
+            )
+
             broadcast_relationship_changed(updated)
 
             proposer_id = relationship.pending_proposed_by
 
-            ActivityLog.log("social", "relationship_declined",
+            ActivityLog.log(
+              "social",
+              "relationship_declined",
               "Relationship upgrade declined: proposed #{proposed_status}",
               actor_id: decliner_id,
               subject_id: proposer_id,
@@ -580,26 +610,27 @@ defmodule Animina.Relationships do
     if relationships == [] do
       []
     else
-      relationship_ids = Enum.map(relationships, & &1.id)
+      overrides_by_rel_id = load_overrides_for_user(user_id, relationships)
 
-      # Batch-load all overrides for this user in one query
-      overrides_by_rel_id =
-        RelationshipOverride
-        |> where([o], o.user_id == ^user_id and o.relationship_id in ^relationship_ids)
-        |> Repo.all()
-        |> Map.new(&{&1.relationship_id, &1})
-
-      # Determine which are hidden (no override making them visible)
-      Enum.reduce(relationships, [], fn rel, acc ->
-        other_id = other_user_id(rel, user_id)
-        override = Map.get(overrides_by_rel_id, rel.id)
-
-        # Default is false (hidden) since we pre-filtered to hidden statuses
-        visible = resolve_permission(override, :visible_in_discovery, false)
-
-        if visible, do: acc, else: [other_id | acc]
-      end)
+      relationships
+      |> Enum.reject(&overridden_visible?(&1, overrides_by_rel_id))
+      |> Enum.map(&other_user_id(&1, user_id))
     end
+  end
+
+  defp load_overrides_for_user(user_id, relationships) do
+    relationship_ids = Enum.map(relationships, & &1.id)
+
+    RelationshipOverride
+    |> where([o], o.user_id == ^user_id and o.relationship_id in ^relationship_ids)
+    |> Repo.all()
+    |> Map.new(&{&1.relationship_id, &1})
+  end
+
+  defp overridden_visible?(relationship, overrides_by_rel_id) do
+    override = Map.get(overrides_by_rel_id, relationship.id)
+    # Default is false (hidden) since we pre-filtered to hidden statuses
+    resolve_permission(override, :visible_in_discovery, false)
   end
 
   @doc """
@@ -687,7 +718,9 @@ defmodule Animina.Relationships do
   defp log_activity(old_status, new_status, actor_id, relationship) do
     other_id = other_user_id(relationship, actor_id)
 
-    ActivityLog.log("social", "relationship_changed",
+    ActivityLog.log(
+      "social",
+      "relationship_changed",
       "Relationship changed: #{old_status} -> #{new_status}",
       actor_id: actor_id,
       subject_id: other_id,

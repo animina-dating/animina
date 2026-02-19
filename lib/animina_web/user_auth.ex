@@ -520,9 +520,9 @@ defmodule AniminaWeb.UserAuth do
       socket
       |> Phoenix.Component.assign(:presence_tracked, true)
       |> Phoenix.LiveView.attach_hook(:presence_diff, :handle_info, fn
-        %Phoenix.Socket.Broadcast{event: "presence_diff"}, sock ->
+        %Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, sock ->
           maybe_refresh_online_count(sock)
-          {:halt, sock}
+          {:halt, maybe_refresh_profile_online_status(sock, diff)}
 
         _other, sock ->
           {:cont, sock}
@@ -535,6 +535,39 @@ defmodule AniminaWeb.UserAuth do
   defp maybe_refresh_online_count(sock) do
     if sock.assigns[:current_scope] && Scope.admin?(sock.assigns[:current_scope]) do
       Phoenix.LiveView.send_update(AniminaWeb.LiveOnlineCountComponent, id: "online-count")
+    end
+  end
+
+  # Update real-time online status on profile pages when the viewed user joins/leaves
+  defp maybe_refresh_profile_online_status(sock, diff) do
+    with %{id: profile_user_id} <- sock.assigns[:profile_user],
+         false <- !!sock.assigns[:hide_online_status],
+         false <- !!sock.assigns[:owner?] do
+      apply_presence_diff(sock, diff, profile_user_id)
+    else
+      _ -> sock
+    end
+  end
+
+  defp apply_presence_diff(sock, diff, profile_user_id) do
+    cond do
+      Map.has_key?(diff.joins, profile_user_id) ->
+        Phoenix.Component.assign(sock, :is_online, true)
+
+      Map.has_key?(diff.leaves, profile_user_id) ->
+        apply_user_left(sock, profile_user_id)
+
+      true ->
+        sock
+    end
+  end
+
+  defp apply_user_left(sock, profile_user_id) do
+    if AniminaWeb.Presence.user_online?(profile_user_id) do
+      sock
+    else
+      last_seen = Animina.Accounts.last_seen(profile_user_id)
+      Phoenix.Component.assign(sock, is_online: false, last_seen_at: last_seen)
     end
   end
 

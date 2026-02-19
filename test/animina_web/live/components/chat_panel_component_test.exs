@@ -172,6 +172,56 @@ defmodule AniminaWeb.ChatPanelComponentTest do
       assert html =~ "data-draft-key=\"draft:#{visitor.id}:#{owner.id}\""
     end
 
+    test "sent message appears immediately in sender's chat panel", %{conn: conn} do
+      owner = user_fixture(language: "en")
+      visitor = user_fixture(language: "en")
+      spotlight_entry_fixture(visitor, owner)
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(visitor)
+        |> live(~p"/users/#{owner.id}")
+
+      # Open panel
+      lv |> element("button", "Message") |> render_click()
+
+      # Send a message (this creates a new conversation)
+      html =
+        lv
+        |> form("#chat-panel-form", message: %{content: "Hello from the chat panel!"})
+        |> render_submit()
+
+      # The sent message should appear immediately in the sender's view
+      assert html =~ "Hello from the chat panel!"
+    end
+
+    test "sent message in existing conversation appears in sender's panel", %{conn: conn} do
+      owner = user_fixture(language: "en")
+      visitor = user_fixture(language: "en")
+
+      # Create existing conversation (conversation grants access)
+      conversation = conversation_fixture(visitor, owner)
+      _msg = message_fixture(conversation, owner, %{content: "Hi there"})
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(visitor)
+        |> live(~p"/users/#{owner.id}")
+
+      # Open panel and verify existing message
+      lv |> element("button", "Message") |> render_click()
+
+      # Send a new message
+      html =
+        lv
+        |> form("#chat-panel-form", message: %{content: "Reply from visitor!"})
+        |> render_submit()
+
+      # Both messages should be visible
+      assert html =~ "Hi there"
+      assert html =~ "Reply from visitor!"
+    end
+
     test "panel shows link to full messages page", %{conn: conn} do
       owner = user_fixture(language: "en")
       visitor = user_fixture(language: "en")

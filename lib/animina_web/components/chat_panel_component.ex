@@ -36,18 +36,23 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   @impl true
   def update(%{chat_event: {:new_message, message}}, socket) do
-    messages = socket.assigns.messages ++ [message]
+    # Deduplicate: sender already added the message locally in deliver_message
+    if Enum.any?(socket.assigns.messages, &(&1.id == message.id)) do
+      {:ok, socket}
+    else
+      messages = socket.assigns.messages ++ [message]
 
-    # Mark as read since panel is open
-    if socket.assigns.conversation_id do
-      Messaging.mark_as_read(socket.assigns.conversation_id, socket.assigns.current_user_id)
+      # Mark as read since panel is open
+      if socket.assigns.conversation_id do
+        Messaging.mark_as_read(socket.assigns.conversation_id, socket.assigns.current_user_id)
+      end
+
+      {:ok,
+       socket
+       |> assign(:messages, messages)
+       |> assign(:grouped_messages, group_messages(messages))
+       |> update_last_read_message_id()}
     end
-
-    {:ok,
-     socket
-     |> assign(:messages, messages)
-     |> assign(:grouped_messages, group_messages(messages))
-     |> update_last_read_message_id()}
   end
 
   def update(%{chat_event: {:message_edited, message}}, socket) do
@@ -237,7 +242,7 @@ defmodule AniminaWeb.ChatPanelComponent do
     ~H"""
     <div class="flex items-center gap-3 my-3">
       <div class="flex-1 border-t border-base-300" />
-      <span class="text-xs text-base-content/40 font-medium">{@group.date_label}</span>
+      <span class="text-xs text-base-content/60 font-medium">{@group.date_label}</span>
       <div class="flex-1 border-t border-base-300" />
     </div>
 
@@ -285,7 +290,7 @@ defmodule AniminaWeb.ChatPanelComponent do
             :if={@show_time}
             class={[
               "text-xs mt-1 flex items-center gap-1",
-              if(@is_sender, do: "text-primary-content/60 justify-end", else: "text-base-content/40")
+              if(@is_sender, do: "text-primary-content/80 justify-end", else: "text-base-content/60")
             ]}
           >
             {format_message_time(@message.inserted_at)}
@@ -467,8 +472,17 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   defp deliver_message(conversation_id, current_user_id, content, socket) do
     case Messaging.send_message(conversation_id, current_user_id, content) do
-      {:ok, _message} ->
-        {:noreply, assign(socket, :form, to_form(%{"content" => ""}, as: :message))}
+      {:ok, message} ->
+        # Add message to local state immediately — don't rely solely on PubSub
+        # which may not be subscribed yet (race condition on new conversations)
+        messages = socket.assigns.messages ++ [message]
+
+        {:noreply,
+         socket
+         |> assign(:messages, messages)
+         |> assign(:grouped_messages, group_messages(messages))
+         |> assign(:form, to_form(%{"content" => ""}, as: :message))
+         |> update_last_read_message_id()}
 
       {:error, :blocked} ->
         {:noreply, assign(socket, :blocked, true)}
