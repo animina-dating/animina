@@ -181,6 +181,25 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
+  Deliver an Ollama health alert email to the admin.
+  Sent when all Ollama instances have been unreachable for 10+ minutes.
+  """
+  def deliver_ollama_health_alert(diagnostics) do
+    email = "sw@wintermeyer-consulting.de"
+
+    {subject, body} =
+      EmailTemplates.render("de", :ollama_health_alert,
+        down_minutes: diagnostics.down_minutes,
+        instance_stats: diagnostics.instance_stats,
+        queue_stats: diagnostics.queue_stats,
+        failed_last_hour: diagnostics.failed_last_hour,
+        semaphore: diagnostics.semaphore
+      )
+
+    deliver(email, subject, body, email_type: :ollama_health_alert)
+  end
+
+  @doc """
   Deliver an Ollama queue alert email to the admin.
   Sent when the queue exceeds the threshold (default: 20 photos).
   """

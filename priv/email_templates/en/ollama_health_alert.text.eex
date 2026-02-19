@@ -1,0 +1,24 @@
+[ANIMINA] Ollama unreachable for <%= @down_minutes %> minutes
+---
+
+Hello,
+
+All Ollama instances have been unreachable for <%= @down_minutes %> minutes. AI jobs are failing and being retried.
+
+Instances:
+<%= for inst <- @instance_stats do %>- <%= inst.url %> | Status: <%= inst.state %> | Failures: <%= inst.failure_count %> | Tags: <%= Enum.join(inst.tags, ", ") %>
+<% end %>
+Queue:
+- Pending: <%= @queue_stats.pending %>
+- Running: <%= @queue_stats.running %>
+- Failed: <%= @queue_stats.failed %>
+
+Failed jobs in the last hour: <%= @failed_last_hour %>
+
+Semaphore:
+- Active: <%= @semaphore.active %> / <%= @semaphore.max %>
+- Waiting: <%= @semaphore.waiting %>
+
+Admin page: https://animina.de/admin/ai-jobs
+
+This alert is sent at most once per 24 hours.

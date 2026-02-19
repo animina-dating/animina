@@ -1,0 +1,24 @@
+[ANIMINA] Ollama seit <%= @down_minutes %> Minuten nicht erreichbar
+---
+
+Hallo,
+
+Alle Ollama-Instanzen sind seit <%= @down_minutes %> Minuten nicht erreichbar. KI-Jobs schlagen fehl und werden wiederholt.
+
+Instanzen:
+<%= for inst <- @instance_stats do %>- <%= inst.url %> | Status: <%= inst.state %> | Fehler: <%= inst.failure_count %> | Tags: <%= Enum.join(inst.tags, ", ") %>
+<% end %>
+Warteschlange:
+- Wartend: <%= @queue_stats.pending %>
+- Laufend: <%= @queue_stats.running %>
+- Fehlgeschlagen: <%= @queue_stats.failed %>
+
+Fehlgeschlagene Jobs in der letzten Stunde: <%= @failed_last_hour %>
+
+Semaphore:
+- Aktiv: <%= @semaphore.active %> / <%= @semaphore.max %>
+- Wartend: <%= @semaphore.waiting %>
+
+Admin-Seite: https://animina.de/admin/ai-jobs
+
+Diese Warnung wird maximal einmal pro 24 Stunden gesendet.

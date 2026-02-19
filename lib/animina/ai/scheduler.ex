@@ -16,6 +16,7 @@ defmodule Animina.AI.Scheduler do
 
   alias Animina.AI
   alias Animina.AI.Executor
+  alias Animina.AI.HealthAlert
   alias Animina.AI.Semaphore
   alias Animina.FeatureFlags
   alias Animina.Photos
@@ -64,7 +65,9 @@ defmodule Animina.AI.Scheduler do
       poll_interval: poll_interval,
       batch_size: batch_size,
       total_dispatched: 0,
-      last_description_seed_at: 0
+      last_description_seed_at: 0,
+      all_down_since: nil,
+      last_health_alert_at: nil
     }
 
     # Crash recovery: reset any running jobs
@@ -85,19 +88,19 @@ defmodule Animina.AI.Scheduler do
 
   @impl true
   def handle_info(:poll, state) do
-    state = do_poll(state)
+    state = do_poll(state, maintenance: true)
     Process.send_after(self(), :poll, state.poll_interval)
     {:noreply, state}
   end
 
   @impl true
   def handle_info(:slot_available, state) do
-    {:noreply, do_poll(state)}
+    {:noreply, do_poll(state, maintenance: false)}
   end
 
   @impl true
   def handle_cast(:poll, state) do
-    state = do_poll(state)
+    state = do_poll(state, maintenance: true)
     {:noreply, state}
   end
 
@@ -114,8 +117,14 @@ defmodule Animina.AI.Scheduler do
 
   # --- Private ---
 
-  defp do_poll(state) do
-    AI.reset_stuck_jobs(@stuck_job_timeout_seconds)
+  defp do_poll(state, opts) do
+    state =
+      if Keyword.get(opts, :maintenance, true) do
+        AI.reset_stuck_jobs(@stuck_job_timeout_seconds)
+        HealthAlert.check(state)
+      else
+        state
+      end
 
     if AI.queue_paused?() do
       state

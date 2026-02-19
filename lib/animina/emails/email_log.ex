@@ -20,6 +20,7 @@ defmodule Animina.Emails.EmailLog do
     account_deletion_goodbye
     daily_report
     registration_spike_alert
+    ollama_health_alert
     ollama_queue_alert
     unread_messages
     email_changed_notification
