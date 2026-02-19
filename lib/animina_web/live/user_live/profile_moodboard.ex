@@ -699,8 +699,8 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   end
 
   @impl true
-  def handle_event("rate_item", %{"item-id" => item_id, "value" => value_str}, socket) do
-    value = String.to_integer(value_str)
+  def handle_event("rate_item", %{"item-id" => item_id, "rating" => rating_str}, socket) do
+    value = String.to_integer(rating_str)
     current_user_id = socket.assigns.current_user_id
 
     case Moodboard.toggle_rating(current_user_id, item_id, value) do

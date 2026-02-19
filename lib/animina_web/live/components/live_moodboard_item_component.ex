@@ -300,7 +300,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       <button
         phx-click="rate_item"
         phx-value-item-id={@item.id}
-        phx-value-value="-1"
+        phx-value-rating="-1"
         class={[
           "btn btn-circle btn-xs btn-ghost",
           if(@my_rating == -1, do: "text-error bg-error/15", else: "text-base-content/40 hover:text-error hover:bg-error/10")
@@ -313,7 +313,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       <button
         phx-click="rate_item"
         phx-value-item-id={@item.id}
-        phx-value-value="1"
+        phx-value-rating="1"
         class={[
           "btn btn-circle btn-xs btn-ghost",
           if(@my_rating == 1, do: "text-success bg-success/15", else: "text-base-content/40 hover:text-success hover:bg-success/10")
@@ -326,7 +326,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       <button
         phx-click="rate_item"
         phx-value-item-id={@item.id}
-        phx-value-value="2"
+        phx-value-rating="2"
         class={[
           "btn btn-xs btn-ghost px-1",
           if(@my_rating == 2, do: "text-warning bg-warning/15", else: "text-base-content/40 hover:text-warning hover:bg-warning/10")
