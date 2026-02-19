@@ -51,4 +51,11 @@ defmodule Animina.Moodboard do
   defdelegate link_avatar_to_pinned_item(user_id, avatar_photo_id), to: Animina.Moodboard.Items
   defdelegate unlink_avatar_from_pinned_item(user_id), to: Animina.Moodboard.Items
   defdelegate get_pinned_item(user_id), to: Animina.Moodboard.Items
+
+  # --- Delegations to Ratings ---
+
+  defdelegate toggle_rating(user_id, item_id, value), to: Animina.Moodboard.Ratings
+  defdelegate get_rating(user_id, item_id), to: Animina.Moodboard.Ratings
+  defdelegate user_ratings_for_items(user_id, item_ids), to: Animina.Moodboard.Ratings
+  defdelegate aggregate_ratings_for_items(item_ids), to: Animina.Moodboard.Ratings
 end

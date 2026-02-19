@@ -289,6 +289,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
                     id={"moodboard-item-#{item.id}"}
                     item={item}
                     owner?={@owner?}
+                    can_rate?={!@owner? && @current_scope.user != nil}
+                    my_rating={Map.get(@my_ratings, item.id)}
+                    rating_aggregates={Map.get(@rating_aggregates, item.id, %{})}
                   />
                 <% end %>
               </div>
@@ -490,6 +493,10 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
   defp mount_moodboard(socket, profile_user, current_user, owner?) do
     items = Moodboard.list_moodboard_with_hidden(profile_user.id)
+    item_ids = Enum.map(items, & &1.id)
+
+    # Load rating data
+    {my_ratings, rating_aggregates} = load_ratings(current_user.id, item_ids, owner?)
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Animina.PubSub, "moodboard:#{profile_user.id}")
@@ -567,7 +574,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       activity_level_text: activity_level_text,
       typical_times_text: typical_times_text,
       heatmap_data: heatmap_data,
-      show_report_modal: false
+      show_report_modal: false,
+      my_ratings: my_ratings,
+      rating_aggregates: rating_aggregates
     )
   end
 
@@ -607,7 +616,9 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
       hide_online_status: true,
       activity_level_text: nil,
       typical_times_text: nil,
-      heatmap_data: %{}
+      heatmap_data: %{},
+      my_ratings: %{},
+      rating_aggregates: %{}
     )
   end
 
@@ -687,6 +698,24 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
     {:noreply, push_navigate(socket, to: ~p"/my/messages?love_emergency_for=#{profile_user.id}")}
   end
 
+  @impl true
+  def handle_event("rate_item", %{"item-id" => item_id, "value" => value_str}, socket) do
+    value = String.to_integer(value_str)
+    current_user_id = socket.assigns.current_user_id
+
+    case Moodboard.toggle_rating(current_user_id, item_id, value) do
+      {:ok, action, _rating} when action in [:created, :switched] ->
+        log_rating(socket, item_id, value)
+        {:noreply, reload_ratings(socket)}
+
+      {:ok, :removed} ->
+        {:noreply, reload_ratings(socket)}
+
+      {:error, _reason} ->
+        {:noreply, socket}
+    end
+  end
+
   # Handle moodboard PubSub messages - all trigger a reload
   @impl true
   def handle_info({event, _payload}, socket)
@@ -698,6 +727,12 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
              :story_updated
            ] do
     {:noreply, reload_items(socket)}
+  end
+
+  # Handle rating PubSub — reload rating data
+  @impl true
+  def handle_info({:moodboard_rating_changed, _item_id}, socket) do
+    {:noreply, reload_ratings(socket)}
   end
 
   # Handle white flag updates
@@ -846,8 +881,47 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
 
   defp reload_items(socket) do
     items = Moodboard.list_moodboard_with_hidden(socket.assigns.profile_user.id)
-    assign(socket, :items, items)
+
+    socket
+    |> assign(:items, items)
+    |> reload_ratings()
   end
+
+  defp reload_ratings(socket) do
+    item_ids = Enum.map(socket.assigns.items, & &1.id)
+
+    {my_ratings, rating_aggregates} =
+      load_ratings(socket.assigns.current_user_id, item_ids, socket.assigns.owner?)
+
+    assign(socket, my_ratings: my_ratings, rating_aggregates: rating_aggregates)
+  end
+
+  defp load_ratings(current_user_id, item_ids, owner?) do
+    my_ratings =
+      if owner?, do: %{}, else: Moodboard.user_ratings_for_items(current_user_id, item_ids)
+
+    rating_aggregates = Moodboard.aggregate_ratings_for_items(item_ids)
+
+    {my_ratings, rating_aggregates}
+  end
+
+  defp log_rating(socket, item_id, value) do
+    label = rating_label(value)
+    profile_user = socket.assigns.profile_user
+
+    ActivityLog.log(
+      "social",
+      "reaction_added",
+      "User rated a moodboard item with #{label} on #{profile_user.display_name}'s profile",
+      actor_id: socket.assigns.current_user_id,
+      subject_id: profile_user.id,
+      metadata: %{"item_id" => item_id, "value" => value, "label" => label}
+    )
+  end
+
+  defp rating_label(-1), do: "dislike"
+  defp rating_label(1), do: "like"
+  defp rating_label(2), do: "love"
 
   defp reload_white_flags(socket) do
     profile_user = socket.assigns.profile_user

@@ -38,6 +38,9 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
   def update(assigns, socket) do
     item = assigns.item
     owner? = Map.get(assigns, :owner?, false)
+    my_rating = Map.get(assigns, :my_rating, nil)
+    rating_aggregates = Map.get(assigns, :rating_aggregates, %{})
+    can_rate? = Map.get(assigns, :can_rate?, false)
 
     has_photo = item.item_type in ["photo", "combined"] && item.moodboard_photo != nil
     has_story = item.item_type in ["story", "combined"] && item.moodboard_story != nil
@@ -48,6 +51,9 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       |> assign(:owner?, owner?)
       |> assign(:has_photo, has_photo)
       |> assign(:has_story, has_story)
+      |> assign(:my_rating, my_rating)
+      |> assign(:rating_aggregates, rating_aggregates)
+      |> assign(:can_rate?, can_rate?)
 
     {:ok, socket}
   end
@@ -63,26 +69,39 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       >
         {gettext("Hidden")}
       </div>
-      
-    <!-- Photo-only card -->
+
+      <!-- Photo-only card -->
       <.photo_card
         :if={@has_photo && !@has_story}
         item={@item}
         owner?={@owner?}
       />
-      
-    <!-- Story-only card -->
+
+      <!-- Story-only card -->
       <.story_card
         :if={!@has_photo && @has_story}
         item={@item}
         owner?={@owner?}
       />
-      
-    <!-- Combined card (photo + caption) -->
+
+      <!-- Combined card (photo + caption) -->
       <.combined_card
         :if={@has_photo && @has_story}
         item={@item}
         owner?={@owner?}
+      />
+
+      <!-- Rating bar for visitors — attached to bottom of card -->
+      <.rating_bar
+        :if={@can_rate? && !@owner?}
+        item={@item}
+        my_rating={@my_rating}
+      />
+
+      <!-- Aggregate counts for owners — attached to bottom of card -->
+      <.rating_aggregates
+        :if={@owner?}
+        rating_aggregates={@rating_aggregates}
       />
     </div>
     """
@@ -271,6 +290,86 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
         <.icon name="hero-clock" class="h-8 w-8" />
         <span class="text-sm font-medium">{gettext("In review")}</span>
       </div>
+    </div>
+    """
+  end
+
+  defp rating_bar(assigns) do
+    ~H"""
+    <div class="-mt-4 relative z-10 mx-2 flex items-center justify-center gap-2 rounded-b-xl bg-base-200/80 backdrop-blur-sm border border-t-0 border-base-300/50 px-3 py-1.5 shadow-sm">
+      <button
+        phx-click="rate_item"
+        phx-value-item-id={@item.id}
+        phx-value-value="-1"
+        class={[
+          "btn btn-circle btn-xs btn-ghost",
+          if(@my_rating == -1, do: "text-error bg-error/15", else: "text-base-content/40 hover:text-error hover:bg-error/10")
+        ]}
+        title={gettext("Dislike")}
+      >
+        <.icon name="hero-hand-thumb-down-mini" class="h-4 w-4" />
+      </button>
+
+      <button
+        phx-click="rate_item"
+        phx-value-item-id={@item.id}
+        phx-value-value="1"
+        class={[
+          "btn btn-circle btn-xs btn-ghost",
+          if(@my_rating == 1, do: "text-success bg-success/15", else: "text-base-content/40 hover:text-success hover:bg-success/10")
+        ]}
+        title={gettext("Like")}
+      >
+        <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
+      </button>
+
+      <button
+        phx-click="rate_item"
+        phx-value-item-id={@item.id}
+        phx-value-value="2"
+        class={[
+          "btn btn-xs btn-ghost px-1",
+          if(@my_rating == 2, do: "text-warning bg-warning/15", else: "text-base-content/40 hover:text-warning hover:bg-warning/10")
+        ]}
+        title={gettext("Love")}
+      >
+        <span class="inline-flex items-center">
+          <span class="overflow-hidden" style="width:10px"><.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" /></span>
+          <.icon name="hero-hand-thumb-up-mini" class="h-4 w-4" />
+        </span>
+      </button>
+    </div>
+    """
+  end
+
+  defp rating_aggregates(assigns) do
+    agg = assigns.rating_aggregates
+    has_any = map_size(agg) > 0
+
+    assigns =
+      assigns
+      |> assign(:has_any, has_any)
+      |> assign(:dislike_count, Map.get(agg, -1, 0))
+      |> assign(:like_count, Map.get(agg, 1, 0))
+      |> assign(:love_count, Map.get(agg, 2, 0))
+
+    ~H"""
+    <div :if={@has_any} class="-mt-4 relative z-10 mx-2 flex items-center justify-center gap-3 rounded-b-xl bg-base-200/60 border border-t-0 border-base-300/30 px-3 py-1.5 text-xs text-base-content/40">
+      <span :if={@dislike_count > 0} class="flex items-center gap-1" title={gettext("Dislike")}>
+        <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
+        {@dislike_count}
+      </span>
+      <span :if={@like_count > 0} class="flex items-center gap-1" title={gettext("Like")}>
+        <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+        {@like_count}
+      </span>
+      <span :if={@love_count > 0} class="flex items-center gap-1" title={gettext("Love")}>
+        <span class="inline-flex items-center">
+          <span class="overflow-hidden" style="width:8px"><.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" /></span>
+          <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+        </span>
+        {@love_count}
+      </span>
     </div>
     """
   end
