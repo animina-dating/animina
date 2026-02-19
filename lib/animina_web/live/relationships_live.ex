@@ -157,7 +157,6 @@ defmodule AniminaWeb.RelationshipsLive do
     """
   end
 
-
   defp format_relative(nil), do: ""
 
   defp format_relative(datetime) do

@@ -1,6 +1,8 @@
 defmodule Animina.MessagingTest do
   use Animina.DataCase, async: true
 
+  import Ecto.Query
+
   alias Animina.AccountsFixtures
   alias Animina.Messaging
   alias Animina.Messaging.Schemas.{Conversation, Message}
@@ -118,7 +120,7 @@ defmodule Animina.MessagingTest do
   end
 
   describe "delete_message/2" do
-    test "soft deletes a message before it's read" do
+    test "soft deletes a message before it's read and within 15 minutes" do
       user1 = AccountsFixtures.user_fixture()
       user2 = AccountsFixtures.user_fixture()
       {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
@@ -145,6 +147,33 @@ defmodule Animina.MessagingTest do
       {:ok, _} = Messaging.mark_as_read(conversation.id, user2.id)
 
       assert {:error, :already_read} = Messaging.delete_message(message.id, user1.id)
+    end
+
+    test "cannot delete message after 15-minute window expires" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, message} = Messaging.send_message(conversation.id, user1.id, "Old message")
+
+      # Backdate message to 16 minutes ago
+      Animina.Repo.update_all(
+        from(m in Messaging.Schemas.Message, where: m.id == ^message.id),
+        set: [inserted_at: DateTime.add(DateTime.utc_now(), -16, :minute)]
+      )
+
+      assert {:error, :delete_window_expired} = Messaging.delete_message(message.id, user1.id)
+    end
+
+    test "cannot delete message when other user is online" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      {:ok, conversation} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, message} = Messaging.send_message(conversation.id, user1.id, "To delete")
+
+      # Track the other user as online
+      AniminaWeb.Presence.track_user(self(), user2.id)
+
+      assert {:error, :other_user_online} = Messaging.delete_message(message.id, user1.id)
     end
   end
 

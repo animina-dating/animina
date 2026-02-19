@@ -40,7 +40,7 @@ msgstr "Акаунт"
 
 #: lib/animina_web/components/core_components.ex:614
 #: lib/animina_web/live/admin/ai_jobs_live.ex:705
-#: lib/animina_web/live/messages_live.ex:80
+#: lib/animina_web/live/messages_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Дії"
@@ -1269,10 +1269,10 @@ msgstr "Додаток"
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:215
 #: lib/animina_web/live/admin/photo_reviews_live.ex:753
 #: lib/animina_web/live/components/report_modal_component.ex:88
-#: lib/animina_web/live/messages_live.ex:199
-#: lib/animina_web/live/messages_live.ex:246
-#: lib/animina_web/live/messages_live.ex:346
-#: lib/animina_web/live/messages_live.ex:620
+#: lib/animina_web/live/messages_live.ex:201
+#: lib/animina_web/live/messages_live.ex:248
+#: lib/animina_web/live/messages_live.ex:348
+#: lib/animina_web/live/messages_live.ex:637
 #: lib/animina_web/live/user_live/avatar_upload.ex:267
 #: lib/animina_web/live/user_live/edit_locations.ex:54
 #: lib/animina_web/live/user_live/moodboard_editor.ex:499
@@ -1301,7 +1301,7 @@ msgstr "Місцезнаходження оновлено."
 #: lib/animina_web/components/moodboard_components.ex:559
 #: lib/animina_web/live/admin/flags_ai_live.ex:402
 #: lib/animina_web/live/admin/flags_system_live.ex:209
-#: lib/animina_web/live/messages_live.ex:249
+#: lib/animina_web/live/messages_live.ex:251
 #: lib/animina_web/live/user_live/edit_locations.ex:47
 #: lib/animina_web/live/user_live/moodboard_editor.ex:506
 #: lib/animina_web/live/user_live/moodboard_editor.ex:618
@@ -1309,7 +1309,7 @@ msgstr "Місцезнаходження оновлено."
 msgid "Save"
 msgstr "Зберегти"
 
-#: lib/animina_web/live/messages_live.ex:460
+#: lib/animina_web/live/messages_live.ex:462
 #: lib/animina_web/live/user_live/profile_moodboard.ex:53
 #: lib/animina_web/live/user_live/profile_moodboard.ex:118
 #: lib/animina_web/live/user_live/profile_moodboard.ex:344
@@ -3491,7 +3491,7 @@ msgstr "Не вдалося видалити запис."
 
 #: lib/animina_web/components/chat_panel_component.ex:317
 #: lib/animina_web/live/admin/photo_blacklist_live.ex:223
-#: lib/animina_web/live/messages_live.ex:579
+#: lib/animina_web/live/messages_live.ex:586
 #: lib/animina_web/live/user_live/moodboard_editor.ex:563
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -4270,51 +4270,52 @@ msgstr "Пошук прапорців та налаштувань..."
 msgid "Blocked"
 msgstr "Заблоковано"
 
-#: lib/animina_web/live/messages_live.ex:1065
+#: lib/animina_web/live/messages_live.ex:1082
 #, elixir-autogen, elixir-format
 msgid "Conversation not found"
 msgstr "Розмову не знайдено"
 
-#: lib/animina_web/live/messages_live.ex:1171
-#: lib/animina_web/live/messages_live.ex:1181
+#: lib/animina_web/live/messages_live.ex:1188
+#: lib/animina_web/live/messages_live.ex:1198
 #, elixir-autogen, elixir-format
 msgid "Could not start conversation"
 msgstr "Не вдалося розпочати розмову"
 
-#: lib/animina_web/live/messages_live.ex:1210
+#: lib/animina_web/live/messages_live.ex:1227
 #, elixir-autogen, elixir-format
 msgid "Failed to send message"
 msgstr "Не вдалося надіслати повідомлення"
 
 #: lib/animina_web/components/layouts.ex:294
-#: lib/animina_web/live/messages_live.ex:37
-#: lib/animina_web/live/messages_live.ex:266
-#: lib/animina_web/live/messages_live.ex:269
-#: lib/animina_web/live/messages_live.ex:980
-#: lib/animina_web/live/messages_live.ex:1044
+#: lib/animina_web/components/live_unread_badge_component.ex:39
+#: lib/animina_web/live/messages_live.ex:38
+#: lib/animina_web/live/messages_live.ex:268
+#: lib/animina_web/live/messages_live.ex:271
+#: lib/animina_web/live/messages_live.ex:997
+#: lib/animina_web/live/messages_live.ex:1061
 #: lib/animina_web/live/user_live/my_hub.ex:192
 #, elixir-autogen, elixir-format
 msgid "Messages"
 msgstr "Повідомлення"
 
 #: lib/animina_web/live/components/conversations_sidebar_component.ex:36
-#: lib/animina_web/live/messages_live.ex:276
+#: lib/animina_web/live/messages_live.ex:278
 #, elixir-autogen, elixir-format
 msgid "No conversations yet"
 msgstr "Розмов ще немає"
 
-#: lib/animina_web/live/messages_live.ex:148
+#: lib/animina_web/live/messages_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "No messages yet"
 msgstr "Повідомлень ще немає"
 
 #: lib/animina_web/components/chat_panel_component.ex:195
-#: lib/animina_web/live/messages_live.ex:149
+#: lib/animina_web/live/messages_live.ex:150
 #, elixir-autogen, elixir-format
 msgid "Send a message to start the conversation"
 msgstr "Надішліть повідомлення, щоб розпочати розмову"
 
-#: lib/animina_web/live/messages_live.ex:278
+#: lib/animina_web/live/messages_live.ex:280
 #: lib/animina_web/live/relationships_live.ex:35
 #, elixir-autogen, elixir-format
 msgid "Start a conversation from a user's profile"
@@ -4328,50 +4329,50 @@ msgstr "Введіть повідомлення..."
 #: lib/animina_web/components/chat_panel_component.ex:646
 #: lib/animina_web/components/chat_panel_component.ex:660
 #: lib/animina_web/components/relationship_components.ex:141
-#: lib/animina_web/live/messages_live.ex:846
-#: lib/animina_web/live/messages_live.ex:864
-#: lib/animina_web/live/messages_live.ex:961
-#: lib/animina_web/live/relationships_live.ex:169
+#: lib/animina_web/live/messages_live.ex:863
+#: lib/animina_web/live/messages_live.ex:881
+#: lib/animina_web/live/messages_live.ex:978
+#: lib/animina_web/live/relationships_live.ex:168
 #: lib/animina_web/live/user_live/my_hub.ex:645
 #, elixir-autogen, elixir-format
 msgid "Yesterday"
 msgstr "Вчора"
 
 #: lib/animina_web/components/message_components.ex:48
-#: lib/animina_web/live/messages_live.ex:1207
+#: lib/animina_web/live/messages_live.ex:1224
 #, elixir-autogen, elixir-format
 msgid "You cannot send messages in this conversation"
 msgstr "Ви не можете надсилати повідомлення в цій розмові"
 
 #: lib/animina_web/components/chat_panel_component.ex:290
-#: lib/animina_web/live/messages_live.ex:549
+#: lib/animina_web/live/messages_live.ex:556
 #, elixir-autogen, elixir-format
 msgid "edited"
 msgstr "відредаговано"
 
 #: lib/animina_web/components/chat_panel_component.ex:169
-#: lib/animina_web/live/messages_live.ex:68
+#: lib/animina_web/live/messages_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "typing..."
 msgstr "друкує..."
 
-#: lib/animina_web/live/messages_live.ex:1250
+#: lib/animina_web/live/messages_live.ex:1267
 #, elixir-autogen, elixir-format
 msgid "Cannot delete a message that has been read"
 msgstr "Не можна видалити прочитане повідомлення"
 
 #: lib/animina_web/components/chat_panel_component.ex:315
-#: lib/animina_web/live/messages_live.ex:577
+#: lib/animina_web/live/messages_live.ex:584
 #, elixir-autogen, elixir-format
 msgid "Delete this message?"
 msgstr "Видалити це повідомлення?"
 
-#: lib/animina_web/live/messages_live.ex:1253
+#: lib/animina_web/live/messages_live.ex:1286
 #, elixir-autogen, elixir-format
 msgid "Failed to delete message"
 msgstr "Не вдалося видалити повідомлення"
 
-#: lib/animina_web/live/messages_live.ex:948
+#: lib/animina_web/live/messages_live.ex:965
 #, elixir-autogen, elixir-format
 msgid "Read"
 msgstr "Прочитано"
@@ -4379,26 +4380,26 @@ msgstr "Прочитано"
 #: lib/animina_web/components/chat_panel_component.ex:645
 #: lib/animina_web/components/relationship_components.ex:140
 #: lib/animina_web/live/admin/ai_jobs_live.ex:494
-#: lib/animina_web/live/messages_live.ex:863
-#: lib/animina_web/live/relationships_live.ex:168
+#: lib/animina_web/live/messages_live.ex:880
+#: lib/animina_web/live/relationships_live.ex:167
 #, elixir-autogen, elixir-format
 msgid "Today"
 msgstr "Сьогодні"
 
 #: lib/animina_web/components/chat_panel_component.ex:658
-#: lib/animina_web/live/messages_live.ex:959
+#: lib/animina_web/live/messages_live.ex:976
 #, elixir-autogen, elixir-format
 msgid "just now"
 msgstr "щойно"
 
-#: lib/animina_web/live/messages_live.ex:951
+#: lib/animina_web/live/messages_live.ex:968
 #, elixir-autogen, elixir-format
 msgid "Read %{time}"
 msgstr "Прочитано %{time}"
 
 #: lib/animina_web/components/chat_panel_component.ex:301
 #: lib/animina_web/live/admin/email_logs_live.ex:185
-#: lib/animina_web/live/messages_live.ex:563
+#: lib/animina_web/live/messages_live.ex:570
 #: lib/animina_web/live/user_live/email_logs.ex:138
 #, elixir-autogen, elixir-format
 msgid "Sent"
@@ -4425,7 +4426,7 @@ msgstr "Цей профіль запропоновано випадково і �
 msgid "Wildcard pick"
 msgstr "Випадковий підбір"
 
-#: lib/animina_web/live/messages_live.ex:403
+#: lib/animina_web/live/messages_live.ex:405
 #, elixir-autogen, elixir-format
 msgid "Draft:"
 msgstr "Чернетка:"
@@ -4577,47 +4578,47 @@ msgstr "та"
 msgid "%{selected}/%{cost} selected"
 msgstr "%{selected}/%{cost} вибрано"
 
-#: lib/animina_web/live/messages_live.ex:1287
+#: lib/animina_web/live/messages_live.ex:1320
 #, elixir-autogen, elixir-format
 msgid "Conversation closed"
 msgstr "Розмову закрито"
 
-#: lib/animina_web/live/messages_live.ex:1617
+#: lib/animina_web/live/messages_live.ex:1650
 #, elixir-autogen, elixir-format
 msgid "Conversation reopened!"
 msgstr "Розмову відновлено!"
 
-#: lib/animina_web/live/messages_live.ex:305
+#: lib/animina_web/live/messages_live.ex:307
 #, elixir-autogen, elixir-format
 msgid "Conversations you've let go of. You can reopen one via Love Emergency."
 msgstr "Розмови, які ви відпустили. Ви можете відновити одну через Екстрену любов."
 
-#: lib/animina_web/live/messages_live.ex:1301
+#: lib/animina_web/live/messages_live.ex:1334
 #, elixir-autogen, elixir-format
 msgid "Failed to close conversation"
 msgstr "Не вдалося закрити розмову"
 
-#: lib/animina_web/live/messages_live.ex:1627
+#: lib/animina_web/live/messages_live.ex:1660
 #, elixir-autogen, elixir-format
 msgid "Failed to reopen conversation"
 msgstr "Не вдалося відновити розмову"
 
-#: lib/animina_web/live/messages_live.ex:350
+#: lib/animina_web/live/messages_live.ex:352
 #, elixir-autogen, elixir-format
 msgid "Let Go"
 msgstr "Відпустити"
 
-#: lib/animina_web/live/messages_live.ex:301
+#: lib/animina_web/live/messages_live.ex:303
 #, elixir-autogen, elixir-format
 msgid "Let Go Archive"
 msgstr "Архів відпущених"
 
-#: lib/animina_web/live/messages_live.ex:429
+#: lib/animina_web/live/messages_live.ex:431
 #, elixir-autogen, elixir-format
 msgid "Let go"
 msgstr "Відпустити"
 
-#: lib/animina_web/live/messages_live.ex:339
+#: lib/animina_web/live/messages_live.ex:341
 #, elixir-autogen, elixir-format
 msgid "Let go of this conversation?"
 msgstr "Відпустити цю розмову?"
@@ -4637,7 +4638,7 @@ msgstr "Немає вільних слотів чату"
 msgid "No free slots"
 msgstr "Немає вільних слотів"
 
-#: lib/animina_web/live/messages_live.ex:472
+#: lib/animina_web/live/messages_live.ex:474
 #: lib/animina_web/live/user_live/profile_moodboard.ex:176
 #, elixir-autogen, elixir-format
 msgid "Reopen"
@@ -4648,18 +4649,18 @@ msgstr "Відновити"
 msgid "Reopen Conversation"
 msgstr "Відновити розмову"
 
-#: lib/animina_web/live/messages_live.ex:469
+#: lib/animina_web/live/messages_live.ex:471
 #, elixir-autogen, elixir-format
 msgid "Reopen by closing %{cost} other conversations"
 msgstr "Відновити, закривши %{cost} інших розмов"
 
 #: lib/animina_web/components/chat_panel_component.ex:446
-#: lib/animina_web/live/messages_live.ex:1168
+#: lib/animina_web/live/messages_live.ex:1185
 #, elixir-autogen, elixir-format
 msgid "This conversation was previously closed."
 msgstr "Ця розмова була раніше закрита."
 
-#: lib/animina_web/live/messages_live.ex:342
+#: lib/animina_web/live/messages_live.ex:344
 #, elixir-autogen, elixir-format
 msgid "This is permanent. Both of you will no longer see each other in discovery."
 msgstr "Це назавжди. Ви більше не побачите одне одного у пошуку."
@@ -4670,12 +4671,12 @@ msgid "To reopen this conversation, you must let go of %{cost} active conversati
 msgstr "Щоб відновити цю розмову, ви повинні відпустити %{cost} активних розмов. Оберіть рівно %{cost} нижче."
 
 #: lib/animina_web/components/chat_panel_component.ex:440
-#: lib/animina_web/live/messages_live.ex:1164
+#: lib/animina_web/live/messages_live.ex:1181
 #, elixir-autogen, elixir-format
 msgid "You have no free chat slots. Let go of a conversation first."
 msgstr "У вас немає вільних слотів чату. Спочатку відпустіть розмову."
 
-#: lib/animina_web/components/live_unread_badge_component.ex:53
+#: lib/animina_web/components/live_unread_badge_component.ex:54
 #, elixir-autogen, elixir-format
 msgid "New chats available today"
 msgstr "Нові чати доступні сьогодні"
@@ -5956,8 +5957,8 @@ msgstr "Увійти"
 #: lib/animina_web/components/core_components.ex:490
 #: lib/animina_web/components/core_components.ex:503
 #: lib/animina_web/components/layouts.ex:265
-#: lib/animina_web/live/messages_live.ex:36
-#: lib/animina_web/live/messages_live.ex:265
+#: lib/animina_web/live/messages_live.ex:37
+#: lib/animina_web/live/messages_live.ex:267
 #: lib/animina_web/live/relationships_live.ex:23
 #: lib/animina_web/live/user_live/account_delete.ex:17
 #: lib/animina_web/live/user_live/account_email_password.ex:20
@@ -6183,6 +6184,7 @@ msgid "Context"
 msgstr ""
 
 #: lib/animina_web/live/admin/reports_live.ex:191
+#: lib/animina_web/live/messages_live.ex:35
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Conversation"
 msgstr "Розмову закрито"
@@ -6192,7 +6194,7 @@ msgstr "Розмову закрито"
 msgid "Could not submit appeal."
 msgstr "Не вдалося подати оскарження. Будь ласка, спробуйте ще раз."
 
-#: lib/animina_web/live/messages_live.ex:1676
+#: lib/animina_web/live/messages_live.ex:1709
 #: lib/animina_web/live/user_live/profile_moodboard.ex:806
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not submit report. Please try again."
@@ -6331,7 +6333,7 @@ msgstr ""
 msgid "Report resolved."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1667
+#: lib/animina_web/live/messages_live.ex:1700
 #: lib/animina_web/live/user_live/profile_moodboard.ex:797
 #, elixir-autogen, elixir-format
 msgid "Report submitted. Our team will review it."
@@ -7197,55 +7199,55 @@ msgid "Online-Dating? Online-Dating!"
 msgstr "Online-Dating? Online-Dating!"
 
 #: lib/animina_web/components/relationship_components.ex:143
-#: lib/animina_web/live/relationships_live.ex:171
+#: lib/animina_web/live/relationships_live.ex:170
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} days ago"
 msgstr "%{count} д. тому"
 
-#: lib/animina_web/live/messages_live.ex:626
+#: lib/animina_web/live/messages_live.ex:643
 #, elixir-autogen, elixir-format
 msgid "%{name} proposed %{status}!"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1766
+#: lib/animina_web/live/messages_live.ex:1799
 #, elixir-autogen, elixir-format
 msgid "A proposal is already pending"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:633
+#: lib/animina_web/live/messages_live.ex:650
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Accept"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:760
-#: lib/animina_web/live/messages_live.ex:767
-#: lib/animina_web/live/messages_live.ex:774
-#: lib/animina_web/live/messages_live.ex:781
-#: lib/animina_web/live/messages_live.ex:788
-#: lib/animina_web/live/messages_live.ex:793
-#: lib/animina_web/live/messages_live.ex:797
-#: lib/animina_web/live/messages_live.ex:803
-#: lib/animina_web/live/messages_live.ex:1720
+#: lib/animina_web/live/messages_live.ex:777
+#: lib/animina_web/live/messages_live.ex:784
+#: lib/animina_web/live/messages_live.ex:791
+#: lib/animina_web/live/messages_live.ex:798
+#: lib/animina_web/live/messages_live.ex:805
+#: lib/animina_web/live/messages_live.ex:810
+#: lib/animina_web/live/messages_live.ex:814
+#: lib/animina_web/live/messages_live.ex:820
+#: lib/animina_web/live/messages_live.ex:1753
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Block"
 msgstr "Заблоковано"
 
-#: lib/animina_web/live/messages_live.ex:1719
+#: lib/animina_web/live/messages_live.ex:1752
 #, elixir-autogen, elixir-format
 msgid "Block this user?"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:233
+#: lib/animina_web/live/messages_live.ex:235
 #, elixir-autogen, elixir-format
 msgid "Can message me"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:227
+#: lib/animina_web/live/messages_live.ex:229
 #, elixir-autogen, elixir-format
 msgid "Can see my profile"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:686
+#: lib/animina_web/live/messages_live.ex:703
 #, elixir-autogen, elixir-format
 msgid "Cancel Proposal"
 msgstr ""
@@ -7255,32 +7257,32 @@ msgstr ""
 msgid "Chatting"
 msgstr "Рукоділля"
 
-#: lib/animina_web/live/messages_live.ex:1388
+#: lib/animina_web/live/messages_live.ex:1421
 #, elixir-autogen, elixir-format
 msgid "Could not accept proposal"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1371
+#: lib/animina_web/live/messages_live.ex:1404
 #, elixir-autogen, elixir-format
 msgid "Could not cancel proposal"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1402
+#: lib/animina_web/live/messages_live.ex:1435
 #, elixir-autogen, elixir-format
 msgid "Could not decline proposal"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1430
+#: lib/animina_web/live/messages_live.ex:1463
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not save permissions"
 msgstr "Не вдалося зберегти налаштування."
 
-#: lib/animina_web/live/messages_live.ex:1769
+#: lib/animina_web/live/messages_live.ex:1802
 #, elixir-autogen, elixir-format
 msgid "Could not send proposal"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1357
+#: lib/animina_web/live/messages_live.ex:1390
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not update relationship"
 msgstr "Не вдалося оновити прапорець."
@@ -7290,7 +7292,7 @@ msgstr "Не вдалося оновити прапорець."
 msgid "Couple"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:219
+#: lib/animina_web/live/messages_live.ex:221
 #, elixir-autogen, elixir-format
 msgid "Custom Permissions for %{name}"
 msgstr ""
@@ -7300,61 +7302,61 @@ msgstr ""
 msgid "Dating"
 msgstr "Малювання"
 
-#: lib/animina_web/live/messages_live.ex:636
+#: lib/animina_web/live/messages_live.ex:653
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Decline"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:657
+#: lib/animina_web/live/messages_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Default: allowed"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:657
+#: lib/animina_web/live/messages_live.ex:674
 #, elixir-autogen, elixir-format
 msgid "Default: not allowed"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:787
-#: lib/animina_web/live/messages_live.ex:1709
+#: lib/animina_web/live/messages_live.ex:804
+#: lib/animina_web/live/messages_live.ex:1742
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Divorce"
 msgstr "Розлучений/розлучена"
 
-#: lib/animina_web/live/messages_live.ex:1709
+#: lib/animina_web/live/messages_live.ex:1742
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Divorce?"
 msgstr "Розлучений/розлучена"
 
-#: lib/animina_web/live/messages_live.ex:759
-#: lib/animina_web/live/messages_live.ex:1695
+#: lib/animina_web/live/messages_live.ex:776
+#: lib/animina_web/live/messages_live.ex:1728
 #, elixir-autogen, elixir-format, fuzzy
 msgid "End Conversation"
 msgstr "Глибокі розмови"
 
-#: lib/animina_web/live/messages_live.ex:802
-#: lib/animina_web/live/messages_live.ex:1715
+#: lib/animina_web/live/messages_live.ex:819
+#: lib/animina_web/live/messages_live.ex:1748
 #, elixir-autogen, elixir-format, fuzzy
 msgid "End Friendship"
 msgstr "Дружба"
 
-#: lib/animina_web/live/messages_live.ex:766
-#: lib/animina_web/live/messages_live.ex:1700
+#: lib/animina_web/live/messages_live.ex:783
+#: lib/animina_web/live/messages_live.ex:1733
 #, elixir-autogen, elixir-format, fuzzy
 msgid "End Relationship"
 msgstr "У стосунках"
 
-#: lib/animina_web/live/messages_live.ex:1693
+#: lib/animina_web/live/messages_live.ex:1726
 #, elixir-autogen, elixir-format
 msgid "End this conversation?"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1714
+#: lib/animina_web/live/messages_live.ex:1747
 #, elixir-autogen, elixir-format
 msgid "End this friendship?"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1699
+#: lib/animina_web/live/messages_live.ex:1732
 #, elixir-autogen, elixir-format
 msgid "End this relationship?"
 msgstr ""
@@ -7379,7 +7381,7 @@ msgstr "Дружба"
 msgid "No relationships yet"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:702
+#: lib/animina_web/live/messages_live.ex:719
 #, elixir-autogen, elixir-format
 msgid "Override Settings"
 msgstr ""
@@ -7389,40 +7391,40 @@ msgstr ""
 msgid "Past"
 msgstr "Випічка та солодощі"
 
-#: lib/animina_web/live/messages_live.ex:1427
+#: lib/animina_web/live/messages_live.ex:1460
 #, elixir-autogen, elixir-format
 msgid "Permissions saved"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1385
+#: lib/animina_web/live/messages_live.ex:1418
 #, elixir-autogen, elixir-format
 msgid "Proposal accepted!"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:738
+#: lib/animina_web/live/messages_live.ex:755
 #, elixir-autogen, elixir-format
 msgid "Propose Couple"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:735
+#: lib/animina_web/live/messages_live.ex:752
 #, elixir-autogen, elixir-format
 msgid "Propose Dating"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:744
-#: lib/animina_web/live/messages_live.ex:747
-#: lib/animina_web/live/messages_live.ex:750
-#: lib/animina_web/live/messages_live.ex:753
+#: lib/animina_web/live/messages_live.ex:761
+#: lib/animina_web/live/messages_live.ex:764
+#: lib/animina_web/live/messages_live.ex:767
+#: lib/animina_web/live/messages_live.ex:770
 #, elixir-autogen, elixir-format
 msgid "Propose Friend"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:741
+#: lib/animina_web/live/messages_live.ex:758
 #, elixir-autogen, elixir-format
 msgid "Propose Marriage"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1344
+#: lib/animina_web/live/messages_live.ex:1377
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Relationship updated"
 msgstr "Сімейний стан"
@@ -7430,80 +7432,80 @@ msgstr "Сімейний стан"
 #: lib/animina_web/components/layouts.ex:300
 #: lib/animina_web/live/relationships_live.ex:24
 #: lib/animina_web/live/relationships_live.ex:27
-#: lib/animina_web/live/relationships_live.ex:206
+#: lib/animina_web/live/relationships_live.ex:205
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Relationships"
 msgstr "Сімейний стан"
 
-#: lib/animina_web/live/messages_live.ex:715
+#: lib/animina_web/live/messages_live.ex:732
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Report"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:773
-#: lib/animina_web/live/messages_live.ex:780
-#: lib/animina_web/live/messages_live.ex:1705
+#: lib/animina_web/live/messages_live.ex:790
+#: lib/animina_web/live/messages_live.ex:797
+#: lib/animina_web/live/messages_live.ex:1738
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Separate"
 msgstr "У розлуці"
 
-#: lib/animina_web/live/messages_live.ex:1704
+#: lib/animina_web/live/messages_live.ex:1737
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Separate?"
 msgstr "У розлуці"
 
-#: lib/animina_web/live/messages_live.ex:239
+#: lib/animina_web/live/messages_live.ex:241
 #, elixir-autogen, elixir-format
 msgid "Show in my discovery"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1720
+#: lib/animina_web/live/messages_live.ex:1753
 #, elixir-autogen, elixir-format
 msgid "They will not be able to contact you or see your profile."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1704
+#: lib/animina_web/live/messages_live.ex:1737
 #, elixir-autogen, elixir-format
 msgid "This will change your status to separated."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1694
+#: lib/animina_web/live/messages_live.ex:1727
 #, elixir-autogen, elixir-format, fuzzy
 msgid "This will end the conversation. You will no longer see each other in discovery."
 msgstr "Це назавжди. Ви більше не побачите одне одного у пошуку."
 
-#: lib/animina_web/live/messages_live.ex:1714
+#: lib/animina_web/live/messages_live.ex:1747
 #, elixir-autogen, elixir-format
 msgid "This will end the friendship."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1699
+#: lib/animina_web/live/messages_live.ex:1732
 #, elixir-autogen, elixir-format
 msgid "This will end the relationship."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1726
+#: lib/animina_web/live/messages_live.ex:1759
 #, elixir-autogen, elixir-format
 msgid "This will end the relationship. You can start a new conversation later."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1709
+#: lib/animina_web/live/messages_live.ex:1742
 #, elixir-autogen, elixir-format
 msgid "This will finalize the divorce."
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:808
-#: lib/animina_web/live/messages_live.ex:1727
+#: lib/animina_web/live/messages_live.ex:825
+#: lib/animina_web/live/messages_live.ex:1760
 #, elixir-autogen, elixir-format
 msgid "Unblock"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:1725
+#: lib/animina_web/live/messages_live.ex:1758
 #, elixir-autogen, elixir-format
 msgid "Unblock this user?"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:615
+#: lib/animina_web/live/messages_live.ex:632
 #, elixir-autogen, elixir-format
 msgid "You proposed %{status}. Waiting for response."
 msgstr ""
@@ -7513,12 +7515,12 @@ msgstr ""
 msgid "No milestones yet"
 msgstr ""
 
-#: lib/animina_web/live/messages_live.ex:126
+#: lib/animina_web/live/messages_live.ex:127
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Relationship Timeline"
 msgstr "Сімейний стан"
 
-#: lib/animina_web/live/messages_live.ex:722
+#: lib/animina_web/live/messages_live.ex:739
 #: lib/animina_web/live/relationships_live.ex:133
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Timeline"
@@ -7527,4 +7529,24 @@ msgstr "Час"
 #: lib/animina_web/components/relationship_components.ex:125
 #, elixir-autogen, elixir-format
 msgid "You"
+msgstr ""
+
+#: lib/animina_web/live/messages_live.ex:42
+#, elixir-autogen, elixir-format
+msgid "Back to messages"
+msgstr ""
+
+#: lib/animina_web/components/message_components.ex:70
+#, elixir-autogen, elixir-format
+msgid "Send message"
+msgstr ""
+
+#: lib/animina_web/live/messages_live.ex:1282
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Cannot delete a message while the other person is online"
+msgstr "Не можна видалити прочитане повідомлення"
+
+#: lib/animina_web/live/messages_live.ex:1274
+#, elixir-autogen, elixir-format
+msgid "Messages can only be deleted within 15 minutes of sending"
 msgstr ""

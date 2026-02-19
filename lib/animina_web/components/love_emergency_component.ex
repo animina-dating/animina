@@ -85,7 +85,6 @@ defmodule AniminaWeb.LoveEmergencyComponent do
     """
   end
 
-
   @impl true
   def update(assigns, socket) do
     active_conversations = assigns[:active_conversations] || []

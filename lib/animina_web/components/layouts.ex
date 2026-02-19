@@ -205,6 +205,7 @@ defmodule AniminaWeb.Layouts do
                           title={gettext("On waitlist")}
                         />
                       <% end %>
+                      <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-success border-2 border-base-200" />
                     </div>
                     <span class="text-sm font-medium text-base-content truncate max-w-20 sm:max-w-32">
                       {@current_scope.user.display_name || @current_scope.user.email}

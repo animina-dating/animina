@@ -67,7 +67,7 @@ defmodule AniminaWeb.MessageComponents do
               data-draft-key={@draft_key}
               style="overflow-y: hidden;"
             >{Phoenix.HTML.Form.normalize_value("textarea", @form[:content].value)}</textarea>
-            <button type="submit" class={@btn_class}>
+            <button type="submit" class={@btn_class} aria-label={gettext("Send message")}>
               <.icon name="hero-paper-airplane" class={@icon_class} />
             </button>
           </div>
@@ -97,8 +97,8 @@ defmodule AniminaWeb.MessageComponents do
   defp wrapper_class(:default), do: "pt-4 border-t border-base-300"
   defp wrapper_class(:sm), do: "px-4 py-3 border-t border-base-300"
 
-  defp hint_class(:default), do: "mt-1.5 text-xs text-base-content/40"
-  defp hint_class(:sm), do: "mt-1 text-[11px] text-base-content/40"
+  defp hint_class(:default), do: "mt-1.5 text-xs text-base-content/70"
+  defp hint_class(:sm), do: "mt-1 text-[11px] text-base-content/70"
 
   defp blocked_class(:default), do: "text-center text-base-content/50 py-4"
   defp blocked_class(:sm), do: "text-center text-base-content/50 py-2 text-sm"

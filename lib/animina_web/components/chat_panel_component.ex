@@ -273,8 +273,8 @@ defmodule AniminaWeb.ChatPanelComponent do
       <div class="relative max-w-[85%]">
         <div class={bubble_classes(@is_sender, @is_first, @is_last)}>
           <div class={[
-            "prose prose-sm max-w-none break-words [&>p]:my-0.5",
-            if(@is_sender, do: "prose-invert", else: "")
+            "prose prose-sm max-w-none break-words [&>p]:my-0.5 [&_blockquote]:!text-inherit [&_blockquote_p]:before:content-none [&_blockquote_p]:after:content-none",
+            if(@is_sender, do: "prose-invert !text-primary-content", else: "!text-base-content")
           ]}>
             {render_markdown(@message.content)}
           </div>
@@ -282,7 +282,7 @@ defmodule AniminaWeb.ChatPanelComponent do
             :if={@show_time}
             class={[
               "text-xs mt-1 flex items-center gap-1",
-              if(@is_sender, do: "text-primary-content/80 justify-end", else: "text-base-content/60")
+              if(@is_sender, do: "text-primary-content justify-end", else: "text-base-content/70")
             ]}
           >
             {format_message_time(@message.inserted_at)}

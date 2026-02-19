@@ -32,13 +32,14 @@ defmodule AniminaWeb.MessagesLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-3xl mx-auto flex flex-col h-[calc(100vh-12rem)]">
+        <h1 class="sr-only">{gettext("Conversation")}</h1>
         <.breadcrumb_nav class="mb-2">
           <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
           <:crumb navigate={~p"/my/messages"}>{gettext("Messages")}</:crumb>
         </.breadcrumb_nav>
         <%!-- Conversation Header --%>
         <div class="flex items-center gap-3 pb-4 border-b border-base-300">
-          <.link navigate={~p"/my/messages"} class="btn btn-ghost btn-sm btn-circle">
+          <.link navigate={~p"/my/messages"} class="btn btn-ghost btn-sm btn-circle" aria-label={gettext("Back to messages")}>
             <.icon name="hero-arrow-left" class="h-5 w-5" />
           </.link>
 
@@ -156,6 +157,7 @@ defmodule AniminaWeb.MessagesLive do
               other_user={@conversation_data && @conversation_data.other_user}
               other_last_read_at={@other_last_read_at}
               last_read_message_id={@last_read_message_id}
+              other_user_online={@conversation_data != nil && MapSet.member?(@online_user_ids, @conversation_data.other_user.id)}
             />
           <% end %>
         </div>
@@ -482,6 +484,7 @@ defmodule AniminaWeb.MessagesLive do
   attr :other_user, :map, default: nil
   attr :other_last_read_at, :any, default: nil
   attr :last_read_message_id, :string, default: nil
+  attr :other_user_online, :boolean, default: false
 
   defp message_group(assigns) do
     ~H"""
@@ -505,6 +508,7 @@ defmodule AniminaWeb.MessagesLive do
         read_at={if(message.id == @last_read_message_id, do: @other_last_read_at)}
         other_user={@other_user}
         current_user_id={@current_user_id}
+        other_user_online={@other_user_online}
       />
     </div>
     """
@@ -521,8 +525,11 @@ defmodule AniminaWeb.MessagesLive do
   attr :read_at, :any, default: nil
   attr :other_user, :map, default: nil
   attr :current_user_id, :string, default: nil
+  attr :other_user_online, :boolean, default: false
 
   defp message_bubble(assigns) do
+    assigns = assign(assigns, :deletable, message_deletable?(assigns))
+
     ~H"""
     <div class={[
       "flex group",
@@ -532,8 +539,8 @@ defmodule AniminaWeb.MessagesLive do
       <div class="relative max-w-[80%]">
         <div class={bubble_classes(@is_sender, @is_first, @is_last)}>
           <div class={[
-            "prose prose-sm max-w-none break-words [&>p]:my-0.5",
-            if(@is_sender, do: "prose-invert", else: "")
+            "prose prose-sm max-w-none break-words [&>p]:my-0.5 [&_blockquote]:!text-inherit [&_blockquote_p]:before:content-none [&_blockquote_p]:after:content-none",
+            if(@is_sender, do: "prose-invert !text-primary-content", else: "!text-base-content")
           ]}>
             {render_markdown(@message.content)}
           </div>
@@ -541,7 +548,7 @@ defmodule AniminaWeb.MessagesLive do
             :if={@show_time}
             class={[
               "text-xs mt-1 flex items-center gap-1",
-              if(@is_sender, do: "text-primary-content/80 justify-end", else: "text-base-content/60")
+              if(@is_sender, do: "text-primary-content justify-end", else: "text-base-content/70")
             ]}
           >
             {format_message_time(@message.inserted_at)}
@@ -568,22 +575,33 @@ defmodule AniminaWeb.MessagesLive do
           </div>
         </div>
 
-        <%!-- Delete button for own unread messages --%>
-        <%= if @is_sender do %>
-          <button
-            id={"delete-message-#{@message.id}"}
-            phx-click="delete_message"
-            phx-value-id={@message.id}
-            data-confirm={gettext("Delete this message?")}
-            class="absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity btn btn-ghost btn-xs btn-circle"
-            title={gettext("Delete")}
-          >
-            <.icon name="hero-trash" class="h-3.5 w-3.5 text-error" />
-          </button>
-        <% end %>
+        <%!-- Delete button: only within 15min window, other user offline, and unread --%>
+        <button
+          :if={@deletable}
+          id={"delete-message-#{@message.id}"}
+          phx-click="delete_message"
+          phx-value-id={@message.id}
+          data-confirm={gettext("Delete this message?")}
+          class="absolute -left-8 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity btn btn-ghost btn-xs btn-circle"
+          title={gettext("Delete")}
+        >
+          <.icon name="hero-trash" class="h-3.5 w-3.5 text-error" />
+        </button>
       </div>
     </div>
     """
+  end
+
+  defp message_deletable?(assigns) do
+    assigns.is_sender &&
+      !assigns.is_read &&
+      !assigns.other_user_online &&
+      within_delete_window?(assigns.message)
+  end
+
+  defp within_delete_window?(message) do
+    age_seconds = DateTime.diff(DateTime.utc_now(), message.inserted_at, :second)
+    age_seconds <= Messaging.delete_window_seconds()
   end
 
   defp bubble_classes(true = _sender, first, last),
@@ -599,7 +617,6 @@ defmodule AniminaWeb.MessagesLive do
     do: "rounded-2xl rounded-t#{side}-sm rounded-#{corner}#{side}-md"
 
   defp bubble_radius(side, _corner, false, false), do: "rounded-2xl rounded-#{side}-sm"
-
 
   # --- Proposal banner component ---
 
@@ -1248,6 +1265,22 @@ defmodule AniminaWeb.MessagesLive do
       {:error, :already_read} ->
         {:noreply,
          put_flash(socket, :error, gettext("Cannot delete a message that has been read"))}
+
+      {:error, :delete_window_expired} ->
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           gettext("Messages can only be deleted within 15 minutes of sending")
+         )}
+
+      {:error, :other_user_online} ->
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           gettext("Cannot delete a message while the other person is online")
+         )}
 
       {:error, _reason} ->
         {:noreply, put_flash(socket, :error, gettext("Failed to delete message"))}

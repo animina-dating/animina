@@ -27,6 +27,9 @@ defmodule Animina.Messaging do
   alias Animina.Repo
   alias Animina.Utils.Timezone
 
+  # Messages can only be deleted within 15 minutes of creation
+  @delete_window_seconds 15 * 60
+
   # --- PubSub Topics ---
 
   @doc """
@@ -365,6 +368,8 @@ defmodule Animina.Messaging do
   def delete_message(message_id, user_id) do
     with {:ok, message} <- get_message_for_user(message_id, user_id),
          :ok <- verify_sender(message, user_id),
+         :ok <- verify_within_delete_window(message),
+         :ok <- verify_other_not_online(message),
          :ok <- verify_not_read(message),
          {:ok, deleted} <- message |> Message.delete_changeset() |> Repo.update() do
       broadcast_message_deleted(message.conversation_id, deleted)
@@ -391,6 +396,26 @@ defmodule Animina.Messaging do
     end
   end
 
+  defp verify_within_delete_window(message) do
+    age_seconds = DateTime.diff(DateTime.utc_now(), message.inserted_at, :second)
+
+    if age_seconds <= @delete_window_seconds do
+      :ok
+    else
+      {:error, :delete_window_expired}
+    end
+  end
+
+  defp verify_other_not_online(message) do
+    other_user_id = get_other_participant_id(message.conversation_id, message.sender_id)
+
+    if other_user_id && AniminaWeb.Presence.user_online?(other_user_id) do
+      {:error, :other_user_online}
+    else
+      :ok
+    end
+  end
+
   defp verify_not_read(message) do
     other_read_at =
       ConversationParticipant
@@ -405,6 +430,11 @@ defmodule Animina.Messaging do
       :ok
     end
   end
+
+  @doc """
+  Returns the delete window duration in seconds.
+  """
+  def delete_window_seconds, do: @delete_window_seconds
 
   @doc """
   Lists messages in a conversation for a user.
