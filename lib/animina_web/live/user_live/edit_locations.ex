@@ -186,6 +186,8 @@ defmodule AniminaWeb.UserLive.EditLocations do
            originator: user
          ) do
       {:ok, _location} ->
+        Animina.Analytics.maybe_log_profile_completed(user)
+
         {:noreply,
          socket
          |> put_flash(:info, gettext("Location added."))
@@ -247,6 +249,8 @@ defmodule AniminaWeb.UserLive.EditLocations do
            originator: user
          ) do
       {:ok, _location} ->
+        Animina.Analytics.maybe_log_profile_completed(user)
+
         {:noreply,
          socket
          |> put_flash(:info, gettext("Location updated."))

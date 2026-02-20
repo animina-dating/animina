@@ -711,6 +711,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   end
 
   defp reload_user_flags(socket, user) do
+    Animina.Analytics.maybe_log_profile_completed(user)
     user_flags = load_all_user_flags(user)
 
     socket

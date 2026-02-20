@@ -21,7 +21,7 @@ defmodule Animina.ActivityLog.ActivityLogEntry do
     "social" =>
       ~w(profile_visit message_sent conversation_created conversation_closed conversation_blocked conversation_reopened bookmark_added reaction_added dismissal_created report_filed report_appeal_filed relationship_proposed relationship_accepted relationship_declined relationship_changed),
     "profile" =>
-      ~w(profile_updated flags_changed moodboard_changed preferences_changed location_changed avatar_changed email_changed password_changed passkey_registered passkey_deleted account_registered account_deleted account_reactivated registration_step_completed referral_waitlist_reduced tos_accepted),
+      ~w(profile_updated flags_changed moodboard_changed preferences_changed location_changed avatar_changed email_changed password_changed passkey_registered passkey_deleted account_registered account_deleted account_reactivated registration_step_completed referral_waitlist_reduced tos_accepted profile_completed),
     "admin" =>
       ~w(role_granted role_revoked feature_flag_toggled photo_review_approved photo_review_rejected photo_review_retry photo_description_regenerated blacklist_entry_added blacklist_entry_removed report_resolved report_appeal_resolved user_warned user_suspended user_banned user_unsuspended karen_auto_reported ad_created ad_updated),
     "system" =>

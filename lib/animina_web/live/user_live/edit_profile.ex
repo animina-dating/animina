@@ -104,7 +104,9 @@ defmodule AniminaWeb.UserLive.EditProfile do
     user = socket.assigns.current_scope.user
 
     case Accounts.update_user_profile(user, user_params, originator: user) do
-      {:ok, _user} ->
+      {:ok, updated_user} ->
+        Animina.Analytics.maybe_log_profile_completed(updated_user)
+
         {:noreply,
          socket
          |> put_flash(:info, gettext("Profile updated successfully."))

@@ -26,6 +26,7 @@ defmodule AniminaWeb.Admin.AdminHubTest do
       assert html =~ "Photo Blacklist"
       assert html =~ "Manage Roles"
       assert html =~ "Feature Flags"
+      assert html =~ "Analytics"
       assert html =~ "Logs"
     end
 
@@ -44,6 +45,7 @@ defmodule AniminaWeb.Admin.AdminHubTest do
       assert has_element?(lv, "main a[href='/admin/photo-blacklist']")
       assert has_element?(lv, "main a[href='/admin/roles']")
       assert has_element?(lv, "main a[href='/admin/flags']")
+      assert has_element?(lv, "main a[href='/admin/analytics']")
       assert has_element?(lv, "main a[href='/admin/logs']")
     end
   end

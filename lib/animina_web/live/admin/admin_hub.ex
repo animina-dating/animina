@@ -7,6 +7,7 @@ defmodule AniminaWeb.Admin.AdminHub do
 
   alias Animina.Ads
   alias Animina.AI
+  alias Animina.Analytics
   alias Animina.Photos
   alias Animina.Reports
   alias AniminaWeb.Layouts
@@ -20,6 +21,7 @@ defmodule AniminaWeb.Admin.AdminHub do
     pending_reports = Reports.count_pending_reports()
     pending_appeals = Reports.count_pending_appeals()
     total_ad_visits = Ads.total_visit_count()
+    page_views_today = Analytics.page_view_count_today()
 
     {:ok,
      assign(socket,
@@ -28,7 +30,8 @@ defmodule AniminaWeb.Admin.AdminHub do
        pending_ai_jobs: pending_ai_jobs,
        pending_reports: pending_reports,
        pending_appeals: pending_appeals,
-       total_ad_visits: total_ad_visits
+       total_ad_visits: total_ad_visits,
+       page_views_today: page_views_today
      )}
   end
 
@@ -120,6 +123,18 @@ defmodule AniminaWeb.Admin.AdminHub do
             <:trailing>
               <span :if={@total_ad_visits > 0} class="badge badge-info">
                 {@total_ad_visits}
+              </span>
+            </:trailing>
+          </.hub_card>
+          <.hub_card
+            navigate={~p"/admin/analytics"}
+            icon="hero-chart-bar"
+            title={gettext("Analytics")}
+            subtitle={gettext("Page views, funnels, and engagement")}
+          >
+            <:trailing>
+              <span :if={@page_views_today > 0} class="badge badge-info">
+                {@page_views_today}
               </span>
             </:trailing>
           </.hub_card>

@@ -85,7 +85,8 @@ config :animina, Animina.Scheduler,
     {"0 6-20/2 * * *", {Animina.Accounts.RegistrationSpikeAlert, :run, []}},
     {"0 2 * * *", {Animina.Accounts, :purge_old_online_user_counts, []}},
     {"0 4 * * *", {Animina.Accounts.OnlineActivity, :purge_old_sessions, []}},
-    {"0 * * * *", {Animina.Messaging.UnreadNotifier, :run, []}}
+    {"0 * * * *", {Animina.Messaging.UnreadNotifier, :run, []}},
+    {"0 3 * * *", {Animina.Analytics.DailyRollup, :run, []}}
   ]
 
 # Gettext i18n configuration

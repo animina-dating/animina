@@ -540,6 +540,8 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   defp step_completed?(_, _step), do: false
 
   defp handle_upload_results(socket, [{:ok, photo}]) do
+    Animina.Analytics.maybe_log_profile_completed(socket.assigns.user)
+
     socket =
       socket
       |> assign(:avatar, photo)
@@ -549,6 +551,8 @@ defmodule AniminaWeb.UserLive.AvatarUpload do
   end
 
   defp handle_upload_results(socket, [%Animina.Photos.Photo{} = photo]) do
+    Animina.Analytics.maybe_log_profile_completed(socket.assigns.user)
+
     socket =
       socket
       |> assign(:avatar, photo)

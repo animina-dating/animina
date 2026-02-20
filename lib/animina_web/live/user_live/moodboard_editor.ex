@@ -800,6 +800,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           Phoenix.PubSub.subscribe(Animina.PubSub, "photos:MoodboardItem:#{item.id}")
         end
 
+        Animina.Analytics.maybe_log_profile_completed(user)
         items = Moodboard.list_moodboard_with_hidden(user.id)
 
         {:noreply,

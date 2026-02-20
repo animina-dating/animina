@@ -151,6 +151,15 @@ defmodule AniminaWeb.Helpers.AdminHelpers do
   def email_status_badge_class(_), do: "badge-error"
 
   @doc """
+  Parses a days parameter from URL params.
+
+  Accepts "7", "30", or "90", defaulting to 30.
+  """
+  def parse_days("7"), do: 7
+  def parse_days("90"), do: 90
+  def parse_days(_), do: 30
+
+  @doc """
   Formats a datetime with seconds for detailed views.
 
   ## Examples

@@ -51,6 +51,9 @@ config :animina, start_mail_log_checker: false
 config :animina, start_photo_serving: false
 config :animina, start_face_serving: false
 
+# Disable analytics page view tracking in tests
+config :animina, :analytics_tracking, false
+
 # Use a temp directory for photo uploads in tests
 config :animina, Animina.Photos, upload_dir: "tmp/test_uploads"
 

@@ -29,7 +29,20 @@ defmodule Animina.Utils.Timezone do
     {start_utc, end_utc}
   end
 
-  defp midnight_berlin_to_utc(date) do
+  @doc """
+  Returns the UTC datetime range for a given date in Europe/Berlin timezone.
+
+  Like `berlin_today_utc_range/0` but for any date.
+  """
+  def berlin_date_utc_range(date) do
+    tomorrow = Date.add(date, 1)
+    {midnight_berlin_to_utc(date), midnight_berlin_to_utc(tomorrow)}
+  end
+
+  @doc """
+  Converts midnight in Europe/Berlin for the given date to UTC.
+  """
+  def midnight_berlin_to_utc(date) do
     {:ok, naive} = NaiveDateTime.new(date, ~T[00:00:00])
     {:ok, dt} = DateTime.from_naive(naive, "Europe/Berlin", Tz.TimeZoneDatabase)
     DateTime.shift_zone!(dt, "Etc/UTC", Tz.TimeZoneDatabase)
