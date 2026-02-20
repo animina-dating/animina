@@ -28,7 +28,10 @@ defmodule AniminaWeb.Router do
     post "/locale", LocaleController, :update
 
     live_session :public,
-      on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :mount_current_scope},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/", IndexLive
       live "/debug", DebugLive
       live "/datenschutz", PrivacyPolicyLive
@@ -82,12 +85,18 @@ defmodule AniminaWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_no_tos,
-      on_mount: [{AniminaWeb.UserAuth, :require_authenticated}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :require_authenticated},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/users/accept-terms", UserLive.AcceptTerms
     end
 
     live_session :require_authenticated_user,
-      on_mount: [{AniminaWeb.UserAuth, :require_authenticated_with_tos}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :require_authenticated_with_tos},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       # Suspended/banned info page
       live "/my/suspended", UserLive.AccountSuspended
 
@@ -136,14 +145,20 @@ defmodule AniminaWeb.Router do
     end
 
     live_session :require_moderator,
-      on_mount: [{AniminaWeb.UserAuth, :require_moderator}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :require_moderator},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/admin/photo-reviews", Admin.PhotoReviewsLive
       live "/admin/reports", Admin.ReportsLive
       live "/admin/reports/appeals", Admin.ReportAppealsLive
     end
 
     live_session :require_admin,
-      on_mount: [{AniminaWeb.UserAuth, :require_admin}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :require_admin},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/admin", Admin.AdminHub, :index
       live "/admin/roles", Admin.UserRolesLive
       live "/admin/photos", Admin.PhotoExplorerLive
@@ -189,7 +204,10 @@ defmodule AniminaWeb.Router do
     pipe_through :browser
 
     live_session :current_user,
-      on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :mount_current_scope},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/confirm/:token", UserLive.PinConfirmation
@@ -212,7 +230,10 @@ defmodule AniminaWeb.Router do
 
     # User profile (after literal auth routes so they match first)
     live_session :user_profile,
-      on_mount: [{AniminaWeb.UserAuth, :mount_current_scope}, {AniminaWeb.AnalyticsHook, :track_page_view}] do
+      on_mount: [
+        {AniminaWeb.UserAuth, :mount_current_scope},
+        {AniminaWeb.AnalyticsHook, :track_page_view}
+      ] do
       live "/users/:user_id", UserLive.ProfileMoodboard
     end
   end

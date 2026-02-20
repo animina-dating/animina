@@ -16,12 +16,14 @@ defmodule Animina.Discovery.Spotlight do
   alias Animina.Discovery.SpotlightPool
   alias Animina.Discovery.WildcardPool
   alias Animina.Messaging
+  alias Animina.Photos
   alias Animina.Repo
   alias Animina.TimeMachine
   alias Animina.Utils.Timezone
 
   @pool_picks 6
   @wildcard_picks 2
+  @preview_count 4
 
   @doc """
   Returns today's spotlight candidates for the viewer.
@@ -39,10 +41,13 @@ defmodule Animina.Discovery.Spotlight do
     case load_today_entries(viewer.id, today) do
       [] ->
         seed_daily(viewer, today)
+        seed_tomorrow(viewer, today)
         load_spotlight_users(viewer.id, today)
 
       entries ->
-        entries_to_users(entries)
+        validate_and_repair_entries(viewer, entries, today)
+        seed_tomorrow(viewer, today)
+        load_spotlight_users(viewer.id, today)
     end
   end
 
@@ -110,41 +115,250 @@ defmodule Animina.Discovery.Spotlight do
   end
 
   @doc """
-  Returns up to 4 preview candidates for the "sneak peek" section.
+  Returns up to 4 preview candidates from tomorrow's pre-seeded entries.
 
-  Builds from the same pool as the daily spotlight but excludes:
-  - Today's spotlight entries
-  - Dismissed users
-  - Conversation partners
-
-  Results are shuffled and not persisted — they may change on each call.
+  These are genuine previews of tomorrow's spotlight, not random picks.
+  Returns the first 4 non-wildcard entries by insertion order.
   """
   def preview_candidates(viewer) do
-    today = berlin_today()
+    tomorrow = Date.add(berlin_today(), 1)
 
-    # Permanent exclusions
-    dismissed = Discovery.dismissed_ids(viewer.id)
-    conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
-    permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+    entries =
+      SpotlightEntry
+      |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+      |> order_by([e], asc: e.is_wildcard, asc: e.inserted_at)
+      |> limit(@preview_count)
+      |> Repo.all()
 
-    # Today's spotlight entries
-    today_ids =
-      load_today_entries(viewer.id, today)
-      |> Enum.map(& &1.shown_user_id)
-      |> MapSet.new()
+    user_ids = Enum.map(entries, & &1.shown_user_id)
 
-    # Build pool and filter
-    pool_candidates = SpotlightPool.build(viewer)
+    users =
+      User
+      |> where([u], u.id in ^user_ids)
+      |> Repo.all()
+      |> Repo.preload(:locations)
 
-    pool_candidates
-    |> Enum.reject(fn c ->
-      MapSet.member?(permanent_exclusions, c.id) || MapSet.member?(today_ids, c.id)
+    # Preserve entry order
+    users_by_id = Map.new(users, &{&1.id, &1})
+    user_ids |> Enum.map(&Map.get(users_by_id, &1)) |> Enum.reject(&is_nil/1)
+  end
+
+  @doc """
+  Builds preview hint metadata for a list of preview candidates.
+
+  Returns a list of maps with: id, pixelated_avatar_url, age, gender_symbol,
+  city_name, obfuscated_name (first char + "...").
+  """
+  def build_preview_hints(users) do
+    city_names = load_city_names_for_users(users)
+
+    Enum.map(users, fn user ->
+      %{
+        id: user.id,
+        pixelated_avatar_url: pixelated_avatar_url(user.id),
+        age: Animina.Accounts.compute_age(user.birthday),
+        gender_symbol: gender_symbol(user.gender),
+        city_name: city_name_for_user(user, city_names),
+        obfuscated_name: obfuscate_name(user.display_name)
+      }
     end)
-    |> Enum.shuffle()
-    |> Enum.take(4)
   end
 
   # --- Private ---
+
+  defp seed_tomorrow(viewer, today) do
+    tomorrow = Date.add(today, 1)
+
+    # Idempotent: skip if tomorrow already has entries
+    existing =
+      SpotlightEntry
+      |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+      |> Repo.aggregate(:count)
+
+    if existing > 0 do
+      :ok
+    else
+      # Permanent exclusions
+      dismissed = Discovery.dismissed_ids(viewer.id)
+      conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
+      permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+
+      # Today's entries to also exclude
+      today_ids =
+        load_today_entries(viewer.id, today)
+        |> Enum.map(& &1.shown_user_id)
+        |> MapSet.new()
+
+      # Build pool and filter
+      pool_candidates = SpotlightPool.build(viewer)
+      pool_ids = Enum.map(pool_candidates, & &1.id)
+
+      available =
+        pool_ids
+        |> Enum.reject(
+          &(MapSet.member?(permanent_exclusions, &1) || MapSet.member?(today_ids, &1))
+        )
+
+      picks = take_random(available, @pool_picks)
+
+      # Wildcard picks
+      wildcard_candidates = WildcardPool.build(viewer)
+      wildcard_ids = Enum.map(wildcard_candidates, & &1.id)
+      picks_set = MapSet.new(picks)
+
+      wildcard_available =
+        wildcard_ids
+        |> Enum.reject(
+          &(MapSet.member?(permanent_exclusions, &1) ||
+              MapSet.member?(today_ids, &1) ||
+              MapSet.member?(picks_set, &1))
+        )
+
+      wildcard_picks = take_random(wildcard_available, @wildcard_picks)
+
+      # Use today's cycle number (don't advance)
+      current_cycle = get_current_cycle(viewer.id)
+      now = TimeMachine.utc_now() |> DateTime.truncate(:second)
+
+      pool_rows =
+        Enum.map(picks, fn uid ->
+          %{
+            id: Ecto.UUID.generate(),
+            user_id: viewer.id,
+            shown_user_id: uid,
+            shown_on: tomorrow,
+            is_wildcard: false,
+            cycle_number: current_cycle,
+            inserted_at: now,
+            updated_at: now
+          }
+        end)
+
+      wildcard_rows =
+        Enum.map(wildcard_picks, fn uid ->
+          %{
+            id: Ecto.UUID.generate(),
+            user_id: viewer.id,
+            shown_user_id: uid,
+            shown_on: tomorrow,
+            is_wildcard: true,
+            cycle_number: current_cycle,
+            inserted_at: now,
+            updated_at: now
+          }
+        end)
+
+      all_rows = pool_rows ++ wildcard_rows
+
+      if all_rows != [] do
+        Repo.insert_all(SpotlightEntry, all_rows, on_conflict: :nothing)
+      end
+
+      :ok
+    end
+  end
+
+  defp validate_and_repair_entries(viewer, entries, today) do
+    # Check each shown_user for validity (state still "normal", not soft-deleted)
+    invalid_entry_ids =
+      entries
+      |> Enum.filter(fn entry ->
+        user =
+          User
+          |> where([u], u.id == ^entry.shown_user_id)
+          |> Repo.one()
+
+        is_nil(user) || user.state != "normal" || user.deleted_at != nil
+      end)
+      |> Enum.map(& &1.id)
+
+    if invalid_entry_ids != [] do
+      # Delete invalid entries
+      SpotlightEntry
+      |> where([e], e.id in ^invalid_entry_ids)
+      |> Repo.delete_all()
+
+      # Get fresh picks to replace them
+      replacement_count = length(invalid_entry_ids)
+      dismissed = Discovery.dismissed_ids(viewer.id)
+      conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
+      permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+
+      existing_ids =
+        entries
+        |> Enum.reject(&(&1.id in invalid_entry_ids))
+        |> Enum.map(& &1.shown_user_id)
+        |> MapSet.new()
+
+      pool_candidates = SpotlightPool.build(viewer)
+      pool_ids = Enum.map(pool_candidates, & &1.id)
+
+      available =
+        pool_ids
+        |> Enum.reject(
+          &(MapSet.member?(permanent_exclusions, &1) || MapSet.member?(existing_ids, &1))
+        )
+
+      picks = take_random(available, replacement_count)
+      current_cycle = get_current_cycle(viewer.id)
+      now = TimeMachine.utc_now() |> DateTime.truncate(:second)
+
+      rows =
+        Enum.map(picks, fn uid ->
+          %{
+            id: Ecto.UUID.generate(),
+            user_id: viewer.id,
+            shown_user_id: uid,
+            shown_on: today,
+            is_wildcard: false,
+            cycle_number: current_cycle,
+            inserted_at: now,
+            updated_at: now
+          }
+        end)
+
+      if rows != [] do
+        Repo.insert_all(SpotlightEntry, rows, on_conflict: :nothing)
+      end
+    end
+  end
+
+  defp pixelated_avatar_url(user_id) do
+    case Photos.get_user_avatar(user_id) do
+      nil -> nil
+      photo -> Photos.signed_url(photo, :pixel)
+    end
+  end
+
+  defp gender_symbol("male"), do: "♂"
+  defp gender_symbol("female"), do: "♀"
+  defp gender_symbol(_), do: "○"
+
+  defp obfuscate_name(nil), do: "?..."
+  defp obfuscate_name(""), do: "?..."
+
+  defp obfuscate_name(name) do
+    first = String.first(name)
+    "#{first}..."
+  end
+
+  defp city_name_for_user(user, city_names) do
+    case user.locations do
+      [%{zip_code: zip} | _] -> Map.get(city_names, zip)
+      _ -> nil
+    end
+  end
+
+  defp load_city_names_for_users(users) do
+    users
+    |> Enum.flat_map(fn user ->
+      case user.locations do
+        locations when is_list(locations) -> locations
+        _ -> []
+      end
+    end)
+    |> Animina.GeoData.city_names_for_locations()
+  end
 
   defp berlin_today do
     now_berlin =

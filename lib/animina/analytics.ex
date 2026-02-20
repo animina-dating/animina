@@ -48,7 +48,8 @@ defmodule Animina.Analytics do
       select: %{
         page_views: count(),
         unique_sessions: count(pv.session_id, :distinct),
-        unique_users: fragment("count(distinct ?) filter (where ? is not null)", pv.user_id, pv.user_id)
+        unique_users:
+          fragment("count(distinct ?) filter (where ? is not null)", pv.user_id, pv.user_id)
       }
     )
     |> Repo.one()
@@ -369,12 +370,11 @@ defmodule Animina.Analytics do
         )
 
       unless already do
-        ActivityLog.log("profile", "profile_completed",
-          "User #{user.display_name} completed their profile",
-          actor_id: user.id
-        )
+        ActivityLog.log(
+          "profile",
+          "profile_completed",
+          "User #{user.display_name} completed their profile", actor_id: user.id)
       end
     end
   end
-
 end

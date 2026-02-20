@@ -91,6 +91,10 @@ defmodule AniminaWeb.SpotlightComponents do
   end
 
   attr :avatar_url, :string, default: nil
+  attr :age, :integer, default: nil
+  attr :gender, :string, default: nil
+  attr :city_name, :string, default: nil
+  attr :obfuscated_name, :string, default: nil
 
   def preview_card(assigns) do
     ~H"""
@@ -107,6 +111,17 @@ defmodule AniminaWeb.SpotlightComponents do
           <.icon name="hero-question-mark-circle" class="h-10 w-10 text-base-content/20" />
         </div>
       <% end %>
+
+      <div :if={@obfuscated_name || @age || @city_name} class="p-2">
+        <p class="text-sm font-medium text-base-content/70">
+          {@obfuscated_name}<span :if={@age} class="font-normal text-base-content/50">, {@age}</span>
+          <span :if={@gender} class="text-base-content/40 ml-1">{@gender}</span>
+        </p>
+        <p :if={@city_name} class="text-xs text-base-content/40 flex items-center gap-1 mt-0.5">
+          <.icon name="hero-map-pin-mini" class="h-3 w-3" />
+          {@city_name}
+        </p>
+      </div>
     </div>
     """
   end

@@ -166,11 +166,23 @@ defmodule Animina.AnalyticsTest do
       today = Date.utc_today()
 
       %DailyPageStat{}
-      |> DailyPageStat.changeset(%{date: today, path: "/a", view_count: 10, unique_sessions: 5, unique_users: 3})
+      |> DailyPageStat.changeset(%{
+        date: today,
+        path: "/a",
+        view_count: 10,
+        unique_sessions: 5,
+        unique_users: 3
+      })
       |> Repo.insert!()
 
       %DailyPageStat{}
-      |> DailyPageStat.changeset(%{date: today, path: "/b", view_count: 5, unique_sessions: 3, unique_users: 2})
+      |> DailyPageStat.changeset(%{
+        date: today,
+        path: "/b",
+        view_count: 5,
+        unique_sessions: 3,
+        unique_users: 2
+      })
       |> Repo.insert!()
 
       [row] = Analytics.daily_totals(30)

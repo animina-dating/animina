@@ -42,7 +42,10 @@ defmodule AniminaWeb.Admin.AnalyticsEngagementLive do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-5xl mx-auto">
         <div class="mb-6">
-          <.link navigate={~p"/admin/analytics"} class="text-sm text-base-content/60 hover:text-base-content">
+          <.link
+            navigate={~p"/admin/analytics"}
+            class="text-sm text-base-content/60 hover:text-base-content"
+          >
             &larr; {gettext("Analytics")}
           </.link>
         </div>

@@ -30,7 +30,13 @@ defmodule Animina.Analytics.DailyPageStatTest do
     end
 
     test "enforces unique date+path constraint" do
-      attrs = %{date: ~D[2026-02-20], path: "/test", view_count: 1, unique_sessions: 1, unique_users: 1}
+      attrs = %{
+        date: ~D[2026-02-20],
+        path: "/test",
+        view_count: 1,
+        unique_sessions: 1,
+        unique_users: 1
+      }
 
       assert {:ok, _} =
                %DailyPageStat{}

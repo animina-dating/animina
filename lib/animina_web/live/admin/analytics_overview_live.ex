@@ -52,19 +52,30 @@ defmodule AniminaWeb.Admin.AnalyticsOverviewLive do
 
         <%!-- Sub-page navigation cards --%>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 mb-8">
-          <.link navigate={~p"/admin/analytics/pages"} class="card bg-base-200 hover:bg-base-300 transition-colors">
+          <.link
+            navigate={~p"/admin/analytics/pages"}
+            class="card bg-base-200 hover:bg-base-300 transition-colors"
+          >
             <div class="card-body p-4">
               <h3 class="card-title text-sm">{gettext("Pages")}</h3>
               <p class="text-xs text-base-content/60">{gettext("Page view breakdown by path")}</p>
             </div>
           </.link>
-          <.link navigate={~p"/admin/analytics/funnels"} class="card bg-base-200 hover:bg-base-300 transition-colors">
+          <.link
+            navigate={~p"/admin/analytics/funnels"}
+            class="card bg-base-200 hover:bg-base-300 transition-colors"
+          >
             <div class="card-body p-4">
               <h3 class="card-title text-sm">{gettext("Funnels")}</h3>
-              <p class="text-xs text-base-content/60">{gettext("Registration and conversion funnel")}</p>
+              <p class="text-xs text-base-content/60">
+                {gettext("Registration and conversion funnel")}
+              </p>
             </div>
           </.link>
-          <.link navigate={~p"/admin/analytics/engagement"} class="card bg-base-200 hover:bg-base-300 transition-colors">
+          <.link
+            navigate={~p"/admin/analytics/engagement"}
+            class="card bg-base-200 hover:bg-base-300 transition-colors"
+          >
             <div class="card-body p-4">
               <h3 class="card-title text-sm">{gettext("Engagement")}</h3>
               <p class="text-xs text-base-content/60">{gettext("DAU/WAU/MAU and feature usage")}</p>

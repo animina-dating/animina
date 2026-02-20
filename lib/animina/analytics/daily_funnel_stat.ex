@@ -24,7 +24,14 @@ defmodule Animina.Analytics.DailyFunnelStat do
 
   def changeset(stat, attrs) do
     stat
-    |> cast(attrs, [:date, :visitors, :registered, :profile_completed, :first_message, :mutual_match])
+    |> cast(attrs, [
+      :date,
+      :visitors,
+      :registered,
+      :profile_completed,
+      :first_message,
+      :mutual_match
+    ])
     |> validate_required([:date])
     |> unique_constraint([:date])
   end

@@ -6,6 +6,7 @@ defmodule Animina.Discovery.SpotlightTest do
   alias Animina.Accounts
   alias Animina.Accounts.Scope
   alias Animina.Discovery
+  alias Animina.Discovery.Schemas.SpotlightEntry
   alias Animina.Discovery.Spotlight
   alias Animina.Messaging
 
@@ -209,6 +210,182 @@ defmodule Animina.Discovery.SpotlightTest do
       preview_ids = Enum.map(previews, & &1.id)
 
       refute partner.id in preview_ids
+    end
+  end
+
+  describe "seed_tomorrow/2 (via get_or_seed_daily)" do
+    setup :setup_viewer_and_candidates
+
+    test "creates entries for tomorrow after seeding today", %{viewer: viewer} do
+      Spotlight.get_or_seed_daily(viewer)
+
+      tomorrow = Date.add(Date.utc_today(), 1)
+
+      tomorrow_entries =
+        SpotlightEntry
+        |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+        |> Repo.all()
+
+      assert tomorrow_entries != []
+      assert length(tomorrow_entries) <= 8
+    end
+
+    test "tomorrow entries don't overlap with today", %{viewer: viewer} do
+      {today_users, _} = Spotlight.get_or_seed_daily(viewer)
+      today_ids = Enum.map(today_users, & &1.id) |> MapSet.new()
+
+      tomorrow = Date.add(Date.utc_today(), 1)
+
+      tomorrow_ids =
+        SpotlightEntry
+        |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+        |> select([e], e.shown_user_id)
+        |> Repo.all()
+        |> MapSet.new()
+
+      assert MapSet.disjoint?(today_ids, tomorrow_ids)
+    end
+
+    test "seeding is idempotent — second call doesn't duplicate tomorrow entries", %{
+      viewer: viewer
+    } do
+      Spotlight.get_or_seed_daily(viewer)
+      Spotlight.get_or_seed_daily(viewer)
+
+      tomorrow = Date.add(Date.utc_today(), 1)
+
+      tomorrow_entries =
+        SpotlightEntry
+        |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+        |> Repo.all()
+
+      assert length(tomorrow_entries) <= 8
+    end
+  end
+
+  describe "preview_candidates/1 returns from tomorrow's entries" do
+    setup :setup_viewer_and_candidates
+
+    test "returns users from tomorrow's pre-seeded entries", %{viewer: viewer} do
+      Spotlight.get_or_seed_daily(viewer)
+
+      tomorrow = Date.add(Date.utc_today(), 1)
+
+      tomorrow_user_ids =
+        SpotlightEntry
+        |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+        |> select([e], e.shown_user_id)
+        |> Repo.all()
+        |> MapSet.new()
+
+      previews = Spotlight.preview_candidates(viewer)
+      preview_ids = Enum.map(previews, & &1.id) |> MapSet.new()
+
+      # All preview candidates should come from tomorrow's entries
+      assert MapSet.subset?(preview_ids, tomorrow_user_ids)
+    end
+
+    test "returns max 4 even though 8 are pre-seeded", %{viewer: viewer} do
+      Spotlight.get_or_seed_daily(viewer)
+      previews = Spotlight.preview_candidates(viewer)
+      assert length(previews) <= 4
+    end
+
+    test "returns stable results across calls", %{viewer: viewer} do
+      Spotlight.get_or_seed_daily(viewer)
+
+      previews1 = Spotlight.preview_candidates(viewer)
+      previews2 = Spotlight.preview_candidates(viewer)
+
+      ids1 = Enum.map(previews1, & &1.id) |> Enum.sort()
+      ids2 = Enum.map(previews2, & &1.id) |> Enum.sort()
+
+      assert ids1 == ids2
+    end
+  end
+
+  describe "get_or_seed_daily/1 validates pre-seeded entries" do
+    setup :setup_viewer_and_candidates
+
+    test "replaces invalid (waitlisted) pre-seeded user on next day", %{
+      viewer: viewer,
+      candidates: candidates
+    } do
+      # Seed today (which also seeds tomorrow)
+      Spotlight.get_or_seed_daily(viewer)
+
+      tomorrow = Date.add(Date.utc_today(), 1)
+
+      tomorrow_entries =
+        SpotlightEntry
+        |> where([e], e.user_id == ^viewer.id and e.shown_on == ^tomorrow)
+        |> Repo.all()
+
+      # Pick one of tomorrow's shown_user_ids and waitlist them
+      if tomorrow_entries != [] do
+        entry = hd(tomorrow_entries)
+        target = Enum.find(candidates, &(&1.id == entry.shown_user_id))
+
+        if target do
+          target
+          |> Ecto.Changeset.change(state: "waitlisted")
+          |> Repo.update!()
+
+          # Now load those entries as "today" by rewriting shown_on
+          # (simulates the next day arriving)
+          Repo.update_all(
+            from(e in SpotlightEntry,
+              where: e.user_id == ^viewer.id and e.shown_on == ^tomorrow
+            ),
+            set: [shown_on: Date.utc_today()]
+          )
+
+          # Delete the old today entries
+          today = Date.utc_today()
+
+          Repo.delete_all(
+            from(e in SpotlightEntry,
+              where:
+                e.user_id == ^viewer.id and e.shown_on == ^today and
+                  e.id not in ^Enum.map(tomorrow_entries, & &1.id)
+            )
+          )
+
+          # Now calling get_or_seed_daily should validate and replace the waitlisted user
+          {users, _} = Spotlight.get_or_seed_daily(viewer)
+          user_ids = Enum.map(users, & &1.id)
+
+          refute target.id in user_ids
+        end
+      end
+    end
+  end
+
+  describe "build_preview_hints/1" do
+    setup :setup_viewer_and_candidates
+
+    test "returns metadata for preview candidates", %{viewer: viewer} do
+      Spotlight.get_or_seed_daily(viewer)
+      previews = Spotlight.preview_candidates(viewer)
+
+      hints = Spotlight.build_preview_hints(previews)
+
+      for hint <- hints do
+        assert Map.has_key?(hint, :id)
+        assert Map.has_key?(hint, :pixelated_avatar_url)
+        assert Map.has_key?(hint, :age)
+        assert Map.has_key?(hint, :gender_symbol)
+        assert Map.has_key?(hint, :city_name)
+        assert Map.has_key?(hint, :obfuscated_name)
+
+        # Obfuscated name should be first char + "..."
+        assert String.ends_with?(hint.obfuscated_name, "...")
+        assert String.length(hint.obfuscated_name) >= 4
+      end
+    end
+
+    test "returns empty list for empty input", %{} do
+      assert Spotlight.build_preview_hints([]) == []
     end
   end
 

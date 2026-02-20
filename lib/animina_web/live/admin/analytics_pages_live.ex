@@ -16,7 +16,9 @@ defmodule AniminaWeb.Admin.AnalyticsPagesLive do
     days = parse_days(params["days"])
 
     pages = Analytics.top_pages(days, 50)
-    max_views = if pages == [], do: 1, else: max(Enum.max_by(pages, & &1.view_count).view_count, 1)
+
+    max_views =
+      if pages == [], do: 1, else: max(Enum.max_by(pages, & &1.view_count).view_count, 1)
 
     {:noreply,
      assign(socket,
@@ -32,7 +34,10 @@ defmodule AniminaWeb.Admin.AnalyticsPagesLive do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-5xl mx-auto">
         <div class="mb-6">
-          <.link navigate={~p"/admin/analytics"} class="text-sm text-base-content/60 hover:text-base-content">
+          <.link
+            navigate={~p"/admin/analytics"}
+            class="text-sm text-base-content/60 hover:text-base-content"
+          >
             &larr; {gettext("Analytics")}
           </.link>
         </div>
