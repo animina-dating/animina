@@ -15,8 +15,10 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   import AniminaWeb.MessageComponents
 
+  alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
+  alias Animina.Wingman
 
   @impl true
   def mount(socket) do
@@ -30,7 +32,10 @@ defmodule AniminaWeb.ChatPanelComponent do
        last_read_message_id: nil,
        blocked: false,
        avatar_photos: %{},
-       loaded: false
+       loaded: false,
+       wingman_suggestions: nil,
+       wingman_loading: false,
+       wingman_dismissed: false
      )}
   end
 
@@ -100,6 +105,13 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   def update(%{chat_event: :clear_typing}, socket) do
     {:ok, assign(socket, :typing, false)}
+  end
+
+  def update(%{chat_event: {:wingman_ready, suggestions}}, socket) do
+    {:ok,
+     socket
+     |> assign(:wingman_suggestions, suggestions)
+     |> assign(:wingman_loading, false)}
   end
 
   def update(assigns, socket) do
@@ -204,6 +216,47 @@ defmodule AniminaWeb.ChatPanelComponent do
               myself={@myself}
             />
           <% end %>
+        </div>
+
+        <%!-- Wingman Card --%>
+        <div
+          :if={@wingman_suggestions != nil && !@wingman_dismissed}
+          class="mx-2 mb-2 p-2.5 bg-info/5 rounded-lg border border-info/20"
+        >
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-medium text-info">
+              {gettext("Wingman")}
+            </span>
+            <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3 w-3" />
+            </button>
+          </div>
+          <div class="space-y-1.5">
+            <div :for={suggestion <- @wingman_suggestions} class="text-xs bg-base-100 rounded p-1.5 border border-base-300">
+              <p>{suggestion["text"]}</p>
+              <p :if={suggestion["hook"]} class="text-[10px] text-base-content/50 mt-0.5">
+                {suggestion["hook"]}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Wingman Loading --%>
+        <div
+          :if={@wingman_loading && !@wingman_dismissed}
+          class="mx-2 mb-2 p-2.5 bg-info/5 rounded-lg border border-info/20"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5">
+              <span class="loading loading-spinner loading-xs text-info"></span>
+              <span class="text-xs font-medium text-info">
+                {gettext("Wingman is thinking...")}
+              </span>
+            </div>
+            <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3 w-3" />
+            </button>
+          </div>
         </div>
 
         <%!-- Input --%>
@@ -387,6 +440,10 @@ defmodule AniminaWeb.ChatPanelComponent do
     end
   end
 
+  def handle_event("dismiss_wingman", _params, socket) do
+    {:noreply, assign(socket, :wingman_dismissed, true)}
+  end
+
   def handle_event("close_panel", _params, socket) do
     # Save draft to server before closing so it persists on reopen
     content = socket.assigns.form[:content].value
@@ -469,6 +526,19 @@ defmodule AniminaWeb.ChatPanelComponent do
         # which may not be subscribed yet (race condition on new conversations)
         messages = socket.assigns.messages ++ [message]
 
+        # Clear wingman after first message
+        socket =
+          if socket.assigns.wingman_suggestions || socket.assigns.wingman_loading do
+            Wingman.delete_suggestions(conversation_id, current_user_id)
+
+            socket
+            |> assign(:wingman_suggestions, nil)
+            |> assign(:wingman_loading, false)
+            |> assign(:wingman_dismissed, true)
+          else
+            socket
+          end
+
         {:noreply,
          socket
          |> assign(:messages, messages)
@@ -493,8 +563,13 @@ defmodule AniminaWeb.ChatPanelComponent do
     end
   end
 
-  defp maybe_load_conversation(socket, %{open: true}) do
-    if socket.assigns.loaded, do: socket, else: assign(socket, :loaded, true)
+  defp maybe_load_conversation(socket, %{open: true} = assigns) do
+    if socket.assigns.loaded do
+      socket
+    else
+      socket = assign(socket, :loaded, true)
+      maybe_init_wingman(socket, assigns, [])
+    end
   end
 
   defp maybe_load_conversation(socket, _assigns), do: socket
@@ -516,14 +591,17 @@ defmodule AniminaWeb.ChatPanelComponent do
 
     form_content = resolve_draft_content(socket, assigns)
 
-    socket
-    |> assign(:messages, messages)
-    |> assign(:grouped_messages, group_messages(messages))
-    |> assign(:other_last_read_at, other_last_read_at)
-    |> assign(:blocked, blocked)
-    |> assign(:loaded, true)
-    |> assign(:form, to_form(%{"content" => form_content}, as: :message))
-    |> update_last_read_message_id()
+    socket =
+      socket
+      |> assign(:messages, messages)
+      |> assign(:grouped_messages, group_messages(messages))
+      |> assign(:other_last_read_at, other_last_read_at)
+      |> assign(:blocked, blocked)
+      |> assign(:loaded, true)
+      |> assign(:form, to_form(%{"content" => form_content}, as: :message))
+      |> update_last_read_message_id()
+
+    maybe_init_wingman(socket, assigns, messages)
   end
 
   defp resolve_draft_content(socket, assigns) do
@@ -536,6 +614,42 @@ defmodule AniminaWeb.ChatPanelComponent do
         Messaging.get_draft(assigns.conversation_id, assigns.current_user_id)
 
       draft_content || ""
+    end
+  end
+
+  defp maybe_init_wingman(socket, assigns, messages) do
+    if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
+      current_user_id = assigns.current_user_id
+      profile_user_id = assigns.profile_user.id
+
+      # We may not have a conversation_id yet (lazy creation).
+      # If so, create a temporary context and generate without a conversation_id link.
+      conversation_id = assigns[:conversation_id]
+
+      if conversation_id do
+        # Subscribe parent to wingman PubSub topic
+        send(self(), {:chat_panel_wingman_subscribe, conversation_id, current_user_id})
+
+        case Wingman.get_or_generate_suggestions(conversation_id, current_user_id, profile_user_id) do
+          {:ok, suggestions} ->
+            assign(socket,
+              wingman_suggestions: suggestions,
+              wingman_loading: false
+            )
+
+          {:pending, _job_id} ->
+            assign(socket, wingman_loading: true)
+
+          {:error, _reason} ->
+            socket
+        end
+      else
+        # No conversation yet — we can't enqueue without one.
+        # Trigger generation after conversation is created (in deliver_message).
+        socket
+      end
+    else
+      socket
     end
   end
 

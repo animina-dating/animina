@@ -20,7 +20,8 @@ defmodule Animina.AI do
   @job_type_modules %{
     "photo_classification" => Animina.AI.JobTypes.PhotoClassification,
     "gender_guess" => Animina.AI.JobTypes.GenderGuess,
-    "photo_description" => Animina.AI.JobTypes.PhotoDescription
+    "photo_description" => Animina.AI.JobTypes.PhotoDescription,
+    "wingman_suggestion" => Animina.AI.JobTypes.WingmanSuggestion
   }
 
   @doc """

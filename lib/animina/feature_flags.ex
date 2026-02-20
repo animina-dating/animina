@@ -739,4 +739,30 @@ defmodule Animina.FeatureFlags do
   def max_red_flags do
     get_system_setting_value(:max_red_flags, 10)
   end
+
+  # --- Wingman Settings ---
+
+  @doc """
+  Returns whether the Wingman AI coaching feature is enabled.
+  Default: false (opt-in rollout).
+  """
+  def wingman_enabled? do
+    enabled?(:wingman)
+  end
+
+  @doc """
+  Returns the AI model used for wingman suggestions.
+  Default: "qwen3:8b"
+  """
+  def wingman_model do
+    get_system_setting_value(:wingman_model, "qwen3:8b")
+  end
+
+  @doc """
+  Returns the cache TTL for wingman suggestions in seconds.
+  Default: 86400 (24 hours)
+  """
+  def wingman_cache_ttl do
+    get_system_setting_value(:wingman_cache_ttl, 86_400)
+  end
 end

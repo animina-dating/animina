@@ -795,6 +795,28 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   end
 
   @impl true
+  def handle_info({:chat_panel_wingman_subscribe, conversation_id, user_id}, socket) do
+    if connected?(socket) do
+      Phoenix.PubSub.subscribe(
+        Animina.PubSub,
+        Animina.Wingman.suggestion_topic(conversation_id, user_id)
+      )
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:wingman_ready, suggestions}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:wingman_ready, suggestions}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info(:close_chat_panel, socket) do
     {:noreply, assign(socket, :chat_open, false)}
   end

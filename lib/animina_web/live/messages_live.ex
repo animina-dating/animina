@@ -26,6 +26,7 @@ defmodule AniminaWeb.MessagesLive do
   alias Animina.Messaging
   alias Animina.Photos
   alias Animina.Relationships
+  alias Animina.Wingman
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
@@ -169,6 +170,47 @@ defmodule AniminaWeb.MessagesLive do
               other_last_online_at={@other_last_online_at}
             />
           <% end %>
+        </div>
+
+        <%!-- Wingman Card --%>
+        <div
+          :if={@wingman_suggestions != nil && !@wingman_dismissed}
+          class="mx-1 mb-2 p-3 bg-info/5 rounded-lg border border-info/20"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-medium text-info">
+              {gettext("Wingman")}
+            </span>
+            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <div class="space-y-2">
+            <div :for={suggestion <- @wingman_suggestions} class="text-sm bg-base-100 rounded p-2 border border-base-300">
+              <p>{suggestion["text"]}</p>
+              <p :if={suggestion["hook"]} class="text-xs text-base-content/50 mt-1">
+                {suggestion["hook"]}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Wingman Loading --%>
+        <div
+          :if={@wingman_loading && !@wingman_dismissed}
+          class="mx-1 mb-2 p-3 bg-info/5 rounded-lg border border-info/20"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="loading loading-spinner loading-sm text-info"></span>
+              <span class="text-sm font-medium text-info">
+                {gettext("Wingman is thinking...")}
+              </span>
+            </div>
+            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+            </button>
+          </div>
         </div>
 
         <%!-- Message Input --%>
@@ -1048,7 +1090,10 @@ defmodule AniminaWeb.MessagesLive do
         override: nil,
         confirm_action: nil,
         show_timeline: false,
-        milestones: []
+        milestones: [],
+        wingman_suggestions: nil,
+        wingman_loading: false,
+        wingman_dismissed: false
       )
 
     # Handle start_with param to create/open a conversation
@@ -1147,6 +1192,8 @@ defmodule AniminaWeb.MessagesLive do
         confirm_action: nil
       )
 
+    socket = maybe_init_wingman(socket, conversation_id, user, other_user)
+
     maybe_push_server_draft(socket, draft_content, draft_updated_at)
   end
 
@@ -1154,6 +1201,9 @@ defmodule AniminaWeb.MessagesLive do
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.conversation_topic(conversation_id))
       Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.typing_topic(conversation_id))
+
+      user_id = socket.assigns.current_scope.user.id
+      Phoenix.PubSub.subscribe(Animina.PubSub, Wingman.suggestion_topic(conversation_id, user_id))
     end
   end
 
@@ -1173,6 +1223,42 @@ defmodule AniminaWeb.MessagesLive do
         else: nil
 
     {relationship, override}
+  end
+
+  defp maybe_init_wingman(socket, conversation_id, user, other_user) do
+    messages = socket.assigns.messages
+
+    # Only show wingman for the very first chat (no messages yet)
+    if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
+      case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
+        {:ok, suggestions} ->
+          assign(socket,
+            wingman_suggestions: suggestions,
+            wingman_loading: false,
+            wingman_dismissed: false
+          )
+
+        {:pending, _job_id} ->
+          assign(socket,
+            wingman_suggestions: nil,
+            wingman_loading: true,
+            wingman_dismissed: false
+          )
+
+        {:error, _reason} ->
+          assign(socket,
+            wingman_suggestions: nil,
+            wingman_loading: false,
+            wingman_dismissed: false
+          )
+      end
+    else
+      assign(socket,
+        wingman_suggestions: nil,
+        wingman_loading: false,
+        wingman_dismissed: false
+      )
+    end
   end
 
   defp compute_other_last_online_at(other_user_id) do
@@ -1237,6 +1323,28 @@ defmodule AniminaWeb.MessagesLive do
     end
   end
 
+  # --- Wingman Events ---
+
+  @impl true
+  def handle_event("dismiss_wingman", _params, socket) do
+    {:noreply, assign(socket, :wingman_dismissed, true)}
+  end
+
+  @impl true
+  def handle_event("refresh_wingman", _params, socket) do
+    user = socket.assigns.current_scope.user
+    conversation_id = socket.assigns.conversation_data.conversation.id
+    other_user = socket.assigns.conversation_data.other_user
+
+    Wingman.refresh_suggestions(conversation_id, user.id, other_user.id)
+
+    {:noreply,
+     socket
+     |> assign(:wingman_loading, true)
+     |> assign(:wingman_suggestions, nil)
+     |> assign(:wingman_dismissed, false)}
+  end
+
   # --- Events ---
 
   @impl true
@@ -1249,6 +1357,22 @@ defmodule AniminaWeb.MessagesLive do
         {:ok, _message} ->
           # Cancel pending draft save timer
           cancel_draft_timer(socket)
+
+          # Dismiss wingman after first message is sent
+          socket =
+            if socket.assigns.wingman_suggestions || socket.assigns.wingman_loading do
+              Wingman.delete_suggestions(
+                conversation_data.conversation.id,
+                user.id
+              )
+
+              socket
+              |> assign(:wingman_suggestions, nil)
+              |> assign(:wingman_loading, false)
+              |> assign(:wingman_dismissed, true)
+            else
+              socket
+            end
 
           # Message will be added via PubSub; draft cleared by context
           {:noreply,
@@ -1612,6 +1736,14 @@ defmodule AniminaWeb.MessagesLive do
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_info({:wingman_ready, suggestions}, socket) do
+    {:noreply,
+     socket
+     |> assign(:wingman_suggestions, suggestions)
+     |> assign(:wingman_loading, false)}
   end
 
   @impl true

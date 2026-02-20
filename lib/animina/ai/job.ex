@@ -14,7 +14,7 @@ defmodule Animina.AI.Job do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  @valid_job_types ~w(photo_classification gender_guess photo_description)
+  @valid_job_types ~w(photo_classification gender_guess photo_description wingman_suggestion)
   @valid_statuses ~w(pending scheduled running completed failed cancelled paused)
 
   schema "ai_jobs" do
