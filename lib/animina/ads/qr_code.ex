@@ -4,7 +4,7 @@ defmodule Animina.Ads.QrCode do
 
   Uses external tools:
   - `qrencode` — generates QR code PNG
-  - `magick` (ImageMagick) — composites heart mask overlay
+  - ImageMagick (`magick` v7 or `convert`/`identify` v6) — composites heart mask overlay
   - `zbarimg` (optional) — verifies QR code decodes correctly
   """
 
@@ -22,12 +22,17 @@ defmodule Animina.Ads.QrCode do
       !command_available?("qrencode") ->
         {:error, "qrencode is not installed. Install with: #{install_hint("qrencode")}"}
 
-      !command_available?("magick") ->
+      !imagemagick_available?() ->
         {:error, "ImageMagick is not installed. Install with: #{install_hint("imagemagick")}"}
 
       true ->
         :ok
     end
+  end
+
+  defp imagemagick_available? do
+    # ImageMagick 7 uses `magick`, ImageMagick 6 (Debian) uses `convert`
+    command_available?("magick") or command_available?("convert")
   end
 
   defp install_hint(package) do
@@ -79,56 +84,65 @@ defmodule Animina.Ads.QrCode do
 
     if qr_w == mask_w do
       # QR and mask are the same size — composite directly, no resizing needed
-      case System.cmd(
-             "magick",
-             [raw, mask, "-gravity", "center", "-composite", output],
-             stderr_to_stdout: true
-           ) do
+      {cmd, args} = magick_cmd([raw, mask, "-gravity", "center", "-composite", output])
+
+      case System.cmd(cmd, args, stderr_to_stdout: true) do
         {_, 0} -> :ok
-        {err, _} -> throw({:error, "magick composite failed: #{err}"})
+        {err, _} -> throw({:error, "ImageMagick composite failed: #{err}"})
       end
     else
       # Fallback: resize mask to match QR size with grid-aligned snapping
       full_size = "#{qr_w}x#{qr_w}"
 
-      case System.cmd(
-             "magick",
-             [
-               raw,
-               "(",
-               mask,
-               "-filter",
-               "point",
-               "-resize",
-               full_size,
-               "-channel",
-               "A",
-               "-threshold",
-               "50%",
-               "+channel",
-               ")",
-               "-gravity",
-               "center",
-               "-composite",
-               output
-             ],
-             stderr_to_stdout: true
-           ) do
+      {cmd, args} =
+        magick_cmd([
+          raw,
+          "(",
+          mask,
+          "-filter",
+          "point",
+          "-resize",
+          full_size,
+          "-channel",
+          "A",
+          "-threshold",
+          "50%",
+          "+channel",
+          ")",
+          "-gravity",
+          "center",
+          "-composite",
+          output
+        ])
+
+      case System.cmd(cmd, args, stderr_to_stdout: true) do
         {_, 0} -> :ok
-        {err, _} -> throw({:error, "magick composite failed: #{err}"})
+        {err, _} -> throw({:error, "ImageMagick composite failed: #{err}"})
       end
     end
   end
 
   defp get_image_dimensions(path) do
-    case System.cmd("magick", ["identify", "-format", "%wx%h", path], stderr_to_stdout: true) do
+    {cmd, args} = identify_cmd(["-format", "%wx%h", path])
+
+    case System.cmd(cmd, args, stderr_to_stdout: true) do
       {dims, 0} ->
         [w, h] = dims |> String.trim() |> String.split("x") |> Enum.map(&String.to_integer/1)
         {w, h}
 
       {err, _} ->
-        throw({:error, "magick identify failed: #{err}"})
+        throw({:error, "ImageMagick identify failed: #{err}"})
     end
+  end
+
+  # ImageMagick 7: `magick [args]`, ImageMagick 6: `convert [args]`
+  defp magick_cmd(args) do
+    if command_available?("magick"), do: {"magick", args}, else: {"convert", args}
+  end
+
+  # ImageMagick 7: `magick identify [args]`, ImageMagick 6: `identify [args]`
+  defp identify_cmd(args) do
+    if command_available?("magick"), do: {"magick", ["identify" | args]}, else: {"identify", args}
   end
 
   defp maybe_verify(output_path, url) do
