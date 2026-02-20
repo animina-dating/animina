@@ -509,7 +509,8 @@ defmodule AniminaWeb.UserLive.Registration do
     {:ok, redirect(socket, to: AniminaWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    ad_source_id = session["ad_source_id"]
     countries = GeoData.list_countries()
     germany = Enum.find(countries, fn c -> c.code == "DE" end)
 
@@ -555,6 +556,7 @@ defmodule AniminaWeb.UserLive.Registration do
       |> assign(step_ready: false)
       |> assign(age: compute_age(to_string(min_birthday)))
       |> assign(max_birthday: to_string(min_birthday))
+      |> assign(ad_source_id: ad_source_id)
       |> assign_form(changeset)
 
     {:ok, socket, temporary_assigns: [form: nil]}
@@ -640,10 +642,14 @@ defmodule AniminaWeb.UserLive.Registration do
       socket.assigns.locations
       |> Enum.map(fn loc -> %{"country_id" => loc.country_id, "zip_code" => loc.zip_code} end)
 
-    save_params = Map.put(merged_params, "locations", locations_for_save)
+    save_params =
+      merged_params
+      |> Map.put("locations", locations_for_save)
+      |> maybe_put_source_ad(socket.assigns.ad_source_id)
 
     case Accounts.register_user(save_params) do
       {:ok, user} ->
+        maybe_record_ad_conversion(socket.assigns.ad_source_id, user.id)
         {:ok, _pin} = Accounts.send_confirmation_pin(user)
         token = Phoenix.Token.sign(AniminaWeb.Endpoint, "pin_confirmation", user.id)
 
@@ -1108,5 +1114,14 @@ defmodule AniminaWeb.UserLive.Registration do
     else
       changeset
     end
+  end
+
+  defp maybe_put_source_ad(params, nil), do: params
+  defp maybe_put_source_ad(params, ad_id), do: Map.put(params, "source_ad_id", ad_id)
+
+  defp maybe_record_ad_conversion(nil, _user_id), do: :ok
+
+  defp maybe_record_ad_conversion(ad_id, user_id) do
+    Animina.Ads.record_conversion(ad_id, user_id)
   end
 end

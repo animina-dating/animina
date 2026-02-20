@@ -78,7 +78,7 @@ user = Animina.Accounts.get_user_by_email("admin@example.com")
 Animina.Accounts.assign_role(user, "admin")
 ```
 
-After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/logs` (email, Ollama, and activity logs).
+After that, manage roles through `/admin/roles`. Admin pages: `/admin/feature-flags`, `/admin/photo-reviews`, `/admin/photos/:id/history`, `/admin/logs` (email, Ollama, and activity logs), `/admin/ads` (ad campaign tracking).
 
 ## Photo System
 
@@ -279,6 +279,16 @@ When a user changes their email or password, a security event is created:
 - **Undo link**: Reverts the change and kills all sessions (victim can regain access)
 - **Confirm link**: Approves the change and clears the cooldown immediately
 - **Password reset NOT blocked**: The forgot-password flow remains available as a recovery mechanism
+
+## Ad Campaign Tracking
+
+Track print and online ad campaigns with unique URLs and QR codes:
+
+- **Trackable URLs**: Each ad gets a URL like `https://animina.de?ad=1f` (hex-encoded number)
+- **QR codes**: Auto-generated with heart-shaped mask overlay (requires `qrencode` and ImageMagick)
+- **Visit analytics**: OS, browser, device type, language detection from user-agent; bot filtering
+- **Conversion tracking**: Links ad visits to user registrations via signed cookie (30-day attribution window)
+- **Admin dashboard**: `/admin/ads` — create ads, view daily visit counts, device breakdowns, conversion rates
 
 ## Legal Compliance
 

@@ -10,7 +10,9 @@ defmodule AniminaWeb.Router do
     plug :put_root_layout, html: {AniminaWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug AniminaWeb.Plugs.AdRedirect
     plug :fetch_current_scope_for_user
+    plug AniminaWeb.Plugs.AdSource
     plug AniminaWeb.Plugs.RequireAdminPath
     plug AniminaWeb.Plugs.SetLocale
   end
@@ -160,7 +162,14 @@ defmodule AniminaWeb.Router do
       live "/admin/logs/ai", Admin.AIJobsLive
       live "/admin/logs/activity", Admin.ActivityLogsLive
       live "/admin/tos-acceptances", Admin.TosAcceptancesLive
+
+      live "/admin/ads", Admin.AdsLive
+      live "/admin/ads/:id", Admin.AdDetailLive
     end
+
+    # Ad QR code serving (admin-only)
+    get "/admin/ads/:id/qr-code", AdQrController, :download
+    get "/admin/ads/:id/qr-code/show", AdQrController, :show
 
     post "/role/switch", RoleController, :switch
     post "/my/settings/update-password", UserSessionController, :update_password

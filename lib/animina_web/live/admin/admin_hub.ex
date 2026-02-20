@@ -5,6 +5,7 @@ defmodule AniminaWeb.Admin.AdminHub do
 
   use AniminaWeb, :live_view
 
+  alias Animina.Ads
   alias Animina.AI
   alias Animina.Photos
   alias Animina.Reports
@@ -18,6 +19,7 @@ defmodule AniminaWeb.Admin.AdminHub do
     pending_ai_jobs = AI.count_jobs(status: "pending") + AI.count_jobs(status: "running")
     pending_reports = Reports.count_pending_reports()
     pending_appeals = Reports.count_pending_appeals()
+    total_ad_visits = Ads.total_visit_count()
 
     {:ok,
      assign(socket,
@@ -25,7 +27,8 @@ defmodule AniminaWeb.Admin.AdminHub do
        pending_reviews: pending_reviews,
        pending_ai_jobs: pending_ai_jobs,
        pending_reports: pending_reports,
-       pending_appeals: pending_appeals
+       pending_appeals: pending_appeals,
+       total_ad_visits: total_ad_visits
      )}
   end
 
@@ -108,6 +111,18 @@ defmodule AniminaWeb.Admin.AdminHub do
             title={gettext("Spotlight Funnel")}
             subtitle={gettext("Analyze filter pipeline for any user")}
           />
+          <.hub_card
+            navigate={~p"/admin/ads"}
+            icon="hero-megaphone"
+            title={gettext("Ad Campaigns")}
+            subtitle={gettext("Track ad performance and QR codes")}
+          >
+            <:trailing>
+              <span :if={@total_ad_visits > 0} class="badge badge-info">
+                {@total_ad_visits}
+              </span>
+            </:trailing>
+          </.hub_card>
           <.hub_card
             navigate={~p"/admin/logs"}
             icon="hero-clipboard-document-list"

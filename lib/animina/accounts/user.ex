@@ -75,6 +75,9 @@ defmodule Animina.Accounts.User do
     # Privacy
     field :hide_online_status, :boolean, default: false
 
+    # Ad attribution
+    belongs_to :source_ad, Animina.Ads.Ad, foreign_key: :source_ad_id
+
     # Virtual fields
     field :terms_accepted, :boolean, virtual: true
     field :tos_accepted, :boolean, virtual: true
@@ -123,7 +126,7 @@ defmodule Animina.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password | @registration_fields])
+    |> cast(attrs, [:email, :password, :source_ad_id | @registration_fields])
     |> compute_age_offsets()
     |> validate_email(opts)
     |> validate_password(opts)
