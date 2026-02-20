@@ -187,7 +187,11 @@ defmodule AniminaWeb.MessagesLive do
                 :if={@wingman_reload_count < Wingman.max_reloads()}
                 phx-click="reload_wingman"
                 class="btn btn-ghost btn-xs text-info"
-                title={gettext("New suggestions (%{remaining} left)", remaining: Wingman.max_reloads() - @wingman_reload_count)}
+                title={
+                  gettext("New suggestions (%{remaining} left)",
+                    remaining: Wingman.max_reloads() - @wingman_reload_count
+                  )
+                }
               >
                 <.icon name="hero-arrow-path" class="h-3.5 w-3.5" />
                 <span class="text-xs">
@@ -1472,9 +1476,7 @@ defmodule AniminaWeb.MessagesLive do
     if Wingman.can_reload?(conversation_id, user.id) do
       Wingman.clear_feedback_for_conversation(user.id, conversation_id)
 
-      Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
-        increment_count: true
-      )
+      Wingman.refresh_suggestions(conversation_id, user.id, other_user.id, increment_count: true)
 
       new_count = Wingman.get_regeneration_count(conversation_id, user.id)
 
@@ -1528,19 +1530,7 @@ defmodule AniminaWeb.MessagesLive do
 
           # Dismiss wingman after first message is sent
           socket =
-            if socket.assigns.wingman_suggestions || socket.assigns.wingman_loading do
-              Wingman.delete_suggestions(
-                conversation_data.conversation.id,
-                user.id
-              )
-
-              socket
-              |> assign(:wingman_suggestions, nil)
-              |> assign(:wingman_loading, false)
-              |> assign(:wingman_dismissed, true)
-            else
-              socket
-            end
+            maybe_dismiss_wingman(socket, conversation_data.conversation.id, user.id)
 
           # Message will be added via PubSub; draft cleared by context
           {:noreply,
@@ -2156,6 +2146,19 @@ defmodule AniminaWeb.MessagesLive do
     cancel_draft_timer(socket)
     timer = Process.send_after(self(), {:save_draft, content}, 2_000)
     assign(socket, :draft_save_timer, timer)
+  end
+
+  defp maybe_dismiss_wingman(socket, conversation_id, user_id) do
+    if socket.assigns.wingman_suggestions || socket.assigns.wingman_loading do
+      Wingman.delete_suggestions(conversation_id, user_id)
+
+      socket
+      |> assign(:wingman_suggestions, nil)
+      |> assign(:wingman_loading, false)
+      |> assign(:wingman_dismissed, true)
+    else
+      socket
+    end
   end
 
   defp cancel_draft_timer(socket) do

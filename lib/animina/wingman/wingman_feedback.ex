@@ -40,7 +40,13 @@ defmodule Animina.Wingman.WingmanFeedback do
       :value,
       :wingman_style
     ])
-    |> validate_required([:user_id, :conversation_id, :suggestion_index, :suggestion_text, :value])
+    |> validate_required([
+      :user_id,
+      :conversation_id,
+      :suggestion_index,
+      :suggestion_text,
+      :value
+    ])
     |> validate_inclusion(:value, [-1, 1])
     |> validate_inclusion(:suggestion_index, [0, 1])
     |> foreign_key_constraint(:user_id)

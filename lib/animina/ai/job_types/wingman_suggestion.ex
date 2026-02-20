@@ -51,7 +51,9 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
       {:ok, suggestions} ->
         Wingman.save_and_broadcast(conversation_id, user_id, suggestions, context_hash, job.id)
 
-        ActivityLog.log("system", "wingman_generated",
+        ActivityLog.log(
+          "system",
+          "wingman_generated",
           "Generated wingman suggestions for conversation",
           actor_id: user_id,
           metadata: %{

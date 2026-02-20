@@ -1,5 +1,5 @@
 defmodule Animina.AnalyticsTest do
-  use Animina.DataCase, async: true
+  use Animina.DataCase, async: false
 
   alias Animina.Analytics
   alias Animina.Analytics.DailyFunnelStat
@@ -7,6 +7,14 @@ defmodule Animina.AnalyticsTest do
   alias Animina.Analytics.PageView
 
   import Animina.AccountsFixtures
+
+  # Clean up any stale page views leaked by Task.start in AnalyticsHook
+  setup do
+    Repo.delete_all(PageView)
+    Repo.delete_all(DailyPageStat)
+    Repo.delete_all(DailyFunnelStat)
+    :ok
+  end
 
   describe "record_page_view/1" do
     test "inserts a page view" do
@@ -87,10 +95,18 @@ defmodule Animina.AnalyticsTest do
     end
   end
 
+  # rollup functions interpret dates as Berlin timezone, so we must
+  # use the current Berlin date (not UTC) to match recorded page views
+  defp berlin_today do
+    DateTime.utc_now()
+    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+    |> DateTime.to_date()
+  end
+
   describe "rollup_page_stats/1" do
     test "aggregates page views into daily stats" do
       session_id = Ecto.UUID.generate()
-      today = Date.utc_today()
+      today = berlin_today()
 
       for path <- ["/discover", "/discover", "/my"] do
         Analytics.record_page_view(%{session_id: session_id, path: path})
@@ -108,7 +124,7 @@ defmodule Animina.AnalyticsTest do
 
     test "is idempotent — re-running replaces existing data" do
       session_id = Ecto.UUID.generate()
-      today = Date.utc_today()
+      today = berlin_today()
 
       Analytics.record_page_view(%{session_id: session_id, path: "/test"})
 
@@ -122,7 +138,7 @@ defmodule Animina.AnalyticsTest do
   describe "rollup_funnel_stats/1" do
     test "creates a funnel stat row" do
       session_id = Ecto.UUID.generate()
-      today = Date.utc_today()
+      today = berlin_today()
 
       Analytics.record_page_view(%{session_id: session_id, path: "/"})
 

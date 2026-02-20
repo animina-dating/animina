@@ -10,6 +10,13 @@ defmodule Animina.Discovery.SpotlightTest do
   alias Animina.Discovery.Spotlight
   alias Animina.Messaging
 
+  # The Spotlight module uses Berlin dates internally, so tests must match
+  defp berlin_today do
+    DateTime.utc_now()
+    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+    |> DateTime.to_date()
+  end
+
   # Helper to activate a user (change state from waitlisted to normal)
   defp activate_user(user) do
     user
@@ -27,8 +34,9 @@ defmodule Animina.Discovery.SpotlightTest do
       |> activate_user()
       |> preload_locations()
 
+    # Need 18+ candidates: 8 per day × 2 days + headroom for exclusions
     candidates =
-      for i <- 1..10 do
+      for i <- 1..18 do
         user_fixture(%{
           gender: "female",
           preferred_partner_gender: ["male"],
@@ -219,7 +227,7 @@ defmodule Animina.Discovery.SpotlightTest do
     test "creates entries for tomorrow after seeding today", %{viewer: viewer} do
       Spotlight.get_or_seed_daily(viewer)
 
-      tomorrow = Date.add(Date.utc_today(), 1)
+      tomorrow = Date.add(berlin_today(), 1)
 
       tomorrow_entries =
         SpotlightEntry
@@ -234,7 +242,7 @@ defmodule Animina.Discovery.SpotlightTest do
       {today_users, _} = Spotlight.get_or_seed_daily(viewer)
       today_ids = Enum.map(today_users, & &1.id) |> MapSet.new()
 
-      tomorrow = Date.add(Date.utc_today(), 1)
+      tomorrow = Date.add(berlin_today(), 1)
 
       tomorrow_ids =
         SpotlightEntry
@@ -252,7 +260,7 @@ defmodule Animina.Discovery.SpotlightTest do
       Spotlight.get_or_seed_daily(viewer)
       Spotlight.get_or_seed_daily(viewer)
 
-      tomorrow = Date.add(Date.utc_today(), 1)
+      tomorrow = Date.add(berlin_today(), 1)
 
       tomorrow_entries =
         SpotlightEntry
@@ -269,7 +277,7 @@ defmodule Animina.Discovery.SpotlightTest do
     test "returns users from tomorrow's pre-seeded entries", %{viewer: viewer} do
       Spotlight.get_or_seed_daily(viewer)
 
-      tomorrow = Date.add(Date.utc_today(), 1)
+      tomorrow = Date.add(berlin_today(), 1)
 
       tomorrow_user_ids =
         SpotlightEntry
@@ -314,7 +322,7 @@ defmodule Animina.Discovery.SpotlightTest do
       # Seed today (which also seeds tomorrow)
       Spotlight.get_or_seed_daily(viewer)
 
-      tomorrow = Date.add(Date.utc_today(), 1)
+      tomorrow = Date.add(berlin_today(), 1)
 
       tomorrow_entries =
         SpotlightEntry
@@ -337,11 +345,11 @@ defmodule Animina.Discovery.SpotlightTest do
             from(e in SpotlightEntry,
               where: e.user_id == ^viewer.id and e.shown_on == ^tomorrow
             ),
-            set: [shown_on: Date.utc_today()]
+            set: [shown_on: berlin_today()]
           )
 
           # Delete the old today entries
-          today = Date.utc_today()
+          today = berlin_today()
 
           Repo.delete_all(
             from(e in SpotlightEntry,

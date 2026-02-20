@@ -210,9 +210,7 @@ defmodule Animina.AI.PerformanceStatsTest do
 
       # Backdate the first job to simulate it being older
       from(j in Job, where: j.id == ^running1.id)
-      |> Repo.update_all(
-        set: [updated_at: DateTime.utc_now() |> DateTime.add(-10, :second)]
-      )
+      |> Repo.update_all(set: [updated_at: DateTime.utc_now() |> DateTime.add(-10, :second)])
 
       {:ok, job2} = AI.enqueue("gender_guess", %{"name" => "second"})
       AI.mark_running(job2)

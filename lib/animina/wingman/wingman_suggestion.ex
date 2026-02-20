@@ -30,7 +30,14 @@ defmodule Animina.Wingman.WingmanSuggestion do
 
   def changeset(suggestion, attrs) do
     suggestion
-    |> cast(attrs, [:conversation_id, :user_id, :suggestions, :context_hash, :ai_job_id, :regeneration_count])
+    |> cast(attrs, [
+      :conversation_id,
+      :user_id,
+      :suggestions,
+      :context_hash,
+      :ai_job_id,
+      :regeneration_count
+    ])
     |> validate_required([:conversation_id, :user_id])
     |> foreign_key_constraint(:conversation_id)
     |> foreign_key_constraint(:user_id)

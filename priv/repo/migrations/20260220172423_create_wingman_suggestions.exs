@@ -4,7 +4,10 @@ defmodule Animina.Repo.Migrations.CreateWingmanSuggestions do
   def change do
     create table(:wingman_suggestions, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :conversation_id, references(:conversations, type: :binary_id, on_delete: :delete_all), null: false
+
+      add :conversation_id, references(:conversations, type: :binary_id, on_delete: :delete_all),
+        null: false
+
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
       add :suggestions, :map
       add :context_hash, :string

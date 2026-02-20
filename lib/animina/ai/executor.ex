@@ -268,8 +268,7 @@ defmodule Animina.AI.Executor do
     cond do
       # No GPU configured → run on any instance
       gpu_count == 0 ->
-        model = if model_family == :vision, do: @cpu_vision_model, else: model
-        {:run, nil, model}
+        {:run, nil, maybe_downgrade_vision(model_family, model)}
 
       # GPU idle → always use GPU ("Never waste an idle GPU!")
       not PerformanceStats.gpu_busy?() ->
@@ -281,23 +280,28 @@ defmodule Animina.AI.Executor do
 
       # GPU busy, CPU available → intelligent decision
       true ->
-        case should_use_cpu?(job_type) do
-          :cpu ->
-            Logger.debug("AI routing: GPU busy, routing #{job_type} to CPU")
-            model = if model_family == :vision, do: @cpu_vision_model, else: model
-            {:run, cpu_filter(), model}
-
-          :gpu_now ->
-            # Random coin flip said GPU — run immediately to build up stats
-            # (only happens when we have no historical data)
-            {:run, gpu_filter(), model}
-
-          :defer ->
-            Logger.debug("AI routing: GPU busy, deferring #{job_type} (waiting for GPU)")
-            {:defer, "waiting for GPU (#{job_type})"}
-        end
+        route_gpu_busy(job_type, model_family, model)
     end
   end
+
+  defp route_gpu_busy(job_type, model_family, model) do
+    case should_use_cpu?(job_type) do
+      :cpu ->
+        Logger.debug("AI routing: GPU busy, routing #{job_type} to CPU")
+        {:run, cpu_filter(), maybe_downgrade_vision(model_family, model)}
+
+      :gpu_now ->
+        # Random coin flip said GPU — run immediately to build up stats
+        {:run, gpu_filter(), model}
+
+      :defer ->
+        Logger.debug("AI routing: GPU busy, deferring #{job_type} (waiting for GPU)")
+        {:defer, "waiting for GPU (#{job_type})"}
+    end
+  end
+
+  defp maybe_downgrade_vision(:vision, _model), do: @cpu_vision_model
+  defp maybe_downgrade_vision(_family, model), do: model
 
   # Returns :cpu (run on CPU now) or :defer (put back in queue, wait for GPU).
   # For the random/no-data case: coin flip decides run-on-CPU vs run-on-GPU immediately
@@ -308,15 +312,7 @@ defmodule Animina.AI.Executor do
 
     case {gpu_job_avg, cpu_job_avg} do
       {nil, nil} ->
-        # No historical data → 50/50 random, always run (never defer)
-        # to build up stats for both instance types
-        if :rand.uniform() > 0.5 do
-          Logger.debug("AI routing: no history for #{job_type}, random → CPU")
-          :cpu
-        else
-          Logger.debug("AI routing: no history for #{job_type}, random → GPU")
-          :gpu_now
-        end
+        random_route(job_type)
 
       {_gpu, nil} ->
         # We know GPU speed but not CPU → defer to wait for known GPU
@@ -326,42 +322,61 @@ defmodule Animina.AI.Executor do
         # We know CPU speed but not GPU → use CPU since we have data
         :cpu
 
-      {gpu_job_avg, cpu_job_avg} ->
+      {gpu_avg, cpu_avg} ->
         # Both available → estimate optimal choice
-        gpu_overall_avg = PerformanceStats.avg_duration_ms_all("gpu")
-        elapsed = PerformanceStats.oldest_running_elapsed_ms()
+        compare_estimated_times(job_type, gpu_avg, cpu_avg)
+    end
+  end
 
-        gpu_remaining =
-          case {gpu_overall_avg, elapsed} do
-            {nil, _} -> 0
-            {_, nil} -> 0
-            {avg, el} -> max(0, avg - el)
-          end
+  # No historical data → 50/50 random, always run (never defer)
+  # to build up stats for both instance types
+  defp random_route(job_type) do
+    if :rand.uniform() > 0.5 do
+      Logger.debug("AI routing: no history for #{job_type}, random → CPU")
+      :cpu
+    else
+      Logger.debug("AI routing: no history for #{job_type}, random → GPU")
+      :gpu_now
+    end
+  end
 
-        # Account for other jobs already waiting for GPU.
-        # Each deferred job ahead of us adds another full GPU cycle to our wait.
-        deferred = PerformanceStats.count_deferred_jobs()
-        gpu_queue_wait = deferred * gpu_job_avg
+  defp compare_estimated_times(job_type, gpu_job_avg, cpu_job_avg) do
+    gpu_remaining = compute_gpu_remaining()
 
-        # Wait-for-GPU total: current job remaining + queue + our job on GPU
-        gpu_total = gpu_remaining + gpu_queue_wait + gpu_job_avg
-        # Use-CPU-now total: just our job execution time on CPU
-        cpu_total = cpu_job_avg
+    # Account for other jobs already waiting for GPU.
+    # Each deferred job ahead of us adds another full GPU cycle to our wait.
+    deferred = PerformanceStats.count_deferred_jobs()
+    gpu_queue_wait = deferred * gpu_job_avg
 
-        # Use CPU if it's faster (with 10% tolerance — close enough = use CPU for throughput)
-        if cpu_total < gpu_total * @cpu_tolerance do
-          Logger.debug(
-            "AI routing: #{job_type} — CPU=#{cpu_total}ms < GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) → CPU"
-          )
+    # Wait-for-GPU total: current job remaining + queue + our job on GPU
+    gpu_total = gpu_remaining + gpu_queue_wait + gpu_job_avg
+    # Use-CPU-now total: just our job execution time on CPU
+    cpu_total = cpu_job_avg
 
-          :cpu
-        else
-          Logger.debug(
-            "AI routing: #{job_type} — GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) < CPU=#{cpu_total}ms → defer for GPU"
-          )
+    # Use CPU if it's faster (with 10% tolerance — close enough = use CPU for throughput)
+    if cpu_total < gpu_total * @cpu_tolerance do
+      Logger.debug(
+        "AI routing: #{job_type} — CPU=#{cpu_total}ms < GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) → CPU"
+      )
 
-          :defer
-        end
+      :cpu
+    else
+      Logger.debug(
+        "AI routing: #{job_type} — GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) < CPU=#{cpu_total}ms → defer for GPU"
+      )
+
+      :defer
+    end
+  end
+
+  defp compute_gpu_remaining do
+    gpu_overall_avg = PerformanceStats.avg_duration_ms_all("gpu")
+    elapsed = PerformanceStats.oldest_running_elapsed_ms()
+
+    case {gpu_overall_avg, elapsed} do
+      {nil, _} -> 0
+      {_, nil} -> 0
+      {avg, el} -> max(0, avg - el)
     end
   end
 

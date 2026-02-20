@@ -248,7 +248,11 @@ defmodule AniminaWeb.ChatPanelComponent do
                 phx-click="reload_wingman"
                 phx-target={@myself}
                 class="btn btn-ghost btn-xs text-info"
-                title={gettext("New suggestions (%{remaining} left)", remaining: Wingman.max_reloads() - @wingman_reload_count)}
+                title={
+                  gettext("New suggestions (%{remaining} left)",
+                    remaining: Wingman.max_reloads() - @wingman_reload_count
+                  )
+                }
               >
                 <.icon name="hero-arrow-path" class="h-3 w-3" />
                 <span class="text-[10px]">
@@ -816,54 +820,62 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   defp maybe_init_wingman(socket, assigns, messages) do
     if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
-      current_user_id = assigns.current_user_id
-      profile_user_id = assigns.profile_user.id
-
-      # Load user's wingman style
-      user = Accounts.get_user(current_user_id)
-      socket = assign(socket, :wingman_style, (user && user.wingman_style) || "casual")
-
-      {conversation_id, socket} =
-        case assigns[:conversation_id] do
-          nil ->
-            # Eagerly create conversation so wingman has a conversation_id to work with
-            eagerly_create_conversation(socket, current_user_id, profile_user_id)
-
-          cid ->
-            {cid, socket}
-        end
-
-      if conversation_id do
-        # Subscribe parent to wingman PubSub topic
-        send(self(), {:chat_panel_wingman_subscribe, conversation_id, current_user_id})
-
-        feedback_map = Wingman.get_feedback_for_suggestions(current_user_id, conversation_id)
-        reload_count = Wingman.get_regeneration_count(conversation_id, current_user_id)
-
-        case Wingman.get_or_generate_suggestions(conversation_id, current_user_id, profile_user_id) do
-          {:ok, suggestions} ->
-            assign(socket,
-              wingman_suggestions: suggestions,
-              wingman_loading: false,
-              wingman_feedback: feedback_map,
-              wingman_reload_count: reload_count
-            )
-
-          {:pending, _job_id} ->
-            assign(socket,
-              wingman_loading: true,
-              wingman_feedback: feedback_map,
-              wingman_reload_count: reload_count
-            )
-
-          {:error, _reason} ->
-            socket
-        end
-      else
-        socket
-      end
+      do_init_wingman(socket, assigns)
     else
       socket
+    end
+  end
+
+  defp do_init_wingman(socket, assigns) do
+    current_user_id = assigns.current_user_id
+    profile_user_id = assigns.profile_user.id
+
+    # Load user's wingman style
+    user = Accounts.get_user(current_user_id)
+    socket = assign(socket, :wingman_style, (user && user.wingman_style) || "casual")
+
+    {conversation_id, socket} =
+      case assigns[:conversation_id] do
+        nil ->
+          eagerly_create_conversation(socket, current_user_id, profile_user_id)
+
+        cid ->
+          {cid, socket}
+      end
+
+    load_wingman_suggestions(socket, conversation_id, current_user_id, profile_user_id)
+  end
+
+  defp load_wingman_suggestions(socket, nil, _current_user_id, _profile_user_id), do: socket
+
+  defp load_wingman_suggestions(socket, conversation_id, current_user_id, profile_user_id) do
+    send(self(), {:chat_panel_wingman_subscribe, conversation_id, current_user_id})
+
+    feedback_map = Wingman.get_feedback_for_suggestions(current_user_id, conversation_id)
+    reload_count = Wingman.get_regeneration_count(conversation_id, current_user_id)
+
+    case Wingman.get_or_generate_suggestions(
+           conversation_id,
+           current_user_id,
+           profile_user_id
+         ) do
+      {:ok, suggestions} ->
+        assign(socket,
+          wingman_suggestions: suggestions,
+          wingman_loading: false,
+          wingman_feedback: feedback_map,
+          wingman_reload_count: reload_count
+        )
+
+      {:pending, _job_id} ->
+        assign(socket,
+          wingman_loading: true,
+          wingman_feedback: feedback_map,
+          wingman_reload_count: reload_count
+        )
+
+      {:error, _reason} ->
+        socket
     end
   end
 

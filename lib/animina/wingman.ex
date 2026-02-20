@@ -178,29 +178,14 @@ defmodule Animina.Wingman do
   def toggle_feedback(user_id, conversation_id, suggestion_index, value, suggestion_data) do
     case get_existing_feedback(user_id, conversation_id, suggestion_index) do
       nil ->
-        attrs = %{
-          user_id: user_id,
-          conversation_id: conversation_id,
-          suggestion_index: suggestion_index,
-          suggestion_text: suggestion_data[:text] || suggestion_data["text"],
-          suggestion_hook: suggestion_data[:hook] || suggestion_data["hook"],
-          value: value
-        }
-
-        case %WingmanFeedback{} |> WingmanFeedback.changeset(attrs) |> Repo.insert() do
-          {:ok, feedback} -> {:ok, :created, feedback}
-          error -> error
-        end
+        create_feedback(user_id, conversation_id, suggestion_index, value, suggestion_data)
 
       %WingmanFeedback{value: ^value} = existing ->
         Repo.delete(existing)
         {:ok, :removed}
 
       %WingmanFeedback{} = existing ->
-        case existing |> WingmanFeedback.changeset(%{value: value}) |> Repo.update() do
-          {:ok, feedback} -> {:ok, :switched, feedback}
-          error -> error
-        end
+        switch_feedback(existing, value)
     end
   end
 
@@ -305,6 +290,29 @@ defmodule Animina.Wingman do
     Enum.join(parts, "\n")
   end
 
+  defp create_feedback(user_id, conversation_id, suggestion_index, value, suggestion_data) do
+    attrs = %{
+      user_id: user_id,
+      conversation_id: conversation_id,
+      suggestion_index: suggestion_index,
+      suggestion_text: suggestion_data[:text] || suggestion_data["text"],
+      suggestion_hook: suggestion_data[:hook] || suggestion_data["hook"],
+      value: value
+    }
+
+    case %WingmanFeedback{} |> WingmanFeedback.changeset(attrs) |> Repo.insert() do
+      {:ok, feedback} -> {:ok, :created, feedback}
+      error -> error
+    end
+  end
+
+  defp switch_feedback(existing, value) do
+    case existing |> WingmanFeedback.changeset(%{value: value}) |> Repo.update() do
+      {:ok, feedback} -> {:ok, :switched, feedback}
+      error -> error
+    end
+  end
+
   defp get_existing_feedback(user_id, conversation_id, suggestion_index) do
     from(f in WingmanFeedback,
       where:
@@ -369,7 +377,7 @@ defmodule Animina.Wingman do
   def parse_suggestions(raw_response) do
     # Try to extract JSON array from response
     case extract_json_array(raw_response) do
-      {:ok, suggestions} when is_list(suggestions) and length(suggestions) > 0 ->
+      {:ok, suggestions} when is_list(suggestions) and suggestions != [] ->
         normalized =
           suggestions
           |> Enum.take(2)
@@ -671,10 +679,12 @@ defmodule Animina.Wingman do
     do: "You're a wingman — casual, direct, a little cheeky."
 
   defp style_rules("de", "funny"),
-    do: "- Formuliere als witziger Kumpel-Rat mit einem Augenzwinkern — finde den humorvollen Dreh, aber bleib respektvoll"
+    do:
+      "- Formuliere als witziger Kumpel-Rat mit einem Augenzwinkern — finde den humorvollen Dreh, aber bleib respektvoll"
 
   defp style_rules("de", "empathetic"),
-    do: "- Formuliere als einfühlsamer Rat — sanft, ermutigend und herzlich, NICHT als fertige Nachrichten"
+    do:
+      "- Formuliere als einfühlsamer Rat — sanft, ermutigend und herzlich, NICHT als fertige Nachrichten"
 
   defp style_rules("de", _casual),
     do: "- Formuliere als Kumpel-Rat, NICHT als fertige Nachrichten zum Absenden"
@@ -683,19 +693,22 @@ defmodule Animina.Wingman do
     do: "- Frame as witty buddy advice with a wink — find the funny angle, but stay respectful"
 
   defp style_rules(_, "empathetic"),
-    do: "- Frame as warm, encouraging advice — gentle and heartfelt, NOT as ready-to-send messages"
+    do:
+      "- Frame as warm, encouraging advice — gentle and heartfelt, NOT as ready-to-send messages"
 
   defp style_rules(_, _casual),
     do: "- Frame as buddy advice, NOT as ready-to-send messages"
 
   defp boldness_paragraph("de", :bold),
-    do: "Die beiden haben einiges gemeinsam — sei ruhig direkt und sprich Gemeinsamkeiten offen an."
+    do:
+      "Die beiden haben einiges gemeinsam — sei ruhig direkt und sprich Gemeinsamkeiten offen an."
 
   defp boldness_paragraph("de", :moderate),
     do: "Es gibt ein paar Anknüpfungspunkte — nutze sie als Gesprächseinstieg."
 
   defp boldness_paragraph("de", :cautious),
-    do: "Die beiden haben auf den ersten Blick wenig gemeinsam — schlage vor, herauszufinden was sie verbinden könnte."
+    do:
+      "Die beiden haben auf den ersten Blick wenig gemeinsam — schlage vor, herauszufinden was sie verbinden könnte."
 
   defp boldness_paragraph(_, :bold),
     do: "They have quite a bit in common — be direct and openly reference shared interests."
@@ -704,7 +717,8 @@ defmodule Animina.Wingman do
     do: "There are a few connection points — use them as conversation starters."
 
   defp boldness_paragraph(_, :cautious),
-    do: "They don't have much in common at first glance — suggest ways to discover what might connect them."
+    do:
+      "They don't have much in common at first glance — suggest ways to discover what might connect them."
 
   defp compute_boldness(%{shared_traits: shared, compatible_values: compatible}) do
     cond do
@@ -730,7 +744,10 @@ defmodule Animina.Wingman do
         if(data.age, do: ["Age: #{data.age}"], else: []) ++
         if(data.city, do: ["City: #{data.city}"], else: []) ++
         if(data.occupation, do: ["Occupation: #{data.occupation}"], else: []) ++
-        if(data.published_flags != [], do: ["Traits: #{Enum.join(data.published_flags, ", ")}"], else: []) ++
+        if(data.published_flags != [],
+          do: ["Traits: #{Enum.join(data.published_flags, ", ")}"],
+          else: []
+        ) ++
         if(data.stories != [], do: ["Stories:\n#{Enum.join(data.stories, "\n---\n")}"], else: [])
 
     Enum.join(parts, "\n")
@@ -738,13 +755,13 @@ defmodule Animina.Wingman do
 
   defp overlap_section(%{shared_traits: shared, compatible_values: compatible}, language) do
     parts =
-      if(shared != []) do
+      if shared != [] do
         label = if language == "de", do: "Gemeinsame Eigenschaften", else: "Things in common"
         ["#{label}: #{Enum.join(shared, ", ")}"]
       else
         []
       end ++
-        if(compatible != []) do
+        if compatible != [] do
           label = if language == "de", do: "Kompatible Werte", else: "Compatible values"
           ["#{label}: #{Enum.join(compatible, ", ")}"]
         else
