@@ -90,6 +90,27 @@ defmodule AniminaWeb.SpotlightComponents do
     """
   end
 
+  attr :avatar_url, :string, default: nil
+
+  def preview_card(assigns) do
+    ~H"""
+    <div class="rounded-lg overflow-hidden border border-base-300/50 bg-base-200">
+      <%= if @avatar_url do %>
+        <img
+          src={@avatar_url}
+          class="w-full aspect-[4/3] object-cover"
+          loading="lazy"
+          alt={gettext("Mystery candidate")}
+        />
+      <% else %>
+        <div class="w-full aspect-[4/3] bg-base-200 flex items-center justify-center">
+          <.icon name="hero-question-mark-circle" class="h-10 w-10 text-base-content/20" />
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
   @doc """
   Resolves a city name for a user given a map of preloaded city names.
   """

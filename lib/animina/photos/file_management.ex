@@ -144,10 +144,38 @@ defmodule Animina.Photos.FileManagement do
   def delete_photo_files(%Photo{} = photo) do
     File.rm(processed_path(photo, :main))
     File.rm(processed_path(photo, :thumbnail))
+    File.rm(processed_path(photo, :pixel))
 
     case original_path(photo) do
       {:ok, path} -> File.rm(path)
       _ -> :ok
+    end
+  end
+
+  @doc """
+  Generates a heavily pixelated variant of the main processed photo.
+
+  Used for sneak-peek teasers. Idempotent — skips if the pixel file
+  already exists. Returns `:ok` or `{:error, reason}`.
+  """
+  def generate_pixel_variant(%Photo{} = photo) do
+    pixel_path = processed_path(photo, :pixel)
+
+    if File.exists?(pixel_path) do
+      :ok
+    else
+      main_path = processed_path(photo, :main)
+
+      with true <- File.exists?(main_path),
+           {:ok, image} <- Image.open(main_path),
+           {:ok, pixelated} <- Image.pixelate(image, 0.03),
+           :ok <- File.mkdir_p(Path.dirname(pixel_path)),
+           {:ok, _} <- Image.write(pixelated, pixel_path, quality: 60) do
+        :ok
+      else
+        false -> {:error, :main_not_found}
+        {:error, reason} -> {:error, reason}
+      end
     end
   end
 
@@ -194,6 +222,7 @@ defmodule Animina.Photos.FileManagement do
     case variant do
       :main -> "#{photo_id}.webp"
       :thumbnail -> "#{photo_id}_thumb.webp"
+      :pixel -> "#{photo_id}_pixel.webp"
     end
   end
 

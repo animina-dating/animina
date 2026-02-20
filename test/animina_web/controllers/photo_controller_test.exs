@@ -69,6 +69,32 @@ defmodule AniminaWeb.PhotoControllerTest do
       assert conn.status == 200
     end
 
+    test "serves pixel variant and lazy-generates it from main", %{conn: conn} do
+      photo = approved_photo_fixture()
+
+      # Create a real main variant (Image library needs a real image to pixelate)
+      dir = Photos.processed_path_dir(photo.owner_type, photo.owner_id)
+      File.mkdir_p!(dir)
+      main_path = Photos.processed_path(photo, :main)
+      {:ok, image} = Image.new(100, 100, color: :green)
+      {:ok, _} = Image.write(image, main_path)
+
+      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+
+      # Pixel file should not exist yet
+      pixel_path = Photos.processed_path(photo, :pixel)
+      refute File.exists?(pixel_path)
+
+      # Request pixel variant — should lazy-generate and serve
+      url = Photos.signed_url(photo, :pixel)
+      conn = get(conn, url)
+      assert conn.status == 200
+      assert get_resp_header(conn, "content-type") == ["image/webp"]
+
+      # File should now be cached on disk
+      assert File.exists?(pixel_path)
+    end
+
     test "yesterday's signature returns 404", %{conn: conn} do
       photo = approved_photo_fixture()
       create_processed_files(photo)

@@ -15,6 +15,7 @@ defmodule AniminaWeb.SpotlightLive do
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
+  alias Animina.Photos
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @countdown_interval :timer.minutes(1)
@@ -75,6 +76,23 @@ defmodule AniminaWeb.SpotlightLive do
             />
           </div>
         </div>
+
+        <%!-- Sneak peek section --%>
+        <div :if={@preview_candidates != []} class="mt-12 mb-4">
+          <div class="flex items-center gap-2 mb-1">
+            <.icon name="hero-eye-slash" class="h-5 w-5 text-base-content/40" />
+            <h2 class="text-lg font-semibold text-base-content/70">{gettext("Sneak peek")}</h2>
+          </div>
+          <p class="text-sm text-base-content/40 mb-4">
+            {gettext("A glimpse of who might appear tomorrow...")}
+          </p>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <.preview_card
+              :for={candidate <- @preview_candidates}
+              avatar_url={Map.get(@preview_avatar_urls, candidate.id)}
+            />
+          </div>
+        </div>
       </div>
 
       <%!-- Conversations sidebar --%>
@@ -109,6 +127,8 @@ defmodule AniminaWeb.SpotlightLive do
       |> assign(:first_stories, %{})
       |> assign(:visited_ids, MapSet.new())
       |> assign(:countdown_text, countdown_text)
+      |> assign(:preview_candidates, [])
+      |> assign(:preview_avatar_urls, %{})
       |> assign(:sidebar_open, false)
       |> assign(:conversations, [])
       |> assign(:conversation_avatars, %{})
@@ -154,6 +174,10 @@ defmodule AniminaWeb.SpotlightLive do
     visited_ids = Discovery.visited_profile_ids(viewer.id, candidate_ids)
     unread_count = Messaging.unread_count(viewer.id)
 
+    # Preview candidates for sneak peek
+    preview_candidates = Spotlight.preview_candidates(viewer)
+    preview_avatar_urls = load_preview_avatar_urls(preview_candidates)
+
     {:noreply,
      socket
      |> assign(:loading, false)
@@ -163,7 +187,9 @@ defmodule AniminaWeb.SpotlightLive do
      |> assign(:city_names, city_names)
      |> assign(:first_stories, first_stories)
      |> assign(:visited_ids, visited_ids)
-     |> assign(:unread_count, unread_count)}
+     |> assign(:unread_count, unread_count)
+     |> assign(:preview_candidates, preview_candidates)
+     |> assign(:preview_avatar_urls, preview_avatar_urls)}
   end
 
   @impl true
@@ -247,6 +273,15 @@ defmodule AniminaWeb.SpotlightLive do
       conversations: conversations,
       conversation_avatars: avatars
     )
+  end
+
+  defp load_preview_avatar_urls(candidates) do
+    for c <- candidates,
+        photo = Photos.get_user_avatar(c.id),
+        photo != nil,
+        into: %{} do
+      {c.id, Photos.signed_url(photo, :pixel)}
+    end
   end
 
   defp load_city_names(users) do

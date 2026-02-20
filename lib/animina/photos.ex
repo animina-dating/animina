@@ -412,6 +412,7 @@ defmodule Animina.Photos do
   defdelegate original_path(photo), to: Animina.Photos.FileManagement
   defdelegate get_crop_data(photo), to: Animina.Photos.FileManagement
   defdelegate delete_crop_data(photo), to: Animina.Photos.FileManagement
+  defdelegate generate_pixel_variant(photo), to: Animina.Photos.FileManagement
 
   # --- Delegations to AuditLog ---
 

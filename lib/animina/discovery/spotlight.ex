@@ -109,6 +109,41 @@ defmodule Animina.Discovery.Spotlight do
     end
   end
 
+  @doc """
+  Returns up to 4 preview candidates for the "sneak peek" section.
+
+  Builds from the same pool as the daily spotlight but excludes:
+  - Today's spotlight entries
+  - Dismissed users
+  - Conversation partners
+
+  Results are shuffled and not persisted — they may change on each call.
+  """
+  def preview_candidates(viewer) do
+    today = berlin_today()
+
+    # Permanent exclusions
+    dismissed = Discovery.dismissed_ids(viewer.id)
+    conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
+    permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+
+    # Today's spotlight entries
+    today_ids =
+      load_today_entries(viewer.id, today)
+      |> Enum.map(& &1.shown_user_id)
+      |> MapSet.new()
+
+    # Build pool and filter
+    pool_candidates = SpotlightPool.build(viewer)
+
+    pool_candidates
+    |> Enum.reject(fn c ->
+      MapSet.member?(permanent_exclusions, c.id) || MapSet.member?(today_ids, c.id)
+    end)
+    |> Enum.shuffle()
+    |> Enum.take(4)
+  end
+
   # --- Private ---
 
   defp berlin_today do

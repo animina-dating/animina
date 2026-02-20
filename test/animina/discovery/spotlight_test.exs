@@ -165,6 +165,53 @@ defmodule Animina.Discovery.SpotlightTest do
     end
   end
 
+  describe "preview_candidates/1" do
+    setup :setup_viewer_and_candidates
+
+    test "returns up to 4 candidates", %{viewer: viewer} do
+      # Seed today's spotlight first
+      Spotlight.get_or_seed_daily(viewer)
+
+      previews = Spotlight.preview_candidates(viewer)
+      assert length(previews) <= 4
+    end
+
+    test "excludes today's spotlight entries", %{viewer: viewer} do
+      {today_users, _} = Spotlight.get_or_seed_daily(viewer)
+      today_ids = Enum.map(today_users, & &1.id) |> MapSet.new()
+
+      previews = Spotlight.preview_candidates(viewer)
+      preview_ids = Enum.map(previews, & &1.id) |> MapSet.new()
+
+      assert MapSet.disjoint?(today_ids, preview_ids)
+    end
+
+    test "excludes dismissed users", %{viewer: viewer, candidates: candidates} do
+      # Dismiss some candidates
+      for c <- Enum.take(candidates, 5) do
+        Discovery.dismiss_user(viewer, c)
+      end
+
+      Spotlight.get_or_seed_daily(viewer)
+      previews = Spotlight.preview_candidates(viewer)
+      preview_ids = Enum.map(previews, & &1.id) |> MapSet.new()
+      dismissed_ids = Enum.take(candidates, 5) |> Enum.map(& &1.id) |> MapSet.new()
+
+      assert MapSet.disjoint?(preview_ids, dismissed_ids)
+    end
+
+    test "excludes conversation partners", %{viewer: viewer, candidates: candidates} do
+      partner = hd(candidates)
+      {:ok, _conv} = Messaging.get_or_create_conversation(viewer.id, partner.id)
+
+      Spotlight.get_or_seed_daily(viewer)
+      previews = Spotlight.preview_candidates(viewer)
+      preview_ids = Enum.map(previews, & &1.id)
+
+      refute partner.id in preview_ids
+    end
+  end
+
   describe "countdown helpers" do
     test "seconds_until_midnight returns non-negative integer" do
       seconds = Spotlight.seconds_until_midnight()

@@ -475,7 +475,7 @@ msgstr "Hassas işlemler için lütfen yeniden kimlik doğrulayın."
 msgid "Privacy"
 msgstr "Gizlilik"
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:106
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:104
 #: lib/animina_web/live/user_live/registration.ex:15
 #: lib/animina_web/live/user_live/settings_hub.ex:28
 #, elixir-autogen, elixir-format
@@ -1024,7 +1024,7 @@ msgstr "Rol Ekle"
 #: lib/animina_web/live/admin/admin_hub.ex:28
 #: lib/animina_web/live/admin/ads_live.ex:166
 #: lib/animina_web/live/admin/ai_jobs_live.ex:371
-#: lib/animina_web/live/admin/analytics_overview_live.ex:43
+#: lib/animina_web/live/admin/analytics_overview_live.ex:44
 #: lib/animina_web/live/admin/email_logs_live.ex:131
 #: lib/animina_web/live/admin/flags_ai_live.ex:162
 #: lib/animina_web/live/admin/flags_index_live.ex:29
@@ -4381,7 +4381,7 @@ msgstr "Okundu"
 #: lib/animina_web/components/chat_panel_component.ex:645
 #: lib/animina_web/components/relationship_components.ex:140
 #: lib/animina_web/live/admin/ai_jobs_live.ex:494
-#: lib/animina_web/live/admin/analytics_overview_live.ex:75
+#: lib/animina_web/live/admin/analytics_overview_live.ex:76
 #: lib/animina_web/live/messages_live.ex:905
 #: lib/animina_web/live/relationships_live.ex:167
 #, elixir-autogen, elixir-format
@@ -5149,9 +5149,9 @@ msgstr[0] "%{count} kayıt"
 msgstr[1] "%{count} kayıt"
 
 #: lib/animina_web/live/admin/ad_detail_live.ex:200
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:101
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:103
-#: lib/animina_web/live/admin/analytics_overview_live.ex:120
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:99
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:101
+#: lib/animina_web/live/admin/analytics_overview_live.ex:121
 #: lib/animina_web/live/user_live/email_logs.ex:171
 #: lib/animina_web/live/user_live/login_history.ex:184
 #, elixir-autogen, elixir-format, fuzzy
@@ -5502,7 +5502,7 @@ msgstr ""
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:344
 #: lib/animina_web/live/admin/activity_logs_live.ex:397
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:131
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:129
 #: lib/animina_web/live/user_live/login_history.ex:149
 #: lib/animina_web/live/user_live/login_history.ex:176
 #, elixir-autogen, elixir-format
@@ -6005,7 +6005,7 @@ msgstr ""
 msgid "Analyze filter pipeline for any user"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:132
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:130
 #: lib/animina_web/live/admin/spotlight_funnel_live.ex:130
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Count"
@@ -6048,27 +6048,27 @@ msgstr "Girişe dön"
 msgid "Conversations"
 msgstr "Konuşma kapatıldı"
 
-#: lib/animina_web/live/spotlight_live.ex:35
-#: lib/animina_web/live/spotlight_live.ex:103
+#: lib/animina_web/live/spotlight_live.ex:36
+#: lib/animina_web/live/spotlight_live.ex:121
 #: lib/animina_web/live/user_live/my_hub.ex:68
 #, elixir-autogen, elixir-format
 msgid "Daily Spotlight"
 msgstr ""
 
-#: lib/animina_web/live/spotlight_live.ex:51
+#: lib/animina_web/live/spotlight_live.ex:52
 #: lib/animina_web/live/user_live/my_hub.ex:71
 #, elixir-autogen, elixir-format
 msgid "New profiles in %{time}"
 msgstr ""
 
-#: lib/animina_web/live/spotlight_live.ex:63
+#: lib/animina_web/live/spotlight_live.ex:64
 #: lib/animina_web/live/user_live/my_hub.ex:83
 #, elixir-autogen, elixir-format
 msgid "No candidates found. Try adjusting your search settings."
 msgstr ""
 
 #: lib/animina_web/components/layouts.ex:289
-#: lib/animina_web/live/spotlight_live.ex:28
+#: lib/animina_web/live/spotlight_live.ex:29
 #: lib/animina_web/live/user_live/my_hub.ex:198
 #: lib/animina_web/live/user_live/profile_moodboard.ex:43
 #, elixir-autogen, elixir-format
@@ -7815,180 +7815,180 @@ msgstr ""
 msgid "QR code generated but failed to save path."
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:64
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:72
-#: lib/animina_web/live/admin/analytics_pages_live.ex:54
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:62
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:70
+#: lib/animina_web/live/admin/analytics_pages_live.ex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} day"
 msgid_plural "%{count} days"
 msgstr[0] "%{count}g önce"
 msgstr[1] "%{count}g önce"
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:107
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:105
 #, elixir-autogen, elixir-format, fuzzy
 msgid "1st Message"
 msgstr "Mesaj"
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:112
+#: lib/animina_web/live/admin/analytics_overview_live.ex:113
 #, elixir-autogen, elixir-format
 msgid "30-Day Page View Trend"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:102
-#: lib/animina_web/live/admin/analytics_overview_live.ex:92
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:100
+#: lib/animina_web/live/admin/analytics_overview_live.ex:93
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Active Users"
 msgstr "Aktif"
 
 #: lib/animina_web/live/admin/admin_hub.ex:132
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:48
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:56
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:46
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:54
 #: lib/animina_web/live/admin/analytics_overview_live.ex:11
-#: lib/animina_web/live/admin/analytics_overview_live.ex:48
-#: lib/animina_web/live/admin/analytics_pages_live.ex:38
+#: lib/animina_web/live/admin/analytics_overview_live.ex:49
+#: lib/animina_web/live/admin/analytics_pages_live.ex:36
 #, elixir-autogen, elixir-format
 msgid "Analytics"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:9
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:11
 #, elixir-autogen, elixir-format
 msgid "Analytics — Engagement"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:11
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:13
 #, elixir-autogen, elixir-format
 msgid "Analytics — Funnels"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_pages_live.ex:9
+#: lib/animina_web/live/admin/analytics_pages_live.ex:11
 #, elixir-autogen, elixir-format
 msgid "Analytics — Pages"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:61
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Conversion Funnel"
 msgstr "Konuşma kapatıldı"
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:71
-#: lib/animina_web/live/admin/analytics_overview_live.ex:95
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:69
+#: lib/animina_web/live/admin/analytics_overview_live.ex:96
 #, elixir-autogen, elixir-format
 msgid "DAU"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:88
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:86
 #, elixir-autogen, elixir-format
 msgid "DAU / MAU"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:69
+#: lib/animina_web/live/admin/analytics_overview_live.ex:70
 #, elixir-autogen, elixir-format
 msgid "DAU/WAU/MAU and feature usage"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:93
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:91
 #, elixir-autogen, elixir-format
 msgid "Daily Active Users"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:95
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "Daily Breakdown"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:53
-#: lib/animina_web/live/admin/analytics_overview_live.ex:68
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:51
+#: lib/animina_web/live/admin/analytics_overview_live.ex:69
 #, elixir-autogen, elixir-format
 msgid "Engagement"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:123
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:121
 #, elixir-autogen, elixir-format
 msgid "Feature Engagement"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:46
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:44
 #, elixir-autogen, elixir-format
 msgid "First Message"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:62
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:60
 #, elixir-autogen, elixir-format
 msgid "From visitor to mutual match"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:62
+#: lib/animina_web/live/admin/analytics_overview_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Funnels"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:73
-#: lib/animina_web/live/admin/analytics_overview_live.ex:97
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:71
+#: lib/animina_web/live/admin/analytics_overview_live.ex:98
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Last 24 hours"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:83
-#: lib/animina_web/live/admin/analytics_overview_live.ex:107
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:81
+#: lib/animina_web/live/admin/analytics_overview_live.ex:108
 #, elixir-autogen, elixir-format
 msgid "Last 30 days"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:78
-#: lib/animina_web/live/admin/analytics_overview_live.ex:102
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:76
+#: lib/animina_web/live/admin/analytics_overview_live.ex:103
 #, elixir-autogen, elixir-format
 msgid "Last 7 days"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:81
-#: lib/animina_web/live/admin/analytics_overview_live.ex:105
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:79
+#: lib/animina_web/live/admin/analytics_overview_live.ex:106
 #, elixir-autogen, elixir-format
 msgid "MAU"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:108
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:106
 #, elixir-autogen, elixir-format
 msgid "Match"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:47
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:45
 #, elixir-autogen, elixir-format
 msgid "Mutual Match"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:97
-#: lib/animina_web/live/admin/analytics_overview_live.ex:114
-#: lib/animina_web/live/admin/analytics_pages_live.ex:59
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:95
+#: lib/animina_web/live/admin/analytics_overview_live.ex:115
+#: lib/animina_web/live/admin/analytics_pages_live.ex:57
 #, elixir-autogen, elixir-format
 msgid "No data yet. Rollup runs daily at 03:00."
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:125
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:123
 #, elixir-autogen, elixir-format
 msgid "No engagement data available."
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:148
+#: lib/animina_web/live/admin/analytics_overview_live.ex:149
 #, elixir-autogen, elixir-format
 msgid "No page views recorded yet today."
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:95
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:93
 #, elixir-autogen, elixir-format
 msgid "No session data available."
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:78
+#: lib/animina_web/live/admin/analytics_overview_live.ex:79
 #, elixir-autogen, elixir-format
 msgid "Page Views"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_pages_live.ex:43
+#: lib/animina_web/live/admin/analytics_pages_live.ex:41
 #, elixir-autogen, elixir-format
 msgid "Page Views by Path"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:57
+#: lib/animina_web/live/admin/analytics_overview_live.ex:58
 #, elixir-autogen, elixir-format
 msgid "Page view breakdown by path"
 msgstr ""
@@ -7998,87 +7998,102 @@ msgstr ""
 msgid "Page views, funnels, and engagement"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:56
+#: lib/animina_web/live/admin/analytics_overview_live.ex:57
 #, elixir-autogen, elixir-format
 msgid "Pages"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:155
-#: lib/animina_web/live/admin/analytics_pages_live.ex:67
+#: lib/animina_web/live/admin/analytics_overview_live.ex:156
+#: lib/animina_web/live/admin/analytics_pages_live.ex:65
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Path"
 msgstr "Hamur İşleri"
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:45
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:43
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Profile Completed"
 msgstr "Profil tamamlanma durumu"
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:44
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:105
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:42
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:103
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Registered"
 msgstr "Kayıt ol"
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:63
+#: lib/animina_web/live/admin/analytics_overview_live.ex:64
 #, elixir-autogen, elixir-format
 msgid "Registration and conversion funnel"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:49
+#: lib/animina_web/live/admin/analytics_overview_live.ex:50
 #, elixir-autogen, elixir-format
 msgid "Self-hosted page view and engagement analytics"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:82
-#: lib/animina_web/live/admin/analytics_overview_live.ex:122
-#: lib/animina_web/live/admin/analytics_pages_live.ex:69
+#: lib/animina_web/live/admin/analytics_overview_live.ex:83
+#: lib/animina_web/live/admin/analytics_overview_live.ex:123
+#: lib/animina_web/live/admin/analytics_pages_live.ex:67
 #, elixir-autogen, elixir-format
 msgid "Sessions"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:86
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:84
 #, elixir-autogen, elixir-format
 msgid "Stickiness"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:146
+#: lib/animina_web/live/admin/analytics_overview_live.ex:147
 #, elixir-autogen, elixir-format
 msgid "Top Pages Today"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_pages_live.ex:44
+#: lib/animina_web/live/admin/analytics_pages_live.ex:42
 #, elixir-autogen, elixir-format
 msgid "Top pages over the selected period"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:54
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:52
 #, elixir-autogen, elixir-format
 msgid "User activity and feature usage"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:86
-#: lib/animina_web/live/admin/analytics_overview_live.ex:123
-#: lib/animina_web/live/admin/analytics_pages_live.ex:70
+#: lib/animina_web/live/admin/analytics_overview_live.ex:87
+#: lib/animina_web/live/admin/analytics_overview_live.ex:124
+#: lib/animina_web/live/admin/analytics_pages_live.ex:68
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Users"
 msgstr "Kullanıcı"
 
-#: lib/animina_web/live/admin/analytics_overview_live.ex:121
-#: lib/animina_web/live/admin/analytics_overview_live.ex:156
-#: lib/animina_web/live/admin/analytics_pages_live.ex:68
+#: lib/animina_web/live/admin/analytics_overview_live.ex:122
+#: lib/animina_web/live/admin/analytics_overview_live.ex:157
+#: lib/animina_web/live/admin/analytics_pages_live.ex:66
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Views"
 msgstr ""
 
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:43
-#: lib/animina_web/live/admin/analytics_funnels_live.ex:104
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:41
+#: lib/animina_web/live/admin/analytics_funnels_live.ex:102
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Visitors"
 msgstr "Görünür"
 
-#: lib/animina_web/live/admin/analytics_engagement_live.ex:76
-#: lib/animina_web/live/admin/analytics_overview_live.ex:100
+#: lib/animina_web/live/admin/analytics_engagement_live.ex:74
+#: lib/animina_web/live/admin/analytics_overview_live.ex:101
 #, elixir-autogen, elixir-format
 msgid "WAU"
+msgstr ""
+
+#: lib/animina_web/live/spotlight_live.ex:87
+#, elixir-autogen, elixir-format
+msgid "A glimpse of who might appear tomorrow..."
+msgstr ""
+
+#: lib/animina_web/components/spotlight_components.ex:103
+#, elixir-autogen, elixir-format
+msgid "Mystery candidate"
+msgstr ""
+
+#: lib/animina_web/live/spotlight_live.ex:84
+#, elixir-autogen, elixir-format
+msgid "Sneak peek"
 msgstr ""

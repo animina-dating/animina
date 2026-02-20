@@ -55,4 +55,5 @@ defmodule Animina.Photos.UrlSigning do
 
   defp variant_filename(%Photo{} = photo, :main), do: "#{photo.id}.webp"
   defp variant_filename(%Photo{} = photo, :thumbnail), do: "#{photo.id}_thumb.webp"
+  defp variant_filename(%Photo{} = photo, :pixel), do: "#{photo.id}_pixel.webp"
 end
