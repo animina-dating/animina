@@ -38,7 +38,8 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_loading: false,
        wingman_dismissed: false,
        wingman_style: "casual",
-       wingman_feedback: %{}
+       wingman_feedback: %{},
+       wingman_reload_count: 0
      )}
   end
 
@@ -111,10 +112,21 @@ defmodule AniminaWeb.ChatPanelComponent do
   end
 
   def update(%{chat_event: {:wingman_ready, suggestions}}, socket) do
+    reload_count =
+      if socket.assigns.conversation_id do
+        Wingman.get_regeneration_count(
+          socket.assigns.conversation_id,
+          socket.assigns.current_user_id
+        )
+      else
+        0
+      end
+
     {:ok,
      socket
      |> assign(:wingman_suggestions, suggestions)
-     |> assign(:wingman_loading, false)}
+     |> assign(:wingman_loading, false)
+     |> assign(:wingman_reload_count, reload_count)}
   end
 
   def update(assigns, socket) do
@@ -230,9 +242,29 @@ defmodule AniminaWeb.ChatPanelComponent do
             <span class="text-xs font-medium text-info">
               {gettext("Wingman")}
             </span>
-            <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
-              <.icon name="hero-x-mark" class="h-3 w-3" />
-            </button>
+            <div class="flex items-center gap-1">
+              <button
+                :if={@wingman_reload_count < Wingman.max_reloads()}
+                phx-click="reload_wingman"
+                phx-target={@myself}
+                class="btn btn-ghost btn-xs text-info"
+                title={gettext("New suggestions (%{remaining} left)", remaining: Wingman.max_reloads() - @wingman_reload_count)}
+              >
+                <.icon name="hero-arrow-path" class="h-3 w-3" />
+                <span class="text-[10px]">
+                  {@wingman_reload_count}/{Wingman.max_reloads()}
+                </span>
+              </button>
+              <span
+                :if={@wingman_reload_count >= Wingman.max_reloads()}
+                class="text-[10px] text-base-content/40 mr-1"
+              >
+                {@wingman_reload_count}/{Wingman.max_reloads()}
+              </span>
+              <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
+                <.icon name="hero-x-mark" class="h-3 w-3" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-1 mb-1.5">
             <button
@@ -261,7 +293,7 @@ defmodule AniminaWeb.ChatPanelComponent do
                 <button
                   phx-click="wingman_feedback"
                   phx-value-index={idx}
-                  phx-value-value="1"
+                  phx-value-rating="1"
                   phx-target={@myself}
                   class={[
                     "btn btn-ghost btn-xs btn-circle",
@@ -277,7 +309,7 @@ defmodule AniminaWeb.ChatPanelComponent do
                 <button
                   phx-click="wingman_feedback"
                   phx-value-index={idx}
-                  phx-value-value="-1"
+                  phx-value-rating="-1"
                   phx-target={@myself}
                   class={[
                     "btn btn-ghost btn-xs btn-circle",
@@ -307,9 +339,14 @@ defmodule AniminaWeb.ChatPanelComponent do
                 {gettext("Wingman is thinking...")}
               </span>
             </div>
-            <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
-              <.icon name="hero-x-mark" class="h-3 w-3" />
-            </button>
+            <div class="flex items-center gap-1">
+              <span class="text-[10px] text-base-content/40 mr-1">
+                {@wingman_reload_count}/{Wingman.max_reloads()}
+              </span>
+              <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
+                <.icon name="hero-x-mark" class="h-3 w-3" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-1">
             <button
@@ -512,9 +549,9 @@ defmodule AniminaWeb.ChatPanelComponent do
     {:noreply, assign(socket, :wingman_dismissed, true)}
   end
 
-  def handle_event("wingman_feedback", %{"index" => idx_str, "value" => val_str}, socket) do
+  def handle_event("wingman_feedback", %{"index" => idx_str, "rating" => rating_str}, socket) do
     idx = String.to_integer(idx_str)
-    value = String.to_integer(val_str)
+    value = String.to_integer(rating_str)
     suggestion = Enum.at(socket.assigns.wingman_suggestions || [], idx)
 
     if suggestion && socket.assigns.conversation_id do
@@ -550,12 +587,13 @@ defmodule AniminaWeb.ChatPanelComponent do
       {:ok, updated_user} ->
         socket = assign(socket, :wingman_style, updated_user.wingman_style)
 
-        # Refresh suggestions with the new style
+        # Refresh suggestions with the new style (does NOT count as a reload)
         if socket.assigns.conversation_id do
           Wingman.refresh_suggestions(
             socket.assigns.conversation_id,
             socket.assigns.current_user_id,
-            socket.assigns.profile_user.id
+            socket.assigns.profile_user.id,
+            increment_count: false
           )
 
           {:noreply,
@@ -569,6 +607,37 @@ defmodule AniminaWeb.ChatPanelComponent do
 
       _ ->
         {:noreply, socket}
+    end
+  end
+
+  def handle_event("reload_wingman", _params, socket) do
+    conversation_id = socket.assigns.conversation_id
+
+    if conversation_id && Wingman.can_reload?(conversation_id, socket.assigns.current_user_id) do
+      Wingman.clear_feedback_for_conversation(
+        socket.assigns.current_user_id,
+        conversation_id
+      )
+
+      Wingman.refresh_suggestions(
+        conversation_id,
+        socket.assigns.current_user_id,
+        socket.assigns.profile_user.id,
+        increment_count: true
+      )
+
+      new_count =
+        Wingman.get_regeneration_count(conversation_id, socket.assigns.current_user_id)
+
+      {:noreply,
+       socket
+       |> assign(:wingman_loading, true)
+       |> assign(:wingman_suggestions, nil)
+       |> assign(:wingman_dismissed, false)
+       |> assign(:wingman_feedback, %{})
+       |> assign(:wingman_reload_count, new_count)}
+    else
+      {:noreply, socket}
     end
   end
 
@@ -769,17 +838,23 @@ defmodule AniminaWeb.ChatPanelComponent do
         send(self(), {:chat_panel_wingman_subscribe, conversation_id, current_user_id})
 
         feedback_map = Wingman.get_feedback_for_suggestions(current_user_id, conversation_id)
+        reload_count = Wingman.get_regeneration_count(conversation_id, current_user_id)
 
         case Wingman.get_or_generate_suggestions(conversation_id, current_user_id, profile_user_id) do
           {:ok, suggestions} ->
             assign(socket,
               wingman_suggestions: suggestions,
               wingman_loading: false,
-              wingman_feedback: feedback_map
+              wingman_feedback: feedback_map,
+              wingman_reload_count: reload_count
             )
 
           {:pending, _job_id} ->
-            assign(socket, wingman_loading: true, wingman_feedback: feedback_map)
+            assign(socket,
+              wingman_loading: true,
+              wingman_feedback: feedback_map,
+              wingman_reload_count: reload_count
+            )
 
           {:error, _reason} ->
             socket

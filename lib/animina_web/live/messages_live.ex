@@ -182,9 +182,28 @@ defmodule AniminaWeb.MessagesLive do
             <span class="text-sm font-medium text-info">
               {gettext("Wingman")}
             </span>
-            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
-              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
-            </button>
+            <div class="flex items-center gap-1">
+              <button
+                :if={@wingman_reload_count < Wingman.max_reloads()}
+                phx-click="reload_wingman"
+                class="btn btn-ghost btn-xs text-info"
+                title={gettext("New suggestions (%{remaining} left)", remaining: Wingman.max_reloads() - @wingman_reload_count)}
+              >
+                <.icon name="hero-arrow-path" class="h-3.5 w-3.5" />
+                <span class="text-xs">
+                  {@wingman_reload_count}/{Wingman.max_reloads()}
+                </span>
+              </button>
+              <span
+                :if={@wingman_reload_count >= Wingman.max_reloads()}
+                class="text-xs text-base-content/40 mr-1"
+              >
+                {@wingman_reload_count}/{Wingman.max_reloads()}
+              </span>
+              <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-1.5 mb-2">
             <button
@@ -212,7 +231,7 @@ defmodule AniminaWeb.MessagesLive do
                 <button
                   phx-click="wingman_feedback"
                   phx-value-index={idx}
-                  phx-value-value="1"
+                  phx-value-rating="1"
                   class={[
                     "btn btn-ghost btn-xs btn-circle",
                     if(Map.get(@wingman_feedback, idx) == 1,
@@ -227,7 +246,7 @@ defmodule AniminaWeb.MessagesLive do
                 <button
                   phx-click="wingman_feedback"
                   phx-value-index={idx}
-                  phx-value-value="-1"
+                  phx-value-rating="-1"
                   class={[
                     "btn btn-ghost btn-xs btn-circle",
                     if(Map.get(@wingman_feedback, idx) == -1,
@@ -256,9 +275,14 @@ defmodule AniminaWeb.MessagesLive do
                 {gettext("Wingman is thinking...")}
               </span>
             </div>
-            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
-              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
-            </button>
+            <div class="flex items-center gap-1">
+              <span class="text-xs text-base-content/40 mr-1">
+                {@wingman_reload_count}/{Wingman.max_reloads()}
+              </span>
+              <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
           <div class="flex gap-1.5">
             <button
@@ -1157,7 +1181,8 @@ defmodule AniminaWeb.MessagesLive do
         wingman_loading: false,
         wingman_dismissed: false,
         wingman_style: user.wingman_style || "casual",
-        wingman_feedback: %{}
+        wingman_feedback: %{},
+        wingman_reload_count: 0
       )
 
     # Handle start_with param to create/open a conversation
@@ -1295,6 +1320,7 @@ defmodule AniminaWeb.MessagesLive do
     # Only show wingman for the very first chat (no messages yet)
     if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
       feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
+      reload_count = Wingman.get_regeneration_count(conversation_id, user.id)
 
       case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
         {:ok, suggestions} ->
@@ -1302,7 +1328,8 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: suggestions,
             wingman_loading: false,
             wingman_dismissed: false,
-            wingman_feedback: feedback_map
+            wingman_feedback: feedback_map,
+            wingman_reload_count: reload_count
           )
 
         {:pending, _job_id} ->
@@ -1310,7 +1337,8 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: nil,
             wingman_loading: true,
             wingman_dismissed: false,
-            wingman_feedback: feedback_map
+            wingman_feedback: feedback_map,
+            wingman_reload_count: reload_count
           )
 
         {:error, _reason} ->
@@ -1318,7 +1346,8 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: nil,
             wingman_loading: false,
             wingman_dismissed: false,
-            wingman_feedback: %{}
+            wingman_feedback: %{},
+            wingman_reload_count: reload_count
           )
       end
     else
@@ -1326,7 +1355,8 @@ defmodule AniminaWeb.MessagesLive do
         wingman_suggestions: nil,
         wingman_loading: false,
         wingman_dismissed: false,
-        wingman_feedback: %{}
+        wingman_feedback: %{},
+        wingman_reload_count: 0
       )
     end
   end
@@ -1408,12 +1438,15 @@ defmodule AniminaWeb.MessagesLive do
       {:ok, updated_user} ->
         socket = assign(socket, :wingman_style, updated_user.wingman_style)
 
-        # If we have a conversation open, refresh suggestions with the new style
+        # If we have a conversation open, refresh suggestions with the new style (does NOT count as a reload)
         socket =
           if socket.assigns.conversation_data do
             conversation_id = socket.assigns.conversation_data.conversation.id
             other_user = socket.assigns.conversation_data.other_user
-            Wingman.refresh_suggestions(conversation_id, user.id, other_user.id)
+
+            Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
+              increment_count: false
+            )
 
             socket
             |> assign(:wingman_loading, true)
@@ -1431,26 +1464,38 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   @impl true
-  def handle_event("refresh_wingman", _params, socket) do
+  def handle_event("reload_wingman", _params, socket) do
     user = socket.assigns.current_scope.user
     conversation_id = socket.assigns.conversation_data.conversation.id
     other_user = socket.assigns.conversation_data.other_user
 
-    Wingman.refresh_suggestions(conversation_id, user.id, other_user.id)
+    if Wingman.can_reload?(conversation_id, user.id) do
+      Wingman.clear_feedback_for_conversation(user.id, conversation_id)
 
-    {:noreply,
-     socket
-     |> assign(:wingman_loading, true)
-     |> assign(:wingman_suggestions, nil)
-     |> assign(:wingman_dismissed, false)}
+      Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
+        increment_count: true
+      )
+
+      new_count = Wingman.get_regeneration_count(conversation_id, user.id)
+
+      {:noreply,
+       socket
+       |> assign(:wingman_loading, true)
+       |> assign(:wingman_suggestions, nil)
+       |> assign(:wingman_dismissed, false)
+       |> assign(:wingman_feedback, %{})
+       |> assign(:wingman_reload_count, new_count)}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
-  def handle_event("wingman_feedback", %{"index" => idx_str, "value" => val_str}, socket) do
+  def handle_event("wingman_feedback", %{"index" => idx_str, "rating" => rating_str}, socket) do
     user = socket.assigns.current_scope.user
     conversation_id = socket.assigns.conversation_data.conversation.id
     idx = String.to_integer(idx_str)
-    value = String.to_integer(val_str)
+    value = String.to_integer(rating_str)
 
     suggestion = Enum.at(socket.assigns.wingman_suggestions || [], idx)
 
@@ -1863,10 +1908,21 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_info({:wingman_ready, suggestions}, socket) do
+    reload_count =
+      if socket.assigns.conversation_data do
+        Wingman.get_regeneration_count(
+          socket.assigns.conversation_data.conversation.id,
+          socket.assigns.current_scope.user.id
+        )
+      else
+        0
+      end
+
     {:noreply,
      socket
      |> assign(:wingman_suggestions, suggestions)
-     |> assign(:wingman_loading, false)}
+     |> assign(:wingman_loading, false)
+     |> assign(:wingman_reload_count, reload_count)}
   end
 
   @impl true

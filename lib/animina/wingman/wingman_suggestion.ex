@@ -23,13 +23,14 @@ defmodule Animina.Wingman.WingmanSuggestion do
 
     field :suggestions, {:array, :map}
     field :context_hash, :string
+    field :regeneration_count, :integer, default: 0
 
     timestamps(type: :utc_datetime)
   end
 
   def changeset(suggestion, attrs) do
     suggestion
-    |> cast(attrs, [:conversation_id, :user_id, :suggestions, :context_hash, :ai_job_id])
+    |> cast(attrs, [:conversation_id, :user_id, :suggestions, :context_hash, :ai_job_id, :regeneration_count])
     |> validate_required([:conversation_id, :user_id])
     |> foreign_key_constraint(:conversation_id)
     |> foreign_key_constraint(:user_id)

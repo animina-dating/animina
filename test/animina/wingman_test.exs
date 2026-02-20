@@ -430,4 +430,92 @@ defmodule Animina.WingmanTest do
       assert prompt_without == prompt_with_empty
     end
   end
+
+  describe "wingman reload / regeneration" do
+    setup do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+      {:ok, conversation} = Messaging.get_or_create_conversation(user.id, other.id)
+
+      %{user: user, other: other, conversation: conversation}
+    end
+
+    test "get_regeneration_count/2 defaults to 0 when no record", %{
+      user: user,
+      conversation: conversation
+    } do
+      assert Wingman.get_regeneration_count(conversation.id, user.id) == 0
+    end
+
+    test "can_reload?/2 returns true when count is below max", %{
+      user: user,
+      conversation: conversation
+    } do
+      assert Wingman.can_reload?(conversation.id, user.id)
+    end
+
+    test "max_reloads/0 returns 3" do
+      assert Wingman.max_reloads() == 3
+    end
+
+    test "refresh_suggestions with increment_count: true increments regeneration_count", %{
+      user: user,
+      other: other,
+      conversation: conversation
+    } do
+      # Create initial suggestion record
+      Wingman.get_or_generate_suggestions(conversation.id, user.id, other.id)
+
+      # Refresh with increment
+      Wingman.refresh_suggestions(conversation.id, user.id, other.id, increment_count: true)
+      assert Wingman.get_regeneration_count(conversation.id, user.id) == 1
+
+      # Refresh again with increment
+      Wingman.refresh_suggestions(conversation.id, user.id, other.id, increment_count: true)
+      assert Wingman.get_regeneration_count(conversation.id, user.id) == 2
+    end
+
+    test "refresh_suggestions with increment_count: false does not increment", %{
+      user: user,
+      other: other,
+      conversation: conversation
+    } do
+      # Create initial suggestion record
+      Wingman.get_or_generate_suggestions(conversation.id, user.id, other.id)
+
+      # Refresh without increment (style change)
+      Wingman.refresh_suggestions(conversation.id, user.id, other.id, increment_count: false)
+      assert Wingman.get_regeneration_count(conversation.id, user.id) == 0
+    end
+
+    test "can_reload?/2 returns false when at max reloads", %{
+      user: user,
+      other: other,
+      conversation: conversation
+    } do
+      # Create initial suggestion record
+      Wingman.get_or_generate_suggestions(conversation.id, user.id, other.id)
+
+      # Increment to max
+      for _ <- 1..3 do
+        Wingman.refresh_suggestions(conversation.id, user.id, other.id, increment_count: true)
+      end
+
+      refute Wingman.can_reload?(conversation.id, user.id)
+    end
+
+    test "clear_feedback_for_conversation/2 deletes feedback for conversation", %{
+      user: user,
+      conversation: conversation
+    } do
+      suggestion_data = %{text: "Test suggestion", hook: "Test hook"}
+      Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      assert Wingman.get_feedback_for_suggestions(user.id, conversation.id) != %{}
+
+      Wingman.clear_feedback_for_conversation(user.id, conversation.id)
+
+      assert Wingman.get_feedback_for_suggestions(user.id, conversation.id) == %{}
+    end
+  end
 end

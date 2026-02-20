@@ -32,6 +32,7 @@ defmodule Animina.Wingman do
   require Logger
 
   @max_story_chars 1500
+  @max_reloads 3
 
   # --- PubSub ---
 
@@ -60,16 +61,74 @@ defmodule Animina.Wingman do
   end
 
   @doc """
-  Forces re-generation of suggestions.
+  Returns the maximum number of wingman reloads allowed per conversation.
   """
-  def refresh_suggestions(conversation_id, user_id, other_user_id) do
-    # Delete existing suggestions first
-    from(ws in WingmanSuggestion,
-      where: ws.conversation_id == ^conversation_id and ws.user_id == ^user_id
-    )
-    |> Repo.delete_all()
+  def max_reloads, do: @max_reloads
+
+  @doc """
+  Returns the current regeneration count for a user/conversation pair.
+  Returns 0 if no suggestion record exists.
+  """
+  def get_regeneration_count(conversation_id, user_id) do
+    case get_cached_suggestions(conversation_id, user_id) do
+      %WingmanSuggestion{regeneration_count: count} -> count
+      nil -> 0
+    end
+  end
+
+  @doc """
+  Returns true if the user can still reload wingman suggestions for this conversation.
+  """
+  def can_reload?(conversation_id, user_id) do
+    get_regeneration_count(conversation_id, user_id) < @max_reloads
+  end
+
+  @doc """
+  Forces re-generation of suggestions.
+
+  Options:
+  - `increment_count: true` — increments regeneration_count (used by reload button)
+  - `increment_count: false` (default) — preserves count (used by style changes)
+  """
+  def refresh_suggestions(conversation_id, user_id, other_user_id, opts \\ []) do
+    increment? = Keyword.get(opts, :increment_count, false)
+
+    case get_cached_suggestions(conversation_id, user_id) do
+      %WingmanSuggestion{} = existing ->
+        new_count =
+          if increment?,
+            do: existing.regeneration_count + 1,
+            else: existing.regeneration_count
+
+        existing
+        |> WingmanSuggestion.changeset(%{suggestions: nil, regeneration_count: new_count})
+        |> Repo.update()
+
+      nil ->
+        # No existing record — create one with initial count if incrementing
+        if increment? do
+          %WingmanSuggestion{}
+          |> WingmanSuggestion.changeset(%{
+            conversation_id: conversation_id,
+            user_id: user_id,
+            regeneration_count: 1
+          })
+          |> Repo.insert()
+        end
+    end
 
     enqueue_generation(conversation_id, user_id, other_user_id)
+  end
+
+  @doc """
+  Deletes all wingman feedback for a user/conversation pair.
+  Called before reload to clear stale feedback from previous suggestions.
+  """
+  def clear_feedback_for_conversation(user_id, conversation_id) do
+    from(f in WingmanFeedback,
+      where: f.user_id == ^user_id and f.conversation_id == ^conversation_id
+    )
+    |> Repo.delete_all()
   end
 
   @doc """
