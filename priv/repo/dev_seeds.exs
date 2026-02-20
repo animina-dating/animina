@@ -4,7 +4,7 @@
 defmodule Animina.Seeds.DevUsers do
   @moduledoc """
   Seeds development test accounts with full profiles, traits, and moodboards.
-  114 users: 75 full personas + 39 V2 discovery test users.
+  114 users with personality profiles, topic-matched moodboards, and login activity.
   All accounts use the password "password12345".
   Avatars use real Unsplash photos stored in priv/static/images/seeds/avatars/.
   """
@@ -24,20 +24,18 @@ defmodule Animina.Seeds.DevUsers do
   @zip_code "56068"
 
   # ==========================================================================
-  # PERSONA DEFINITIONS (114 users: 75 full personas + 39 V2 test users)
-  # Thomas MUST be at index 0 for V2 discovery test compatibility
-  # (V2 tests reference his phone +4915010000000 and email dev-thomas@animina.test).
+  # PERSONA DEFINITIONS (114 users)
+  # Thomas is at index 0 (discovery tests reference his phone and email).
+  # Email format: dev-{first}-{last}@animina.test (Thomas: dev-thomas@animina.test)
   #
-  # Full persona fields:
+  # Required fields:
   #   name, last_name, gender, age, avatar (filename stem → avatar-dev-{stem}.jpg)
   #   profile (index into @personality_profiles), topics (for moodboard matching)
-  #   roles (optional), waitlisted (optional), height (optional)
   #
-  # V2 test user fields (group is present, no avatar/profile/topics):
-  #   name, last_name, gender, age, height, group (test category)
-  #   zip_code (optional, default 56068), search_radius (optional)
-  #   partner_height_min/max (optional), partner_minimum/maximum_age_offset (optional)
-  #   blacklist (optional), conflict_trait (optional)
+  # Optional fields:
+  #   roles, waitlisted, height, activity, group, zip_code, search_radius,
+  #   partner_height_min/max, partner_minimum/maximum_age_offset,
+  #   blacklist, conflict_trait
   # ==========================================================================
   @personas [
     # Thomas first — V2 discovery test anchor (profile 0 = Adventurer with Hiking/Surfing/Camping/Rock + hard-red Vegan)
@@ -128,58 +126,49 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Pia", last_name: "Schwarz", gender: "female", age: 22, avatar: "pia", profile: 7, topics: [:music, :art, :travel]},
     %{name: "Stella", last_name: "Köhler", gender: "female", age: 25, avatar: "stella", profile: 12, topics: [:cooking, :food, :coffee]},
     %{name: "Luisa", last_name: "Wagner", gender: "female", age: 24, avatar: "luisa", profile: 1, topics: [:nature, :hiking, :garden]},
-    # ======================================================================
-    # V2 DISCOVERY TEST USERS (39 female users calibrated against Thomas)
-    # Thomas: age 32, height 186, male, Koblenz 56068, search_radius 60,
-    #         hard-red Vegan, white Hiking/Surfing/Camping/Rock
-    # Email format: dev-v2-{name}@animina.test (to avoid name collisions)
-    # These users get a random female avatar and no profile/moodboard.
-    # ======================================================================
-    # --- Group A: Good Matches — survive all filters (10 users) ---
-    %{name: "Amelie", last_name: "Berger", gender: "female", age: 30, height: 168, group: :good},
-    %{name: "Greta", last_name: "Franke", gender: "female", age: 29, height: 170, group: :good},
-    %{name: "Hanna", last_name: "Dietrich", gender: "female", age: 32, height: 165, group: :good, search_radius: 80},
-    %{name: "Ida", last_name: "Engel", gender: "female", age: 28, height: 172, group: :good, zip_code: "56566"},
-    %{name: "Jana", last_name: "Fuchs", gender: "female", age: 34, height: 163, group: :good, zip_code: "56566", search_radius: 150},
-    %{name: "Johanna", last_name: "Gerber", gender: "female", age: 31, height: 175, group: :good, zip_code: "56566"},
-    %{name: "Karla", last_name: "Haas", gender: "female", age: 30, height: 162, group: :good, zip_code: "65556", search_radius: 80},
-    %{name: "Leonie", last_name: "Jaeger", gender: "female", age: 33, height: 170, group: :good, zip_code: "65556"},
-    %{name: "Mia", last_name: "Kaiser", gender: "female", age: 29, height: 167, group: :good, zip_code: "53179", search_radius: 90},
-    %{name: "Nora", last_name: "Lorenz", gender: "female", age: 31, height: 174, group: :good, zip_code: "53179"},
-    # --- Group B: Distance Drops (8 users) ---
-    %{name: "Pia", last_name: "Moeller", gender: "female", age: 30, height: 168, group: :distance, zip_code: "55116", search_radius: 45},
-    %{name: "Romy", last_name: "Naumann", gender: "female", age: 29, height: 170, group: :distance, zip_code: "55116", search_radius: 40},
-    %{name: "Sofia", last_name: "Otto", gender: "female", age: 31, height: 166, group: :distance, zip_code: "57072", search_radius: 50},
-    %{name: "Theresa", last_name: "Peters", gender: "female", age: 33, height: 172, group: :distance, zip_code: "57072", search_radius: 45},
-    %{name: "Anja", last_name: "Reuter", gender: "female", age: 30, height: 168, group: :distance, zip_code: "50667", search_radius: 50},
-    %{name: "Bettina", last_name: "Seidel", gender: "female", age: 28, height: 165, group: :distance, zip_code: "50667", search_radius: 50},
-    %{name: "Carla", last_name: "Thiel", gender: "female", age: 32, height: 170, group: :distance, zip_code: "60311", search_radius: 50},
-    %{name: "Dina", last_name: "Ulrich", gender: "female", age: 29, height: 167, group: :distance, zip_code: "54290", search_radius: 50},
-    # --- Group C: Height Drops (6 users) ---
-    %{name: "Edith", last_name: "Vogt", gender: "female", age: 30, height: 165, group: :height, search_radius: 100, partner_height_min: 195},
-    %{name: "Frieda", last_name: "Walther", gender: "female", age: 29, height: 162, group: :height, search_radius: 100, partner_height_min: 195},
-    %{name: "Gisela", last_name: "Xander", gender: "female", age: 31, height: 170, group: :height, search_radius: 100, partner_height_min: 195},
-    %{name: "Hedwig", last_name: "Yildiz", gender: "female", age: 28, height: 168, group: :height, search_radius: 100, partner_height_max: 175},
-    %{name: "Irene", last_name: "Ziegler", gender: "female", age: 33, height: 163, group: :height, search_radius: 100, partner_height_max: 175},
-    %{name: "Jutta", last_name: "Adler", gender: "female", age: 30, height: 167, group: :height, search_radius: 100, partner_height_max: 175},
-    # --- Group D: Blacklisted (5 users) ---
-    %{name: "Klara", last_name: "Bach", gender: "female", age: 30, height: 168, group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
-    %{name: "Lotte", last_name: "Conrad", gender: "female", age: 29, height: 170, group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
-    %{name: "Magda", last_name: "Dreyer", gender: "female", age: 31, height: 165, group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
-    %{name: "Nele", last_name: "Ebert", gender: "female", age: 28, height: 172, group: :blacklist, search_radius: 100, blacklist: "+4915010000000"},
-    %{name: "Olivia", last_name: "Fink", gender: "female", age: 33, height: 167, group: :blacklist, search_radius: 100, blacklist: "+4915010000000"},
-    # --- Group E: Hard-Red Conflicts (5 users) ---
-    %{name: "Paula", last_name: "Graf", gender: "female", age: 30, height: 168, group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
-    %{name: "Renate", last_name: "Horn", gender: "female", age: 29, height: 170, group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
-    %{name: "Svenja", last_name: "Iske", gender: "female", age: 31, height: 165, group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
-    %{name: "Thea", last_name: "Janssen", gender: "female", age: 28, height: 172, group: :red, search_radius: 100, conflict_trait: {:red, "Sports", "Hiking"}},
-    %{name: "Ursula", last_name: "Keller", gender: "female", age: 33, height: 167, group: :red, search_radius: 100, conflict_trait: {:red, "Sports", "Hiking"}},
-    # --- Group F: Age Drops (5 users) ---
-    %{name: "Veronika", last_name: "Lang", gender: "female", age: 21, height: 168, group: :age, search_radius: 100, partner_maximum_age_offset: 2},
-    %{name: "Wiebke", last_name: "Marx", gender: "female", age: 21, height: 170, group: :age, search_radius: 100, partner_maximum_age_offset: 2},
-    %{name: "Xenia", last_name: "Nowak", gender: "female", age: 21, height: 165, group: :age, search_radius: 100, partner_maximum_age_offset: 2},
-    %{name: "Yvonne", last_name: "Oswald", gender: "female", age: 44, height: 167, group: :age, search_radius: 100, partner_minimum_age_offset: 2},
-    %{name: "Zara", last_name: "Pohl", gender: "female", age: 44, height: 163, group: :age, search_radius: 100, partner_minimum_age_offset: 2}
+    # --- Discovery test users (39 users calibrated against Thomas) ---
+    # good: survive all filters, distance: filtered by proximity,
+    # height: filtered by height prefs, blacklist: contact blacklisted,
+    # red: hard-red trait conflicts, age: filtered by age prefs
+    %{name: "Amelie", last_name: "Berger", gender: "female", age: 30, height: 168, avatar: "sabine", profile: 0, topics: [:hiking, :mountains, :nature], group: :good},
+    %{name: "Greta", last_name: "Franke", gender: "female", age: 29, height: 170, avatar: "nina", profile: 1, topics: [:nature, :hiking, :yoga], group: :good},
+    %{name: "Hanna", last_name: "Dietrich", gender: "female", age: 32, height: 165, avatar: "mei", profile: 2, topics: [:art, :music, :books], group: :good, search_radius: 80},
+    %{name: "Ida", last_name: "Engel", gender: "female", age: 28, height: 172, avatar: "claudia", profile: 3, topics: [:books, :coffee, :art], group: :good, zip_code: "56566"},
+    %{name: "Jana", last_name: "Fuchs", gender: "female", age: 34, height: 163, avatar: "amara", profile: 4, topics: [:cooking, :garden, :pets], group: :good, zip_code: "56566", search_radius: 150},
+    %{name: "Johanna", last_name: "Gerber", gender: "female", age: 31, height: 175, avatar: "ronja", profile: 5, topics: [:cooking, :garden, :yoga], group: :good, zip_code: "56566"},
+    %{name: "Karla", last_name: "Haas", gender: "female", age: 30, height: 162, avatar: "hannah", profile: 6, topics: [:music, :travel, :coffee], group: :good, zip_code: "65556", search_radius: 80},
+    %{name: "Leonie", last_name: "Jaeger", gender: "female", age: 33, height: 170, avatar: "svenja", profile: 7, topics: [:travel, :beach, :music], group: :good, zip_code: "65556"},
+    %{name: "Mia", last_name: "Kaiser", gender: "female", age: 29, height: 167, avatar: "johanna", profile: 8, topics: [:books, :coffee, :yoga], group: :good, zip_code: "53179", search_radius: 90},
+    %{name: "Nora", last_name: "Lorenz", gender: "female", age: 31, height: 174, avatar: "nora", profile: 9, topics: [:sunset, :cooking, :coffee], group: :good, zip_code: "53179"},
+    %{name: "Pia", last_name: "Moeller", gender: "female", age: 30, height: 168, avatar: "vanessa", profile: 10, topics: [:cycling, :hiking, :nature], group: :distance, zip_code: "55116", search_radius: 45},
+    %{name: "Romy", last_name: "Naumann", gender: "female", age: 29, height: 170, avatar: "leonie", profile: 11, topics: [:music, :art, :coffee], group: :distance, zip_code: "55116", search_radius: 40},
+    %{name: "Sofia", last_name: "Otto", gender: "female", age: 31, height: 166, avatar: "sophie", profile: 12, topics: [:cooking, :food, :coffee], group: :distance, zip_code: "57072", search_radius: 50},
+    %{name: "Theresa", last_name: "Peters", gender: "female", age: 33, height: 172, avatar: "greta", profile: 13, topics: [:pets, :nature, :garden], group: :distance, zip_code: "57072", search_radius: 45},
+    %{name: "Anja", last_name: "Reuter", gender: "female", age: 30, height: 168, avatar: "jasmin", profile: 14, topics: [:travel, :beach, :music], group: :distance, zip_code: "50667", search_radius: 50},
+    %{name: "Bettina", last_name: "Seidel", gender: "female", age: 28, height: 165, avatar: "clara", profile: 15, topics: [:yoga, :nature, :coffee], group: :distance, zip_code: "50667", search_radius: 50},
+    %{name: "Carla", last_name: "Thiel", gender: "female", age: 32, height: 170, avatar: "katharina", profile: 16, topics: [:coffee, :books, :music], group: :distance, zip_code: "60311", search_radius: 50},
+    %{name: "Dina", last_name: "Ulrich", gender: "female", age: 29, height: 167, avatar: "anja", profile: 17, topics: [:cooking, :books, :coffee], group: :distance, zip_code: "54290", search_radius: 50},
+    %{name: "Edith", last_name: "Vogt", gender: "female", age: 30, height: 165, avatar: "eva", profile: 18, topics: [:coffee, :books, :travel], group: :height, search_radius: 100, partner_height_min: 195},
+    %{name: "Frieda", last_name: "Walther", gender: "female", age: 29, height: 162, avatar: "birgit", profile: 19, topics: [:cooking, :garden, :nature], group: :height, search_radius: 100, partner_height_min: 195},
+    %{name: "Georg", last_name: "Xander", gender: "male", age: 31, height: 170, avatar: "marko", profile: 0, topics: [:hiking, :mountains, :nature], group: :height, search_radius: 100, partner_height_min: 195},
+    %{name: "Hedwig", last_name: "Yildiz", gender: "female", age: 28, height: 168, avatar: "lina", profile: 1, topics: [:nature, :hiking, :yoga], group: :height, search_radius: 100, partner_height_max: 175},
+    %{name: "Irene", last_name: "Ziegler", gender: "female", age: 33, height: 163, avatar: "selina", profile: 2, topics: [:art, :music, :books], group: :height, search_radius: 100, partner_height_max: 175},
+    %{name: "Jutta", last_name: "Adler", gender: "female", age: 30, height: 167, avatar: "frieda", profile: 3, topics: [:books, :coffee, :art], group: :height, search_radius: 100, partner_height_max: 175},
+    %{name: "Klara", last_name: "Bach", gender: "female", age: 30, height: 168, avatar: "amelie", profile: 4, topics: [:cooking, :garden, :pets], group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{name: "Lotte", last_name: "Conrad", gender: "female", age: 29, height: 170, avatar: "tanja", profile: 5, topics: [:cooking, :garden, :yoga], group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{name: "Magda", last_name: "Dreyer", gender: "female", age: 31, height: 165, avatar: "marie", profile: 6, topics: [:music, :travel, :coffee], group: :blacklist, search_radius: 100, blacklist: "dev-thomas@animina.test"},
+    %{name: "Nele", last_name: "Ebert", gender: "female", age: 28, height: 172, avatar: "layla", profile: 7, topics: [:travel, :beach, :music], group: :blacklist, search_radius: 100, blacklist: "+4915010000000"},
+    %{name: "Olivia", last_name: "Fink", gender: "female", age: 33, height: 167, avatar: "emma", profile: 8, topics: [:books, :coffee, :yoga], group: :blacklist, search_radius: 100, blacklist: "+4915010000000"},
+    %{name: "Paula", last_name: "Graf", gender: "female", age: 30, height: 168, avatar: "julia", profile: 9, topics: [:sunset, :cooking, :coffee], group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
+    %{name: "Renate", last_name: "Horn", gender: "female", age: 29, height: 170, avatar: "natasha", profile: 10, topics: [:cycling, :hiking, :nature], group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
+    %{name: "Svenja", last_name: "Iske", gender: "female", age: 31, height: 165, avatar: "daniela", profile: 11, topics: [:music, :art, :coffee], group: :red, search_radius: 100, conflict_trait: {:white, "Diet", "Vegan"}},
+    %{name: "Thea", last_name: "Janssen", gender: "female", age: 28, height: 172, avatar: "kira", profile: 12, topics: [:cooking, :food, :coffee], group: :red, search_radius: 100, conflict_trait: {:red, "Sports", "Hiking"}},
+    %{name: "Ursula", last_name: "Keller", gender: "female", age: 33, height: 167, avatar: "aisha", profile: 13, topics: [:pets, :nature, :garden], group: :red, search_radius: 100, conflict_trait: {:red, "Sports", "Hiking"}},
+    %{name: "Veronika", last_name: "Lang", gender: "female", age: 21, height: 168, avatar: "petra", profile: 14, topics: [:travel, :beach, :music], group: :age, search_radius: 100, partner_maximum_age_offset: 2},
+    %{name: "Wiebke", last_name: "Marx", gender: "female", age: 21, height: 170, avatar: "lena", profile: 15, topics: [:yoga, :nature, :coffee], group: :age, search_radius: 100, partner_maximum_age_offset: 2},
+    %{name: "Xenia", last_name: "Nowak", gender: "female", age: 21, height: 165, avatar: "carla", profile: 16, topics: [:coffee, :books, :music], group: :age, search_radius: 100, partner_maximum_age_offset: 2},
+    %{name: "Yvonne", last_name: "Oswald", gender: "female", age: 44, height: 167, avatar: "anna", profile: 17, topics: [:cooking, :books, :coffee], group: :age, search_radius: 100, partner_minimum_age_offset: 2},
+    %{name: "Zara", last_name: "Pohl", gender: "female", age: 44, height: 163, avatar: "yuki", profile: 18, topics: [:coffee, :books, :travel], group: :age, search_radius: 100, partner_minimum_age_offset: 2}
   ]
 
   # ==========================================================================
@@ -860,10 +849,9 @@ defmodule Animina.Seeds.DevUsers do
   end
 
   # ==========================================================================
-  # USER CREATION (handles both full personas and V2 test users)
+  # USER CREATION
   # ==========================================================================
   defp create_persona(persona, country_id, index, lookup) do
-    v2? = Map.has_key?(persona, :group)
     birthday = birthday_from_age(persona.age)
     phone = generate_phone(index)
     gender = persona.gender
@@ -871,9 +859,9 @@ defmodule Animina.Seeds.DevUsers do
     zip_code = Map.get(persona, :zip_code, @zip_code)
 
     email =
-      if v2?,
-        do: "dev-v2-#{String.downcase(persona.name)}@animina.test",
-        else: "dev-#{String.downcase(persona.name)}@animina.test"
+      if index == 0,
+        do: "dev-thomas@animina.test",
+        else: "dev-#{email_slug(persona.name)}-#{email_slug(persona.last_name)}@animina.test"
 
     height =
       Map.get_lazy(persona, :height, fn ->
@@ -911,31 +899,23 @@ defmodule Animina.Seeds.DevUsers do
             confirm_and_activate_user(user)
           end
 
-        # Assign roles
         assign_roles(user, Map.get(persona, :roles, []))
 
-        if v2? do
-          # V2 test user: random avatar, optional blacklist/conflict trait
-          create_random_avatar(user, gender)
-          if persona[:blacklist], do: add_blacklist_entry(user, persona.blacklist)
-          if persona[:conflict_trait], do: add_conflict_trait(user, persona.conflict_trait, lookup)
+        profile = Enum.at(@personality_profiles, persona.profile)
+        create_persona_avatar(user, gender, persona.avatar)
+        assign_persona_traits(user, profile, lookup)
+        update_persona_intro(user, persona.profile, index)
+        create_persona_moodboard(user, persona, index)
 
-          IO.puts("  Created: #{persona.name} #{persona.last_name} (#{email}) [#{persona.group}]")
-        else
-          # Full persona: dedicated avatar, personality traits, intro, moodboard
-          profile = Enum.at(@personality_profiles, persona.profile)
-          assign_persona_traits(user, profile, lookup)
-          create_persona_avatar(user, gender, persona.avatar)
-          update_persona_intro(user, persona.profile, index)
-          create_persona_moodboard(user, persona, index)
+        activity_pattern = persona[:activity] || auto_activity_pattern(index)
+        seed_login_activity(user, activity_pattern, index)
 
-          # Seed login activity for heatmap display
-          activity_pattern = persona[:activity] || auto_activity_pattern(index)
-          seed_login_activity(user, activity_pattern, index)
+        if persona[:blacklist], do: add_blacklist_entry(user, persona.blacklist)
+        if persona[:conflict_trait], do: add_conflict_trait(user, persona.conflict_trait, lookup)
 
-          state = if Map.get(persona, :waitlisted, false), do: " [waitlisted]", else: ""
-          IO.puts("  Created: #{persona.name} #{persona.last_name} (#{email})#{state}")
-        end
+        state = if Map.get(persona, :waitlisted, false), do: " [waitlisted]", else: ""
+        group = if persona[:group], do: " [#{persona.group}]", else: ""
+        IO.puts("  Created: #{persona.name} #{persona.last_name} (#{email})#{state}#{group}")
 
         {:ok, user}
 
@@ -960,32 +940,6 @@ defmodule Animina.Seeds.DevUsers do
       {:error, reason} ->
         IO.puts("    Warning: avatar failed for #{user.display_name}: #{inspect(reason)}")
         {:error, reason}
-    end
-  end
-
-  defp create_random_avatar(user, gender) do
-    avatar_dir = avatar_directory(gender)
-
-    case File.ls(avatar_dir) do
-      {:ok, files} ->
-        jpgs = Enum.filter(files, &String.ends_with?(&1, ".jpg"))
-
-        if jpgs != [] do
-          avatar_path = Path.join(avatar_dir, Enum.random(jpgs))
-
-          case Photos.upload_photo("User", user.id, avatar_path, type: "avatar") do
-            {:ok, photo} ->
-              Moodboard.link_avatar_to_pinned_item(user.id, photo.id)
-              {:ok, photo}
-
-            {:error, reason} ->
-              IO.puts("    Warning: random avatar failed: #{inspect(reason)}")
-              {:error, reason}
-          end
-        end
-
-      _ ->
-        :ok
     end
   end
 
@@ -1347,6 +1301,17 @@ defmodule Animina.Seeds.DevUsers do
     for role <- roles do
       Accounts.assign_role(user, to_string(role))
     end
+  end
+
+  defp email_slug(name) do
+    name
+    |> String.downcase()
+    |> String.replace("ä", "ae")
+    |> String.replace("ö", "oe")
+    |> String.replace("ü", "ue")
+    |> String.replace("ß", "ss")
+    |> String.replace("ç", "c")
+    |> String.replace(~r/[^a-z0-9]/, "")
   end
 
   defp maybe_put(map, _key, nil), do: map
