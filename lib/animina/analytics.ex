@@ -373,7 +373,9 @@ defmodule Animina.Analytics do
         ActivityLog.log(
           "profile",
           "profile_completed",
-          "User #{user.display_name} completed their profile", actor_id: user.id)
+          "User #{user.display_name} completed their profile",
+          actor_id: user.id
+        )
       end
     end
   end
