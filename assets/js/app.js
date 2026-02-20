@@ -50,7 +50,7 @@ window.addEventListener("phx:deployment-starting", (event) => {
   const version = event.detail && event.detail.version
   if (version) {
     const titleEl = document.querySelector("#deployment-notice .font-semibold")
-    if (titleEl) titleEl.textContent = `Updating ANIMINA to v${version}`
+    if (titleEl) titleEl.textContent = `Software update on the server (v${version})`
   }
 })
 

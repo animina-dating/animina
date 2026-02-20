@@ -570,16 +570,14 @@ defmodule AniminaWeb.Layouts do
       <.flash
         id="deployment-notice"
         kind={:info}
-        title={gettext("Updating ANIMINA")}
+        title={gettext("Software update on the server")}
         phx-disconnected={
           show(".phx-server-error #deployment-notice") |> JS.remove_attribute("hidden")
         }
         phx-connected={hide("#deployment-notice") |> JS.set_attribute({"hidden", ""})}
         hidden
       >
-        {gettext(
-          "A new software version is being installed on the server. This will only take a moment..."
-        )}
+        {gettext("Please be patient for a moment.")}
         <.icon name="hero-arrow-path" class="ms-1 size-3 motion-safe:animate-spin" />
       </.flash>
     </div>

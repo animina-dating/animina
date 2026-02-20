@@ -3,7 +3,7 @@ defmodule Animina.Deployment do
   Broadcasts deployment notifications to all connected LiveViews.
 
   Called via RPC from the deploy script just before a cold restart,
-  so users see a friendly "Updating ANIMINA" message instead of
+  so users see a friendly "Software update on the server" message instead of
   "Something went wrong!".
   """
 
@@ -13,7 +13,7 @@ defmodule Animina.Deployment do
   Broadcasts a deploying notification to all subscribers.
 
   The version is optional — when nil, the client falls back to a
-  generic "Updating ANIMINA" title.
+  generic "Software update on the server" title.
   """
   def notify_deploying(version \\ nil) do
     Phoenix.PubSub.broadcast(Animina.PubSub, @topic, {:deploying, version})

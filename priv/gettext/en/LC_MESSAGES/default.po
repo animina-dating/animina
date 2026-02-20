@@ -747,16 +747,6 @@ msgstr ""
 msgid "of"
 msgstr ""
 
-#: lib/animina_web/components/layouts.ex:573
-#, elixir-autogen, elixir-format
-msgid "Updating ANIMINA"
-msgstr "Updating ANIMINA"
-
-#: lib/animina_web/components/layouts.ex:580
-#, elixir-autogen, elixir-format
-msgid "A new software version is being installed on the server. This will only take a moment..."
-msgstr "A new software version is being installed on the server. This will only take a moment..."
-
 #: lib/animina_web/live/user_live/edit_locations.ex:118
 #, elixir-autogen, elixir-format
 msgid "Add Location"
@@ -8097,3 +8087,13 @@ msgstr "Mystery candidate"
 #, elixir-autogen, elixir-format
 msgid "Sneak peek"
 msgstr "Sneak peek"
+
+#: lib/animina_web/components/layouts.ex:580
+#, elixir-autogen, elixir-format
+msgid "Please be patient for a moment."
+msgstr "Please be patient for a moment."
+
+#: lib/animina_web/components/layouts.ex:573
+#, elixir-autogen, elixir-format
+msgid "Software update on the server"
+msgstr "Software update on the server"
