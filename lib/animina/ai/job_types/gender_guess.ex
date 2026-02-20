@@ -23,7 +23,7 @@ defmodule Animina.AI.JobTypes.GenderGuess do
   def default_model, do: "qwen3:1.7b"
 
   @impl true
-  def default_priority, do: 2
+  def default_priority, do: 1
 
   @impl true
   def max_attempts, do: 3

@@ -453,6 +453,27 @@ defmodule Animina.AI do
     )
   end
 
+  @doc """
+  Defers a running job back to the queue with a short delay, undoing
+  the attempt increment from mark_running.
+
+  Used when the intelligent router decides to wait for a GPU rather than
+  use a slower CPU. The job goes back to the queue so other CPU-eligible
+  jobs can use the freed semaphore slot. After the delay, the scheduler
+  retries — if GPU is free by then, the job runs on GPU.
+  """
+  def defer_job(job_id, delay_seconds \\ 3) do
+    scheduled_at = DateTime.utc_now() |> DateTime.add(delay_seconds, :second)
+
+    from(j in Job,
+      where: j.id == ^job_id and j.status == "running"
+    )
+    |> Repo.update_all(
+      set: [status: "scheduled", scheduled_at: scheduled_at, updated_at: DateTime.utc_now()],
+      inc: [attempt: -1]
+    )
+  end
+
   # --- Scheduler Queries ---
 
   @doc """
@@ -613,6 +634,21 @@ defmodule Animina.AI do
         j.subject_id == ^subject_id and
         j.status in ~w(pending scheduled running)
     )
+    |> Repo.exists?()
+  end
+
+  @doc """
+  Returns whether there are pending/scheduled high-priority jobs (priority <= 2)
+  ready to run. Used by the executor to decide GPU vs CPU routing for low-priority jobs.
+  """
+  def has_high_priority_demand? do
+    now = DateTime.utc_now()
+
+    Job
+    |> where([j], j.status in ~w(pending scheduled))
+    |> where([j], j.priority <= 2)
+    |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
+    |> limit(1)
     |> Repo.exists?()
   end
 

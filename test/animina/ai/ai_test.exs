@@ -20,8 +20,22 @@ defmodule Animina.AITest do
       assert {:ok, job} = AI.enqueue("gender_guess", %{"name" => "alice"})
 
       assert job.job_type == "gender_guess"
-      assert job.priority == 2
+      assert job.priority == 1
       assert job.max_attempts == 3
+    end
+
+    test "creates a job with correct defaults for wingman_suggestion" do
+      assert {:ok, job} =
+               AI.enqueue("wingman_suggestion", %{
+                 "prompt" => "test prompt",
+                 "conversation_id" => Ecto.UUID.generate(),
+                 "user_id" => Ecto.UUID.generate(),
+                 "context_hash" => "abc123"
+               })
+
+      assert job.job_type == "wingman_suggestion"
+      assert job.priority == 2
+      assert job.max_attempts == 2
     end
 
     test "creates a job with correct defaults for photo_description" do
@@ -469,6 +483,31 @@ defmodule Animina.AITest do
       assert enqueued == 1
       assert skipped == 0
       assert AI.has_pending_job?("photo_description", "Photo", approved.id)
+    end
+  end
+
+  describe "has_high_priority_demand?/0" do
+    test "returns true when a high-priority job is pending" do
+      AI.enqueue("gender_guess", %{"name" => "alice"})
+
+      assert AI.has_high_priority_demand?()
+    end
+
+    test "returns false when only low-priority jobs are pending" do
+      AI.enqueue("photo_description", %{"photo_id" => Ecto.UUID.generate()})
+
+      refute AI.has_high_priority_demand?()
+    end
+
+    test "returns false when high-priority jobs are scheduled in the future" do
+      future = DateTime.utc_now() |> DateTime.add(1, :hour)
+      AI.enqueue("gender_guess", %{"name" => "alice"}, scheduled_at: future)
+
+      refute AI.has_high_priority_demand?()
+    end
+
+    test "returns false when no jobs exist" do
+      refute AI.has_high_priority_demand?()
     end
   end
 end

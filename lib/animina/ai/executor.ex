@@ -19,11 +19,15 @@ defmodule Animina.AI.Executor do
   alias Animina.ActivityLog
   alias Animina.AI
   alias Animina.AI.Client
+  alias Animina.AI.PerformanceStats
   alias Animina.AI.Semaphore
   alias Animina.FeatureFlags
 
   # Smallest vision model — used when CPU instance handles vision overflow
   @cpu_vision_model "qwen3-vl:2b"
+
+  # When estimated times are within this tolerance, prefer CPU to keep throughput up
+  @cpu_tolerance 1.1
 
   @doc """
   Executes a single AI job. Called from Task.Supervisor.
@@ -94,25 +98,34 @@ defmodule Animina.AI.Executor do
   defp execute_with_prompt(job, module, input_opts, prompt) do
     model_family = module.model_family()
     model = select_model(job, module)
-    {instance_filter, model} = build_instance_filter(model_family, model)
 
-    # Apply configured delay for UX testing
-    FeatureFlags.apply_delay(:photo_ollama_check)
+    case build_instance_filter(job.priority, job.job_type, model_family, model) do
+      {:defer, reason} ->
+        # GPU busy and waiting is smarter than CPU — put job back so other
+        # CPU-eligible jobs can use the freed semaphore slot
+        Logger.debug("AI.Executor: Deferring job #{job.id}: #{reason}")
+        AI.defer_job(job.id)
+        :defer
 
-    timeout = FeatureFlags.ollama_semaphore_timeout()
+      {:run, instance_filter, model} ->
+        # Apply configured delay for UX testing
+        FeatureFlags.apply_delay(:photo_ollama_check)
 
-    case Semaphore.acquire(timeout) do
-      :ok ->
-        try do
-          run_completion(job, module, model, prompt, input_opts, instance_filter)
-        after
-          Semaphore.release()
+        timeout = FeatureFlags.ollama_semaphore_timeout()
+
+        case Semaphore.acquire(timeout) do
+          :ok ->
+            try do
+              run_completion(job, module, model, prompt, input_opts, instance_filter)
+            after
+              Semaphore.release()
+            end
+
+          {:error, :timeout} ->
+            Logger.debug("AI.Executor: Semaphore busy, rescheduling job #{job.id}")
+            AI.reschedule_running_job(job.id)
+            :retry
         end
-
-      {:error, :timeout} ->
-        Logger.debug("AI.Executor: Semaphore busy, rescheduling job #{job.id}")
-        AI.reschedule_running_job(job.id)
-        :retry
     end
   end
 
@@ -226,55 +239,129 @@ defmodule Animina.AI.Executor do
   defp terminal_input_error?({:thumbnail_read_failed, :enoent}), do: true
   defp terminal_input_error?(_), do: false
 
-  @doc false
-  def build_instance_filter(:vision, model) do
-    # Vision jobs prefer GPU instances (sorted by fastest avg_duration)
-    # If all GPU instances are unhealthy, Client falls back to all instances
-    # When a CPU instance handles a vision job, force smallest model
-    filter = fn instance ->
-      tags = Map.get(instance, :tags, [])
+  @doc """
+  Determines which instance type (GPU/CPU) should handle a job based on
+  availability and historical performance data.
 
-      if "gpu" in tags do
-        true
-      else
-        # CPU instance — will be included only if GPU filter returns empty
-        false
-      end
-    end
+  Returns:
+  - `{:run, filter, model}` — execute the job now with the given instance filter
+  - `{:defer, reason}` — put the job back in the queue (GPU busy, waiting is smarter)
 
-    # Wrap to handle CPU fallback: if the chosen instance is CPU, override model
-    # This is handled at the Client level — if filter returns empty, all instances are tried
-    # We need a different approach: use a two-phase filter
-    gpu_instances = get_gpu_instance_count()
-
-    if gpu_instances > 0 do
-      {filter, model}
-    else
-      # No GPU instances configured at all — use smallest model on CPU
-      {nil, @cpu_vision_model}
-    end
+  Decision flow:
+  1. No GPU configured → run on any instance (downgrade vision model)
+  2. GPU idle → run on GPU
+  3. GPU busy, no CPU → run on GPU (must wait, no alternative)
+  4. GPU busy, CPU available → intelligent decision:
+     - Use CPU: `{:run, cpu_filter, model}` — CPU is estimated faster
+     - Wait for GPU: `{:defer, reason}` — job goes back to queue with short
+       delay so other CPU-eligible jobs can use the freed semaphore slot
+     - No data: 50/50 random (run on whichever wins the coin flip)
+  """
+  def build_instance_filter(_priority, _job_type, model_family, model) when model_family == nil do
+    {:run, nil, model}
   end
 
-  def build_instance_filter(:text, model) do
-    # Text jobs prefer CPU instances (they handle text well, saves GPU for vision)
-    filter = fn instance ->
-      tags = Map.get(instance, :tags, [])
-      "cpu" in tags
-    end
-
+  def build_instance_filter(_priority, job_type, model_family, model) do
+    gpu_count = get_gpu_instance_count()
     cpu_count = get_cpu_instance_count()
 
-    if cpu_count > 0 do
-      {filter, model}
-    else
-      # No CPU instances — run text on any instance
-      {nil, model}
+    cond do
+      # No GPU configured → run on any instance
+      gpu_count == 0 ->
+        model = if model_family == :vision, do: @cpu_vision_model, else: model
+        {:run, nil, model}
+
+      # GPU idle → always use GPU ("Never waste an idle GPU!")
+      not PerformanceStats.gpu_busy?() ->
+        {:run, gpu_filter(), model}
+
+      # GPU busy but no CPU available → must wait for GPU (no alternative)
+      cpu_count == 0 ->
+        {:run, gpu_filter(), model}
+
+      # GPU busy, CPU available → intelligent decision
+      true ->
+        case should_use_cpu?(job_type) do
+          :cpu ->
+            Logger.debug("AI routing: GPU busy, routing #{job_type} to CPU")
+            model = if model_family == :vision, do: @cpu_vision_model, else: model
+            {:run, cpu_filter(), model}
+
+          :gpu_now ->
+            # Random coin flip said GPU — run immediately to build up stats
+            # (only happens when we have no historical data)
+            {:run, gpu_filter(), model}
+
+          :defer ->
+            Logger.debug("AI routing: GPU busy, deferring #{job_type} (waiting for GPU)")
+            {:defer, "waiting for GPU (#{job_type})"}
+        end
     end
   end
 
-  def build_instance_filter(_family, model) do
-    {nil, model}
+  # Returns :cpu (run on CPU now) or :defer (put back in queue, wait for GPU).
+  # For the random/no-data case: coin flip decides run-on-CPU vs run-on-GPU immediately
+  # (we need data from both to make smart decisions, so random always runs, never defers).
+  defp should_use_cpu?(job_type) do
+    gpu_job_avg = PerformanceStats.avg_duration_ms("gpu", job_type)
+    cpu_job_avg = PerformanceStats.avg_duration_ms("cpu", job_type)
+
+    case {gpu_job_avg, cpu_job_avg} do
+      {nil, nil} ->
+        # No historical data → 50/50 random, always run (never defer)
+        # to build up stats for both instance types
+        if :rand.uniform() > 0.5 do
+          Logger.debug("AI routing: no history for #{job_type}, random → CPU")
+          :cpu
+        else
+          Logger.debug("AI routing: no history for #{job_type}, random → GPU")
+          :gpu_now
+        end
+
+      {_gpu, nil} ->
+        # We know GPU speed but not CPU → defer to wait for known GPU
+        :defer
+
+      {nil, _cpu} ->
+        # We know CPU speed but not GPU → use CPU since we have data
+        :cpu
+
+      {gpu_job_avg, cpu_job_avg} ->
+        # Both available → estimate optimal choice
+        gpu_overall_avg = PerformanceStats.avg_duration_ms_all("gpu")
+        elapsed = PerformanceStats.oldest_running_elapsed_ms()
+
+        gpu_remaining =
+          case {gpu_overall_avg, elapsed} do
+            {nil, _} -> 0
+            {_, nil} -> 0
+            {avg, el} -> max(0, avg - el)
+          end
+
+        # Wait-for-GPU total: remaining wait + our job execution on GPU
+        gpu_total = gpu_remaining + gpu_job_avg
+        # Use-CPU-now total: just our job execution time on CPU
+        cpu_total = cpu_job_avg
+
+        # Use CPU if it's faster (with 10% tolerance — close enough = use CPU for throughput)
+        if cpu_total < gpu_total * @cpu_tolerance do
+          Logger.debug(
+            "AI routing: #{job_type} — CPU=#{cpu_total}ms < GPU=#{gpu_total}ms → CPU"
+          )
+
+          :cpu
+        else
+          Logger.debug(
+            "AI routing: #{job_type} — GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + job=#{gpu_job_avg}) < CPU=#{cpu_total}ms → defer for GPU"
+          )
+
+          :defer
+        end
+    end
   end
+
+  defp gpu_filter, do: fn instance -> "gpu" in Map.get(instance, :tags, []) end
+  defp cpu_filter, do: fn instance -> "cpu" in Map.get(instance, :tags, []) end
 
   defp get_gpu_instance_count do
     Client.ollama_instances()

@@ -23,7 +23,7 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   def default_model, do: "qwen3:8b"
 
   @impl true
-  def default_priority, do: 1
+  def default_priority, do: 2
 
   @impl true
   def max_attempts, do: 2
