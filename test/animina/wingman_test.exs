@@ -1,6 +1,7 @@
 defmodule Animina.WingmanTest do
   use Animina.DataCase, async: true
 
+  alias Animina.Messaging
   alias Animina.Wingman
 
   import Animina.AccountsFixtures
@@ -26,6 +27,15 @@ defmodule Animina.WingmanTest do
       assert context.conversation_state == "new"
     end
 
+    test "includes user_ratings in context" do
+      user = user_fixture(language: "en")
+      other = user_fixture(language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      assert is_list(context.user_ratings)
+    end
+
     test "includes overlap without red_white" do
       user = user_fixture(language: "en")
       other = user_fixture(language: "en")
@@ -47,7 +57,6 @@ defmodule Animina.WingmanTest do
       context = Wingman.gather_context(user, other, [])
 
       assert is_list(context.user.stories)
-      assert is_list(context.user.photo_descriptions)
       assert is_list(context.user.published_flags)
     end
   end
@@ -67,14 +76,112 @@ defmodule Animina.WingmanTest do
       assert prompt =~ "JSON"
     end
 
-    test "builds German prompt when language is de" do
+    test "builds German prompt with Wingman persona" do
       user = user_fixture(display_name: "Anna", language: "de")
       other = user_fixture(display_name: "Ben", language: "de")
 
       context = Wingman.gather_context(user, other, [])
       prompt = Wingman.build_prompt(context, "de")
 
-      assert prompt =~ "Dating-Coach"
+      assert prompt =~ "Wingman"
+      refute prompt =~ "Dating-Coach"
+    end
+
+    test "builds English prompt with Wingman persona" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "wingman"
+      refute prompt =~ "dating coach"
+    end
+
+    test "includes user age in system instruction" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      # The user's age should appear in the prompt
+      if context.user.age do
+        assert prompt =~ "#{context.user.age}"
+      end
+    end
+  end
+
+  describe "build_prompt/3 with style" do
+    test "casual prompt contains wingman persona (EN)" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en", "casual")
+
+      assert prompt =~ "wingman"
+    end
+
+    test "casual prompt contains Wingman persona (DE)" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de", "casual")
+
+      assert prompt =~ "Wingman"
+    end
+
+    test "funny prompt contains humor-related terms (EN)" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en", "funny")
+
+      assert prompt =~ "witty" or prompt =~ "humor"
+    end
+
+    test "funny prompt contains humor-related terms (DE)" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de", "funny")
+
+      assert prompt =~ "witzig" or prompt =~ "Humor"
+    end
+
+    test "empathetic prompt contains empathy-related terms (EN)" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en", "empathetic")
+
+      assert prompt =~ "warm" or prompt =~ "thoughtful"
+    end
+
+    test "empathetic prompt contains empathy-related terms (DE)" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de", "empathetic")
+
+      assert prompt =~ "einfühlsam" or prompt =~ "warmherzig"
+    end
+
+    test "build_prompt/2 without style produces same result as casual" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt_default = Wingman.build_prompt(context, "en")
+      prompt_casual = Wingman.build_prompt(context, "en", "casual")
+
+      assert prompt_default == prompt_casual
     end
   end
 
@@ -99,7 +206,7 @@ defmodule Animina.WingmanTest do
       assert length(suggestions) == 2
     end
 
-    test "limits to 3 suggestions" do
+    test "limits to 2 suggestions" do
       raw =
         Jason.encode!([
           %{"text" => "Tip 1", "hook" => "R1"},
@@ -109,7 +216,7 @@ defmodule Animina.WingmanTest do
         ])
 
       assert {:ok, suggestions} = Wingman.parse_suggestions(raw)
-      assert length(suggestions) == 3
+      assert length(suggestions) == 2
     end
 
     test "handles malformed JSON" do
@@ -161,6 +268,166 @@ defmodule Animina.WingmanTest do
     test "returns a formatted topic string" do
       topic = Wingman.suggestion_topic("conv-123", "user-456")
       assert topic == "wingman:conv-123:user-456"
+    end
+  end
+
+  describe "wingman feedback" do
+    setup do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+      {:ok, conversation} = Messaging.get_or_create_conversation(user.id, other.id)
+
+      suggestion_data = %{
+        text: "Ask about their hiking photos",
+        hook: "You both love nature"
+      }
+
+      %{user: user, conversation: conversation, suggestion_data: suggestion_data}
+    end
+
+    test "toggle_feedback/5 creates a new feedback record", %{
+      user: user,
+      conversation: conversation,
+      suggestion_data: suggestion_data
+    } do
+      assert {:ok, :created, feedback} =
+               Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      assert feedback.user_id == user.id
+      assert feedback.conversation_id == conversation.id
+      assert feedback.suggestion_index == 0
+      assert feedback.value == 1
+      assert feedback.suggestion_text == "Ask about their hiking photos"
+      assert feedback.suggestion_hook == "You both love nature"
+    end
+
+    test "toggle_feedback/5 toggles off when same value", %{
+      user: user,
+      conversation: conversation,
+      suggestion_data: suggestion_data
+    } do
+      {:ok, :created, _} =
+        Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      assert {:ok, :removed} =
+               Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      # Should be gone
+      assert Wingman.get_feedback_for_suggestions(user.id, conversation.id) == %{}
+    end
+
+    test "toggle_feedback/5 switches value when different", %{
+      user: user,
+      conversation: conversation,
+      suggestion_data: suggestion_data
+    } do
+      {:ok, :created, _} =
+        Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      assert {:ok, :switched, feedback} =
+               Wingman.toggle_feedback(user.id, conversation.id, 0, -1, suggestion_data)
+
+      assert feedback.value == -1
+    end
+
+    test "get_feedback_for_suggestions/2 returns index => value map", %{
+      user: user,
+      conversation: conversation,
+      suggestion_data: suggestion_data
+    } do
+      Wingman.toggle_feedback(user.id, conversation.id, 0, 1, suggestion_data)
+
+      Wingman.toggle_feedback(user.id, conversation.id, 1, -1, %{
+        text: "Comment on their city",
+        hook: "Local connection"
+      })
+
+      result = Wingman.get_feedback_for_suggestions(user.id, conversation.id)
+      assert result == %{0 => 1, 1 => -1}
+    end
+
+    test "recent_feedback/1 returns last 10 ordered by recency", %{
+      user: user,
+      suggestion_data: suggestion_data
+    } do
+      # Create 12 feedbacks across different conversations
+      for i <- 1..12 do
+        other = user_fixture(display_name: "User#{i}", language: "en")
+        {:ok, conv} = Messaging.get_or_create_conversation(user.id, other.id)
+        Wingman.toggle_feedback(user.id, conv.id, 0, 1, suggestion_data)
+      end
+
+      feedbacks = Wingman.recent_feedback(user.id)
+      assert length(feedbacks) == 10
+    end
+
+    test "recent_feedback/1 returns empty list when none" do
+      user = user_fixture(display_name: "Lonely", language: "en")
+      assert Wingman.recent_feedback(user.id) == []
+    end
+  end
+
+  describe "feedback_section/2" do
+    test "formats liked/disliked for EN" do
+      feedbacks = [
+        %{value: 1, suggestion_text: "Ask about their hiking photos"},
+        %{value: -1, suggestion_text: "Comment on their city"}
+      ]
+
+      section = Wingman.feedback_section(feedbacks, "en")
+      assert section =~ "Previous feedback"
+      assert section =~ "Liked"
+      assert section =~ "Ask about their hiking photos"
+      assert section =~ "Disliked"
+      assert section =~ "Comment on their city"
+    end
+
+    test "formats liked/disliked for DE" do
+      feedbacks = [
+        %{value: 1, suggestion_text: "Frag nach den Wanderfotos"},
+        %{value: -1, suggestion_text: "Kommentiere die Stadt"}
+      ]
+
+      section = Wingman.feedback_section(feedbacks, "de")
+      assert section =~ "Bisheriges Feedback"
+      assert section =~ "Gefallen"
+      assert section =~ "Frag nach den Wanderfotos"
+      assert section =~ "Nicht gefallen"
+      assert section =~ "Kommentiere die Stadt"
+    end
+
+    test "returns empty string when no feedback" do
+      assert Wingman.feedback_section([], "en") == ""
+    end
+  end
+
+  describe "build_prompt/4 with feedback" do
+    test "includes feedback section when feedback provided" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      feedback = [
+        %{value: 1, suggestion_text: "Ask about hiking"},
+        %{value: -1, suggestion_text: "Mention the weather"}
+      ]
+
+      prompt = Wingman.build_prompt(context, "en", "casual", feedback)
+      assert prompt =~ "Previous feedback"
+      assert prompt =~ "Ask about hiking"
+      assert prompt =~ "Mention the weather"
+    end
+
+    test "build_prompt/3 without feedback produces same as build_prompt/4 with empty list" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt_without = Wingman.build_prompt(context, "en", "casual")
+      prompt_with_empty = Wingman.build_prompt(context, "en", "casual", [])
+
+      assert prompt_without == prompt_with_empty
     end
   end
 end

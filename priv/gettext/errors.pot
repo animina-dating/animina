@@ -115,17 +115,17 @@ msgstr ""
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:53
 #: lib/animina/accounts/contact_blacklist_entry.ex:57
-#: lib/animina/accounts/user.ex:274
+#: lib/animina/accounts/user.ex:278
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:172
+#: lib/animina/accounts/user.ex:176
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:269
+#: lib/animina/accounts/user.ex:273
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr ""
@@ -205,12 +205,12 @@ msgstr ""
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr ""
 
-#: lib/animina/accounts/user.ex:421
+#: lib/animina/accounts/user.ex:425
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr ""
 
-#: lib/animina/accounts/user.ex:357
+#: lib/animina/accounts/user.ex:361
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr ""

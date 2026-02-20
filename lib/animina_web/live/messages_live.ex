@@ -21,6 +21,7 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.MessageComponents
   import AniminaWeb.RelationshipComponents
 
+  alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.FeatureFlags
   alias Animina.Messaging
@@ -185,12 +186,60 @@ defmodule AniminaWeb.MessagesLive do
               <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
             </button>
           </div>
+          <div class="flex gap-1.5 mb-2">
+            <button
+              :for={{style, label} <- wingman_style_options()}
+              phx-click="change_wingman_style"
+              phx-value-style={style}
+              class={[
+                "badge badge-sm cursor-pointer",
+                if(style == @wingman_style, do: "badge-info", else: "badge-ghost")
+              ]}
+            >
+              {label}
+            </button>
+          </div>
           <div class="space-y-2">
-            <div :for={suggestion <- @wingman_suggestions} class="text-sm bg-base-100 rounded p-2 border border-base-300">
+            <div
+              :for={{suggestion, idx} <- Enum.with_index(@wingman_suggestions)}
+              class="text-sm bg-base-100 rounded p-2 border border-base-300"
+            >
               <p>{suggestion["text"]}</p>
               <p :if={suggestion["hook"]} class="text-xs text-base-content/50 mt-1">
                 {suggestion["hook"]}
               </p>
+              <div class="flex items-center gap-1 mt-1.5">
+                <button
+                  phx-click="wingman_feedback"
+                  phx-value-index={idx}
+                  phx-value-value="1"
+                  class={[
+                    "btn btn-ghost btn-xs btn-circle",
+                    if(Map.get(@wingman_feedback, idx) == 1,
+                      do: "text-success bg-success/20",
+                      else: "text-base-content/30 hover:text-success hover:bg-success/10"
+                    )
+                  ]}
+                  title={gettext("Helpful")}
+                >
+                  <.icon name="hero-hand-thumb-up-mini" class="h-3.5 w-3.5" />
+                </button>
+                <button
+                  phx-click="wingman_feedback"
+                  phx-value-index={idx}
+                  phx-value-value="-1"
+                  class={[
+                    "btn btn-ghost btn-xs btn-circle",
+                    if(Map.get(@wingman_feedback, idx) == -1,
+                      do: "text-error bg-error/20",
+                      else: "text-base-content/30 hover:text-error hover:bg-error/10"
+                    )
+                  ]}
+                  title={gettext("Not helpful")}
+                >
+                  <.icon name="hero-hand-thumb-down-mini" class="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -200,7 +249,7 @@ defmodule AniminaWeb.MessagesLive do
           :if={@wingman_loading && !@wingman_dismissed}
           class="mx-1 mb-2 p-3 bg-info/5 rounded-lg border border-info/20"
         >
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
               <span class="loading loading-spinner loading-sm text-info"></span>
               <span class="text-sm font-medium text-info">
@@ -209,6 +258,19 @@ defmodule AniminaWeb.MessagesLive do
             </div>
             <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
               <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <div class="flex gap-1.5">
+            <button
+              :for={{style, label} <- wingman_style_options()}
+              phx-click="change_wingman_style"
+              phx-value-style={style}
+              class={[
+                "badge badge-sm cursor-pointer",
+                if(style == @wingman_style, do: "badge-info", else: "badge-ghost")
+              ]}
+            >
+              {label}
             </button>
           </div>
         </div>
@@ -1093,7 +1155,9 @@ defmodule AniminaWeb.MessagesLive do
         milestones: [],
         wingman_suggestions: nil,
         wingman_loading: false,
-        wingman_dismissed: false
+        wingman_dismissed: false,
+        wingman_style: user.wingman_style || "casual",
+        wingman_feedback: %{}
       )
 
     # Handle start_with param to create/open a conversation
@@ -1230,33 +1294,39 @@ defmodule AniminaWeb.MessagesLive do
 
     # Only show wingman for the very first chat (no messages yet)
     if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
+      feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
+
       case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
         {:ok, suggestions} ->
           assign(socket,
             wingman_suggestions: suggestions,
             wingman_loading: false,
-            wingman_dismissed: false
+            wingman_dismissed: false,
+            wingman_feedback: feedback_map
           )
 
         {:pending, _job_id} ->
           assign(socket,
             wingman_suggestions: nil,
             wingman_loading: true,
-            wingman_dismissed: false
+            wingman_dismissed: false,
+            wingman_feedback: feedback_map
           )
 
         {:error, _reason} ->
           assign(socket,
             wingman_suggestions: nil,
             wingman_loading: false,
-            wingman_dismissed: false
+            wingman_dismissed: false,
+            wingman_feedback: %{}
           )
       end
     else
       assign(socket,
         wingman_suggestions: nil,
         wingman_loading: false,
-        wingman_dismissed: false
+        wingman_dismissed: false,
+        wingman_feedback: %{}
       )
     end
   end
@@ -1331,6 +1401,36 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   @impl true
+  def handle_event("change_wingman_style", %{"style" => style}, socket) do
+    user = socket.assigns.current_scope.user
+
+    case Accounts.update_wingman_style(user, style) do
+      {:ok, updated_user} ->
+        socket = assign(socket, :wingman_style, updated_user.wingman_style)
+
+        # If we have a conversation open, refresh suggestions with the new style
+        socket =
+          if socket.assigns.conversation_data do
+            conversation_id = socket.assigns.conversation_data.conversation.id
+            other_user = socket.assigns.conversation_data.other_user
+            Wingman.refresh_suggestions(conversation_id, user.id, other_user.id)
+
+            socket
+            |> assign(:wingman_loading, true)
+            |> assign(:wingman_suggestions, nil)
+            |> assign(:wingman_dismissed, false)
+          else
+            socket
+          end
+
+        {:noreply, socket}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
   def handle_event("refresh_wingman", _params, socket) do
     user = socket.assigns.current_scope.user
     conversation_id = socket.assigns.conversation_data.conversation.id
@@ -1343,6 +1443,29 @@ defmodule AniminaWeb.MessagesLive do
      |> assign(:wingman_loading, true)
      |> assign(:wingman_suggestions, nil)
      |> assign(:wingman_dismissed, false)}
+  end
+
+  @impl true
+  def handle_event("wingman_feedback", %{"index" => idx_str, "value" => val_str}, socket) do
+    user = socket.assigns.current_scope.user
+    conversation_id = socket.assigns.conversation_data.conversation.id
+    idx = String.to_integer(idx_str)
+    value = String.to_integer(val_str)
+
+    suggestion = Enum.at(socket.assigns.wingman_suggestions || [], idx)
+
+    if suggestion do
+      suggestion_data = %{
+        text: suggestion["text"],
+        hook: suggestion["hook"]
+      }
+
+      Wingman.toggle_feedback(user.id, conversation_id, idx, value, suggestion_data)
+      feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
+      {:noreply, assign(socket, :wingman_feedback, feedback_map)}
+    else
+      {:noreply, socket}
+    end
   end
 
   # --- Events ---
@@ -1992,5 +2115,13 @@ defmodule AniminaWeb.MessagesLive do
       user = socket.assigns.current_scope.user
       Messaging.save_draft(conversation_data.conversation.id, user.id, content)
     end
+  end
+
+  defp wingman_style_options do
+    [
+      {"casual", gettext("Casual")},
+      {"funny", gettext("Funny")},
+      {"empathetic", gettext("Empathetic")}
+    ]
   end
 end
