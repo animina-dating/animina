@@ -1,6 +1,8 @@
 defmodule AniminaWeb.Admin.AdDetailLiveTest do
   use AniminaWeb.ConnCase, async: true
 
+  alias Animina.Ads.QrCode
+
   import Animina.AdsFixtures
   import Phoenix.LiveViewTest
 
@@ -48,6 +50,45 @@ defmodule AniminaWeb.Admin.AdDetailLiveTest do
         conn
         |> log_in_user(admin)
         |> live(~p"/admin/ads/#{Ecto.UUID.generate()}")
+    end
+  end
+
+  describe "generate-qr" do
+    test "shows Generate QR button when qr_code_path is nil", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+      ad = ad_fixture()
+
+      # Ad fixture doesn't generate QR, so qr_code_path is nil
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(admin)
+        |> live(~p"/admin/ads/#{ad.id}")
+
+      assert html =~ "Generate QR"
+    end
+
+    test "generate-qr event attempts QR generation", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+      ad = ad_fixture()
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(admin)
+        |> live(~p"/admin/ads/#{ad.id}")
+
+      html = lv |> element("button", "Generate QR") |> render_click()
+
+      case QrCode.check_dependencies() do
+        :ok ->
+          # Tools available — QR generated, button replaced by image
+          assert html =~ "QR code generated"
+          assert html =~ "Download QR"
+          refute html =~ "Generate QR"
+
+        {:error, _reason} ->
+          # Tools missing — error flash shown
+          assert html =~ "not installed"
+      end
     end
   end
 end

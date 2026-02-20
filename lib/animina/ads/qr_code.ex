@@ -20,13 +20,21 @@ defmodule Animina.Ads.QrCode do
   def check_dependencies do
     cond do
       !command_available?("qrencode") ->
-        {:error, "qrencode is not installed. Install with: brew install qrencode"}
+        {:error, "qrencode is not installed. Install with: #{install_hint("qrencode")}"}
 
       !command_available?("magick") ->
-        {:error, "ImageMagick is not installed. Install with: brew install imagemagick"}
+        {:error, "ImageMagick is not installed. Install with: #{install_hint("imagemagick")}"}
 
       true ->
         :ok
+    end
+  end
+
+  defp install_hint(package) do
+    case :os.type() do
+      {:unix, :linux} -> "apt install #{package}"
+      {:unix, :darwin} -> "brew install #{package}"
+      _ -> "your package manager (#{package})"
     end
   end
 

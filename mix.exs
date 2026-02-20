@@ -4,7 +4,7 @@ defmodule Animina.MixProject do
   def project do
     [
       app: :animina,
-      version: "2.3.98",
+      version: "2.3.99",
       elixir: "~> 1.19",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,

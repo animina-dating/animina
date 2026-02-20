@@ -1,6 +1,8 @@
 defmodule AniminaWeb.Admin.AdsLiveTest do
   use AniminaWeb.ConnCase, async: true
 
+  alias Animina.Ads.QrCode
+
   import Animina.AdsFixtures
   import Phoenix.LiveViewTest
 
@@ -33,6 +35,30 @@ defmodule AniminaWeb.Admin.AdsLiveTest do
         |> live(~p"/admin/ads")
 
       assert html =~ "No ads created yet"
+    end
+  end
+
+  describe "toggle-form dependency check" do
+    test "toggle-form checks dependencies before opening form", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+
+      {:ok, lv, _html} =
+        conn
+        |> log_in_user(admin)
+        |> live(~p"/admin/ads")
+
+      html = lv |> element("button", "New Ad") |> render_click()
+
+      case QrCode.check_dependencies() do
+        :ok ->
+          # Tools are available — form should open
+          assert html =~ "Create New Ad"
+
+        {:error, _reason} ->
+          # Tools missing — form stays closed, error flash shown
+          refute html =~ "Create New Ad"
+          assert html =~ "not installed"
+      end
     end
   end
 end

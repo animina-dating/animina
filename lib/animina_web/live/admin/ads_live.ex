@@ -45,7 +45,18 @@ defmodule AniminaWeb.Admin.AdsLive do
 
   @impl true
   def handle_event("toggle-form", _params, socket) do
-    {:noreply, assign(socket, show_form: !socket.assigns.show_form)}
+    if socket.assigns.show_form do
+      # Closing the form — no check needed
+      {:noreply, assign(socket, show_form: false)}
+    else
+      case QrCode.check_dependencies() do
+        :ok ->
+          {:noreply, assign(socket, show_form: true)}
+
+        {:error, reason} ->
+          {:noreply, put_flash(socket, :error, reason)}
+      end
+    end
   end
 
   def handle_event(
@@ -108,8 +119,10 @@ defmodule AniminaWeb.Admin.AdsLive do
   defp generate_qr(ad) do
     case QrCode.generate(ad) do
       {:ok, path} ->
-        Ads.update_qr_code_path(ad, path)
-        {:ok, path}
+        case Ads.update_qr_code_path(ad, path) do
+          {:ok, _updated_ad} -> {:ok, path}
+          {:error, _changeset} -> {:error, "QR code generated but failed to save path"}
+        end
 
       {:error, reason} ->
         {:error, reason}

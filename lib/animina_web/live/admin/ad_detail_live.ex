@@ -3,6 +3,7 @@ defmodule AniminaWeb.Admin.AdDetailLive do
 
   alias Animina.Ads
   alias Animina.Ads.Ad
+  alias Animina.Ads.QrCode
   alias AniminaWeb.Layouts
 
   import AniminaWeb.Helpers.AdminHelpers, only: [parse_int: 2, format_datetime: 1]
@@ -55,6 +56,29 @@ defmodule AniminaWeb.Admin.AdDetailLive do
        total_pages: result.total_pages
      )
      |> stream(:visits, result.entries, reset: true)}
+  end
+
+  @impl true
+  def handle_event("generate-qr", _params, socket) do
+    ad = socket.assigns.ad
+
+    case QrCode.generate(ad) do
+      {:ok, path} ->
+        case Ads.update_qr_code_path(ad, path) do
+          {:ok, updated_ad} ->
+            {:noreply,
+             socket
+             |> assign(ad: updated_ad)
+             |> put_flash(:info, gettext("QR code generated successfully."))}
+
+          {:error, _changeset} ->
+            {:noreply,
+             put_flash(socket, :error, gettext("QR code generated but failed to save path."))}
+        end
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, reason)}
+    end
   end
 
   defp build_path(socket, overrides) do
@@ -131,6 +155,15 @@ defmodule AniminaWeb.Admin.AdDetailLive do
                 <.icon name="hero-arrow-down-tray-mini" class="w-3 h-3" />
                 {gettext("Download QR")}
               </a>
+            </div>
+            <div :if={!@ad.qr_code_path} class="flex flex-col items-center gap-2">
+              <div class="w-32 h-32 bg-base-300 rounded flex items-center justify-center">
+                <.icon name="hero-qr-code" class="w-12 h-12 text-base-content/30" />
+              </div>
+              <button phx-click="generate-qr" class="btn btn-primary btn-xs">
+                <.icon name="hero-arrow-path-mini" class="w-3 h-3" />
+                {gettext("Generate QR")}
+              </button>
             </div>
           </div>
         </div>
