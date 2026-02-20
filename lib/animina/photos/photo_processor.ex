@@ -154,11 +154,13 @@ defmodule Animina.Photos.PhotoProcessor do
     # The AI.Scheduler will pick it up and the Executor will handle
     # classification, side effects, and state transitions.
     owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
+    priority = if photo.type == "avatar", do: 2, else: 3
 
     case AI.enqueue("photo_classification", %{"photo_id" => photo.id},
            subject_type: "Photo",
            subject_id: photo.id,
-           requester_id: owner_id
+           requester_id: owner_id,
+           priority: priority
          ) do
       {:ok, _job} ->
         Logger.info("Photo #{photo.id} enqueued for AI classification")
