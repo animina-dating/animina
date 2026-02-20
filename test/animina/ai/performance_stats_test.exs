@@ -222,4 +222,42 @@ defmodule Animina.AI.PerformanceStatsTest do
       assert elapsed >= 9000
     end
   end
+
+  describe "count_deferred_jobs/0" do
+    test "returns 0 when no deferred jobs exist" do
+      assert PerformanceStats.count_deferred_jobs() == 0
+    end
+
+    test "counts jobs with scheduled_at in the near future (deferred)" do
+      # Create and defer two jobs
+      {:ok, job1} = AI.enqueue("gender_guess", %{"name" => "deferred1"})
+      {:ok, _} = AI.mark_running(job1)
+      AI.defer_job(job1.id, 3)
+
+      {:ok, job2} = AI.enqueue("gender_guess", %{"name" => "deferred2"})
+      {:ok, _} = AI.mark_running(job2)
+      AI.defer_job(job2.id, 3)
+
+      assert PerformanceStats.count_deferred_jobs() == 2
+    end
+
+    test "does not count jobs scheduled far in the future (retry backoff)" do
+      # A retried job scheduled 15 minutes from now should not count
+      future = DateTime.utc_now() |> DateTime.add(15, :minute)
+
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "retry"}, scheduled_at: future)
+
+      # Manually set to scheduled with far-future scheduled_at
+      from(j in Job, where: j.id == ^job.id)
+      |> Repo.update_all(set: [status: "scheduled", scheduled_at: future])
+
+      assert PerformanceStats.count_deferred_jobs() == 0
+    end
+
+    test "does not count pending jobs without scheduled_at" do
+      AI.enqueue("gender_guess", %{"name" => "pending"})
+
+      assert PerformanceStats.count_deferred_jobs() == 0
+    end
+  end
 end

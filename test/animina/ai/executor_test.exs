@@ -219,6 +219,53 @@ defmodule Animina.AI.ExecutorTest do
     end
   end
 
+  describe "build_instance_filter/4 — GPU busy, queue depth forces CPU" do
+    test "switches to CPU when GPU queue depth makes waiting too long" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      make_gpu_busy()
+
+      # GPU takes 10s, CPU takes 25s — normally GPU is faster
+      create_completed_job(
+        job_type: "photo_description",
+        params: %{"photo_id" => Ecto.UUID.generate()},
+        server_url: "http://gpu:11434/api",
+        duration_ms: 10_000
+      )
+
+      create_completed_job(
+        job_type: "photo_description",
+        params: %{"photo_id" => Ecto.UUID.generate()},
+        server_url: "http://cpu:11434/api",
+        duration_ms: 25_000
+      )
+
+      # Also need overall GPU avg
+      create_completed_job(server_url: "http://gpu:11434/api", duration_ms: 10_000)
+
+      # With no deferred jobs, GPU should win: remaining + 10s < 25s
+      # (depends on timing but GPU total should be ~10-20s vs CPU 25s)
+
+      # Now simulate 2 already-deferred jobs waiting for GPU
+      {:ok, d1} = AI.enqueue("gender_guess", %{"name" => "deferred1"})
+      {:ok, _} = AI.mark_running(d1)
+      AI.defer_job(d1.id, 5)
+
+      {:ok, d2} = AI.enqueue("gender_guess", %{"name" => "deferred2"})
+      {:ok, _} = AI.mark_running(d2)
+      AI.defer_job(d2.id, 5)
+
+      # Now GPU total = remaining + (2 * 10000) + 10000 = remaining + 30000
+      # CPU total = 25000
+      # 25000 < (remaining + 30000) * 1.1 → CPU wins because of queue depth
+      assert {:run, filter, _model} =
+               Executor.build_instance_filter(4, "photo_description", :text, "qwen3:1.7b")
+
+      assert is_function(filter, 1)
+      assert filter.(cpu_instance()) == true
+      assert filter.(gpu_instance()) == false
+    end
+  end
+
   describe "build_instance_filter/4 — GPU busy, only CPU data → run on CPU" do
     test "uses CPU when only CPU historical data exists" do
       set_ollama_instances([gpu_instance(), cpu_instance()])

@@ -71,6 +71,25 @@ defmodule Animina.AI.PerformanceStats do
     end
   end
 
+  @doc """
+  Counts jobs that were recently deferred (waiting for GPU).
+
+  Deferred jobs have status "scheduled" with a scheduled_at in the near future
+  (within 10 seconds). This count is used to estimate the actual GPU queue depth:
+  if 3 jobs are already deferred waiting for GPU, the 4th job's real GPU wait
+  is much longer than just the current running job's remaining time.
+  """
+  @spec count_deferred_jobs() :: non_neg_integer()
+  def count_deferred_jobs do
+    now = DateTime.utc_now()
+    near_future = DateTime.add(now, 10, :second)
+
+    Job
+    |> where([j], j.status == "scheduled")
+    |> where([j], j.scheduled_at > ^now and j.scheduled_at <= ^near_future)
+    |> Repo.aggregate(:count)
+  end
+
   # --- Private ---
 
   defp query_avg(urls, job_type) do

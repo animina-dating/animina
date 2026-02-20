@@ -338,21 +338,26 @@ defmodule Animina.AI.Executor do
             {avg, el} -> max(0, avg - el)
           end
 
-        # Wait-for-GPU total: remaining wait + our job execution on GPU
-        gpu_total = gpu_remaining + gpu_job_avg
+        # Account for other jobs already waiting for GPU.
+        # Each deferred job ahead of us adds another full GPU cycle to our wait.
+        deferred = PerformanceStats.count_deferred_jobs()
+        gpu_queue_wait = deferred * gpu_job_avg
+
+        # Wait-for-GPU total: current job remaining + queue + our job on GPU
+        gpu_total = gpu_remaining + gpu_queue_wait + gpu_job_avg
         # Use-CPU-now total: just our job execution time on CPU
         cpu_total = cpu_job_avg
 
         # Use CPU if it's faster (with 10% tolerance — close enough = use CPU for throughput)
         if cpu_total < gpu_total * @cpu_tolerance do
           Logger.debug(
-            "AI routing: #{job_type} — CPU=#{cpu_total}ms < GPU=#{gpu_total}ms → CPU"
+            "AI routing: #{job_type} — CPU=#{cpu_total}ms < GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) → CPU"
           )
 
           :cpu
         else
           Logger.debug(
-            "AI routing: #{job_type} — GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + job=#{gpu_job_avg}) < CPU=#{cpu_total}ms → defer for GPU"
+            "AI routing: #{job_type} — GPU=#{gpu_total}ms (remaining=#{gpu_remaining} + queue=#{gpu_queue_wait} + job=#{gpu_job_avg}) < CPU=#{cpu_total}ms → defer for GPU"
           )
 
           :defer
