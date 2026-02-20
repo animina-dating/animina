@@ -622,9 +622,15 @@ defmodule AniminaWeb.ChatPanelComponent do
       current_user_id = assigns.current_user_id
       profile_user_id = assigns.profile_user.id
 
-      # We may not have a conversation_id yet (lazy creation).
-      # If so, create a temporary context and generate without a conversation_id link.
-      conversation_id = assigns[:conversation_id]
+      {conversation_id, socket} =
+        case assigns[:conversation_id] do
+          nil ->
+            # Eagerly create conversation so wingman has a conversation_id to work with
+            eagerly_create_conversation(socket, current_user_id, profile_user_id)
+
+          cid ->
+            {cid, socket}
+        end
 
       if conversation_id do
         # Subscribe parent to wingman PubSub topic
@@ -644,12 +650,27 @@ defmodule AniminaWeb.ChatPanelComponent do
             socket
         end
       else
-        # No conversation yet — we can't enqueue without one.
-        # Trigger generation after conversation is created (in deliver_message).
         socket
       end
     else
       socket
+    end
+  end
+
+  defp eagerly_create_conversation(socket, current_user_id, profile_user_id) do
+    case Messaging.can_initiate_conversation?(current_user_id, profile_user_id) do
+      :ok ->
+        case Messaging.get_or_create_conversation(current_user_id, profile_user_id) do
+          {:ok, conversation} ->
+            send(self(), {:chat_panel_subscribe, conversation.id})
+            {conversation.id, assign(socket, :conversation_id, conversation.id)}
+
+          {:error, _reason} ->
+            {nil, socket}
+        end
+
+      {:error, _reason} ->
+        {nil, socket}
     end
   end
 

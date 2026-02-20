@@ -21,7 +21,7 @@ defmodule Animina.Wingman.WingmanSuggestion do
     belongs_to :user, User
     belongs_to :ai_job, Job
 
-    field :suggestions, :map
+    field :suggestions, {:array, :map}
     field :context_hash, :string
 
     timestamps(type: :utc_datetime)
