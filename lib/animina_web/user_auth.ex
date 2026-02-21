@@ -649,7 +649,7 @@ defmodule AniminaWeb.UserAuth do
     ~p"/my/settings"
   end
 
-  def signed_in_path(_), do: ~p"/"
+  def signed_in_path(_), do: ~p"/my"
 
   @doc """
   Plug for routes that require the user to be authenticated.
