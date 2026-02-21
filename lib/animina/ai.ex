@@ -652,6 +652,63 @@ defmodule Animina.AI do
     |> Repo.exists?()
   end
 
+  # --- Estimation helpers ---
+
+  @doc """
+  Returns the queue position of a job — how many runnable jobs are ahead of it.
+  Returns 0 if the job is already running/completed/not found.
+  """
+  def queue_position_for_job(job_id) do
+    case Repo.get(Job, job_id) do
+      nil ->
+        0
+
+      %Job{status: status} when status not in ~w(pending scheduled) ->
+        0
+
+      job ->
+        now = DateTime.utc_now()
+
+        Job
+        |> where([j], j.status in ~w(pending scheduled))
+        |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
+        |> where(
+          [j],
+          j.priority < ^job.priority or
+            (j.priority == ^job.priority and j.inserted_at < ^job.inserted_at)
+        )
+        |> Repo.aggregate(:count)
+    end
+  end
+
+  @doc """
+  Estimates how long a wingman job will take to complete, in milliseconds.
+
+  Uses `PerformanceStats.avg_duration_ms` (tries "gpu" then "cpu") and
+  the job's queue position to estimate total wait time.
+
+  Returns `{estimated_ms, queue_position}` or `nil` if no historical data.
+  """
+  def estimate_wingman_wait_ms(job_id) do
+    alias Animina.AI.PerformanceStats
+    alias Animina.AI.Semaphore
+
+    avg_ms =
+      PerformanceStats.avg_duration_ms("gpu", "wingman_suggestion") ||
+        PerformanceStats.avg_duration_ms("cpu", "wingman_suggestion")
+
+    if avg_ms do
+      position = queue_position_for_job(job_id)
+      %{max: max_slots} = Semaphore.status()
+      max_slots = max(max_slots, 1)
+      estimated_ms = ceil((position + 1) / max_slots) * avg_ms
+      estimated_ms = round(estimated_ms * 1.1)
+      {estimated_ms, position}
+    else
+      nil
+    end
+  end
+
   # --- Config helpers ---
 
   @doc """

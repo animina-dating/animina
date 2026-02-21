@@ -22,6 +22,7 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.RelationshipComponents
 
   alias Animina.Accounts.OnlineActivity
+  alias Animina.AI
   alias Animina.AI.SpellCheck
   alias Animina.FeatureFlags
   alias Animina.Messaging
@@ -253,6 +254,26 @@ defmodule AniminaWeb.MessagesLive do
             <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
               <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
             </button>
+          </div>
+          <div :if={@wingman_estimated_ms}>
+            <progress
+              class="progress progress-info w-full h-2"
+              value={round(@wingman_progress * 100)}
+              max="100"
+            />
+            <div class="flex items-center justify-between mt-1 text-xs text-base-content/50">
+              <span :if={@wingman_queue_position && @wingman_queue_position > 0}>
+                {gettext("Position %{position} in queue",
+                  position: @wingman_queue_position
+                )}
+              </span>
+              <span :if={!@wingman_queue_position || @wingman_queue_position == 0} />
+              <span>
+                {gettext("~%{seconds}s remaining",
+                  seconds: wingman_remaining_seconds(@wingman_estimated_ms, @wingman_progress)
+                )}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -1141,6 +1162,12 @@ defmodule AniminaWeb.MessagesLive do
         wingman_loading: false,
         wingman_dismissed: false,
         wingman_feedback: %{},
+        wingman_job_id: nil,
+        wingman_started_at: nil,
+        wingman_estimated_ms: nil,
+        wingman_queue_position: nil,
+        wingman_progress: 0.0,
+        wingman_progress_timer: nil,
         spellcheck_loading: false,
         spellcheck_original: nil,
         spellcheck_task: nil
@@ -1300,33 +1327,7 @@ defmodule AniminaWeb.MessagesLive do
 
     # Only show wingman for the very first chat (no messages yet)
     if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
-      feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
-
-      case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
-        {:ok, suggestions} ->
-          assign(socket,
-            wingman_suggestions: suggestions,
-            wingman_loading: false,
-            wingman_dismissed: false,
-            wingman_feedback: feedback_map
-          )
-
-        {:pending, _job_id} ->
-          assign(socket,
-            wingman_suggestions: nil,
-            wingman_loading: true,
-            wingman_dismissed: false,
-            wingman_feedback: feedback_map
-          )
-
-        {:error, _reason} ->
-          assign(socket,
-            wingman_suggestions: nil,
-            wingman_loading: false,
-            wingman_dismissed: false,
-            wingman_feedback: %{}
-          )
-      end
+      init_wingman(socket, conversation_id, user, other_user)
     else
       assign(socket,
         wingman_suggestions: nil,
@@ -1335,6 +1336,57 @@ defmodule AniminaWeb.MessagesLive do
         wingman_feedback: %{}
       )
     end
+  end
+
+  defp init_wingman(socket, conversation_id, user, other_user) do
+    feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
+
+    case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
+      {:ok, suggestions} ->
+        assign(socket,
+          wingman_suggestions: suggestions,
+          wingman_loading: false,
+          wingman_dismissed: false,
+          wingman_feedback: feedback_map
+        )
+
+      {:pending, job_id} ->
+        init_wingman_progress(socket, job_id, feedback_map)
+
+      {:error, _reason} ->
+        assign(socket,
+          wingman_suggestions: nil,
+          wingman_loading: false,
+          wingman_dismissed: false,
+          wingman_feedback: %{}
+        )
+    end
+  end
+
+  defp init_wingman_progress(socket, job_id, feedback_map) do
+    {estimated_ms, queue_position} =
+      case AI.estimate_wingman_wait_ms(job_id) do
+        {ms, pos} -> {ms, pos}
+        nil -> {nil, nil}
+      end
+
+    timer =
+      if estimated_ms,
+        do: Process.send_after(self(), :wingman_progress_tick, 2_000),
+        else: nil
+
+    assign(socket,
+      wingman_suggestions: nil,
+      wingman_loading: true,
+      wingman_dismissed: false,
+      wingman_feedback: feedback_map,
+      wingman_job_id: job_id,
+      wingman_started_at: DateTime.utc_now(),
+      wingman_estimated_ms: estimated_ms,
+      wingman_queue_position: queue_position,
+      wingman_progress: 0.0,
+      wingman_progress_timer: timer
+    )
   end
 
   defp compute_other_last_online_at(other_user_id) do
@@ -1403,7 +1455,12 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_event("dismiss_wingman", _params, socket) do
-    {:noreply, assign(socket, :wingman_dismissed, true)}
+    cancel_wingman_timer(socket)
+
+    {:noreply,
+     socket
+     |> assign(:wingman_dismissed, true)
+     |> assign(:wingman_progress_timer, nil)}
   end
 
   @impl true
@@ -1865,11 +1922,31 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   @impl true
+  def handle_info(:wingman_progress_tick, socket) do
+    if socket.assigns.wingman_loading && socket.assigns.wingman_estimated_ms do
+      elapsed = DateTime.diff(DateTime.utc_now(), socket.assigns.wingman_started_at, :millisecond)
+      progress = min(elapsed / socket.assigns.wingman_estimated_ms, 0.95)
+      timer = Process.send_after(self(), :wingman_progress_tick, 2_000)
+
+      {:noreply,
+       socket
+       |> assign(:wingman_progress, progress)
+       |> assign(:wingman_progress_timer, timer)}
+    else
+      {:noreply, assign(socket, :wingman_progress_timer, nil)}
+    end
+  end
+
+  @impl true
   def handle_info({:wingman_ready, suggestions}, socket) do
+    cancel_wingman_timer(socket)
+
     {:noreply,
      socket
      |> assign(:wingman_suggestions, suggestions)
-     |> assign(:wingman_loading, false)}
+     |> assign(:wingman_loading, false)
+     |> assign(:wingman_progress, 1.0)
+     |> assign(:wingman_progress_timer, nil)}
   end
 
   # --- Spellcheck task results ---
@@ -2153,15 +2230,28 @@ defmodule AniminaWeb.MessagesLive do
 
   defp maybe_dismiss_wingman(socket, conversation_id, user_id) do
     if socket.assigns.wingman_suggestions || socket.assigns.wingman_loading do
+      cancel_wingman_timer(socket)
       Wingman.delete_suggestions(conversation_id, user_id)
 
       socket
       |> assign(:wingman_suggestions, nil)
       |> assign(:wingman_loading, false)
       |> assign(:wingman_dismissed, true)
+      |> assign(:wingman_progress_timer, nil)
     else
       socket
     end
+  end
+
+  defp cancel_wingman_timer(socket) do
+    if socket.assigns.wingman_progress_timer do
+      Process.cancel_timer(socket.assigns.wingman_progress_timer)
+    end
+  end
+
+  defp wingman_remaining_seconds(estimated_ms, progress) do
+    remaining_ms = estimated_ms * (1 - progress)
+    max(round(remaining_ms / 1_000), 1)
   end
 
   defp cancel_draft_timer(socket) do

@@ -15,6 +15,7 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   import AniminaWeb.MessageComponents
 
+  alias Animina.AI
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -37,6 +38,9 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_loading: false,
        wingman_dismissed: false,
        wingman_feedback: %{},
+       wingman_started_at: nil,
+       wingman_estimated_ms: nil,
+       wingman_queue_position: nil,
        spellcheck_loading: false,
        spellcheck_original: nil
      )}
@@ -319,6 +323,29 @@ defmodule AniminaWeb.ChatPanelComponent do
             <button phx-click="dismiss_wingman" phx-target={@myself} class="btn btn-ghost btn-xs">
               <.icon name="hero-x-mark" class="h-3 w-3" />
             </button>
+          </div>
+          <div
+            :if={@wingman_estimated_ms}
+            id="wingman-progress-panel"
+            phx-hook="WingmanProgress"
+            data-estimated-ms={@wingman_estimated_ms}
+            data-started-at={@wingman_started_at}
+          >
+            <progress
+              class="progress progress-info w-full h-1.5"
+              value="0"
+              max="100"
+              data-role="bar"
+            />
+            <div class="flex items-center justify-between mt-1 text-xs text-base-content/50">
+              <span :if={@wingman_queue_position && @wingman_queue_position > 0}>
+                {gettext("Position %{position} in queue",
+                  position: @wingman_queue_position
+                )}
+              </span>
+              <span :if={!@wingman_queue_position || @wingman_queue_position == 0} />
+              <span data-role="remaining" />
+            </div>
           </div>
         </div>
 
@@ -782,10 +809,19 @@ defmodule AniminaWeb.ChatPanelComponent do
           wingman_feedback: feedback_map
         )
 
-      {:pending, _job_id} ->
+      {:pending, job_id} ->
+        {estimated_ms, queue_position} =
+          case AI.estimate_wingman_wait_ms(job_id) do
+            {ms, pos} -> {ms, pos}
+            nil -> {nil, nil}
+          end
+
         assign(socket,
           wingman_loading: true,
-          wingman_feedback: feedback_map
+          wingman_feedback: feedback_map,
+          wingman_started_at: DateTime.to_iso8601(DateTime.utc_now()),
+          wingman_estimated_ms: estimated_ms,
+          wingman_queue_position: queue_position
         )
 
       {:error, _reason} ->

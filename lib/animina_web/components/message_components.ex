@@ -70,38 +70,44 @@ defmodule AniminaWeb.MessageComponents do
               data-draft-key={@draft_key}
               style="overflow-y: hidden;"
             >{Phoenix.HTML.Form.normalize_value("textarea", @form[:content].value)}</textarea>
+            <span :if={@spellcheck_enabled} class="self-end">
+              <%= cond do %>
+                <% @spellcheck_loading -> %>
+                  <span class={["btn btn-ghost btn-circle", spellcheck_btn_class(@size)]}>
+                    <span class={spellcheck_spinner_class(@size)} />
+                  </span>
+                <% @spellcheck_has_undo -> %>
+                  <button
+                    type="button"
+                    phx-click="undo_spellcheck"
+                    phx-target={@phx_target}
+                    class={["btn btn-ghost btn-circle text-primary", spellcheck_btn_class(@size)]}
+                    title={gettext("Undo correction")}
+                  >
+                    <.icon name="hero-arrow-uturn-left" class={@icon_class} />
+                  </button>
+                <% true -> %>
+                  <button
+                    type="button"
+                    phx-click="spellcheck"
+                    phx-target={@phx_target}
+                    class={[
+                      "btn btn-ghost btn-circle text-base-content/40 hover:text-primary",
+                      spellcheck_btn_class(@size)
+                    ]}
+                    title={gettext("Check spelling & grammar")}
+                  >
+                    <.icon name="hero-sparkles" class={@icon_class} />
+                  </button>
+              <% end %>
+            </span>
             <button type="submit" class={@btn_class} aria-label={gettext("Send message")}>
               <.icon name="hero-paper-airplane" class={@icon_class} />
             </button>
           </div>
-          <div class={[hint_class(@size), "flex items-center justify-between gap-2"]}>
+          <div class={hint_class(@size)}>
             <span class="truncate">
               {gettext("**bold** *italic* `code` — Enter to send, Shift+Enter for new line")}
-            </span>
-            <span :if={@spellcheck_enabled} class="flex items-center gap-2 shrink-0">
-              <button
-                :if={@spellcheck_has_undo}
-                type="button"
-                phx-click="undo_spellcheck"
-                phx-target={@phx_target}
-                class="link link-primary"
-              >
-                {gettext("Undo")}
-              </button>
-              <%= if @spellcheck_loading do %>
-                <span class="flex items-center gap-1 text-base-content/50">
-                  <span class={spellcheck_spinner_class(@size)} />
-                </span>
-              <% else %>
-                <button
-                  type="button"
-                  phx-click="spellcheck"
-                  phx-target={@phx_target}
-                  class="link link-hover text-base-content/50 hover:text-primary whitespace-nowrap"
-                >
-                  {gettext("Check spelling & grammar")}
-                </button>
-              <% end %>
             </span>
           </div>
         </.form>
@@ -123,6 +129,9 @@ defmodule AniminaWeb.MessageComponents do
 
   defp icon_class(:default), do: "h-5 w-5"
   defp icon_class(:sm), do: "h-4 w-4"
+
+  defp spellcheck_btn_class(:default), do: ""
+  defp spellcheck_btn_class(:sm), do: "btn-sm"
 
   defp spellcheck_spinner_class(:default), do: "loading loading-spinner loading-xs"
   defp spellcheck_spinner_class(:sm), do: "loading loading-spinner loading-xs"
