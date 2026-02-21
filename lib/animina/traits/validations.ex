@@ -8,6 +8,7 @@ defmodule Animina.Traits.Validations do
   import Ecto.Query
 
   alias Animina.Repo
+  alias Animina.Traits
   alias Animina.Traits.{Flag, UserFlag}
 
   @doc """
@@ -20,11 +21,10 @@ defmodule Animina.Traits.Validations do
 
   defp do_validate_single_select(attrs, flag_id, user_id) do
     color = get_attr(attrs, :color)
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
-    category = flag.category
+    flag = Traits.get_flag_with_category!(flag_id)
 
-    if single_select_enforced?(category.selection_mode, color) do
-      check_single_select_count(attrs, user_id, color, category)
+    if single_select_enforced?(flag.category.selection_mode, color) do
+      check_single_select_count(attrs, user_id, color, flag.category)
     else
       :ok
     end
@@ -80,7 +80,7 @@ defmodule Animina.Traits.Validations do
 
   defp do_validate_exclusive_hard(attrs, flag_id, user_id, color) do
     intensity = get_attr(attrs, :intensity)
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
+    flag = Traits.get_flag_with_category!(flag_id)
 
     if flag.category.exclusive_hard do
       check_exclusive_hard_add(attrs, user_id, color, flag.category.id, intensity)
@@ -231,10 +231,9 @@ defmodule Animina.Traits.Validations do
   end
 
   defp check_exclusive_hard_promotion(user_flag, new_intensity) do
-    flag = Repo.get!(Flag, user_flag.flag_id) |> Repo.preload(:category)
-    category = flag.category
+    flag = Traits.get_flag_with_category!(user_flag.flag_id)
 
-    if category.exclusive_hard && count_others_in_category(user_flag, category) > 0 do
+    if flag.category.exclusive_hard && count_others_in_category(user_flag, flag.category) > 0 do
       changeset =
         user_flag
         |> UserFlag.changeset(%{intensity: new_intensity})

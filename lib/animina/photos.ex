@@ -533,15 +533,6 @@ defmodule Animina.Photos do
   end
 
   defp resize_to_max(image, max_dim) do
-    width = Image.width(image)
-    height = Image.height(image)
-    longest = max(width, height)
-
-    if longest > max_dim do
-      scale = max_dim / longest
-      Image.resize(image, scale)
-    else
-      {:ok, image}
-    end
+    FileManagement.resize_to_max(image, max_dim)
   end
 end

@@ -178,10 +178,7 @@ defmodule Animina.Discovery.Spotlight do
     if existing > 0 do
       :ok
     else
-      # Permanent exclusions
-      dismissed = Discovery.dismissed_ids(viewer.id)
-      conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
-      permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+      permanent_exclusions = permanent_exclusion_set(viewer.id)
 
       # Today's entries to also exclude
       today_ids =
@@ -280,9 +277,7 @@ defmodule Animina.Discovery.Spotlight do
 
       # Get fresh picks to replace them
       replacement_count = length(invalid_entry_ids)
-      dismissed = Discovery.dismissed_ids(viewer.id)
-      conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
-      permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+      permanent_exclusions = permanent_exclusion_set(viewer.id)
 
       existing_ids =
         entries
@@ -368,6 +363,12 @@ defmodule Animina.Discovery.Spotlight do
     DateTime.to_date(now_berlin)
   end
 
+  defp permanent_exclusion_set(viewer_id) do
+    dismissed = Discovery.dismissed_ids(viewer_id)
+    conversation_partners = Messaging.list_conversation_partner_ids(viewer_id)
+    MapSet.new(dismissed ++ conversation_partners)
+  end
+
   defp load_today_entries(user_id, today) do
     SpotlightEntry
     |> where([e], e.user_id == ^user_id and e.shown_on == ^today)
@@ -400,10 +401,7 @@ defmodule Animina.Discovery.Spotlight do
   end
 
   defp seed_daily(viewer, today) do
-    # Permanent exclusions: dismissed users + conversation partners
-    dismissed = Discovery.dismissed_ids(viewer.id)
-    conversation_partners = Messaging.list_conversation_partner_ids(viewer.id)
-    permanent_exclusions = MapSet.new(dismissed ++ conversation_partners)
+    permanent_exclusions = permanent_exclusion_set(viewer.id)
 
     # Build candidate pool
     pool_candidates = SpotlightPool.build(viewer)

@@ -56,6 +56,12 @@ defmodule Animina.Traits do
     |> Repo.all()
   end
 
+  def get_flag_with_category!(flag_id) do
+    Flag
+    |> Repo.get!(flag_id)
+    |> Repo.preload(:category)
+  end
+
   def toggle_category_optin(user, category, opts \\ []) do
     pt_opts = PT.opts(opts)
 
@@ -180,10 +186,10 @@ defmodule Animina.Traits do
 
   defp validate_flag_limit(_attrs), do: :ok
 
-  defp max_flags_for_color("white"), do: Animina.FeatureFlags.max_white_flags()
-  defp max_flags_for_color("green"), do: Animina.FeatureFlags.max_green_flags()
-  defp max_flags_for_color("red"), do: Animina.FeatureFlags.max_red_flags()
-  defp max_flags_for_color(_), do: :infinity
+  def max_flags_for_color("white"), do: Animina.FeatureFlags.max_white_flags()
+  def max_flags_for_color("green"), do: Animina.FeatureFlags.max_green_flags()
+  def max_flags_for_color("red"), do: Animina.FeatureFlags.max_red_flags()
+  def max_flags_for_color(_), do: :infinity
 
   defp maybe_broadcast_white_flags(%{color: "white", user_id: user_id}) do
     broadcast_white_flags_updated(user_id)
@@ -244,7 +250,7 @@ defmodule Animina.Traits do
              |> PaperTrail.update(pt_opts)
              |> PT.unwrap() do
         from(uf in UserFlag,
-          where: uf.user_id == ^updated.user_id and uf.source_flag_id == ^updated.flag_id
+          where: uf.user_id == ^user_flag.user_id and uf.source_flag_id == ^user_flag.flag_id
         )
         |> Repo.update_all(set: [intensity: new_intensity])
 
@@ -261,21 +267,33 @@ defmodule Animina.Traits do
         {:ok, :already_removed}
 
       user_flag ->
-        color = user_flag.color
+        do_remove_user_flag(user, user_flag, pt_opts)
+    end
+  end
 
+  defp do_remove_user_flag(user, user_flag, pt_opts) do
+    color = user_flag.color
+
+    result =
+      Repo.transaction(fn ->
         from(uf in UserFlag,
           where: uf.user_id == ^user.id and uf.source_flag_id == ^user_flag.flag_id
         )
         |> Repo.delete_all()
 
-        result = PaperTrail.delete(user_flag, pt_opts) |> PT.unwrap()
-
-        # Broadcast white flag changes
-        if color == "white" do
-          broadcast_white_flags_updated(user.id)
+        case PaperTrail.delete(user_flag, pt_opts) |> PT.unwrap() do
+          {:ok, deleted} -> deleted
+          {:error, reason} -> Repo.rollback(reason)
         end
+      end)
 
-        result
+    case result do
+      {:ok, deleted} ->
+        if color == "white", do: broadcast_white_flags_updated(user.id)
+        {:ok, deleted}
+
+      {:error, _} = error ->
+        error
     end
   end
 
@@ -283,7 +301,7 @@ defmodule Animina.Traits do
     if color in ["white", "red"] do
       false
     else
-      flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
+      flag = get_flag_with_category!(flag_id)
       category = flag.category
 
       if category.exclusive_hard do
@@ -296,7 +314,7 @@ defmodule Animina.Traits do
   end
 
   def remove_other_exclusive_hard_flags(user, flag_id, color) do
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
+    flag = get_flag_with_category!(flag_id)
     category = flag.category
 
     if category.exclusive_hard && color != "white" do
@@ -316,7 +334,7 @@ defmodule Animina.Traits do
   end
 
   def find_existing_flag_in_category(user_id, flag_id, color) do
-    flag = Repo.get!(Flag, flag_id) |> Repo.preload(:category)
+    flag = get_flag_with_category!(flag_id)
     category = flag.category
 
     if Validations.single_select_enforced?(category.selection_mode, color) do

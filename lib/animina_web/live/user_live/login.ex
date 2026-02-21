@@ -304,14 +304,5 @@ defmodule AniminaWeb.UserLive.Login do
     end)
   end
 
-  defp calculate_age(birthday) do
-    today = Date.utc_today()
-    age = today.year - birthday.year
-
-    if {today.month, today.day} < {birthday.month, birthday.day} do
-      age - 1
-    else
-      age
-    end
-  end
+  defp calculate_age(birthday), do: Animina.Accounts.compute_age(birthday)
 end

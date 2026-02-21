@@ -32,9 +32,7 @@ defmodule Animina.Accounts.Locations do
   Automatically assigns the next available position (max #{@max_locations}).
   """
   def add_user_location(%User{id: user_id}, attrs, opts \\ []) do
-    current_count =
-      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
-      |> Repo.one()
+    current_count = count_user_locations(user_id)
 
     if current_count >= @max_locations do
       {:error, :max_locations_reached}
@@ -77,9 +75,7 @@ defmodule Animina.Accounts.Locations do
   Removes a user location by its ID.
   """
   def remove_user_location(%User{id: user_id}, location_id, opts \\ []) do
-    current_count =
-      from(l in UserLocation, where: l.user_id == ^user_id, select: count())
-      |> Repo.one()
+    current_count = count_user_locations(user_id)
 
     if current_count <= 1 do
       {:error, :last_location}
@@ -89,5 +85,10 @@ defmodule Animina.Accounts.Locations do
         location -> PaperTrail.delete(location, PT.opts(opts)) |> PT.unwrap()
       end
     end
+  end
+
+  defp count_user_locations(user_id) do
+    from(l in UserLocation, where: l.user_id == ^user_id, select: count())
+    |> Repo.one()
   end
 end

@@ -38,7 +38,7 @@ defmodule Animina.Accounts do
   def get_user_by_email(email) when is_binary(email) do
     from(u in User,
       where: u.email == ^email,
-      order_by: [asc_nulls_first: u.deleted_at],
+      where: is_nil(u.deleted_at),
       limit: 1
     )
     |> Repo.one()
@@ -485,6 +485,7 @@ defmodule Animina.Accounts do
         {:ok, {user, security_info}}
       else
         {:error, :cooldown_active} -> {:error, :cooldown_active}
+        {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
         _ -> {:error, :transaction_aborted}
       end
     end)
@@ -905,20 +906,11 @@ defmodule Animina.Accounts do
       from(t in UserToken,
         where: t.user_id == ^user_id,
         where: t.context == "session",
-        where: t.token != ^current_token,
-        select: t
+        where: t.token != ^current_token
       )
 
     tokens = Repo.all(query)
-
-    Repo.delete_all(
-      from(t in UserToken,
-        where: t.user_id == ^user_id,
-        where: t.context == "session",
-        where: t.token != ^current_token
-      )
-    )
-
+    Repo.delete_all(query)
     tokens
   end
 
@@ -1010,45 +1002,28 @@ defmodule Animina.Accounts do
     end
   end
 
-  defp undo_email_change(event) do
+  defp undo_email_change(event),
+    do: undo_security_change(event, email: event.old_value)
+
+  defp undo_password_change(event),
+    do: undo_security_change(event, hashed_password: event.old_value)
+
+  defp undo_security_change(event, user_changes) do
     user = get_user!(event.user_id)
 
     Repo.transact(fn ->
-      # Revert email
       user
-      |> Ecto.Changeset.change(email: event.old_value)
+      |> Ecto.Changeset.change(user_changes)
       |> Repo.update!()
 
-      # Resolve the event
-      event
-      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "undone")
-      |> Repo.update!()
+      updated_event =
+        event
+        |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "undone")
+        |> Repo.update!()
 
-      # Kill all sessions
       Repo.delete_all(from(t in UserToken, where: t.user_id == ^event.user_id))
 
-      {:ok, event}
-    end)
-  end
-
-  defp undo_password_change(event) do
-    user = get_user!(event.user_id)
-
-    Repo.transact(fn ->
-      # Restore old password hash
-      user
-      |> Ecto.Changeset.change(hashed_password: event.old_value)
-      |> Repo.update!()
-
-      # Resolve the event
-      event
-      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "undone")
-      |> Repo.update!()
-
-      # Kill all sessions
-      Repo.delete_all(from(t in UserToken, where: t.user_id == ^event.user_id))
-
-      {:ok, event}
+      {:ok, updated_event}
     end)
   end
 

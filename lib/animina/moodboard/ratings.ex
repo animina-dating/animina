@@ -135,8 +135,10 @@ defmodule Animina.Moodboard.Ratings do
   end
 
   defp remove_rating(rating) do
-    Repo.delete(rating)
-    {:ok, :removed}
+    case Repo.delete(rating) do
+      {:ok, _} -> {:ok, :removed}
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   defp switch_rating(rating, new_value) do

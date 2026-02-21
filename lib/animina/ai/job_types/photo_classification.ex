@@ -103,13 +103,17 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   end
 
   defp apply_classification({:ok, :approved}, photo, _parsed, result_map) do
-    Photos.transition_photo(photo, "approved", %{
-      ollama_retry_count: 0,
-      ollama_retry_at: nil,
-      ollama_check_type: nil
-    })
+    case Photos.transition_photo(photo, "approved", %{
+           ollama_retry_count: 0,
+           ollama_retry_at: nil,
+           ollama_check_type: nil
+         }) do
+      {:ok, _photo} ->
+        {:ok, Map.put(result_map, "verdict", "approved")}
 
-    {:ok, Map.put(result_map, "verdict", "approved")}
+      {:error, reason} ->
+        {:error, {:transition_failed, reason}}
+    end
   end
 
   defp apply_classification({:error, violation, message}, photo, parsed, result_map) do
@@ -126,15 +130,19 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
       content_safety: parsed.content_safety
     })
 
-    Photos.transition_photo(photo, new_state, %{
-      error_message: message,
-      ollama_retry_count: 0,
-      ollama_retry_at: nil,
-      ollama_check_type: nil
-    })
+    case Photos.transition_photo(photo, new_state, %{
+           error_message: message,
+           ollama_retry_count: 0,
+           ollama_retry_at: nil,
+           ollama_check_type: nil
+         }) do
+      {:ok, _photo} ->
+        {:ok,
+         Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
 
-    {:ok,
-     Map.merge(result_map, %{"verdict" => "rejected", "reason" => Atom.to_string(violation)})}
+      {:error, reason} ->
+        {:error, {:transition_failed, reason}}
+    end
   end
 
   # --- Private ---

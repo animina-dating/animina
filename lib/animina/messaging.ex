@@ -12,10 +12,13 @@ defmodule Animina.Messaging do
 
   import Ecto.Query
 
+  require Logger
+
   alias Animina.ActivityLog
   alias Animina.Discovery
   alias Animina.FeatureFlags
   alias Animina.Relationships
+  alias Animina.TimeMachine
 
   alias Animina.Messaging.Schemas.{
     Conversation,
@@ -86,32 +89,30 @@ defmodule Animina.Messaging do
 
   defp create_conversation(user1_id, user2_id) do
     Repo.transaction(fn ->
-      {:ok, conversation} =
-        %Conversation{}
-        |> Conversation.changeset(%{})
-        |> Repo.insert()
+      with {:ok, conversation} <-
+             %Conversation{} |> Conversation.changeset(%{}) |> Repo.insert(),
+           {:ok, _} <-
+             %ConversationParticipant{}
+             |> ConversationParticipant.changeset(%{
+               conversation_id: conversation.id,
+               user_id: user1_id,
+               initiator: true
+             })
+             |> Repo.insert(),
+           {:ok, _} <-
+             %ConversationParticipant{}
+             |> ConversationParticipant.changeset(%{
+               conversation_id: conversation.id,
+               user_id: user2_id
+             })
+             |> Repo.insert() do
+        # Create a "chatting" relationship between the two users
+        Relationships.create_relationship(user1_id, user2_id, "chatting")
 
-      {:ok, _} =
-        %ConversationParticipant{}
-        |> ConversationParticipant.changeset(%{
-          conversation_id: conversation.id,
-          user_id: user1_id,
-          initiator: true
-        })
-        |> Repo.insert()
-
-      {:ok, _} =
-        %ConversationParticipant{}
-        |> ConversationParticipant.changeset(%{
-          conversation_id: conversation.id,
-          user_id: user2_id
-        })
-        |> Repo.insert()
-
-      # Create a "chatting" relationship between the two users
-      Relationships.create_relationship(user1_id, user2_id, "chatting")
-
-      conversation
+        conversation
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
     end)
   end
 
@@ -199,37 +200,27 @@ defmodule Animina.Messaging do
   end
 
   defp assemble_conversation_details(conversation, user_id, latest_messages, users_by_id) do
-    other_participant =
-      Enum.find(conversation.participants, fn p -> p.user_id != user_id end)
+    other_participant = find_other_participant(conversation.participants, user_id)
+    my_participant = find_my_participant(conversation.participants, user_id)
 
     other_user =
       if other_participant, do: Map.get(users_by_id, other_participant.user_id)
 
     latest_message = Map.get(latest_messages, conversation.id)
 
-    my_participant = Enum.find(conversation.participants, fn p -> p.user_id == user_id end)
-
-    unread =
-      if my_participant && latest_message && latest_message.sender_id != user_id do
-        is_nil(my_participant.last_read_at) ||
-          DateTime.compare(my_participant.last_read_at, latest_message.inserted_at) == :lt
-      else
-        false
-      end
-
     %{
       conversation: conversation,
       other_user: other_user,
       latest_message: latest_message,
-      unread: unread,
+      unread: compute_unread(my_participant, latest_message, user_id),
       blocked: other_participant && other_participant.blocked_at != nil,
       draft_content: my_participant && my_participant.draft_content
     }
   end
 
   defp load_conversation_details(conversation, user_id) do
-    other_participant =
-      Enum.find(conversation.participants, fn p -> p.user_id != user_id end)
+    other_participant = find_other_participant(conversation.participants, user_id)
+    my_participant = find_my_participant(conversation.participants, user_id)
 
     other_user =
       if other_participant do
@@ -244,21 +235,11 @@ defmodule Animina.Messaging do
       |> limit(1)
       |> Repo.one()
 
-    my_participant = Enum.find(conversation.participants, fn p -> p.user_id == user_id end)
-
-    unread =
-      if my_participant && latest_message && latest_message.sender_id != user_id do
-        is_nil(my_participant.last_read_at) ||
-          DateTime.compare(my_participant.last_read_at, latest_message.inserted_at) == :lt
-      else
-        false
-      end
-
     %{
       conversation: conversation,
       other_user: other_user,
       latest_message: latest_message,
-      unread: unread,
+      unread: compute_unread(my_participant, latest_message, user_id),
       blocked: other_participant && other_participant.blocked_at != nil,
       draft_content: my_participant && my_participant.draft_content
     }
@@ -397,7 +378,7 @@ defmodule Animina.Messaging do
   end
 
   defp verify_within_delete_window(message) do
-    age_seconds = DateTime.diff(DateTime.utc_now(), message.inserted_at, :second)
+    age_seconds = DateTime.diff(TimeMachine.utc_now(), message.inserted_at, :second)
 
     if age_seconds <= @delete_window_seconds do
       :ok
@@ -422,7 +403,7 @@ defmodule Animina.Messaging do
     AniminaWeb.Presence.user_online?(user_id) ||
       Animina.Accounts.UserOnlineSession
       |> where([s], s.user_id == ^user_id)
-      |> where([s], s.started_at <= ^DateTime.utc_now())
+      |> where([s], s.started_at <= ^TimeMachine.utc_now())
       |> where([s], is_nil(s.ended_at) or s.ended_at >= ^since)
       |> Repo.exists?()
   end
@@ -463,8 +444,6 @@ defmodule Animina.Messaging do
         Message
         |> where([m], m.conversation_id == ^conversation_id)
         |> where([m], is_nil(m.deleted_at))
-        |> order_by([m], asc: m.inserted_at)
-        |> limit(^limit)
         |> preload(:sender)
 
       query =
@@ -474,7 +453,10 @@ defmodule Animina.Messaging do
           query
         end
 
-      Repo.all(query)
+      query
+      |> order_by([m], asc: m.inserted_at)
+      |> limit(^limit)
+      |> Repo.all()
     else
       []
     end
@@ -519,9 +501,10 @@ defmodule Animina.Messaging do
           is_nil(m.deleted_at)
     )
     |> where([p, _c, _m], p.user_id == ^user_id)
+    |> where([p, _c, _m], is_nil(p.closed_at))
     |> where([p, _c, m], is_nil(p.last_read_at) or p.last_read_at < m.inserted_at)
     |> select([p, _c, _m], count(p.conversation_id, :distinct))
-    |> Repo.one()
+    |> Repo.one() || 0
   end
 
   @doc """
@@ -557,28 +540,39 @@ defmodule Animina.Messaging do
           |> ConversationParticipant.block_changeset()
           |> Repo.update()
 
-        case result do
-          {:ok, _} -> handle_block_success(conversation_id, blocker_id)
-          _ -> :ok
-        end
+        if match?({:ok, _}, result),
+          do: log_block_side_effects(conversation_id, blocker_id)
 
         result
+    end
+  end
+
+  defp log_block_side_effects(conversation_id, blocker_id) do
+    case handle_block_success(conversation_id, blocker_id) do
+      {:error, reason} ->
+        Logger.warning("[Messaging] Block side-effect failed: #{inspect(reason)}")
+
+      _ ->
+        :ok
     end
   end
 
   defp handle_block_success(conversation_id, blocker_id) do
     other_id = get_other_participant_id(conversation_id, blocker_id)
 
-    case Relationships.get_relationship(blocker_id, other_id) do
-      nil -> :ok
-      rel -> Relationships.transition_status(rel, "blocked", blocker_id)
-    end
+    result =
+      case Relationships.get_relationship(blocker_id, other_id) do
+        nil -> :ok
+        rel -> Relationships.transition_status(rel, "blocked", blocker_id)
+      end
 
     ActivityLog.log("social", "conversation_blocked", "User blocked in conversation",
       actor_id: blocker_id,
       subject_id: other_id,
       metadata: %{"conversation_id" => conversation_id}
     )
+
+    result
   end
 
   @doc """
@@ -874,10 +868,10 @@ defmodule Animina.Messaging do
         |> where([p], p.conversation_id == ^conversation_id)
         |> Repo.all()
 
-      other_participant = Enum.find(participants, fn p -> p.user_id != closed_by_id end)
-      my_participant = Enum.find(participants, fn p -> p.user_id == closed_by_id end)
+      other_participant = find_other_participant(participants, closed_by_id)
+      my_participant = find_my_participant(participants, closed_by_id)
 
-      unless my_participant && other_participant do
+      if is_nil(my_participant) || is_nil(other_participant) do
         Repo.rollback(:not_participant)
       end
 
@@ -972,7 +966,7 @@ defmodule Animina.Messaging do
     end)
 
     # Reopen the relationship back to "chatting"
-    other = Enum.find(participants, fn p -> p.user_id != user_id end)
+    other = find_other_participant(participants, user_id)
 
     if other do
       case Relationships.get_relationship(user_id, other.user_id) do
@@ -1006,7 +1000,7 @@ defmodule Animina.Messaging do
       |> where([p], p.conversation_id == ^conv_id)
       |> Repo.all()
 
-    other = Enum.find(participants, fn p -> p.user_id != user_id end)
+    other = find_other_participant(participants, user_id)
 
     if other do
       broadcast_conversation_reopened(conv_id, user_id, other.user_id)
@@ -1068,5 +1062,24 @@ defmodule Animina.Messaging do
         {:conversation_reopened, conversation_id}
       )
     end)
+  end
+
+  # --- Participant helpers ---
+
+  defp find_other_participant(participants, user_id) do
+    Enum.find(participants, fn p -> p.user_id != user_id end)
+  end
+
+  defp find_my_participant(participants, user_id) do
+    Enum.find(participants, fn p -> p.user_id == user_id end)
+  end
+
+  defp compute_unread(my_participant, latest_message, user_id) do
+    if my_participant && latest_message && latest_message.sender_id != user_id do
+      is_nil(my_participant.last_read_at) ||
+        DateTime.compare(my_participant.last_read_at, latest_message.inserted_at) == :lt
+    else
+      false
+    end
   end
 end

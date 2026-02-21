@@ -911,7 +911,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
                 &times;
               </button>
               <img
-                src={Photos.signed_url(@enlarged_photo, :normal)}
+                src={Photos.signed_url(@enlarged_photo, :main)}
                 class="w-full h-auto rounded"
               />
               <div class="text-center mt-2 flex justify-center gap-4">

@@ -14,6 +14,7 @@ defmodule Animina.Photos.OllamaQueue do
   alias Animina.Photos.Photo
   alias Animina.Repo
   alias Animina.Repo.Paginator
+  alias Animina.TimeMachine
 
   @doc """
   Lists photos in the Ollama retry queue (pending_ollama and needs_manual_review states).
@@ -36,17 +37,8 @@ defmodule Animina.Photos.OllamaQueue do
     * `:state_filter` - filter by specific state (nil for all queue states)
   """
   def list_ollama_queue_paginated(opts \\ []) do
-    state_filter = Keyword.get(opts, :state_filter)
-
-    states =
-      if state_filter && state_filter in Photos.ollama_queue_states() do
-        [state_filter]
-      else
-        Photos.ollama_queue_states()
-      end
-
     Photo
-    |> where([p], p.state in ^states)
+    |> where([p], p.state in ^resolve_queue_states(opts))
     |> order_by([p], asc: p.ollama_retry_at, asc: p.inserted_at)
     |> Paginator.paginate(page: opts[:page], per_page: opts[:per_page], max_per_page: 250)
   end
@@ -59,18 +51,19 @@ defmodule Animina.Photos.OllamaQueue do
     * `:state_filter` - filter by specific state (nil for all queue states)
   """
   def count_ollama_queue(opts \\ []) do
+    Photo
+    |> where([p], p.state in ^resolve_queue_states(opts))
+    |> Repo.aggregate(:count)
+  end
+
+  defp resolve_queue_states(opts) do
     state_filter = Keyword.get(opts, :state_filter)
 
-    states =
-      if state_filter && state_filter in Photos.ollama_queue_states() do
-        [state_filter]
-      else
-        Photos.ollama_queue_states()
-      end
-
-    Photo
-    |> where([p], p.state in ^states)
-    |> Repo.aggregate(:count)
+    if state_filter && state_filter in Photos.ollama_queue_states() do
+      [state_filter]
+    else
+      Photos.ollama_queue_states()
+    end
   end
 
   @doc """
@@ -78,7 +71,7 @@ defmodule Animina.Photos.OllamaQueue do
   Returns up to `limit` photos ordered by retry time.
   """
   def list_photos_due_for_ollama_retry(limit \\ 10) do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
 
     Photo
     |> where([p], p.state in ^Photos.ollama_pending_states())
@@ -93,7 +86,7 @@ defmodule Animina.Photos.OllamaQueue do
   """
   def calculate_next_retry_at(retry_count) do
     minutes = 15 * retry_count
-    DateTime.utc_now() |> DateTime.add(minutes, :minute)
+    TimeMachine.utc_now() |> DateTime.add(minutes, :minute)
   end
 
   @doc """
@@ -213,7 +206,7 @@ defmodule Animina.Photos.OllamaQueue do
 
     Photos.transition_photo(photo, "pending_ollama", %{
       ollama_retry_count: 0,
-      ollama_retry_at: DateTime.utc_now()
+      ollama_retry_at: TimeMachine.utc_now()
     })
   end
 

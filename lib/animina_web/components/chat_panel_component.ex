@@ -985,7 +985,7 @@ defmodule AniminaWeb.ChatPanelComponent do
   # --- Formatting ---
 
   defp format_date_label(date) do
-    today = Date.utc_today()
+    today = Animina.TimeMachine.utc_today()
     diff = Date.diff(today, date)
 
     cond do
@@ -997,7 +997,7 @@ defmodule AniminaWeb.ChatPanelComponent do
   end
 
   defp format_message_time(datetime) do
-    now = DateTime.utc_now()
+    now = Animina.TimeMachine.utc_now()
     diff_seconds = DateTime.diff(now, datetime, :second)
     diff_days = Date.diff(DateTime.to_date(now), DateTime.to_date(datetime))
 

@@ -11,6 +11,7 @@ defmodule AniminaWeb.WebAuthnController do
 
   alias Animina.Accounts
   alias Animina.ActivityLog
+  alias AniminaWeb.Helpers.ControllerHelpers
   alias AniminaWeb.UserAuth
 
   # --- Registration (authenticated user adding a passkey) ---
@@ -64,32 +65,42 @@ defmodule AniminaWeb.WebAuthnController do
     challenge = get_session(conn, :webauthn_challenge)
 
     if is_nil(challenge) do
-      conn |> put_status(400) |> json(%{error: "No registration challenge in session"})
+      conn |> put_status(401) |> json(%{error: "No registration challenge in session"})
     else
-      attestation_object = Base.url_decode64!(params["attestation_object"], padding: false)
-      client_data_json = Base.url_decode64!(params["client_data_json"], padding: false)
-
-      case Wax.register(attestation_object, client_data_json, challenge) do
-        {:ok, {auth_data, _attestation_result}} ->
-          credential_id = auth_data.attested_credential_data.credential_id
-          cose_key = auth_data.attested_credential_data.credential_public_key
-
-          attrs = %{
-            credential_id: credential_id,
-            public_key: cose_key,
-            sign_count: auth_data.sign_count,
-            label: params["label"]
-          }
-
-          save_passkey(conn, user, attrs)
-
-        {:error, error} ->
-          conn
-          |> delete_session(:webauthn_challenge)
-          |> put_status(400)
-          |> json(%{error: Exception.message(error)})
-      end
+      do_register_complete(conn, params, user, challenge)
     end
+  end
+
+  defp do_register_complete(conn, params, user, challenge) do
+    with {:ok, attestation_object} <- decode_b64(params["attestation_object"]),
+         {:ok, client_data_json} <- decode_b64(params["client_data_json"]),
+         {:ok, {auth_data, _}} <-
+           register_credential(attestation_object, client_data_json, challenge) do
+      attrs = %{
+        credential_id: auth_data.attested_credential_data.credential_id,
+        public_key: auth_data.attested_credential_data.credential_public_key,
+        sign_count: auth_data.sign_count,
+        label: params["label"]
+      }
+
+      save_passkey(conn, user, attrs)
+    else
+      {:error, %_{} = error} ->
+        conn
+        |> delete_session(:webauthn_challenge)
+        |> put_status(400)
+        |> json(%{error: Exception.message(error)})
+
+      {:error, reason} ->
+        conn
+        |> delete_session(:webauthn_challenge)
+        |> put_status(400)
+        |> json(%{error: "Invalid request: #{reason}"})
+    end
+  end
+
+  defp register_credential(attestation_object, client_data_json, challenge) do
+    Wax.register(attestation_object, client_data_json, challenge)
   end
 
   # --- Authentication (logging in with a passkey) ---
@@ -118,7 +129,7 @@ defmodule AniminaWeb.WebAuthnController do
     challenge = get_session(conn, :webauthn_challenge)
 
     if is_nil(challenge) do
-      conn |> put_status(400) |> json(%{error: "No authentication challenge in session"})
+      conn |> put_status(401) |> json(%{error: "No authentication challenge in session"})
     else
       with {:ok, credential_id} <-
              decode_b64(params["credential_id"]),
@@ -235,12 +246,8 @@ defmodule AniminaWeb.WebAuthnController do
 
   defp verify_sudo_user(_conn, _user), do: :ok
 
-  # Set user_return_to from sudo_return_to param (validates path starts with "/")
-  defp maybe_set_sudo_return_to(conn, %{"sudo_return_to" => "/" <> _ = return_to}) do
-    put_session(conn, :user_return_to, return_to)
-  end
-
-  defp maybe_set_sudo_return_to(conn, _params), do: conn
+  defp maybe_set_sudo_return_to(conn, params),
+    do: ControllerHelpers.maybe_set_sudo_return_to(conn, params)
 
   defp decode_b64(nil), do: {:error, "missing parameter"}
 
@@ -255,16 +262,7 @@ defmodule AniminaWeb.WebAuthnController do
     Accounts.get_user_by_passkey_credential_id(credential_id)
   end
 
-  defp conn_metadata(conn) do
-    ua =
-      case Plug.Conn.get_req_header(conn, "user-agent") do
-        [ua | _] -> ua
-        _ -> nil
-      end
-
-    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
-    %{"user_agent" => ua, "ip_address" => ip}
-  end
+  defp conn_metadata(conn), do: ControllerHelpers.conn_metadata(conn)
 
   defp format_changeset_errors(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->

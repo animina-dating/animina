@@ -7,7 +7,7 @@ defmodule Animina.Traits.Matching do
 
   alias Animina.Repo
   alias Animina.Traits
-  alias Animina.Traits.{Category, UserCategoryOptIn}
+  alias Animina.Traits.Category
 
   @doc """
   Computes the flag overlap between two users for matching.
@@ -25,8 +25,8 @@ defmodule Animina.Traits.Matching do
     a_flags = Traits.list_all_user_flags(user_a)
     b_flags = Traits.list_all_user_flags(user_b)
 
-    a_opted = list_user_opt_in_category_ids(user_a)
-    b_opted = list_user_opt_in_category_ids(user_b)
+    a_opted = Traits.list_user_optin_category_ids(user_a)
+    b_opted = Traits.list_user_optin_category_ids(user_b)
 
     sensitive_ids = list_sensitive_category_ids()
 
@@ -57,10 +57,15 @@ defmodule Animina.Traits.Matching do
 
     green_intensity =
       build_intensity_map(a_by_color["green"])
-      |> Map.merge(build_intensity_map(b_by_color["green"]))
+      |> Map.merge(build_intensity_map(b_by_color["green"]), fn _k, v1, v2 ->
+        if v1 == "hard" || v2 == "hard", do: "hard", else: "soft"
+      end)
 
     red_intensity =
-      build_intensity_map(a_by_color["red"]) |> Map.merge(build_intensity_map(b_by_color["red"]))
+      build_intensity_map(a_by_color["red"])
+      |> Map.merge(build_intensity_map(b_by_color["red"]), fn _k, v1, v2 ->
+        if v1 == "hard" || v2 == "hard", do: "hard", else: "soft"
+      end)
 
     {green_white_hard, green_white_soft} = split_by_intensity(green_white, green_intensity)
     {red_white_hard, red_white_soft} = split_by_intensity(red_white, red_intensity)
@@ -76,11 +81,6 @@ defmodule Animina.Traits.Matching do
     }
   end
 
-  defp list_user_opt_in_category_ids(user) do
-    from(o in UserCategoryOptIn, where: o.user_id == ^user.id, select: o.category_id)
-    |> Repo.all()
-  end
-
   defp list_sensitive_category_ids do
     from(c in Category, where: c.sensitive == true, select: c.id)
     |> Repo.all()
@@ -90,13 +90,13 @@ defmodule Animina.Traits.Matching do
     sensitive_set = MapSet.new(sensitive_ids)
 
     Enum.filter(user_flags, fn uf ->
-      flag = uf.flag
-      category_id = flag.category_id
+      case uf.flag do
+        %{category_id: category_id} ->
+          not MapSet.member?(sensitive_set, category_id) or
+            MapSet.member?(mutual_sensitive, category_id)
 
-      if MapSet.member?(sensitive_set, category_id) do
-        MapSet.member?(mutual_sensitive, category_id)
-      else
-        true
+        _ ->
+          false
       end
     end)
   end

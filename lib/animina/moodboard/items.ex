@@ -352,7 +352,17 @@ defmodule Animina.Moodboard.Items do
       {:ok, updated_story} ->
         # Get the moodboard item to find the user_id
         item = get_item(updated_story.moodboard_item_id)
-        if item, do: broadcast_story_updated(updated_story, item.user_id)
+
+        if item do
+          broadcast_story_updated(updated_story, item.user_id)
+
+          ActivityLog.log("profile", "moodboard_changed", "Story updated",
+            actor_id: item.user_id,
+            subject_id: item.user_id,
+            metadata: %{"item_id" => item.id, "action" => "story_updated"}
+          )
+        end
+
         {:ok, updated_story}
 
       error ->
@@ -412,13 +422,6 @@ defmodule Animina.Moodboard.Items do
   def delete_item(%MoodboardItem{pinned: true}), do: {:error, :cannot_delete_pinned_item}
 
   def delete_item(%MoodboardItem{} = item) do
-    # First delete associated photo files if any
-    item = Repo.preload(item, moodboard_photo: :photo)
-
-    if item.moodboard_photo && item.moodboard_photo.photo do
-      Photos.delete_photo(item.moodboard_photo.photo)
-    end
-
     result =
       item
       |> MoodboardItem.state_changeset("deleted", %{})
@@ -426,6 +429,7 @@ defmodule Animina.Moodboard.Items do
 
     case result do
       {:ok, deleted_item} ->
+        maybe_delete_photo_files(deleted_item)
         broadcast_item_deleted(deleted_item)
         {:ok, deleted_item}
 
@@ -439,13 +443,16 @@ defmodule Animina.Moodboard.Items do
   Used for cleanup, not normal operation.
   """
   def hard_delete_item(%MoodboardItem{} = item) do
+    maybe_delete_photo_files(item)
+    Repo.delete(item)
+  end
+
+  defp maybe_delete_photo_files(item) do
     item = Repo.preload(item, moodboard_photo: :photo)
 
     if item.moodboard_photo && item.moodboard_photo.photo do
       Photos.delete_photo(item.moodboard_photo.photo)
     end
-
-    Repo.delete(item)
   end
 
   # --- Query helpers ---

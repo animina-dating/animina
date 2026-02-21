@@ -17,6 +17,7 @@ defmodule Animina.Photos.PhotoProcessor do
 
   alias Animina.AI
   alias Animina.Photos
+  alias Animina.Photos.FileManagement
   alias Animina.Photos.Photo
 
   # --- Client API ---
@@ -125,12 +126,9 @@ defmodule Animina.Photos.PhotoProcessor do
          {:ok, photo} <- process_image(photo),
          {:ok, photo} <- check_blacklist(photo),
          {:ok, photo} <- run_ollama_check(photo) do
-      # Log final approval
-      Photos.log_event(photo, "photo_approved", "system", nil, %{via: "automated_processing"})
-
-      broadcast_approved(photo)
-
-      Logger.info("Photo #{photo.id} processed and approved")
+      # Photo is now in ollama_checking state, awaiting AI classification.
+      # Approval/rejection will be handled by AI.JobTypes.PhotoClassification.
+      Logger.info("Photo #{photo.id} processed and enqueued for AI classification")
     else
       {:error, :blacklisted} ->
         Logger.info("Photo #{photo.id} rejected: matches blacklist")
@@ -326,12 +324,16 @@ defmodule Animina.Photos.PhotoProcessor do
     end
   end
 
+  defp get_bool(_, _, default), do: default
+
   defp get_int(map, key, default) when is_map(map) do
     case Map.get(map, key) do
       n when is_integer(n) -> n
       _ -> default
     end
   end
+
+  defp get_int(_, _, default), do: default
 
   # Legacy parsing for backwards compatibility with old response format
   defp parse_legacy_response(response) do
@@ -579,24 +581,7 @@ defmodule Animina.Photos.PhotoProcessor do
   end
 
   defp resize_to_max(image, max_dim) do
-    width = Image.width(image)
-    height = Image.height(image)
-    longest = max(width, height)
-
-    if longest > max_dim do
-      scale = max_dim / longest
-      Image.resize(image, scale)
-    else
-      {:ok, image}
-    end
-  end
-
-  defp broadcast_approved(%Photo{} = photo) do
-    Phoenix.PubSub.broadcast(
-      Animina.PubSub,
-      "photos:#{photo.owner_type}:#{photo.owner_id}",
-      {:photo_approved, photo}
-    )
+    FileManagement.resize_to_max(image, max_dim)
   end
 
   defp broadcast_state_changed(%Photo{} = photo) do

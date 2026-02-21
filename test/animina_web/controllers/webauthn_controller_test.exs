@@ -44,7 +44,7 @@ defmodule AniminaWeb.WebAuthnControllerTest do
           client_data_json: "dGVzdA"
         })
 
-      body = json_response(conn, 400)
+      body = json_response(conn, 401)
       assert body["error"] =~ "No registration challenge"
     end
   end
@@ -75,7 +75,7 @@ defmodule AniminaWeb.WebAuthnControllerTest do
           client_data_json: "dGVzdA"
         })
 
-      body = json_response(conn, 400)
+      body = json_response(conn, 401)
       assert body["error"] =~ "No authentication challenge"
     end
   end

@@ -874,23 +874,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
 
   @impl true
   def handle_event("update-story-inline", %{"content" => content}, socket) do
-    item = socket.assigns.editing_item
-
-    case Moodboard.update_story(item.moodboard_story, content) do
-      {:ok, _story} ->
-        items = Moodboard.list_moodboard_with_hidden(socket.assigns.user.id)
-
-        {:noreply,
-         socket
-         |> assign(:items, items)
-         |> assign(:about_me_complete?, about_me_complete?(items))
-         |> assign(:editing_item, nil)
-         |> assign(:edit_content, "")
-         |> put_flash(:info, gettext("Text updated"))}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, gettext("Failed to update text"))}
-    end
+    do_update_story(socket, content)
   end
 
   @impl true
@@ -900,23 +884,7 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
 
   @impl true
   def handle_event("update-story", %{"content" => content}, socket) do
-    item = socket.assigns.editing_item
-
-    case Moodboard.update_story(item.moodboard_story, content) do
-      {:ok, _story} ->
-        items = Moodboard.list_moodboard_with_hidden(socket.assigns.user.id)
-
-        {:noreply,
-         socket
-         |> assign(:items, items)
-         |> assign(:about_me_complete?, about_me_complete?(items))
-         |> assign(:editing_item, nil)
-         |> assign(:edit_content, "")
-         |> put_flash(:info, gettext("Text updated"))}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, gettext("Failed to update text"))}
-    end
+    do_update_story(socket, content)
   end
 
   @impl true
@@ -970,6 +938,26 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
      socket
      |> assign(columns: columns, user: updated_user)
      |> ColumnPreferences.update_scope_user(updated_user)}
+  end
+
+  defp do_update_story(socket, content) do
+    item = socket.assigns.editing_item
+
+    case Moodboard.update_story(item.moodboard_story, content) do
+      {:ok, _story} ->
+        items = Moodboard.list_moodboard_with_hidden(socket.assigns.user.id)
+
+        {:noreply,
+         socket
+         |> assign(:items, items)
+         |> assign(:about_me_complete?, about_me_complete?(items))
+         |> assign(:editing_item, nil)
+         |> assign(:edit_content, "")
+         |> put_flash(:info, gettext("Text updated"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to update text"))}
+    end
   end
 
   # Handle moodboard_item_created - need to subscribe to photo updates for new item

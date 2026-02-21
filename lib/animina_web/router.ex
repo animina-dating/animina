@@ -164,7 +164,6 @@ defmodule AniminaWeb.Router do
       live "/admin/photos", Admin.PhotoExplorerLive
       live "/admin/photos/:id", Admin.PhotoDetailLive
       live "/admin/photos/:id/history", Admin.PhotoHistoryLive
-      live "/admin/feature-flags", Admin.FlagsIndexLive
       live "/admin/flags", Admin.FlagsIndexLive
       live "/admin/flags/ai", Admin.FlagsAiLive
       live "/admin/flags/system", Admin.FlagsSystemLive

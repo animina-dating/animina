@@ -10,6 +10,9 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   alias Animina.Accounts
   alias Animina.Accounts.ContactBlacklistEntry
   alias Animina.GeoData
+  alias Animina.Relationships
+  alias Animina.Relationships.Schemas.{Relationship, RelationshipOverride}
+  alias Animina.Reports.ReportInvisibility
   alias Animina.TimeMachine
 
   @doc """
@@ -77,6 +80,46 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
     end
   end
 
+  def exclude_report_invisible(query, viewer) do
+    hidden_ids =
+      from(i in ReportInvisibility,
+        where: i.user_id == ^viewer.id and not is_nil(i.hidden_user_id),
+        select: i.hidden_user_id
+      )
+
+    where(query, [u], u.id not in subquery(hidden_ids))
+  end
+
+  def exclude_relationship_hidden(query, viewer) do
+    hidden_statuses = Relationships.hidden_in_discovery_statuses()
+
+    hidden_as_a =
+      from(r in Relationship,
+        left_join: o in RelationshipOverride,
+        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        where:
+          r.user_a_id == ^viewer.id and
+            r.status in ^hidden_statuses and
+            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
+        select: r.user_b_id
+      )
+
+    hidden_as_b =
+      from(r in Relationship,
+        left_join: o in RelationshipOverride,
+        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
+        where:
+          r.user_b_id == ^viewer.id and
+            r.status in ^hidden_statuses and
+            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
+        select: r.user_a_id
+      )
+
+    query
+    |> where([u], u.id not in subquery(hidden_as_a))
+    |> where([u], u.id not in subquery(hidden_as_b))
+  end
+
   def filter_by_bidirectional_gender(query, viewer) do
     viewer_gender = viewer.gender
     viewer_prefs = viewer.preferred_partner_gender || []
@@ -99,41 +142,12 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
   end
 
   def filter_by_bidirectional_age(query, viewer) do
-    viewer_age = compute_age(viewer.birthday)
-
-    if viewer_age do
-      viewer_min_age = viewer_age - (viewer.partner_minimum_age_offset || 6)
-      viewer_max_age = viewer_age + (viewer.partner_maximum_age_offset || 2)
-
-      today = TimeMachine.utc_today()
-      max_birthday = Date.add(today, -viewer_min_age * 365)
-      min_birthday = Date.add(today, -viewer_max_age * 365)
-
-      query
-      # Candidate must be within viewer's age range
-      |> where([u], u.birthday >= ^min_birthday and u.birthday <= ^max_birthday)
-      # Viewer must be within candidate's age range (bidirectional)
-      |> where(
-        [u],
-        fragment(
-          "? >= (EXTRACT(YEAR FROM age(current_date, ?)) - COALESCE(?, 6))",
-          ^viewer_age,
-          u.birthday,
-          u.partner_minimum_age_offset
-        )
-      )
-      |> where(
-        [u],
-        fragment(
-          "? <= (EXTRACT(YEAR FROM age(current_date, ?)) + COALESCE(?, 2))",
-          ^viewer_age,
-          u.birthday,
-          u.partner_maximum_age_offset
-        )
-      )
-    else
-      query
-    end
+    filter_by_bidirectional_age(
+      query,
+      viewer,
+      viewer.partner_minimum_age_offset || 6,
+      viewer.partner_maximum_age_offset || 2
+    )
   end
 
   def filter_by_bidirectional_height(query, viewer) do
@@ -161,6 +175,98 @@ defmodule Animina.Discovery.Filters.FilterHelpers do
       query
     end
   end
+
+  @doc """
+  Shared bidirectional distance filter.
+
+  `viewer_radius` controls how far the viewer looks (pass `viewer.search_radius * 1.2`
+  for expanded wildcard filtering). `default_radius` is the fallback for candidates
+  without a search_radius.
+  """
+  def filter_by_bidirectional_distance(query, viewer, viewer_radius, default_radius \\ 60) do
+    case get_viewer_coordinates(viewer) do
+      {:ok, lat, lon} ->
+        query
+        |> join(:inner, [u], loc in assoc(u, :locations), on: loc.position == 1, as: :location)
+        |> join(:inner, [u, location: loc], c in GeoData.City,
+          on: c.zip_code == loc.zip_code,
+          as: :city
+        )
+        |> where(
+          [u, location: _loc, city: c],
+          fragment(
+            "haversine_distance(?, ?, ?, ?) <= ?",
+            ^lat,
+            ^lon,
+            c.lat,
+            c.lon,
+            ^viewer_radius
+          ) and
+            fragment(
+              "haversine_distance(?, ?, ?, ?) <= COALESCE(?, ?)",
+              ^lat,
+              ^lon,
+              c.lat,
+              c.lon,
+              u.search_radius,
+              ^default_radius
+            )
+        )
+
+      :error ->
+        where(query, [u], false)
+    end
+  end
+
+  @doc """
+  Shared bidirectional age filter.
+
+  `viewer_min_offset` and `viewer_max_offset` control how far the viewer
+  looks in each age direction (pass expanded values for wildcard filtering).
+  """
+  def filter_by_bidirectional_age(query, viewer, viewer_min_offset, viewer_max_offset) do
+    viewer_age = compute_age(viewer.birthday)
+
+    if viewer_age do
+      viewer_min_age = viewer_age - viewer_min_offset
+      viewer_max_age = viewer_age + viewer_max_offset
+
+      today = TimeMachine.utc_today()
+      max_birthday = Date.add(today, -round(viewer_min_age * 365.25))
+      min_birthday = Date.add(today, -round(viewer_max_age * 365.25))
+
+      query
+      |> where([u], u.birthday >= ^min_birthday and u.birthday <= ^max_birthday)
+      |> where(
+        [u],
+        fragment(
+          "? >= (EXTRACT(YEAR FROM age(?::date, ?)) - COALESCE(?, 6))",
+          ^viewer_age,
+          ^today,
+          u.birthday,
+          u.partner_minimum_age_offset
+        )
+      )
+      |> where(
+        [u],
+        fragment(
+          "? <= (EXTRACT(YEAR FROM age(?::date, ?)) + COALESCE(?, 2))",
+          ^viewer_age,
+          ^today,
+          u.birthday,
+          u.partner_maximum_age_offset
+        )
+      )
+    else
+      query
+    end
+  end
+
+  def ensure_locations_loaded(%{locations: %Ecto.Association.NotLoaded{}} = viewer) do
+    Animina.Repo.preload(viewer, :locations)
+  end
+
+  def ensure_locations_loaded(viewer), do: viewer
 
   defp primary_zip_code(%{locations: [%{position: 1, zip_code: zip} | _]}), do: zip
 

@@ -205,14 +205,7 @@ defmodule Animina.Accounts.User do
 
   defp maybe_put_max_offset(changeset, _user_age, _max_age), do: changeset
 
-  defp compute_user_age(birthday) do
-    today = TimeMachine.utc_today()
-    age = today.year - birthday.year
-
-    if {today.month, today.day} < {birthday.month, birthday.day},
-      do: age - 1,
-      else: age
-  end
+  defp compute_user_age(birthday), do: Animina.Accounts.compute_age(birthday)
 
   defp validate_profile_fields(changeset) do
     changeset

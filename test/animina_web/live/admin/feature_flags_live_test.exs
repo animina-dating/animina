@@ -29,9 +29,9 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
       assert html =~ "System Settings"
     end
 
-    test "backward compat: /admin/feature-flags shows hub", %{conn: conn, admin: admin} do
+    test "canonical /admin/flags path shows hub", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, _view, html} = live(conn, ~p"/admin/feature-flags")
+      {:ok, _view, html} = live(conn, ~p"/admin/flags")
 
       assert html =~ "Feature Flags"
       assert html =~ "AI / Ollama"

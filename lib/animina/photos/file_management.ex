@@ -5,6 +5,8 @@ defmodule Animina.Photos.FileManagement do
   Handles file validation, storage paths, and EXIF stripping.
   """
 
+  require Logger
+
   alias Animina.Photos
   alias Animina.Photos.Photo
   alias Animina.Photos.PhotoProcessor
@@ -102,13 +104,33 @@ defmodule Animina.Photos.FileManagement do
   end
 
   @doc """
+  Resizes an image so its longest dimension does not exceed `max_dim`.
+  Returns `{:ok, resized_image}` or passes through `{:ok, image}` if already small enough.
+  """
+  def resize_to_max(image, max_dim) do
+    width = Image.width(image)
+    height = Image.height(image)
+    longest = max(width, height)
+
+    if longest > max_dim do
+      scale = max_dim / longest
+      Image.resize(image, scale)
+    else
+      {:ok, image}
+    end
+  end
+
+  @doc """
   Validates that a file's magic bytes match a supported image format.
   Returns `{:ok, detected_type}` or `{:error, :invalid_image}`.
   """
   def validate_image_magic(file_path) do
-    case File.read(file_path) do
-      {:ok, content} ->
-        case detect_image_type(content) do
+    case File.open(file_path, [:read, :binary]) do
+      {:ok, file} ->
+        header = IO.binread(file, 12)
+        File.close(file)
+
+        case detect_image_type(header) do
           nil -> {:error, :invalid_image}
           type -> {:ok, type}
         end
@@ -142,13 +164,22 @@ defmodule Animina.Photos.FileManagement do
   Deletes all files associated with a photo (processed variants and original).
   """
   def delete_photo_files(%Photo{} = photo) do
-    File.rm(processed_path(photo, :main))
-    File.rm(processed_path(photo, :thumbnail))
-    File.rm(processed_path(photo, :pixel))
+    for variant <- [:main, :thumbnail, :pixel] do
+      path = processed_path(photo, variant)
+      rm_file(path, "variant")
+    end
 
     case original_path(photo) do
-      {:ok, path} -> File.rm(path)
+      {:ok, path} -> rm_file(path, "original")
       _ -> :ok
+    end
+  end
+
+  defp rm_file(path, label) do
+    case File.rm(path) do
+      :ok -> :ok
+      {:error, :enoent} -> :ok
+      {:error, reason} -> Logger.warning("[Photos] Failed to delete #{label} #{path}: #{reason}")
     end
   end
 
@@ -255,7 +286,7 @@ defmodule Animina.Photos.FileManagement do
 
     case File.read(crop_path) do
       {:ok, json} ->
-        case Jason.decode(json, keys: :atoms) do
+        case Jason.decode(json, keys: :atoms!) do
           {:ok, data} -> data
           _ -> nil
         end

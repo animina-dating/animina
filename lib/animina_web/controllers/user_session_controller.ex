@@ -3,6 +3,7 @@ defmodule AniminaWeb.UserSessionController do
 
   alias Animina.Accounts
   alias Animina.ActivityLog
+  alias AniminaWeb.Helpers.ControllerHelpers
   alias AniminaWeb.UserAuth
 
   def create(conn, params) do
@@ -76,6 +77,11 @@ defmodule AniminaWeb.UserSessionController do
           gettext("Cannot change password while a recent account change is being reviewed.")
         )
         |> redirect(to: ~p"/my/settings/account/email-password")
+
+      {:error, %Ecto.Changeset{}} ->
+        conn
+        |> put_flash(:error, gettext("Password update failed. Please check the requirements."))
+        |> redirect(to: ~p"/my/settings/account/email-password")
     end
   end
 
@@ -102,12 +108,8 @@ defmodule AniminaWeb.UserSessionController do
     |> UserAuth.log_out_user()
   end
 
-  # Set user_return_to from sudo_return_to param (validates path starts with "/")
-  defp maybe_set_sudo_return_to(conn, %{"sudo_return_to" => "/" <> _ = return_to}) do
-    put_session(conn, :user_return_to, return_to)
-  end
-
-  defp maybe_set_sudo_return_to(conn, _params), do: conn
+  defp maybe_set_sudo_return_to(conn, params),
+    do: ControllerHelpers.maybe_set_sudo_return_to(conn, params)
 
   defp log_logout(%{user: %{id: id, display_name: name}}, conn) do
     ActivityLog.log("auth", "logout", "#{name} logged out",
@@ -118,14 +120,5 @@ defmodule AniminaWeb.UserSessionController do
 
   defp log_logout(_, _conn), do: :ok
 
-  defp conn_metadata(conn) do
-    ua =
-      case Plug.Conn.get_req_header(conn, "user-agent") do
-        [ua | _] -> ua
-        _ -> nil
-      end
-
-    ip = conn.remote_ip |> :inet.ntoa() |> to_string()
-    %{"user_agent" => ua, "ip_address" => ip}
-  end
+  defp conn_metadata(conn), do: ControllerHelpers.conn_metadata(conn)
 end

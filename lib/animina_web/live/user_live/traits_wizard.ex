@@ -1,7 +1,6 @@
 defmodule AniminaWeb.UserLive.TraitsWizard do
   use AniminaWeb, :live_view
 
-  alias Animina.FeatureFlags
   alias Animina.Traits
   alias AniminaWeb.TraitTranslations
 
@@ -745,9 +744,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     ~p"/my/settings/profile/traits?step=#{@step_params[step]}"
   end
 
-  defp max_flags_for_color("white"), do: FeatureFlags.max_white_flags()
-  defp max_flags_for_color("green"), do: FeatureFlags.max_green_flags()
-  defp max_flags_for_color("red"), do: FeatureFlags.max_red_flags()
+  defp max_flags_for_color(color), do: Traits.max_flags_for_color(color)
 
   defp flag_limit_color_label(1), do: gettext("white")
   defp flag_limit_color_label(2), do: gettext("green")

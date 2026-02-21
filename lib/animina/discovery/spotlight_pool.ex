@@ -25,17 +25,14 @@ defmodule Animina.Discovery.SpotlightPool do
 
   alias Animina.Accounts.User
   alias Animina.Discovery.Filters.FilterHelpers
-  alias Animina.Relationships
-  alias Animina.Relationships.Schemas.{Relationship, RelationshipOverride}
   alias Animina.Repo
-  alias Animina.Reports.ReportInvisibility
   alias Animina.Traits.UserFlag
 
   @doc """
   Main entry point. Returns a flat list of matching users.
   """
   def build(viewer) do
-    viewer = ensure_locations_loaded(viewer)
+    viewer = FilterHelpers.ensure_locations_loaded(viewer)
 
     base_query()
     |> exclude_self(viewer)
@@ -58,7 +55,7 @@ defmodule Animina.Discovery.SpotlightPool do
   Each step is `%{name: string, count: integer, drop: integer, drop_pct: float}`.
   """
   def build_with_funnel(viewer) do
-    viewer = ensure_locations_loaded(viewer)
+    viewer = FilterHelpers.ensure_locations_loaded(viewer)
 
     steps = [
       {"All active users",
@@ -109,7 +106,7 @@ defmodule Animina.Discovery.SpotlightPool do
   the final results after all filters. Runs exactly 2 SQL calls.
   """
   def build_with_pool_count(viewer) do
-    viewer = ensure_locations_loaded(viewer)
+    viewer = FilterHelpers.ensure_locations_loaded(viewer)
 
     through_distance =
       base_query()
@@ -147,50 +144,11 @@ defmodule Animina.Discovery.SpotlightPool do
   defp exclude_blacklisted(query, viewer),
     do: FilterHelpers.exclude_contact_blacklisted(query, viewer)
 
-  defp exclude_report_invisible(query, viewer) do
-    hidden_ids =
-      from(i in ReportInvisibility,
-        where: i.user_id == ^viewer.id and not is_nil(i.hidden_user_id),
-        select: i.hidden_user_id
-      )
+  defp exclude_report_invisible(query, viewer),
+    do: FilterHelpers.exclude_report_invisible(query, viewer)
 
-    where(query, [u], u.id not in subquery(hidden_ids))
-  end
-
-  # Excludes users where the relationship status says visible_in_discovery: false
-  # AND the viewer hasn't overridden it to true.
-  # Uses two subqueries to avoid UUID casting issues with fragments.
-  defp exclude_relationship_hidden(query, viewer) do
-    hidden_statuses = Relationships.hidden_in_discovery_statuses()
-
-    # When viewer is user_a, the other user is user_b
-    hidden_as_a =
-      from(r in Relationship,
-        left_join: o in RelationshipOverride,
-        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
-        where:
-          r.user_a_id == ^viewer.id and
-            r.status in ^hidden_statuses and
-            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
-        select: r.user_b_id
-      )
-
-    # When viewer is user_b, the other user is user_a
-    hidden_as_b =
-      from(r in Relationship,
-        left_join: o in RelationshipOverride,
-        on: o.relationship_id == r.id and o.user_id == ^viewer.id,
-        where:
-          r.user_b_id == ^viewer.id and
-            r.status in ^hidden_statuses and
-            (is_nil(o.visible_in_discovery) or o.visible_in_discovery == false),
-        select: r.user_a_id
-      )
-
-    query
-    |> where([u], u.id not in subquery(hidden_as_a))
-    |> where([u], u.id not in subquery(hidden_as_b))
-  end
+  defp exclude_relationship_hidden(query, viewer),
+    do: FilterHelpers.exclude_relationship_hidden(query, viewer)
 
   defp filter_by_gender(query, viewer),
     do: FilterHelpers.filter_by_bidirectional_gender(query, viewer)
@@ -203,43 +161,8 @@ defmodule Animina.Discovery.SpotlightPool do
   # --- Bidirectional distance filter ---
 
   defp filter_by_distance(query, viewer) do
-    case FilterHelpers.get_viewer_coordinates(viewer) do
-      {:ok, lat, lon} ->
-        viewer_radius = viewer.search_radius || 60
-        default_radius = 60
-
-        query
-        |> join(:inner, [u], loc in assoc(u, :locations), on: loc.position == 1, as: :location)
-        |> join(:inner, [u, location: loc], c in Animina.GeoData.City,
-          on: c.zip_code == loc.zip_code,
-          as: :city
-        )
-        |> where(
-          [u, location: _loc, city: c],
-          # Direction 1: candidate within viewer's radius
-          # Direction 2: viewer within candidate's radius
-          fragment(
-            "haversine_distance(?, ?, ?, ?) <= ?",
-            ^lat,
-            ^lon,
-            c.lat,
-            c.lon,
-            ^viewer_radius
-          ) and
-            fragment(
-              "haversine_distance(?, ?, ?, ?) <= COALESCE(?, ?)",
-              ^lat,
-              ^lon,
-              c.lat,
-              c.lon,
-              u.search_radius,
-              ^default_radius
-            )
-        )
-
-      :error ->
-        where(query, [u], false)
-    end
+    viewer_radius = viewer.search_radius || 60
+    FilterHelpers.filter_by_bidirectional_distance(query, viewer, viewer_radius)
   end
 
   # --- Hard red conflict filter (SQL subqueries) ---
@@ -287,10 +210,4 @@ defmodule Animina.Discovery.SpotlightPool do
   end
 
   # --- Helpers ---
-
-  defp ensure_locations_loaded(%{locations: %Ecto.Association.NotLoaded{}} = viewer) do
-    Repo.preload(viewer, :locations)
-  end
-
-  defp ensure_locations_loaded(viewer), do: viewer
 end
