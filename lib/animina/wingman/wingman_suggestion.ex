@@ -23,7 +23,6 @@ defmodule Animina.Wingman.WingmanSuggestion do
 
     field :suggestions, {:array, :map}
     field :context_hash, :string
-    field :regeneration_count, :integer, default: 0
 
     timestamps(type: :utc_datetime)
   end
@@ -35,8 +34,7 @@ defmodule Animina.Wingman.WingmanSuggestion do
       :user_id,
       :suggestions,
       :context_hash,
-      :ai_job_id,
-      :regeneration_count
+      :ai_job_id
     ])
     |> validate_required([:conversation_id, :user_id])
     |> foreign_key_constraint(:conversation_id)

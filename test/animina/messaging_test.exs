@@ -517,15 +517,30 @@ defmodule Animina.MessagingTest do
   # --- Chat Slot System Tests ---
 
   describe "active_conversation_count/1" do
-    test "counts open (non-closed) conversations" do
+    test "counts open (non-closed) conversations with messages" do
       user1 = AccountsFixtures.user_fixture()
       user2 = AccountsFixtures.user_fixture()
       user3 = AccountsFixtures.user_fixture()
 
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv2} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.send_message(conv1.id, user1.id, "Hi")
+      {:ok, _} = Messaging.send_message(conv2.id, user1.id, "Hi")
 
       assert Messaging.active_conversation_count(user1.id) == 2
+    end
+
+    test "does not count conversations without messages" do
+      user1 = AccountsFixtures.user_fixture()
+      user2 = AccountsFixtures.user_fixture()
+      user3 = AccountsFixtures.user_fixture()
+
+      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.send_message(conv1.id, user1.id, "Hi")
+
+      # Only conv1 has a message, conv2 is empty (e.g. wingman-created)
+      assert Messaging.active_conversation_count(user1.id) == 1
     end
 
     test "does not count closed conversations" do
@@ -534,7 +549,9 @@ defmodule Animina.MessagingTest do
       user3 = AccountsFixtures.user_fixture()
 
       {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, conv2} = Messaging.get_or_create_conversation(user1.id, user3.id)
+      {:ok, _} = Messaging.send_message(conv1.id, user1.id, "Hi")
+      {:ok, _} = Messaging.send_message(conv2.id, user1.id, "Hi")
       {:ok, _} = Messaging.close_conversation(conv1.id, user1.id)
 
       assert Messaging.active_conversation_count(user1.id) == 1
@@ -558,7 +575,8 @@ defmodule Animina.MessagingTest do
       user1 = AccountsFixtures.user_fixture()
       user2 = AccountsFixtures.user_fixture()
 
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.send_message(conv.id, user1.id, "Hi")
 
       assert Messaging.daily_new_chat_count(user1.id) == 1
     end
@@ -669,7 +687,8 @@ defmodule Animina.MessagingTest do
       user1 = AccountsFixtures.user_fixture()
       user2 = AccountsFixtures.user_fixture()
 
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, conv} = Messaging.get_or_create_conversation(user1.id, user2.id)
+      {:ok, _} = Messaging.send_message(conv.id, user1.id, "Hi")
 
       status = Messaging.chat_slot_status(user1.id)
       assert status.active == 1

@@ -804,11 +804,22 @@ defmodule Animina.Messaging do
 
   @doc """
   Returns the number of active (non-closed) conversations for a user.
+  Only counts conversations that have at least one message.
   """
   def active_conversation_count(user_id) do
     ConversationParticipant
     |> where([p], p.user_id == ^user_id)
     |> where([p], is_nil(p.closed_at))
+    |> where(
+      [p],
+      exists(
+        from(m in Message,
+          where: m.conversation_id == parent_as(:participant).conversation_id,
+          select: 1
+        )
+      )
+    )
+    |> from(as: :participant)
     |> select([p], count(p.id))
     |> Repo.one()
   end
@@ -822,6 +833,7 @@ defmodule Animina.Messaging do
 
   @doc """
   Returns the number of new conversations initiated by the user today (Berlin time).
+  Only counts conversations that have at least one message.
   """
   def daily_new_chat_count(user_id) do
     {start_utc, end_utc} = Timezone.berlin_today_utc_range()
@@ -830,6 +842,16 @@ defmodule Animina.Messaging do
     |> where([p], p.user_id == ^user_id)
     |> where([p], p.initiator == true)
     |> where([p], p.inserted_at >= ^start_utc and p.inserted_at < ^end_utc)
+    |> where(
+      [p],
+      exists(
+        from(m in Message,
+          where: m.conversation_id == parent_as(:participant).conversation_id,
+          select: 1
+        )
+      )
+    )
+    |> from(as: :participant)
     |> select([p], count(p.id))
     |> Repo.one()
   end

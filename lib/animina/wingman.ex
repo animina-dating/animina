@@ -19,6 +19,8 @@ defmodule Animina.Wingman do
 
   alias Animina.Accounts
   alias Animina.AI
+  alias Animina.Discovery.Filters.FilterHelpers
+  alias Animina.Discovery.Schemas.SpotlightEntry
   alias Animina.GeoData
   alias Animina.Messaging
   alias Animina.Moodboard
@@ -32,7 +34,6 @@ defmodule Animina.Wingman do
   require Logger
 
   @max_story_chars 1500
-  @max_reloads 3
 
   # --- PubSub ---
 
@@ -61,77 +62,6 @@ defmodule Animina.Wingman do
   end
 
   @doc """
-  Returns the maximum number of wingman reloads allowed per conversation.
-  """
-  def max_reloads, do: @max_reloads
-
-  @doc """
-  Returns the current regeneration count for a user/conversation pair.
-  Returns 0 if no suggestion record exists.
-  """
-  def get_regeneration_count(conversation_id, user_id) do
-    case get_cached_suggestions(conversation_id, user_id) do
-      %WingmanSuggestion{regeneration_count: count} -> count
-      nil -> 0
-    end
-  end
-
-  @doc """
-  Returns true if the user can still reload wingman suggestions for this conversation.
-  """
-  def can_reload?(conversation_id, user_id) do
-    get_regeneration_count(conversation_id, user_id) < @max_reloads
-  end
-
-  @doc """
-  Forces re-generation of suggestions.
-
-  Options:
-  - `increment_count: true` — increments regeneration_count (used by reload button)
-  - `increment_count: false` (default) — preserves count (used by style changes)
-  """
-  def refresh_suggestions(conversation_id, user_id, other_user_id, opts \\ []) do
-    increment? = Keyword.get(opts, :increment_count, false)
-
-    case get_cached_suggestions(conversation_id, user_id) do
-      %WingmanSuggestion{} = existing ->
-        new_count =
-          if increment?,
-            do: existing.regeneration_count + 1,
-            else: existing.regeneration_count
-
-        existing
-        |> WingmanSuggestion.changeset(%{suggestions: nil, regeneration_count: new_count})
-        |> Repo.update()
-
-      nil ->
-        # No existing record — create one with initial count if incrementing
-        if increment? do
-          %WingmanSuggestion{}
-          |> WingmanSuggestion.changeset(%{
-            conversation_id: conversation_id,
-            user_id: user_id,
-            regeneration_count: 1
-          })
-          |> Repo.insert()
-        end
-    end
-
-    enqueue_generation(conversation_id, user_id, other_user_id)
-  end
-
-  @doc """
-  Deletes all wingman feedback for a user/conversation pair.
-  Called before reload to clear stale feedback from previous suggestions.
-  """
-  def clear_feedback_for_conversation(user_id, conversation_id) do
-    from(f in WingmanFeedback,
-      where: f.user_id == ^user_id and f.conversation_id == ^conversation_id
-    )
-    |> Repo.delete_all()
-  end
-
-  @doc """
   Deletes cached suggestions for a conversation/user pair.
   Called after the first message is sent.
   """
@@ -148,11 +78,16 @@ defmodule Animina.Wingman do
   Returns a map with `:user`, `:other_user`, `:overlap`, and `:conversation_state`.
   """
   def gather_context(requesting_user, other_user, messages) do
+    requesting_user = Repo.preload(requesting_user, :locations)
+    other_user = Repo.preload(other_user, :locations)
+
     user_data = gather_user_data(requesting_user)
     other_user_data = gather_user_data(other_user)
 
     overlap = gather_safe_overlap(requesting_user, other_user)
     user_ratings = gather_user_ratings(requesting_user.id, other_user.id)
+    distance_km = compute_distance(requesting_user, other_user)
+    is_wildcard = wildcard?(requesting_user.id, other_user.id)
 
     conversation_state = summarize_conversation(messages)
 
@@ -161,6 +96,8 @@ defmodule Animina.Wingman do
       other_user: other_user_data,
       overlap: overlap,
       user_ratings: user_ratings,
+      distance_km: distance_km,
+      is_wildcard: is_wildcard,
       conversation_state: conversation_state
     }
   end
@@ -201,95 +138,6 @@ defmodule Animina.Wingman do
     |> Map.new()
   end
 
-  @doc """
-  Returns the last `count` feedback records for a user, ordered by most recent first.
-  """
-  def recent_feedback(user_id, count \\ 10) do
-    from(f in WingmanFeedback,
-      where: f.user_id == ^user_id,
-      order_by: [desc: f.inserted_at],
-      limit: ^count,
-      select: %{
-        value: f.value,
-        suggestion_text: f.suggestion_text,
-        suggestion_hook: f.suggestion_hook
-      }
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  Formats feedback into a prompt section for the LLM.
-  """
-  def feedback_section([], _language), do: ""
-
-  def feedback_section(feedbacks, language) do
-    liked = feedbacks |> Enum.filter(&(&1.value == 1)) |> Enum.map(& &1.suggestion_text)
-    disliked = feedbacks |> Enum.filter(&(&1.value == -1)) |> Enum.map(& &1.suggestion_text)
-
-    if liked == [] && disliked == [] do
-      ""
-    else
-      build_feedback_section(liked, disliked, language)
-    end
-  end
-
-  defp build_feedback_section(liked, disliked, "de") do
-    parts = ["## Bisheriges Feedback zu deinen Vorschlägen"]
-
-    parts =
-      if liked != [] do
-        items = Enum.map_join(liked, "\n", &"  - \"#{&1}\"")
-        parts ++ ["Gefallen:\n#{items}"]
-      else
-        parts
-      end
-
-    parts =
-      if disliked != [] do
-        items = Enum.map_join(disliked, "\n", &"  - \"#{&1}\"")
-        parts ++ ["Nicht gefallen:\n#{items}"]
-      else
-        parts
-      end
-
-    parts =
-      parts ++
-        [
-          "Passe deine Vorschläge basierend auf diesem Feedback an — mehr von dem was gefiel, weniger von dem was nicht gefiel."
-        ]
-
-    Enum.join(parts, "\n")
-  end
-
-  defp build_feedback_section(liked, disliked, _language) do
-    parts = ["## Previous feedback on your suggestions"]
-
-    parts =
-      if liked != [] do
-        items = Enum.map_join(liked, "\n", &"  - \"#{&1}\"")
-        parts ++ ["Liked:\n#{items}"]
-      else
-        parts
-      end
-
-    parts =
-      if disliked != [] do
-        items = Enum.map_join(disliked, "\n", &"  - \"#{&1}\"")
-        parts ++ ["Disliked:\n#{items}"]
-      else
-        parts
-      end
-
-    parts =
-      parts ++
-        [
-          "Adjust your suggestions based on this feedback — more of what was liked, less of what was disliked."
-        ]
-
-    Enum.join(parts, "\n")
-  end
-
   defp create_feedback(user_id, conversation_id, suggestion_index, value, suggestion_data) do
     attrs = %{
       user_id: user_id,
@@ -325,44 +173,47 @@ defmodule Animina.Wingman do
 
   @doc """
   Builds the Ollama prompt from gathered context in the user's language.
-
-  Accepts an optional `style` parameter ("casual", "funny", "empathetic")
-  and an optional `feedback` list from `recent_feedback/1`.
-  Defaults to "casual" which preserves the original wingman behavior.
   """
-  def build_prompt(context, language \\ "de", style \\ "casual", feedback \\ []) do
+  def build_prompt(context, language \\ "de") do
     user = context.user
     other = context.other_user
     overlap = context.overlap
     conv_state = context.conversation_state
 
+    is_wildcard = Map.get(context, :is_wildcard, false)
     boldness = compute_boldness(overlap)
-    system_instruction = system_instruction(language, user.age, boldness, style)
+
+    system_instruction =
+      system_instruction(language, user.age, boldness, other.gender, other.display_name)
+
+    time_section = time_context_section(language)
     user_section = user_profile_section(user, language)
     other_section = other_profile_section(other, language)
-    overlap_section = overlap_section(overlap, language)
+    overlap_section = overlap_section(overlap, context.distance_km, language)
+    wildcard_section = wildcard_section(is_wildcard, language)
     ratings_section = ratings_section(context.user_ratings, language)
-    feedback_sec = feedback_section(feedback, language)
     conv_section = conversation_section(conv_state, language)
 
     sections =
       [
         system_instruction,
+        time_section,
         user_section,
         other_section,
         overlap_section,
+        wildcard_section,
         ratings_section,
-        feedback_sec,
         conv_section
       ]
       |> Enum.reject(&(&1 == ""))
       |> Enum.join("\n\n")
 
+    json_instruction = json_instruction(language)
+
     """
     #{sections}
 
-    Return ONLY valid JSON — an array of exactly 2 objects: [{"text": "coaching tip", "hook": "why this works"}]
-    No markdown, no explanation, just the JSON array.
+    #{json_instruction}
     """
   end
 
@@ -375,28 +226,34 @@ defmodule Animina.Wingman do
   def parse_suggestions(""), do: {:error, :parse_failed}
 
   def parse_suggestions(raw_response) do
-    # Try to extract JSON array from response
-    case extract_json_array(raw_response) do
-      {:ok, suggestions} when is_list(suggestions) and suggestions != [] ->
-        normalized =
-          suggestions
-          |> Enum.take(2)
-          |> Enum.map(fn item ->
-            %{
-              "text" => to_string(Map.get(item, "text", "")),
-              "hook" => to_string(Map.get(item, "hook", ""))
-            }
-          end)
-          |> Enum.filter(fn %{"text" => text} -> text != "" end)
-
-        if Enum.empty?(normalized),
-          do: {:error, :parse_failed},
-          else: {:ok, normalized}
-
-      _ ->
-        {:error, :parse_failed}
+    if repetitive?(raw_response) do
+      {:error, :parse_failed}
+    else
+      raw_response
+      |> extract_json_array()
+      |> normalize_suggestions()
     end
   end
+
+  defp normalize_suggestions({:ok, suggestions})
+       when is_list(suggestions) and suggestions != [] do
+    normalized =
+      suggestions
+      |> Enum.take(2)
+      |> Enum.map(fn item ->
+        %{
+          "text" => to_string(Map.get(item, "text", "")),
+          "hook" => to_string(Map.get(item, "hook", ""))
+        }
+      end)
+      |> Enum.filter(fn %{"text" => text} -> text != "" end)
+
+    if Enum.empty?(normalized),
+      do: {:error, :parse_failed},
+      else: {:ok, normalized}
+  end
+
+  defp normalize_suggestions(_), do: {:error, :parse_failed}
 
   @doc """
   Saves suggestions to the database and broadcasts via PubSub.
@@ -469,9 +326,7 @@ defmodule Animina.Wingman do
       context = gather_context(user, other_user, messages)
       hash = context_hash(context)
       language = user.language || "de"
-      style = user.wingman_style || "casual"
-      feedback = recent_feedback(user_id)
-      prompt = build_prompt(context, language, style, feedback)
+      prompt = build_prompt(context, language)
 
       params = %{
         "conversation_id" => conversation_id,
@@ -500,8 +355,15 @@ defmodule Animina.Wingman do
     %{
       display_name: user.display_name,
       age: age,
+      gender: user.gender,
+      height: user.height,
       occupation: user.occupation,
       city: city_name,
+      search_radius: user.search_radius,
+      partner_age_min: if(user.birthday, do: age - user.partner_minimum_age_offset),
+      partner_age_max: if(user.birthday, do: age + user.partner_maximum_age_offset),
+      partner_height_min: user.partner_height_min,
+      partner_height_max: user.partner_height_max,
       stories: stories,
       published_flags: published_flags
     }
@@ -610,6 +472,51 @@ defmodule Animina.Wingman do
     years
   end
 
+  defp wildcard?(viewer_id, shown_user_id) do
+    today = TimeMachine.utc_today()
+
+    from(e in SpotlightEntry,
+      where:
+        e.user_id == ^viewer_id and
+          e.shown_user_id == ^shown_user_id and
+          e.shown_on == ^today and
+          e.is_wildcard == true
+    )
+    |> Repo.exists?()
+  end
+
+  defp compute_distance(user_a, user_b) do
+    with {:ok, lat1, lon1} <- FilterHelpers.get_viewer_coordinates(user_a),
+         {:ok, lat2, lon2} <- FilterHelpers.get_viewer_coordinates(user_b) do
+      haversine_km(lat1, lon1, lat2, lon2)
+    else
+      _ -> nil
+    end
+  end
+
+  defp haversine_km(lat1, lon1, lat2, lon2) do
+    r = 6371.0
+    dlat = deg_to_rad(lat2 - lat1)
+    dlon = deg_to_rad(lon2 - lon1)
+
+    a =
+      :math.sin(dlat / 2) * :math.sin(dlat / 2) +
+        :math.cos(deg_to_rad(lat1)) * :math.cos(deg_to_rad(lat2)) *
+          :math.sin(dlon / 2) * :math.sin(dlon / 2)
+
+    c = 2 * :math.atan2(:math.sqrt(a), :math.sqrt(1 - a))
+    round(r * c)
+  end
+
+  defp deg_to_rad(deg), do: deg * :math.pi() / 180
+
+  defp pronoun("de", "male"), do: "ihn"
+  defp pronoun("de", "female"), do: "sie"
+  defp pronoun("de", _), do: "die Person"
+  defp pronoun(_, "male"), do: "him"
+  defp pronoun(_, "female"), do: "her"
+  defp pronoun(_, _), do: "them"
+
   defp summarize_conversation(messages) do
     count = length(messages)
 
@@ -622,88 +529,43 @@ defmodule Animina.Wingman do
 
   # --- Prompt building ---
 
-  defp system_instruction("de", age, boldness, style) do
+  defp system_instruction("de", age, boldness, other_gender, other_name) do
     age_text = if age, do: "Der User ist #{age} Jahre alt. ", else: ""
     boldness_text = boldness_paragraph("de", boldness)
-    persona = style_persona("de", style)
-    rules = style_rules("de", style)
+    pronoun_de = pronoun("de", other_gender)
 
     """
-    #{persona} #{age_text}Hilf beim Gesprächseinstieg oder dabei, das Gespräch zu vertiefen.
-
-    Sei konkret — nutze Profildetails, die auffallen. Gib 2 knackige Tipps. Keine Anrede — starte direkt mit dem Inhalt.
+    Du bist ein Wingman — locker, direkt, ein bisschen frech. #{age_text}Schau dir beide Profile an. Zeig 2 Sachen auf, die auffallen — Gemeinsamkeiten, interessante Details, etwas das neugierig macht. Sag was dir auffällt und schlag ein Gesprächsthema vor, z.B. "Sprich #{pronoun_de} doch mal auf X an." Aber schreib KEINE fertigen Nachrichten oder Formulierungen — nur das Thema nennen, den Rest macht der User selbst.
 
     #{boldness_text}
 
     Regeln:
-    #{rules}
+    - Sei locker und direkt — wie ein Kumpel, dem was aufgefallen ist
+    - Sprich den User mit "du" an. Nenne das Gegenüber einmal beim Namen ("#{other_name}"), danach nur noch Pronomen (#{pronoun_de}/er/sie). Wenn du über beide sprichst, verwende "ihr" (2. Person Plural): "ihr sucht beide", "ihr lebt beide in" — NIEMALS unpersönliches "Beide suchen", "Beide sind", "beide haben". Beispiel: "#{other_name} mag wie du X — frag #{pronoun_de} doch mal nach Y."
     - Passe deinen Ton ans Alter an: locker bei Jüngeren, etwas gewählter bei Älteren — aber immer auf Augenhöhe
-    - Verrate niemals Dealbreaker oder private Informationen
+    - KEIN Thema Sex — auch nicht angedeutet. Nicht in den Tipps, nicht im Hook.
     """
     |> String.trim()
   end
 
-  defp system_instruction(_, age, boldness, style) do
+  defp system_instruction(lang, age, boldness, other_gender, other_name) do
     age_text = if age, do: "The user is #{age} years old. ", else: ""
     boldness_text = boldness_paragraph("en", boldness)
-    persona = style_persona("en", style)
-    rules = style_rules("en", style)
+    pronoun_en = pronoun(lang, other_gender)
 
     """
-    #{persona} #{age_text}Help start or deepen a conversation.
-
-    Be specific — use profile details that stand out. Give 2 punchy tips. No greeting — jump straight into the advice.
+    You're a wingman — casual, direct, a little cheeky. #{age_text}Look at both profiles. Point out 2 things that stand out — shared interests, interesting details, something that sparks curiosity. Say what you notice and suggest a conversation topic, e.g. "Ask #{pronoun_en} about X." But do NOT write ready-made messages or phrases — just name the topic, the user writes the message themselves.
 
     #{boldness_text}
 
     Rules:
-    #{rules}
+    - Be casual and direct — like a buddy who noticed something
+    - Address the user as "you". Mention the other person by name ("#{other_name}") once, then use pronouns (#{pronoun_en}/he/she). When talking about both, use "you both": "you both live in", "you're both into" — NEVER impersonal third person like "Both are", "Both of them", "They both". Example: "#{other_name} also likes X — ask #{pronoun_en} about Y."
     - Adapt your tone to age: relaxed for younger folks, a bit more refined for older ones — but always eye-to-eye
-    - Never reveal dealbreakers or private information
+    - NEVER mention sex — not even hinted at. Not in the tips, not in the hook.
     """
     |> String.trim()
   end
-
-  # --- Style persona & rules ---
-
-  defp style_persona("de", "funny"),
-    do: "Du bist ein witziger Wingman — Humor ist deine Superkraft, spielerisch und schlagfertig."
-
-  defp style_persona("de", "empathetic"),
-    do: "Du bist ein einfühlsamer Coach — warmherzig, aufmerksam und behutsam."
-
-  defp style_persona("de", _casual),
-    do: "Du bist ein Wingman — locker, direkt, ein bisschen frech."
-
-  defp style_persona(_, "funny"),
-    do: "You're a witty wingman — humor is your superpower, playful and sharp."
-
-  defp style_persona(_, "empathetic"),
-    do: "You're a thoughtful coach — warm, genuine, and encouraging."
-
-  defp style_persona(_, _casual),
-    do: "You're a wingman — casual, direct, a little cheeky."
-
-  defp style_rules("de", "funny"),
-    do:
-      "- Formuliere als witziger Kumpel-Rat mit einem Augenzwinkern — finde den humorvollen Dreh, aber bleib respektvoll"
-
-  defp style_rules("de", "empathetic"),
-    do:
-      "- Formuliere als einfühlsamer Rat — sanft, ermutigend und herzlich, NICHT als fertige Nachrichten"
-
-  defp style_rules("de", _casual),
-    do: "- Formuliere als Kumpel-Rat, NICHT als fertige Nachrichten zum Absenden"
-
-  defp style_rules(_, "funny"),
-    do: "- Frame as witty buddy advice with a wink — find the funny angle, but stay respectful"
-
-  defp style_rules(_, "empathetic"),
-    do:
-      "- Frame as warm, encouraging advice — gentle and heartfelt, NOT as ready-to-send messages"
-
-  defp style_rules(_, _casual),
-    do: "- Frame as buddy advice, NOT as ready-to-send messages"
 
   defp boldness_paragraph("de", :bold),
     do:
@@ -735,38 +597,124 @@ defmodule Animina.Wingman do
   end
 
   defp user_profile_section(user, language) do
-    label = if language == "de", do: "Über dich", else: "About you"
-    format_profile_section(label, user.display_name, user)
+    role = if language == "de", do: "dein User", else: "your user"
+    label = "## #{user.display_name} (#{role})"
+    format_profile_section(label, user.display_name, user, language)
   end
 
   defp other_profile_section(other, language) do
-    label = if language == "de", do: "Über", else: "About"
-    format_profile_section("#{label} #{other.display_name}", other.display_name, other)
+    role = if language == "de", do: "das Gegenüber", else: "the other person"
+    label = "## #{other.display_name} (#{role})"
+    format_profile_section(label, other.display_name, other, language)
   end
 
-  defp format_profile_section(label, _name, data) do
-    parts =
-      ["## #{label}"] ++
-        if(data.age, do: ["Age: #{data.age}"], else: []) ++
-        if(data.city, do: ["City: #{data.city}"], else: []) ++
-        if(data.occupation, do: ["Occupation: #{data.occupation}"], else: []) ++
+  defp format_profile_section(label, _name, data, language) do
+    labels = profile_labels(language)
+    gender_label = if language == "de", do: translate_gender(data.gender), else: data.gender
+
+    fields =
+      [
+        {data.gender, "#{labels.gender}: #{gender_label}"},
+        {data.age, "#{labels.age}: #{data.age}"},
+        {data.height, "#{labels.height}: #{data.height} cm"},
+        {data.city, "#{labels.city}: #{data.city}"},
+        {data.occupation, "#{labels.occupation}: #{data.occupation}"}
+      ]
+      |> Enum.filter(fn {val, _} -> val end)
+      |> Enum.map(fn {_, line} -> line end)
+
+    extras =
+      format_search_preferences(data, language) ++
         if(data.published_flags != [],
-          do: ["Traits: #{Enum.join(data.published_flags, ", ")}"],
+          do: ["#{labels.traits}: #{Enum.join(data.published_flags, ", ")}"],
           else: []
         ) ++
-        if(data.stories != [], do: ["Stories:\n#{Enum.join(data.stories, "\n---\n")}"], else: [])
+        if(data.stories != [],
+          do: ["#{labels.stories}:\n#{Enum.join(data.stories, "\n---\n")}"],
+          else: []
+        )
 
-    Enum.join(parts, "\n")
+    Enum.join([label | fields] ++ extras, "\n")
   end
 
-  defp overlap_section(%{shared_traits: shared, compatible_values: compatible}, language) do
+  defp profile_labels("de") do
+    %{
+      gender: "Geschlecht",
+      age: "Alter",
+      height: "Größe",
+      city: "Stadt",
+      occupation: "Beruf",
+      traits: "Eigenschaften",
+      stories: "Geschichten"
+    }
+  end
+
+  defp profile_labels(_language) do
+    %{
+      gender: "Gender",
+      age: "Age",
+      height: "Height",
+      city: "City",
+      occupation: "Occupation",
+      traits: "Traits",
+      stories: "Stories"
+    }
+  end
+
+  defp translate_gender("female"), do: "weiblich"
+  defp translate_gender("male"), do: "männlich"
+  defp translate_gender("diverse"), do: "divers"
+  defp translate_gender(other), do: other
+
+  defp format_search_preferences(data, language) do
+    {l_age, l_height, l_radius, l_years} =
+      if language == "de" do
+        {"Sucht Alter", "Sucht Größe", "Suchradius", "Jahre"}
+      else
+        {"Looking for age", "Looking for height", "Search radius", "years"}
+      end
+
+    parts = []
+
     parts =
-      if shared != [] do
-        label = if language == "de", do: "Gemeinsame Eigenschaften", else: "Things in common"
-        ["#{label}: #{Enum.join(shared, ", ")}"]
+      if data.partner_age_min && data.partner_age_max do
+        parts ++ ["#{l_age}: #{data.partner_age_min}–#{data.partner_age_max} #{l_years}"]
+      else
+        parts
+      end
+
+    parts =
+      if data.partner_height_min && data.partner_height_max do
+        parts ++ ["#{l_height}: #{data.partner_height_min}–#{data.partner_height_max} cm"]
+      else
+        parts
+      end
+
+    if data.search_radius do
+      parts ++ ["#{l_radius}: #{data.search_radius} km"]
+    else
+      parts
+    end
+  end
+
+  defp overlap_section(
+         %{shared_traits: shared, compatible_values: compatible},
+         distance_km,
+         language
+       ) do
+    parts =
+      if distance_km do
+        label = if language == "de", do: "Entfernung", else: "Distance"
+        ["#{label}: ~#{distance_km} km"]
       else
         []
       end ++
+        if shared != [] do
+          label = if language == "de", do: "Gemeinsame Eigenschaften", else: "Things in common"
+          ["#{label}: #{Enum.join(shared, ", ")}"]
+        else
+          []
+        end ++
         if compatible != [] do
           label = if language == "de", do: "Kompatible Werte", else: "Compatible values"
           ["#{label}: #{Enum.join(compatible, ", ")}"]
@@ -775,6 +723,16 @@ defmodule Animina.Wingman do
         end
 
     if parts == [], do: "", else: Enum.join(parts, "\n")
+  end
+
+  defp wildcard_section(false, _language), do: ""
+
+  defp wildcard_section(true, "de") do
+    "Hinweis: Diese Person ist ein Wildcard-Vorschlag — es ist unklar, ob die beiden wirklich Gemeinsamkeiten haben. Erfinde keine Gemeinsamkeiten. Konzentriere dich auf interessante Details aus den Profilen und schlage vor, herauszufinden, ob es eine Verbindung gibt."
+  end
+
+  defp wildcard_section(true, _language) do
+    "Note: This person is a wildcard suggestion — it's unclear whether they actually have anything in common. Don't invent similarities. Focus on interesting profile details and suggest finding out whether there's a connection."
   end
 
   defp ratings_section([], _language), do: ""
@@ -788,11 +746,17 @@ defmodule Animina.Wingman do
     lines =
       Enum.map(ratings, fn %{rating: rating, content: content} ->
         emoji = rating_emoji(rating)
-        "- #{emoji} #{rating}: #{content}"
+        translated = translate_rating(rating, language)
+        "- #{emoji} #{translated}: #{content}"
       end)
 
     Enum.join([label | lines], "\n")
   end
+
+  defp translate_rating("love", "de"), do: "Liebe"
+  defp translate_rating("like", "de"), do: "Gefällt"
+  defp translate_rating("dislike", "de"), do: "Gefällt nicht"
+  defp translate_rating(rating, _language), do: rating
 
   defp rating_emoji("love"), do: "❤️"
   defp rating_emoji("like"), do: "👍"
@@ -800,23 +764,137 @@ defmodule Animina.Wingman do
   defp rating_emoji(_), do: "•"
 
   defp conversation_section(state, language) do
-    label = if language == "de", do: "Gesprächsstatus", else: "Conversation state"
-    "#{label}: #{state}"
+    if language == "de" do
+      "Gesprächsstatus: #{translate_conv_state(state)}"
+    else
+      "Conversation state: #{state}"
+    end
+  end
+
+  defp json_instruction("de") do
+    """
+    Gib NUR gültiges JSON zurück — ein Array mit genau 2 Objekten, jeweils mit den Schlüsseln "text" und "hook":
+    [{"text": "was dir aufgefallen ist", "hook": "warum das ein guter Gesprächseinstieg wäre"}, {"text": "noch etwas das dir aufgefallen ist", "hook": "warum das interessant ist"}]
+    Beide Schlüssel sind PFLICHT in jedem Objekt. Halte jeden "text" auf 1-2 Sätze. Kein Markdown, keine Erklärung, nur das JSON-Array.
+    """
+    |> String.trim()
+  end
+
+  defp json_instruction(_language) do
+    """
+    Return ONLY valid JSON — an array of exactly 2 objects, each with "text" and "hook" keys:
+    [{"text": "what you noticed", "hook": "why this could be a conversation opener"}, {"text": "another thing you noticed", "hook": "why this is interesting"}]
+    Both keys are REQUIRED in every object. Keep each "text" to 1-2 sentences max. No markdown, no explanation, just the JSON array.
+    """
+    |> String.trim()
+  end
+
+  defp translate_conv_state("new"), do: "neu"
+
+  defp translate_conv_state("early (" <> rest),
+    do: "Anfang (#{String.replace(rest, " messages)", " Nachrichten)")}"
+
+  defp translate_conv_state("ongoing (" <> rest),
+    do: "laufend (#{String.replace(rest, " messages)", " Nachrichten)")}"
+
+  defp translate_conv_state(other), do: other
+
+  defp time_context_section(language) do
+    now_berlin =
+      TimeMachine.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    time = Calendar.strftime(now_berlin, "%H:%M")
+    weekday = berlin_weekday(now_berlin, language)
+
+    if language == "de" do
+      "Aktuelle Zeit: #{weekday}, #{time} Uhr (deutsche Zeit)"
+    else
+      "Current time: #{weekday}, #{time} (German time)"
+    end
+  end
+
+  defp berlin_weekday(datetime, "de") do
+    case Date.day_of_week(DateTime.to_date(datetime)) do
+      1 -> "Montag"
+      2 -> "Dienstag"
+      3 -> "Mittwoch"
+      4 -> "Donnerstag"
+      5 -> "Freitag"
+      6 -> "Samstag"
+      7 -> "Sonntag"
+    end
+  end
+
+  defp berlin_weekday(datetime, _language) do
+    case Date.day_of_week(DateTime.to_date(datetime)) do
+      1 -> "Monday"
+      2 -> "Tuesday"
+      3 -> "Wednesday"
+      4 -> "Thursday"
+      5 -> "Friday"
+      6 -> "Saturday"
+      7 -> "Sunday"
+    end
   end
 
   # --- JSON extraction ---
 
   defp extract_json_array(text) do
-    # Find JSON array in the response
-    case Regex.run(~r/\[[\s\S]*?\]/s, text) do
-      [json_str] ->
-        case Jason.decode(json_str) do
+    # Try complete array first, then truncated
+    json_str =
+      case Regex.run(~r/\[[\s\S]*\]/s, text) do
+        [match] -> match
+        nil -> try_close_truncated(text)
+      end
+
+    try_decode(json_str)
+  end
+
+  defp try_decode(nil), do: :error
+
+  defp try_decode(json_str) do
+    case Jason.decode(json_str) do
+      {:ok, list} when is_list(list) ->
+        {:ok, list}
+
+      _ ->
+        repaired = repair_json(json_str)
+
+        case Jason.decode(repaired) do
           {:ok, list} when is_list(list) -> {:ok, list}
           _ -> :error
         end
+    end
+  end
+
+  # When the LLM output was truncated (no closing "]"), find the last
+  # complete JSON object and close the array.
+  defp try_close_truncated(text) do
+    case Regex.run(~r/\[[\s\S]*/s, text) do
+      [partial] ->
+        # Find the last complete object (ending with "}")
+        case Regex.run(~r/(.*\})\s*,?\s*\{?[\s\S]*$/s, partial) do
+          [_, up_to_last_complete] -> up_to_last_complete <> "]"
+          nil -> nil
+        end
 
       nil ->
-        :error
+        nil
     end
+  end
+
+  # Fix common LLM JSON errors: mismatched braces/parens, trailing commas
+  defp repair_json(str) do
+    str
+    |> String.replace(~r/\"\)(\s*[,\]])/, "\"}\\1")
+    |> String.replace(~r/,(\s*[\]\}])/, "\\1")
+  end
+
+  # Detect LLM repetition loops: any phrase of 8+ words repeated 4+ times
+  defp repetitive?(text) when byte_size(text) < 200, do: false
+
+  defp repetitive?(text) do
+    Regex.match?(~r/(\b\w+(?:\s+\w+){7,})\s*(?:.*?\1){3}/s, text)
   end
 end

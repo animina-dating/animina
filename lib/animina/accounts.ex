@@ -1284,13 +1284,4 @@ defmodule Animina.Accounts do
     |> User.online_status_changeset(attrs)
     |> Repo.update()
   end
-
-  @doc """
-  Updates the wingman coaching style for a user.
-  """
-  def update_wingman_style(%User{} = user, style) when style in ~w(casual funny empathetic) do
-    user
-    |> User.wingman_style_changeset(%{wingman_style: style})
-    |> Repo.update()
-  end
 end

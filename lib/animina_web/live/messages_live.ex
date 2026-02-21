@@ -21,7 +21,6 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.MessageComponents
   import AniminaWeb.RelationshipComponents
 
-  alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.FeatureFlags
   alias Animina.Messaging
@@ -183,56 +182,26 @@ defmodule AniminaWeb.MessagesLive do
             <span class="text-sm font-medium text-info">
               {gettext("Wingman")}
             </span>
-            <div class="flex items-center gap-1">
-              <button
-                :if={@wingman_reload_count < Wingman.max_reloads()}
-                phx-click="reload_wingman"
-                class="btn btn-ghost btn-xs text-info"
-                title={
-                  gettext("New suggestions (%{remaining} left)",
-                    remaining: Wingman.max_reloads() - @wingman_reload_count
-                  )
-                }
-              >
-                <.icon name="hero-arrow-path" class="h-3.5 w-3.5" />
-                <span class="text-xs">
-                  {@wingman_reload_count}/{Wingman.max_reloads()}
-                </span>
-              </button>
-              <span
-                :if={@wingman_reload_count >= Wingman.max_reloads()}
-                class="text-xs text-base-content/40 mr-1"
-              >
-                {@wingman_reload_count}/{Wingman.max_reloads()}
-              </span>
-              <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
-                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-          <div class="flex gap-1.5 mb-2">
-            <button
-              :for={{style, label} <- wingman_style_options()}
-              phx-click="change_wingman_style"
-              phx-value-style={style}
-              class={[
-                "badge badge-sm cursor-pointer",
-                if(style == @wingman_style, do: "badge-info", else: "badge-ghost")
-              ]}
-            >
-              {label}
+            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
             </button>
           </div>
           <div class="space-y-2">
             <div
               :for={{suggestion, idx} <- Enum.with_index(@wingman_suggestions)}
-              class="text-sm bg-base-100 rounded p-2 border border-base-300"
+              class="bg-base-100 rounded-lg overflow-hidden border border-base-300"
             >
-              <p>{suggestion["text"]}</p>
-              <p :if={suggestion["hook"]} class="text-xs text-base-content/50 mt-1">
-                {suggestion["hook"]}
-              </p>
-              <div class="flex items-center gap-1 mt-1.5">
+              <div class="p-3">
+                <p class="text-sm font-medium">{suggestion["text"]}</p>
+              </div>
+              <div
+                :if={suggestion["hook"]}
+                class="flex items-start gap-2 px-3 py-2 bg-base-200/50 border-t border-base-300/50"
+              >
+                <span class="text-base mt-0.5 shrink-0">💡</span>
+                <p class="text-sm text-base-content/70 italic">{suggestion["hook"]}</p>
+              </div>
+              <div class="flex items-center gap-1 px-3 py-1.5 border-t border-base-300/30">
                 <button
                   phx-click="wingman_feedback"
                   phx-value-index={idx}
@@ -280,26 +249,8 @@ defmodule AniminaWeb.MessagesLive do
                 {gettext("Wingman is thinking...")}
               </span>
             </div>
-            <div class="flex items-center gap-1">
-              <span class="text-xs text-base-content/40 mr-1">
-                {@wingman_reload_count}/{Wingman.max_reloads()}
-              </span>
-              <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
-                <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
-              </button>
-            </div>
-          </div>
-          <div class="flex gap-1.5">
-            <button
-              :for={{style, label} <- wingman_style_options()}
-              phx-click="change_wingman_style"
-              phx-value-style={style}
-              class={[
-                "badge badge-sm cursor-pointer",
-                if(style == @wingman_style, do: "badge-info", else: "badge-ghost")
-              ]}
-            >
-              {label}
+            <button phx-click="dismiss_wingman" class="btn btn-ghost btn-xs">
+              <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -1185,9 +1136,7 @@ defmodule AniminaWeb.MessagesLive do
         wingman_suggestions: nil,
         wingman_loading: false,
         wingman_dismissed: false,
-        wingman_style: user.wingman_style || "casual",
-        wingman_feedback: %{},
-        wingman_reload_count: 0
+        wingman_feedback: %{}
       )
 
     # Handle start_with param to create/open a conversation
@@ -1345,7 +1294,6 @@ defmodule AniminaWeb.MessagesLive do
     # Only show wingman for the very first chat (no messages yet)
     if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
       feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
-      reload_count = Wingman.get_regeneration_count(conversation_id, user.id)
 
       case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
         {:ok, suggestions} ->
@@ -1353,8 +1301,7 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: suggestions,
             wingman_loading: false,
             wingman_dismissed: false,
-            wingman_feedback: feedback_map,
-            wingman_reload_count: reload_count
+            wingman_feedback: feedback_map
           )
 
         {:pending, _job_id} ->
@@ -1362,8 +1309,7 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: nil,
             wingman_loading: true,
             wingman_dismissed: false,
-            wingman_feedback: feedback_map,
-            wingman_reload_count: reload_count
+            wingman_feedback: feedback_map
           )
 
         {:error, _reason} ->
@@ -1371,8 +1317,7 @@ defmodule AniminaWeb.MessagesLive do
             wingman_suggestions: nil,
             wingman_loading: false,
             wingman_dismissed: false,
-            wingman_feedback: %{},
-            wingman_reload_count: reload_count
+            wingman_feedback: %{}
           )
       end
     else
@@ -1380,8 +1325,7 @@ defmodule AniminaWeb.MessagesLive do
         wingman_suggestions: nil,
         wingman_loading: false,
         wingman_dismissed: false,
-        wingman_feedback: %{},
-        wingman_reload_count: 0
+        wingman_feedback: %{}
       )
     end
   end
@@ -1453,72 +1397,6 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_event("dismiss_wingman", _params, socket) do
     {:noreply, assign(socket, :wingman_dismissed, true)}
-  end
-
-  @impl true
-  def handle_event("change_wingman_style", %{"style" => style}, socket) do
-    user = socket.assigns.current_scope.user
-
-    case Accounts.update_wingman_style(user, style) do
-      {:ok, updated_user} ->
-        socket = assign(socket, :wingman_style, updated_user.wingman_style)
-
-        # If we have a conversation open, refresh suggestions with the new style (does NOT count as a reload)
-        socket =
-          if socket.assigns.conversation_data do
-            conversation_id = socket.assigns.conversation_data.conversation.id
-            other_user = socket.assigns.conversation_data.other_user
-
-            Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
-              increment_count: false
-            )
-
-            socket
-            |> assign(:wingman_loading, true)
-            |> assign(:wingman_suggestions, nil)
-            |> assign(:wingman_dismissed, false)
-          else
-            socket
-          end
-
-        {:noreply, socket}
-
-      _ ->
-        {:noreply, socket}
-    end
-  end
-
-  @impl true
-  def handle_event("reload_wingman", _params, socket) do
-    user = socket.assigns.current_scope.user
-    conversation_data = socket.assigns.conversation_data
-
-    if is_nil(conversation_data) do
-      {:noreply, socket}
-    else
-      conversation_id = conversation_data.conversation.id
-      other_user = conversation_data.other_user
-
-      if Wingman.can_reload?(conversation_id, user.id) do
-        Wingman.clear_feedback_for_conversation(user.id, conversation_id)
-
-        Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
-          increment_count: true
-        )
-
-        new_count = Wingman.get_regeneration_count(conversation_id, user.id)
-
-        {:noreply,
-         socket
-         |> assign(:wingman_loading, true)
-         |> assign(:wingman_suggestions, nil)
-         |> assign(:wingman_dismissed, false)
-         |> assign(:wingman_feedback, %{})
-         |> assign(:wingman_reload_count, new_count)}
-      else
-        {:noreply, socket}
-      end
-    end
   end
 
   @impl true
@@ -1941,21 +1819,10 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_info({:wingman_ready, suggestions}, socket) do
-    reload_count =
-      if socket.assigns.conversation_data do
-        Wingman.get_regeneration_count(
-          socket.assigns.conversation_data.conversation.id,
-          socket.assigns.current_scope.user.id
-        )
-      else
-        0
-      end
-
     {:noreply,
      socket
      |> assign(:wingman_suggestions, suggestions)
-     |> assign(:wingman_loading, false)
-     |> assign(:wingman_reload_count, reload_count)}
+     |> assign(:wingman_loading, false)}
   end
 
   @impl true
@@ -2217,13 +2084,5 @@ defmodule AniminaWeb.MessagesLive do
       user = socket.assigns.current_scope.user
       Messaging.save_draft(conversation_data.conversation.id, user.id, content)
     end
-  end
-
-  defp wingman_style_options do
-    [
-      {"casual", gettext("Casual")},
-      {"funny", gettext("Funny")},
-      {"empathetic", gettext("Empathetic")}
-    ]
   end
 end

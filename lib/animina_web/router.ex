@@ -130,9 +130,6 @@ defmodule AniminaWeb.Router do
       # Language
       live "/my/settings/language", UserLive.LanguageSettings, :edit
 
-      # Wingman
-      live "/my/settings/wingman", UserLive.WingmanSettings, :index
-
       # Logs
       live "/my/logs", UserLive.LogsHub, :index
       live "/my/logs/emails", UserLive.EmailLogs, :index

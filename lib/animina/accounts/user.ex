@@ -11,8 +11,6 @@ defmodule Animina.Accounts.User do
 
   @valid_genders ~w(male female diverse)
   @valid_languages ~w(de en tr ru ar pl fr es uk)
-  @valid_wingman_styles ~w(casual funny empathetic)
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -75,9 +73,6 @@ defmodule Animina.Accounts.User do
 
     # Privacy
     field :hide_online_status, :boolean, default: false
-
-    # Wingman AI coaching style
-    field :wingman_style, :string, default: "casual"
 
     # Ad attribution
     belongs_to :source_ad, Animina.Ads.Ad, foreign_key: :source_ad_id
@@ -587,20 +582,5 @@ defmodule Animina.Accounts.User do
     user
     |> cast(attrs, [:state, :suspended_until, :ban_reason])
     |> validate_inclusion(:state, ~w(waitlisted normal suspended banned))
-  end
-
-  @doc """
-  Returns the list of valid wingman styles.
-  """
-  def valid_wingman_styles, do: @valid_wingman_styles
-
-  @doc """
-  A changeset for updating the wingman coaching style.
-  """
-  def wingman_style_changeset(user, attrs) do
-    user
-    |> cast(attrs, [:wingman_style])
-    |> validate_required([:wingman_style])
-    |> validate_inclusion(:wingman_style, @valid_wingman_styles)
   end
 end

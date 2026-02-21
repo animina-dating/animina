@@ -46,12 +46,6 @@ defmodule AniminaWeb.UserLive.SettingsHub do
             title={gettext("Language")}
             subtitle={@language_preview}
           />
-          <.hub_card
-            navigate={~p"/my/settings/wingman"}
-            icon="hero-light-bulb"
-            title={gettext("Wingman Style")}
-            subtitle={@wingman_preview}
-          />
         </div>
       </div>
     </Layouts.app>
@@ -81,7 +75,6 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:privacy_preview, build_privacy_preview(user))
       |> assign(:profile_preview, profile_preview)
-      |> assign(:wingman_preview, wingman_style_label(user.wingman_style || "casual"))
 
     {:ok, socket}
   end
@@ -93,9 +86,4 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       gettext("Online status visible")
     end
   end
-
-  defp wingman_style_label("casual"), do: gettext("Casual")
-  defp wingman_style_label("funny"), do: gettext("Funny")
-  defp wingman_style_label("empathetic"), do: gettext("Empathetic")
-  defp wingman_style_label(_), do: gettext("Casual")
 end
