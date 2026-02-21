@@ -39,16 +39,12 @@ defmodule AniminaWeb.Admin.AnalyticsOverviewLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-5xl mx-auto">
-        <div class="mb-6">
-          <.link navigate={~p"/admin"} class="text-sm text-base-content/60 hover:text-base-content">
-            &larr; {gettext("Admin")}
-          </.link>
-        </div>
-
-        <.header>
-          {gettext("Analytics")}
-          <:subtitle>{gettext("Self-hosted page view and engagement analytics")}</:subtitle>
-        </.header>
+        <.page_header
+          title={gettext("Analytics")}
+          subtitle={gettext("Self-hosted page view and engagement analytics")}
+        >
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+        </.page_header>
 
         <%!-- Sub-page navigation cards --%>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6 mb-8">

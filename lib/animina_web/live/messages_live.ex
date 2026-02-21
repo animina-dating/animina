@@ -28,6 +28,7 @@ defmodule AniminaWeb.MessagesLive do
   alias Animina.Photos
   alias Animina.Relationships
   alias Animina.Wingman
+  alias Animina.TimeMachine
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
@@ -757,7 +758,7 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   defp within_delete_window?(message) do
-    age_seconds = DateTime.diff(DateTime.utc_now(), message.inserted_at, :second)
+    age_seconds = DateTime.diff(TimeMachine.utc_now(), message.inserted_at, :second)
     age_seconds <= Messaging.delete_window_seconds()
   end
 
@@ -1009,7 +1010,7 @@ defmodule AniminaWeb.MessagesLive do
   # --- Time formatting helpers ---
 
   defp format_time(datetime) do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
     diff_days = Date.diff(DateTime.to_date(now), DateTime.to_date(datetime))
 
     cond do
@@ -1030,7 +1031,7 @@ defmodule AniminaWeb.MessagesLive do
   defp format_message_time(datetime), do: format_relative_time(datetime)
 
   defp format_date_label(date) do
-    today = Date.utc_today()
+    today = TimeMachine.utc_today()
     diff = Date.diff(today, date)
 
     cond do
@@ -1125,7 +1126,7 @@ defmodule AniminaWeb.MessagesLive do
     do: gettext("Read %{time}", time: format_relative_time(datetime))
 
   defp format_relative_time(datetime) do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
     diff_seconds = DateTime.diff(now, datetime, :second)
     diff_days = Date.diff(DateTime.to_date(now), DateTime.to_date(datetime))
 
@@ -1292,11 +1293,31 @@ defmodule AniminaWeb.MessagesLive do
 
   defp subscribe_to_conversation(socket, conversation_id) do
     if connected?(socket) do
+      # Unsubscribe from previous conversation topics if switching conversations
+      unsubscribe_from_conversation(socket)
+
       Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.conversation_topic(conversation_id))
       Phoenix.PubSub.subscribe(Animina.PubSub, Messaging.typing_topic(conversation_id))
 
       user_id = socket.assigns.current_scope.user.id
       Phoenix.PubSub.subscribe(Animina.PubSub, Wingman.suggestion_topic(conversation_id, user_id))
+    end
+  end
+
+  defp unsubscribe_from_conversation(socket) do
+    case socket.assigns[:conversation_data] do
+      %{conversation: %{id: old_id}} ->
+        user_id = socket.assigns.current_scope.user.id
+        Phoenix.PubSub.unsubscribe(Animina.PubSub, Messaging.conversation_topic(old_id))
+        Phoenix.PubSub.unsubscribe(Animina.PubSub, Messaging.typing_topic(old_id))
+        Phoenix.PubSub.unsubscribe(Animina.PubSub, Wingman.suggestion_topic(old_id, user_id))
+
+        if rel = socket.assigns[:relationship] do
+          Phoenix.PubSub.unsubscribe(Animina.PubSub, Relationships.relationship_topic(rel.id))
+        end
+
+      _ ->
+        :ok
     end
   end
 
@@ -1470,48 +1491,62 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_event("reload_wingman", _params, socket) do
     user = socket.assigns.current_scope.user
-    conversation_id = socket.assigns.conversation_data.conversation.id
-    other_user = socket.assigns.conversation_data.other_user
+    conversation_data = socket.assigns.conversation_data
 
-    if Wingman.can_reload?(conversation_id, user.id) do
-      Wingman.clear_feedback_for_conversation(user.id, conversation_id)
-
-      Wingman.refresh_suggestions(conversation_id, user.id, other_user.id, increment_count: true)
-
-      new_count = Wingman.get_regeneration_count(conversation_id, user.id)
-
-      {:noreply,
-       socket
-       |> assign(:wingman_loading, true)
-       |> assign(:wingman_suggestions, nil)
-       |> assign(:wingman_dismissed, false)
-       |> assign(:wingman_feedback, %{})
-       |> assign(:wingman_reload_count, new_count)}
-    else
+    if is_nil(conversation_data) do
       {:noreply, socket}
+    else
+      conversation_id = conversation_data.conversation.id
+      other_user = conversation_data.other_user
+
+      if Wingman.can_reload?(conversation_id, user.id) do
+        Wingman.clear_feedback_for_conversation(user.id, conversation_id)
+
+        Wingman.refresh_suggestions(conversation_id, user.id, other_user.id,
+          increment_count: true
+        )
+
+        new_count = Wingman.get_regeneration_count(conversation_id, user.id)
+
+        {:noreply,
+         socket
+         |> assign(:wingman_loading, true)
+         |> assign(:wingman_suggestions, nil)
+         |> assign(:wingman_dismissed, false)
+         |> assign(:wingman_feedback, %{})
+         |> assign(:wingman_reload_count, new_count)}
+      else
+        {:noreply, socket}
+      end
     end
   end
 
   @impl true
   def handle_event("wingman_feedback", %{"index" => idx_str, "rating" => rating_str}, socket) do
-    user = socket.assigns.current_scope.user
-    conversation_id = socket.assigns.conversation_data.conversation.id
-    idx = String.to_integer(idx_str)
-    value = String.to_integer(rating_str)
+    conversation_data = socket.assigns.conversation_data
 
-    suggestion = Enum.at(socket.assigns.wingman_suggestions || [], idx)
-
-    if suggestion do
-      suggestion_data = %{
-        text: suggestion["text"],
-        hook: suggestion["hook"]
-      }
-
-      Wingman.toggle_feedback(user.id, conversation_id, idx, value, suggestion_data)
-      feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
-      {:noreply, assign(socket, :wingman_feedback, feedback_map)}
-    else
+    if is_nil(conversation_data) do
       {:noreply, socket}
+    else
+      user = socket.assigns.current_scope.user
+      conversation_id = conversation_data.conversation.id
+      idx = String.to_integer(idx_str)
+      value = String.to_integer(rating_str)
+
+      suggestion = Enum.at(socket.assigns.wingman_suggestions || [], idx)
+
+      if suggestion do
+        suggestion_data = %{
+          text: suggestion["text"],
+          hook: suggestion["hook"]
+        }
+
+        Wingman.toggle_feedback(user.id, conversation_id, idx, value, suggestion_data)
+        feedback_map = Wingman.get_feedback_for_suggestions(user.id, conversation_id)
+        {:noreply, assign(socket, :wingman_feedback, feedback_map)}
+      else
+        {:noreply, socket}
+      end
     end
   end
 
@@ -1685,29 +1720,34 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_event("execute_relationship_action", _params, socket) do
-    {_title, _desc, _btn_label, target_status} = socket.assigns.confirm_action
-    relationship = socket.assigns.relationship
-    user_id = socket.assigns.current_scope.user.id
+    case socket.assigns.confirm_action do
+      {_title, _desc, _btn_label, target_status} ->
+        relationship = socket.assigns.relationship
+        user_id = socket.assigns.current_scope.user.id
 
-    case Relationships.transition_status(relationship, target_status, user_id) do
-      {:ok, updated} ->
-        socket =
-          socket
-          |> assign(relationship: updated, confirm_action: nil)
-          |> put_flash(:info, gettext("Relationship updated"))
+        case Relationships.transition_status(relationship, target_status, user_id) do
+          {:ok, updated} ->
+            socket =
+              socket
+              |> assign(relationship: updated, confirm_action: nil)
+              |> put_flash(:info, gettext("Relationship updated"))
 
-        # Redirect to index if conversation is now ended/blocked
-        if target_status in ["ended", "blocked"] do
-          {:noreply, push_navigate(socket, to: ~p"/my/messages")}
-        else
-          {:noreply, socket}
+            # Redirect to index if conversation is now ended/blocked
+            if target_status in ["ended", "blocked"] do
+              {:noreply, push_navigate(socket, to: ~p"/my/messages")}
+            else
+              {:noreply, socket}
+            end
+
+          {:error, _reason} ->
+            {:noreply,
+             socket
+             |> assign(:confirm_action, nil)
+             |> put_flash(:error, gettext("Could not update relationship"))}
         end
 
-      {:error, _reason} ->
-        {:noreply,
-         socket
-         |> assign(:confirm_action, nil)
-         |> put_flash(:error, gettext("Could not update relationship"))}
+      nil ->
+        {:noreply, socket}
     end
   end
 

@@ -41,19 +41,13 @@ defmodule AniminaWeb.Admin.AnalyticsEngagementLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-5xl mx-auto">
-        <div class="mb-6">
-          <.link
-            navigate={~p"/admin/analytics"}
-            class="text-sm text-base-content/60 hover:text-base-content"
-          >
-            &larr; {gettext("Analytics")}
-          </.link>
-        </div>
-
-        <.header>
-          {gettext("Engagement")}
-          <:subtitle>{gettext("User activity and feature usage")}</:subtitle>
-        </.header>
+        <.page_header
+          title={gettext("Engagement")}
+          subtitle={gettext("User activity and feature usage")}
+        >
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/analytics"}>{gettext("Analytics")}</:crumb>
+        </.page_header>
 
         <%!-- Date range selector --%>
         <div class="flex gap-2 mt-4 mb-6">

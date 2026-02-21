@@ -23,14 +23,7 @@ defmodule Animina.Discovery do
   The dismissed user will never appear in suggestions again for this viewer.
   """
   def dismiss_user(viewer, dismissed_user) do
-    attrs = %{
-      user_id: viewer.id,
-      dismissed_id: dismissed_user.id
-    }
-
-    %Dismissal{}
-    |> Dismissal.changeset(attrs)
-    |> Repo.insert(on_conflict: :nothing, conflict_target: [:user_id, :dismissed_id])
+    dismiss_user_by_id(viewer.id, dismissed_user.id)
   end
 
   @doc """

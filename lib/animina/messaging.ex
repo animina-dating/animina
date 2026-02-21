@@ -651,15 +651,18 @@ defmodule Animina.Messaging do
 
   # --- Helpers ---
 
-  defp participant?(conversation_id, user_id) do
+  defp participant_query(conversation_id, user_id) do
     ConversationParticipant
     |> where([p], p.conversation_id == ^conversation_id and p.user_id == ^user_id)
+  end
+
+  defp participant?(conversation_id, user_id) do
+    participant_query(conversation_id, user_id)
     |> Repo.exists?()
   end
 
   defp get_participant(conversation_id, user_id) do
-    ConversationParticipant
-    |> where([p], p.conversation_id == ^conversation_id and p.user_id == ^user_id)
+    participant_query(conversation_id, user_id)
     |> Repo.one()
   end
 

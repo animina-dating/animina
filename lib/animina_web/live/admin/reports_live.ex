@@ -34,12 +34,12 @@ defmodule AniminaWeb.Admin.ReportsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-6xl mx-auto">
-        <div class="mb-6">
-          <.header>
-            {gettext("User Reports")}
-            <:subtitle>{gettext("Review and resolve user reports")}</:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("User Reports")}
+          subtitle={gettext("Review and resolve user reports")}
+        >
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+        </.page_header>
 
         <div :if={@selected_report} class="mb-6">
           <.report_detail

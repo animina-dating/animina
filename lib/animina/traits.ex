@@ -9,6 +9,8 @@ defmodule Animina.Traits do
 
   import Ecto.Query
 
+  require Logger
+
   alias Animina.Accounts.User
   alias Animina.ActivityLog
   alias Animina.Repo
@@ -285,16 +287,7 @@ defmodule Animina.Traits do
       category = flag.category
 
       if category.exclusive_hard do
-        from(uf in UserFlag,
-          join: f in Flag,
-          on: f.id == uf.flag_id,
-          where:
-            uf.user_id == ^user_id and
-              uf.color == ^color and
-              uf.inherited == false and
-              f.category_id == ^category.id and
-              uf.flag_id != ^flag_id
-        )
+        other_flags_in_category_query(user_id, flag_id, color, category.id)
         |> Repo.exists?()
       else
         false
@@ -308,17 +301,8 @@ defmodule Animina.Traits do
 
     if category.exclusive_hard && color != "white" do
       other_flags =
-        from(uf in UserFlag,
-          join: f in Flag,
-          on: f.id == uf.flag_id,
-          where:
-            uf.user_id == ^user.id and
-              uf.color == ^color and
-              uf.inherited == false and
-              f.category_id == ^category.id and
-              uf.flag_id != ^flag_id,
-          select: uf.id
-        )
+        other_flags_in_category_query(user.id, flag_id, color, category.id)
+        |> select([uf], uf.id)
         |> Repo.all()
 
       Enum.each(other_flags, fn uf_id ->
@@ -336,21 +320,25 @@ defmodule Animina.Traits do
     category = flag.category
 
     if Validations.single_select_enforced?(category.selection_mode, color) do
-      from(uf in UserFlag,
-        join: f in Flag,
-        on: f.id == uf.flag_id,
-        where:
-          uf.user_id == ^user_id and
-            uf.color == ^color and
-            uf.inherited == false and
-            f.category_id == ^category.id and
-            uf.flag_id != ^flag_id,
-        preload: [:flag]
-      )
+      other_flags_in_category_query(user_id, flag_id, color, category.id)
+      |> preload([:flag])
       |> Repo.one()
     else
       nil
     end
+  end
+
+  defp other_flags_in_category_query(user_id, flag_id, color, category_id) do
+    from(uf in UserFlag,
+      join: f in Flag,
+      on: f.id == uf.flag_id,
+      where:
+        uf.user_id == ^user_id and
+          uf.color == ^color and
+          uf.inherited == false and
+          f.category_id == ^category_id and
+          uf.flag_id != ^flag_id
+    )
   end
 
   def list_user_flags(user, color) do
@@ -403,8 +391,16 @@ defmodule Animina.Traits do
       from(uf in UserFlag, where: uf.user_id == ^user.id)
       |> Repo.all()
 
-    Enum.each(flags, fn flag ->
-      PaperTrail.delete(flag, pt_opts)
+    results = Enum.map(flags, fn flag -> PaperTrail.delete(flag, pt_opts) end)
+
+    Enum.each(results, fn
+      {:error, changeset} ->
+        Logger.warning(
+          "[Traits] Failed to delete user flag for user #{user.id}: #{inspect(changeset.errors)}"
+        )
+
+      _ ->
+        :ok
     end)
 
     {:ok, length(flags)}
@@ -450,11 +446,32 @@ defmodule Animina.Traits do
       )
       |> Repo.all()
 
-    Enum.each(user_flags, fn uf -> PaperTrail.delete(uf, pt_opts) end)
+    Enum.each(user_flags, fn uf ->
+      case PaperTrail.delete(uf, pt_opts) do
+        {:error, changeset} ->
+          Logger.warning(
+            "[Traits] Failed to delete user flag #{uf.id} during category opt-out: #{inspect(changeset.errors)}"
+          )
+
+        _ ->
+          :ok
+      end
+    end)
 
     case Repo.get_by(UserCategoryOptIn, user_id: user.id, category_id: category.id) do
-      nil -> :ok
-      opt_in -> PaperTrail.delete(opt_in, pt_opts)
+      nil ->
+        :ok
+
+      opt_in ->
+        case PaperTrail.delete(opt_in, pt_opts) do
+          {:error, changeset} ->
+            Logger.warning(
+              "[Traits] Failed to delete category opt-in for user #{user.id}: #{inspect(changeset.errors)}"
+            )
+
+          _ ->
+            :ok
+        end
     end
 
     {:ok, :opted_out}
@@ -494,9 +511,20 @@ defmodule Animina.Traits do
 
     Enum.each(default_category_ids, fn category_id ->
       unless category_id in existing_published_ids do
-        %UserWhiteFlagCategoryPublish{}
-        |> UserWhiteFlagCategoryPublish.changeset(%{user_id: user.id, category_id: category_id})
-        |> PaperTrail.insert(pt_opts)
+        case %UserWhiteFlagCategoryPublish{}
+             |> UserWhiteFlagCategoryPublish.changeset(%{
+               user_id: user.id,
+               category_id: category_id
+             })
+             |> PaperTrail.insert(pt_opts) do
+          {:error, changeset} ->
+            Logger.warning(
+              "[Traits] Failed to create default published category for user #{user.id}: #{inspect(changeset.errors)}"
+            )
+
+          _ ->
+            :ok
+        end
       end
     end)
 

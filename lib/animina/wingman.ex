@@ -573,16 +573,22 @@ defmodule Animina.Wingman do
     }
   end
 
-  defp resolve_flag_names(flag_ids) do
-    flag_ids
-    |> Enum.map(fn flag_id ->
-      case Repo.get(Animina.Traits.Flag, flag_id) |> Repo.preload(:category) do
-        %{name: name, category: %{name: category_name}} ->
-          "#{category_name || ""}: #{name || ""}" |> String.trim()
+  defp resolve_flag_names([]), do: []
 
-        _ ->
-          nil
-      end
+  defp resolve_flag_names(flag_ids) do
+    flags =
+      from(f in Animina.Traits.Flag,
+        where: f.id in ^flag_ids,
+        preload: [:category]
+      )
+      |> Repo.all()
+
+    Enum.map(flags, fn
+      %{name: name, category: %{name: category_name}} ->
+        "#{category_name || ""}: #{name || ""}" |> String.trim()
+
+      _ ->
+        nil
     end)
     |> Enum.reject(&is_nil/1)
   end

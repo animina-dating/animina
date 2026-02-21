@@ -16,6 +16,7 @@ defmodule Animina.Photos do
   alias Animina.Photos.FileManagement
   alias Animina.Photos.Photo
   alias Animina.Repo
+  alias Animina.TimeMachine
 
   # --- Configuration helpers ---
 
@@ -318,7 +319,7 @@ defmodule Animina.Photos do
 
     query =
       if older_than_seconds > 0 do
-        cutoff = DateTime.add(DateTime.utc_now(), -older_than_seconds, :second)
+        cutoff = DateTime.add(TimeMachine.utc_now(), -older_than_seconds, :second)
         where(query, [p], p.updated_at < ^cutoff)
       else
         query

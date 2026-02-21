@@ -134,6 +134,7 @@ defmodule AniminaWeb.SpotlightLive do
       |> assign(:sidebar_open, false)
       |> assign(:conversations, [])
       |> assign(:conversation_avatars, %{})
+      |> assign(:online_user_ids, MapSet.new())
       |> assign(:unread_count, 0)
 
     if connected?(socket) do

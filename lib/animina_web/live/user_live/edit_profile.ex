@@ -57,7 +57,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
             </label>
             <input
               type="text"
-              value={Date.to_iso8601(@birthday)}
+              value={if @birthday, do: Date.to_iso8601(@birthday), else: ""}
               disabled
               class="input input-bordered w-full opacity-60"
             />

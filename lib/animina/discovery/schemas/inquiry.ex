@@ -30,8 +30,20 @@ defmodule Animina.Discovery.Schemas.Inquiry do
     inquiry
     |> cast(attrs, [:sender_id, :receiver_id, :inquiry_date])
     |> validate_required([:sender_id, :receiver_id, :inquiry_date])
+    |> validate_different_users(:sender_id, :receiver_id)
     |> foreign_key_constraint(:sender_id)
     |> foreign_key_constraint(:receiver_id)
     |> unique_constraint([:sender_id, :receiver_id])
+  end
+
+  defp validate_different_users(changeset, field_a, field_b) do
+    a = get_field(changeset, field_a)
+    b = get_field(changeset, field_b)
+
+    if a && b && a == b do
+      add_error(changeset, field_b, "must be different from #{field_a}")
+    else
+      changeset
+    end
   end
 end

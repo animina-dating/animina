@@ -345,6 +345,7 @@ defmodule AniminaWeb.UserLive.MyHub do
     |> assign(:unread_conversations, unread_conversations)
     |> assign(:conversation_avatars, conversation_avatars)
     |> assign(:total_conversation_count, length(conversations))
+    |> assign(:online_user_ids, MapSet.new())
     |> assign(:chat_open, false)
     |> assign(:chat_profile_user, nil)
     |> assign(:chat_conversation_id, nil)

@@ -30,12 +30,13 @@ defmodule AniminaWeb.Admin.ReportAppealsLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-6xl mx-auto">
-        <div class="mb-6">
-          <.header>
-            {gettext("Report Appeals")}
-            <:subtitle>{gettext("Review appeals from reported users")}</:subtitle>
-          </.header>
-        </div>
+        <.page_header
+          title={gettext("Report Appeals")}
+          subtitle={gettext("Review appeals from reported users")}
+        >
+          <:crumb navigate={~p"/admin"}>{gettext("Admin")}</:crumb>
+          <:crumb navigate={~p"/admin/reports"}>{gettext("Reports")}</:crumb>
+        </.page_header>
 
         <div :if={@selected_appeal} class="mb-6">
           <.appeal_detail

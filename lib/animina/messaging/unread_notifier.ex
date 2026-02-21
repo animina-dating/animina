@@ -59,8 +59,9 @@ defmodule Animina.Messaging.UnreadNotifier do
     |> select([u, cp, m], u.id)
     |> distinct(true)
     |> Repo.all()
-    |> Enum.map(&Repo.get(User, &1))
-    |> Enum.reject(&is_nil/1)
+    |> then(fn ids ->
+      from(u in User, where: u.id in ^ids) |> Repo.all()
+    end)
   end
 
   @doc """

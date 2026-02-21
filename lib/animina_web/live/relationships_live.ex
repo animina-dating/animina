@@ -9,6 +9,7 @@ defmodule AniminaWeb.RelationshipsLive do
 
   alias Animina.Accounts
   alias Animina.Relationships
+  alias Animina.TimeMachine
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @active_statuses ~w(couple married dating chatting friend)
@@ -160,7 +161,7 @@ defmodule AniminaWeb.RelationshipsLive do
   defp format_relative(nil), do: ""
 
   defp format_relative(datetime) do
-    now = DateTime.utc_now()
+    now = TimeMachine.utc_now()
     diff_days = Date.diff(DateTime.to_date(now), DateTime.to_date(datetime))
 
     cond do
@@ -207,6 +208,7 @@ defmodule AniminaWeb.RelationshipsLive do
        past_relationships: past_relationships,
        users: users,
        avatar_photos: avatar_photos,
+       online_user_ids: MapSet.new(),
        expanded_timeline: nil,
        milestones: []
      )}

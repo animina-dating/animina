@@ -25,8 +25,20 @@ defmodule Animina.Discovery.Schemas.ProfileVisit do
     profile_visit
     |> cast(attrs, [:visitor_id, :visited_id])
     |> validate_required([:visitor_id, :visited_id])
+    |> validate_different_users(:visitor_id, :visited_id)
     |> foreign_key_constraint(:visitor_id)
     |> foreign_key_constraint(:visited_id)
     |> unique_constraint([:visitor_id, :visited_id])
+  end
+
+  defp validate_different_users(changeset, field_a, field_b) do
+    a = get_field(changeset, field_a)
+    b = get_field(changeset, field_b)
+
+    if a && b && a == b do
+      add_error(changeset, field_b, "must be different from #{field_a}")
+    else
+      changeset
+    end
   end
 end
