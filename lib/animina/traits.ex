@@ -509,26 +509,27 @@ defmodule Animina.Traits do
 
     existing_published_ids = list_published_white_flag_category_ids(user)
 
-    Enum.each(default_category_ids, fn category_id ->
-      unless category_id in existing_published_ids do
-        case %UserWhiteFlagCategoryPublish{}
-             |> UserWhiteFlagCategoryPublish.changeset(%{
-               user_id: user.id,
-               category_id: category_id
-             })
-             |> PaperTrail.insert(pt_opts) do
-          {:error, changeset} ->
-            Logger.warning(
-              "[Traits] Failed to create default published category for user #{user.id}: #{inspect(changeset.errors)}"
-            )
-
-          _ ->
-            :ok
-        end
-      end
+    default_category_ids
+    |> Enum.reject(&(&1 in existing_published_ids))
+    |> Enum.each(fn category_id ->
+      insert_default_published_category(user.id, category_id, pt_opts)
     end)
 
     :ok
+  end
+
+  defp insert_default_published_category(user_id, category_id, pt_opts) do
+    case %UserWhiteFlagCategoryPublish{}
+         |> UserWhiteFlagCategoryPublish.changeset(%{user_id: user_id, category_id: category_id})
+         |> PaperTrail.insert(pt_opts) do
+      {:error, changeset} ->
+        Logger.warning(
+          "[Traits] Failed to create default published category for user #{user_id}: #{inspect(changeset.errors)}"
+        )
+
+      _ ->
+        :ok
+    end
   end
 
   @doc """

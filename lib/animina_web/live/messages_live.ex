@@ -27,8 +27,8 @@ defmodule AniminaWeb.MessagesLive do
   alias Animina.Messaging
   alias Animina.Photos
   alias Animina.Relationships
-  alias Animina.Wingman
   alias Animina.TimeMachine
+  alias Animina.Wingman
   alias AniminaWeb.Helpers.AvatarHelpers
 
   @impl true
@@ -1722,29 +1722,7 @@ defmodule AniminaWeb.MessagesLive do
   def handle_event("execute_relationship_action", _params, socket) do
     case socket.assigns.confirm_action do
       {_title, _desc, _btn_label, target_status} ->
-        relationship = socket.assigns.relationship
-        user_id = socket.assigns.current_scope.user.id
-
-        case Relationships.transition_status(relationship, target_status, user_id) do
-          {:ok, updated} ->
-            socket =
-              socket
-              |> assign(relationship: updated, confirm_action: nil)
-              |> put_flash(:info, gettext("Relationship updated"))
-
-            # Redirect to index if conversation is now ended/blocked
-            if target_status in ["ended", "blocked"] do
-              {:noreply, push_navigate(socket, to: ~p"/my/messages")}
-            else
-              {:noreply, socket}
-            end
-
-          {:error, _reason} ->
-            {:noreply,
-             socket
-             |> assign(:confirm_action, nil)
-             |> put_flash(:error, gettext("Could not update relationship"))}
-        end
+        do_execute_relationship_action(socket, target_status)
 
       nil ->
         {:noreply, socket}
@@ -1840,6 +1818,31 @@ defmodule AniminaWeb.MessagesLive do
       )
 
     {:noreply, socket}
+  end
+
+  defp do_execute_relationship_action(socket, target_status) do
+    relationship = socket.assigns.relationship
+    user_id = socket.assigns.current_scope.user.id
+
+    case Relationships.transition_status(relationship, target_status, user_id) do
+      {:ok, updated} ->
+        socket =
+          socket
+          |> assign(relationship: updated, confirm_action: nil)
+          |> put_flash(:info, gettext("Relationship updated"))
+
+        if target_status in ["ended", "blocked"] do
+          {:noreply, push_navigate(socket, to: ~p"/my/messages")}
+        else
+          {:noreply, socket}
+        end
+
+      {:error, _reason} ->
+        {:noreply,
+         socket
+         |> assign(:confirm_action, nil)
+         |> put_flash(:error, gettext("Could not update relationship"))}
+    end
   end
 
   # --- PubSub handlers ---
