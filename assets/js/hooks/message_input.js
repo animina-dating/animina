@@ -51,6 +51,26 @@ const MessageInput = {
       this.autoGrow()
     })
 
+    // Handle spellcheck result — set corrected text
+    this.handleEvent("spellcheck_result", ({input_id, text}) => {
+      if (input_id === this.el.id) {
+        this.el.value = text
+        this.saveDraft()
+        this.autoGrow()
+        this.el.dispatchEvent(new Event("input", { bubbles: true }))
+      }
+    })
+
+    // Handle undo spellcheck — restore original text
+    this.handleEvent("undo_spellcheck", ({input_id, text}) => {
+      if (input_id === this.el.id) {
+        this.el.value = text
+        this.saveDraft()
+        this.autoGrow()
+        this.el.dispatchEvent(new Event("input", { bubbles: true }))
+      }
+    })
+
     // Save draft to server before full page unload or LiveView navigation
     this._beforeUnload = () => {
       if (this.el.value) {

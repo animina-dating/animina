@@ -36,7 +36,9 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_suggestions: nil,
        wingman_loading: false,
        wingman_dismissed: false,
-       wingman_feedback: %{}
+       wingman_feedback: %{},
+       spellcheck_loading: false,
+       spellcheck_original: nil
      )}
   end
 
@@ -115,9 +117,26 @@ defmodule AniminaWeb.ChatPanelComponent do
      |> assign(:wingman_loading, false)}
   end
 
+  def update(%{chat_event: {:spellcheck_done, original, corrected}}, socket) do
+    {:ok,
+     socket
+     |> assign(:spellcheck_loading, false)
+     |> assign(:spellcheck_original, original)
+     |> assign(:form, to_form(%{"content" => corrected}, as: :message))}
+  end
+
+  def update(%{chat_event: :spellcheck_unchanged}, socket) do
+    {:ok, assign(socket, :spellcheck_loading, false)}
+  end
+
+  def update(%{chat_event: :spellcheck_error}, socket) do
+    {:ok, assign(socket, :spellcheck_loading, false)}
+  end
+
   def update(assigns, socket) do
     socket =
       socket
+      |> assign(:id, assigns.id)
       |> assign(:current_user_id, assigns.current_user_id)
       |> assign(:profile_user, assigns.profile_user)
       |> assign(:open, assigns.open)
@@ -313,6 +332,9 @@ defmodule AniminaWeb.ChatPanelComponent do
           size={:sm}
           phx_target={@myself}
           typing_event="chat_typing"
+          spellcheck_enabled={FeatureFlags.spellcheck_enabled?()}
+          spellcheck_loading={@spellcheck_loading}
+          spellcheck_has_undo={@spellcheck_original != nil}
         />
       </div>
     </div>
@@ -519,6 +541,30 @@ defmodule AniminaWeb.ChatPanelComponent do
     end
   end
 
+  def handle_event("spellcheck", _params, socket) do
+    content = socket.assigns.form[:content].value
+
+    if is_binary(content) && String.trim(content) != "" do
+      send(self(), {:chat_panel_spellcheck, socket.assigns.id, String.trim(content)})
+      {:noreply, assign(socket, :spellcheck_loading, true)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("undo_spellcheck", _params, socket) do
+    case socket.assigns.spellcheck_original do
+      nil ->
+        {:noreply, socket}
+
+      original ->
+        {:noreply,
+         socket
+         |> assign(:spellcheck_original, nil)
+         |> assign(:form, to_form(%{"content" => original}, as: :message))}
+    end
+  end
+
   def handle_event("close_panel", _params, socket) do
     # Save draft to server before closing so it persists on reopen
     content = socket.assigns.form[:content].value
@@ -619,6 +665,7 @@ defmodule AniminaWeb.ChatPanelComponent do
          |> assign(:messages, messages)
          |> assign(:grouped_messages, group_messages(messages))
          |> assign(:form, to_form(%{"content" => ""}, as: :message))
+         |> assign(:spellcheck_original, nil)
          |> update_last_read_message_id()}
 
       {:error, :blocked} ->

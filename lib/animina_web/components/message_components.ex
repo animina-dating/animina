@@ -32,6 +32,9 @@ defmodule AniminaWeb.MessageComponents do
   attr :size, :atom, default: :default, values: [:default, :sm]
   attr :phx_target, :any, default: nil
   attr :typing_event, :string, default: "typing"
+  attr :spellcheck_enabled, :boolean, default: false
+  attr :spellcheck_loading, :boolean, default: false
+  attr :spellcheck_has_undo, :boolean, default: false
 
   def chat_input(assigns) do
     assigns =
@@ -71,8 +74,35 @@ defmodule AniminaWeb.MessageComponents do
               <.icon name="hero-paper-airplane" class={@icon_class} />
             </button>
           </div>
-          <div class={hint_class(@size)}>
-            {gettext("**bold** *italic* `code` — Enter to send, Shift+Enter for new line")}
+          <div class={[hint_class(@size), "flex items-center justify-between gap-2"]}>
+            <span class="truncate">
+              {gettext("**bold** *italic* `code` — Enter to send, Shift+Enter for new line")}
+            </span>
+            <span :if={@spellcheck_enabled} class="flex items-center gap-2 shrink-0">
+              <button
+                :if={@spellcheck_has_undo}
+                type="button"
+                phx-click="undo_spellcheck"
+                phx-target={@phx_target}
+                class="link link-primary"
+              >
+                {gettext("Undo")}
+              </button>
+              <%= if @spellcheck_loading do %>
+                <span class="flex items-center gap-1 text-base-content/50">
+                  <span class={spellcheck_spinner_class(@size)} />
+                </span>
+              <% else %>
+                <button
+                  type="button"
+                  phx-click="spellcheck"
+                  phx-target={@phx_target}
+                  class="link link-hover text-base-content/50 hover:text-primary whitespace-nowrap"
+                >
+                  {gettext("Check spelling & grammar")}
+                </button>
+              <% end %>
+            </span>
           </div>
         </.form>
       <% end %>
@@ -93,6 +123,9 @@ defmodule AniminaWeb.MessageComponents do
 
   defp icon_class(:default), do: "h-5 w-5"
   defp icon_class(:sm), do: "h-4 w-4"
+
+  defp spellcheck_spinner_class(:default), do: "loading loading-spinner loading-xs"
+  defp spellcheck_spinner_class(:sm), do: "loading loading-spinner loading-xs"
 
   defp wrapper_class(:default), do: "pt-4 border-t border-base-300"
   defp wrapper_class(:sm), do: "px-4 py-3 border-t border-base-300"

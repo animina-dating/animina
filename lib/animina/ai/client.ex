@@ -24,7 +24,8 @@ defmodule Animina.AI.Client do
           prompt: String.t(),
           images: [String.t()],
           target_server: String.t(),
-          instance_filter: (map() -> boolean())
+          instance_filter: (map() -> boolean()),
+          api_opts: keyword()
         ]
 
   @failover_eligible_errors [
@@ -49,6 +50,7 @@ defmodule Animina.AI.Client do
   - `:images` — list of base64-encoded images
   - `:target_server` — pin to a specific server URL
   - `:instance_filter` — function `(instance_map) -> boolean` to pre-filter instances
+  - `:api_opts` — extra keyword options passed through to `Ollama.completion/2` (e.g. `think: false`)
 
   Returns:
   - `{:ok, response, server_url}` on success
@@ -65,14 +67,16 @@ defmodule Animina.AI.Client do
     images = Keyword.get(opts, :images, [])
     target_server = Keyword.get(opts, :target_server)
     instance_filter = Keyword.get(opts, :instance_filter)
+    api_opts = Keyword.get(opts, :api_opts, [])
 
     instances = ollama_instances()
     total_timeout = AI.config(:ollama_total_timeout, 300_000)
     deadline = System.monotonic_time(:millisecond) + total_timeout
 
     instances_to_try = resolve_instances(instances, target_server, instance_filter)
+    req = %{model: model, prompt: prompt, images: images, api_opts: api_opts}
 
-    try_instances(instances_to_try, model, prompt, images, deadline, [])
+    try_instances(instances_to_try, req, deadline, [])
   end
 
   @doc """
@@ -227,12 +231,12 @@ defmodule Animina.AI.Client do
     end
   end
 
-  defp try_instances([], _model, _prompt, _images, _deadline, errors) do
+  defp try_instances([], _req, _deadline, errors) do
     Logger.error("All AI instances failed: #{inspect(errors)}")
     {:error, :all_instances_unavailable}
   end
 
-  defp try_instances([instance | rest], model, prompt, images, deadline, errors) do
+  defp try_instances([instance | rest], req, deadline, errors) do
     remaining = deadline - System.monotonic_time(:millisecond)
 
     if remaining <= 0 do
@@ -247,49 +251,44 @@ defmodule Animina.AI.Client do
 
       start_ms = System.monotonic_time(:millisecond)
 
-      case do_request(instance.url, model, prompt, images, timeout) do
+      case do_request(instance.url, req, timeout) do
         {:ok, response} ->
           duration_ms = System.monotonic_time(:millisecond) - start_ms
           HealthTracker.record_success(instance.url, duration_ms)
           {:ok, response, instance.url}
 
         {:error, reason} ->
-          parsed_error = parse_error(reason)
-          HealthTracker.record_failure(instance.url, parsed_error)
-
-          handle_request_error(
-            instance,
-            rest,
-            model,
-            prompt,
-            images,
-            deadline,
-            errors,
-            parsed_error
-          )
+          handle_request_error(instance, rest, req, deadline, errors, reason)
       end
     end
   end
 
-  defp handle_request_error(instance, rest, model, prompt, images, deadline, errors, parsed_error) do
+  defp handle_request_error(instance, rest, req, deadline, errors, reason) do
+    parsed_error = parse_error(reason)
+    HealthTracker.record_failure(instance.url, parsed_error)
+
     if failover_eligible_error?(parsed_error) do
       Logger.warning(
         "AI instance #{instance.url} failed with #{inspect(parsed_error)}, trying next"
       )
 
-      try_instances(rest, model, prompt, images, deadline, [
-        {instance.url, parsed_error} | errors
-      ])
+      try_instances(rest, req, deadline, [{instance.url, parsed_error} | errors])
     else
       Logger.error("AI request failed with non-retryable error: #{inspect(parsed_error)}")
       {:error, parsed_error}
     end
   end
 
-  defp do_request(url, model, prompt, images, timeout) do
+  defp do_request(
+         url,
+         %{model: model, prompt: prompt, images: images, api_opts: api_opts},
+         timeout
+       ) do
     client = Ollama.init(base_url: url, receive_timeout: timeout)
 
-    case Ollama.completion(client, model: model, prompt: prompt, images: images) do
+    base_opts = [model: model, prompt: prompt, images: images]
+
+    case Ollama.completion(client, Keyword.merge(base_opts, api_opts)) do
       {:ok, %{"response" => response_text} = response} ->
         Logger.debug("AI response: #{inspect(response_text)}")
         {:ok, response}

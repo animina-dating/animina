@@ -22,6 +22,7 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.RelationshipComponents
 
   alias Animina.Accounts.OnlineActivity
+  alias Animina.AI.SpellCheck
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -262,6 +263,9 @@ defmodule AniminaWeb.MessagesLive do
           form_id="message-form"
           draft_key={"draft:#{@current_scope.user.id}:#{@conversation_data && @conversation_data.other_user.id}"}
           blocked={@conversation_data != nil && @conversation_data.blocked}
+          spellcheck_enabled={FeatureFlags.spellcheck_enabled?()}
+          spellcheck_loading={@spellcheck_loading}
+          spellcheck_has_undo={@spellcheck_original != nil}
         />
       </div>
 
@@ -1136,7 +1140,10 @@ defmodule AniminaWeb.MessagesLive do
         wingman_suggestions: nil,
         wingman_loading: false,
         wingman_dismissed: false,
-        wingman_feedback: %{}
+        wingman_feedback: %{},
+        spellcheck_loading: false,
+        spellcheck_original: nil,
+        spellcheck_task: nil
       )
 
     # Handle start_with param to create/open a conversation
@@ -1450,6 +1457,7 @@ defmodule AniminaWeb.MessagesLive do
            socket
            |> assign(:form, to_form(%{"content" => ""}, as: :message))
            |> assign(:draft_save_timer, nil)
+           |> assign(:spellcheck_original, nil)
            |> push_event("clear_draft", %{})}
 
         {:error, :blocked} ->
@@ -1484,6 +1492,45 @@ defmodule AniminaWeb.MessagesLive do
   def handle_event("save_draft", %{"content" => content}, socket) do
     save_draft_now(socket, content)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("spellcheck", _params, socket) do
+    content = socket.assigns.form[:content].value
+
+    if is_binary(content) && String.trim(content) != "" do
+      user = socket.assigns.current_scope.user
+
+      task =
+        Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
+          SpellCheck.check_text(String.trim(content),
+            age: Animina.Accounts.compute_age(user.birthday),
+            gender: user.gender
+          )
+        end)
+
+      {:noreply,
+       socket
+       |> assign(:spellcheck_loading, true)
+       |> assign(:spellcheck_task, task.ref)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("undo_spellcheck", _params, socket) do
+    case socket.assigns.spellcheck_original do
+      nil ->
+        {:noreply, socket}
+
+      original ->
+        {:noreply,
+         socket
+         |> assign(:spellcheck_original, nil)
+         |> assign(:form, to_form(%{"content" => original}, as: :message))
+         |> push_event("undo_spellcheck", %{input_id: "message-input", text: original})}
+    end
   end
 
   @impl true
@@ -1823,6 +1870,52 @@ defmodule AniminaWeb.MessagesLive do
      socket
      |> assign(:wingman_suggestions, suggestions)
      |> assign(:wingman_loading, false)}
+  end
+
+  # --- Spellcheck task results ---
+
+  @impl true
+  def handle_info({ref, {:ok, corrected}}, socket) when socket.assigns.spellcheck_task == ref do
+    Process.demonitor(ref, [:flush])
+    original = socket.assigns.form[:content].value
+
+    if corrected == String.trim(original || "") do
+      {:noreply,
+       socket
+       |> assign(:spellcheck_loading, false)
+       |> assign(:spellcheck_task, nil)
+       |> put_flash(:info, gettext("Text looks good!"))}
+    else
+      {:noreply,
+       socket
+       |> assign(:spellcheck_loading, false)
+       |> assign(:spellcheck_task, nil)
+       |> assign(:spellcheck_original, original)
+       |> assign(:form, to_form(%{"content" => corrected}, as: :message))
+       |> push_event("spellcheck_result", %{input_id: "message-input", text: corrected})}
+    end
+  end
+
+  @impl true
+  def handle_info({ref, {:error, _reason}}, socket)
+      when socket.assigns.spellcheck_task == ref do
+    Process.demonitor(ref, [:flush])
+
+    {:noreply,
+     socket
+     |> assign(:spellcheck_loading, false)
+     |> assign(:spellcheck_task, nil)
+     |> put_flash(:error, gettext("Spell check unavailable right now"))}
+  end
+
+  @impl true
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, socket)
+      when socket.assigns.spellcheck_task == ref do
+    {:noreply,
+     socket
+     |> assign(:spellcheck_loading, false)
+     |> assign(:spellcheck_task, nil)
+     |> put_flash(:error, gettext("Spell check unavailable right now"))}
   end
 
   @impl true

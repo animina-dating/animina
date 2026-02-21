@@ -121,6 +121,20 @@ defmodule Animina.FeatureFlags do
       min_value: 0,
       max_value: 50
     },
+    # Spellcheck settings
+    %{
+      name: :spellcheck,
+      label: "Spell Check",
+      description: "LLM-powered spelling and grammar check for chat messages",
+      type: :flag
+    },
+    %{
+      name: :spellcheck_model,
+      label: "Spellcheck Model",
+      description: "Text model used for spell/grammar checking (small, fast model recommended)",
+      type: :string,
+      default_value: "qwen3:8b"
+    },
     # AI Scheduler settings
     %{
       name: :ai_scheduler_poll_interval,
@@ -764,5 +778,22 @@ defmodule Animina.FeatureFlags do
   """
   def wingman_cache_ttl do
     get_system_setting_value(:wingman_cache_ttl, 86_400)
+  end
+
+  # --- Spellcheck Settings ---
+
+  @doc """
+  Returns whether the spellcheck feature is enabled.
+  """
+  def spellcheck_enabled? do
+    enabled?(:spellcheck)
+  end
+
+  @doc """
+  Returns the AI model used for spell/grammar checking.
+  Default: "qwen3:8b"
+  """
+  def spellcheck_model do
+    get_system_setting_value(:spellcheck_model, "qwen3:8b")
   end
 end
