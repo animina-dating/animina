@@ -153,6 +153,16 @@ defmodule Animina.FeatureFlags do
       default_value: 5,
       min_value: 1,
       max_value: 20
+    },
+    %{
+      name: :ai_load_gate_threshold,
+      label: "AI Load Gate Threshold",
+      description:
+        "Suppress wingman and spellcheck when this many high-priority jobs (prio 1+2) are queued",
+      type: :integer,
+      default_value: 5,
+      min_value: 1,
+      max_value: 50
     }
   ]
 
@@ -795,5 +805,33 @@ defmodule Animina.FeatureFlags do
   """
   def spellcheck_model do
     get_system_setting_value(:spellcheck_model, "qwen3:8b")
+  end
+
+  # --- Load Gate ---
+
+  @doc """
+  Returns the load gate threshold for suppressing optional AI features.
+  Default: 5
+  """
+  def ai_load_gate_threshold do
+    get_system_setting_value(:ai_load_gate_threshold, 5)
+  end
+
+  @doc """
+  Returns whether wingman is available (enabled AND queue not overloaded).
+  """
+  def wingman_available? do
+    wingman_enabled?() and not ai_queue_overloaded?()
+  end
+
+  @doc """
+  Returns whether spellcheck is available (enabled AND queue not overloaded).
+  """
+  def spellcheck_available? do
+    spellcheck_enabled?() and not ai_queue_overloaded?()
+  end
+
+  defp ai_queue_overloaded? do
+    Animina.AI.high_priority_job_count() >= ai_load_gate_threshold()
   end
 end

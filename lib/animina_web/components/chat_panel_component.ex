@@ -41,8 +41,11 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_started_at: nil,
        wingman_estimated_ms: nil,
        wingman_queue_position: nil,
+       wingman_job_id: nil,
+       wingman_expiry_timer: nil,
        spellcheck_loading: false,
-       spellcheck_original: nil
+       spellcheck_original: nil,
+       last_spellchecked_text: nil
      )}
   end
 
@@ -121,16 +124,40 @@ defmodule AniminaWeb.ChatPanelComponent do
      |> assign(:wingman_loading, false)}
   end
 
+  def update(%{chat_event: {:wingman_expiry_check, job_id}}, socket) do
+    if socket.assigns.wingman_loading && socket.assigns.wingman_job_id == job_id do
+      job = Animina.AI.get_job(job_id)
+
+      if job && job.status in ~w(cancelled failed) do
+        {:ok,
+         socket
+         |> assign(:wingman_loading, false)
+         |> assign(:wingman_suggestions, nil)
+         |> assign(:wingman_dismissed, true)}
+      else
+        {:ok, socket}
+      end
+    else
+      {:ok, socket}
+    end
+  end
+
   def update(%{chat_event: {:spellcheck_done, original, corrected}}, socket) do
     {:ok,
      socket
      |> assign(:spellcheck_loading, false)
      |> assign(:spellcheck_original, original)
+     |> assign(:last_spellchecked_text, String.trim(corrected))
      |> assign(:form, to_form(%{"content" => corrected}, as: :message))}
   end
 
   def update(%{chat_event: :spellcheck_unchanged}, socket) do
-    {:ok, assign(socket, :spellcheck_loading, false)}
+    content = socket.assigns.form[:content].value
+
+    {:ok,
+     socket
+     |> assign(:spellcheck_loading, false)
+     |> assign(:last_spellchecked_text, String.trim(content || ""))}
   end
 
   def update(%{chat_event: :spellcheck_error}, socket) do
@@ -359,7 +386,7 @@ defmodule AniminaWeb.ChatPanelComponent do
           size={:sm}
           phx_target={@myself}
           typing_event="chat_typing"
-          spellcheck_enabled={FeatureFlags.spellcheck_enabled?()}
+          spellcheck_enabled={FeatureFlags.spellcheck_available?()}
           spellcheck_loading={@spellcheck_loading}
           spellcheck_has_undo={@spellcheck_original != nil}
         />
@@ -571,9 +598,15 @@ defmodule AniminaWeb.ChatPanelComponent do
   def handle_event("spellcheck", _params, socket) do
     content = socket.assigns.form[:content].value
 
-    if is_binary(content) && String.trim(content) != "" do
-      send(self(), {:chat_panel_spellcheck, socket.assigns.id, String.trim(content)})
-      {:noreply, assign(socket, :spellcheck_loading, true)}
+    if is_binary(content) && String.trim(content) != "" && FeatureFlags.spellcheck_available?() do
+      trimmed = String.trim(content)
+
+      if trimmed == socket.assigns.last_spellchecked_text do
+        {:noreply, socket}
+      else
+        send(self(), {:chat_panel_spellcheck, socket.assigns.id, trimmed})
+        {:noreply, assign(socket, :spellcheck_loading, true)}
+      end
     else
       {:noreply, socket}
     end
@@ -588,6 +621,7 @@ defmodule AniminaWeb.ChatPanelComponent do
         {:noreply,
          socket
          |> assign(:spellcheck_original, nil)
+         |> assign(:last_spellchecked_text, nil)
          |> assign(:form, to_form(%{"content" => original}, as: :message))}
     end
   end
@@ -693,6 +727,7 @@ defmodule AniminaWeb.ChatPanelComponent do
          |> assign(:grouped_messages, group_messages(messages))
          |> assign(:form, to_form(%{"content" => ""}, as: :message))
          |> assign(:spellcheck_original, nil)
+         |> assign(:last_spellchecked_text, nil)
          |> update_last_read_message_id()}
 
       {:error, :blocked} ->
@@ -767,7 +802,7 @@ defmodule AniminaWeb.ChatPanelComponent do
   end
 
   defp maybe_init_wingman(socket, assigns, messages) do
-    if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
+    if FeatureFlags.wingman_available?() && Enum.empty?(messages) do
       do_init_wingman(socket, assigns)
     else
       socket
@@ -816,12 +851,17 @@ defmodule AniminaWeb.ChatPanelComponent do
             nil -> {nil, nil}
           end
 
+        # Schedule expiry check slightly after the 60s job expiry
+        expiry_timer = Process.send_after(self(), {:wingman_expiry_check, job_id}, 65_000)
+
         assign(socket,
           wingman_loading: true,
           wingman_feedback: feedback_map,
           wingman_started_at: DateTime.to_iso8601(DateTime.utc_now()),
           wingman_estimated_ms: estimated_ms,
-          wingman_queue_position: queue_position
+          wingman_queue_position: queue_position,
+          wingman_job_id: job_id,
+          wingman_expiry_timer: expiry_timer
         )
 
       {:error, _reason} ->

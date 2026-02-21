@@ -120,6 +120,7 @@ defmodule Animina.AI.Scheduler do
   defp do_poll(state, opts) do
     state =
       if Keyword.get(opts, :maintenance, true) do
+        AI.cancel_expired_jobs()
         AI.reset_stuck_jobs(@stuck_job_timeout_seconds)
         HealthAlert.check(state)
       else

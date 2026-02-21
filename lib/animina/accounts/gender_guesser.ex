@@ -34,7 +34,8 @@ defmodule Animina.Accounts.GenderGuesser do
   defp guess_via_ollama(name) do
     case AI.execute_sync("gender_guess", %{"name" => name},
            subject_type: "User",
-           timeout: 30_000
+           timeout: 30_000,
+           expires_at: DateTime.utc_now() |> DateTime.add(20, :second)
          ) do
       {:ok, %{"gender" => gender}} ->
         {:ok, gender}

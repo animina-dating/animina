@@ -25,6 +25,7 @@ defmodule Animina.AI.Job do
     field :attempt, :integer, default: 0
     field :max_attempts, :integer, default: 20
     field :scheduled_at, :utc_datetime
+    field :expires_at, :utc_datetime
     field :params, :map
     field :result, :map
     field :model, :string
@@ -54,6 +55,7 @@ defmodule Animina.AI.Job do
       :status,
       :max_attempts,
       :scheduled_at,
+      :expires_at,
       :params,
       :model,
       :subject_type,

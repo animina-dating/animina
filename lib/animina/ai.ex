@@ -45,6 +45,7 @@ defmodule Animina.AI do
     * `:subject_id` - UUID of the subject entity
     * `:requester_id` - Who triggered it (nil = system)
     * `:model` - Override the default model
+    * `:expires_at` - Auto-cancel if not started by this time
   """
   def enqueue(job_type, params, opts \\ []) do
     case job_type_module(job_type) do
@@ -61,7 +62,8 @@ defmodule Animina.AI do
           subject_type: Keyword.get(opts, :subject_type),
           subject_id: Keyword.get(opts, :subject_id),
           requester_id: Keyword.get(opts, :requester_id),
-          model: Keyword.get(opts, :model)
+          model: Keyword.get(opts, :model),
+          expires_at: Keyword.get(opts, :expires_at)
         }
 
         %Job{}
@@ -486,6 +488,7 @@ defmodule Animina.AI do
     Job
     |> where([j], j.status in ~w(pending scheduled))
     |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
+    |> where([j], is_nil(j.expires_at) or j.expires_at > ^now)
     |> order_by([j], asc: j.priority, asc: j.inserted_at)
     |> limit(^limit)
     |> Repo.all()
@@ -650,6 +653,38 @@ defmodule Animina.AI do
     |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
     |> limit(1)
     |> Repo.exists?()
+  end
+
+  @doc """
+  Counts pending/scheduled/running high-priority jobs (priority <= 2) ready to run.
+  Used for load gating wingman and spellcheck.
+  """
+  def high_priority_job_count do
+    now = DateTime.utc_now()
+
+    Job
+    |> where([j], j.status in ~w(pending scheduled running))
+    |> where([j], j.priority <= 2)
+    |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
+    |> Repo.aggregate(:count)
+  end
+
+  @doc """
+  Cancels pending/scheduled jobs past their `expires_at`. Returns count.
+  """
+  def cancel_expired_jobs do
+    now = DateTime.utc_now()
+
+    {count, _} =
+      Job
+      |> where([j], j.status in ~w(pending scheduled))
+      |> where([j], not is_nil(j.expires_at) and j.expires_at <= ^now)
+      |> Repo.update_all(
+        set: [status: "cancelled", error: "Expired", updated_at: DateTime.utc_now()]
+      )
+
+    if count > 0, do: Logger.info("AI: Cancelled #{count} expired job(s)")
+    count
   end
 
   # --- Estimation helpers ---

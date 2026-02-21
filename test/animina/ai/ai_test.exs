@@ -510,4 +510,127 @@ defmodule Animina.AITest do
       refute AI.has_high_priority_demand?()
     end
   end
+
+  describe "high_priority_job_count/0" do
+    test "counts pending/scheduled/running prio 1+2 jobs" do
+      # prio 1 — counted
+      AI.enqueue("gender_guess", %{"name" => "alice"})
+      # prio 2 — counted
+      AI.enqueue("wingman_suggestion", %{
+        "prompt" => "p",
+        "conversation_id" => Ecto.UUID.generate(),
+        "user_id" => Ecto.UUID.generate(),
+        "context_hash" => "h"
+      })
+
+      # prio 4 — NOT counted
+      AI.enqueue("photo_description", %{"photo_id" => Ecto.UUID.generate()})
+
+      assert AI.high_priority_job_count() == 2
+    end
+
+    test "excludes future-scheduled jobs" do
+      future = DateTime.utc_now() |> DateTime.add(1, :hour)
+      AI.enqueue("gender_guess", %{"name" => "bob"}, scheduled_at: future)
+
+      assert AI.high_priority_job_count() == 0
+    end
+
+    test "includes running jobs" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "carol"})
+      {:ok, _running} = AI.mark_running(job)
+
+      assert AI.high_priority_job_count() == 1
+    end
+  end
+
+  describe "cancel_expired_jobs/0" do
+    test "cancels expired pending jobs" do
+      expired_at = DateTime.utc_now() |> DateTime.add(-10, :second)
+
+      {:ok, job} =
+        AI.enqueue("gender_guess", %{"name" => "test"}, expires_at: expired_at)
+
+      assert AI.cancel_expired_jobs() >= 1
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "cancelled"
+      assert updated.error == "Expired"
+    end
+
+    test "skips jobs without expires_at" do
+      {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"})
+
+      AI.cancel_expired_jobs()
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "pending"
+    end
+
+    test "skips running jobs" do
+      expired_at = DateTime.utc_now() |> DateTime.add(-10, :second)
+
+      {:ok, job} =
+        AI.enqueue("gender_guess", %{"name" => "test"}, expires_at: expired_at)
+
+      {:ok, _running} = AI.mark_running(job)
+
+      AI.cancel_expired_jobs()
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "running"
+    end
+
+    test "skips jobs not yet expired" do
+      future = DateTime.utc_now() |> DateTime.add(60, :second)
+
+      {:ok, job} =
+        AI.enqueue("gender_guess", %{"name" => "test"}, expires_at: future)
+
+      AI.cancel_expired_jobs()
+
+      updated = AI.get_job(job.id)
+      assert updated.status == "pending"
+    end
+  end
+
+  describe "list_runnable_jobs/1 with expiry" do
+    test "excludes expired jobs" do
+      expired_at = DateTime.utc_now() |> DateTime.add(-10, :second)
+
+      {:ok, expired_job} =
+        AI.enqueue("gender_guess", %{"name" => "expired"}, expires_at: expired_at)
+
+      {:ok, valid_job} = AI.enqueue("gender_guess", %{"name" => "valid"})
+
+      jobs = AI.list_runnable_jobs(10)
+      job_ids = Enum.map(jobs, & &1.id)
+
+      refute expired_job.id in job_ids
+      assert valid_job.id in job_ids
+    end
+
+    test "includes jobs with future expires_at" do
+      future = DateTime.utc_now() |> DateTime.add(60, :second)
+
+      {:ok, job} =
+        AI.enqueue("gender_guess", %{"name" => "future"}, expires_at: future)
+
+      jobs = AI.list_runnable_jobs(10)
+      job_ids = Enum.map(jobs, & &1.id)
+
+      assert job.id in job_ids
+    end
+  end
+
+  describe "enqueue/3 with expires_at" do
+    test "stores expires_at on the job" do
+      expires_at = DateTime.utc_now() |> DateTime.add(30, :second) |> DateTime.truncate(:second)
+
+      {:ok, job} =
+        AI.enqueue("gender_guess", %{"name" => "test"}, expires_at: expires_at)
+
+      assert job.expires_at == expires_at
+    end
+  end
 end

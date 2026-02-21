@@ -336,7 +336,10 @@ defmodule Animina.Wingman do
         "context_hash" => hash
       }
 
-      case AI.enqueue("wingman_suggestion", params, requester_id: user_id) do
+      case AI.enqueue("wingman_suggestion", params,
+             requester_id: user_id,
+             expires_at: DateTime.utc_now() |> DateTime.add(60, :second)
+           ) do
         {:ok, job} -> {:pending, job.id}
         error -> error
       end

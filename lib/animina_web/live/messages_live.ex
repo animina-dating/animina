@@ -284,7 +284,7 @@ defmodule AniminaWeb.MessagesLive do
           form_id="message-form"
           draft_key={"draft:#{@current_scope.user.id}:#{@conversation_data && @conversation_data.other_user.id}"}
           blocked={@conversation_data != nil && @conversation_data.blocked}
-          spellcheck_enabled={FeatureFlags.spellcheck_enabled?()}
+          spellcheck_enabled={FeatureFlags.spellcheck_available?()}
           spellcheck_loading={@spellcheck_loading}
           spellcheck_has_undo={@spellcheck_original != nil}
         />
@@ -1170,7 +1170,8 @@ defmodule AniminaWeb.MessagesLive do
         wingman_progress_timer: nil,
         spellcheck_loading: false,
         spellcheck_original: nil,
-        spellcheck_task: nil
+        spellcheck_task: nil,
+        last_spellchecked_text: nil
       )
 
     # Handle start_with param to create/open a conversation
@@ -1326,7 +1327,7 @@ defmodule AniminaWeb.MessagesLive do
     messages = socket.assigns.messages
 
     # Only show wingman for the very first chat (no messages yet)
-    if FeatureFlags.wingman_enabled?() && Enum.empty?(messages) do
+    if FeatureFlags.wingman_available?() && Enum.empty?(messages) do
       init_wingman(socket, conversation_id, user, other_user)
     else
       assign(socket,
@@ -1515,6 +1516,7 @@ defmodule AniminaWeb.MessagesLive do
            |> assign(:form, to_form(%{"content" => ""}, as: :message))
            |> assign(:draft_save_timer, nil)
            |> assign(:spellcheck_original, nil)
+           |> assign(:last_spellchecked_text, nil)
            |> push_event("clear_draft", %{})}
 
         {:error, :blocked} ->
@@ -1554,24 +1556,30 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_event("spellcheck", _params, socket) do
     content = socket.assigns.form[:content].value
+    trimmed = is_binary(content) && String.trim(content)
 
-    if is_binary(content) && String.trim(content) != "" do
-      user = socket.assigns.current_scope.user
+    cond do
+      !trimmed || trimmed == "" || !FeatureFlags.spellcheck_available?() ->
+        {:noreply, socket}
 
-      task =
-        Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
-          SpellCheck.check_text(String.trim(content),
-            age: Animina.Accounts.compute_age(user.birthday),
-            gender: user.gender
-          )
-        end)
+      trimmed == socket.assigns.last_spellchecked_text ->
+        {:noreply, socket}
 
-      {:noreply,
-       socket
-       |> assign(:spellcheck_loading, true)
-       |> assign(:spellcheck_task, task.ref)}
-    else
-      {:noreply, socket}
+      true ->
+        user = socket.assigns.current_scope.user
+
+        task =
+          Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
+            SpellCheck.check_text(trimmed,
+              age: Animina.Accounts.compute_age(user.birthday),
+              gender: user.gender
+            )
+          end)
+
+        {:noreply,
+         socket
+         |> assign(:spellcheck_loading, true)
+         |> assign(:spellcheck_task, task.ref)}
     end
   end
 
@@ -1585,6 +1593,7 @@ defmodule AniminaWeb.MessagesLive do
         {:noreply,
          socket
          |> assign(:spellcheck_original, nil)
+         |> assign(:last_spellchecked_text, nil)
          |> assign(:form, to_form(%{"content" => original}, as: :message))
          |> push_event("undo_spellcheck", %{input_id: "message-input", text: original})}
     end
@@ -1924,14 +1933,30 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_info(:wingman_progress_tick, socket) do
     if socket.assigns.wingman_loading && socket.assigns.wingman_estimated_ms do
-      elapsed = DateTime.diff(DateTime.utc_now(), socket.assigns.wingman_started_at, :millisecond)
-      progress = min(elapsed / socket.assigns.wingman_estimated_ms, 0.95)
-      timer = Process.send_after(self(), :wingman_progress_tick, 2_000)
+      # Check if the job was cancelled (expired)
+      job = socket.assigns[:wingman_job_id] && AI.get_job(socket.assigns.wingman_job_id)
 
-      {:noreply,
-       socket
-       |> assign(:wingman_progress, progress)
-       |> assign(:wingman_progress_timer, timer)}
+      if job && job.status in ~w(cancelled failed) do
+        cancel_wingman_timer(socket)
+
+        {:noreply,
+         socket
+         |> assign(:wingman_loading, false)
+         |> assign(:wingman_suggestions, nil)
+         |> assign(:wingman_dismissed, true)
+         |> assign(:wingman_progress_timer, nil)}
+      else
+        elapsed =
+          DateTime.diff(DateTime.utc_now(), socket.assigns.wingman_started_at, :millisecond)
+
+        progress = min(elapsed / socket.assigns.wingman_estimated_ms, 0.95)
+        timer = Process.send_after(self(), :wingman_progress_tick, 2_000)
+
+        {:noreply,
+         socket
+         |> assign(:wingman_progress, progress)
+         |> assign(:wingman_progress_timer, timer)}
+      end
     else
       {:noreply, assign(socket, :wingman_progress_timer, nil)}
     end
@@ -1961,6 +1986,7 @@ defmodule AniminaWeb.MessagesLive do
        socket
        |> assign(:spellcheck_loading, false)
        |> assign(:spellcheck_task, nil)
+       |> assign(:last_spellchecked_text, String.trim(original || ""))
        |> put_flash(:info, gettext("Text looks good!"))}
     else
       {:noreply,
@@ -1968,6 +1994,7 @@ defmodule AniminaWeb.MessagesLive do
        |> assign(:spellcheck_loading, false)
        |> assign(:spellcheck_task, nil)
        |> assign(:spellcheck_original, original)
+       |> assign(:last_spellchecked_text, String.trim(corrected))
        |> assign(:form, to_form(%{"content" => corrected}, as: :message))
        |> push_event("spellcheck_result", %{input_id: "message-input", text: corrected})}
     end
