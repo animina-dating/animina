@@ -43,11 +43,11 @@ defmodule AniminaWeb.StatusLiveTest do
       assert html =~ "Deployed At"
       assert html =~ "Uptime"
 
-      # Ollama Instances section
-      assert html =~ "Ollama Instances"
-      assert html =~ "Active"
-      assert html =~ "Inactive"
-      assert html =~ "Total Jobs"
+      # This Server heading
+      assert html =~ "This Server"
+
+      # Server Nodes section
+      assert html =~ "Server Nodes"
     end
 
     test "handles periodic refresh", %{conn: conn} do

@@ -173,24 +173,61 @@ defmodule AniminaWeb.StatusLive do
         :exit, _ -> []
       end
 
-    total = length(stats)
-    active = Enum.count(stats, &(&1.state in [:closed, :half_open]))
-    inactive = total - active
-
-    total_jobs = Enum.reduce(stats, 0, fn s, acc -> acc + s.job_count end)
-
-    tags =
+    # Ping all instances in parallel
+    pings =
       stats
-      |> Enum.flat_map(& &1.tags)
-      |> Enum.frequencies()
+      |> Task.async_stream(&ping_instance/1, timeout: 6_000, on_timeout: :kill_task)
+      |> Enum.map(fn
+        {:ok, result} -> result
+        _ -> nil
+      end)
 
-    assign(socket,
-      ollama_total: total,
-      ollama_active: active,
-      ollama_inactive: inactive,
-      ollama_total_jobs: total_jobs,
-      ollama_tags: tags
-    )
+    # Build node list with names
+    {nodes, _remote_counter} =
+      stats
+      |> Enum.zip(pings)
+      |> Enum.reduce({[], 1}, fn {stat, ping_ms}, {acc, counter} ->
+        if localhost?(stat.url) do
+          node = build_node("This Server", stat, ping_ms)
+          {[node | acc], counter}
+        else
+          node = build_node("ANIMINA Server #{counter}", stat, ping_ms)
+          {[node | acc], counter + 1}
+        end
+      end)
+
+    assign(socket, server_nodes: Enum.reverse(nodes))
+  end
+
+  defp build_node(name, stat, ping_ms) do
+    %{
+      name: name,
+      online?: stat.state in [:closed, :half_open],
+      ping_ms: ping_ms,
+      tags: stat.tags,
+      job_count: stat.job_count,
+      avg_duration_ms: stat.avg_duration_ms
+    }
+  end
+
+  defp ping_instance(stat) do
+    base_url = stat.url |> String.replace(~r{/api/?$}, "")
+
+    start = System.monotonic_time(:millisecond)
+
+    case Req.get(base_url, receive_timeout: 5_000, connect_options: [timeout: 5_000]) do
+      {:ok, %{status: 200}} ->
+        System.monotonic_time(:millisecond) - start
+
+      _ ->
+        nil
+    end
+  rescue
+    _ -> nil
+  end
+
+  defp localhost?(url) do
+    String.contains?(url, "localhost") or String.contains?(url, "127.0.0.1")
   end
 
   defp assign_user_stats(socket) do
@@ -742,21 +779,20 @@ defmodule AniminaWeb.StatusLive do
           </div>
         <% end %>
 
-        <div class="grid grid-cols-2 gap-6">
-          <%!-- Deployment --%>
+        <%!-- This Server --%>
+        <h2 class="text-lg font-semibold mb-4">This Server</h2>
+        <div class="grid grid-cols-2 gap-6 mb-8">
           <.section title="Deployment">
             <.row label="Deployed At" value={@deployed_at} />
             <.row label="Uptime" value={@uptime} />
           </.section>
 
-          <%!-- Versions --%>
           <.section title="Versions">
             <.row label="ANIMINA" value={@app_version} />
             <.row label="Elixir" value={@elixir_version} />
             <.row label="Erlang/OTP" value={@otp_version} />
           </.section>
 
-          <%!-- System Load --%>
           <.section title="System Load">
             <%= if @load_averages == :not_available do %>
               <.row label="Status" value="N/A" />
@@ -767,7 +803,6 @@ defmodule AniminaWeb.StatusLive do
             <% end %>
           </.section>
 
-          <%!-- BEAM Memory --%>
           <.section title="BEAM Memory">
             <.row label="Total" value={@beam_memory.total} />
             <.row label="Processes" value={@beam_memory.processes} />
@@ -776,7 +811,6 @@ defmodule AniminaWeb.StatusLive do
             <.row label="Binaries" value={@beam_memory.binaries} />
           </.section>
 
-          <%!-- System Memory --%>
           <.section title="System Memory">
             <%= if @system_memory == :not_available do %>
               <.row label="Status" value="N/A (not Linux)" />
@@ -787,7 +821,6 @@ defmodule AniminaWeb.StatusLive do
             <% end %>
           </.section>
 
-          <%!-- Database --%>
           <.section title="Database">
             <.row label="PostgreSQL">
               <span class={[
@@ -800,34 +833,6 @@ defmodule AniminaWeb.StatusLive do
             </.row>
           </.section>
 
-          <%!-- Ollama Instances --%>
-          <.section title="Ollama Instances">
-            <.row label="Total" value={@ollama_total} />
-            <.row label="Active">
-              <span class={[
-                "inline-flex items-center gap-1 font-medium",
-                @ollama_active > 0 && "text-green-800",
-                @ollama_active == 0 && "text-red-800"
-              ]}>
-                {if @ollama_active > 0, do: "● #{@ollama_active}", else: "● 0"}
-              </span>
-            </.row>
-            <.row label="Inactive">
-              <span class={[
-                "inline-flex items-center gap-1 font-medium",
-                @ollama_inactive == 0 && "text-green-800",
-                @ollama_inactive > 0 && "text-red-800"
-              ]}>
-                {if @ollama_inactive > 0, do: "● #{@ollama_inactive}", else: "● 0"}
-              </span>
-            </.row>
-            <.row label="Total Jobs" value={@ollama_total_jobs} />
-            <%= for {tag, count} <- @ollama_tags do %>
-              <.row label={"Tag: #{tag}"} value={count} />
-            <% end %>
-          </.section>
-
-          <%!-- BEAM / CPU Info --%>
           <.section title="BEAM / CPU Info">
             <%= if @cpu_info != :not_available do %>
               <.row label="CPU Model" value={@cpu_info.model} />
@@ -839,6 +844,55 @@ defmodule AniminaWeb.StatusLive do
             <.row label="Schedulers" value={@scheduler_count} />
             <.row label="Process Count" value={@process_count} />
           </.section>
+        </div>
+
+        <%!-- Server Nodes --%>
+        <h2 class="text-lg font-semibold mb-4">Server Nodes</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <%= for node <- @server_nodes do %>
+            <div class="bg-white rounded-lg border border-gray-200 p-4">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-sm font-semibold text-gray-900">{node.name}</h3>
+                <span class={[
+                  "inline-flex items-center gap-1 text-xs font-medium",
+                  node.online? && "text-green-700",
+                  !node.online? && "text-red-700"
+                ]}>
+                  <span class={[
+                    "inline-block w-2 h-2 rounded-full",
+                    node.online? && "bg-green-500",
+                    !node.online? && "bg-red-500"
+                  ]}>
+                  </span>
+                  {if node.online?, do: "Online", else: "Offline"}
+                </span>
+              </div>
+              <div class="space-y-1.5 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Ping</span>
+                  <span class="font-mono text-gray-900">
+                    {if node.ping_ms, do: "#{node.ping_ms} ms", else: "—"}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Tags</span>
+                  <span class="font-mono text-gray-900">
+                    {Enum.join(node.tags, ", ")}
+                  </span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Jobs</span>
+                  <span class="font-mono text-gray-900">{node.job_count}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Avg Response</span>
+                  <span class="font-mono text-gray-900">
+                    {if node.avg_duration_ms, do: "#{round(node.avg_duration_ms)} ms", else: "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
     </Layouts.app>
