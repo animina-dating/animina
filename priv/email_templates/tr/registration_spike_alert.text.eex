@@ -15,4 +15,4 @@ ANIMINA'da olağandışı yüksek bir kayıt sayısı tespit edildi.
 Saatlik dağılım (Avrupa/Berlin):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "kayıt", else: "kayıt" %>
 <% end %>
-Hata ayıklama genel bakış: https://animina.de/debug
+Durum genel bakışı: https://animina.de/status

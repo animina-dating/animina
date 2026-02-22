@@ -1,8 +1,9 @@
-defmodule AniminaWeb.DebugLive do
+defmodule AniminaWeb.StatusLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
   alias Animina.Accounts.Scope
+  alias Animina.AI.HealthTracker
   alias Ecto.Adapters.SQL
 
   @refresh_interval 5_000
@@ -28,8 +29,9 @@ defmodule AniminaWeb.DebugLive do
 
     socket =
       socket
-      |> assign(page_title: "System Debug")
+      |> assign(page_title: "System Status")
       |> assign_metrics()
+      |> assign_ollama_stats()
       |> assign_user_stats()
       |> assign_online_graph()
       |> assign_registration_graph()
@@ -44,6 +46,7 @@ defmodule AniminaWeb.DebugLive do
     {:noreply,
      socket
      |> assign_metrics()
+     |> assign_ollama_stats()
      |> assign_user_stats()
      |> assign_online_graph()
      |> assign_registration_graph()}
@@ -157,6 +160,36 @@ defmodule AniminaWeb.DebugLive do
       cpu_info: cpu_info(),
       deployed_at: format_deployed_at(),
       uptime: format_uptime()
+    )
+  end
+
+  defp assign_ollama_stats(socket) do
+    stats =
+      try do
+        HealthTracker.get_instance_stats()
+      rescue
+        _ -> []
+      catch
+        :exit, _ -> []
+      end
+
+    total = length(stats)
+    active = Enum.count(stats, &(&1.state in [:closed, :half_open]))
+    inactive = total - active
+
+    total_jobs = Enum.reduce(stats, 0, fn s, acc -> acc + s.job_count end)
+
+    tags =
+      stats
+      |> Enum.flat_map(& &1.tags)
+      |> Enum.frequencies()
+
+    assign(socket,
+      ollama_total: total,
+      ollama_active: active,
+      ollama_inactive: inactive,
+      ollama_total_jobs: total_jobs,
+      ollama_tags: tags
     )
   end
 
@@ -597,7 +630,7 @@ defmodule AniminaWeb.DebugLive do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div>
-        <h1 class="text-2xl font-bold mb-8">System Debug</h1>
+        <h1 class="text-2xl font-bold mb-8">System Status</h1>
 
         <%= if @current_scope && Scope.admin?(@current_scope) do %>
           <div class="grid grid-cols-3 gap-6 mb-8">
@@ -765,6 +798,33 @@ defmodule AniminaWeb.DebugLive do
                 {if @db_status == :ok, do: "● Connected", else: "● Unreachable"}
               </span>
             </.row>
+          </.section>
+
+          <%!-- Ollama Instances --%>
+          <.section title="Ollama Instances">
+            <.row label="Total" value={@ollama_total} />
+            <.row label="Active">
+              <span class={[
+                "inline-flex items-center gap-1 font-medium",
+                @ollama_active > 0 && "text-green-800",
+                @ollama_active == 0 && "text-red-800"
+              ]}>
+                {if @ollama_active > 0, do: "● #{@ollama_active}", else: "● 0"}
+              </span>
+            </.row>
+            <.row label="Inactive">
+              <span class={[
+                "inline-flex items-center gap-1 font-medium",
+                @ollama_inactive == 0 && "text-green-800",
+                @ollama_inactive > 0 && "text-red-800"
+              ]}>
+                {if @ollama_inactive > 0, do: "● #{@ollama_inactive}", else: "● 0"}
+              </span>
+            </.row>
+            <.row label="Total Jobs" value={@ollama_total_jobs} />
+            <%= for {tag, count} <- @ollama_tags do %>
+              <.row label={"Tag: #{tag}"} value={count} />
+            <% end %>
           </.section>
 
           <%!-- BEAM / CPU Info --%>

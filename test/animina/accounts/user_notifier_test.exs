@@ -40,7 +40,7 @@ defmodule Animina.Accounts.UserNotifierTest do
       {:ok, email} =
         UserNotifier.deliver_daily_new_users_report(3, {"Stefan", "stefan@example.com"})
 
-      assert email.text_body =~ "https://animina.de/debug"
+      assert email.text_body =~ "https://animina.de/status"
     end
 
     test "uses singular for count of 1" do
@@ -91,7 +91,7 @@ defmodule Animina.Accounts.UserNotifierTest do
           {"Stefan", "stefan@example.com"}
         )
 
-      assert email.text_body =~ "https://animina.de/debug"
+      assert email.text_body =~ "https://animina.de/status"
     end
   end
 

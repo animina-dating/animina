@@ -5,4 +5,4 @@ Hello,
 
 <%= if @count == 1 do %><%= @count %> new user registered and confirmed via PIN at ANIMINA in the last 24 hours.<% else %><%= @count %> new users registered and confirmed via PIN at ANIMINA in the last 24 hours.<% end %>
 
-Debug overview: https://animina.de/debug
+Status overview: https://animina.de/status

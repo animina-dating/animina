@@ -15,4 +15,4 @@
 Погодинний розподіл (Europe/Berlin):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "реєстрація", else: "реєстрацій" %>
 <% end %>
-Огляд налагодження: https://animina.de/debug
+Огляд статусу: https://animina.de/status

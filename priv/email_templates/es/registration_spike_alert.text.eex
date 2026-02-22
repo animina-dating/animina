@@ -15,4 +15,4 @@ Resumen:
 Desglose por hora (Europa/Berlín):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "registro", else: "registros" %>
 <% end %>
-Vista general de depuración: https://animina.de/debug
+Vista general de estado: https://animina.de/status

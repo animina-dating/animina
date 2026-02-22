@@ -33,7 +33,7 @@ defmodule AniminaWeb.Router do
         {AniminaWeb.AnalyticsHook, :track_page_view}
       ] do
       live "/", IndexLive
-      live "/debug", DebugLive
+      live "/status", StatusLive
       live "/datenschutz", PrivacyPolicyLive
       live "/agb", TermsOfServiceLive
       live "/impressum", ImpressumLive

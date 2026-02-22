@@ -15,4 +15,4 @@
 التوزيع بالساعة (أوروبا/برلين):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "تسجيل", else: "تسجيلات" %>
 <% end %>
-نظرة عامة للتصحيح: https://animina.de/debug
+نظرة عامة على الحالة: https://animina.de/status

@@ -64,7 +64,7 @@ defmodule AniminaWeb.LiveOnlineCountComponentTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       # Component is mounted with fids-digit spans for admin users.
       # Count may vary depending on other presence-tracked test processes.
@@ -75,7 +75,7 @@ defmodule AniminaWeb.LiveOnlineCountComponentTest do
       user = user_fixture()
       conn = log_in_user(conn, user)
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "fids-digit"
     end

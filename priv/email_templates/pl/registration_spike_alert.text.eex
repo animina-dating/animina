@@ -15,4 +15,4 @@ Podsumowanie:
 Podział godzinowy (Europe/Berlin):
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "rejestracja", else: "rejestracji" %>
 <% end %>
-Panel debugowania: https://animina.de/debug
+Panel statusu: https://animina.de/status

@@ -15,4 +15,4 @@ Résumé :
 Répartition horaire (Europe/Berlin) :
 <%= for {hour, count} <- @hourly_breakdown do %>  <%= String.pad_leading(Integer.to_string(hour), 2, "0") %>:00 - <%= count %> <%= if count == 1, do: "inscription", else: "inscriptions" %>
 <% end %>
-Aperçu debug : https://animina.de/debug
+Aperçu statut : https://animina.de/status

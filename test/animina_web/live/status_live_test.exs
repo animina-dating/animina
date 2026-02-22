@@ -1,15 +1,15 @@
-defmodule AniminaWeb.DebugLiveTest do
+defmodule AniminaWeb.StatusLiveTest do
   use AniminaWeb.ConnCase, async: true
 
   import Animina.AccountsFixtures
   import Phoenix.LiveViewTest
 
-  describe "GET /debug" do
-    test "renders the debug page with all sections", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/debug")
+  describe "GET /status" do
+    test "renders the status page with all sections", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       # Page title
-      assert html =~ "System Debug"
+      assert html =~ "System Status"
 
       # Versions section
       assert html =~ "Versions"
@@ -42,29 +42,35 @@ defmodule AniminaWeb.DebugLiveTest do
       assert html =~ "Deployment"
       assert html =~ "Deployed At"
       assert html =~ "Uptime"
+
+      # Ollama Instances section
+      assert html =~ "Ollama Instances"
+      assert html =~ "Active"
+      assert html =~ "Inactive"
+      assert html =~ "Total Jobs"
     end
 
     test "handles periodic refresh", %{conn: conn} do
-      {:ok, view, _html} = live(conn, ~p"/debug")
+      {:ok, view, _html} = live(conn, ~p"/status")
 
       # Simulate the refresh timer message
       send(view.pid, :refresh)
 
       # Page should still render correctly after refresh
       html = render(view)
-      assert html =~ "System Debug"
+      assert html =~ "System Status"
       assert html =~ "Versions"
       assert html =~ "Database"
     end
 
     test "renders shared layout with ANIMINA nav", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       assert html =~ "ANIMINA"
     end
 
     test "does not show online users graph for unauthenticated visitors", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "Online Users"
       refute html =~ "24 hours"
@@ -74,7 +80,7 @@ defmodule AniminaWeb.DebugLiveTest do
       user = user_fixture()
       conn = log_in_user(conn, user)
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "Online Users"
       refute html =~ "24 hours"
@@ -84,7 +90,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       assert html =~ "Online Users"
       assert html =~ "24 hours"
@@ -97,7 +103,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, view, _html} = live(conn, ~p"/debug")
+      {:ok, view, _html} = live(conn, ~p"/status")
 
       html =
         view
@@ -111,7 +117,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       assert html =~ "No data yet"
     end
@@ -119,7 +125,7 @@ defmodule AniminaWeb.DebugLiveTest do
     # Admin stats box tests
 
     test "does not show admin stats box for unauthenticated visitors", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "User Totals"
       refute html =~ "Growth (Confirmed)"
@@ -130,7 +136,7 @@ defmodule AniminaWeb.DebugLiveTest do
       user = user_fixture()
       conn = log_in_user(conn, user)
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "User Totals"
       refute html =~ "Growth (Confirmed)"
@@ -141,7 +147,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       # Three section headings
       assert html =~ "User Totals"
@@ -173,7 +179,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, view, _html} = live(conn, ~p"/debug")
+      {:ok, view, _html} = live(conn, ~p"/status")
 
       send(view.pid, :refresh)
 
@@ -186,7 +192,7 @@ defmodule AniminaWeb.DebugLiveTest do
     # Registration graph tests
 
     test "does not show registration graph for unauthenticated visitors", %{conn: conn} do
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "New Registrations"
       refute html =~ "Registered"
@@ -197,7 +203,7 @@ defmodule AniminaWeb.DebugLiveTest do
       user = user_fixture()
       conn = log_in_user(conn, user)
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       refute html =~ "New Registrations"
       refute html =~ "Registered"
@@ -208,7 +214,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, _view, html} = live(conn, ~p"/debug")
+      {:ok, _view, html} = live(conn, ~p"/status")
 
       assert html =~ "New Registrations"
       assert html =~ "Registered"
@@ -221,7 +227,7 @@ defmodule AniminaWeb.DebugLiveTest do
       admin = admin_fixture()
       conn = log_in_user(conn, admin, current_role: "admin")
 
-      {:ok, view, _html} = live(conn, ~p"/debug")
+      {:ok, view, _html} = live(conn, ~p"/status")
 
       html =
         view
