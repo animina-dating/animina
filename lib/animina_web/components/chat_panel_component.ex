@@ -15,6 +15,7 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   import AniminaWeb.MessageComponents
 
+  alias Animina.Accounts
   alias Animina.AI
   alias Animina.FeatureFlags
   alias Animina.Messaging
@@ -42,6 +43,8 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_estimated_ms: nil,
        wingman_queue_position: nil,
        wingman_job_id: nil,
+       wingman_available: false,
+       wingman_enabled: true,
        wingman_expiry_timer: nil,
        spellcheck_loading: false,
        spellcheck_original: nil,
@@ -376,6 +379,28 @@ defmodule AniminaWeb.ChatPanelComponent do
           </div>
         </div>
 
+        <%!-- Wingman Toggle --%>
+        <div
+          :if={@wingman_available && Enum.empty?(@messages)}
+          class="flex items-center justify-between mx-2 mb-1 px-2.5 py-1.5 rounded-lg bg-base-200/50"
+        >
+          <span class="text-xs text-base-content/60">
+            {gettext("Wingman")}
+          </span>
+          <label class="cursor-pointer flex items-center gap-1.5">
+            <span class="text-xs text-base-content/40">
+              {if @wingman_enabled, do: gettext("On"), else: gettext("Off")}
+            </span>
+            <input
+              type="checkbox"
+              class="toggle toggle-xs toggle-info"
+              checked={@wingman_enabled}
+              phx-click="toggle_wingman"
+              phx-target={@myself}
+            />
+          </label>
+        </div>
+
         <%!-- Input --%>
         <.chat_input
           form={@form}
@@ -562,6 +587,33 @@ defmodule AniminaWeb.ChatPanelComponent do
 
   def handle_event("dismiss_wingman", _params, socket) do
     {:noreply, assign(socket, :wingman_dismissed, true)}
+  end
+
+  def handle_event("toggle_wingman", _params, socket) do
+    user = Accounts.get_user!(socket.assigns.current_user_id)
+    new_value = !user.wingman_enabled
+
+    case Accounts.update_wingman_enabled(user, %{wingman_enabled: new_value}) do
+      {:ok, _updated} ->
+        socket =
+          socket
+          |> assign(:wingman_enabled, new_value)
+          |> then(fn s ->
+            if !new_value do
+              s
+              |> assign(:wingman_suggestions, nil)
+              |> assign(:wingman_loading, false)
+              |> assign(:wingman_dismissed, true)
+            else
+              s
+            end
+          end)
+
+        {:noreply, socket}
+
+      {:error, _} ->
+        {:noreply, socket}
+    end
   end
 
   def handle_event("wingman_feedback", %{"index" => idx_str, "rating" => rating_str}, socket) do
@@ -802,7 +854,15 @@ defmodule AniminaWeb.ChatPanelComponent do
   end
 
   defp maybe_init_wingman(socket, assigns, messages) do
-    if FeatureFlags.wingman_available?() && Enum.empty?(messages) do
+    wingman_available = FeatureFlags.wingman_available?()
+    user = Accounts.get_user!(assigns.current_user_id)
+
+    socket =
+      socket
+      |> assign(:wingman_available, wingman_available)
+      |> assign(:wingman_enabled, user.wingman_enabled)
+
+    if wingman_available && user.wingman_enabled && Enum.empty?(messages) do
       do_init_wingman(socket, assigns)
     else
       socket

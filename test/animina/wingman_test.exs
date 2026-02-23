@@ -1,10 +1,51 @@
 defmodule Animina.WingmanTest do
   use Animina.DataCase, async: true
 
+  alias Animina.Accounts
+  alias Animina.Accounts.User
   alias Animina.Messaging
   alias Animina.Wingman
 
   import Animina.AccountsFixtures
+
+  describe "wingman_changeset/2" do
+    test "valid changeset with wingman_enabled = false" do
+      user = user_fixture(language: "en")
+      changeset = User.wingman_changeset(user, %{wingman_enabled: false})
+      assert changeset.valid?
+    end
+
+    test "valid changeset with wingman_enabled = true" do
+      user = user_fixture(language: "en")
+      changeset = User.wingman_changeset(user, %{wingman_enabled: true})
+      assert changeset.valid?
+    end
+
+    test "changeset with empty attrs keeps existing value" do
+      user = user_fixture(language: "en")
+      changeset = User.wingman_changeset(user, %{})
+      assert changeset.valid?
+      assert Ecto.Changeset.get_field(changeset, :wingman_enabled) == true
+    end
+  end
+
+  describe "update_wingman_enabled/2" do
+    test "disables wingman for a user" do
+      user = user_fixture(language: "en")
+      assert user.wingman_enabled == true
+
+      {:ok, updated} = Accounts.update_wingman_enabled(user, %{wingman_enabled: false})
+      assert updated.wingman_enabled == false
+    end
+
+    test "re-enables wingman for a user" do
+      user = user_fixture(language: "en")
+      {:ok, user} = Accounts.update_wingman_enabled(user, %{wingman_enabled: false})
+
+      {:ok, updated} = Accounts.update_wingman_enabled(user, %{wingman_enabled: true})
+      assert updated.wingman_enabled == true
+    end
+  end
 
   describe "gather_context/3" do
     test "includes basic user data" do
@@ -43,21 +84,24 @@ defmodule Animina.WingmanTest do
       context = Wingman.gather_context(user, other, [])
 
       assert is_map(context.overlap)
-      assert Map.has_key?(context.overlap, :shared_traits)
+      assert Map.has_key?(context.overlap, :shared_traits_public)
+      assert Map.has_key?(context.overlap, :shared_traits_private)
       assert Map.has_key?(context.overlap, :compatible_values)
       # Should not include red_white overlap
       refute Map.has_key?(context.overlap, :red_white)
       refute Map.has_key?(context.overlap, :dealbreakers)
     end
 
-    test "returns lists for stories and photo descriptions" do
+    test "returns lists for stories and flag data" do
       user = user_fixture(language: "en")
       other = user_fixture(language: "en")
 
       context = Wingman.gather_context(user, other, [])
 
       assert is_list(context.user.stories)
-      assert is_list(context.user.published_flags)
+      assert is_list(context.user.white_flags_published)
+      assert is_list(context.user.white_flags_private)
+      assert is_list(context.user.green_flags)
     end
 
     test "includes is_wildcard in context" do
@@ -338,6 +382,168 @@ defmodule Animina.WingmanTest do
       prompt = Wingman.build_prompt(context, "en")
 
       refute prompt =~ "wildcard"
+    end
+  end
+
+  describe "build_prompt flag system and moodboard explanation" do
+    test "German prompt includes moodboard explanation" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Moodboard"
+      assert prompt =~ "Geschichten"
+    end
+
+    test "English prompt includes moodboard explanation" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Moodboard"
+      assert prompt =~ "stories"
+    end
+
+    test "German prompt includes flag system explanation" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Weiße Flaggen"
+      assert prompt =~ "Grüne Flaggen"
+      assert prompt =~ "wichtig"
+      assert prompt =~ "flexibel"
+      # Rote Flaggen should not be mentioned (they are never shown)
+      refute prompt =~ "Rote Flaggen"
+    end
+
+    test "English prompt includes flag system explanation" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "White flags"
+      assert prompt =~ "Green flags"
+      assert prompt =~ "hard"
+      assert prompt =~ "soft"
+      # Red flags should not be mentioned (they are never shown)
+      refute prompt =~ "Red flags"
+    end
+
+    test "German prompt includes dating platform context" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "ANIMINA"
+      assert prompt =~ "Online-Dating-Plattform"
+      assert prompt =~ "erste Nachricht"
+    end
+
+    test "English prompt includes dating platform context" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "ANIMINA"
+      assert prompt =~ "online dating platform"
+      assert prompt =~ "first message"
+    end
+
+    test "German prompt includes privacy rules for flags" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "NICHT beim Namen"
+    end
+
+    test "English prompt includes privacy rules for flags" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "NEVER by name"
+    end
+
+    test "German prompt includes rule about known shared traits being facts" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Bekannte Gemeinsamkeiten"
+      assert prompt =~ "FAKTEN"
+    end
+
+    test "English prompt includes rule about known shared traits being facts" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Known shared traits"
+      assert prompt =~ "FACTS"
+    end
+
+    test "German prompt includes rule about not inventing traits" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Erfinde keine Aktivitäten"
+    end
+
+    test "English prompt includes rule about not inventing traits" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Do not invent activities"
+    end
+
+    test "German prompt includes rule about green flags meaning" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Grüne Flaggen zeigen"
+      assert prompt =~ "beim PARTNER sucht"
+    end
+
+    test "English prompt includes rule about green flags meaning" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Green flags show"
+      assert prompt =~ "SEEKS in a partner"
     end
   end
 

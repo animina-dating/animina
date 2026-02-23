@@ -117,17 +117,17 @@ msgstr "Код приглашения не найден"
 
 #: lib/animina/accounts/contact_blacklist_entry.ex:53
 #: lib/animina/accounts/contact_blacklist_entry.ex:57
-#: lib/animina/accounts/user.ex:273
+#: lib/animina/accounts/user.ex:267
 #, elixir-autogen, elixir-format
 msgid "is not a valid phone number"
 msgstr "не является действительным номером телефона"
 
-#: lib/animina/accounts/user.ex:171
+#: lib/animina/accounts/user.ex:172
 #, elixir-autogen, elixir-format
 msgid "must be 6 characters (letters and digits)"
 msgstr "должно содержать 6 символов (буквы и цифры)"
 
-#: lib/animina/accounts/user.ex:268
+#: lib/animina/accounts/user.ex:262
 #, elixir-autogen, elixir-format
 msgid "must be a mobile number (not a landline)"
 msgstr "должен быть мобильным номером (не стационарным)"
@@ -207,12 +207,12 @@ msgstr "Это собака. На фото профиля должно быть 
 msgid "This is an animal. Your profile photo must show your face. You can use animal photos in your moodboard instead."
 msgstr "Это животное. На фото профиля должно быть ваше лицо. Вы можете использовать фотографии животных в мудборде."
 
-#: lib/animina/accounts/user.ex:420
+#: lib/animina/accounts/user.ex:414
 #, elixir-autogen, elixir-format
 msgid "does not match password"
 msgstr "не совпадает с паролем"
 
-#: lib/animina/accounts/user.ex:356
+#: lib/animina/accounts/user.ex:350
 #, elixir-autogen, elixir-format
 msgid "must have the @ sign and no spaces"
 msgstr "должен содержать знак @ и не содержать пробелов"

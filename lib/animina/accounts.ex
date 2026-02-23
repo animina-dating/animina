@@ -1259,4 +1259,15 @@ defmodule Animina.Accounts do
     |> User.online_status_changeset(attrs)
     |> Repo.update()
   end
+
+  # --- Wingman preference ---
+
+  @doc """
+  Updates the wingman_enabled preference for a user.
+  """
+  def update_wingman_enabled(%User{} = user, attrs) do
+    user
+    |> User.wingman_changeset(attrs)
+    |> Repo.update()
+  end
 end

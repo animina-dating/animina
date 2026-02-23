@@ -132,7 +132,7 @@ defmodule Animina.AI.Executor do
   defp run_completion(job, module, model, prompt, input_opts, instance_filter) do
     completion_opts =
       [model: model, prompt: prompt, instance_filter: instance_filter] ++
-        Keyword.take(input_opts, [:images, :target_server])
+        Keyword.take(input_opts, [:images, :target_server, :api_opts])
 
     {duration_us, result} = :timer.tc(fn -> Client.completion(completion_opts) end)
     duration_ms = div(duration_us, 1000)

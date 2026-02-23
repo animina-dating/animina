@@ -73,6 +73,7 @@ defmodule Animina.Accounts.User do
 
     # Privacy
     field :hide_online_status, :boolean, default: false
+    field :wingman_enabled, :boolean, default: true
 
     # Ad attribution
     belongs_to :source_ad, Animina.Ads.Ad, foreign_key: :source_ad_id
@@ -566,6 +567,15 @@ defmodule Animina.Accounts.User do
     user
     |> cast(attrs, [:hide_online_status])
     |> validate_required([:hide_online_status])
+  end
+
+  @doc """
+  A changeset for toggling the Wingman AI feature.
+  """
+  def wingman_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:wingman_enabled])
+    |> validate_required([:wingman_enabled])
   end
 
   @doc """

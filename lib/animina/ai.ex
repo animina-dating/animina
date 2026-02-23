@@ -737,7 +737,7 @@ defmodule Animina.AI do
       %{max: max_slots} = Semaphore.status()
       max_slots = max(max_slots, 1)
       estimated_ms = ceil((position + 1) / max_slots) * avg_ms
-      estimated_ms = round(estimated_ms * 1.1)
+      estimated_ms = round(estimated_ms * 1.2)
       {estimated_ms, position}
     else
       nil

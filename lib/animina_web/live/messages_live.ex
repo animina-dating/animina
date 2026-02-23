@@ -21,6 +21,7 @@ defmodule AniminaWeb.MessagesLive do
   import AniminaWeb.MessageComponents
   import AniminaWeb.RelationshipComponents
 
+  alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.AI
   alias Animina.AI.SpellCheck
@@ -275,6 +276,27 @@ defmodule AniminaWeb.MessagesLive do
               </span>
             </div>
           </div>
+        </div>
+
+        <%!-- Wingman Toggle --%>
+        <div
+          :if={@wingman_available && @conversation_data && Enum.empty?(@messages)}
+          class="flex items-center justify-between mx-1 mb-1 px-3 py-2 rounded-lg bg-base-200/50"
+        >
+          <span class="text-xs text-base-content/60">
+            {gettext("Wingman")}
+          </span>
+          <label class="cursor-pointer flex items-center gap-2">
+            <span class="text-xs text-base-content/40">
+              {if @wingman_enabled, do: gettext("On"), else: gettext("Off")}
+            </span>
+            <input
+              type="checkbox"
+              class="toggle toggle-xs toggle-info"
+              checked={@wingman_enabled}
+              phx-click="toggle_wingman"
+            />
+          </label>
         </div>
 
         <%!-- Message Input --%>
@@ -1158,6 +1180,8 @@ defmodule AniminaWeb.MessagesLive do
         confirm_action: nil,
         show_timeline: false,
         milestones: [],
+        wingman_available: FeatureFlags.wingman_available?(),
+        wingman_enabled: user.wingman_enabled,
         wingman_suggestions: nil,
         wingman_loading: false,
         wingman_dismissed: false,
@@ -1327,7 +1351,7 @@ defmodule AniminaWeb.MessagesLive do
     messages = socket.assigns.messages
 
     # Only show wingman for the very first chat (no messages yet)
-    if FeatureFlags.wingman_available?() && Enum.empty?(messages) do
+    if FeatureFlags.wingman_available?() && user.wingman_enabled && Enum.empty?(messages) do
       init_wingman(socket, conversation_id, user, other_user)
     else
       assign(socket,
@@ -1462,6 +1486,35 @@ defmodule AniminaWeb.MessagesLive do
      socket
      |> assign(:wingman_dismissed, true)
      |> assign(:wingman_progress_timer, nil)}
+  end
+
+  @impl true
+  def handle_event("toggle_wingman", _params, socket) do
+    user = socket.assigns.current_scope.user
+    new_value = !user.wingman_enabled
+
+    case Accounts.update_wingman_enabled(user, %{wingman_enabled: new_value}) do
+      {:ok, _updated_user} ->
+        socket = assign(socket, :wingman_enabled, new_value)
+
+        socket =
+          if !new_value do
+            cancel_wingman_timer(socket)
+
+            socket
+            |> assign(:wingman_suggestions, nil)
+            |> assign(:wingman_loading, false)
+            |> assign(:wingman_dismissed, true)
+            |> assign(:wingman_progress_timer, nil)
+          else
+            socket
+          end
+
+        {:noreply, socket}
+
+      {:error, _} ->
+        {:noreply, socket}
+    end
   end
 
   @impl true

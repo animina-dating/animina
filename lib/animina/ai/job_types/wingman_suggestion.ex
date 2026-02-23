@@ -37,8 +37,10 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
 
   @impl true
   def prepare_input(_params) do
-    # Text-only — no images needed
-    {:ok, []}
+    # Text-only — no images needed.
+    # think: false — qwen3 defaults to thinking mode which wastes thousands of
+    # tokens on <think> tags before the actual JSON; we just need the answer.
+    {:ok, [api_opts: [think: false]]}
   end
 
   @impl true
