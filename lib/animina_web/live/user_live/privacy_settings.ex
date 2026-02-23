@@ -54,9 +54,7 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
                 {gettext("Wingman")}
               </div>
               <div class="text-xs text-base-content/60 mt-1">
-                {gettext(
-                  "The AI Wingman suggests conversation starters when you open a new chat."
-                )}
+                {gettext("The AI Wingman suggests conversation starters when you open a new chat.")}
               </div>
             </div>
             <div class="flex flex-col items-center gap-1">

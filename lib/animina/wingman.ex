@@ -933,55 +933,64 @@ defmodule Animina.Wingman do
          language
        ) do
     parts =
-      if distance_km do
-        label = if language == "de", do: "Entfernung", else: "Distance"
-        ["#{label}: ~#{distance_km} km"]
-      else
-        []
-      end ++
-        if public_shared != [] do
-          label =
-            if language == "de",
-              do: "Gemeinsame Eigenschaften (beide öffentlich — darfst du nennen)",
-              else: "Things in common (both public — you may name these)"
-
-          translated = Enum.map(public_shared, &translate_overlap_name/1)
-          ["#{label}: #{Enum.join(translated, ", ")}"]
-        else
-          []
-        end ++
-        if private_shared != [] do
-          label =
-            if language == "de",
-              do:
-                "Hinweis: Der User hat Interessen in diesen Bereichen, die das Gegenüber eventuell teilt. Schlage vor, danach zu fragen — aber verrate NICHT, dass das Gegenüber das auch mag",
-              else:
-                "Hint: The user has interests in these areas that the other person might share. Suggest asking about them — but do NOT reveal the other person shares them"
-
-          # Only show the category, not the specific flag — to prevent leaking
-          categories =
-            private_shared
-            |> Enum.map(fn name ->
-              case String.split(name, ": ", parts: 2) do
-                [cat, _] -> AniminaWeb.TraitTranslations.translate(cat)
-                _ -> AniminaWeb.TraitTranslations.translate(name)
-              end
-            end)
-            |> Enum.uniq()
-
-          ["#{label}: #{Enum.join(categories, ", ")}"]
-        else
-          []
-        end ++
-        if compatible != [] do
-          label = if language == "de", do: "Kompatible Werte", else: "Compatible values"
-          translated = Enum.map(compatible, &translate_overlap_name/1)
-          ["#{label}: #{Enum.join(translated, ", ")}"]
-        else
-          []
-        end
+      overlap_distance(distance_km, language) ++
+        overlap_public(public_shared, language) ++
+        overlap_private(private_shared, language) ++
+        overlap_compatible(compatible, language)
 
     if parts == [], do: "", else: Enum.join(parts, "\n")
+  end
+
+  defp overlap_distance(nil, _language), do: []
+
+  defp overlap_distance(distance_km, language) do
+    label = if language == "de", do: "Entfernung", else: "Distance"
+    ["#{label}: ~#{distance_km} km"]
+  end
+
+  defp overlap_public([], _language), do: []
+
+  defp overlap_public(public_shared, language) do
+    label =
+      if language == "de",
+        do: "Gemeinsame Eigenschaften (beide öffentlich — darfst du nennen)",
+        else: "Things in common (both public — you may name these)"
+
+    translated = Enum.map(public_shared, &translate_overlap_name/1)
+    ["#{label}: #{Enum.join(translated, ", ")}"]
+  end
+
+  defp overlap_private([], _language), do: []
+
+  defp overlap_private(private_shared, language) do
+    label =
+      if language == "de",
+        do:
+          "Hinweis: Der User hat Interessen in diesen Bereichen, die das Gegenüber eventuell teilt. Schlage vor, danach zu fragen — aber verrate NICHT, dass das Gegenüber das auch mag",
+        else:
+          "Hint: The user has interests in these areas that the other person might share. Suggest asking about them — but do NOT reveal the other person shares them"
+
+    categories =
+      private_shared
+      |> Enum.map(&extract_category/1)
+      |> Enum.uniq()
+
+    ["#{label}: #{Enum.join(categories, ", ")}"]
+  end
+
+  defp overlap_compatible([], _language), do: []
+
+  defp overlap_compatible(compatible, language) do
+    label = if language == "de", do: "Kompatible Werte", else: "Compatible values"
+    translated = Enum.map(compatible, &translate_overlap_name/1)
+    ["#{label}: #{Enum.join(translated, ", ")}"]
+  end
+
+  defp extract_category(name) do
+    case String.split(name, ": ", parts: 2) do
+      [cat, _] -> AniminaWeb.TraitTranslations.translate(cat)
+      _ -> AniminaWeb.TraitTranslations.translate(name)
+    end
   end
 
   defp wildcard_section(false, _language), do: ""

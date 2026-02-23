@@ -1498,7 +1498,9 @@ defmodule AniminaWeb.MessagesLive do
         socket = assign(socket, :wingman_enabled, new_value)
 
         socket =
-          if !new_value do
+          if new_value do
+            socket
+          else
             cancel_wingman_timer(socket)
 
             socket
@@ -1506,8 +1508,6 @@ defmodule AniminaWeb.MessagesLive do
             |> assign(:wingman_loading, false)
             |> assign(:wingman_dismissed, true)
             |> assign(:wingman_progress_timer, nil)
-          else
-            socket
           end
 
         {:noreply, socket}

@@ -598,16 +598,7 @@ defmodule AniminaWeb.ChatPanelComponent do
         socket =
           socket
           |> assign(:wingman_enabled, new_value)
-          |> then(fn s ->
-            if !new_value do
-              s
-              |> assign(:wingman_suggestions, nil)
-              |> assign(:wingman_loading, false)
-              |> assign(:wingman_dismissed, true)
-            else
-              s
-            end
-          end)
+          |> maybe_dismiss_wingman(new_value)
 
         {:noreply, socket}
 
@@ -944,6 +935,15 @@ defmodule AniminaWeb.ChatPanelComponent do
       {:error, _reason} ->
         {nil, socket}
     end
+  end
+
+  defp maybe_dismiss_wingman(socket, true), do: socket
+
+  defp maybe_dismiss_wingman(socket, false) do
+    socket
+    |> assign(:wingman_suggestions, nil)
+    |> assign(:wingman_loading, false)
+    |> assign(:wingman_dismissed, true)
   end
 
   defp maybe_load_avatar(socket, assigns) do
