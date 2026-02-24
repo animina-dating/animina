@@ -47,32 +47,6 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
               </span>
             </div>
           </div>
-
-          <div class="flex items-center justify-between p-4 rounded-lg border border-base-300">
-            <div class="flex-1 mr-4">
-              <div class="font-semibold text-sm text-base-content">
-                {gettext("Wingman")}
-              </div>
-              <div class="text-xs text-base-content/60 mt-1">
-                {gettext("The AI Wingman suggests conversation starters when you open a new chat.")}
-              </div>
-            </div>
-            <div class="flex flex-col items-center gap-1">
-              <input
-                type="checkbox"
-                class="toggle toggle-success"
-                checked={@wingman_enabled}
-                phx-click="toggle_wingman"
-              />
-              <span class={[
-                "text-xs font-medium",
-                if(@wingman_enabled, do: "text-success", else: "text-base-content/40")
-              ]}>
-                {if @wingman_enabled, do: gettext("On"), else: gettext("Off")}
-              </span>
-            </div>
-          </div>
-
         </div>
       </div>
     </Layouts.app>
@@ -88,7 +62,6 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
       |> assign(:page_title, gettext("Privacy"))
       |> assign(:user, user)
       |> assign(:hide_online_status, user.hide_online_status)
-      |> assign(:wingman_enabled, user.wingman_enabled)
 
     {:ok, socket}
   end
@@ -110,29 +83,6 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
            if(new_value,
              do: gettext("Online status is now hidden from other users."),
              else: gettext("Online status is now visible to other users.")
-           )
-         )}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, gettext("Could not update privacy settings."))}
-    end
-  end
-
-  @impl true
-  def handle_event("toggle_wingman", _params, socket) do
-    new_value = !socket.assigns.wingman_enabled
-
-    case Accounts.update_wingman_enabled(socket.assigns.user, %{wingman_enabled: new_value}) do
-      {:ok, updated_user} ->
-        {:noreply,
-         socket
-         |> assign(:user, updated_user)
-         |> assign(:wingman_enabled, updated_user.wingman_enabled)
-         |> put_flash(
-           :info,
-           if(new_value,
-             do: gettext("Wingman is now active."),
-             else: gettext("Wingman is now inactive.")
            )
          )}
 

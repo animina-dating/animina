@@ -472,7 +472,7 @@ msgstr "Bitte authentifiziere dich erneut, um sensible Aktionen durchzuführen."
 
 #: lib/animina_web/components/layouts.ex:497
 #: lib/animina_web/live/user_live/privacy_settings.ex:16
-#: lib/animina_web/live/user_live/privacy_settings.ex:88
+#: lib/animina_web/live/user_live/privacy_settings.ex:62
 #: lib/animina_web/live/user_live/settings_hub.ex:115
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -591,7 +591,7 @@ msgstr "Neues Passwort setzen"
 #: lib/animina_web/live/user_live/my_hub.ex:225
 #: lib/animina_web/live/user_live/settings_hub.ex:19
 #: lib/animina_web/live/user_live/settings_hub.ex:109
-#: lib/animina_web/live/user_live/settings_hub.ex:174
+#: lib/animina_web/live/user_live/settings_hub.ex:205
 #: lib/animina_web/live/user_live/traits_wizard.ex:16
 #, elixir-autogen, elixir-format
 msgid "Settings"
@@ -3429,7 +3429,7 @@ msgstr "So funktioniert's"
 #: lib/animina_web/helpers/feature_flag_helpers.ex:37
 #: lib/animina_web/live/messages_live.ex:291
 #: lib/animina_web/live/user_live/privacy_settings.ex:46
-#: lib/animina_web/live/user_live/privacy_settings.ex:71
+#: lib/animina_web/live/user_live/settings_hub.ex:162
 #, elixir-autogen, elixir-format
 msgid "Off"
 msgstr "Aus"
@@ -3438,7 +3438,7 @@ msgstr "Aus"
 #: lib/animina_web/helpers/feature_flag_helpers.ex:30
 #: lib/animina_web/live/messages_live.ex:291
 #: lib/animina_web/live/user_live/privacy_settings.ex:46
-#: lib/animina_web/live/user_live/privacy_settings.ex:71
+#: lib/animina_web/live/user_live/settings_hub.ex:162
 #, elixir-autogen, elixir-format
 msgid "On"
 msgstr "An"
@@ -4973,12 +4973,12 @@ msgstr "Bitte versuche es mit einer anderen E-Mail-Adresse oder probiere es spä
 msgid "Your email provider is currently rejecting emails from our server. The confirmation code could not be delivered to %{email}."
 msgstr "Dein E-Mail-Anbieter lehnt derzeit E-Mails von unserem Server ab. Der Bestätigungscode konnte nicht an %{email} zugestellt werden."
 
-#: lib/animina_web/live/user_live/settings_hub.ex:198
+#: lib/animina_web/live/user_live/settings_hub.ex:253
 #, elixir-autogen, elixir-format
 msgid "%{count} contacts blocked"
 msgstr "%{count} Kontakte blockiert"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:197
+#: lib/animina_web/live/user_live/settings_hub.ex:252
 #, elixir-autogen, elixir-format
 msgid "1 contact blocked"
 msgstr "1 Kontakt blockiert"
@@ -5035,7 +5035,7 @@ msgstr "Kontakt konnte nicht entfernt werden."
 msgid "Label (optional)"
 msgstr "Bezeichnung (optional)"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:196
+#: lib/animina_web/live/user_live/settings_hub.ex:251
 #, elixir-autogen, elixir-format
 msgid "No contacts blocked"
 msgstr "Keine Kontakte blockiert"
@@ -5328,8 +5328,7 @@ msgstr[1] "Warteliste — noch %{count} Tage"
 msgid "approximately 2 weeks"
 msgstr "ca. 2 Wochen"
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:117
-#: lib/animina_web/live/user_live/privacy_settings.ex:140
+#: lib/animina_web/live/user_live/privacy_settings.ex:90
 #, elixir-autogen, elixir-format
 msgid "Could not update privacy settings."
 msgstr "Datenschutzeinstellungen konnten nicht aktualisiert werden."
@@ -5400,23 +5399,23 @@ msgstr "An den meisten Tagen online"
 msgid "Online several times a week"
 msgstr "Mehrmals pro Woche online"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:186
+#: lib/animina_web/live/user_live/settings_hub.ex:241
 #, elixir-autogen, elixir-format
 msgid "Online status hidden"
 msgstr "Online-Status verborgen"
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:111
+#: lib/animina_web/live/user_live/privacy_settings.ex:84
 #, elixir-autogen, elixir-format
 msgid "Online status is now hidden from other users."
 msgstr "Online-Status ist jetzt vor anderen Nutzern verborgen."
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:112
+#: lib/animina_web/live/user_live/privacy_settings.ex:85
 #, elixir-autogen, elixir-format
 msgid "Online status is now visible to other users."
 msgstr "Online-Status ist jetzt für andere Nutzer sichtbar."
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:24
-#: lib/animina_web/live/user_live/settings_hub.ex:188
+#: lib/animina_web/live/user_live/settings_hub.ex:243
 #, elixir-autogen, elixir-format
 msgid "Online status visible"
 msgstr "Online-Status sichtbar"
@@ -8078,7 +8077,7 @@ msgstr "Software-Update auf dem Server"
 #: lib/animina_web/components/chat_panel_component.ex:388
 #: lib/animina_web/live/messages_live.ex:186
 #: lib/animina_web/live/messages_live.ex:287
-#: lib/animina_web/live/user_live/privacy_settings.ex:54
+#: lib/animina_web/live/user_live/settings_hub.ex:145
 #, elixir-autogen, elixir-format
 msgid "Wingman"
 msgstr "Wingman"
@@ -8149,12 +8148,12 @@ msgstr "Korrektur rückgängig machen"
 msgid "Password update failed. Please check the requirements."
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:134
+#: lib/animina_web/live/user_live/settings_hub.ex:229
 #, elixir-autogen, elixir-format
 msgid "Wingman is now active."
 msgstr "Wingman ist jetzt aktiv."
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:135
+#: lib/animina_web/live/user_live/settings_hub.ex:230
 #, elixir-autogen, elixir-format
 msgid "Wingman is now inactive."
 msgstr "Wingman ist jetzt inaktiv."
@@ -8164,7 +8163,17 @@ msgstr "Wingman ist jetzt inaktiv."
 msgid "Other users can see when you are online, your last seen time, and your activity patterns."
 msgstr "Andere Nutzer können sehen, wann du online bist, wann du zuletzt online warst und dein Aktivitätsmuster."
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:57
+#: lib/animina_web/live/user_live/settings_hub.ex:148
 #, elixir-autogen, elixir-format
 msgid "The AI Wingman suggests conversation starters when you open a new chat."
 msgstr "Der KI-Wingman schlägt Gesprächseinstiege vor, wenn du einen neuen Chat öffnest."
+
+#: lib/animina_web/live/user_live/settings_hub.ex:235
+#, elixir-autogen, elixir-format
+msgid "Could not update feature settings."
+msgstr "Funktionseinstellungen konnten nicht aktualisiert werden."
+
+#: lib/animina_web/live/user_live/settings_hub.ex:139
+#, elixir-autogen, elixir-format
+msgid "Features"
+msgstr "Funktionen"

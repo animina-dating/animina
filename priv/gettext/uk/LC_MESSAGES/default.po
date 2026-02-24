@@ -473,7 +473,7 @@ msgstr "Будь ласка, пройдіть повторну автентиф�
 
 #: lib/animina_web/components/layouts.ex:497
 #: lib/animina_web/live/user_live/privacy_settings.ex:16
-#: lib/animina_web/live/user_live/privacy_settings.ex:88
+#: lib/animina_web/live/user_live/privacy_settings.ex:62
 #: lib/animina_web/live/user_live/settings_hub.ex:115
 #, elixir-autogen, elixir-format
 msgid "Privacy"
@@ -592,7 +592,7 @@ msgstr "Встановити новий пароль"
 #: lib/animina_web/live/user_live/my_hub.ex:225
 #: lib/animina_web/live/user_live/settings_hub.ex:19
 #: lib/animina_web/live/user_live/settings_hub.ex:109
-#: lib/animina_web/live/user_live/settings_hub.ex:174
+#: lib/animina_web/live/user_live/settings_hub.ex:205
 #: lib/animina_web/live/user_live/traits_wizard.ex:16
 #, elixir-autogen, elixir-format
 msgid "Settings"
@@ -3431,7 +3431,7 @@ msgstr "Як це працює"
 #: lib/animina_web/helpers/feature_flag_helpers.ex:37
 #: lib/animina_web/live/messages_live.ex:291
 #: lib/animina_web/live/user_live/privacy_settings.ex:46
-#: lib/animina_web/live/user_live/privacy_settings.ex:71
+#: lib/animina_web/live/user_live/settings_hub.ex:162
 #, elixir-autogen, elixir-format
 msgid "Off"
 msgstr "Вимк"
@@ -3440,7 +3440,7 @@ msgstr "Вимк"
 #: lib/animina_web/helpers/feature_flag_helpers.ex:30
 #: lib/animina_web/live/messages_live.ex:291
 #: lib/animina_web/live/user_live/privacy_settings.ex:46
-#: lib/animina_web/live/user_live/privacy_settings.ex:71
+#: lib/animina_web/live/user_live/settings_hub.ex:162
 #, elixir-autogen, elixir-format
 msgid "On"
 msgstr "Увімк"
@@ -4981,12 +4981,12 @@ msgstr ""
 msgid "Your email provider is currently rejecting emails from our server. The confirmation code could not be delivered to %{email}."
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:198
+#: lib/animina_web/live/user_live/settings_hub.ex:253
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} contacts blocked"
 msgstr "%{count} всього"
 
-#: lib/animina_web/live/user_live/settings_hub.ex:197
+#: lib/animina_web/live/user_live/settings_hub.ex:252
 #, elixir-autogen, elixir-format
 msgid "1 contact blocked"
 msgstr ""
@@ -5043,7 +5043,7 @@ msgstr "Не вдалося видалити місцезнаходження."
 msgid "Label (optional)"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:196
+#: lib/animina_web/live/user_live/settings_hub.ex:251
 #, elixir-autogen, elixir-format
 msgid "No contacts blocked"
 msgstr ""
@@ -5341,8 +5341,7 @@ msgstr[2] ""
 msgid "approximately 2 weeks"
 msgstr "приблизно 4 тижні"
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:117
-#: lib/animina_web/live/user_live/privacy_settings.ex:140
+#: lib/animina_web/live/user_live/privacy_settings.ex:90
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Could not update privacy settings."
 msgstr "Не вдалося оновити прапорець."
@@ -5416,23 +5415,23 @@ msgstr ""
 msgid "Online several times a week"
 msgstr ""
 
-#: lib/animina_web/live/user_live/settings_hub.ex:186
+#: lib/animina_web/live/user_live/settings_hub.ex:241
 #, elixir-autogen, elixir-format
 msgid "Online status hidden"
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:111
+#: lib/animina_web/live/user_live/privacy_settings.ex:84
 #, elixir-autogen, elixir-format
 msgid "Online status is now hidden from other users."
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:112
+#: lib/animina_web/live/user_live/privacy_settings.ex:85
 #, elixir-autogen, elixir-format
 msgid "Online status is now visible to other users."
 msgstr ""
 
 #: lib/animina_web/live/user_live/privacy_settings.ex:24
-#: lib/animina_web/live/user_live/settings_hub.ex:188
+#: lib/animina_web/live/user_live/settings_hub.ex:243
 #, elixir-autogen, elixir-format
 msgid "Online status visible"
 msgstr ""
@@ -8106,7 +8105,7 @@ msgstr "Оновлення ПЗ на сервері"
 #: lib/animina_web/components/chat_panel_component.ex:388
 #: lib/animina_web/live/messages_live.ex:186
 #: lib/animina_web/live/messages_live.ex:287
-#: lib/animina_web/live/user_live/privacy_settings.ex:54
+#: lib/animina_web/live/user_live/settings_hub.ex:145
 #, elixir-autogen, elixir-format
 msgid "Wingman"
 msgstr ""
@@ -8177,12 +8176,12 @@ msgstr ""
 msgid "Password update failed. Please check the requirements."
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:134
+#: lib/animina_web/live/user_live/settings_hub.ex:229
 #, elixir-autogen, elixir-format
 msgid "Wingman is now active."
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:135
+#: lib/animina_web/live/user_live/settings_hub.ex:230
 #, elixir-autogen, elixir-format
 msgid "Wingman is now inactive."
 msgstr ""
@@ -8192,7 +8191,17 @@ msgstr ""
 msgid "Other users can see when you are online, your last seen time, and your activity patterns."
 msgstr ""
 
-#: lib/animina_web/live/user_live/privacy_settings.ex:57
+#: lib/animina_web/live/user_live/settings_hub.ex:148
 #, elixir-autogen, elixir-format
 msgid "The AI Wingman suggests conversation starters when you open a new chat."
 msgstr ""
+
+#: lib/animina_web/live/user_live/settings_hub.ex:235
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Could not update feature settings."
+msgstr "Не вдалося оновити прапорець."
+
+#: lib/animina_web/live/user_live/settings_hub.ex:139
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Features"
+msgstr "Функціональні прапорці"
