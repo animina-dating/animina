@@ -164,7 +164,7 @@ defmodule Animina.Photos.FileManagement do
   Deletes all files associated with a photo (processed variants and original).
   """
   def delete_photo_files(%Photo{} = photo) do
-    for variant <- [:main, :thumbnail, :pixel] do
+    for variant <- [:main, :thumbnail, :pixel, :review_pixel] do
       path = processed_path(photo, variant)
       rm_file(path, "variant")
     end
@@ -207,6 +207,51 @@ defmodule Animina.Photos.FileManagement do
         false -> {:error, :main_not_found}
         {:error, reason} -> {:error, reason}
       end
+    end
+  end
+
+  @doc """
+  Generates a very heavily pixelated variant for the "In review" placeholder.
+
+  Uses 0.01 pixelation (much bigger blocks than the spotlight `:pixel` variant)
+  so the image is completely unrecognizable but shows color tones.
+  Idempotent — skips if the file already exists.
+  """
+  def generate_review_pixel_variant(%Photo{} = photo) do
+    review_pixel_path = processed_path(photo, :review_pixel)
+
+    if File.exists?(review_pixel_path) do
+      :ok
+    else
+      main_path = processed_path(photo, :main)
+
+      with true <- File.exists?(main_path),
+           {:ok, image} <- Image.open(main_path),
+           {:ok, pixelated} <- Image.pixelate(image, 0.02),
+           :ok <- File.mkdir_p(Path.dirname(review_pixel_path)),
+           {:ok, _} <- Image.write(pixelated, review_pixel_path, quality: 60) do
+        :ok
+      else
+        false -> {:error, :main_not_found}
+        {:error, reason} -> {:error, reason}
+      end
+    end
+  end
+
+  @doc """
+  Generates the review pixel variant from an already-loaded Vix.Vips.Image.
+
+  Called during the processing pipeline to avoid re-reading the main file.
+  """
+  def generate_review_pixel_from_image(%Photo{} = photo, image) do
+    review_pixel_path = processed_path(photo, :review_pixel)
+
+    with {:ok, pixelated} <- Image.pixelate(image, 0.02),
+         :ok <- File.mkdir_p(Path.dirname(review_pixel_path)),
+         {:ok, _} <- Image.write(pixelated, review_pixel_path, quality: 60) do
+      :ok
+    else
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -254,6 +299,7 @@ defmodule Animina.Photos.FileManagement do
       :main -> "#{photo_id}.webp"
       :thumbnail -> "#{photo_id}_thumb.webp"
       :pixel -> "#{photo_id}_pixel.webp"
+      :review_pixel -> "#{photo_id}_review_pixel.webp"
     end
   end
 

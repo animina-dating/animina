@@ -4192,8 +4192,10 @@ msgstr "Ta strona nie istnieje lub nie masz do niej dostępu."
 msgid "Appeal pending"
 msgstr "Odwołanie oczekujące"
 
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:331
-#: lib/animina_web/live/components/live_photo_component.ex:158
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:350
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:358
+#: lib/animina_web/live/components/live_photo_component.ex:167
+#: lib/animina_web/live/components/live_photo_component.ex:178
 #, elixir-autogen, elixir-format
 msgid "In review"
 msgstr "W trakcie przeglądu"
@@ -7538,23 +7540,23 @@ msgstr ""
 msgid "Tue"
 msgstr "Turcja"
 
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:379
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:430
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:469
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:407
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:458
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:497
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Like"
 msgstr ""
 
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:399
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:434
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:473
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:427
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:462
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:501
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Love"
 msgstr ""
 
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:359
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:426
-#: lib/animina_web/live/components/live_moodboard_item_component.ex:465
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:387
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:454
+#: lib/animina_web/live/components/live_moodboard_item_component.ex:493
 #, elixir-autogen, elixir-format
 msgid "Dislike"
 msgstr ""

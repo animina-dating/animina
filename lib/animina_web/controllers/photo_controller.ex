@@ -27,9 +27,13 @@ defmodule AniminaWeb.PhotoController do
   defp serve_photo(conn, photo, variant) do
     path = Photos.processed_path(photo, variant)
 
-    # Lazy-generate pixelated variant on first request
+    # Lazy-generate pixelated variants on first request
     if variant == :pixel && !File.exists?(path) do
       Photos.generate_pixel_variant(photo)
+    end
+
+    if variant == :review_pixel && !File.exists?(path) do
+      Photos.generate_review_pixel_variant(photo)
     end
 
     if File.exists?(path) do
@@ -49,6 +53,10 @@ defmodule AniminaWeb.PhotoController do
       String.ends_with?(filename, "_thumb.webp") ->
         photo_id = String.replace_trailing(filename, "_thumb.webp", "")
         {:ok, photo_id, :thumbnail}
+
+      String.ends_with?(filename, "_review_pixel.webp") ->
+        photo_id = String.replace_trailing(filename, "_review_pixel.webp", "")
+        {:ok, photo_id, :review_pixel}
 
       String.ends_with?(filename, "_pixel.webp") ->
         photo_id = String.replace_trailing(filename, "_pixel.webp", "")

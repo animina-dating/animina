@@ -46,7 +46,14 @@ defmodule AniminaWeb.LivePhotoComponent do
     class = Map.get(assigns, :class, "w-full h-auto")
 
     servable? = PhotoStatus.servable?(photo)
+    approved? = PhotoStatus.approved?(photo)
     url = if servable?, do: Photos.signed_url(photo, variant), else: nil
+
+    # For non-owners: show pixelated preview when photo is servable but not approved
+    review_pixel_url =
+      if !owner? && servable? && !approved? do
+        Photos.signed_url(photo, :review_pixel)
+      end
 
     socket =
       socket
@@ -58,6 +65,7 @@ defmodule AniminaWeb.LivePhotoComponent do
       |> assign(:analyzing?, PhotoStatus.analyzing?(photo))
       |> assign(:processing?, PhotoStatus.processing?(photo))
       |> assign(:url, url)
+      |> assign(:review_pixel_url, review_pixel_url)
       |> assign(:status_badge, status_badge(photo, owner?))
 
     {:ok, socket}
@@ -81,6 +89,7 @@ defmodule AniminaWeb.LivePhotoComponent do
           photo={@photo}
           url={@url}
           class={@class}
+          review_pixel_url={@review_pixel_url}
         />
       <% end %>
     </div>
@@ -111,7 +120,7 @@ defmodule AniminaWeb.LivePhotoComponent do
       <%= if @approved? do %>
         <img src={@url} alt="" class={@class} loading="lazy" />
       <% else %>
-        <.review_placeholder class={@class} />
+        <.review_placeholder class={@class} review_pixel_url={@review_pixel_url} />
       <% end %>
     </div>
     """
@@ -149,15 +158,27 @@ defmodule AniminaWeb.LivePhotoComponent do
 
   defp review_placeholder(assigns) do
     ~H"""
-    <div class={[
-      @class,
-      "relative bg-base-300 flex items-center justify-center min-h-32 rounded-lg"
-    ]}>
-      <div class="flex flex-col items-center gap-2 text-base-content/60">
-        <.icon name="hero-clock" class="h-8 w-8" />
-        <span class="text-sm font-medium">{gettext("In review")}</span>
+    <%= if @review_pixel_url do %>
+      <div class="relative rounded-lg overflow-hidden">
+        <img src={@review_pixel_url} alt="" class={@class} loading="lazy" />
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div class="flex flex-col items-center gap-2 text-white">
+            <.icon name="hero-clock" class="h-8 w-8" />
+            <span class="text-sm font-medium">{gettext("In review")}</span>
+          </div>
+        </div>
       </div>
-    </div>
+    <% else %>
+      <div class={[
+        @class,
+        "relative bg-base-300 flex items-center justify-center min-h-32 rounded-lg"
+      ]}>
+        <div class="flex flex-col items-center gap-2 text-base-content/60">
+          <.icon name="hero-clock" class="h-8 w-8" />
+          <span class="text-sm font-medium">{gettext("In review")}</span>
+        </div>
+      </div>
+    <% end %>
     """
   end
 

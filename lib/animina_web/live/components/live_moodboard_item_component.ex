@@ -115,10 +115,16 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
 
   defp photo_card(assigns) do
     photo = assigns.item.moodboard_photo.photo
+    owner? = assigns.owner?
     servable? = PhotoStatus.servable?(photo)
     analyzing? = PhotoStatus.analyzing?(photo)
     approved? = PhotoStatus.approved?(photo)
     url = if servable?, do: Photos.signed_url(photo, :main), else: nil
+
+    review_pixel_url =
+      if !owner? && servable? && !approved? do
+        Photos.signed_url(photo, :review_pixel)
+      end
 
     assigns =
       assigns
@@ -127,6 +133,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       |> assign(:analyzing?, analyzing?)
       |> assign(:approved?, approved?)
       |> assign(:url, url)
+      |> assign(:review_pixel_url, review_pixel_url)
 
     ~H"""
     <div class="editorial-photo-card">
@@ -143,6 +150,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
             photo={@photo}
             url={@url}
             approved?={@approved?}
+            review_pixel_url={@review_pixel_url}
           />
         <% end %>
         <!-- Rating pill for visitors -->
@@ -194,11 +202,17 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
   defp combined_card(assigns) do
     photo = assigns.item.moodboard_photo.photo
     content = assigns.item.moodboard_story.content
+    owner? = assigns.owner?
 
     servable? = PhotoStatus.servable?(photo)
     analyzing? = PhotoStatus.analyzing?(photo)
     approved? = PhotoStatus.approved?(photo)
     url = if servable?, do: Photos.signed_url(photo, :main), else: nil
+
+    review_pixel_url =
+      if !owner? && servable? && !approved? do
+        Photos.signed_url(photo, :review_pixel)
+      end
 
     has_custom_content =
       content != nil && String.trim(content) != "" && content not in @default_intro_prompts
@@ -212,6 +226,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
       |> assign(:analyzing?, analyzing?)
       |> assign(:approved?, approved?)
       |> assign(:url, url)
+      |> assign(:review_pixel_url, review_pixel_url)
       |> assign(:rendered_content, rendered)
       |> assign(:has_custom_content, has_custom_content)
 
@@ -230,6 +245,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
             photo={@photo}
             url={@url}
             approved?={@approved?}
+            review_pixel_url={@review_pixel_url}
           />
         <% end %>
         <!-- Caption below photo (only if user wrote custom content) -->
@@ -290,7 +306,7 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
           phx-value-item-id={@photo.id}
         />
       <% else %>
-        <.review_placeholder />
+        <.review_placeholder review_pixel_url={@review_pixel_url} />
       <% end %>
     </div>
     """
@@ -325,12 +341,24 @@ defmodule AniminaWeb.LiveMoodboardItemComponent do
 
   defp review_placeholder(assigns) do
     ~H"""
-    <div class="relative bg-base-300 flex items-center justify-center min-h-32 aspect-square">
-      <div class="flex flex-col items-center gap-2 text-base-content/60">
-        <.icon name="hero-clock" class="h-8 w-8" />
-        <span class="text-sm font-medium">{gettext("In review")}</span>
+    <%= if @review_pixel_url do %>
+      <div class="relative overflow-hidden">
+        <img src={@review_pixel_url} alt="" class="w-full h-auto block" loading="lazy" />
+        <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div class="flex flex-col items-center gap-2 text-white">
+            <.icon name="hero-clock" class="h-8 w-8" />
+            <span class="text-sm font-medium">{gettext("In review")}</span>
+          </div>
+        </div>
       </div>
-    </div>
+    <% else %>
+      <div class="relative bg-base-300 flex items-center justify-center min-h-32 aspect-square">
+        <div class="flex flex-col items-center gap-2 text-base-content/60">
+          <.icon name="hero-clock" class="h-8 w-8" />
+          <span class="text-sm font-medium">{gettext("In review")}</span>
+        </div>
+      </div>
+    <% end %>
     """
   end
 

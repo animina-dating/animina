@@ -443,6 +443,8 @@ defmodule Animina.Photos.PhotoProcessor do
          # Create thumbnail for AI analysis and UX
          {:ok, thumb} <- resize_to_max(image, thumb_dim),
          {:ok, _} <- Image.write(thumb, thumbnail_path, quality: quality, strip_metadata: true),
+         # Generate review pixel variant (non-critical, log but don't fail)
+         _ <- generate_review_pixel_safe(photo, image),
          # Compute dhash for blacklist checking
          {:ok, dhash} <- Photos.compute_dhash(main_path),
          # Clean up crop data file after successful processing
@@ -577,6 +579,20 @@ defmodule Animina.Photos.PhotoProcessor do
         })
 
         {:error, :blacklisted}
+    end
+  end
+
+  defp generate_review_pixel_safe(photo, image) do
+    case FileManagement.generate_review_pixel_from_image(photo, image) do
+      :ok ->
+        :ok
+
+      {:error, reason} ->
+        Logger.warning(
+          "Photo #{photo.id}: review pixel generation failed: #{inspect(reason)}"
+        )
+
+        :ok
     end
   end
 
