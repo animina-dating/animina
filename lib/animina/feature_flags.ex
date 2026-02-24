@@ -151,7 +151,7 @@ defmodule Animina.FeatureFlags do
       description:
         "Suppress wingman and spellcheck when this many high-priority jobs (prio 1+2) are queued",
       type: :integer,
-      default_value: 10,
+      default_value: 15,
       min_value: 1,
       max_value: 50
     }
@@ -802,10 +802,10 @@ defmodule Animina.FeatureFlags do
 
   @doc """
   Returns the load gate threshold for suppressing optional AI features.
-  Default: 10
+  Default: 15
   """
   def ai_load_gate_threshold do
-    get_system_setting_value(:ai_load_gate_threshold, 10)
+    get_system_setting_value(:ai_load_gate_threshold, 15)
   end
 
   @doc """
