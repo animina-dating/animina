@@ -119,10 +119,7 @@ config :animina, Animina.Photos,
   ollama_url: "http://localhost:11434/api",
   ollama_default_tags: ["gpu"],
   ollama_model: "qwen3-vl:8b",
-  ollama_timeout: 120_000,
-  ollama_total_timeout: 300_000,
-  ollama_circuit_breaker_threshold: 3,
-  ollama_circuit_breaker_reset_ms: 60_000
+  ollama_timeout: 120_000
 
 # Timezone database for proper CET/CEST handling
 config :elixir, :time_zone_database, Tz.TimeZoneDatabase

@@ -50,7 +50,7 @@ defmodule Animina.Photos.PhotoProcessor do
   and transitions them back to `pending` state so they can be re-processed.
 
   Note: Photos in `pending_ollama` states are NOT recovered here. They maintain
-  their retry schedule and will be processed by the AI.Scheduler.
+  their retry schedule and will be processed by the AI.Queue.
 
   Returns `{:ok, count}` with the number of recovered photos.
   """
@@ -149,10 +149,10 @@ defmodule Animina.Photos.PhotoProcessor do
 
   defp run_ollama_check(photo) do
     # Enqueue an AI job for classification instead of running inline.
-    # The AI.Scheduler will pick it up and the Executor will handle
-    # classification, side effects, and state transitions.
+    # The AI.Queue will pick it up and dispatch to an Ollama instance.
+    # Classification, side effects, and state transitions are handled by the job type module.
     owner_id = if photo.owner_type == "User", do: photo.owner_id, else: nil
-    priority = if photo.type == "avatar", do: 2, else: 3
+    priority = if photo.type == "avatar", do: 30, else: 40
 
     case AI.enqueue("photo_classification", %{"photo_id" => photo.id},
            subject_type: "Photo",

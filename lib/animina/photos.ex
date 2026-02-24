@@ -37,34 +37,6 @@ defmodule Animina.Photos do
   def blacklist_hamming_threshold, do: config(:blacklist_hamming_threshold, 10)
   def thumbnail_dimension, do: config(:thumbnail_dimension, 768)
   def ollama_timeout, do: config(:ollama_timeout, 120_000)
-  def ollama_model, do: Animina.FeatureFlags.ollama_model()
-
-  # Model selection is now handled by Animina.AI.Executor
-
-  # Kept for backward compatibility (used by OllamaQueue for adaptive retry logic)
-  def select_ollama_model do
-    alias Animina.FeatureFlags
-
-    if FeatureFlags.enabled?(:ollama_adaptive_model) do
-      queue_count = count_ollama_queue()
-      downgrade_tier3 = FeatureFlags.ollama_downgrade_tier3_threshold()
-      downgrade_tier2 = FeatureFlags.ollama_downgrade_tier2_threshold()
-      upgrade = FeatureFlags.ollama_upgrade_threshold()
-
-      cond do
-        queue_count > downgrade_tier3 -> FeatureFlags.ollama_model_tier3()
-        queue_count > downgrade_tier2 -> FeatureFlags.ollama_model_tier2()
-        queue_count <= upgrade -> FeatureFlags.ollama_model_tier1()
-        true -> FeatureFlags.ollama_model_tier2()
-      end
-    else
-      ollama_model()
-    end
-  end
-
-  def ollama_total_timeout, do: config(:ollama_total_timeout, 300_000)
-  def ollama_circuit_breaker_threshold, do: config(:ollama_circuit_breaker_threshold, 3)
-  def ollama_circuit_breaker_reset_ms, do: config(:ollama_circuit_breaker_reset_ms, 60_000)
 
   # States where the processed .webp file should exist and can be served
   @servable_states ~w(approved ollama_checking pending_ollama needs_manual_review no_face_error error appeal_pending appeal_rejected)
@@ -153,56 +125,6 @@ defmodule Animina.Photos do
       FileManagement.delete_photo_files(photo)
       {:ok, photo}
     end
-  end
-
-  # --- Description generation ---
-
-  @doc """
-  Lists approved photos that don't have a description yet, oldest first.
-  """
-  def list_photos_needing_description(limit \\ 5) do
-    Photo
-    |> where([p], p.state == "approved" and is_nil(p.description))
-    |> order_by([p], asc: p.inserted_at)
-    |> limit(^limit)
-    |> Repo.all()
-  end
-
-  @doc """
-  Counts approved photos that still need a description.
-  """
-  def count_photos_needing_description do
-    Photo
-    |> where([p], p.state == "approved" and is_nil(p.description))
-    |> Repo.aggregate(:count)
-  end
-
-  @doc """
-  Counts all approved photos.
-  """
-  def count_approved_photos do
-    Photo
-    |> where([p], p.state == "approved")
-    |> Repo.aggregate(:count)
-  end
-
-  @doc """
-  Returns all approved photo IDs.
-  """
-  def list_approved_photo_ids do
-    Photo
-    |> where([p], p.state == "approved")
-    |> select([p], p.id)
-    |> Repo.all()
-  end
-
-  @doc """
-  Updates a photo's AI-generated description fields.
-  """
-  def update_photo_description(%Photo{} = photo, attrs) do
-    photo
-    |> Photo.description_changeset(attrs)
-    |> Repo.update()
   end
 
   # --- Search ---

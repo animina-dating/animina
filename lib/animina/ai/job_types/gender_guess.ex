@@ -2,8 +2,8 @@ defmodule Animina.AI.JobTypes.GenderGuess do
   @moduledoc """
   AI job type for guessing gender from a first name.
 
-  Uses a text model (no vision) to determine whether a first name
-  is typically male or female. Results are cached in the first_name_genders table.
+  P10 priority, uses qwen3:1.7b text model.
+  Results are cached in the first_name_genders table.
   """
 
   @behaviour Animina.AI.JobType
@@ -20,16 +20,13 @@ defmodule Animina.AI.JobTypes.GenderGuess do
   def model_family, do: :text
 
   @impl true
-  def default_model, do: "qwen3:1.7b"
+  def model, do: "qwen3:1.7b"
 
   @impl true
-  def default_priority, do: 1
+  def priority, do: 10
 
   @impl true
   def max_attempts, do: 1
-
-  @impl true
-  def allowed_model_downgrades, do: []
 
   @impl true
   def build_prompt(%{"name" => name}) do
@@ -37,11 +34,11 @@ defmodule Animina.AI.JobTypes.GenderGuess do
       "Respond with ONLY valid JSON: {\"gender\": \"male\"} or {\"gender\": \"female\"}."
   end
 
+  @impl true
   def build_prompt(_), do: raise("GenderGuess job requires a 'name' param")
 
   @impl true
   def prepare_input(_params) do
-    # Text-only — no images needed
     {:ok, []}
   end
 
@@ -55,7 +52,6 @@ defmodule Animina.AI.JobTypes.GenderGuess do
         {:ok, %{"gender" => gender, "needs_review" => needs_review}}
 
       :error ->
-        # Default to male with review flag on parse failure
         insert_cache(name, "male", true)
         {:ok, %{"gender" => "male", "needs_review" => true, "parse_error" => true}}
     end

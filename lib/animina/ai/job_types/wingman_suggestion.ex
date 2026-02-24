@@ -2,8 +2,8 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   @moduledoc """
   AI job type for generating wingman conversation coaching suggestions.
 
-  Uses a text model to produce personalized conversation tips based on
-  publicly visible profile data from both users.
+  P20 priority, uses qwen3:8b text model.
+  Results are broadcast via PubSub to the wingman topic.
   """
 
   @behaviour Animina.AI.JobType
@@ -20,26 +20,21 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   def model_family, do: :text
 
   @impl true
-  def default_model, do: "qwen3:8b"
+  def model, do: "qwen3:8b"
 
   @impl true
-  def default_priority, do: 2
+  def priority, do: 20
 
   @impl true
   def max_attempts, do: 1
 
   @impl true
-  def allowed_model_downgrades, do: []
-
-  @impl true
   def build_prompt(%{"prompt" => prompt}), do: prompt
+  @impl true
   def build_prompt(_), do: raise("WingmanSuggestion job requires a 'prompt' param")
 
   @impl true
   def prepare_input(_params) do
-    # Text-only — no images needed.
-    # think: false — qwen3 defaults to thinking mode which wastes thousands of
-    # tokens on <think> tags before the actual JSON; we just need the answer.
     {:ok, [api_opts: [think: false]]}
   end
 

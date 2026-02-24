@@ -12,7 +12,7 @@ defmodule AniminaWeb.UserLive.MyHub do
   import AniminaWeb.WaitlistComponents
 
   alias Animina.Accounts
-  alias Animina.AI.SpellCheck
+  alias Animina.AI
   alias Animina.Discovery
   alias Animina.Discovery.Spotlight
   alias Animina.GeoData
@@ -619,27 +619,39 @@ defmodule AniminaWeb.UserLive.MyHub do
   def handle_info({:chat_panel_spellcheck, component_id, content}, socket) do
     user = socket.assigns.current_scope.user
 
-    task =
-      Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
-        SpellCheck.check_text(content,
-          age: Accounts.compute_age(user.birthday),
-          gender: user.gender
-        )
-      end)
+    params = %{
+      "text" => content,
+      "age" => Accounts.compute_age(user.birthday),
+      "gender" => user.gender
+    }
 
-    {:noreply,
-     assign(socket,
-       spellcheck_task: task.ref,
-       spellcheck_component_id: component_id,
-       spellcheck_original: content
-     )}
+    case AI.enqueue("spellcheck", params) do
+      {:ok, job} ->
+        topic = "ai:result:#{job.id}"
+        Phoenix.PubSub.subscribe(Animina.PubSub, topic)
+
+        {:noreply,
+         assign(socket,
+           spellcheck_task: topic,
+           spellcheck_component_id: component_id,
+           spellcheck_original: content
+         )}
+
+      {:error, _} ->
+        send_update(AniminaWeb.ChatPanelComponent,
+          id: component_id,
+          chat_event: :spellcheck_error
+        )
+
+        {:noreply, put_flash(socket, :error, gettext("Spell check unavailable right now"))}
+    end
   end
 
   @impl true
-  def handle_info({ref, {:ok, corrected}}, socket)
+  def handle_info({:ai_result, topic, {:ok, %{"corrected_text" => corrected}}}, socket)
       when is_map_key(socket.assigns, :spellcheck_task) and
-             socket.assigns.spellcheck_task == ref do
-    Process.demonitor(ref, [:flush])
+             socket.assigns.spellcheck_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
     original = socket.assigns.spellcheck_original
     component_id = socket.assigns.spellcheck_component_id
 
@@ -664,27 +676,10 @@ defmodule AniminaWeb.UserLive.MyHub do
   end
 
   @impl true
-  def handle_info({ref, {:error, _reason}}, socket)
+  def handle_info({:ai_result, topic, {:error, _reason}}, socket)
       when is_map_key(socket.assigns, :spellcheck_task) and
-             socket.assigns.spellcheck_task == ref do
-    Process.demonitor(ref, [:flush])
-    component_id = socket.assigns.spellcheck_component_id
-
-    send_update(AniminaWeb.ChatPanelComponent,
-      id: component_id,
-      chat_event: :spellcheck_error
-    )
-
-    {:noreply,
-     socket
-     |> assign(spellcheck_task: nil, spellcheck_original: nil)
-     |> put_flash(:error, gettext("Spell check unavailable right now"))}
-  end
-
-  @impl true
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, socket)
-      when is_map_key(socket.assigns, :spellcheck_task) and
-             socket.assigns.spellcheck_task == ref do
+             socket.assigns.spellcheck_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
     component_id = socket.assigns.spellcheck_component_id
 
     send_update(AniminaWeb.ChatPanelComponent,

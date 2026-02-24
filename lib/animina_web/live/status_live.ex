@@ -3,7 +3,7 @@ defmodule AniminaWeb.StatusLive do
 
   alias Animina.Accounts
   alias Animina.Accounts.Scope
-  alias Animina.AI.HealthTracker
+  alias Animina.AI.Queue
   alias Ecto.Adapters.SQL
 
   @refresh_interval 5_000
@@ -164,9 +164,9 @@ defmodule AniminaWeb.StatusLive do
   end
 
   defp assign_ollama_stats(socket) do
-    stats =
+    instances =
       try do
-        HealthTracker.get_instance_stats()
+        Queue.status()
       rescue
         _ -> []
       catch
@@ -175,7 +175,7 @@ defmodule AniminaWeb.StatusLive do
 
     # Ping all instances in parallel
     pings =
-      stats
+      instances
       |> Task.async_stream(&ping_instance/1, timeout: 6_000, on_timeout: :kill_task)
       |> Enum.map(fn
         {:ok, result} -> result
@@ -184,14 +184,14 @@ defmodule AniminaWeb.StatusLive do
 
     # Build node list with names
     {nodes, _remote_counter} =
-      stats
+      instances
       |> Enum.zip(pings)
-      |> Enum.reduce({[], 1}, fn {stat, ping_ms}, {acc, counter} ->
-        if localhost?(stat.url) do
-          node = build_node("This Server", stat, ping_ms)
+      |> Enum.reduce({[], 1}, fn {inst, ping_ms}, {acc, counter} ->
+        if localhost?(inst.url) do
+          node = build_node("This Server", inst, ping_ms)
           {[node | acc], counter}
         else
-          node = build_node("ANIMINA Server #{counter}", stat, ping_ms)
+          node = build_node("ANIMINA Server #{counter}", inst, ping_ms)
           {[node | acc], counter + 1}
         end
       end)
@@ -199,14 +199,13 @@ defmodule AniminaWeb.StatusLive do
     assign(socket, server_nodes: Enum.reverse(nodes))
   end
 
-  defp build_node(name, stat, ping_ms) do
+  defp build_node(name, inst, ping_ms) do
     %{
       name: name,
-      online?: stat.state in [:closed, :half_open],
+      online?: ping_ms != nil,
       ping_ms: ping_ms,
-      tags: stat.tags,
-      job_count: stat.job_count,
-      avg_duration_ms: stat.avg_duration_ms
+      tags: inst.tags,
+      busy: inst.busy
     }
   end
 
@@ -881,13 +880,9 @@ defmodule AniminaWeb.StatusLive do
                   </span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-500">Jobs</span>
-                  <span class="font-mono text-gray-900">{node.job_count}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Avg Response</span>
+                  <span class="text-gray-500">Status</span>
                   <span class="font-mono text-gray-900">
-                    {if node.avg_duration_ms, do: "#{round(node.avg_duration_ms)} ms", else: "—"}
+                    {if node.busy, do: "Busy", else: "Idle"}
                   </span>
                 </div>
               </div>

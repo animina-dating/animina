@@ -1,9 +1,6 @@
 defmodule Animina.AI.Job do
   @moduledoc """
   Schema for AI jobs — the unified queue for all AI processing tasks.
-
-  Each job represents a unit of work to be executed by an AI model (Ollama),
-  such as photo classification, gender guessing, or photo description generation.
   """
 
   use Ecto.Schema
@@ -14,8 +11,8 @@ defmodule Animina.AI.Job do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  @valid_job_types ~w(photo_classification gender_guess photo_description wingman_suggestion)
-  @valid_statuses ~w(pending scheduled running completed failed cancelled paused)
+  @valid_job_types ~w(photo_classification gender_guess wingman_suggestion preheated_wingman spellcheck greeting_guard)
+  @valid_statuses ~w(pending running completed failed cancelled)
 
   schema "ai_jobs" do
     field :job_type, :string
@@ -23,7 +20,7 @@ defmodule Animina.AI.Job do
     field :status, :string, default: "pending"
     field :error, :string
     field :attempt, :integer, default: 0
-    field :max_attempts, :integer, default: 20
+    field :max_attempts, :integer, default: 10
     field :scheduled_at, :utc_datetime
     field :expires_at, :utc_datetime
     field :params, :map
@@ -65,7 +62,7 @@ defmodule Animina.AI.Job do
     |> validate_required([:job_type, :priority, :params])
     |> validate_inclusion(:job_type, @valid_job_types)
     |> validate_inclusion(:status, @valid_statuses)
-    |> validate_number(:priority, greater_than: 0, less_than_or_equal_to: 5)
+    |> validate_number(:priority, greater_than_or_equal_to: 10, less_than_or_equal_to: 50)
     |> foreign_key_constraint(:requester_id)
   end
 
@@ -91,12 +88,12 @@ defmodule Animina.AI.Job do
   end
 
   @doc """
-  Changeset for admin actions (cancel, reprioritize, pause).
+  Changeset for admin actions (cancel, reprioritize).
   """
   def admin_changeset(job, attrs) do
     job
     |> cast(attrs, [:status, :priority, :scheduled_at, :error])
     |> validate_inclusion(:status, @valid_statuses)
-    |> validate_number(:priority, greater_than: 0, less_than_or_equal_to: 5)
+    |> validate_number(:priority, greater_than_or_equal_to: 10, less_than_or_equal_to: 50)
   end
 end

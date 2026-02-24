@@ -2,9 +2,8 @@ defmodule Animina.AI.JobTypes.PreheatedWingman do
   @moduledoc """
   AI job type for pre-computed wingman conversation hints.
 
-  Identical prompt/model to WingmanSuggestion but runs at priority 5
-  (lowest) so it only uses GPU/CPU when idle. Results are stored in the
-  `preheated_wingman_hints` table instead of `wingman_suggestions`.
+  P50 priority (lowest), uses qwen3:8b text model.
+  Results are stored in `preheated_wingman_hints` table.
   """
 
   @behaviour Animina.AI.JobType
@@ -20,19 +19,17 @@ defmodule Animina.AI.JobTypes.PreheatedWingman do
   def model_family, do: :text
 
   @impl true
-  def default_model, do: "qwen3:8b"
+  def model, do: "qwen3:8b"
 
   @impl true
-  def default_priority, do: 5
+  def priority, do: 50
 
   @impl true
   def max_attempts, do: 1
 
   @impl true
-  def allowed_model_downgrades, do: []
-
-  @impl true
   def build_prompt(%{"prompt" => prompt}), do: prompt
+  @impl true
   def build_prompt(_), do: raise("PreheatedWingman job requires a 'prompt' param")
 
   @impl true

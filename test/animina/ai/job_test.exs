@@ -4,107 +4,70 @@ defmodule Animina.AI.JobTest do
   alias Animina.AI.Job
 
   describe "create_changeset/2" do
-    test "validates required fields" do
+    test "valid job with all fields" do
+      attrs = %{
+        job_type: "photo_classification",
+        priority: 30,
+        max_attempts: 10,
+        params: %{"photo_id" => Ecto.UUID.generate()}
+      }
+
+      changeset = Job.create_changeset(%Job{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "requires job_type and params" do
       changeset = Job.create_changeset(%Job{}, %{})
       refute changeset.valid?
-      assert "can't be blank" in errors_on(changeset).job_type
-      assert "can't be blank" in errors_on(changeset).priority
-      assert "can't be blank" in errors_on(changeset).params
+      assert %{job_type: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates job_type inclusion" do
-      changeset =
-        Job.create_changeset(%Job{}, %{
-          job_type: "invalid",
-          priority: 3,
-          params: %{}
-        })
-
+      changeset = Job.create_changeset(%Job{}, %{job_type: "invalid_type", params: %{}})
       refute changeset.valid?
-      assert "is invalid" in errors_on(changeset).job_type
+      assert %{job_type: ["is invalid"]} = errors_on(changeset)
     end
 
-    test "validates priority range" do
-      changeset =
-        Job.create_changeset(%Job{}, %{
-          job_type: "photo_classification",
-          priority: 0,
-          params: %{}
-        })
+    test "validates priority range 10-50" do
+      low = Job.create_changeset(%Job{}, %{job_type: "spellcheck", priority: 5, params: %{}})
+      refute low.valid?
 
-      refute changeset.valid?
-      assert "must be greater than 0" in errors_on(changeset).priority
+      high = Job.create_changeset(%Job{}, %{job_type: "spellcheck", priority: 55, params: %{}})
+      refute high.valid?
 
-      changeset =
-        Job.create_changeset(%Job{}, %{
-          job_type: "photo_classification",
-          priority: 6,
-          params: %{}
-        })
-
-      refute changeset.valid?
-      assert "must be less than or equal to 5" in errors_on(changeset).priority
+      ok = Job.create_changeset(%Job{}, %{job_type: "spellcheck", priority: 20, params: %{}})
+      assert ok.valid?
     end
 
-    test "creates valid changeset with required fields" do
-      changeset =
-        Job.create_changeset(%Job{}, %{
-          job_type: "photo_classification",
-          priority: 3,
-          params: %{"photo_id" => "some-uuid"}
-        })
+    test "accepts all valid job types" do
+      valid_types = ~w(photo_classification gender_guess wingman_suggestion preheated_wingman spellcheck greeting_guard)
 
-      assert changeset.valid?
+      for type <- valid_types do
+        changeset = Job.create_changeset(%Job{}, %{job_type: type, priority: 20, params: %{}})
+        assert changeset.valid?, "Expected #{type} to be valid"
+      end
     end
 
-    test "defaults status to pending" do
-      changeset =
-        Job.create_changeset(%Job{}, %{
-          job_type: "gender_guess",
-          priority: 2,
-          params: %{"name" => "alice"}
-        })
-
-      assert changeset.valid?
+    test "defaults to pending status" do
+      changeset = Job.create_changeset(%Job{}, %{job_type: "spellcheck", params: %{}})
       assert Ecto.Changeset.get_field(changeset, :status) == "pending"
     end
   end
 
   describe "update_changeset/2" do
-    test "allows updating execution fields" do
-      job = %Job{
-        id: Ecto.UUID.generate(),
-        job_type: "photo_classification",
-        priority: 3,
-        status: "pending",
-        params: %{}
-      }
-
-      changeset =
-        Job.update_changeset(job, %{
-          status: "running",
-          attempt: 1,
-          model: "qwen3-vl:8b",
-          prompt: "test prompt"
-        })
-
-      assert changeset.valid?
-    end
-
     test "validates status inclusion" do
-      job = %Job{status: "running"}
-
-      changeset = Job.update_changeset(job, %{status: "invalid_status"})
+      job = %Job{id: Ecto.UUID.generate(), status: "running"}
+      changeset = Job.update_changeset(job, %{status: "invalid"})
       refute changeset.valid?
     end
-  end
 
-  describe "admin_changeset/2" do
-    test "allows changing priority and status" do
-      job = %Job{status: "pending", priority: 3}
+    test "allows valid status transitions" do
+      job = %Job{id: Ecto.UUID.generate(), status: "running"}
 
-      changeset = Job.admin_changeset(job, %{priority: 1, status: "cancelled"})
-      assert changeset.valid?
+      for status <- ~w(pending running completed failed cancelled) do
+        changeset = Job.update_changeset(job, %{status: status})
+        assert changeset.valid?, "Expected status #{status} to be valid"
+      end
     end
   end
 end

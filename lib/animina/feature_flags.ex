@@ -38,33 +38,7 @@ defmodule Animina.FeatureFlags do
       type: :flag,
       default_auto_approve_value: true
     },
-    %{
-      name: :ollama_model,
-      label: "Ollama Model",
-      description: "Vision model used for photo classification (e.g., qwen3-vl:4b, llava:13b)",
-      type: :string,
-      default_value: "qwen3-vl:4b"
-    },
-    # Concurrency settings
-    %{
-      name: :ollama_semaphore_timeout,
-      label: "Semaphore Timeout (ms)",
-      description: "How long a photo waits for an Ollama slot before queuing for retry",
-      type: :integer,
-      default_value: 30_000,
-      min_value: 5_000,
-      max_value: 300_000
-    },
-    %{
-      name: :ollama_retry_batch_size,
-      label: "Retry Batch Size",
-      description: "Photos to process per retry poll cycle (every 60s)",
-      type: :integer,
-      default_value: 5,
-      min_value: 1,
-      max_value: 20
-    },
-    # Adaptive model settings — three-tier: 8b → 4b → 2b
+    # Adaptive model settings
     %{
       name: :ollama_adaptive_model,
       label: "Adaptive Model Selection",
@@ -72,88 +46,12 @@ defmodule Animina.FeatureFlags do
         "Automatically step down to smaller models under queue pressure (8b → 4b → 2b)",
       type: :flag
     },
-    %{
-      name: :ollama_model_tier1,
-      label: "Tier 1 Model (Best Quality)",
-      description: "Used when queue is small (default operation)",
-      type: :string,
-      default_value: "qwen3-vl:8b"
-    },
-    %{
-      name: :ollama_model_tier2,
-      label: "Tier 2 Model (Medium)",
-      description: "Used when queue exceeds downgrade threshold",
-      type: :string,
-      default_value: "qwen3-vl:4b"
-    },
-    %{
-      name: :ollama_model_tier3,
-      label: "Tier 3 Model (Fast)",
-      description: "Used when queue exceeds second downgrade threshold",
-      type: :string,
-      default_value: "qwen3-vl:2b"
-    },
-    %{
-      name: :ollama_downgrade_tier2_threshold,
-      label: "Downgrade to Tier 2 Threshold",
-      description: "Queue size above which Tier 2 model is used instead of Tier 1",
-      type: :integer,
-      default_value: 10,
-      min_value: 1,
-      max_value: 100
-    },
-    %{
-      name: :ollama_downgrade_tier3_threshold,
-      label: "Downgrade to Tier 3 Threshold",
-      description: "Queue size above which Tier 3 model is used instead of Tier 2",
-      type: :integer,
-      default_value: 20,
-      min_value: 1,
-      max_value: 200
-    },
-    %{
-      name: :ollama_upgrade_threshold,
-      label: "Upgrade Threshold",
-      description:
-        "Queue size at or below which the system upgrades back to the next better model",
-      type: :integer,
-      default_value: 5,
-      min_value: 0,
-      max_value: 50
-    },
     # Spellcheck settings
     %{
       name: :spellcheck,
       label: "Spell Check",
       description: "LLM-powered spelling and grammar check for chat messages",
       type: :flag
-    },
-    %{
-      name: :spellcheck_model,
-      label: "Spellcheck Model",
-      description: "Text model used for spell/grammar checking (small, fast model recommended)",
-      type: :string,
-      default_value: "qwen3:8b"
-    },
-    # AI Scheduler settings
-    %{
-      name: :ai_scheduler_poll_interval,
-      label: "AI Scheduler Poll Interval (ms)",
-      description: "How often the AI scheduler polls for runnable jobs",
-      type: :integer,
-      default_value: 5_000,
-      min_value: 1_000,
-      max_value: 60_000
-    },
-    %{
-      name: :ai_load_gate_threshold,
-      label: "AI Load Gate Threshold",
-      description:
-        "Suppress wingman and spellcheck when this many high-priority jobs (prio 1+2) are queued",
-      type: :integer,
-      default_value: 15,
-      min_value: 1,
-      max_value: 50
     }
   ]
 
@@ -631,78 +529,6 @@ defmodule Animina.FeatureFlags do
     get_system_setting_value(:contact_blacklist_max_entries, 500)
   end
 
-  @doc """
-  Returns the configured Ollama model for photo classification.
-  Default: "qwen3-vl:4b"
-  """
-  def ollama_model do
-    get_system_setting_value(:ollama_model, "qwen3-vl:4b")
-  end
-
-  @doc """
-  Returns the semaphore timeout in milliseconds.
-  Default: 30_000
-  """
-  def ollama_semaphore_timeout do
-    get_system_setting_value(:ollama_semaphore_timeout, 30_000)
-  end
-
-  @doc """
-  Returns the retry batch size per poll cycle.
-  Default: 5
-  """
-  def ollama_retry_batch_size do
-    get_system_setting_value(:ollama_retry_batch_size, 5)
-  end
-
-  @doc """
-  Returns the Tier 1 model name (best quality, used under low load).
-  Default: "qwen3-vl:8b"
-  """
-  def ollama_model_tier1 do
-    get_system_setting_value(:ollama_model_tier1, "qwen3-vl:8b")
-  end
-
-  @doc """
-  Returns the Tier 2 model name (medium, used under moderate load).
-  Default: "qwen3-vl:4b"
-  """
-  def ollama_model_tier2 do
-    get_system_setting_value(:ollama_model_tier2, "qwen3-vl:4b")
-  end
-
-  @doc """
-  Returns the Tier 3 model name (fast, used under heavy load).
-  Default: "qwen3-vl:2b"
-  """
-  def ollama_model_tier3 do
-    get_system_setting_value(:ollama_model_tier3, "qwen3-vl:2b")
-  end
-
-  @doc """
-  Returns the queue size threshold for downgrading from Tier 1 to Tier 2.
-  Default: 10
-  """
-  def ollama_downgrade_tier2_threshold do
-    get_system_setting_value(:ollama_downgrade_tier2_threshold, 10)
-  end
-
-  @doc """
-  Returns the queue size threshold for downgrading from Tier 2 to Tier 3.
-  Default: 20
-  """
-  def ollama_downgrade_tier3_threshold do
-    get_system_setting_value(:ollama_downgrade_tier3_threshold, 20)
-  end
-
-  @doc """
-  Returns the queue size at or below which the system upgrades to a better model.
-  Default: 5
-  """
-  def ollama_upgrade_threshold do
-    get_system_setting_value(:ollama_upgrade_threshold, 5)
-  end
-
   # --- Chat Slot Settings ---
 
   @doc """
@@ -766,14 +592,6 @@ defmodule Animina.FeatureFlags do
   end
 
   @doc """
-  Returns the AI model used for wingman suggestions.
-  Default: "qwen3:8b"
-  """
-  def wingman_model do
-    get_system_setting_value(:wingman_model, "qwen3:8b")
-  end
-
-  @doc """
   Returns the cache TTL for wingman suggestions in seconds.
   Default: 86400 (24 hours)
   """
@@ -791,24 +609,6 @@ defmodule Animina.FeatureFlags do
   end
 
   @doc """
-  Returns the AI model used for spell/grammar checking.
-  Default: "qwen3:8b"
-  """
-  def spellcheck_model do
-    get_system_setting_value(:spellcheck_model, "qwen3:8b")
-  end
-
-  # --- Load Gate ---
-
-  @doc """
-  Returns the load gate threshold for suppressing optional AI features.
-  Default: 15
-  """
-  def ai_load_gate_threshold do
-    get_system_setting_value(:ai_load_gate_threshold, 15)
-  end
-
-  @doc """
   Returns whether wingman is available (enabled AND queue not overloaded).
   """
   def wingman_available? do
@@ -823,6 +623,6 @@ defmodule Animina.FeatureFlags do
   end
 
   defp ai_queue_overloaded? do
-    Animina.AI.high_priority_job_count() >= ai_load_gate_threshold()
+    false
   end
 end

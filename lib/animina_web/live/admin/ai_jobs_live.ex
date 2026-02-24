@@ -2,7 +2,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   use AniminaWeb, :live_view
 
   alias Animina.AI
-  alias Animina.AI.Semaphore
+  alias Animina.AI.Queue
   alias Animina.Photos
   alias AniminaWeb.Layouts
 
@@ -28,8 +28,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
        show_bulk_retry_modal: false,
        bulk_retry_range: nil,
        bulk_retry_count: 0,
-       show_regenerate_modal: false,
-       regenerate_count: 0,
        detail_job: nil,
        detail_tab: "result",
        enlarged_photo: nil
@@ -62,7 +60,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
       )
 
     stats = AI.queue_stats()
-    semaphore = safe_semaphore_status()
+    instances = safe_queue_status()
     paused = AI.queue_paused?()
     models = AI.distinct_models()
     job_types = AI.distinct_job_types()
@@ -90,7 +88,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
        filter_model: filter_model,
        view_mode: if(queue_only, do: "queue", else: "all"),
        stats: stats,
-       semaphore: semaphore,
+       instances: instances,
        paused: paused,
        available_models: models,
        available_job_types: job_types,
@@ -240,37 +238,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
      assign(socket, show_bulk_retry_modal: false, bulk_retry_range: nil, bulk_retry_count: 0)}
   end
 
-  @impl true
-  def handle_event("show-regenerate-modal", _params, socket) do
-    count = Photos.count_approved_photos()
-    {:noreply, assign(socket, show_regenerate_modal: true, regenerate_count: count)}
-  end
-
-  @impl true
-  def handle_event("confirm-regenerate", _params, socket) do
-    requester_id = socket.assigns.current_scope.user.id
-    {enqueued, skipped} = AI.enqueue_all_photo_descriptions(requester_id: requester_id)
-
-    socket =
-      socket
-      |> assign(show_regenerate_modal: false, regenerate_count: 0)
-      |> put_flash(
-        :info,
-        gettext(
-          "Regeneration started: %{enqueued} jobs enqueued, %{skipped} skipped (already queued).",
-          enqueued: enqueued,
-          skipped: skipped
-        )
-      )
-      |> reload_jobs()
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("close-regenerate-modal", _params, socket) do
-    {:noreply, assign(socket, show_regenerate_modal: false, regenerate_count: 0)}
-  end
 
   @impl true
   def handle_info(:auto_reload, socket) do
@@ -301,7 +268,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
       total_count: result.total_count,
       total_pages: result.total_pages,
       stats: AI.queue_stats(),
-      semaphore: safe_semaphore_status(),
+      instances: safe_queue_status(),
       paused: AI.queue_paused?()
     )
   end
@@ -339,10 +306,10 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     ~p"/admin/logs/ai?#{params}"
   end
 
-  defp safe_semaphore_status do
-    Semaphore.status()
+  defp safe_queue_status do
+    Queue.status()
   rescue
-    _ -> %{active: 0, max: 0, waiting: 0}
+    _ -> []
   end
 
   defp bulk_retry_since("1h"), do: DateTime.utc_now() |> DateTime.add(-1, :hour)
@@ -419,9 +386,9 @@ defmodule AniminaWeb.Admin.AIJobsLive do
           </div>
 
           <div class="flex items-center gap-2 bg-base-200 rounded-lg px-4 py-2">
-            <span class="text-sm text-base-content/60">{gettext("Slots")}</span>
+            <span class="text-sm text-base-content/60">{gettext("Instances")}</span>
             <span class="badge badge-sm badge-primary font-mono">
-              {@semaphore.active}/{@semaphore.max}
+              {Enum.count(@instances, & &1.busy)}/{length(@instances)}
             </span>
           </div>
 
@@ -497,13 +464,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
             </ul>
           </div>
 
-          <button
-            class="btn btn-sm btn-outline btn-accent gap-1"
-            phx-click="show-regenerate-modal"
-          >
-            <.icon name="hero-sparkles" class="h-4 w-4" />
-            {gettext("Regenerate Descriptions")}
-          </button>
         </div>
 
         <%!-- Bulk Retry Confirmation Modal --%>
@@ -531,33 +491,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
               </div>
             </div>
             <div class="modal-backdrop" phx-click="close-bulk-retry-modal"></div>
-          </div>
-        <% end %>
-
-        <%!-- Regenerate Descriptions Confirmation Modal --%>
-        <%= if @show_regenerate_modal do %>
-          <div class="modal modal-open">
-            <div class="modal-box">
-              <h3 class="text-lg font-bold">{gettext("Regenerate All Descriptions")}</h3>
-              <p class="py-4">
-                {ngettext(
-                  "This will enqueue description jobs for %{count} approved photo at background priority. Photos with pending jobs will be skipped.",
-                  "This will enqueue description jobs for %{count} approved photos at background priority. Photos with pending jobs will be skipped.",
-                  @regenerate_count,
-                  count: @regenerate_count
-                )}
-              </p>
-              <div class="modal-action">
-                <button class="btn" phx-click="close-regenerate-modal">
-                  {gettext("Cancel")}
-                </button>
-                <button class="btn btn-accent" phx-click="confirm-regenerate">
-                  <.icon name="hero-sparkles" class="h-4 w-4" />
-                  {gettext("Regenerate")}
-                </button>
-              </div>
-            </div>
-            <div class="modal-backdrop" phx-click="close-regenerate-modal"></div>
           </div>
         <% end %>
 
@@ -1073,7 +1006,7 @@ defmodule AniminaWeb.Admin.AIJobsLive do
     {[":econnrefused", "econnrefused"], "GPU Offline", "badge-error"},
     {["all_instances_unavailable"], "All GPUs Down", "badge-error"},
     {["total_timeout_exceeded"], "Total Timeout", "badge-warning"},
-    {["Semaphore timeout"], "Queue Full", "badge-warning"},
+    {["timeout"], "Timeout", "badge-warning"},
     {["http_error, 503", "http_error, 500"], "GPU Error", "badge-error"},
     {["runner has unexpectedly stopped"], "GPU Crash", "badge-error"},
     {["thumbnail_read_failed"], "File Error", "badge-ghost"}
@@ -1116,7 +1049,10 @@ defmodule AniminaWeb.Admin.AIJobsLive do
 
   defp format_job_type("photo_classification"), do: "Classification"
   defp format_job_type("gender_guess"), do: "Gender Guess"
-  defp format_job_type("photo_description"), do: "Description"
+  defp format_job_type("wingman_suggestion"), do: "Wingman"
+  defp format_job_type("preheated_wingman"), do: "Preheated Wingman"
+  defp format_job_type("spellcheck"), do: "Spellcheck"
+  defp format_job_type("greeting_guard"), do: "Greeting Guard"
   defp format_job_type(other), do: other
 
   defp format_priority(1), do: "Critical"
@@ -1150,7 +1086,10 @@ defmodule AniminaWeb.Admin.AIJobsLive do
 
   defp job_type_badge_class("photo_classification"), do: "badge-primary"
   defp job_type_badge_class("gender_guess"), do: "badge-secondary"
-  defp job_type_badge_class("photo_description"), do: "badge-accent"
+  defp job_type_badge_class("wingman_suggestion"), do: "badge-accent"
+  defp job_type_badge_class("preheated_wingman"), do: "badge-accent"
+  defp job_type_badge_class("spellcheck"), do: "badge-info"
+  defp job_type_badge_class("greeting_guard"), do: "badge-warning"
   defp job_type_badge_class(_), do: "badge-ghost"
 
   defp priority_badge_class(1), do: "badge-error"

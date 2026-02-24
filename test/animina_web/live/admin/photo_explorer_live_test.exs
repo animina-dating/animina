@@ -16,14 +16,6 @@ defmodule AniminaWeb.Admin.PhotoExplorerLiveTest do
           owner_id: user.id
         })
 
-      # Description is set via description_changeset, not create_changeset
-      {:ok, photo} =
-        Animina.Photos.update_photo_description(photo, %{
-          description: "A scenic mountain view",
-          description_model: "test-model",
-          description_generated_at: DateTime.utc_now(:second)
-        })
-
       %{admin: admin, user: user, photo: photo}
     end
 
@@ -49,18 +41,6 @@ defmodule AniminaWeb.Admin.PhotoExplorerLiveTest do
         |> render_change(%{"query" => "SearchableUser"})
 
       assert html =~ user.display_name
-    end
-
-    test "search by description returns results", %{conn: conn, admin: admin} do
-      conn = log_in_user(conn, admin, current_role: "admin")
-      {:ok, lv, _html} = live(conn, ~p"/admin/photos")
-
-      html =
-        lv
-        |> element("#photo-search")
-        |> render_change(%{"query" => "mountain view"})
-
-      assert html =~ "scenic mountain"
     end
 
     test "empty search shows prompt", %{conn: conn, admin: admin} do

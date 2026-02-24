@@ -1,9 +1,8 @@
 defmodule Animina.AI do
   @moduledoc """
-  Context for the centralized AI job service.
+  Slim context for the AI job queue.
 
-  Provides a unified API for enqueuing, managing, and querying AI jobs
-  across all use cases (photo classification, gender guessing, photo descriptions).
+  Provides enqueue, management, and query functions for AI jobs.
   """
 
   import Ecto.Query
@@ -20,26 +19,28 @@ defmodule Animina.AI do
   @job_type_modules %{
     "photo_classification" => Animina.AI.JobTypes.PhotoClassification,
     "gender_guess" => Animina.AI.JobTypes.GenderGuess,
-    "photo_description" => Animina.AI.JobTypes.PhotoDescription,
     "wingman_suggestion" => Animina.AI.JobTypes.WingmanSuggestion,
-    "preheated_wingman" => Animina.AI.JobTypes.PreheatedWingman
+    "preheated_wingman" => Animina.AI.JobTypes.PreheatedWingman,
+    "spellcheck" => Animina.AI.JobTypes.SpellCheck,
+    "greeting_guard" => Animina.AI.JobTypes.GreetingGuard
   }
 
-  @doc """
-  Returns the module implementing a given job type string.
-  """
+  @doc "Returns `{:ok, module}` or `:error` for the given job type string."
   def job_type_module(job_type) do
     Map.fetch(@job_type_modules, job_type)
   end
 
+  @doc "Returns the full job type registry map (`%{type_string => module}`)."
+  def job_type_modules, do: @job_type_modules
+
   # --- Enqueue ---
 
   @doc """
-  Enqueues a new AI job.
+  Enqueues a new AI job and broadcasts to wake the queue.
 
   ## Options
 
-    * `:priority` - Override default priority (1-5)
+    * `:priority` - Override default priority (10-50)
     * `:max_attempts` - Override default max attempts
     * `:scheduled_at` - Schedule for later (nil = immediate)
     * `:subject_type` - Polymorphic type ("Photo", "User")
@@ -56,7 +57,7 @@ defmodule Animina.AI do
       {:ok, module} ->
         attrs = %{
           job_type: job_type,
-          priority: Keyword.get(opts, :priority, module.default_priority()),
+          priority: Keyword.get(opts, :priority, module.priority()),
           max_attempts: Keyword.get(opts, :max_attempts, module.max_attempts()),
           scheduled_at: Keyword.get(opts, :scheduled_at),
           params: params,
@@ -67,190 +68,145 @@ defmodule Animina.AI do
           expires_at: Keyword.get(opts, :expires_at)
         }
 
-        %Job{}
-        |> Job.create_changeset(attrs)
-        |> Repo.insert()
+        case %Job{} |> Job.create_changeset(attrs) |> Repo.insert() do
+          {:ok, _job} = result ->
+            Phoenix.PubSub.broadcast(Animina.PubSub, "ai:new_job", :new_job)
+            result
+
+          error ->
+            error
+        end
     end
   end
 
   @doc """
-  Enqueues a job and waits synchronously for its completion.
-
-  Used by GenderGuesser for cache-miss lookups. Creates the job,
-  then polls until completed or timeout.
+  Enqueues a job and waits for completion via PubSub.
 
   Returns `{:ok, result}` or `{:error, reason}`.
   """
-  def execute_sync(job_type, params, opts \\ []) do
+  def enqueue_and_wait(job_type, params, opts \\ []) do
     timeout = Keyword.get(opts, :timeout, 30_000)
-    poll_interval = 500
 
     case enqueue(job_type, params, opts) do
       {:ok, job} ->
-        poll_for_completion(job.id, timeout, poll_interval)
+        topic = "ai:result:#{job.id}"
+        Phoenix.PubSub.subscribe(Animina.PubSub, topic)
+
+        result =
+          receive do
+            {:ai_result, ^topic, {:ok, value}} ->
+              {:ok, value}
+
+            {:ai_result, ^topic, {:error, reason}} ->
+              {:error, reason}
+          after
+            timeout ->
+              {:error, :timeout}
+          end
+
+        Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
+        result
 
       {:error, _} = error ->
         error
     end
   end
 
-  defp poll_for_completion(job_id, timeout, poll_interval) do
-    deadline = System.monotonic_time(:millisecond) + timeout
+  # --- Job Management ---
 
-    do_poll(job_id, deadline, poll_interval)
-  end
-
-  defp do_poll(job_id, deadline, poll_interval) do
-    remaining = deadline - System.monotonic_time(:millisecond)
-
-    if remaining <= 0 do
-      {:error, :timeout}
-    else
-      case Repo.get(Job, job_id) do
-        %Job{status: "completed", result: result} ->
-          {:ok, result}
-
-        %Job{status: "failed", error: error} ->
-          {:error, {:job_failed, error}}
-
-        %Job{status: "cancelled"} ->
-          {:error, :cancelled}
+  @doc "Cancels a pending job. Returns `{:error, :not_cancellable}` for non-pending jobs."
+  def cancel(job_id) do
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: "pending"} ->
+          job
+          |> Job.admin_changeset(%{status: "cancelled"})
+          |> Repo.update()
 
         _ ->
-          Process.sleep(min(poll_interval, remaining))
-          do_poll(job_id, deadline, poll_interval)
+          {:error, :not_cancellable}
       end
     end
   end
 
-  # --- Job Management ---
-
-  @doc """
-  Cancels a job with a terminal error (e.g. deleted photo).
-  Bypasses retry logic — sets status to cancelled immediately.
-  """
+  @doc "Cancels a pending or running job with an error reason. Used by the queue on input preparation failures."
   def cancel_with_error(job_id, error) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: status} when status in ~w(pending running) ->
+          job
+          |> Job.admin_changeset(%{status: "cancelled", error: error})
+          |> Repo.update()
 
-      job ->
-        job
-        |> Job.admin_changeset(%{status: "cancelled", error: error})
-        |> Repo.update()
+        _ ->
+          {:error, :not_cancellable}
+      end
     end
   end
 
-  @doc """
-  Cancels a pending or paused job.
-  """
-  def cancel(job_id) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
-
-      %Job{status: status} = job when status in ~w(pending scheduled paused) ->
-        job
-        |> Job.admin_changeset(%{status: "cancelled"})
-        |> Repo.update()
-
-      _ ->
-        {:error, :not_cancellable}
-    end
-  end
-
-  @doc """
-  Force-cancels a running job. Sets status to "cancelled" with an admin error message.
-  Only works on running jobs.
-  """
+  @doc "Force-cancels a running job (admin action)."
   def force_cancel(job_id) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: "running"} ->
+          job
+          |> Job.admin_changeset(%{status: "cancelled", error: "Force cancelled by admin"})
+          |> Repo.update()
 
-      %Job{status: "running"} = job ->
-        job
-        |> Job.admin_changeset(%{status: "cancelled", error: "Force cancelled by admin"})
-        |> Repo.update()
-
-      _ ->
-        {:error, :not_cancellable}
+        _ ->
+          {:error, :not_cancellable}
+      end
     end
   end
 
-  @doc """
-  Force-restarts a running job by resetting it to "pending".
-  Only works on running jobs.
-  """
+  @doc "Force-restarts a running job back to pending (admin action)."
   def force_restart(job_id) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: "running"} ->
+          job
+          |> Job.admin_changeset(%{status: "pending", scheduled_at: nil})
+          |> Repo.update()
 
-      %Job{status: "running"} = job ->
-        job
-        |> Job.admin_changeset(%{status: "pending", scheduled_at: nil})
-        |> Repo.update()
-
-      _ ->
-        {:error, :not_restartable}
+        _ ->
+          {:error, :not_restartable}
+      end
     end
   end
 
-  @doc """
-  Retries a failed or cancelled job by resetting it to pending.
-  """
-  def retry(job_id, opts \\ []) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
+  @doc "Retries a failed or cancelled job by resetting it to pending."
+  def retry(job_id) do
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: status} when status in ~w(failed cancelled) ->
+          job
+          |> Job.update_changeset(%{status: "pending", scheduled_at: nil})
+          |> Repo.update()
 
-      %Job{status: status} = job when status in ~w(failed cancelled) ->
-        attrs = %{
-          status: "pending",
-          scheduled_at: nil
-        }
-
-        attrs =
-          if model = Keyword.get(opts, :model) do
-            Map.put(attrs, :model, model)
-          else
-            attrs
-          end
-
-        # Use update_changeset to allow setting model
-        job
-        |> Job.update_changeset(attrs)
-        |> Repo.update()
-
-      _ ->
-        {:error, :not_retryable}
+        _ ->
+          {:error, :not_retryable}
+      end
     end
   end
 
-  @doc """
-  Changes the priority of a pending or scheduled job.
-  """
+  @doc "Changes the priority of a pending job."
   def reprioritize(job_id, priority) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        {:error, :not_found}
+    with {:ok, job} <- fetch_job(job_id) do
+      case job do
+        %Job{status: "pending"} ->
+          job
+          |> Job.admin_changeset(%{priority: priority})
+          |> Repo.update()
 
-      %Job{status: status} = job when status in ~w(pending scheduled) ->
-        job
-        |> Job.admin_changeset(%{priority: priority})
-        |> Repo.update()
-
-      _ ->
-        {:error, :not_reprioritizable}
+        _ ->
+          {:error, :not_reprioritizable}
+      end
     end
   end
 
   # --- Queue Control ---
 
-  @doc """
-  Pauses the entire AI queue. Jobs will not be dispatched until resumed.
-  """
+  @doc "Pauses the AI job queue via feature flag."
   def pause_queue do
     case FeatureFlags.get_or_create_flag_setting("system:ai_queue_paused", %{
            description: "Whether the AI job queue is paused",
@@ -264,9 +220,7 @@ defmodule Animina.AI do
     end
   end
 
-  @doc """
-  Resumes the AI queue.
-  """
+  @doc "Resumes the AI job queue."
   def resume_queue do
     case FeatureFlags.get_flag_setting("system:ai_queue_paused") do
       nil ->
@@ -277,44 +231,33 @@ defmodule Animina.AI do
     end
   end
 
-  @doc """
-  Returns whether the queue is currently paused.
-  """
+  @doc "Returns `true` if the AI job queue is paused."
   def queue_paused? do
     FeatureFlags.get_system_setting_value(:ai_queue_paused, false) == true
   end
 
   # --- Queries ---
 
-  @doc """
-  Gets a single job by ID.
-  """
-  def get_job(id) do
-    Repo.get(Job, id)
+  @doc "Fetches a job by ID, returns `nil` if not found."
+  def get_job(id), do: Repo.get(Job, id)
+
+  @doc "Fetches a job by ID, raises if not found."
+  def get_job!(id), do: Repo.get!(Job, id)
+
+  @doc "Counts jobs, optionally filtered by `:status`."
+  def count_jobs(opts \\ []) do
+    query = from(j in Job)
+
+    query =
+      case Keyword.get(opts, :status) do
+        nil -> query
+        status -> where(query, [j], j.status == ^status)
+      end
+
+    Repo.aggregate(query, :count)
   end
 
-  @doc """
-  Gets a single job by ID, raising if not found.
-  """
-  def get_job!(id) do
-    Repo.get!(Job, id)
-  end
-
-  @doc """
-  Lists jobs with pagination, filtering, and sorting.
-
-  ## Options
-
-    * `:page` - page number (default: 1)
-    * `:per_page` - items per page (default: 50)
-    * `:sort_by` - column to sort by (default: :inserted_at)
-    * `:sort_dir` - :asc or :desc (default: :desc)
-    * `:filter_job_type` - filter by job type
-    * `:filter_status` - filter by status
-    * `:filter_priority` - filter by priority
-    * `:filter_model` - filter by model
-    * `:queue_only` - if true, only show pending/scheduled/running jobs
-  """
+  @doc "Lists jobs with filtering, sorting, and pagination options."
   def list_jobs(opts \\ []) do
     sort_by = Keyword.get(opts, :sort_by, :inserted_at)
     sort_dir = Keyword.get(opts, :sort_dir, :desc)
@@ -329,20 +272,7 @@ defmodule Animina.AI do
     |> Paginator.paginate(page: opts[:page], per_page: opts[:per_page], max_per_page: 500)
   end
 
-  @doc """
-  Counts jobs matching the given filters.
-  """
-  def count_jobs(opts \\ []) do
-    Job
-    |> maybe_filter_job_type(opts[:filter_job_type])
-    |> maybe_filter_status(opts[:filter_status])
-    |> maybe_filter_priority(opts[:filter_priority])
-    |> Repo.aggregate(:count)
-  end
-
-  @doc """
-  Returns queue statistics — counts by status.
-  """
+  @doc "Returns a map of job counts grouped by status."
   def queue_stats do
     stats =
       Job
@@ -352,18 +282,15 @@ defmodule Animina.AI do
       |> Map.new()
 
     %{
-      pending: Map.get(stats, "pending", 0) + Map.get(stats, "scheduled", 0),
+      pending: Map.get(stats, "pending", 0),
       running: Map.get(stats, "running", 0),
       completed: Map.get(stats, "completed", 0),
       failed: Map.get(stats, "failed", 0),
-      cancelled: Map.get(stats, "cancelled", 0),
-      paused: Map.get(stats, "paused", 0)
+      cancelled: Map.get(stats, "cancelled", 0)
     }
   end
 
-  @doc """
-  Returns a list of distinct model names used in AI jobs.
-  """
+  @doc "Returns a sorted list of distinct model strings used in jobs."
   def distinct_models do
     Job
     |> where([j], not is_nil(j.model))
@@ -373,9 +300,7 @@ defmodule Animina.AI do
     |> Repo.all()
   end
 
-  @doc """
-  Returns a list of distinct job types used in AI jobs.
-  """
+  @doc "Returns a sorted list of distinct job type strings."
   def distinct_job_types do
     Job
     |> distinct([j], j.job_type)
@@ -384,107 +309,14 @@ defmodule Animina.AI do
     |> Repo.all()
   end
 
-  # --- Bulk Operations ---
-
-  @doc """
-  Enqueues photo_description jobs for all approved photos.
-
-  Skips photos that already have a pending/running description job.
-  Jobs are enqueued at the given priority (default: 5 = background).
-
-  Returns `{enqueued_count, skipped_count}`.
-  """
-  def enqueue_all_photo_descriptions(opts \\ []) do
-    priority = Keyword.get(opts, :priority, 5)
-    requester_id = Keyword.get(opts, :requester_id)
-
-    photo_ids = Animina.Photos.list_approved_photo_ids()
-
-    Enum.reduce(photo_ids, {0, 0}, fn photo_id, {enqueued, skipped} ->
-      if has_pending_job?("photo_description", "Photo", photo_id) do
-        {enqueued, skipped + 1}
-      else
-        enqueue("photo_description", %{"photo_id" => photo_id},
-          subject_type: "Photo",
-          subject_id: photo_id,
-          requester_id: requester_id,
-          priority: priority
-        )
-
-        {enqueued + 1, skipped}
-      end
-    end)
-  end
-
-  @doc """
-  Counts failed jobs since the given datetime.
-  """
-  def count_failed_since(since) do
-    Job
-    |> where([j], j.status == "failed")
-    |> where([j], j.inserted_at >= ^since)
-    |> Repo.aggregate(:count)
-  end
-
-  @doc """
-  Bulk-retries all failed jobs since the given datetime by resetting them to pending.
-  Returns `{count, nil}` tuple from `Repo.update_all`.
-  """
-  def retry_failed_since(since) do
-    Job
-    |> where([j], j.status == "failed")
-    |> where([j], j.inserted_at >= ^since)
-    |> Repo.update_all(
-      set: [status: "pending", scheduled_at: nil, updated_at: DateTime.utc_now()]
-    )
-  end
-
-  @doc """
-  Reschedules a running job back to scheduled without incrementing the attempt counter.
-
-  Used when a semaphore timeout occurs — the job never actually ran,
-  so it shouldn't count against max_attempts.
-  """
-  def reschedule_running_job(job_id) do
-    scheduled_at = DateTime.utc_now() |> DateTime.add(5, :second)
-
-    from(j in Job,
-      where: j.id == ^job_id and j.status == "running"
-    )
-    |> Repo.update_all(
-      set: [status: "scheduled", scheduled_at: scheduled_at, updated_at: DateTime.utc_now()]
-    )
-  end
-
-  @doc """
-  Defers a running job back to the queue with a short delay, undoing
-  the attempt increment from mark_running.
-
-  Currently used as a test helper for count_deferred_jobs setup.
-  """
-  def defer_job(job_id, delay_seconds \\ 3) do
-    scheduled_at = DateTime.utc_now() |> DateTime.add(delay_seconds, :second)
-
-    from(j in Job,
-      where: j.id == ^job_id and j.status == "running"
-    )
-    |> Repo.update_all(
-      set: [status: "scheduled", scheduled_at: scheduled_at, updated_at: DateTime.utc_now()],
-      inc: [attempt: -1]
-    )
-  end
-
   # --- Scheduler Queries ---
 
-  @doc """
-  Returns runnable jobs: pending or scheduled with scheduled_at <= now.
-  Ordered by priority ASC, then inserted_at ASC.
-  """
-  def list_runnable_jobs(limit \\ 5) do
+  @doc "Returns up to `limit` pending jobs that are ready to run."
+  def list_runnable_jobs(limit \\ 10) do
     now = DateTime.utc_now()
 
     Job
-    |> where([j], j.status in ~w(pending scheduled))
+    |> where([j], j.status == "pending")
     |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
     |> where([j], is_nil(j.expires_at) or j.expires_at > ^now)
     |> order_by([j], asc: j.priority, asc: j.inserted_at)
@@ -492,17 +324,15 @@ defmodule Animina.AI do
     |> Repo.all()
   end
 
-  @doc """
-  Resets any running jobs back to scheduled (crash recovery on startup).
-  """
+  @doc "Resets all running jobs to pending (crash recovery on startup)."
   def reset_running_jobs do
     {count, _} =
       Job
       |> where([j], j.status == "running")
-      |> Repo.update_all(set: [status: "scheduled", updated_at: DateTime.utc_now()])
+      |> Repo.update_all(set: [status: "pending", updated_at: DateTime.utc_now()])
 
     if count > 0 do
-      Logger.info("AI Scheduler: Reset #{count} running jobs to scheduled (crash recovery)")
+      Logger.info("AI: Reset #{count} running jobs to pending (crash recovery)")
     end
 
     count
@@ -510,14 +340,7 @@ defmodule Animina.AI do
 
   @stuck_error_prefix "Reset: job stuck running"
 
-  @doc """
-  Resets jobs that have been running longer than `timeout_seconds` back to "scheduled".
-
-  This catches stuck jobs (e.g., Ollama hangs, Task process crashes without cleanup).
-  Each job is only auto-reset once — jobs whose error already starts with the
-  stuck prefix are skipped to prevent infinite restart loops.
-  Runs as a single efficient SQL query, usually matching 0 rows.
-  """
+  @doc "Resets jobs stuck in running state for longer than `timeout_seconds`."
   def reset_stuck_jobs(timeout_seconds \\ 180) do
     cutoff = DateTime.utc_now() |> DateTime.add(-timeout_seconds, :second)
     prefix = @stuck_error_prefix <> "%"
@@ -531,7 +354,7 @@ defmodule Animina.AI do
       )
       |> Repo.update_all(
         set: [
-          status: "scheduled",
+          status: "pending",
           error: "#{@stuck_error_prefix} for over #{timeout_seconds}s",
           updated_at: DateTime.utc_now()
         ]
@@ -544,9 +367,23 @@ defmodule Animina.AI do
     count
   end
 
-  @doc """
-  Marks a job as running with the given attempt number.
-  """
+  @doc "Cancels pending jobs that have passed their `expires_at` time."
+  def cancel_expired_jobs do
+    now = DateTime.utc_now()
+
+    {count, _} =
+      Job
+      |> where([j], j.status == "pending")
+      |> where([j], not is_nil(j.expires_at) and j.expires_at <= ^now)
+      |> Repo.update_all(
+        set: [status: "cancelled", error: "Expired", updated_at: DateTime.utc_now()]
+      )
+
+    if count > 0, do: Logger.info("AI: Cancelled #{count} expired job(s)")
+    count
+  end
+
+  @doc "Marks a job as running and increments its attempt counter."
   def mark_running(job) do
     job
     |> Job.update_changeset(%{
@@ -556,36 +393,23 @@ defmodule Animina.AI do
     |> Repo.update()
   end
 
-  @doc """
-  Marks a job as completed with its result.
-
-  Uses a conditional UPDATE (WHERE status = 'running') to prevent overwriting
-  a job that was cancelled or restarted by an admin while executing.
-  Returns `{:error, :job_not_running}` if the job is no longer running.
-  """
+  @doc "Marks a running job as completed with result attributes."
   def mark_completed(job, attrs) do
     merged = Map.merge(attrs, %{status: "completed"})
     conditional_update(job, merged)
   end
 
-  @doc """
-  Marks a job as failed. If max attempts not reached, schedules retry.
-
-  Uses a conditional UPDATE (WHERE status = 'running') to prevent overwriting
-  a job that was cancelled or restarted by an admin while executing.
-  Returns `{:error, :job_not_running}` if the job is no longer running.
-  """
+  @doc "Marks a running job as failed, scheduling a retry if attempts remain."
   def mark_failed(job, error, attrs \\ %{}) do
     merged =
       if job.attempt >= job.max_attempts do
         Map.merge(attrs, %{status: "failed", error: error})
       else
-        # Schedule retry with backoff: 15 * attempt minutes
-        retry_minutes = 15 * job.attempt
-        scheduled_at = DateTime.utc_now() |> DateTime.add(retry_minutes, :minute)
+        retry_seconds = 15 * job.attempt
+        scheduled_at = DateTime.utc_now() |> DateTime.add(retry_seconds, :second)
 
         Map.merge(attrs, %{
-          status: "scheduled",
+          status: "pending",
           error: error,
           scheduled_at: scheduled_at
         })
@@ -594,19 +418,16 @@ defmodule Animina.AI do
     conditional_update(job, merged)
   end
 
-  # Applies an update only if the job is still in "running" status.
-  # Returns {:ok, job} or {:error, :job_not_running}.
   defp conditional_update(job, attrs) do
     changeset = Job.update_changeset(job, attrs)
 
     if changeset.valid? do
-      changes = changeset.changes
       now = DateTime.utc_now()
 
       set_fields =
-        changes
+        changeset.changes
         |> Map.put(:updated_at, now)
-        |> Enum.map(fn {k, v} -> {k, v} end)
+        |> Map.to_list()
 
       {count, updated} =
         Job
@@ -623,9 +444,7 @@ defmodule Animina.AI do
     end
   end
 
-  @doc """
-  Checks if there's already a pending/running job for the given subject.
-  """
+  @doc "Returns `true` if a pending or running job exists for the given type and subject."
   def has_pending_job?(job_type, subject_type, subject_id) do
     Job
     |> where(
@@ -633,124 +452,48 @@ defmodule Animina.AI do
       j.job_type == ^job_type and
         j.subject_type == ^subject_type and
         j.subject_id == ^subject_id and
-        j.status in ~w(pending scheduled running)
+        j.status in ~w(pending running)
     )
     |> Repo.exists?()
   end
 
-  @doc """
-  Returns whether there are pending/scheduled high-priority jobs (priority <= 2)
-  ready to run. Used by the executor to decide GPU vs CPU routing for low-priority jobs.
-  """
-  def has_high_priority_demand? do
-    now = DateTime.utc_now()
+  # --- Bulk Operations ---
 
+  @doc "Counts failed jobs inserted since the given datetime."
+  def count_failed_since(since) do
     Job
-    |> where([j], j.status in ~w(pending scheduled))
-    |> where([j], j.priority <= 2)
-    |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
-    |> limit(1)
-    |> Repo.exists?()
-  end
-
-  @doc """
-  Counts pending/scheduled/running high-priority jobs (priority <= 2) ready to run.
-  Used for load gating wingman and spellcheck.
-  """
-  def high_priority_job_count do
-    now = DateTime.utc_now()
-
-    Job
-    |> where([j], j.status in ~w(pending scheduled running))
-    |> where([j], j.priority <= 2)
-    |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
+    |> where([j], j.status == "failed")
+    |> where([j], j.inserted_at >= ^since)
     |> Repo.aggregate(:count)
   end
 
-  @doc """
-  Cancels pending/scheduled jobs past their `expires_at`. Returns count.
-  """
-  def cancel_expired_jobs do
-    now = DateTime.utc_now()
-
-    {count, _} =
-      Job
-      |> where([j], j.status in ~w(pending scheduled))
-      |> where([j], not is_nil(j.expires_at) and j.expires_at <= ^now)
-      |> Repo.update_all(
-        set: [status: "cancelled", error: "Expired", updated_at: DateTime.utc_now()]
-      )
-
-    if count > 0, do: Logger.info("AI: Cancelled #{count} expired job(s)")
-    count
-  end
-
-  # --- Estimation helpers ---
-
-  @doc """
-  Returns the queue position of a job — how many runnable jobs are ahead of it.
-  Returns 0 if the job is already running/completed/not found.
-  """
-  def queue_position_for_job(job_id) do
-    case Repo.get(Job, job_id) do
-      nil ->
-        0
-
-      %Job{status: status} when status not in ~w(pending scheduled) ->
-        0
-
-      job ->
-        now = DateTime.utc_now()
-
-        Job
-        |> where([j], j.status in ~w(pending scheduled))
-        |> where([j], is_nil(j.scheduled_at) or j.scheduled_at <= ^now)
-        |> where(
-          [j],
-          j.priority < ^job.priority or
-            (j.priority == ^job.priority and j.inserted_at < ^job.inserted_at)
-        )
-        |> Repo.aggregate(:count)
-    end
-  end
-
-  @doc """
-  Estimates how long a wingman job will take to complete, in milliseconds.
-
-  Uses `PerformanceStats.avg_duration_ms` (tries "gpu" then "cpu") and
-  the job's queue position to estimate total wait time.
-
-  Returns `{estimated_ms, queue_position}` or `nil` if no historical data.
-  """
-  def estimate_wingman_wait_ms(job_id) do
-    alias Animina.AI.PerformanceStats
-    alias Animina.AI.Semaphore
-
-    avg_ms =
-      PerformanceStats.avg_duration_ms("gpu", "wingman_suggestion") ||
-        PerformanceStats.avg_duration_ms("cpu", "wingman_suggestion")
-
-    if avg_ms do
-      position = queue_position_for_job(job_id)
-      %{max: max_slots} = Semaphore.status()
-      max_slots = max(max_slots, 1)
-      estimated_ms = ceil((position + 1) / max_slots) * avg_ms
-      estimated_ms = round(estimated_ms * 1.2)
-      {estimated_ms, position}
-    else
-      nil
-    end
+  @doc "Resets all failed jobs inserted since `since` back to pending."
+  def retry_failed_since(since) do
+    Job
+    |> where([j], j.status == "failed")
+    |> where([j], j.inserted_at >= ^since)
+    |> Repo.update_all(
+      set: [status: "pending", scheduled_at: nil, updated_at: DateTime.utc_now()]
+    )
   end
 
   # --- Config helpers ---
 
   @doc """
-  Gets an AI config value from application env, with a default.
+  Reads AI-related config from the `:animina, Animina.Photos` app env.
+
+  Legacy helper — config lives under `Animina.Photos` for historical reasons.
+  Delegates to `Animina.AI.Client.config/2`.
   """
-  def config(key, default) do
-    :animina
-    |> Application.get_env(Animina.Photos, [])
-    |> Keyword.get(key, default)
+  defdelegate config(key, default), to: Animina.AI.Client
+
+  # --- Private helpers ---
+
+  defp fetch_job(job_id) do
+    case Repo.get(Job, job_id) do
+      nil -> {:error, :not_found}
+      %Job{} = job -> {:ok, job}
+    end
   end
 
   # --- Private filter helpers ---
@@ -780,7 +523,7 @@ defmodule Animina.AI do
   defp maybe_filter_model(query, model), do: where(query, [j], j.model == ^model)
 
   defp maybe_queue_only(query, true),
-    do: where(query, [j], j.status in ~w(pending scheduled running))
+    do: where(query, [j], j.status in ~w(pending running))
 
   defp maybe_queue_only(query, _), do: query
 end

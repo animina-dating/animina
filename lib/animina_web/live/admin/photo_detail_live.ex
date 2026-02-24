@@ -2,7 +2,6 @@ defmodule AniminaWeb.Admin.PhotoDetailLive do
   use AniminaWeb, :live_view
 
   alias Animina.Accounts
-  alias Animina.AI
   alias Animina.Photos
 
   import AniminaWeb.Helpers.AdminHelpers,
@@ -21,43 +20,6 @@ defmodule AniminaWeb.Admin.PhotoDetailLive do
        owner: owner,
        history: history
      )}
-  end
-
-  @impl true
-  def handle_event("regenerate-description", _params, socket) do
-    photo = socket.assigns.photo
-    admin = socket.assigns.current_scope.user
-
-    case AI.enqueue("photo_description", %{"photo_id" => photo.id},
-           priority: 4,
-           subject_type: "Photo",
-           subject_id: photo.id,
-           requester_id: admin.id
-         ) do
-      {:ok, _job} ->
-        Animina.ActivityLog.log(
-          "admin",
-          "photo_description_regenerated",
-          "Admin #{admin.display_name} requested description regeneration for photo #{String.slice(photo.id, 0, 8)}",
-          actor_id: admin.id,
-          metadata: %{"photo_id" => photo.id}
-        )
-
-        {:noreply,
-         put_flash(
-           socket,
-           :info,
-           gettext("Description regeneration job enqueued.")
-         )}
-
-      {:error, _reason} ->
-        {:noreply,
-         put_flash(
-           socket,
-           :error,
-           gettext("Failed to enqueue description job.")
-         )}
-    end
   end
 
   @impl true
@@ -152,16 +114,7 @@ defmodule AniminaWeb.Admin.PhotoDetailLive do
           <%!-- AI Description Card --%>
           <div class="card bg-base-200 border border-base-300">
             <div class="card-body">
-              <div class="flex items-center justify-between">
-                <h2 class="card-title text-base">{gettext("AI Description")}</h2>
-                <button
-                  class="btn btn-sm btn-outline btn-accent"
-                  phx-click="regenerate-description"
-                >
-                  <.icon name="hero-sparkles" class="h-4 w-4" />
-                  {gettext("Regenerate Description")}
-                </button>
-              </div>
+              <h2 class="card-title text-base">{gettext("AI Description")}</h2>
               <%= if @photo.description do %>
                 <p class="text-sm mt-2">{@photo.description}</p>
                 <div class="flex flex-wrap gap-4 mt-3 text-xs text-base-content/50">

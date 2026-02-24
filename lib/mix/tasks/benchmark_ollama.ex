@@ -35,7 +35,6 @@ defmodule Mix.Tasks.Benchmark.Ollama do
   """
   use Mix.Task
 
-  alias Animina.AI.Client, as: AIClient
   alias Animina.Photos.PhotoProcessor
 
   @default_count 20
@@ -99,13 +98,7 @@ defmodule Mix.Tasks.Benchmark.Ollama do
       Keyword.get(opts, :url) ||
         Animina.AI.config(:ollama_url, "http://localhost:11434/api")
 
-    model =
-      Keyword.get(opts, :model) ||
-        try do
-          AIClient.default_model()
-        rescue
-          _ -> "qwen3-vl:8b"
-        end
+    model = Keyword.get(opts, :model) || "qwen3-vl:8b"
 
     concurrency_levels =
       case Keyword.get(opts, :concurrency) do
@@ -156,7 +149,7 @@ defmodule Mix.Tasks.Benchmark.Ollama do
   # ── Warnings ────────────────────────────────────────────────────────
 
   defp warn_if_ai_running do
-    case GenServer.whereis(Animina.AI.Semaphore) do
+    case GenServer.whereis(Animina.AI.Queue) do
       nil ->
         :ok
 

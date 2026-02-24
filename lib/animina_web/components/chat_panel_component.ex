@@ -16,7 +16,6 @@ defmodule AniminaWeb.ChatPanelComponent do
   import AniminaWeb.MessageComponents
 
   alias Animina.Accounts
-  alias Animina.AI
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -39,9 +38,6 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_loading: false,
        wingman_dismissed: false,
        wingman_feedback: %{},
-       wingman_started_at: nil,
-       wingman_estimated_ms: nil,
-       wingman_queue_position: nil,
        wingman_job_id: nil,
        wingman_available: false,
        wingman_enabled: true,
@@ -354,29 +350,7 @@ defmodule AniminaWeb.ChatPanelComponent do
               <.icon name="hero-x-mark" class="h-3 w-3" />
             </button>
           </div>
-          <div
-            :if={@wingman_estimated_ms}
-            id="wingman-progress-panel"
-            phx-hook="WingmanProgress"
-            data-estimated-ms={@wingman_estimated_ms}
-            data-started-at={@wingman_started_at}
-          >
-            <progress
-              class="progress progress-info w-full h-1.5"
-              value="0"
-              max="100"
-              data-role="bar"
-            />
-            <div class="flex items-center justify-between mt-1 text-xs text-base-content/50">
-              <span :if={@wingman_queue_position && @wingman_queue_position > 0}>
-                {gettext("Position %{position} in queue",
-                  position: @wingman_queue_position
-                )}
-              </span>
-              <span :if={!@wingman_queue_position || @wingman_queue_position == 0} />
-              <span data-role="remaining" />
-            </div>
-          </div>
+          <progress class="progress progress-info w-full h-1.5 mt-1" />
         </div>
 
         <%!-- Wingman Toggle --%>
@@ -896,21 +870,12 @@ defmodule AniminaWeb.ChatPanelComponent do
         )
 
       {:pending, job_id} ->
-        {estimated_ms, queue_position} =
-          case AI.estimate_wingman_wait_ms(job_id) do
-            {ms, pos} -> {ms, pos}
-            nil -> {nil, nil}
-          end
-
         # Schedule expiry check slightly after the 60s job expiry
         expiry_timer = Process.send_after(self(), {:wingman_expiry_check, job_id}, 65_000)
 
         assign(socket,
           wingman_loading: true,
           wingman_feedback: feedback_map,
-          wingman_started_at: DateTime.to_iso8601(DateTime.utc_now()),
-          wingman_estimated_ms: estimated_ms,
-          wingman_queue_position: queue_position,
           wingman_job_id: job_id,
           wingman_expiry_timer: expiry_timer
         )

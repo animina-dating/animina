@@ -24,8 +24,7 @@ defmodule AniminaWeb.MessagesLive do
   alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.AI
-  alias Animina.AI.GreetingGuard
-  alias Animina.AI.SpellCheck
+  alias Animina.AI.JobTypes.GreetingGuard
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -257,26 +256,7 @@ defmodule AniminaWeb.MessagesLive do
               <.icon name="hero-x-mark" class="h-3.5 w-3.5" />
             </button>
           </div>
-          <div :if={@wingman_estimated_ms}>
-            <progress
-              class="progress progress-info w-full h-2"
-              value={round(@wingman_progress * 100)}
-              max="100"
-            />
-            <div class="flex items-center justify-between mt-1 text-xs text-base-content/50">
-              <span :if={@wingman_queue_position && @wingman_queue_position > 0}>
-                {gettext("Position %{position} in queue",
-                  position: @wingman_queue_position
-                )}
-              </span>
-              <span :if={!@wingman_queue_position || @wingman_queue_position == 0} />
-              <span>
-                {gettext("~%{seconds}s remaining",
-                  seconds: wingman_remaining_seconds(@wingman_estimated_ms, @wingman_progress)
-                )}
-              </span>
-            </div>
-          </div>
+          <progress class="progress progress-info w-full h-2 mt-1" />
         </div>
 
         <%!-- Wingman Toggle --%>
@@ -1231,9 +1211,6 @@ defmodule AniminaWeb.MessagesLive do
         wingman_dismissed: false,
         wingman_feedback: %{},
         wingman_job_id: nil,
-        wingman_started_at: nil,
-        wingman_estimated_ms: nil,
-        wingman_queue_position: nil,
         wingman_progress: 0.0,
         wingman_progress_timer: nil,
         spellcheck_loading: false,
@@ -1438,28 +1415,14 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   defp init_wingman_progress(socket, job_id, feedback_map) do
-    {estimated_ms, queue_position} =
-      case AI.estimate_wingman_wait_ms(job_id) do
-        {ms, pos} -> {ms, pos}
-        nil -> {nil, nil}
-      end
-
-    timer =
-      if estimated_ms,
-        do: Process.send_after(self(), :wingman_progress_tick, 2_000),
-        else: nil
-
     assign(socket,
       wingman_suggestions: nil,
       wingman_loading: true,
       wingman_dismissed: false,
       wingman_feedback: feedback_map,
       wingman_job_id: job_id,
-      wingman_started_at: DateTime.utc_now(),
-      wingman_estimated_ms: estimated_ms,
-      wingman_queue_position: queue_position,
       wingman_progress: 0.0,
-      wingman_progress_timer: timer
+      wingman_progress_timer: nil
     )
   end
 
@@ -1692,18 +1655,25 @@ defmodule AniminaWeb.MessagesLive do
       true ->
         user = socket.assigns.current_scope.user
 
-        task =
-          Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
-            SpellCheck.check_text(trimmed,
-              age: Animina.Accounts.compute_age(user.birthday),
-              gender: user.gender
-            )
-          end)
+        params = %{
+          "text" => trimmed,
+          "age" => Animina.Accounts.compute_age(user.birthday),
+          "gender" => user.gender
+        }
 
-        {:noreply,
-         socket
-         |> assign(:spellcheck_loading, true)
-         |> assign(:spellcheck_task, task.ref)}
+        case AI.enqueue("spellcheck", params) do
+          {:ok, job} ->
+            topic = "ai:result:#{job.id}"
+            Phoenix.PubSub.subscribe(Animina.PubSub, topic)
+
+            {:noreply,
+             socket
+             |> assign(:spellcheck_loading, true)
+             |> assign(:spellcheck_task, topic)}
+
+          {:error, _} ->
+            {:noreply, put_flash(socket, :error, gettext("Spell check unavailable right now"))}
+        end
     end
   end
 
@@ -1961,22 +1931,33 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   defp start_greeting_guard_check(socket, user, other_user, content) do
-    task =
-      Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
-        GreetingGuard.check_greeting(content, user.display_name, other_user.display_name)
-      end)
+    params = %{
+      "content" => content,
+      "sender_name" => user.display_name,
+      "recipient_name" => other_user.display_name
+    }
 
-    # Safety timeout — fail open after 5 seconds
-    Process.send_after(self(), :greeting_guard_timeout, 5_000)
+    case AI.enqueue("greeting_guard", params) do
+      {:ok, job} ->
+        topic = "ai:result:#{job.id}"
+        Phoenix.PubSub.subscribe(Animina.PubSub, topic)
 
-    {:noreply,
-     socket
-     |> assign(:greeting_guard_pending, true)
-     |> assign(:greeting_guard_task, task.ref)
-     |> assign(:greeting_guard_content, content)
-     |> assign(:greeting_guard_recipient, other_user.display_name)
-     |> assign(:form, to_form(%{"content" => ""}, as: :message))
-     |> push_event("clear_draft", %{})}
+        # Safety timeout — fail open after 5 seconds
+        Process.send_after(self(), :greeting_guard_timeout, 5_000)
+
+        {:noreply,
+         socket
+         |> assign(:greeting_guard_pending, true)
+         |> assign(:greeting_guard_task, topic)
+         |> assign(:greeting_guard_content, content)
+         |> assign(:greeting_guard_recipient, other_user.display_name)
+         |> assign(:form, to_form(%{"content" => ""}, as: :message))
+         |> push_event("clear_draft", %{})}
+
+      {:error, _} ->
+        # Enqueue failed — fail open, send the message
+        do_send_message(socket, socket.assigns.conversation_data, user, content)
+    end
   end
 
   defp do_send_message(socket, conversation_data, user, content) do
@@ -2107,34 +2088,7 @@ defmodule AniminaWeb.MessagesLive do
 
   @impl true
   def handle_info(:wingman_progress_tick, socket) do
-    if socket.assigns.wingman_loading && socket.assigns.wingman_estimated_ms do
-      # Check if the job was cancelled (expired)
-      job = socket.assigns[:wingman_job_id] && AI.get_job(socket.assigns.wingman_job_id)
-
-      if job && job.status in ~w(cancelled failed) do
-        cancel_wingman_timer(socket)
-
-        {:noreply,
-         socket
-         |> assign(:wingman_loading, false)
-         |> assign(:wingman_suggestions, nil)
-         |> assign(:wingman_dismissed, true)
-         |> assign(:wingman_progress_timer, nil)}
-      else
-        elapsed =
-          DateTime.diff(DateTime.utc_now(), socket.assigns.wingman_started_at, :millisecond)
-
-        progress = min(elapsed / socket.assigns.wingman_estimated_ms, 0.95)
-        timer = Process.send_after(self(), :wingman_progress_tick, 2_000)
-
-        {:noreply,
-         socket
-         |> assign(:wingman_progress, progress)
-         |> assign(:wingman_progress_timer, timer)}
-      end
-    else
-      {:noreply, assign(socket, :wingman_progress_timer, nil)}
-    end
+    {:noreply, assign(socket, :wingman_progress_timer, nil)}
   end
 
   @impl true
@@ -2149,11 +2103,12 @@ defmodule AniminaWeb.MessagesLive do
      |> assign(:wingman_progress_timer, nil)}
   end
 
-  # --- Spellcheck task results ---
+  # --- Spellcheck PubSub results ---
 
   @impl true
-  def handle_info({ref, {:ok, corrected}}, socket) when socket.assigns.spellcheck_task == ref do
-    Process.demonitor(ref, [:flush])
+  def handle_info({:ai_result, topic, {:ok, %{"corrected_text" => corrected}}}, socket)
+      when socket.assigns.spellcheck_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
     original = socket.assigns.form[:content].value
 
     if corrected == String.trim(original || "") do
@@ -2176,9 +2131,9 @@ defmodule AniminaWeb.MessagesLive do
   end
 
   @impl true
-  def handle_info({ref, {:error, _reason}}, socket)
-      when socket.assigns.spellcheck_task == ref do
-    Process.demonitor(ref, [:flush])
+  def handle_info({:ai_result, topic, {:error, _reason}}, socket)
+      when socket.assigns.spellcheck_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
 
     {:noreply,
      socket
@@ -2187,23 +2142,13 @@ defmodule AniminaWeb.MessagesLive do
      |> put_flash(:error, gettext("Spell check unavailable right now"))}
   end
 
-  @impl true
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, socket)
-      when socket.assigns.spellcheck_task == ref do
-    {:noreply,
-     socket
-     |> assign(:spellcheck_loading, false)
-     |> assign(:spellcheck_task, nil)
-     |> put_flash(:error, gettext("Spell check unavailable right now"))}
-  end
-
-  # --- Greeting guard task results ---
+  # --- Greeting guard PubSub results ---
 
   # AI says it's a generic greeting → show modal
   @impl true
-  def handle_info({ref, {:ok, true}}, socket)
-      when socket.assigns.greeting_guard_task == ref do
-    Process.demonitor(ref, [:flush])
+  def handle_info({:ai_result, topic, {:ok, %{"is_generic_greeting" => true}}}, socket)
+      when socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
 
     Animina.ActivityLog.log(
       "system",
@@ -2223,9 +2168,9 @@ defmodule AniminaWeb.MessagesLive do
 
   # AI says it's not a generic greeting → send normally
   @impl true
-  def handle_info({ref, {:ok, false}}, socket)
-      when socket.assigns.greeting_guard_task == ref do
-    Process.demonitor(ref, [:flush])
+  def handle_info({:ai_result, topic, {:ok, %{"is_generic_greeting" => false}}}, socket)
+      when socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
     content = socket.assigns.greeting_guard_content
     user = socket.assigns.current_scope.user
     conversation_data = socket.assigns.conversation_data
@@ -2236,21 +2181,9 @@ defmodule AniminaWeb.MessagesLive do
 
   # AI call failed → fail open, send the message
   @impl true
-  def handle_info({ref, {:error, _reason}}, socket)
-      when socket.assigns.greeting_guard_task == ref do
-    Process.demonitor(ref, [:flush])
-    content = socket.assigns.greeting_guard_content
-    user = socket.assigns.current_scope.user
-    conversation_data = socket.assigns.conversation_data
-
-    socket = assign(socket, :greeting_guard_task, nil)
-    do_send_message(socket, conversation_data, user, content)
-  end
-
-  # Task process crashed → fail open
-  @impl true
-  def handle_info({:DOWN, ref, :process, _pid, _reason}, socket)
-      when socket.assigns.greeting_guard_task == ref do
+  def handle_info({:ai_result, topic, {:error, _reason}}, socket)
+      when socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
     content = socket.assigns.greeting_guard_content
     user = socket.assigns.current_scope.user
     conversation_data = socket.assigns.conversation_data
@@ -2263,6 +2196,7 @@ defmodule AniminaWeb.MessagesLive do
   @impl true
   def handle_info(:greeting_guard_timeout, socket) do
     if socket.assigns.greeting_guard_pending && socket.assigns.greeting_guard_task do
+      Phoenix.PubSub.unsubscribe(Animina.PubSub, socket.assigns.greeting_guard_task)
       content = socket.assigns.greeting_guard_content
       user = socket.assigns.current_scope.user
       conversation_data = socket.assigns.conversation_data
@@ -2526,11 +2460,6 @@ defmodule AniminaWeb.MessagesLive do
     if socket.assigns.wingman_progress_timer do
       Process.cancel_timer(socket.assigns.wingman_progress_timer)
     end
-  end
-
-  defp wingman_remaining_seconds(estimated_ms, progress) do
-    remaining_ms = estimated_ms * (1 - progress)
-    max(round(remaining_ms / 1_000), 1)
   end
 
   defp cancel_draft_timer(socket) do

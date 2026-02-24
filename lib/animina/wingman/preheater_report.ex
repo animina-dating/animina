@@ -58,7 +58,7 @@ defmodule Animina.Wingman.PreheaterReport do
     total_users = count_wingman_users()
     expected_hints = count_expected_pairs(today)
     completed_hints = count_completed_hints(today)
-    pending_jobs = count_jobs_by_status(~w(pending scheduled running))
+    pending_jobs = count_jobs_by_status(~w(pending running))
     failed_jobs = count_jobs_by_status(~w(failed))
 
     completion_pct =

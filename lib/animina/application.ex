@@ -5,8 +5,6 @@ defmodule Animina.Application do
 
   use Application
 
-  alias Animina.AI.Client, as: AIClient
-  alias Animina.AI.Warmup
   alias Animina.Photos.PhotoProcessor
 
   @impl true
@@ -46,20 +44,7 @@ defmodule Animina.Application do
     # Recover stuck photos after services are ready (delayed to ensure GenServers are up)
     recover_stuck_photos()
 
-    # Warm up Ollama model (delayed to ensure AI.HealthTracker is ready)
-    warmup_ollama()
-
     result
-  end
-
-  defp warmup_ollama do
-    if Application.get_env(:animina, :start_ai_services, true) do
-      Task.start(fn ->
-        # Wait for AI.HealthTracker GenServer to be fully initialized
-        Process.sleep(2000)
-        Warmup.warmup_all()
-      end)
-    end
   end
 
   defp recover_stuck_photos do
@@ -127,14 +112,10 @@ defmodule Animina.Application do
 
   defp maybe_start_ai_services do
     if Application.get_env(:animina, :start_ai_services, true) do
-      AIClient.init_counter()
-
       [
         {Task.Supervisor, name: Animina.AI.TaskSupervisor},
-        Animina.AI.HealthTracker,
-        Animina.AI.Semaphore,
-        Animina.AI.Scheduler,
-        Animina.Photos.PhotoProcessor
+        Animina.AI.Queue,
+        PhotoProcessor
       ]
     else
       []

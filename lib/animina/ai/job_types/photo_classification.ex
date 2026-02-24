@@ -2,8 +2,8 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   @moduledoc """
   AI job type for photo classification (content safety, face detection, etc.).
 
-  Uses a vision model to analyze photos and determine if they are appropriate
-  for the dating platform. Handles both avatar and moodboard photos.
+  P30 for avatars, P40 for moodboard photos (set at enqueue time).
+  Uses qwen3-vl:8b vision model.
   """
 
   @behaviour Animina.AI.JobType
@@ -19,16 +19,13 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   def model_family, do: :vision
 
   @impl true
-  def default_model, do: "qwen3-vl:8b"
+  def model, do: "qwen3-vl:8b"
 
   @impl true
-  def default_priority, do: 3
+  def priority, do: 30
 
   @impl true
   def max_attempts, do: 10
-
-  @impl true
-  def allowed_model_downgrades, do: ["qwen3-vl:4b", "qwen3-vl:2b"]
 
   @impl true
   def build_prompt(_params) do
@@ -54,6 +51,7 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
     end
   end
 
+  @impl true
   def prepare_input(_), do: {:error, :missing_photo_id}
 
   @impl true
