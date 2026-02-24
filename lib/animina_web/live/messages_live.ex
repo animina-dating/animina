@@ -24,6 +24,7 @@ defmodule AniminaWeb.MessagesLive do
   alias Animina.Accounts
   alias Animina.Accounts.OnlineActivity
   alias Animina.AI
+  alias Animina.AI.GreetingGuard
   alias Animina.AI.SpellCheck
   alias Animina.FeatureFlags
   alias Animina.Messaging
@@ -299,6 +300,19 @@ defmodule AniminaWeb.MessagesLive do
           </label>
         </div>
 
+        <%!-- Wingman Queue Busy Notice --%>
+        <div
+          :if={
+            @wingman_queue_busy && @wingman_enabled && @conversation_data &&
+              Enum.empty?(@messages)
+          }
+          class="mx-1 mb-1 px-3 py-2 rounded-lg bg-warning/10 border border-warning/20"
+        >
+          <p class="text-xs text-base-content/60">
+            {gettext("Wingman is temporarily paused due to high demand. It will be back shortly.")}
+          </p>
+        </div>
+
         <%!-- Message Input --%>
         <.chat_input
           form={@form}
@@ -309,6 +323,7 @@ defmodule AniminaWeb.MessagesLive do
           spellcheck_enabled={FeatureFlags.spellcheck_available?()}
           spellcheck_loading={@spellcheck_loading}
           spellcheck_has_undo={@spellcheck_original != nil}
+          greeting_guard_pending={@greeting_guard_pending}
         />
       </div>
 
@@ -323,6 +338,33 @@ defmodule AniminaWeb.MessagesLive do
         context_id={@conversation_data.conversation.id}
         current_scope={@current_scope}
       />
+
+      <%!-- Greeting Guard Modal --%>
+      <div
+        :if={@show_greeting_guard_modal}
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      >
+        <div class="bg-base-100 rounded-lg p-6 max-w-sm mx-4 shadow-xl">
+          <div class="flex items-center gap-2 mb-3">
+            <.icon name="hero-light-bulb" class="h-6 w-6 text-warning" />
+            <h3 class="text-lg font-semibold">{gettext("Stand out!")}</h3>
+          </div>
+          <p class="text-base-content/70 text-sm">
+            {gettext(
+              "%{name} receives many short greetings. Write something personal to make a better first impression!",
+              name: @greeting_guard_recipient
+            )}
+          </p>
+          <div class="mt-6 flex gap-3 justify-end">
+            <button phx-click="greeting_guard_send_anyway" class="btn btn-ghost btn-sm">
+              {gettext("Send anyway")}
+            </button>
+            <button phx-click="greeting_guard_edit" class="btn btn-primary btn-sm">
+              {gettext("Edit message")}
+            </button>
+          </div>
+        </div>
+      </div>
 
       <%!-- Confirmation Dialog --%>
       <div
@@ -1181,6 +1223,7 @@ defmodule AniminaWeb.MessagesLive do
         show_timeline: false,
         milestones: [],
         wingman_available: FeatureFlags.wingman_available?(),
+        wingman_queue_busy: FeatureFlags.wingman_enabled?() and not FeatureFlags.wingman_available?(),
         wingman_enabled: user.wingman_enabled,
         wingman_suggestions: nil,
         wingman_loading: false,
@@ -1195,7 +1238,12 @@ defmodule AniminaWeb.MessagesLive do
         spellcheck_loading: false,
         spellcheck_original: nil,
         spellcheck_task: nil,
-        last_spellchecked_text: nil
+        last_spellchecked_text: nil,
+        greeting_guard_pending: false,
+        greeting_guard_task: nil,
+        greeting_guard_content: nil,
+        greeting_guard_recipient: nil,
+        show_greeting_guard_modal: false
       )
 
     # Handle start_with param to create/open a conversation
@@ -1553,35 +1601,77 @@ defmodule AniminaWeb.MessagesLive do
     user = socket.assigns.current_scope.user
     conversation_data = socket.assigns.conversation_data
 
-    if conversation_data && String.trim(content) != "" do
-      case Messaging.send_message(conversation_data.conversation.id, user.id, content) do
-        {:ok, _message} ->
-          # Cancel pending draft save timer
-          cancel_draft_timer(socket)
+    if conversation_data && String.trim(content) != "" &&
+         !socket.assigns.greeting_guard_pending do
+      other_user = conversation_data.other_user
 
-          # Dismiss wingman after first message is sent
-          socket =
-            maybe_dismiss_wingman(socket, conversation_data.conversation.id, user.id)
+      if GreetingGuard.should_check?(user, other_user, content, socket.assigns.messages) do
+        # Spawn async AI check; clear the input optimistically
+        task =
+          Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
+            GreetingGuard.check_greeting(
+              content,
+              user.display_name,
+              other_user.display_name
+            )
+          end)
 
-          # Message will be added via PubSub; draft cleared by context
-          {:noreply,
-           socket
-           |> assign(:form, to_form(%{"content" => ""}, as: :message))
-           |> assign(:draft_save_timer, nil)
-           |> assign(:spellcheck_original, nil)
-           |> assign(:last_spellchecked_text, nil)
-           |> push_event("clear_draft", %{})}
+        # Safety timeout — fail open after 5 seconds
+        Process.send_after(self(), :greeting_guard_timeout, 5_000)
 
-        {:error, :blocked} ->
-          {:noreply,
-           put_flash(socket, :error, gettext("You cannot send messages in this conversation"))}
-
-        {:error, _changeset} ->
-          {:noreply, put_flash(socket, :error, gettext("Failed to send message"))}
+        {:noreply,
+         socket
+         |> assign(:greeting_guard_pending, true)
+         |> assign(:greeting_guard_task, task.ref)
+         |> assign(:greeting_guard_content, content)
+         |> assign(:greeting_guard_recipient, other_user.display_name)
+         |> assign(:form, to_form(%{"content" => ""}, as: :message))
+         |> push_event("clear_draft", %{})}
+      else
+        do_send_message(socket, conversation_data, user, content)
       end
     else
       {:noreply, socket}
     end
+  end
+
+  @impl true
+  def handle_event("greeting_guard_send_anyway", _params, socket) do
+    content = socket.assigns.greeting_guard_content
+    user = socket.assigns.current_scope.user
+    conversation_data = socket.assigns.conversation_data
+
+    socket =
+      socket
+      |> assign(:show_greeting_guard_modal, false)
+      |> assign(:greeting_guard_pending, false)
+      |> assign(:greeting_guard_task, nil)
+      |> assign(:greeting_guard_content, nil)
+      |> assign(:greeting_guard_recipient, nil)
+
+    if content && conversation_data do
+      do_send_message(socket, conversation_data, user, content)
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("greeting_guard_edit", _params, socket) do
+    content = socket.assigns.greeting_guard_content
+
+    {:noreply,
+     socket
+     |> assign(:show_greeting_guard_modal, false)
+     |> assign(:greeting_guard_pending, false)
+     |> assign(:greeting_guard_task, nil)
+     |> assign(:greeting_guard_content, nil)
+     |> assign(:greeting_guard_recipient, nil)
+     |> assign(:form, to_form(%{"content" => content || ""}, as: :message))
+     |> push_event("greeting_guard_restore", %{
+       input_id: "message-input",
+       text: content || ""
+     })}
   end
 
   @impl true
@@ -1889,6 +1979,38 @@ defmodule AniminaWeb.MessagesLive do
     end
   end
 
+  defp do_send_message(socket, conversation_data, user, content) do
+    case Messaging.send_message(conversation_data.conversation.id, user.id, content) do
+      {:ok, _message} ->
+        # Cancel pending draft save timer
+        cancel_draft_timer(socket)
+
+        # Dismiss wingman after first message is sent
+        socket =
+          maybe_dismiss_wingman(socket, conversation_data.conversation.id, user.id)
+
+        # Message will be added via PubSub; draft cleared by context
+        {:noreply,
+         socket
+         |> assign(:form, to_form(%{"content" => ""}, as: :message))
+         |> assign(:draft_save_timer, nil)
+         |> assign(:spellcheck_original, nil)
+         |> assign(:last_spellchecked_text, nil)
+         |> assign(:greeting_guard_pending, false)
+         |> assign(:greeting_guard_task, nil)
+         |> assign(:greeting_guard_content, nil)
+         |> assign(:greeting_guard_recipient, nil)
+         |> push_event("clear_draft", %{})}
+
+      {:error, :blocked} ->
+        {:noreply,
+         put_flash(socket, :error, gettext("You cannot send messages in this conversation"))}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, gettext("Failed to send message"))}
+    end
+  end
+
   # --- PubSub handlers ---
 
   @impl true
@@ -2073,6 +2195,83 @@ defmodule AniminaWeb.MessagesLive do
      |> assign(:spellcheck_loading, false)
      |> assign(:spellcheck_task, nil)
      |> put_flash(:error, gettext("Spell check unavailable right now"))}
+  end
+
+  # --- Greeting guard task results ---
+
+  # AI says it's a generic greeting → show modal
+  @impl true
+  def handle_info({ref, {:ok, true}}, socket)
+      when socket.assigns.greeting_guard_task == ref do
+    Process.demonitor(ref, [:flush])
+
+    Animina.ActivityLog.log(
+      "system",
+      "greeting_guard_triggered",
+      "Greeting guard triggered for #{socket.assigns.current_scope.user.display_name}",
+      actor_id: socket.assigns.current_scope.user.id,
+      subject_id:
+        socket.assigns.conversation_data && socket.assigns.conversation_data.other_user.id,
+      metadata: %{"content" => socket.assigns.greeting_guard_content}
+    )
+
+    {:noreply,
+     socket
+     |> assign(:greeting_guard_task, nil)
+     |> assign(:show_greeting_guard_modal, true)}
+  end
+
+  # AI says it's not a generic greeting → send normally
+  @impl true
+  def handle_info({ref, {:ok, false}}, socket)
+      when socket.assigns.greeting_guard_task == ref do
+    Process.demonitor(ref, [:flush])
+    content = socket.assigns.greeting_guard_content
+    user = socket.assigns.current_scope.user
+    conversation_data = socket.assigns.conversation_data
+
+    socket = assign(socket, :greeting_guard_task, nil)
+    do_send_message(socket, conversation_data, user, content)
+  end
+
+  # AI call failed → fail open, send the message
+  @impl true
+  def handle_info({ref, {:error, _reason}}, socket)
+      when socket.assigns.greeting_guard_task == ref do
+    Process.demonitor(ref, [:flush])
+    content = socket.assigns.greeting_guard_content
+    user = socket.assigns.current_scope.user
+    conversation_data = socket.assigns.conversation_data
+
+    socket = assign(socket, :greeting_guard_task, nil)
+    do_send_message(socket, conversation_data, user, content)
+  end
+
+  # Task process crashed → fail open
+  @impl true
+  def handle_info({:DOWN, ref, :process, _pid, _reason}, socket)
+      when socket.assigns.greeting_guard_task == ref do
+    content = socket.assigns.greeting_guard_content
+    user = socket.assigns.current_scope.user
+    conversation_data = socket.assigns.conversation_data
+
+    socket = assign(socket, :greeting_guard_task, nil)
+    do_send_message(socket, conversation_data, user, content)
+  end
+
+  # Safety timeout — if task hasn't responded in 5s, fail open
+  @impl true
+  def handle_info(:greeting_guard_timeout, socket) do
+    if socket.assigns.greeting_guard_pending && socket.assigns.greeting_guard_task do
+      content = socket.assigns.greeting_guard_content
+      user = socket.assigns.current_scope.user
+      conversation_data = socket.assigns.conversation_data
+
+      socket = assign(socket, :greeting_guard_task, nil)
+      do_send_message(socket, conversation_data, user, content)
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true

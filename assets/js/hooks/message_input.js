@@ -71,6 +71,18 @@ const MessageInput = {
       }
     })
 
+    // Handle greeting guard edit — restore text and focus
+    this.handleEvent("greeting_guard_restore", ({input_id, text}) => {
+      if (input_id === this.el.id) {
+        this.el.value = text
+        this.saveDraft()
+        this.autoGrow()
+        this.el.dispatchEvent(new Event("input", { bubbles: true }))
+        this.el.focus()
+        this.el.setSelectionRange(text.length, text.length)
+      }
+    })
+
     // Save draft to server before full page unload or LiveView navigation
     this._beforeUnload = () => {
       if (this.el.value) {

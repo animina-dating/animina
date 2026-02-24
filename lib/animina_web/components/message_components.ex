@@ -35,6 +35,7 @@ defmodule AniminaWeb.MessageComponents do
   attr :spellcheck_enabled, :boolean, default: false
   attr :spellcheck_loading, :boolean, default: false
   attr :spellcheck_has_undo, :boolean, default: false
+  attr :greeting_guard_pending, :boolean, default: false
 
   def chat_input(assigns) do
     assigns =
@@ -101,8 +102,17 @@ defmodule AniminaWeb.MessageComponents do
                   </button>
               <% end %>
             </span>
-            <button type="submit" class={@btn_class} aria-label={gettext("Send message")}>
-              <.icon name="hero-paper-airplane" class={@icon_class} />
+            <button
+              type="submit"
+              class={@btn_class}
+              aria-label={gettext("Send message")}
+              disabled={@greeting_guard_pending}
+            >
+              <%= if @greeting_guard_pending do %>
+                <span class="loading loading-spinner loading-xs" />
+              <% else %>
+                <.icon name="hero-paper-airplane" class={@icon_class} />
+              <% end %>
             </button>
           </div>
           <div class={hint_class(@size)}>
