@@ -85,9 +85,9 @@ defmodule Animina.Wingman do
   @doc """
   Assembles safe-to-use profile data for both users.
 
-  Returns a map with `:user`, `:other_user`, `:overlap`, and `:conversation_state`.
+  Returns a map with `:user`, `:other_user`, and `:overlap`.
   """
-  def gather_context(requesting_user, other_user, messages) do
+  def gather_context(requesting_user, other_user, _messages) do
     requesting_user = Repo.preload(requesting_user, :locations)
     other_user = Repo.preload(other_user, :locations)
 
@@ -99,16 +99,13 @@ defmodule Animina.Wingman do
     distance_km = compute_distance(requesting_user, other_user)
     is_wildcard = wildcard?(requesting_user.id, other_user.id)
 
-    conversation_state = summarize_conversation(messages)
-
     %{
       user: user_data,
       other_user: other_user_data,
       overlap: overlap,
       user_ratings: user_ratings,
       distance_km: distance_km,
-      is_wildcard: is_wildcard,
-      conversation_state: conversation_state
+      is_wildcard: is_wildcard
     }
   end
 
@@ -571,16 +568,6 @@ defmodule Animina.Wingman do
   defp pronoun(_, "female"), do: "her"
   defp pronoun(_, _), do: "them"
 
-  defp summarize_conversation(messages) do
-    count = length(messages)
-
-    cond do
-      count == 0 -> "new"
-      count <= 5 -> "early (#{count} messages)"
-      true -> "ongoing (#{count} messages)"
-    end
-  end
-
   # --- Prompt assigns ---
 
   defp prepare_assigns(context, language) do
@@ -660,8 +647,6 @@ defmodule Animina.Wingman do
             content: content
           }
         end),
-      # Conversation
-      conversation_state: translate_conv_state(context.conversation_state, language)
     }
   end
 
@@ -741,17 +726,6 @@ defmodule Animina.Wingman do
   defp rating_emoji("like"), do: "👍"
   defp rating_emoji("dislike"), do: "👎"
   defp rating_emoji(_), do: "•"
-
-  defp translate_conv_state("new", "de"), do: "neu"
-  defp translate_conv_state("new", _), do: "new"
-
-  defp translate_conv_state("early (" <> rest, "de"),
-    do: "Anfang (#{String.replace(rest, " messages)", " Nachrichten)")}"
-
-  defp translate_conv_state("ongoing (" <> rest, "de"),
-    do: "laufend (#{String.replace(rest, " messages)", " Nachrichten)")}"
-
-  defp translate_conv_state(other, _language), do: other
 
   defp berlin_weekday(datetime, "de") do
     case Date.day_of_week(DateTime.to_date(datetime)) do

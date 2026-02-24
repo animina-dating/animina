@@ -56,16 +56,6 @@ defmodule Animina.WingmanTest do
 
       assert context.user.display_name == "Alice"
       assert context.other_user.display_name == "Bob"
-      assert is_binary(context.conversation_state) or is_nil(context.conversation_state)
-    end
-
-    test "includes conversation state summary" do
-      user = user_fixture(language: "en")
-      other = user_fixture(language: "en")
-
-      # Empty conversation
-      context = Wingman.gather_context(user, other, [])
-      assert context.conversation_state == "new"
     end
 
     test "includes user_ratings in context" do
@@ -298,7 +288,6 @@ defmodule Animina.WingmanTest do
       assert prompt =~ "Sucht Größe:"
       assert prompt =~ "Suchradius:"
       assert prompt =~ "Entfernung:"
-      assert prompt =~ "Gesprächsstatus: neu"
       assert prompt =~ "Gib NUR gültiges JSON"
 
       # Should NOT contain English labels
@@ -307,7 +296,6 @@ defmodule Animina.WingmanTest do
       refute prompt =~ "Looking for"
       refute prompt =~ "Search radius:"
       refute prompt =~ "Distance:"
-      refute prompt =~ "Conversation state:"
       refute prompt =~ "Return ONLY valid JSON"
     end
 
@@ -326,7 +314,6 @@ defmodule Animina.WingmanTest do
       assert prompt =~ "Height: 168 cm"
       assert prompt =~ "Looking for age:"
       assert prompt =~ "Search radius:"
-      assert prompt =~ "Conversation state: new"
       assert prompt =~ "Return ONLY valid JSON"
     end
 
