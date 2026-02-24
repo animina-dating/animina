@@ -168,6 +168,7 @@ defmodule Animina.Traits do
       expand_on_write(user_flag)
       maybe_broadcast_white_flags(user_flag)
       maybe_log_first_flag_of_color(user_flag)
+      Animina.Wingman.invalidate_preheated_hints(user_flag.user_id)
       {:ok, user_flag}
     end
   end
@@ -290,6 +291,7 @@ defmodule Animina.Traits do
     case result do
       {:ok, deleted} ->
         if color == "white", do: broadcast_white_flags_updated(user.id)
+        Animina.Wingman.invalidate_preheated_hints(user.id)
         {:ok, deleted}
 
       {:error, _} = error ->

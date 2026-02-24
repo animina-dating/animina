@@ -21,7 +21,8 @@ defmodule Animina.AI do
     "photo_classification" => Animina.AI.JobTypes.PhotoClassification,
     "gender_guess" => Animina.AI.JobTypes.GenderGuess,
     "photo_description" => Animina.AI.JobTypes.PhotoDescription,
-    "wingman_suggestion" => Animina.AI.JobTypes.WingmanSuggestion
+    "wingman_suggestion" => Animina.AI.JobTypes.WingmanSuggestion,
+    "preheated_wingman" => Animina.AI.JobTypes.PreheatedWingman
   }
 
   @doc """

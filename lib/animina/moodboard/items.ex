@@ -130,6 +130,7 @@ defmodule Animina.Moodboard.Items do
       {:ok, item} ->
         broadcast_item_created(item)
         log_moodboard_item_created(user, "story")
+        Animina.Wingman.invalidate_preheated_hints(user.id)
         {:ok, item}
 
       error ->
@@ -361,6 +362,8 @@ defmodule Animina.Moodboard.Items do
             subject_id: item.user_id,
             metadata: %{"item_id" => item.id, "action" => "story_updated"}
           )
+
+          Animina.Wingman.invalidate_preheated_hints(item.user_id)
         end
 
         {:ok, updated_story}
@@ -431,6 +434,7 @@ defmodule Animina.Moodboard.Items do
       {:ok, deleted_item} ->
         maybe_delete_photo_files(deleted_item)
         broadcast_item_deleted(deleted_item)
+        Animina.Wingman.invalidate_preheated_hints(deleted_item.user_id)
         {:ok, deleted_item}
 
       error ->

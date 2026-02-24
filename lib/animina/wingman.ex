@@ -33,6 +33,7 @@ defmodule Animina.Wingman do
   alias Animina.TimeMachine
   alias Animina.Traits
   alias Animina.Traits.Matching
+  alias Animina.Wingman.PreheatedWingmanHint
   alias Animina.Wingman.PromptTemplate
   alias Animina.Wingman.WingmanFeedback
   alias Animina.Wingman.WingmanSuggestion
@@ -76,7 +77,16 @@ defmodule Animina.Wingman do
         {:ok, suggestions}
 
       _ ->
-        enqueue_generation(conversation_id, user_id, other_user_id)
+        # Check preheated hints before on-demand generation
+        case get_preheated_hint(user_id, other_user_id) do
+          %PreheatedWingmanHint{suggestions: suggestions} when is_list(suggestions) ->
+            # Promote to wingman_suggestions so feedback/deletion works unchanged
+            save_and_broadcast(conversation_id, user_id, suggestions, nil, nil)
+            {:ok, suggestions}
+
+          _ ->
+            enqueue_generation(conversation_id, user_id, other_user_id)
+        end
     end
   end
 
@@ -116,6 +126,79 @@ defmodule Animina.Wingman do
       distance_km: distance_km,
       is_wildcard: is_wildcard
     }
+  end
+
+  # --- Preheated Hints API ---
+
+  @doc """
+  Saves or updates a preheated wingman hint via upsert.
+  """
+  def save_preheated_hint(user_id, other_user_id, shown_on, suggestions, context_hash, ai_job_id) do
+    attrs = %{
+      user_id: user_id,
+      other_user_id: other_user_id,
+      shown_on: shown_on,
+      suggestions: suggestions,
+      context_hash: context_hash,
+      ai_job_id: ai_job_id
+    }
+
+    %PreheatedWingmanHint{}
+    |> PreheatedWingmanHint.changeset(attrs)
+    |> Repo.insert(
+      on_conflict: {:replace, [:suggestions, :context_hash, :ai_job_id, :updated_at]},
+      conflict_target: [:user_id, :other_user_id, :shown_on]
+    )
+  end
+
+  @doc """
+  Looks up a preheated hint for today (Berlin time).
+  Returns nil if no hint exists or suggestions are nil.
+  """
+  def get_preheated_hint(user_id, other_user_id) do
+    today = berlin_today()
+
+    from(h in PreheatedWingmanHint,
+      where:
+        h.user_id == ^user_id and
+          h.other_user_id == ^other_user_id and
+          h.shown_on == ^today and
+          not is_nil(h.suggestions)
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Deletes all today's preheated hints where the user appears on either side.
+  Called when a user edits their moodboard or flags, making hints stale.
+  """
+  def invalidate_preheated_hints(user_id) do
+    today = berlin_today()
+
+    from(h in PreheatedWingmanHint,
+      where: (h.user_id == ^user_id or h.other_user_id == ^user_id) and h.shown_on == ^today
+    )
+    |> Repo.delete_all()
+  end
+
+  @doc """
+  Deletes preheated hints older than today (Berlin time).
+  """
+  def cleanup_old_preheated_hints do
+    today = berlin_today()
+
+    {count, _} =
+      from(h in PreheatedWingmanHint, where: h.shown_on < ^today)
+      |> Repo.delete_all()
+
+    if count > 0, do: Logger.info("Wingman: Cleaned up #{count} old preheated hint(s)")
+    count
+  end
+
+  defp berlin_today do
+    TimeMachine.utc_now()
+    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+    |> DateTime.to_date()
   end
 
   # --- Feedback API ---

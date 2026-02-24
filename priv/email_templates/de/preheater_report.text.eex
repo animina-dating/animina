@@ -1,0 +1,16 @@
+[ANIMINA] Wingman-Vorberechnung unvollständig (<%= @completion_pct %>%)
+---
+
+Hallo,
+
+Die nächtliche Wingman-Vorberechnung ist nicht vollständig abgeschlossen.
+
+Statistik:
+- Wingman-Nutzer: <%= @total_users %>
+- Erwartete Hints: <%= @expected_hints %>
+- Fertige Hints: <%= @completed_hints %>
+- Ausstehende Jobs: <%= @pending_jobs %>
+- Fehlgeschlagene Jobs: <%= @failed_jobs %>
+- Abschlussrate: <%= @completion_pct %>%
+
+Admin-Seite: https://animina.de/admin/ai-jobs

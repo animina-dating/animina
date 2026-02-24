@@ -17,4 +17,7 @@ if Mix.env() == :dev do
   end
 
   Animina.Seeds.DevUsers.seed_all()
+
+  # Pre-compute wingman hints for dev spotlight profiles
+  Animina.Wingman.Preheater.run()
 end

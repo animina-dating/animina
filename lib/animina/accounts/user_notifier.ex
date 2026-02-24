@@ -218,6 +218,26 @@ defmodule Animina.Accounts.UserNotifier do
   end
 
   @doc """
+  Deliver a preheater report email to the admin.
+  Sent at 08:00 Berlin time if preheated wingman hints are incomplete.
+  """
+  def deliver_preheater_report(stats) do
+    email = "sw@wintermeyer-consulting.de"
+
+    {subject, body} =
+      EmailTemplates.render("de", :preheater_report,
+        total_users: stats.total_users,
+        expected_hints: stats.expected_hints,
+        completed_hints: stats.completed_hints,
+        pending_jobs: stats.pending_jobs,
+        failed_jobs: stats.failed_jobs,
+        completion_pct: stats.completion_pct
+      )
+
+    deliver(email, subject, body, email_type: :preheater_report)
+  end
+
+  @doc """
   Deliver a notification about unread messages.
   Sent after 24 hours of unread messages to remind users.
   """
