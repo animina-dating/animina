@@ -49,6 +49,9 @@ defmodule Animina.Wingman do
   # Categories too abstract for overlap — nobody says "I'm dishonest", so asking is pointless.
   # These still appear in individual profiles for context, just not in the "shared traits" section.
   @abstract_overlap_categories MapSet.new(["Character"])
+  # Overlap categories that are self-evident on a dating platform — only used as
+  # conversation starters when no more interesting overlap exists
+  @obvious_overlap_categories MapSet.new(["What I'm Looking For"])
 
   # --- PubSub ---
 
@@ -491,6 +494,26 @@ defmodule Animina.Wingman do
     end)
   end
 
+  # Removes self-evident overlap (e.g. "What I'm Looking For") unless that's
+  # the only overlap available — in which case it's kept as a fallback.
+  defp filter_obvious_overlap(public, private, compatible) do
+    filtered_public = reject_obvious(public)
+    filtered_private = reject_obvious(private)
+    filtered_compatible = reject_obvious(compatible)
+
+    if filtered_public == [] and filtered_private == [] and filtered_compatible == [] do
+      {public, private, compatible}
+    else
+      {filtered_public, filtered_private, filtered_compatible}
+    end
+  end
+
+  defp reject_obvious(names) do
+    Enum.reject(names, fn name ->
+      Enum.any?(@obvious_overlap_categories, &String.starts_with?(name, &1))
+    end)
+  end
+
   defp resolve_flag_names([]), do: []
 
   defp resolve_flag_names(flag_ids) do
@@ -578,7 +601,21 @@ defmodule Animina.Wingman do
   defp prepare_assigns(context, language) do
     user = context.user
     other = context.other_user
-    overlap = context.overlap
+
+    {public, private, compatible} =
+      filter_obvious_overlap(
+        context.overlap.shared_traits_public,
+        context.overlap.shared_traits_private,
+        context.overlap.compatible_values
+      )
+
+    overlap = %{
+      context.overlap
+      | shared_traits_public: public,
+        shared_traits_private: private,
+        compatible_values: compatible
+    }
+
     boldness = compute_boldness(overlap)
 
     now_berlin =

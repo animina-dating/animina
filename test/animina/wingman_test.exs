@@ -698,6 +698,80 @@ defmodule Animina.WingmanTest do
     end
   end
 
+  describe "obvious overlap deprioritization" do
+    test "obvious overlap excluded when interesting overlap exists" do
+      user = user_fixture(display_name: "Anna", language: "en")
+      other = user_fixture(display_name: "Ben", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      # Inject both an obvious and an interesting compatible value
+      context =
+        put_in(context, [:overlap, :compatible_values], [
+          "What I'm Looking For: Long-term Relationship",
+          "Hobbies: Sailing"
+        ])
+
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Sailing"
+      refute prompt =~ "Long-term Relationship"
+    end
+
+    test "obvious overlap kept as fallback when no other overlap" do
+      user = user_fixture(display_name: "Anna", language: "en")
+      other = user_fixture(display_name: "Ben", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      # Only obvious overlap, nothing else
+      context =
+        put_in(context, [:overlap, :shared_traits_public], [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_private], [])
+
+      context =
+        put_in(context, [:overlap, :compatible_values], [
+          "What I'm Looking For: Long-term Relationship"
+        ])
+
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Long-term Relationship"
+    end
+
+    test "obvious overlap excluded from all three lists" do
+      user = user_fixture(display_name: "Anna", language: "en")
+      other = user_fixture(display_name: "Ben", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_public], [
+          "What I'm Looking For: Long-term Relationship",
+          "Music: Jazz"
+        ])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_private], [
+          "What I'm Looking For: Marriage"
+        ])
+
+      context =
+        put_in(context, [:overlap, :compatible_values], [
+          "What I'm Looking For: Family"
+        ])
+
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Jazz"
+      refute prompt =~ "Long-term Relationship"
+      refute prompt =~ "Marriage"
+      refute prompt =~ "Family"
+    end
+  end
+
   describe "build_prompt private overlap hints" do
     test "German prompt renders structured hints for private overlaps" do
       user = user_fixture(display_name: "Anna", language: "de")
