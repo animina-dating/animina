@@ -238,7 +238,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
      assign(socket, show_bulk_retry_modal: false, bulk_retry_range: nil, bulk_retry_count: 0)}
   end
 
-
   @impl true
   def handle_info(:auto_reload, socket) do
     if socket.assigns.auto_reload do
@@ -463,7 +462,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
               </li>
             </ul>
           </div>
-
         </div>
 
         <%!-- Bulk Retry Confirmation Modal --%>

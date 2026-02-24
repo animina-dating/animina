@@ -34,13 +34,14 @@ defmodule Animina.AI.JobTypes.GreetingGuard do
 
   @impl true
   def prepare_input(%{"sender_name" => sender_name, "recipient_name" => recipient_name}) do
-    system =
-      "You are a dating message classifier. " <>
-        "#{sender_name} is sending a first message to #{recipient_name}. " <>
-        "Classify whether the message is a generic greeting (like \"Hi\", \"Hello\", " <>
-        "\"Hey\", \"Hallo #{recipient_name}!\", \"Na?\", \"Wie geht's?\", \"What's up?\") " <>
-        "that shows no personal effort, or whether it contains something personal or specific. " <>
-        "Respond with JSON: {\"is_generic_greeting\": true} or {\"is_generic_greeting\": false}"
+    system = ~s"""
+    You are a dating message classifier. \
+    #{sender_name} is sending a first message to #{recipient_name}. \
+    Classify whether the message is a generic greeting (like "Hi", "Hello", \
+    "Hey", "Hallo #{recipient_name}!", "Na?", "Wie geht's?", "What's up?") \
+    that shows no personal effort, or whether it contains something personal or specific. \
+    Respond with JSON: {"is_generic_greeting": true} or {"is_generic_greeting": false}\
+    """
 
     {:ok, [api_opts: [think: false, system: system, format: "json"]]}
   end
@@ -113,5 +114,4 @@ defmodule Animina.AI.JobTypes.GreetingGuard do
       _ -> :error
     end
   end
-
 end

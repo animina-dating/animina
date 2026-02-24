@@ -5,7 +5,10 @@ defmodule Animina.Repo.Migrations.CreatePreheatedWingmanHints do
     create table(:preheated_wingman_hints, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
-      add :other_user_id, references(:users, type: :binary_id, on_delete: :delete_all), null: false
+
+      add :other_user_id, references(:users, type: :binary_id, on_delete: :delete_all),
+        null: false
+
       add :shown_on, :date, null: false
       add :suggestions, {:array, :map}
       add :context_hash, :string

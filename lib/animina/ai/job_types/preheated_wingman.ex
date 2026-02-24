@@ -46,7 +46,15 @@ defmodule Animina.AI.JobTypes.PreheatedWingman do
 
     case Wingman.parse_suggestions(raw_response) do
       {:ok, suggestions} ->
-        Wingman.save_preheated_hint(user_id, other_user_id, shown_on, suggestions, context_hash, job.id)
+        Wingman.save_preheated_hint(
+          user_id,
+          other_user_id,
+          shown_on,
+          suggestions,
+          context_hash,
+          job.id
+        )
+
         {:ok, %{"suggestions" => suggestions}}
 
       {:error, :parse_failed} ->

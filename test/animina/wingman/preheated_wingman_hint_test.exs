@@ -69,7 +69,9 @@ defmodule Animina.Wingman.PreheatedWingmanHintTest do
       suggestions2 = [%{"text" => "Updated", "hook" => "r2"}]
 
       {:ok, _} = Wingman.save_preheated_hint(user.id, other.id, today, suggestions1, "hash1", nil)
-      {:ok, hint} = Wingman.save_preheated_hint(user.id, other.id, today, suggestions2, "hash2", nil)
+
+      {:ok, hint} =
+        Wingman.save_preheated_hint(user.id, other.id, today, suggestions2, "hash2", nil)
 
       assert hint.suggestions == suggestions2
       assert hint.context_hash == "hash2"

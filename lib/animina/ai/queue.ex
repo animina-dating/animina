@@ -341,14 +341,9 @@ defmodule Animina.AI.Queue do
     models = warmup_models()
 
     Enum.each(instances, fn inst ->
-      Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
-        model =
-          if "gpu" in inst.tags do
-            models[:vision]
-          else
-            models[:text]
-          end
+      model = if "gpu" in inst.tags, do: models[:vision], else: models[:text]
 
+      Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
         Client.warmup(inst.url, model)
       end)
     end)

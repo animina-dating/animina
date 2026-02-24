@@ -48,7 +48,10 @@ defmodule Animina.Wingman.Preheater do
 
     cancelled = cancel_leftover_jobs()
     cleaned = Wingman.cleanup_old_preheated_hints()
-    Logger.info("Preheater: cancelled #{cancelled} leftover job(s), cleaned #{cleaned} old hint(s)")
+
+    Logger.info(
+      "Preheater: cancelled #{cancelled} leftover job(s), cleaned #{cleaned} old hint(s)"
+    )
 
     users = list_wingman_users()
     Logger.info("Preheater: found #{length(users)} wingman user(s)")

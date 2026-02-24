@@ -18,7 +18,11 @@ defmodule Animina.AITest do
     end
 
     test "allows overriding priority" do
-      assert {:ok, job} = AI.enqueue("photo_classification", %{"photo_id" => Ecto.UUID.generate()}, priority: 40)
+      assert {:ok, job} =
+               AI.enqueue("photo_classification", %{"photo_id" => Ecto.UUID.generate()},
+                 priority: 40
+               )
+
       assert job.priority == 40
     end
 
