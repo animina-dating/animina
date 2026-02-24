@@ -199,7 +199,7 @@ defmodule Animina.Photos.FileManagement do
 
       with true <- File.exists?(main_path),
            {:ok, image} <- Image.open(main_path),
-           {:ok, pixelated} <- Image.pixelate(image, 0.03),
+           {:ok, pixelated} <- Image.pixelate(image, 0.035),
            :ok <- File.mkdir_p(Path.dirname(pixel_path)),
            {:ok, _} <- Image.write(pixelated, pixel_path, quality: 60) do
         :ok
@@ -227,7 +227,7 @@ defmodule Animina.Photos.FileManagement do
 
       with true <- File.exists?(main_path),
            {:ok, image} <- Image.open(main_path),
-           {:ok, pixelated} <- Image.pixelate(image, 0.02),
+           {:ok, pixelated} <- Image.pixelate(image, 0.025),
            :ok <- File.mkdir_p(Path.dirname(review_pixel_path)),
            {:ok, _} <- Image.write(pixelated, review_pixel_path, quality: 60) do
         :ok
@@ -246,7 +246,7 @@ defmodule Animina.Photos.FileManagement do
   def generate_review_pixel_from_image(%Photo{} = photo, image) do
     review_pixel_path = processed_path(photo, :review_pixel)
 
-    with {:ok, pixelated} <- Image.pixelate(image, 0.02),
+    with {:ok, pixelated} <- Image.pixelate(image, 0.025),
          :ok <- File.mkdir_p(Path.dirname(review_pixel_path)),
          {:ok, _} <- Image.write(pixelated, review_pixel_path, quality: 60) do
       :ok

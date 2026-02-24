@@ -459,10 +459,7 @@ defmodule Animina.AI do
   Defers a running job back to the queue with a short delay, undoing
   the attempt increment from mark_running.
 
-  Used when the intelligent router decides to wait for a GPU rather than
-  use a slower CPU. The job goes back to the queue so other CPU-eligible
-  jobs can use the freed semaphore slot. After the delay, the scheduler
-  retries — if GPU is free by then, the job runs on GPU.
+  Currently used as a test helper for count_deferred_jobs setup.
   """
   def defer_job(job_id, delay_seconds \\ 3) do
     scheduled_at = DateTime.utc_now() |> DateTime.add(delay_seconds, :second)

@@ -588,9 +588,7 @@ defmodule Animina.Photos.PhotoProcessor do
         :ok
 
       {:error, reason} ->
-        Logger.warning(
-          "Photo #{photo.id}: review pixel generation failed: #{inspect(reason)}"
-        )
+        Logger.warning("Photo #{photo.id}: review pixel generation failed: #{inspect(reason)}")
 
         :ok
     end

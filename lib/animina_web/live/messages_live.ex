@@ -1223,7 +1223,8 @@ defmodule AniminaWeb.MessagesLive do
         show_timeline: false,
         milestones: [],
         wingman_available: FeatureFlags.wingman_available?(),
-        wingman_queue_busy: FeatureFlags.wingman_enabled?() and not FeatureFlags.wingman_available?(),
+        wingman_queue_busy:
+          FeatureFlags.wingman_enabled?() and not FeatureFlags.wingman_available?(),
         wingman_enabled: user.wingman_enabled,
         wingman_suggestions: nil,
         wingman_loading: false,
@@ -1606,27 +1607,7 @@ defmodule AniminaWeb.MessagesLive do
       other_user = conversation_data.other_user
 
       if GreetingGuard.should_check?(user, other_user, content, socket.assigns.messages) do
-        # Spawn async AI check; clear the input optimistically
-        task =
-          Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
-            GreetingGuard.check_greeting(
-              content,
-              user.display_name,
-              other_user.display_name
-            )
-          end)
-
-        # Safety timeout — fail open after 5 seconds
-        Process.send_after(self(), :greeting_guard_timeout, 5_000)
-
-        {:noreply,
-         socket
-         |> assign(:greeting_guard_pending, true)
-         |> assign(:greeting_guard_task, task.ref)
-         |> assign(:greeting_guard_content, content)
-         |> assign(:greeting_guard_recipient, other_user.display_name)
-         |> assign(:form, to_form(%{"content" => ""}, as: :message))
-         |> push_event("clear_draft", %{})}
+        start_greeting_guard_check(socket, user, other_user, content)
       else
         do_send_message(socket, conversation_data, user, content)
       end
@@ -1977,6 +1958,25 @@ defmodule AniminaWeb.MessagesLive do
          |> assign(:confirm_action, nil)
          |> put_flash(:error, gettext("Could not update relationship"))}
     end
+  end
+
+  defp start_greeting_guard_check(socket, user, other_user, content) do
+    task =
+      Task.Supervisor.async_nolink(Animina.AI.TaskSupervisor, fn ->
+        GreetingGuard.check_greeting(content, user.display_name, other_user.display_name)
+      end)
+
+    # Safety timeout — fail open after 5 seconds
+    Process.send_after(self(), :greeting_guard_timeout, 5_000)
+
+    {:noreply,
+     socket
+     |> assign(:greeting_guard_pending, true)
+     |> assign(:greeting_guard_task, task.ref)
+     |> assign(:greeting_guard_content, content)
+     |> assign(:greeting_guard_recipient, other_user.display_name)
+     |> assign(:form, to_form(%{"content" => ""}, as: :message))
+     |> push_event("clear_draft", %{})}
   end
 
   defp do_send_message(socket, conversation_data, user, content) do

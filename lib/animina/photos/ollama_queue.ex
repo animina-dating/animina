@@ -8,6 +8,7 @@ defmodule Animina.Photos.OllamaQueue do
 
   import Ecto.Query
 
+  alias Animina.AI.JobTypes.PhotoClassification
   alias Animina.Photos
   alias Animina.Photos.AuditLog
   alias Animina.Photos.Helpers
@@ -102,7 +103,7 @@ defmodule Animina.Photos.OllamaQueue do
     current_count = photo.ollama_retry_count || 0
     new_count = current_count + 1
 
-    if new_count > Animina.AI.JobTypes.PhotoClassification.max_attempts() do
+    if new_count > PhotoClassification.max_attempts() do
       AuditLog.log_event(photo, "ollama_retries_exhausted", "system", nil, %{
         retry_count: current_count
       })

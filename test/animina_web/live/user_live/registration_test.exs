@@ -434,20 +434,14 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
 
     test "prefills gender from cache when available", %{conn: conn} do
-      # Insert a cached gender entry
-      Animina.Repo.insert!(%Animina.Accounts.FirstNameGender{
-        first_name: "maria",
-        gender: "female",
-        needs_human_review: false
-      })
-
+      # "sophie" is seeded as female in the first_name_genders migration
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       lv
       |> element("#registration_form")
       |> render_change(
         user: %{
-          "first_name" => "Maria",
+          "first_name" => "Sophie",
           "last_name" => "Doe",
           "email" => "test@example.com",
           "password" => "password1234",
@@ -464,12 +458,7 @@ defmodule AniminaWeb.UserLive.RegistrationTest do
     end
 
     test "partner preferences use opposite of guessed gender", %{conn: conn} do
-      # Insert a cached female name
-      Animina.Repo.insert!(%Animina.Accounts.FirstNameGender{
-        first_name: "petra",
-        gender: "female",
-        needs_human_review: false
-      })
+      # "petra" is seeded as female in the first_name_genders migration
 
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 

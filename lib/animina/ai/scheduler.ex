@@ -149,21 +149,8 @@ defmodule Animina.AI.Scheduler do
       initial_depth = PerformanceStats.count_deferred_jobs()
 
       {dispatched, _depth, _gpu_queued} =
-        Enum.reduce_while(jobs, {0, initial_depth, 0}, fn job, {count, depth, gpu_queued} ->
-          if count >= slots_to_fill do
-            {:halt, {count, depth, gpu_queued}}
-          else
-            case route_with_gpu_cap(job, depth, gpu_queued, max_gpu_queue) do
-              {:dispatch, route, new_depth} ->
-                dispatch_job(job, route)
-                new_gpu_queued = if gpu_route?(route), do: gpu_queued + 1, else: gpu_queued
-                {:cont, {count + 1, new_depth, new_gpu_queued}}
-
-              {:skip_for_gpu, new_depth} ->
-                # Job stays in queue, picked up when GPU frees
-                {:cont, {count, new_depth, gpu_queued + 1}}
-            end
-          end
+        Enum.reduce_while(jobs, {0, initial_depth, 0}, fn job, acc ->
+          fill_slot(job, acc, slots_to_fill, max_gpu_queue)
         end)
 
       if dispatched > 0 do
@@ -171,6 +158,32 @@ defmodule Animina.AI.Scheduler do
       end
 
       %{state | total_dispatched: state.total_dispatched + dispatched}
+    end
+  end
+
+  defp fill_slot(_job, {count, depth, gpu_queued}, slots_to_fill, _max_gpu_queue)
+       when count >= slots_to_fill do
+    {:halt, {count, depth, gpu_queued}}
+  end
+
+  defp fill_slot(job, {count, depth, gpu_queued}, _slots_to_fill, max_gpu_queue) do
+    dispatch_or_skip(job, count, depth, gpu_queued, max_gpu_queue)
+  end
+
+  defp dispatch_or_skip(job, count, depth, gpu_queued, max_gpu_queue) do
+    case route_with_gpu_cap(job, depth, gpu_queued, max_gpu_queue) do
+      {:dispatch, route, new_depth} ->
+        dispatch_job(job, route)
+        new_gpu_queued = if gpu_route?(route), do: gpu_queued + 1, else: gpu_queued
+        {:cont, {count + 1, new_depth, new_gpu_queued}}
+
+      {:skip_for_gpu, new_depth} ->
+        # Job stays in queue, picked up when GPU frees
+        {:cont, {count, new_depth, gpu_queued + 1}}
+
+      {:cont_skip, new_depth} ->
+        # Job was handled (e.g. marked failed), skip without dispatch
+        {:cont, {count, new_depth, gpu_queued}}
     end
   end
 
@@ -210,7 +223,9 @@ defmodule Animina.AI.Scheduler do
         end
 
       :error ->
-        {:dispatch, nil, gpu_depth}
+        Logger.warning("AI.Scheduler: Unknown job type #{job.job_type}, marking failed")
+        AI.mark_failed(job, "Unknown job type: #{job.job_type}")
+        {:cont_skip, gpu_depth}
     end
   end
 

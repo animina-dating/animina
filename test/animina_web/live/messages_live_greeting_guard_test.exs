@@ -4,6 +4,7 @@ defmodule AniminaWeb.MessagesLiveGreetingGuardTest do
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
+  alias Animina.Accounts.User
   alias Animina.Messaging
 
   describe "greeting guard in conversation" do
@@ -115,7 +116,7 @@ defmodule AniminaWeb.MessagesLiveGreetingGuardTest do
 
       {:ok, male_no_wingman} =
         male_no_wingman
-        |> Animina.Accounts.User.wingman_changeset(%{wingman_enabled: false})
+        |> User.wingman_changeset(%{wingman_enabled: false})
         |> Animina.Repo.update()
 
       {:ok, conversation} =

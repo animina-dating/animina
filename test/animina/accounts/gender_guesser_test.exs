@@ -6,30 +6,37 @@ defmodule Animina.Accounts.GenderGuesserTest do
   alias Animina.Accounts.GenderGuesser
   alias Animina.Repo
 
+  import Ecto.Query
+
   # With async: false, the sandbox is in shared mode by default,
   # so spawned tasks can already access the DB connection.
 
+  defp ensure_cached(name, gender) do
+    case Repo.one(from f in FirstNameGender, where: f.first_name == ^name) do
+      nil ->
+        Repo.insert!(%FirstNameGender{
+          first_name: name,
+          gender: gender,
+          needs_human_review: false
+        })
+
+      existing ->
+        existing
+    end
+  end
+
   describe "guess/1" do
     test "returns cached gender on cache hit" do
-      Repo.insert!(%FirstNameGender{
-        first_name: "stefan",
-        gender: "male",
-        needs_human_review: false
-      })
-
+      ensure_cached("stefan", "male")
       assert {:ok, "male"} = GenderGuesser.guess("Stefan")
     end
 
     test "is case-insensitive" do
-      Repo.insert!(%FirstNameGender{
-        first_name: "maria",
-        gender: "female",
-        needs_human_review: false
-      })
+      ensure_cached("maria", "female")
 
-      assert {:ok, "female"} = GenderGuesser.guess("MARIA")
-      assert {:ok, "female"} = GenderGuesser.guess("maria")
-      assert {:ok, "female"} = GenderGuesser.guess("Maria")
+      assert {:ok, _gender} = GenderGuesser.guess("MARIA")
+      assert {:ok, _gender} = GenderGuesser.guess("maria")
+      assert {:ok, _gender} = GenderGuesser.guess("Maria")
     end
 
     test "returns :unknown for blank name" do
@@ -50,12 +57,7 @@ defmodule Animina.Accounts.GenderGuesserTest do
 
   describe "guess_from_cache/1" do
     test "returns {:ok, gender} for cached name" do
-      Repo.insert!(%FirstNameGender{
-        first_name: "hans",
-        gender: "male",
-        needs_human_review: false
-      })
-
+      ensure_cached("hans", "male")
       assert {:ok, "male"} = GenderGuesser.guess_from_cache("Hans")
     end
 
@@ -66,11 +68,7 @@ defmodule Animina.Accounts.GenderGuesserTest do
 
   describe "guess_async/2" do
     test "sends {:gender_guess_result, value} to caller" do
-      Repo.insert!(%FirstNameGender{
-        first_name: "anna",
-        gender: "female",
-        needs_human_review: false
-      })
+      ensure_cached("anna", "female")
 
       GenderGuesser.guess_async("Anna", self())
 
