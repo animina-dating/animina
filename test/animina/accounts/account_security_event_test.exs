@@ -223,26 +223,4 @@ defmodule Animina.Accounts.AccountSecurityEventTest do
                Accounts.confirm_security_event("totally_invalid_token")
     end
   end
-
-  describe "cleanup_expired_security_events/0" do
-    test "removes resolved and expired events" do
-      user = user_fixture()
-
-      # Create a resolved event
-      {_, _, event1} = AccountSecurityEvent.build(user.id, "email_change")
-      event1 = Animina.Repo.insert!(event1)
-
-      event1
-      |> Ecto.Changeset.change(resolved_at: DateTime.utc_now(:second), resolution: "confirmed")
-      |> Animina.Repo.update!()
-
-      # Create an expired event
-      {_, _, event2} = AccountSecurityEvent.build(user.id, "password_change")
-      event2 = %{event2 | expires_at: DateTime.add(DateTime.utc_now(:second), -1, :hour)}
-      Animina.Repo.insert!(event2)
-
-      {count, _} = Accounts.cleanup_expired_security_events()
-      assert count == 2
-    end
-  end
 end

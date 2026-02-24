@@ -777,23 +777,6 @@ defmodule Animina.Messaging do
     |> Repo.all()
   end
 
-  @doc """
-  Returns a MapSet of candidate_ids that have a conversation with the given user.
-  Efficient batch query for the discover page.
-  """
-  def conversation_user_ids(user_id, candidate_ids) do
-    ConversationParticipant
-    |> join(:inner, [p1], p2 in ConversationParticipant,
-      on: p1.conversation_id == p2.conversation_id and p2.user_id == ^user_id
-    )
-    |> where([p1, _p2], p1.user_id in ^candidate_ids)
-    |> where([p1, _p2], is_nil(p1.closed_at))
-    |> select([p1, _p2], p1.user_id)
-    |> distinct(true)
-    |> Repo.all()
-    |> MapSet.new()
-  end
-
   # --- Chat Slot System ---
 
   @doc """

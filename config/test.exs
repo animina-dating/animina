@@ -48,8 +48,6 @@ config :animina, start_session_tracker: false
 config :animina, start_mail_queue_checker: false
 # Disable mail log checker in tests (tested with injected read_fn)
 config :animina, start_mail_log_checker: false
-config :animina, start_photo_serving: false
-config :animina, start_face_serving: false
 
 # Disable analytics page view tracking in tests
 config :animina, :analytics_tracking, false

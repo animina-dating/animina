@@ -337,38 +337,6 @@ defmodule Animina.MessagingTest do
     end
   end
 
-  describe "conversation_user_ids/2" do
-    test "returns user IDs that have conversations with the given user" do
-      user1 = AccountsFixtures.user_fixture()
-      user2 = AccountsFixtures.user_fixture()
-      user3 = AccountsFixtures.user_fixture()
-      user4 = AccountsFixtures.user_fixture()
-
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user2.id)
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
-
-      result = Messaging.conversation_user_ids(user1.id, [user2.id, user3.id, user4.id])
-
-      assert MapSet.member?(result, user2.id)
-      assert MapSet.member?(result, user3.id)
-      refute MapSet.member?(result, user4.id)
-    end
-
-    test "returns empty set when no conversations exist" do
-      user1 = AccountsFixtures.user_fixture()
-      user2 = AccountsFixtures.user_fixture()
-
-      result = Messaging.conversation_user_ids(user1.id, [user2.id])
-      assert MapSet.size(result) == 0
-    end
-
-    test "returns empty set for empty candidate list" do
-      user1 = AccountsFixtures.user_fixture()
-      result = Messaging.conversation_user_ids(user1.id, [])
-      assert MapSet.size(result) == 0
-    end
-  end
-
   describe "save_draft/3" do
     test "saves a draft for a user in a conversation" do
       user1 = AccountsFixtures.user_fixture()
@@ -738,22 +706,6 @@ defmodule Animina.MessagingTest do
       conversations = Messaging.list_conversations(user1.id)
       assert length(conversations) == 1
       assert hd(conversations).conversation.id != conv1.id
-    end
-  end
-
-  describe "conversation_user_ids/2 excludes closed" do
-    test "closed conversation partners are excluded" do
-      user1 = AccountsFixtures.user_fixture()
-      user2 = AccountsFixtures.user_fixture()
-      user3 = AccountsFixtures.user_fixture()
-
-      {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
-      {:ok, _} = Messaging.get_or_create_conversation(user1.id, user3.id)
-      {:ok, _} = Messaging.close_conversation(conv1.id, user1.id)
-
-      result = Messaging.conversation_user_ids(user1.id, [user2.id, user3.id])
-      refute MapSet.member?(result, user2.id)
-      assert MapSet.member?(result, user3.id)
     end
   end
 

@@ -1054,18 +1054,6 @@ defmodule Animina.Accounts do
     end
   end
 
-  @doc """
-  Deletes expired (resolved or past expiry) security events for cleanup.
-  """
-  def cleanup_expired_security_events do
-    now = DateTime.utc_now(:second)
-
-    from(e in AccountSecurityEvent,
-      where: not is_nil(e.resolved_at) or e.expires_at < ^now
-    )
-    |> Repo.delete_all()
-  end
-
   ## Passkeys (WebAuthn)
 
   @doc """
