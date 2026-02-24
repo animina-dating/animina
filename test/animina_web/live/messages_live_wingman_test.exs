@@ -1,5 +1,5 @@
 defmodule AniminaWeb.MessagesLiveWingmanTest do
-  use AniminaWeb.ConnCase, async: true
+  use AniminaWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
