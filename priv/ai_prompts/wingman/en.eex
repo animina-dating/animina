@@ -27,9 +27,7 @@ Rules:
   eye-to-eye
 - NEVER mention sex — not even hinted at. Not in the
   tips, not in the hook.
-- Published white flags may be named. Private white
-  flags NEVER by name — only generic category
-  references.
+- Published white flags may be named.
 - Flags are more important than stories — use them as
   primary source for tips.
 - Both being single is NOT a conversation topic —
@@ -37,16 +35,9 @@ Rules:
   German is also not a topic — it's a German
   platform. Only OTHER shared languages (e.g. Spanish,
   French) are interesting.
-- When a hint says "the user has interests in area X
-  that the other person might share", only mention the
-  USER'S trait and suggest asking. NEVER claim the
-  other person also likes it. Do NOT ask about the
-  parent category when the user has a specific
-  activity — "You like surfing — ask <%= @pronoun %>
-  if <%= @pronoun %> is into sports" is nonsense
-  because surfing IS a sport. Better: "You're into
-  sports — ask <%= @pronoun %> what sports
-  <%= @pronoun %> enjoys."
+- When a conversation hint suggests asking about
+  something, only mention the USER'S trait and suggest
+  asking. NEVER claim the other person also likes it.
 - Known shared traits (from "Things in common" or
   "Compatible values") are FACTS — use them as
   conversation starters ("You both surf — bring that
@@ -86,8 +77,7 @@ personality insight.
 - hard = very important / non-negotiable
 - soft = nice to have / flexible
 - Visibility: Public white flags may be mentioned by
-  name. Private white flags NEVER by name — only
-  generic category-level references.
+  name.
 - Flags are MORE important than stories — both matter,
   but flags are more structured and definitive.
 
@@ -102,8 +92,6 @@ personality insight.
 <% end %><%= if @user_search_radius do %>Search radius: <%= @user_search_radius %> km
 <% end %><%= if @user_white_flags_published != [] do %>White flags (own traits) — Public:
 <%= for flag <- @user_white_flags_published do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
-<% end %><% end %><%= if @user_white_flags_private != [] do %>White flags (own traits) — Private — NEVER mention by name!:
-<%= for flag <- @user_white_flags_private do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
 <% end %><% end %><%= if @user_green_flags != [] do %>Green flags (looking for in partner):
 <%= for flag <- @user_green_flags do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
 <% end %><% end %><%= if @user_stories != [] do %>Stories:
@@ -128,12 +116,9 @@ personality insight.
 <% end %><%= if @overlap_public != [] do %>Things in common
 (both public — you may name these):
 <%= Enum.join(@overlap_public, ", ") %>
-<% end %><%= if @overlap_private_categories != [] do %>Hint:
-The user has interests in these areas that the other
-person might share. Suggest asking about them — but
-do NOT reveal the other person shares them:
-<%= Enum.join(@overlap_private_categories, ", ") %>
-<% end %><%= if @overlap_compatible != [] do %>Compatible values:
+<% end %><%= if @overlap_private_hints != [] do %>Conversation hints (based on profile analysis):
+<%= for hint <- @overlap_private_hints do %>- <%= hint %>
+<% end %><% end %><%= if @overlap_compatible != [] do %>Compatible values:
 <%= Enum.join(@overlap_compatible, ", ") %>
 <% end %><%= if @is_wildcard do %>Note: This person is a
 wildcard suggestion — it's unclear whether they

@@ -11,8 +11,11 @@ defmodule Animina.Wingman do
     occupation, city, age
   - Uses delicately: green flags (framed as shared values), white_white and
     green_white overlap
-  - Private white flags: included for context but the LLM is instructed to
-    NEVER mention them by name — only generic category-level references
+  - Private white flags: NEVER sent to the LLM. Instead, private overlaps
+    are pre-computed into structured conversation hints in Elixir code so the
+    LLM only sees "Suggest asking if the other person also enjoys X"
+  - Sex-related categories (Sexual Preferences, Sexual Practices) are
+    excluded from private overlap hints entirely
   - Never uses: red flags, red_white conflicts, sensitive categories without
     mutual opt-in
   """
@@ -39,6 +42,8 @@ defmodule Animina.Wingman do
 
   # Categories that are too obvious for conversation tips on a German dating platform
   @trivial_categories MapSet.new(["Relationship Status"])
+  # Sex-related categories excluded from private overlap hints (the prompt already bans sex topics)
+  @sex_categories MapSet.new(["Sexual Preferences", "Sexual Practices"])
   # Flag names that are trivial when shared (everyone on a German platform speaks German)
   @trivial_shared_flags MapSet.new(["Languages: Deutsch"])
   # Categories too abstract for overlap — nobody says "I'm dishonest", so asking is pointless.
@@ -612,7 +617,6 @@ defmodule Animina.Wingman do
       user_partner_height_max: user.partner_height_max,
       user_search_radius: user.search_radius,
       user_white_flags_published: translate_flags.(user.white_flags_published),
-      user_white_flags_private: translate_flags.(user.white_flags_private),
       user_green_flags: translate_flags.(user.green_flags),
       user_stories: user.stories,
       # Other user profile (strip private flags)
@@ -633,8 +637,7 @@ defmodule Animina.Wingman do
       # Overlap
       distance_km: context.distance_km,
       overlap_public: Enum.map(overlap.shared_traits_public, &translate_overlap_name/1),
-      overlap_private_categories:
-        overlap.shared_traits_private |> Enum.map(&extract_category/1) |> Enum.uniq(),
+      overlap_private_hints: build_private_overlap_hints(overlap.shared_traits_private, language),
       overlap_compatible: Enum.map(overlap.compatible_values, &translate_overlap_name/1),
       # Wildcard
       is_wildcard: Map.get(context, :is_wildcard, false),
@@ -697,11 +700,31 @@ defmodule Animina.Wingman do
     end
   end
 
-  defp extract_category(name) do
-    case String.split(name, ": ", parts: 2) do
-      [cat, _] -> AniminaWeb.TraitTranslations.translate(cat)
-      _ -> AniminaWeb.TraitTranslations.translate(name)
-    end
+  defp build_private_overlap_hints(shared_traits_private, language) do
+    shared_traits_private
+    |> Enum.reject(fn name ->
+      case String.split(name, ": ", parts: 2) do
+        [cat, _] -> MapSet.member?(@sex_categories, cat)
+        _ -> false
+      end
+    end)
+    |> Enum.take(20)
+    |> Enum.map(fn name ->
+      case String.split(name, ": ", parts: 2) do
+        [_cat, flag] ->
+          translated = AniminaWeb.TraitTranslations.translate(flag)
+
+          if language == "de",
+            do:
+              "Dein User mag: #{translated}. Schlage vor zu fragen, ob das Gegenüber auch #{translated} mag.",
+            else:
+              "Your user likes: #{translated}. Suggest asking if the other person also enjoys #{translated}."
+
+        _ ->
+          nil
+      end
+    end)
+    |> Enum.reject(&is_nil/1)
   end
 
   defp translate_intensity(intensity) do

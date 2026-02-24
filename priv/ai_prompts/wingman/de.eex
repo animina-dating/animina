@@ -29,8 +29,7 @@ Regeln:
 - KEIN Thema Sex — auch nicht angedeutet. Nicht in den
   Tipps, nicht im Hook.
 - Öffentliche weiße Flaggen darfst du beim Namen
-  nennen. Private weiße Flaggen NICHT beim Namen
-  nennen — nur allgemein auf die Kategorie verweisen.
+  nennen.
 - Flaggen sind wichtiger als Geschichten — nutze sie
   als primäre Quelle für Tipps.
 - Dass beide Single sind, ist KEIN Gesprächsthema —
@@ -39,18 +38,10 @@ Regeln:
   ebenfalls kein Thema — das ist eine deutsche
   Plattform. Nur ANDERE gemeinsame Sprachen
   (z.B. Spanisch, Französisch) sind interessant.
-- Wenn ein Hinweis sagt "der User hat Interessen in
-  Bereich X, die das Gegenüber eventuell teilt",
-  erwähne NUR die Eigenschaft des Users und schlage
-  vor zu fragen. NIEMALS behaupten, dass das
-  Gegenüber das auch mag. Frag dabei NICHT nach der
-  übergeordneten Kategorie, wenn der User eine
-  konkrete Aktivität hat — "Du surfst gerne — frag
-  <%= @pronoun %>, ob <%= @pronoun %> auch Sport
-  macht" ist Unsinn, weil Surfen bereits Sport ist.
-  Besser: "Du bist sportlich unterwegs — frag
-  <%= @pronoun %> doch mal, welche Sportarten
-  <%= @pronoun %> mag."
+- Wenn ein Gesprächshinweis vorschlägt, nach etwas zu
+  fragen, erwähne NUR die Eigenschaft des Users und
+  schlage vor zu fragen. NIEMALS behaupten, dass das
+  Gegenüber das auch mag.
 - Bekannte Gemeinsamkeiten (aus "Gemeinsame
   Eigenschaften" oder "Kompatible Werte") sind
   FAKTEN — nutze sie als Gesprächseinstieg ("Ihr
@@ -92,9 +83,7 @@ Einblick in die Persönlichkeit.
 - wichtig = sehr wichtig / nicht verhandelbar
 - flexibel = wäre schön / flexibel
 - Sichtbarkeit: Öffentliche weiße Flaggen dürfen beim
-  Namen genannt werden. Private weiße Flaggen NIEMALS
-  beim Namen nennen — nur allgemein auf
-  Kategorie-Ebene verweisen.
+  Namen genannt werden.
 - Flaggen sind WICHTIGER als Geschichten — beides
   zählt, aber Flaggen sind strukturierter und
   aussagekräftiger.
@@ -110,8 +99,6 @@ Einblick in die Persönlichkeit.
 <% end %><%= if @user_search_radius do %>Suchradius: <%= @user_search_radius %> km
 <% end %><%= if @user_white_flags_published != [] do %>Weiße Flaggen (eigene Eigenschaften) — Öffentlich:
 <%= for flag <- @user_white_flags_published do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
-<% end %><% end %><%= if @user_white_flags_private != [] do %>Weiße Flaggen (eigene Eigenschaften) — Privat — NICHT beim Namen nennen!:
-<%= for flag <- @user_white_flags_private do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
 <% end %><% end %><%= if @user_green_flags != [] do %>Grüne Flaggen (sucht beim Partner):
 <%= for flag <- @user_green_flags do %>- <%= flag.category %>: <%= flag.name %> (<%= flag.intensity %>)
 <% end %><% end %><%= if @user_stories != [] do %>Geschichten:
@@ -136,13 +123,9 @@ Einblick in die Persönlichkeit.
 <% end %><%= if @overlap_public != [] do %>Gemeinsame Eigenschaften
 (beide öffentlich — darfst du nennen):
 <%= Enum.join(@overlap_public, ", ") %>
-<% end %><%= if @overlap_private_categories != [] do %>Hinweis:
-Der User hat Interessen in diesen Bereichen, die das
-Gegenüber eventuell teilt. Schlage vor, danach zu
-fragen — aber verrate NICHT, dass das Gegenüber das
-auch mag:
-<%= Enum.join(@overlap_private_categories, ", ") %>
-<% end %><%= if @overlap_compatible != [] do %>Kompatible Werte:
+<% end %><%= if @overlap_private_hints != [] do %>Gesprächshinweise (basierend auf Profilanalyse):
+<%= for hint <- @overlap_private_hints do %>- <%= hint %>
+<% end %><% end %><%= if @overlap_compatible != [] do %>Kompatible Werte:
 <%= Enum.join(@overlap_compatible, ", ") %>
 <% end %><%= if @is_wildcard do %>Hinweis: Diese Person ist
 ein Wildcard-Vorschlag — es ist unklar, ob die beiden

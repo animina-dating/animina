@@ -449,24 +449,26 @@ defmodule Animina.WingmanTest do
       assert prompt =~ "first message"
     end
 
-    test "German prompt includes privacy rules for flags" do
+    test "German prompt does not contain private flag names or private flag section" do
       user = user_fixture(display_name: "Anna", language: "de")
       other = user_fixture(display_name: "Ben", language: "de")
 
       context = Wingman.gather_context(user, other, [])
       prompt = Wingman.build_prompt(context, "de")
 
-      assert prompt =~ "NICHT beim Namen"
+      refute prompt =~ "Privat — NICHT beim Namen"
+      refute prompt =~ "NICHT beim Namen nennen!"
     end
 
-    test "English prompt includes privacy rules for flags" do
+    test "English prompt does not contain private flag names or private flag section" do
       user = user_fixture(display_name: "Alice", language: "en")
       other = user_fixture(display_name: "Bob", language: "en")
 
       context = Wingman.gather_context(user, other, [])
       prompt = Wingman.build_prompt(context, "en")
 
-      assert prompt =~ "NEVER by name"
+      refute prompt =~ "Private — NEVER mention by name"
+      refute prompt =~ "NEVER by name"
     end
 
     test "German prompt includes rule about known shared traits being facts" do
@@ -693,6 +695,63 @@ defmodule Animina.WingmanTest do
 
       result = Wingman.get_feedback_for_suggestions(user.id, conversation.id)
       assert result == %{0 => 1, 1 => -1}
+    end
+  end
+
+  describe "build_prompt private overlap hints" do
+    test "German prompt renders structured hints for private overlaps" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+
+      # Inject a fake private overlap to verify hint rendering
+      context =
+        put_in(context, [:overlap, :shared_traits_private], ["Hobbies: Segeln"])
+
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Gesprächshinweise (basierend auf Profilanalyse):"
+      assert prompt =~ "Dein User mag:"
+      assert prompt =~ "Schlage vor zu fragen"
+    end
+
+    test "English prompt renders structured hints for private overlaps" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_private], ["Hobbies: Sailing"])
+
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "Conversation hints (based on profile analysis):"
+      assert prompt =~ "Your user likes:"
+      assert prompt =~ "Suggest asking"
+    end
+
+    test "sex-related categories are excluded from private overlap hints" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_private], [
+          "Hobbies: Segeln",
+          "Sexual Preferences: BDSM",
+          "Sexual Practices: Tantra"
+        ])
+
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Segeln"
+      refute prompt =~ "BDSM"
+      refute prompt =~ "Tantra"
+      refute prompt =~ "Sexual Preferences"
+      refute prompt =~ "Sexual Practices"
     end
   end
 end
