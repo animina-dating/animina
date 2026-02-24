@@ -10,8 +10,11 @@
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
 
-# In development, seed 50 test accounts with full profiles
+# In development, seed 114 test accounts with full profiles
 if Mix.env() == :dev do
-  Code.require_file("dev_seeds.exs", __DIR__)
+  for file <- ~w(personas.ex stories.ex profiles.ex seeder.ex) do
+    Code.require_file("dev_seeds/#{file}", __DIR__)
+  end
+
   Animina.Seeds.DevUsers.seed_all()
 end
