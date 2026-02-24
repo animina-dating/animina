@@ -19,6 +19,7 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
       assert html =~ "Display Name"
       assert html =~ "Height"
       assert html =~ "Occupation"
+      assert html =~ "Gender"
     end
 
     test "has page title", %{conn: conn} do
@@ -129,6 +130,18 @@ defmodule AniminaWeb.UserLive.EditProfileTest do
         |> live(~p"/my/settings/profile/info")
 
       assert html =~ "This field cannot be changed."
+    end
+
+    test "displays gender as a disabled field", %{conn: conn} do
+      user = user_fixture(language: "en", gender: "female")
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(user)
+        |> live(~p"/my/settings/profile/info")
+
+      assert html =~ "Gender"
+      assert html =~ "Female"
     end
   end
 end

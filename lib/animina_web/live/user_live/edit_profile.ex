@@ -66,6 +66,21 @@ defmodule AniminaWeb.UserLive.EditProfile do
             </p>
           </div>
 
+          <div class="mb-4">
+            <label class="label">
+              <span class="label-text">{gettext("Gender")}</span>
+            </label>
+            <input
+              type="text"
+              value={gender_label(@gender)}
+              disabled
+              class="input input-bordered w-full opacity-60"
+            />
+            <p class="text-xs text-base-content/60 mt-1">
+              {gettext("This field cannot be changed.")}
+            </p>
+          </div>
+
           <.button variant="primary" phx-disable-with={gettext("Saving...")}>
             {gettext("Save Profile")}
           </.button>
@@ -84,6 +99,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
       socket
       |> assign(:page_title, gettext("Edit Profile"))
       |> assign(:birthday, user.birthday)
+      |> assign(:gender, user.gender)
       |> assign(:form, to_form(changeset))
 
     {:ok, socket}
@@ -116,4 +132,9 @@ defmodule AniminaWeb.UserLive.EditProfile do
         {:noreply, assign(socket, form: to_form(changeset, action: :insert))}
     end
   end
+
+  defp gender_label("male"), do: gettext("Male")
+  defp gender_label("female"), do: gettext("Female")
+  defp gender_label("diverse"), do: gettext("Diverse")
+  defp gender_label(_), do: ""
 end
