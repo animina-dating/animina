@@ -185,53 +185,9 @@ defmodule Animina.Wingman do
   Builds the Ollama prompt from gathered context in the user's language.
   """
   def build_prompt(context, language \\ "de") do
-    # Set Gettext locale so TraitTranslations.translate/1 returns the right language
     Gettext.put_locale(AniminaWeb.Gettext, language)
-
-    user = context.user
-    other = context.other_user
-    overlap = context.overlap
-    conv_state = context.conversation_state
-
-    is_wildcard = Map.get(context, :is_wildcard, false)
-    boldness = compute_boldness(overlap)
-
-    system_instruction =
-      system_instruction(language, user.age, boldness, other.gender, other.display_name)
-
-    time_section = time_context_section(language)
-    moodboard_explanation = moodboard_explanation_section(language)
-    flag_system = flag_system_section(language)
-    user_section = user_profile_section(user, language)
-    other_section = other_profile_section(other, language)
-    overlap_section = overlap_section(overlap, context.distance_km, language)
-    wildcard_section = wildcard_section(is_wildcard, language)
-    ratings_section = ratings_section(context.user_ratings, language)
-    conv_section = conversation_section(conv_state, language)
-
-    sections =
-      [
-        system_instruction,
-        time_section,
-        moodboard_explanation,
-        flag_system,
-        user_section,
-        other_section,
-        overlap_section,
-        wildcard_section,
-        ratings_section,
-        conv_section
-      ]
-      |> Enum.reject(&(&1 == ""))
-      |> Enum.join("\n\n")
-
-    json_instruction = json_instruction(language)
-
-    """
-    #{sections}
-
-    #{json_instruction}
-    """
+    assigns = prepare_assigns(context, language)
+    Animina.Wingman.PromptTemplate.render(language, assigns)
   end
 
   @doc """
@@ -625,105 +581,91 @@ defmodule Animina.Wingman do
     end
   end
 
-  # --- Prompt building ---
+  # --- Prompt assigns ---
 
-  defp moodboard_explanation_section("de") do
-    """
-    ## Was ist das Moodboard?
-    Das Moodboard ist das visuelle Profil — ein Raster aus Fotos, Textgeschichten und kombinierten Karten. Die unten gezeigten "Geschichten" sind die selbstgeschriebenen Texte aus den Moodboard-Einträgen. Sie sind persönlich und kreativ — behandle sie als Einblick in die Persönlichkeit.
-    """
-    |> String.trim()
+  defp prepare_assigns(context, language) do
+    user = context.user
+    other = context.other_user
+    overlap = context.overlap
+    boldness = compute_boldness(overlap)
+
+    now_berlin =
+      TimeMachine.utc_now()
+      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    translate_flags = fn flags ->
+      Enum.map(flags, fn %{category: cat, name: name, intensity: intensity} ->
+        %{
+          category: AniminaWeb.TraitTranslations.translate(cat),
+          name: AniminaWeb.TraitTranslations.translate(name),
+          intensity: translate_intensity(intensity)
+        }
+      end)
+    end
+
+    %{
+      # System instruction
+      user_age: user.age,
+      pronoun: pronoun(language, other.gender),
+      other_name: other.display_name,
+      boldness_text: boldness_paragraph(language, boldness),
+      # Time
+      weekday: berlin_weekday(now_berlin, language),
+      time: Calendar.strftime(now_berlin, "%H:%M"),
+      # User profile
+      user_name: user.display_name,
+      user_gender: user.gender,
+      user_gender_label: translate_gender(user.gender),
+      user_height: user.height,
+      user_city: user.city,
+      user_occupation: user.occupation,
+      user_partner_age_min: user.partner_age_min,
+      user_partner_age_max: user.partner_age_max,
+      user_partner_height_min: user.partner_height_min,
+      user_partner_height_max: user.partner_height_max,
+      user_search_radius: user.search_radius,
+      user_white_flags_published: translate_flags.(user.white_flags_published),
+      user_white_flags_private: translate_flags.(user.white_flags_private),
+      user_green_flags: translate_flags.(user.green_flags),
+      user_stories: user.stories,
+      # Other user profile (strip private flags)
+      other_gender: other.gender,
+      other_gender_label: translate_gender(other.gender),
+      other_age: other.age,
+      other_height: other.height,
+      other_city: other.city,
+      other_occupation: other.occupation,
+      other_partner_age_min: other.partner_age_min,
+      other_partner_age_max: other.partner_age_max,
+      other_partner_height_min: other.partner_height_min,
+      other_partner_height_max: other.partner_height_max,
+      other_search_radius: other.search_radius,
+      other_white_flags_published: translate_flags.(other.white_flags_published),
+      other_green_flags: translate_flags.(other.green_flags),
+      other_stories: other.stories,
+      # Overlap
+      distance_km: context.distance_km,
+      overlap_public: Enum.map(overlap.shared_traits_public, &translate_overlap_name/1),
+      overlap_private_categories:
+        overlap.shared_traits_private |> Enum.map(&extract_category/1) |> Enum.uniq(),
+      overlap_compatible: Enum.map(overlap.compatible_values, &translate_overlap_name/1),
+      # Wildcard
+      is_wildcard: Map.get(context, :is_wildcard, false),
+      # Ratings
+      ratings:
+        Enum.map(context.user_ratings, fn %{rating: rating, content: content} ->
+          %{
+            emoji: rating_emoji(rating),
+            label: translate_rating(rating, language),
+            content: content
+          }
+        end),
+      # Conversation
+      conversation_state: translate_conv_state(context.conversation_state, language)
+    }
   end
 
-  defp moodboard_explanation_section(_language) do
-    """
-    ## What is the Moodboard?
-    The moodboard is the visual profile — a grid of photos, text stories, and combined cards. The "stories" shown below are the self-written texts from moodboard items. They are personal and creative — treat them as personality insight.
-    """
-    |> String.trim()
-  end
-
-  defp flag_system_section("de") do
-    """
-    ## Flaggen-System
-    - Weiße Flaggen = eigene Eigenschaften ("Ich bin so")
-    - Grüne Flaggen = was man beim Partner sucht ("Ich wünsche mir das")
-    - wichtig = sehr wichtig / nicht verhandelbar
-    - flexibel = wäre schön / flexibel
-    - Sichtbarkeit: Öffentliche weiße Flaggen dürfen beim Namen genannt werden. Private weiße Flaggen NIEMALS beim Namen nennen — nur allgemein auf Kategorie-Ebene verweisen.
-    - Flaggen sind WICHTIGER als Geschichten — beides zählt, aber Flaggen sind strukturierter und aussagekräftiger.
-    """
-    |> String.trim()
-  end
-
-  defp flag_system_section(_language) do
-    """
-    ## Flag System
-    - White flags = personal traits ("I am like this")
-    - Green flags = what you want in a partner ("I want this")
-    - hard = very important / non-negotiable
-    - soft = nice to have / flexible
-    - Visibility: Public white flags may be mentioned by name. Private white flags NEVER by name — only generic category-level references.
-    - Flags are MORE important than stories — both matter, but flags are more structured and definitive.
-    """
-    |> String.trim()
-  end
-
-  defp system_instruction("de", age, boldness, other_gender, other_name) do
-    age_text = if age, do: "Der User ist #{age} Jahre alt. ", else: ""
-    boldness_text = boldness_paragraph("de", boldness)
-    pronoun_de = pronoun("de", other_gender)
-
-    """
-    Das hier ist ANIMINA, eine Online-Dating-Plattform. Der User möchte die erste Nachricht an das Gegenüber schreiben — die beiden kennen sich noch nicht. Du bist ein Wingman — locker, direkt, ein bisschen frech. #{age_text}Schau dir beide Profile an. Zeig 2 Sachen auf, die auffallen — Gemeinsamkeiten, interessante Details, etwas das neugierig macht. Sag was dir auffällt und schlag ein Gesprächsthema vor, z.B. "Sprich #{pronoun_de} doch mal auf X an." Aber schreib KEINE fertigen Nachrichten oder Formulierungen — nur das Thema nennen, den Rest macht der User selbst.
-
-    #{boldness_text}
-
-    Regeln:
-    - Sei locker und direkt — wie ein Kumpel, dem was aufgefallen ist
-    - Sprich den User mit "du" an. Nenne das Gegenüber einmal beim Namen ("#{other_name}"), danach nur noch Pronomen (#{pronoun_de}/er/sie). Wenn du über beide sprichst, verwende "ihr" (2. Person Plural): "ihr sucht beide", "ihr lebt beide in" — NIEMALS unpersönliches "Beide suchen", "Beide sind", "beide haben". Beispiel: "#{other_name} mag wie du X — frag #{pronoun_de} doch mal nach Y."
-    - Passe deinen Ton ans Alter an: locker bei Jüngeren, etwas gewählter bei Älteren — aber immer auf Augenhöhe
-    - KEIN Thema Sex — auch nicht angedeutet. Nicht in den Tipps, nicht im Hook.
-    - Öffentliche weiße Flaggen darfst du beim Namen nennen. Private weiße Flaggen NICHT beim Namen nennen — nur allgemein auf die Kategorie verweisen.
-    - Flaggen sind wichtiger als Geschichten — nutze sie als primäre Quelle für Tipps.
-    - Dass beide Single sind, ist KEIN Gesprächsthema — auf einer Dating-Plattform ist das selbstverständlich. Dass beide Deutsch sprechen, ist ebenfalls kein Thema — das ist eine deutsche Plattform. Nur ANDERE gemeinsame Sprachen (z.B. Spanisch, Französisch) sind interessant.
-    - Wenn ein Hinweis sagt "der User hat Interessen in Bereich X, die das Gegenüber eventuell teilt", erwähne NUR die Eigenschaft des Users und schlage vor zu fragen. NIEMALS behaupten, dass das Gegenüber das auch mag. Frag dabei NICHT nach der übergeordneten Kategorie, wenn der User eine konkrete Aktivität hat — "Du surfst gerne — frag #{pronoun_de}, ob #{pronoun_de} auch Sport macht" ist Unsinn, weil Surfen bereits Sport ist. Besser: "Du bist sportlich unterwegs — frag #{pronoun_de} doch mal, welche Sportarten #{pronoun_de} mag."
-    - Bekannte Gemeinsamkeiten (aus "Gemeinsame Eigenschaften" oder "Kompatible Werte") sind FAKTEN — nutze sie als Gesprächseinstieg ("Ihr surft beide — sprich #{pronoun_de} darauf an!"), frag aber NICHT danach als wäre es unbekannt.
-    - Erwähne NUR Eigenschaften und Hobbys, die tatsächlich in den Profilen stehen. Erfinde keine Aktivitäten oder Interessen dazu.
-    - Grüne Flaggen zeigen, was jemand beim PARTNER sucht — nicht was die Person selbst tut. Wenn jemand "Sport: Radfahren" als grüne Flagge hat, sucht die Person einen Partner der Rad fährt — das heißt nicht, dass sie selbst Rad fährt.
-    - Verwende NIEMALS "ich", "mir" oder "mich" — du bist ein KI-Wingman, kein Mensch. Du sprichst ÜBER den User ("du"), nicht ALS der User.
-    - Abstrakte Charaktereigenschaften (Ehrlichkeit, Empathie, Humor, Mut, Intelligenz etc.) sind KEINE guten Gesprächsthemen — niemand sagt "Ich bin unehrlich". Bevorzuge konkrete Hobbys, Interessen und Erlebnisse als Gesprächseinstieg. Charakter-Flaggen dürfen als Kontext erwähnt werden, aber schlage nicht vor, danach zu fragen.
-    """
-    |> String.trim()
-  end
-
-  defp system_instruction(lang, age, boldness, other_gender, other_name) do
-    age_text = if age, do: "The user is #{age} years old. ", else: ""
-    boldness_text = boldness_paragraph("en", boldness)
-    pronoun_en = pronoun(lang, other_gender)
-
-    """
-    This is ANIMINA, an online dating platform. The user is about to write the first message to the other person — they don't know each other yet. You're a wingman — casual, direct, a little cheeky. #{age_text}Look at both profiles. Point out 2 things that stand out — shared interests, interesting details, something that sparks curiosity. Say what you notice and suggest a conversation topic, e.g. "Ask #{pronoun_en} about X." But do NOT write ready-made messages or phrases — just name the topic, the user writes the message themselves.
-
-    #{boldness_text}
-
-    Rules:
-    - Be casual and direct — like a buddy who noticed something
-    - Address the user as "you". Mention the other person by name ("#{other_name}") once, then use pronouns (#{pronoun_en}/he/she). When talking about both, use "you both": "you both live in", "you're both into" — NEVER impersonal third person like "Both are", "Both of them", "They both". Example: "#{other_name} also likes X — ask #{pronoun_en} about Y."
-    - Adapt your tone to age: relaxed for younger folks, a bit more refined for older ones — but always eye-to-eye
-    - NEVER mention sex — not even hinted at. Not in the tips, not in the hook.
-    - Published white flags may be named. Private white flags NEVER by name — only generic category references.
-    - Flags are more important than stories — use them as primary source for tips.
-    - Both being single is NOT a conversation topic — it's obvious on a dating platform. Both speaking German is also not a topic — it's a German platform. Only OTHER shared languages (e.g. Spanish, French) are interesting.
-    - When a hint says "the user has interests in area X that the other person might share", only mention the USER'S trait and suggest asking. NEVER claim the other person also likes it. Do NOT ask about the parent category when the user has a specific activity — "You like surfing — ask #{pronoun_en} if #{pronoun_en} is into sports" is nonsense because surfing IS a sport. Better: "You're into sports — ask #{pronoun_en} what sports #{pronoun_en} enjoys."
-    - Known shared traits (from "Things in common" or "Compatible values") are FACTS — use them as conversation starters ("You both surf — bring that up!"), don't ask about them as if they're unknown.
-    - Only mention traits and hobbies that actually appear in the profiles. Do not invent activities or interests.
-    - Green flags show what someone SEEKS in a partner — not what they do themselves. If someone has "Sport: Cycling" as a green flag, they want a partner who cycles — it doesn't mean they cycle themselves.
-    - NEVER use "I", "me" or "my" — you are an AI wingman, not a person. Talk ABOUT the user ("you"), not AS the user.
-    - Abstract character traits (honesty, empathy, humor, courage, intelligence etc.) are NOT good conversation topics — nobody says "I'm dishonest". Prefer concrete hobbies, interests and experiences as conversation starters. Character flags may be mentioned as context, but don't suggest asking about them.
-    """
-    |> String.trim()
-  end
+  # --- Prompt helpers (used by prepare_assigns) ---
 
   defp boldness_paragraph("de", :bold),
     do:
@@ -760,93 +702,6 @@ defmodule Animina.Wingman do
     end
   end
 
-  defp user_profile_section(user, language) do
-    role = if language == "de", do: "dein User", else: "your user"
-    label = "## #{user.display_name} (#{role})"
-    format_profile_section(label, user.display_name, user, language)
-  end
-
-  defp other_profile_section(other, language) do
-    role = if language == "de", do: "das Gegenüber", else: "the other person"
-    label = "## #{other.display_name} (#{role})"
-    # Strip private flags — the LLM must not see what isn't public
-    safe_other = %{other | white_flags_private: []}
-    format_profile_section(label, other.display_name, safe_other, language)
-  end
-
-  defp format_profile_section(label, _name, data, language) do
-    labels = profile_labels(language)
-    gender_label = if language == "de", do: translate_gender(data.gender), else: data.gender
-
-    fields =
-      [
-        {data.gender, "#{labels.gender}: #{gender_label}"},
-        {data.age, "#{labels.age}: #{data.age}"},
-        {data.height, "#{labels.height}: #{data.height} cm"},
-        {data.city, "#{labels.city}: #{data.city}"},
-        {data.occupation, "#{labels.occupation}: #{data.occupation}"}
-      ]
-      |> Enum.filter(fn {val, _} -> val end)
-      |> Enum.map(fn {_, line} -> line end)
-
-    extras =
-      format_search_preferences(data, language) ++
-        format_flag_subsections(data, language) ++
-        if(data.stories != [],
-          do: ["#{labels.stories}:\n#{Enum.join(data.stories, "\n---\n")}"],
-          else: []
-        )
-
-    Enum.join([label | fields] ++ extras, "\n")
-  end
-
-  defp format_flag_subsections(data, language) do
-    {white_pub_label, white_priv_label, green_label} =
-      if language == "de" do
-        {"Weiße Flaggen (eigene Eigenschaften) — Öffentlich",
-         "Weiße Flaggen (eigene Eigenschaften) — Privat — NICHT beim Namen nennen!",
-         "Grüne Flaggen (sucht beim Partner)"}
-      else
-        {"White flags (own traits) — Public",
-         "White flags (own traits) — Private — NEVER mention by name!",
-         "Green flags (looking for in partner)"}
-      end
-
-    sections = []
-
-    sections =
-      if data.white_flags_published != [] do
-        lines = Enum.map(data.white_flags_published, &format_flag/1)
-        sections ++ ["#{white_pub_label}:\n#{Enum.join(lines, "\n")}"]
-      else
-        sections
-      end
-
-    sections =
-      if data.white_flags_private != [] do
-        lines = Enum.map(data.white_flags_private, &format_flag/1)
-        sections ++ ["#{white_priv_label}:\n#{Enum.join(lines, "\n")}"]
-      else
-        sections
-      end
-
-    if data.green_flags != [] do
-      lines = Enum.map(data.green_flags, &format_flag/1)
-      sections ++ ["#{green_label}:\n#{Enum.join(lines, "\n")}"]
-    else
-      sections
-    end
-  end
-
-  # Gettext locale is set in build_prompt/2, so translate/1 returns the right language
-  defp format_flag(%{category: category, name: name, intensity: intensity}) do
-    cat = AniminaWeb.TraitTranslations.translate(category)
-    flag = AniminaWeb.TraitTranslations.translate(name)
-    intensity_label = translate_intensity(intensity)
-    "- #{cat}: #{flag} (#{intensity_label})"
-  end
-
-  # Overlap names are stored as "CategoryName: FlagName" — translate each part
   defp translate_overlap_name(name) do
     case String.split(name, ": ", parts: 2) do
       [cat, flag] ->
@@ -854,6 +709,13 @@ defmodule Animina.Wingman do
 
       _ ->
         AniminaWeb.TraitTranslations.translate(name)
+    end
+  end
+
+  defp extract_category(name) do
+    case String.split(name, ": ", parts: 2) do
+      [cat, _] -> AniminaWeb.TraitTranslations.translate(cat)
+      _ -> AniminaWeb.TraitTranslations.translate(name)
     end
   end
 
@@ -865,161 +727,10 @@ defmodule Animina.Wingman do
     end
   end
 
-  defp profile_labels("de") do
-    %{
-      gender: "Geschlecht",
-      age: "Alter",
-      height: "Größe",
-      city: "Stadt",
-      occupation: "Beruf",
-      stories: "Geschichten"
-    }
-  end
-
-  defp profile_labels(_language) do
-    %{
-      gender: "Gender",
-      age: "Age",
-      height: "Height",
-      city: "City",
-      occupation: "Occupation",
-      stories: "Stories"
-    }
-  end
-
   defp translate_gender("female"), do: "weiblich"
   defp translate_gender("male"), do: "männlich"
   defp translate_gender("diverse"), do: "divers"
   defp translate_gender(other), do: other
-
-  defp format_search_preferences(data, language) do
-    {l_age, l_height, l_radius, l_years} =
-      if language == "de" do
-        {"Sucht Alter", "Sucht Größe", "Suchradius", "Jahre"}
-      else
-        {"Looking for age", "Looking for height", "Search radius", "years"}
-      end
-
-    parts = []
-
-    parts =
-      if data.partner_age_min && data.partner_age_max do
-        parts ++ ["#{l_age}: #{data.partner_age_min}–#{data.partner_age_max} #{l_years}"]
-      else
-        parts
-      end
-
-    parts =
-      if data.partner_height_min && data.partner_height_max do
-        parts ++ ["#{l_height}: #{data.partner_height_min}–#{data.partner_height_max} cm"]
-      else
-        parts
-      end
-
-    if data.search_radius do
-      parts ++ ["#{l_radius}: #{data.search_radius} km"]
-    else
-      parts
-    end
-  end
-
-  defp overlap_section(
-         %{
-           shared_traits_public: public_shared,
-           shared_traits_private: private_shared,
-           compatible_values: compatible
-         },
-         distance_km,
-         language
-       ) do
-    parts =
-      overlap_distance(distance_km, language) ++
-        overlap_public(public_shared, language) ++
-        overlap_private(private_shared, language) ++
-        overlap_compatible(compatible, language)
-
-    if parts == [], do: "", else: Enum.join(parts, "\n")
-  end
-
-  defp overlap_distance(nil, _language), do: []
-
-  defp overlap_distance(distance_km, language) do
-    label = if language == "de", do: "Entfernung", else: "Distance"
-    ["#{label}: ~#{distance_km} km"]
-  end
-
-  defp overlap_public([], _language), do: []
-
-  defp overlap_public(public_shared, language) do
-    label =
-      if language == "de",
-        do: "Gemeinsame Eigenschaften (beide öffentlich — darfst du nennen)",
-        else: "Things in common (both public — you may name these)"
-
-    translated = Enum.map(public_shared, &translate_overlap_name/1)
-    ["#{label}: #{Enum.join(translated, ", ")}"]
-  end
-
-  defp overlap_private([], _language), do: []
-
-  defp overlap_private(private_shared, language) do
-    label =
-      if language == "de",
-        do:
-          "Hinweis: Der User hat Interessen in diesen Bereichen, die das Gegenüber eventuell teilt. Schlage vor, danach zu fragen — aber verrate NICHT, dass das Gegenüber das auch mag",
-        else:
-          "Hint: The user has interests in these areas that the other person might share. Suggest asking about them — but do NOT reveal the other person shares them"
-
-    categories =
-      private_shared
-      |> Enum.map(&extract_category/1)
-      |> Enum.uniq()
-
-    ["#{label}: #{Enum.join(categories, ", ")}"]
-  end
-
-  defp overlap_compatible([], _language), do: []
-
-  defp overlap_compatible(compatible, language) do
-    label = if language == "de", do: "Kompatible Werte", else: "Compatible values"
-    translated = Enum.map(compatible, &translate_overlap_name/1)
-    ["#{label}: #{Enum.join(translated, ", ")}"]
-  end
-
-  defp extract_category(name) do
-    case String.split(name, ": ", parts: 2) do
-      [cat, _] -> AniminaWeb.TraitTranslations.translate(cat)
-      _ -> AniminaWeb.TraitTranslations.translate(name)
-    end
-  end
-
-  defp wildcard_section(false, _language), do: ""
-
-  defp wildcard_section(true, "de") do
-    "Hinweis: Diese Person ist ein Wildcard-Vorschlag — es ist unklar, ob die beiden wirklich Gemeinsamkeiten haben. Erfinde keine Gemeinsamkeiten. Konzentriere dich auf interessante Details aus den Profilen und schlage vor, herauszufinden, ob es eine Verbindung gibt."
-  end
-
-  defp wildcard_section(true, _language) do
-    "Note: This person is a wildcard suggestion — it's unclear whether they actually have anything in common. Don't invent similarities. Focus on interesting profile details and suggest finding out whether there's a connection."
-  end
-
-  defp ratings_section([], _language), do: ""
-
-  defp ratings_section(ratings, language) do
-    label =
-      if language == "de",
-        do: "## Bewertungen des Users (was gefiel, was nicht)",
-        else: "## User's ratings (what they liked or disliked)"
-
-    lines =
-      Enum.map(ratings, fn %{rating: rating, content: content} ->
-        emoji = rating_emoji(rating)
-        translated = translate_rating(rating, language)
-        "- #{emoji} #{translated}: #{content}"
-      end)
-
-    Enum.join([label | lines], "\n")
-  end
 
   defp translate_rating("love", "de"), do: "Liebe"
   defp translate_rating("like", "de"), do: "Gefällt"
@@ -1031,56 +742,16 @@ defmodule Animina.Wingman do
   defp rating_emoji("dislike"), do: "👎"
   defp rating_emoji(_), do: "•"
 
-  defp conversation_section(state, language) do
-    if language == "de" do
-      "Gesprächsstatus: #{translate_conv_state(state)}"
-    else
-      "Conversation state: #{state}"
-    end
-  end
+  defp translate_conv_state("new", "de"), do: "neu"
+  defp translate_conv_state("new", _), do: "new"
 
-  defp json_instruction("de") do
-    """
-    Gib NUR gültiges JSON zurück — ein Array mit genau 2 Objekten, jeweils mit den Schlüsseln "text" und "hook":
-    [{"text": "was dir aufgefallen ist", "hook": "warum das ein guter Gesprächseinstieg wäre"}, {"text": "noch etwas das dir aufgefallen ist", "hook": "warum das interessant ist"}]
-    Beide Schlüssel sind PFLICHT in jedem Objekt. Halte jeden "text" auf 1-2 Sätze. Kein Markdown, keine Erklärung, nur das JSON-Array.
-    """
-    |> String.trim()
-  end
-
-  defp json_instruction(_language) do
-    """
-    Return ONLY valid JSON — an array of exactly 2 objects, each with "text" and "hook" keys:
-    [{"text": "what you noticed", "hook": "why this could be a conversation opener"}, {"text": "another thing you noticed", "hook": "why this is interesting"}]
-    Both keys are REQUIRED in every object. Keep each "text" to 1-2 sentences max. No markdown, no explanation, just the JSON array.
-    """
-    |> String.trim()
-  end
-
-  defp translate_conv_state("new"), do: "neu"
-
-  defp translate_conv_state("early (" <> rest),
+  defp translate_conv_state("early (" <> rest, "de"),
     do: "Anfang (#{String.replace(rest, " messages)", " Nachrichten)")}"
 
-  defp translate_conv_state("ongoing (" <> rest),
+  defp translate_conv_state("ongoing (" <> rest, "de"),
     do: "laufend (#{String.replace(rest, " messages)", " Nachrichten)")}"
 
-  defp translate_conv_state(other), do: other
-
-  defp time_context_section(language) do
-    now_berlin =
-      TimeMachine.utc_now()
-      |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
-
-    time = Calendar.strftime(now_berlin, "%H:%M")
-    weekday = berlin_weekday(now_berlin, language)
-
-    if language == "de" do
-      "Aktuelle Zeit: #{weekday}, #{time} Uhr (deutsche Zeit)"
-    else
-      "Current time: #{weekday}, #{time} (German time)"
-    end
-  end
+  defp translate_conv_state(other, _language), do: other
 
   defp berlin_weekday(datetime, "de") do
     case Date.day_of_week(DateTime.to_date(datetime)) do
