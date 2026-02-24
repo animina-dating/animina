@@ -52,9 +52,9 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Fynn", last_name: "Scholz", gender: "male", age: 27, avatar: "fynn", profile: 0, topics: [:hiking, :beach, :travel], activity: :evening_regular},
     %{name: "Nico", last_name: "Bauer", gender: "male", age: 24, avatar: "nico", profile: 7, topics: [:music, :travel, :beach]},
     # Activity :new_user = only started logging in recently (last 2 weeks)
-    %{name: "Björn", last_name: "Lindqvist", gender: "male", age: 33, avatar: "bjoern", profile: 0, topics: [:hiking, :mountains, :nature], activity: :new_user},
+    %{name: "Björn", last_name: "Lindqvist", gender: "male", age: 33, avatar: "bjoern", profile: 0, topics: [:hiking, :mountains, :nature], roles: [:admin], activity: :new_user},
     %{name: "Samuel", last_name: "Adeyemi", gender: "male", age: 32, avatar: "samuel", profile: 11, topics: [:music, :art, :coffee]},
-    %{name: "Torsten", last_name: "Krüger", gender: "male", age: 34, avatar: "torsten", profile: 12, topics: [:cooking, :food, :coffee]},
+    %{name: "Torsten", last_name: "Krüger", gender: "male", age: 34, avatar: "torsten", profile: 12, topics: [:cooking, :food, :coffee], roles: [:admin]},
     %{name: "Jörg", last_name: "Hauser", gender: "male", age: 43, avatar: "joerg", profile: 19, topics: [:cooking, :garden, :nature]},
     %{name: "Viktor", last_name: "Volkov", gender: "male", age: 35, avatar: "viktor", profile: 10, topics: [:cycling, :hiking, :nature]},
     %{name: "Anton", last_name: "Nowak", gender: "male", age: 24, avatar: "anton", profile: 16, topics: [:coffee, :books, :music]},
@@ -82,7 +82,7 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Nina", last_name: "Schulz", gender: "female", age: 24, avatar: "nina", profile: 0, topics: [:hiking, :beach, :nature], activity: :morning_routine},
     %{name: "Mei", last_name: "Tanaka", gender: "female", age: 26, avatar: "mei", profile: 2, topics: [:art, :coffee, :music]},
     # Activity :fading = was active weeks ago, now barely logs in
-    %{name: "Claudia", last_name: "Richter", gender: "female", age: 34, avatar: "claudia", profile: 18, topics: [:books, :coffee, :yoga], activity: :fading},
+    %{name: "Claudia", last_name: "Richter", gender: "female", age: 34, avatar: "claudia", profile: 18, topics: [:books, :coffee, :yoga], roles: [:admin], activity: :fading},
     # Activity :weekend_warrior
     %{name: "Amara", last_name: "Okafor", gender: "female", age: 25, avatar: "amara", profile: 6, topics: [:music, :travel, :coffee], activity: :weekend_warrior},
     # Activity :sporadic
@@ -112,7 +112,7 @@ defmodule Animina.Seeds.DevUsers do
     %{name: "Emma", last_name: "Lorenz", gender: "female", age: 23, avatar: "emma", profile: 4, topics: [:cooking, :garden, :pets]},
     %{name: "Julia", last_name: "Meier", gender: "female", age: 26, avatar: "julia", profile: 10, topics: [:cycling, :yoga, :hiking]},
     %{name: "Natasha", last_name: "Petrov", gender: "female", age: 24, avatar: "natasha", profile: 14, topics: [:travel, :beach, :nature]},
-    %{name: "Daniela", last_name: "Braun", gender: "female", age: 32, avatar: "daniela", profile: 11, topics: [:music, :coffee, :art]},
+    %{name: "Daniela", last_name: "Braun", gender: "female", age: 32, avatar: "daniela", profile: 11, topics: [:music, :coffee, :art], roles: [:admin]},
     %{name: "Kira", last_name: "Sommer", gender: "female", age: 24, avatar: "kira", profile: 0, topics: [:beach, :hiking, :nature]},
     %{name: "Aisha", last_name: "Mensah", gender: "female", age: 25, avatar: "aisha", profile: 10, topics: [:cycling, :yoga, :nature]},
     %{name: "Petra", last_name: "Zimmermann", gender: "female", age: 42, avatar: "petra", profile: 19, topics: [:cooking, :garden, :nature]},
