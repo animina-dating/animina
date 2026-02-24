@@ -25,7 +25,7 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   def default_priority, do: 3
 
   @impl true
-  def max_attempts, do: 20
+  def max_attempts, do: 10
 
   @impl true
   def allowed_model_downgrades, do: ["qwen3-vl:4b", "qwen3-vl:2b"]

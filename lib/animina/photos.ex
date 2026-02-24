@@ -76,14 +76,10 @@ defmodule Animina.Photos do
   @ollama_pending_states ~w(pending_ollama)
   @ollama_queue_states @ollama_pending_states ++ ["needs_manual_review"]
 
-  # Max retries before requiring manual review
-  @max_ollama_retries 20
-
   def servable_states, do: @servable_states
   def analyzing_states, do: @analyzing_states
   def ollama_pending_states, do: @ollama_pending_states
   def ollama_queue_states, do: @ollama_queue_states
-  def max_ollama_retries, do: @max_ollama_retries
   def processed_file_available?(state), do: state in @servable_states
 
   @doc """

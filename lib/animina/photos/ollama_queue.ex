@@ -96,13 +96,13 @@ defmodule Animina.Photos.OllamaQueue do
   - retry_count incremented
   - retry_at set based on backoff formula
 
-  If retry_count reaches max_ollama_retries, transitions to needs_manual_review instead.
+  If retry_count reaches PhotoClassification.max_attempts, transitions to needs_manual_review instead.
   """
   def queue_for_ollama_retry(%Photo{} = photo) do
     current_count = photo.ollama_retry_count || 0
     new_count = current_count + 1
 
-    if new_count > Photos.max_ollama_retries() do
+    if new_count > Animina.AI.JobTypes.PhotoClassification.max_attempts() do
       AuditLog.log_event(photo, "ollama_retries_exhausted", "system", nil, %{
         retry_count: current_count
       })

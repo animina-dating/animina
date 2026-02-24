@@ -26,7 +26,7 @@ defmodule Animina.AI.JobTypes.GenderGuess do
   def default_priority, do: 1
 
   @impl true
-  def max_attempts, do: 3
+  def max_attempts, do: 1
 
   @impl true
   def allowed_model_downgrades, do: []

@@ -26,7 +26,7 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   def default_priority, do: 2
 
   @impl true
-  def max_attempts, do: 2
+  def max_attempts, do: 1
 
   @impl true
   def allowed_model_downgrades, do: []

@@ -11,7 +11,7 @@ defmodule Animina.AITest do
 
       assert job.job_type == "photo_classification"
       assert job.priority == 3
-      assert job.max_attempts == 20
+      assert job.max_attempts == 10
       assert job.status == "pending"
       assert job.attempt == 0
     end
@@ -21,7 +21,7 @@ defmodule Animina.AITest do
 
       assert job.job_type == "gender_guess"
       assert job.priority == 1
-      assert job.max_attempts == 3
+      assert job.max_attempts == 1
     end
 
     test "creates a job with correct defaults for wingman_suggestion" do
@@ -35,7 +35,7 @@ defmodule Animina.AITest do
 
       assert job.job_type == "wingman_suggestion"
       assert job.priority == 2
-      assert job.max_attempts == 2
+      assert job.max_attempts == 1
     end
 
     test "creates a job with correct defaults for photo_description" do
