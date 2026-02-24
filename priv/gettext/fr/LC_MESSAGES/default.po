@@ -156,6 +156,7 @@ msgstr "Décrivez-vous : vos traits, loisirs, valeurs et mode de vie. De l'humou
 msgid "Display name (2-50 characters)"
 msgstr "Nom d'affichage (2-50 caractères)"
 
+#: lib/animina_web/live/user_live/edit_profile.ex:138
 #: lib/animina_web/live/user_live/registration.ex:280
 #: lib/animina_web/live/user_live/registration.ex:419
 #, elixir-autogen, elixir-format
@@ -204,6 +205,7 @@ msgstr "Entrez votre adresse e-mail et nous vous enverrons un lien de réinitial
 msgid "Everyone has deal-breakers. Be honest about what doesn't work for you. It saves time and disappointment on both sides."
 msgstr "Tout le monde a ses limites. Soyez honnête sur ce qui ne vous convient pas. Cela fait gagner du temps et évite les déceptions des deux côtés."
 
+#: lib/animina_web/live/user_live/edit_profile.ex:137
 #: lib/animina_web/live/user_live/registration.ex:279
 #: lib/animina_web/live/user_live/registration.ex:418
 #, elixir-autogen, elixir-format
@@ -240,6 +242,7 @@ msgstr "Gratuit. Pour toujours. Pour tous."
 msgid "Fun without addiction"
 msgstr "Du plaisir sans addiction"
 
+#: lib/animina_web/live/user_live/edit_profile.ex:71
 #: lib/animina_web/live/user_live/registration.ex:276
 #, elixir-autogen, elixir-format
 msgid "Gender"
@@ -328,6 +331,7 @@ msgstr "Se déconnecter"
 msgid "Logged out successfully."
 msgstr "Déconnexion réussie."
 
+#: lib/animina_web/live/user_live/edit_profile.ex:136
 #: lib/animina_web/live/user_live/registration.ex:278
 #: lib/animina_web/live/user_live/registration.ex:417
 #, elixir-autogen, elixir-format
@@ -559,7 +563,7 @@ msgstr "Enregistrer le mot de passe"
 #: lib/animina_web/live/components/account_email_password_component.ex:90
 #: lib/animina_web/live/user_live/edit_locations.ex:46
 #: lib/animina_web/live/user_live/edit_preferences.ex:87
-#: lib/animina_web/live/user_live/edit_profile.ex:69
+#: lib/animina_web/live/user_live/edit_profile.ex:84
 #, elixir-autogen, elixir-format
 msgid "Saving..."
 msgstr "Enregistrement..."
@@ -794,7 +798,7 @@ msgid "Display Name"
 msgstr "Nom d'affichage"
 
 #: lib/animina_web/live/user_live/edit_profile.ex:12
-#: lib/animina_web/live/user_live/edit_profile.ex:85
+#: lib/animina_web/live/user_live/edit_profile.ex:100
 #, elixir-autogen, elixir-format
 msgid "Edit Profile"
 msgstr "Modifier le profil"
@@ -861,7 +865,7 @@ msgstr "Préférences mises à jour avec succès."
 msgid "Preferred Partner Gender"
 msgstr "Genre de partenaire préféré"
 
-#: lib/animina_web/live/user_live/edit_profile.ex:112
+#: lib/animina_web/live/user_live/edit_profile.ex:128
 #, elixir-autogen, elixir-format
 msgid "Profile updated successfully."
 msgstr "Profil mis à jour avec succès."
@@ -878,7 +882,7 @@ msgstr "Supprimer"
 msgid "Save Preferences"
 msgstr "Enregistrer les préférences"
 
-#: lib/animina_web/live/user_live/edit_profile.ex:70
+#: lib/animina_web/live/user_live/edit_profile.ex:85
 #, elixir-autogen, elixir-format
 msgid "Save Profile"
 msgstr "Enregistrer le profil"
@@ -1127,7 +1131,7 @@ msgstr "Impossible de supprimer le dernier administrateur. Attribuez d'abord un 
 msgid "About Me"
 msgstr "À propos de moi"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:673
+#: lib/animina_web/live/user_live/traits_wizard.ex:656
 #, elixir-autogen, elixir-format
 msgid "Could not add flag."
 msgstr "Impossible d'ajouter le drapeau."
@@ -1137,12 +1141,12 @@ msgstr "Impossible d'ajouter le drapeau."
 msgid "Finish"
 msgstr "Terminer"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:614
+#: lib/animina_web/live/user_live/traits_wizard.ex:597
 #, elixir-autogen, elixir-format
 msgid "All flags have been deleted."
 msgstr "Tous les drapeaux ont été supprimés."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:740
+#: lib/animina_web/live/user_live/traits_wizard.ex:723
 #, elixir-autogen, elixir-format
 msgid "Are you sure that you want to delete all %{white} white, %{green} green and %{red} red flags of yours?"
 msgstr "Es-tu sûr(e) de vouloir supprimer tous tes %{white} drapeaux blancs, %{green} drapeaux verts et %{red} drapeaux rouges ?"
@@ -1187,7 +1191,7 @@ msgstr "désactivé"
 msgid "prefer not"
 msgstr "plutôt pas"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:631
+#: lib/animina_web/live/user_live/traits_wizard.ex:614
 #, elixir-autogen, elixir-format
 msgid "Could not update flag."
 msgstr "Impossible de mettre à jour le drapeau."
@@ -1325,6 +1329,7 @@ msgid "Birthday"
 msgstr "Date de naissance"
 
 #: lib/animina_web/live/user_live/edit_profile.ex:65
+#: lib/animina_web/live/user_live/edit_profile.ex:80
 #, elixir-autogen, elixir-format
 msgid "This field cannot be changed."
 msgstr "Ce champ ne peut pas être modifié."
@@ -2595,12 +2600,12 @@ msgstr "Écriture"
 msgid "Yoga"
 msgstr "Yoga"
 
-#: lib/animina_web/trait_translations.ex:386
+#: lib/animina_web/trait_translations.ex:384
 #, elixir-autogen, elixir-format
 msgid "69"
 msgstr "69"
 
-#: lib/animina_web/trait_translations.ex:388
+#: lib/animina_web/trait_translations.ex:386
 #, elixir-autogen, elixir-format
 msgid "Against the Wall"
 msgstr "Contre le mur"
@@ -2620,7 +2625,7 @@ msgstr "Sexe anal : passif"
 msgid "Bondage"
 msgstr "Bondage"
 
-#: lib/animina_web/trait_translations.ex:384
+#: lib/animina_web/trait_translations.ex:382
 #, elixir-autogen, elixir-format
 msgid "Cowgirl"
 msgstr "Cowgirl"
@@ -2630,12 +2635,12 @@ msgstr "Cowgirl"
 msgid "Dates"
 msgstr "Rendez-vous"
 
-#: lib/animina_web/trait_translations.ex:379
+#: lib/animina_web/trait_translations.ex:377
 #, elixir-autogen, elixir-format
 msgid "Dirty Talk"
 msgstr "Dirty talk"
 
-#: lib/animina_web/trait_translations.ex:383
+#: lib/animina_web/trait_translations.ex:381
 #, elixir-autogen, elixir-format
 msgid "Doggy Style"
 msgstr "Levrette"
@@ -2690,7 +2695,7 @@ msgstr "En couple"
 msgid "It's Complicated"
 msgstr "C'est compliqué"
 
-#: lib/animina_web/trait_translations.ex:378
+#: lib/animina_web/trait_translations.ex:376
 #, elixir-autogen, elixir-format
 msgid "Kissing"
 msgstr "Baisers"
@@ -2711,17 +2716,17 @@ msgstr "Mariage"
 msgid "Married"
 msgstr "Marié(e)"
 
-#: lib/animina_web/trait_translations.ex:375
+#: lib/animina_web/trait_translations.ex:373
 #, elixir-autogen, elixir-format
 msgid "Massage: Giving"
 msgstr "Massage : donner"
 
-#: lib/animina_web/trait_translations.ex:376
+#: lib/animina_web/trait_translations.ex:374
 #, elixir-autogen, elixir-format
 msgid "Massage: Receiving"
 msgstr "Massage : recevoir"
 
-#: lib/animina_web/trait_translations.ex:382
+#: lib/animina_web/trait_translations.ex:380
 #, elixir-autogen, elixir-format
 msgid "Missionary"
 msgstr "Missionnaire"
@@ -2756,7 +2761,7 @@ msgstr "Sexe oral : recevoir"
 msgid "Pets"
 msgstr "Animaux de compagnie"
 
-#: lib/animina_web/trait_translations.ex:381
+#: lib/animina_web/trait_translations.ex:379
 #, elixir-autogen, elixir-format
 msgid "Phone Sex"
 msgstr "Sexe par téléphone"
@@ -2776,16 +2781,6 @@ msgstr "Rarement"
 msgid "Relationship Status"
 msgstr "Situation amoureuse"
 
-#: lib/animina_web/trait_translations.ex:373
-#, elixir-autogen, elixir-format
-msgid "Rimming: Giving"
-msgstr "Anulingus : donner"
-
-#: lib/animina_web/trait_translations.ex:374
-#, elixir-autogen, elixir-format
-msgid "Rimming: Receiving"
-msgstr "Anulingus : recevoir"
-
 #: lib/animina_web/trait_translations.ex:347
 #, elixir-autogen, elixir-format
 msgid "Role Play"
@@ -2796,7 +2791,7 @@ msgstr "Jeu de rôle"
 msgid "S&M"
 msgstr "S&M"
 
-#: lib/animina_web/trait_translations.ex:380
+#: lib/animina_web/trait_translations.ex:378
 #, elixir-autogen, elixir-format
 msgid "Sexting"
 msgstr "Sexting"
@@ -2831,12 +2826,12 @@ msgstr "Quelque chose de léger"
 msgid "Sometimes"
 msgstr "Parfois"
 
-#: lib/animina_web/trait_translations.ex:385
+#: lib/animina_web/trait_translations.ex:383
 #, elixir-autogen, elixir-format
 msgid "Spooning"
 msgstr "Cuillère"
 
-#: lib/animina_web/trait_translations.ex:387
+#: lib/animina_web/trait_translations.ex:385
 #, elixir-autogen, elixir-format
 msgid "Standing"
 msgstr "Debout"
@@ -2866,7 +2861,7 @@ msgstr "Tantra"
 msgid "Toys"
 msgstr "Jouets"
 
-#: lib/animina_web/trait_translations.ex:377
+#: lib/animina_web/trait_translations.ex:375
 #, elixir-autogen, elixir-format
 msgid "Vaginal Sex"
 msgstr "Sexe vaginal"
@@ -4435,35 +4430,15 @@ msgstr "Sélection joker"
 msgid "Draft:"
 msgstr "Brouillon :"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:405
-#, elixir-autogen, elixir-format
-msgid "+10 pts"
-msgstr "+10 pts"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:407
-#, elixir-autogen, elixir-format
-msgid "-50 pts"
-msgstr "-50 pts"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:436
+#: lib/animina_web/live/user_live/traits_wizard.ex:431
 #, elixir-autogen, elixir-format
 msgid "click to set as nice to have (+10 pts)"
 msgstr "clique pour définir comme souhaitable (+10 pts)"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:437
+#: lib/animina_web/live/user_live/traits_wizard.ex:432
 #, elixir-autogen, elixir-format
 msgid "click to set as prefer not (-50 pts)"
 msgstr "clique pour définir comme plutôt pas (-50 pts)"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:408
-#, elixir-autogen, elixir-format
-msgid "Excluded"
-msgstr "Exclu"
-
-#: lib/animina_web/live/user_live/traits_wizard.ex:406
-#, elixir-autogen, elixir-format
-msgid "Required"
-msgstr "Requis"
 
 #: lib/animina_web/live/user_live/traits_wizard.ex:386
 #, elixir-autogen, elixir-format
@@ -4475,22 +4450,22 @@ msgstr "Sélectionne les traits que tu ne souhaites pas chez un partenaire. Cliq
 msgid "Select traits you'd like your partner to have. Click once for nice to have (+10 pts), again for must have (required — only shows profiles with this trait). These flags are always private."
 msgstr "Sélectionne les traits que tu aimerais chez ton partenaire. Clique une fois pour souhaitable (+10 pts), encore une fois pour indispensable (requis — n'affiche que les profils avec ce trait). Ces drapeaux sont toujours privés."
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:447
+#: lib/animina_web/live/user_live/traits_wizard.ex:442
 #, elixir-autogen, elixir-format
 msgid "deal breaker (excluded) — click to remove"
 msgstr "rédhibitoire (exclu) — cliquez pour retirer"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:446
+#: lib/animina_web/live/user_live/traits_wizard.ex:441
 #, elixir-autogen, elixir-format
 msgid "must have (required) — click to remove"
 msgstr "indispensable (requis) — cliquez pour retirer"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:441
+#: lib/animina_web/live/user_live/traits_wizard.ex:436
 #, elixir-autogen, elixir-format
 msgid "nice to have (+10 pts) — click to change to must have (required)"
 msgstr "souhaitable (+10 pts) — cliquez pour passer en indispensable (requis)"
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:442
+#: lib/animina_web/live/user_live/traits_wizard.ex:437
 #, elixir-autogen, elixir-format
 msgid "prefer not (-50 pts) — click to change to deal breaker (excluded)"
 msgstr "plutôt pas (-50 pts) — cliquez pour passer en rédhibitoire (exclu)"
@@ -7028,32 +7003,32 @@ msgstr ""
 msgid "dHash"
 msgstr ""
 
-#: lib/animina_web/trait_translations.ex:393
+#: lib/animina_web/trait_translations.ex:391
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Acts of Service"
 msgstr "Conditions d'utilisation"
 
-#: lib/animina_web/trait_translations.ex:390
+#: lib/animina_web/trait_translations.ex:388
 #, elixir-autogen, elixir-format
 msgid "Love Languages"
 msgstr ""
 
-#: lib/animina_web/trait_translations.ex:395
+#: lib/animina_web/trait_translations.ex:393
 #, elixir-autogen, elixir-format
 msgid "Physical Touch"
 msgstr ""
 
-#: lib/animina_web/trait_translations.ex:392
+#: lib/animina_web/trait_translations.ex:390
 #, elixir-autogen, elixir-format
 msgid "Quality Time"
 msgstr ""
 
-#: lib/animina_web/trait_translations.ex:394
+#: lib/animina_web/trait_translations.ex:392
 #, elixir-autogen, elixir-format
 msgid "Receiving Gifts"
 msgstr ""
 
-#: lib/animina_web/trait_translations.ex:391
+#: lib/animina_web/trait_translations.ex:389
 #, elixir-autogen, elixir-format
 msgid "Words of Affirmation"
 msgstr ""
@@ -7068,17 +7043,17 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:728
+#: lib/animina_web/live/user_live/traits_wizard.ex:711
 #, elixir-autogen, elixir-format
 msgid "green"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:729
+#: lib/animina_web/live/user_live/traits_wizard.ex:712
 #, elixir-autogen, elixir-format
 msgid "red"
 msgstr ""
 
-#: lib/animina_web/live/user_live/traits_wizard.ex:727
+#: lib/animina_web/live/user_live/traits_wizard.ex:710
 #, elixir-autogen, elixir-format
 msgid "white"
 msgstr ""

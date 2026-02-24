@@ -370,8 +370,6 @@ defmodule AniminaWeb.TraitTranslations do
       gettext("Anal Sex: Receiving"),
       gettext("Fingering: Giving"),
       gettext("Fingering: Receiving"),
-      gettext("Rimming: Giving"),
-      gettext("Rimming: Receiving"),
       gettext("Massage: Giving"),
       gettext("Massage: Receiving"),
       gettext("Vaginal Sex"),

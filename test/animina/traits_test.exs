@@ -1875,13 +1875,13 @@ defmodule Animina.TraitsTest do
       assert category.sensitive == true
     end
 
-    test "category has all 22 flags" do
+    test "category has all 20 flags" do
       categories = Traits.list_categories()
       category = Enum.find(categories, fn c -> c.name == "Sexual Practices" end)
       assert category != nil
 
       flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 22
+      assert length(flags) == 20
 
       flag_names = Enum.map(flags, & &1.name)
 
@@ -1892,8 +1892,6 @@ defmodule Animina.TraitsTest do
       assert "Anal Sex: Receiving" in flag_names
       assert "Fingering: Giving" in flag_names
       assert "Fingering: Receiving" in flag_names
-      assert "Rimming: Giving" in flag_names
-      assert "Rimming: Receiving" in flag_names
       assert "Massage: Giving" in flag_names
       assert "Massage: Receiving" in flag_names
 
