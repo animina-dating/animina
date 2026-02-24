@@ -17,14 +17,18 @@ defmodule Animina.AI.Scheduler do
   alias Animina.AI
   alias Animina.AI.Executor
   alias Animina.AI.HealthAlert
+  alias Animina.AI.PerformanceStats
   alias Animina.AI.Semaphore
   alias Animina.FeatureFlags
   alias Animina.Photos
 
   @default_poll_interval_ms 5_000
-  @default_batch_size 5
   @description_seed_interval_ms 60_000
   @stuck_job_timeout_seconds 180
+
+  # Per GPU, at most this many jobs may be deferred (skip_for_gpu) per poll cycle.
+  # E.g. with 1 GPU and multiplier 2: max 2 jobs wait for GPU, rest forced to CPU.
+  @gpu_queue_multiplier 2
 
   # --- Client API ---
 
@@ -58,12 +62,8 @@ defmodule Animina.AI.Scheduler do
         read_setting(:ai_scheduler_poll_interval, @default_poll_interval_ms)
       )
 
-    batch_size =
-      Keyword.get(opts, :batch_size, read_setting(:ai_scheduler_batch_size, @default_batch_size))
-
     state = %{
       poll_interval: poll_interval,
-      batch_size: batch_size,
       total_dispatched: 0,
       last_description_seed_at: 0,
       all_down_since: nil,
@@ -79,9 +79,7 @@ defmodule Animina.AI.Scheduler do
     # Schedule first poll after startup delay
     Process.send_after(self(), :poll, 3_000)
 
-    Logger.info(
-      "AI.Scheduler started with poll_interval=#{poll_interval}ms, batch_size=#{batch_size}"
-    )
+    Logger.info("AI.Scheduler started with poll_interval=#{poll_interval}ms")
 
     {:ok, state}
   end
@@ -144,10 +142,29 @@ defmodule Animina.AI.Scheduler do
     if available <= 0 do
       state
     else
-      batch = min(state.batch_size, available)
-      jobs = AI.list_runnable_jobs(batch)
-      Enum.each(jobs, &dispatch_job/1)
-      dispatched = length(jobs)
+      slots_to_fill = available
+      max_gpu_queue = Executor.get_gpu_instance_count() * @gpu_queue_multiplier
+      # Fetch extra jobs so we can skip GPU-waiting ones and still fill CPU slots
+      jobs = AI.list_runnable_jobs(max(slots_to_fill * 5, 20))
+      initial_depth = PerformanceStats.count_deferred_jobs()
+
+      {dispatched, _depth, _gpu_queued} =
+        Enum.reduce_while(jobs, {0, initial_depth, 0}, fn job, {count, depth, gpu_queued} ->
+          if count >= slots_to_fill do
+            {:halt, {count, depth, gpu_queued}}
+          else
+            case route_with_gpu_cap(job, depth, gpu_queued, max_gpu_queue) do
+              {:dispatch, route, new_depth} ->
+                dispatch_job(job, route)
+                new_gpu_queued = if gpu_route?(route), do: gpu_queued + 1, else: gpu_queued
+                {:cont, {count + 1, new_depth, new_gpu_queued}}
+
+              {:skip_for_gpu, new_depth} ->
+                # Job stays in queue, picked up when GPU frees
+                {:cont, {count, new_depth, gpu_queued + 1}}
+            end
+          end
+        end)
 
       if dispatched > 0 do
         Logger.debug("AI.Scheduler: Dispatched #{dispatched} job(s)")
@@ -178,9 +195,31 @@ defmodule Animina.AI.Scheduler do
       Logger.warning("AI.Scheduler: Failed to seed photo descriptions: #{inspect(e)}")
   end
 
-  defp dispatch_job(job) do
+  defp route_with_gpu_cap(job, gpu_depth, gpu_queued, max_gpu_queue) do
+    case AI.job_type_module(job.job_type) do
+      {:ok, module} ->
+        case Executor.pre_route(job, module, gpu_depth) do
+          {:skip_for_gpu, new_depth} when gpu_queued >= max_gpu_queue ->
+            # GPU queue is full — force this job to CPU instead of waiting
+            model = module.default_model()
+            model_family = module.model_family()
+            Executor.force_cpu(job, model_family, model, new_depth)
+
+          other ->
+            other
+        end
+
+      :error ->
+        {:dispatch, nil, gpu_depth}
+    end
+  end
+
+  defp gpu_route?({:run_gpu, _model}), do: true
+  defp gpu_route?(_), do: false
+
+  defp dispatch_job(job, route) do
     Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
-      Executor.run(job)
+      Executor.run(job, route)
     end)
   end
 

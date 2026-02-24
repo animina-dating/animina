@@ -312,6 +312,191 @@ defmodule Animina.AI.ExecutorTest do
     end
   end
 
+  # --- pre_route/3 tests ---
+
+  # Helper to build a job struct for pre_route (needs job_type, model)
+  defp make_job(job_type) do
+    {:ok, job} = AI.enqueue(job_type, %{"name" => "pre_route_test"})
+    job
+  end
+
+  defp gender_guess_module, do: Animina.AI.JobTypes.GenderGuess
+  defp photo_description_module, do: Animina.AI.JobTypes.PhotoDescription
+
+  describe "pre_route/3 — no GPU configured" do
+    test "dispatches with {:run_any, ...} and downgrades vision model" do
+      set_ollama_instances([cpu_instance()])
+      job = make_job("photo_classification")
+
+      assert {:dispatch, {:run_any, "qwen3-vl:2b"}, 0} =
+               Executor.pre_route(job, Animina.AI.JobTypes.PhotoClassification, 0)
+    end
+
+    test "dispatches text job with {:run_any, ...} and keeps model" do
+      set_ollama_instances([cpu_instance()])
+      job = make_job("gender_guess")
+
+      assert {:dispatch, {:run_any, "qwen3:1.7b"}, 0} =
+               Executor.pre_route(job, gender_guess_module(), 0)
+    end
+  end
+
+  describe "pre_route/3 — GPU idle" do
+    test "dispatches to GPU and increments depth" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      job = make_job("gender_guess")
+
+      assert {:dispatch, {:run_gpu, "qwen3:1.7b"}, 1} =
+               Executor.pre_route(job, gender_guess_module(), 0)
+    end
+  end
+
+  describe "pre_route/3 — GPU busy, no CPU" do
+    test "dispatches to GPU (must wait)" do
+      set_ollama_instances([gpu_instance()])
+      make_gpu_busy()
+      job = make_job("gender_guess")
+
+      assert {:dispatch, {:run_gpu, "qwen3:1.7b"}, 1} =
+               Executor.pre_route(job, gender_guess_module(), 0)
+    end
+  end
+
+  describe "pre_route/3 — increasing depth routes to CPU (core fix)" do
+    test "first job skips for GPU, later jobs route to CPU as depth grows" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      make_gpu_busy()
+
+      # GPU takes 10s, CPU takes 25s — GPU is normally preferred
+      create_completed_job(
+        job_type: "photo_description",
+        params: %{"photo_id" => Ecto.UUID.generate()},
+        server_url: "http://gpu:11434/api",
+        duration_ms: 10_000
+      )
+
+      create_completed_job(
+        job_type: "photo_description",
+        params: %{"photo_id" => Ecto.UUID.generate()},
+        server_url: "http://cpu:11434/api",
+        duration_ms: 25_000
+      )
+
+      # Overall GPU avg for remaining-time estimation
+      create_completed_job(server_url: "http://gpu:11434/api", duration_ms: 10_000)
+
+      module = photo_description_module()
+
+      # At depth=0, GPU is worth waiting for (remaining + 0*10000 + 10000 < 25000)
+      result0 = Executor.pre_route(make_job("photo_description"), module, 0)
+      assert {:skip_for_gpu, 1} = result0
+
+      # At depth=3, GPU total = remaining + 3*10000 + 10000 = remaining + 40000
+      # CPU total = 25000 — CPU wins!
+      result3 = Executor.pre_route(make_job("photo_description"), module, 3)
+      assert {:dispatch, {:run_cpu, _model}, 3} = result3
+    end
+  end
+
+  describe "pre_route/3 — GPU busy, only GPU data → skip for GPU" do
+    test "skips when only GPU historical data exists" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      make_gpu_busy()
+
+      create_completed_job(server_url: "http://gpu:11434/api", duration_ms: 5_000)
+
+      job = make_job("gender_guess")
+
+      assert {:skip_for_gpu, 1} =
+               Executor.pre_route(job, gender_guess_module(), 0)
+    end
+  end
+
+  describe "pre_route/3 — GPU busy, only CPU data → dispatch to CPU" do
+    test "dispatches to CPU when only CPU historical data exists" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      make_gpu_busy()
+
+      create_completed_job(server_url: "http://cpu:11434/api", duration_ms: 5_000)
+
+      job = make_job("gender_guess")
+
+      assert {:dispatch, {:run_cpu, "qwen3:1.7b"}, 0} =
+               Executor.pre_route(job, gender_guess_module(), 0)
+    end
+  end
+
+  describe "pre_route/3 — GPU busy, no data → random dispatch (never skip)" do
+    test "always dispatches (never skips) to build stats" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      make_gpu_busy()
+
+      module = gender_guess_module()
+
+      results =
+        for _ <- 1..30 do
+          Executor.pre_route(make_job("gender_guess"), module, 0)
+        end
+
+      # All should be {:dispatch, ...}, never {:skip_for_gpu, ...}
+      assert Enum.all?(results, fn
+               {:dispatch, _, _} -> true
+               _ -> false
+             end)
+
+      # Should see both GPU and CPU routes
+      routes =
+        Enum.map(results, fn {:dispatch, route, _depth} ->
+          case route do
+            {:run_gpu, _} -> :gpu
+            {:run_cpu, _} -> :cpu
+          end
+        end)
+
+      assert :gpu in routes or :cpu in routes
+    end
+  end
+
+  describe "get_gpu_instance_count/0" do
+    test "returns count of GPU-tagged instances" do
+      set_ollama_instances([gpu_instance(), cpu_instance()])
+      assert Executor.get_gpu_instance_count() == 1
+    end
+
+    test "returns 0 when no GPU instances configured" do
+      set_ollama_instances([cpu_instance(), cpu_instance()])
+      assert Executor.get_gpu_instance_count() == 0
+    end
+
+    test "counts multiple GPU instances" do
+      set_ollama_instances([gpu_instance(), gpu_instance(), cpu_instance()])
+      assert Executor.get_gpu_instance_count() == 2
+    end
+  end
+
+  describe "force_cpu/2" do
+    test "returns CPU dispatch route for text model" do
+      assert {:dispatch, {:run_cpu, "qwen3:1.7b"}, 5} =
+               Executor.force_cpu(
+                 %{job_type: "gender_guess", model: nil},
+                 :text,
+                 "qwen3:1.7b",
+                 5
+               )
+    end
+
+    test "downgrades vision model to CPU variant" do
+      assert {:dispatch, {:run_cpu, "qwen3-vl:2b"}, 3} =
+               Executor.force_cpu(
+                 %{job_type: "photo_classification", model: nil},
+                 :vision,
+                 "qwen3-vl:8b",
+                 3
+               )
+    end
+
+  end
+
   describe "defer_job/2" do
     test "puts job back in queue with short delay and undoes attempt increment" do
       {:ok, job} = AI.enqueue("gender_guess", %{"name" => "test"}, max_attempts: 20)

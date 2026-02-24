@@ -30,12 +30,14 @@ defmodule Animina.AI.Executor do
   @cpu_tolerance 1.1
 
   @doc """
-  Executes a single AI job. Called from Task.Supervisor.
+  Executes a single AI job with a pre-computed route.
+  Called from Task.Supervisor when the Scheduler has already decided GPU vs CPU.
+  Pass `nil` as route to fall back to the legacy `build_instance_filter` path.
   """
-  def run(%AI.Job{} = job) do
+  def run(%AI.Job{} = job, route) do
     case AI.job_type_module(job.job_type) do
       {:ok, module} ->
-        execute_with_module(job, module)
+        execute_with_module(job, module, route)
 
       :error ->
         AI.mark_failed(job, "Unknown job type: #{job.job_type}")
@@ -43,11 +45,121 @@ defmodule Animina.AI.Executor do
     end
   end
 
-  defp execute_with_module(job, module) do
+  @doc """
+  Executes a single AI job. Legacy entry point — routes at execution time.
+  """
+  def run(%AI.Job{} = job), do: run(job, nil)
+
+  @doc """
+  Pre-computes the routing decision for a job given its position in the GPU queue.
+  Called by the Scheduler sequentially to avoid the race condition of concurrent
+  Tasks all querying count_deferred_jobs() simultaneously.
+
+  Returns:
+    - `{:dispatch, route, new_gpu_depth}` — dispatch with this route
+    - `{:skip_for_gpu, new_gpu_depth}` — skip, job waits in queue for GPU
+  """
+  def pre_route(job, module, gpu_queue_depth) do
+    model_family = module.model_family()
+    model = select_model(job, module)
+    gpu_count = get_gpu_instance_count()
+    cpu_count = get_cpu_instance_count()
+
+    cond do
+      gpu_count == 0 ->
+        {:dispatch, {:run_any, maybe_downgrade_vision(model_family, model)}, gpu_queue_depth}
+
+      not PerformanceStats.gpu_busy?() ->
+        {:dispatch, {:run_gpu, model}, gpu_queue_depth + 1}
+
+      cpu_count == 0 ->
+        {:dispatch, {:run_gpu, model}, gpu_queue_depth + 1}
+
+      true ->
+        position_aware_route(job.job_type, model_family, model, gpu_queue_depth)
+    end
+  end
+
+  @doc """
+  Forces a job to CPU when the GPU queue cap has been reached.
+  Downgrades vision models to the smallest CPU-compatible variant.
+
+  Called by the Scheduler when `gpu_queued >= max_gpu_queue`.
+  """
+  def force_cpu(job, model_family, model, gpu_queue_depth) do
+    Logger.info(
+      "AI routing: GPU queue full, forcing job #{job.job_type} to CPU"
+    )
+
+    {:dispatch, {:run_cpu, maybe_downgrade_vision(model_family, model)}, gpu_queue_depth}
+  end
+
+  defp position_aware_route(job_type, model_family, model, gpu_queue_depth) do
+    gpu_avg = PerformanceStats.avg_duration_ms("gpu", job_type)
+    cpu_avg = PerformanceStats.avg_duration_ms("cpu", job_type)
+
+    case {gpu_avg, cpu_avg} do
+      {nil, nil} ->
+        # No history — coin flip, always dispatch to build stats
+        if :rand.uniform() > 0.5 do
+          {:dispatch, {:run_cpu, maybe_downgrade_vision(model_family, model)}, gpu_queue_depth}
+        else
+          {:dispatch, {:run_gpu, model}, gpu_queue_depth + 1}
+        end
+
+      {_gpu, nil} ->
+        # Only GPU data — skip, wait for GPU
+        {:skip_for_gpu, gpu_queue_depth + 1}
+
+      {nil, _cpu} ->
+        # Only CPU data — use CPU
+        {:dispatch, {:run_cpu, maybe_downgrade_vision(model_family, model)}, gpu_queue_depth}
+
+      {gpu_job_avg, cpu_job_avg} ->
+        compare_with_queue_position(
+          job_type,
+          model_family,
+          model,
+          gpu_job_avg,
+          cpu_job_avg,
+          gpu_queue_depth
+        )
+    end
+  end
+
+  defp compare_with_queue_position(
+         job_type,
+         model_family,
+         model,
+         gpu_job_avg,
+         cpu_job_avg,
+         gpu_queue_depth
+       ) do
+    gpu_remaining = compute_gpu_remaining()
+    gpu_queue_wait = gpu_queue_depth * gpu_job_avg
+    gpu_total = gpu_remaining + gpu_queue_wait + gpu_job_avg
+    cpu_total = cpu_job_avg
+
+    if cpu_total < gpu_total * @cpu_tolerance do
+      Logger.debug(
+        "AI routing: #{job_type} pos=#{gpu_queue_depth} — CPU #{round(cpu_total)}ms < GPU #{round(gpu_total)}ms → CPU"
+      )
+
+      {:dispatch, {:run_cpu, maybe_downgrade_vision(model_family, model)}, gpu_queue_depth}
+    else
+      Logger.debug(
+        "AI routing: #{job_type} pos=#{gpu_queue_depth} — GPU #{round(gpu_total)}ms < CPU #{round(cpu_total)}ms → skip for GPU"
+      )
+
+      {:skip_for_gpu, gpu_queue_depth + 1}
+    end
+  end
+
+  defp execute_with_module(job, module, route) do
     # Mark as running
     case AI.mark_running(job) do
       {:ok, job} ->
-        do_execute(job, module)
+        do_execute(job, module, route)
 
       {:error, reason} ->
         Logger.error("AI.Executor: Failed to mark job #{job.id} as running: #{inspect(reason)}")
@@ -55,11 +167,11 @@ defmodule Animina.AI.Executor do
     end
   end
 
-  defp do_execute(job, module) do
+  defp do_execute(job, module, route) do
     # Prepare input
     case module.prepare_input(job.params) do
       {:ok, input_opts} ->
-        execute_with_input(job, module, input_opts)
+        execute_with_input(job, module, input_opts, route)
 
       {:error, reason} ->
         error_msg = "Input preparation failed: #{inspect(reason)}"
@@ -76,7 +188,7 @@ defmodule Animina.AI.Executor do
     end
   end
 
-  defp execute_with_input(job, module, input_opts) do
+  defp execute_with_input(job, module, input_opts, route) do
     prompt =
       try do
         module.build_prompt(job.params)
@@ -91,43 +203,57 @@ defmodule Animina.AI.Executor do
         :error
 
       prompt ->
-        execute_with_prompt(job, module, input_opts, prompt)
+        execute_with_prompt(job, module, input_opts, prompt, route)
     end
   end
 
-  defp execute_with_prompt(job, module, input_opts, prompt) do
-    model_family = module.model_family()
-    model = select_model(job, module)
+  defp execute_with_prompt(job, module, input_opts, prompt, route) do
+    {instance_filter, model} =
+      case route do
+        nil ->
+          # Legacy path: decide routing at execution time
+          model_family = module.model_family()
+          model = select_model(job, module)
 
-    case build_instance_filter(job.priority, job.job_type, model_family, model) do
-      {:defer, reason} ->
-        # GPU busy and waiting is smarter than CPU — put job back so other
-        # CPU-eligible jobs can use the freed semaphore slot
-        Logger.debug("AI.Executor: Deferring job #{job.id}: #{reason}")
-        AI.defer_job(job.id)
-        :defer
+          case build_instance_filter(job.priority, job.job_type, model_family, model) do
+            {:defer, reason} ->
+              Logger.debug("AI.Executor: Deferring job #{job.id}: #{reason}")
+              AI.defer_job(job.id)
+              throw(:defer)
 
-      {:run, instance_filter, model} ->
-        # Apply configured delay for UX testing
-        FeatureFlags.apply_delay(:photo_ollama_check)
+            {:run, filter, model} ->
+              {filter, model}
+          end
 
-        timeout = FeatureFlags.ollama_semaphore_timeout()
+        _ ->
+          resolve_route(route)
+      end
 
-        case Semaphore.acquire(timeout) do
-          :ok ->
-            try do
-              run_completion(job, module, model, prompt, input_opts, instance_filter)
-            after
-              Semaphore.release()
-            end
+    # Apply configured delay for UX testing
+    FeatureFlags.apply_delay(:photo_ollama_check)
 
-          {:error, :timeout} ->
-            Logger.debug("AI.Executor: Semaphore busy, rescheduling job #{job.id}")
-            AI.reschedule_running_job(job.id)
-            :retry
+    timeout = FeatureFlags.ollama_semaphore_timeout()
+
+    case Semaphore.acquire(timeout) do
+      :ok ->
+        try do
+          run_completion(job, module, model, prompt, input_opts, instance_filter)
+        after
+          Semaphore.release()
         end
+
+      {:error, :timeout} ->
+        Logger.debug("AI.Executor: Semaphore busy, rescheduling job #{job.id}")
+        AI.reschedule_running_job(job.id)
+        :retry
     end
+  catch
+    :defer -> :defer
   end
+
+  defp resolve_route({:run_gpu, model}), do: {gpu_filter(), model}
+  defp resolve_route({:run_cpu, model}), do: {cpu_filter(), model}
+  defp resolve_route({:run_any, model}), do: {nil, model}
 
   defp run_completion(job, module, model, prompt, input_opts, instance_filter) do
     completion_opts =
@@ -383,7 +509,10 @@ defmodule Animina.AI.Executor do
   defp gpu_filter, do: fn instance -> "gpu" in Map.get(instance, :tags, []) end
   defp cpu_filter, do: fn instance -> "cpu" in Map.get(instance, :tags, []) end
 
-  defp get_gpu_instance_count do
+  @doc """
+  Returns the number of GPU-tagged Ollama instances.
+  """
+  def get_gpu_instance_count do
     Client.ollama_instances()
     |> Enum.count(fn inst -> "gpu" in Map.get(inst, :tags, []) end)
   end
