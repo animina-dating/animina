@@ -13,7 +13,7 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
     <Layouts.app flash={@flash} current_scope={@current_scope}>
       <div class="max-w-2xl mx-auto">
         <.settings_header
-          title={gettext("Privacy & Blocking")}
+          title={gettext("Privacy")}
           subtitle={gettext("Manage your privacy settings")}
         />
 
@@ -73,25 +73,6 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
             </div>
           </div>
 
-          <.link
-            navigate={~p"/my/settings/blocked-contacts"}
-            class="flex items-center gap-4 p-4 rounded-lg border border-base-300 hover:border-primary transition-colors"
-          >
-            <span class="flex-shrink-0 text-base-content/60">
-              <.icon name="hero-shield-check" class="h-6 w-6" />
-            </span>
-            <div class="flex-1 min-w-0">
-              <div class="font-semibold text-sm text-base-content">
-                {gettext("Blocked Contacts")}
-              </div>
-              <div class="text-xs text-base-content/60 truncate mt-0.5">
-                {@blocked_contacts_preview}
-              </div>
-            </div>
-            <span class="flex-shrink-0 text-base-content/30">
-              <.icon name="hero-chevron-right-mini" class="h-5 w-5" />
-            </span>
-          </.link>
         </div>
       </div>
     </Layouts.app>
@@ -104,11 +85,10 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
 
     socket =
       socket
-      |> assign(:page_title, gettext("Privacy & Blocking"))
+      |> assign(:page_title, gettext("Privacy"))
       |> assign(:user, user)
       |> assign(:hide_online_status, user.hide_online_status)
       |> assign(:wingman_enabled, user.wingman_enabled)
-      |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))
 
     {:ok, socket}
   end
@@ -161,13 +141,4 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
     end
   end
 
-  defp build_blocked_contacts_preview(user) do
-    count = Accounts.count_contact_blacklist_entries(user)
-
-    case count do
-      0 -> gettext("No contacts blocked")
-      1 -> gettext("1 contact blocked")
-      n -> gettext("%{count} contacts blocked", count: n)
-    end
-  end
 end

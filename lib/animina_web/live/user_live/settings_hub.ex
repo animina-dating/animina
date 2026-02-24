@@ -6,6 +6,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
 
   use AniminaWeb, :live_view
 
+  alias Animina.Accounts
   alias Animina.Accounts.ProfileCompleteness
   alias AniminaWeb.Languages
 
@@ -111,8 +112,14 @@ defmodule AniminaWeb.UserLive.SettingsHub do
           <.hub_card
             navigate={~p"/my/settings/privacy"}
             icon="hero-eye-slash"
-            title={gettext("Privacy & Blocking")}
+            title={gettext("Privacy")}
             subtitle={@privacy_preview}
+          />
+          <.hub_card
+            navigate={~p"/my/settings/blocked-contacts"}
+            icon="hero-no-symbol"
+            title={gettext("Blocked Contacts")}
+            subtitle={@blocked_contacts_preview}
           />
           <.hub_card
             navigate={~p"/my/settings/account"}
@@ -169,6 +176,7 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       |> assign(:profile_completeness, profile_completeness)
       |> assign(:language_preview, Languages.display_name(current_locale))
       |> assign(:privacy_preview, build_privacy_preview(user))
+      |> assign(:blocked_contacts_preview, build_blocked_contacts_preview(user))
 
     {:ok, socket}
   end
@@ -178,6 +186,16 @@ defmodule AniminaWeb.UserLive.SettingsHub do
       gettext("Online status hidden")
     else
       gettext("Online status visible")
+    end
+  end
+
+  defp build_blocked_contacts_preview(user) do
+    count = Accounts.count_contact_blacklist_entries(user)
+
+    case count do
+      0 -> gettext("No contacts blocked")
+      1 -> gettext("1 contact blocked")
+      n -> gettext("%{count} contacts blocked", count: n)
     end
   end
 end
