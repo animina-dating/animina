@@ -146,21 +146,12 @@ defmodule Animina.FeatureFlags do
       max_value: 60_000
     },
     %{
-      name: :ai_scheduler_batch_size,
-      label: "AI Scheduler Batch Size",
-      description: "Maximum jobs to dispatch per poll cycle",
-      type: :integer,
-      default_value: 5,
-      min_value: 1,
-      max_value: 20
-    },
-    %{
       name: :ai_load_gate_threshold,
       label: "AI Load Gate Threshold",
       description:
         "Suppress wingman and spellcheck when this many high-priority jobs (prio 1+2) are queued",
       type: :integer,
-      default_value: 5,
+      default_value: 10,
       min_value: 1,
       max_value: 50
     }
@@ -811,10 +802,10 @@ defmodule Animina.FeatureFlags do
 
   @doc """
   Returns the load gate threshold for suppressing optional AI features.
-  Default: 5
+  Default: 10
   """
   def ai_load_gate_threshold do
-    get_system_setting_value(:ai_load_gate_threshold, 5)
+    get_system_setting_value(:ai_load_gate_threshold, 10)
   end
 
   @doc """
