@@ -72,38 +72,23 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           class="flex flex-wrap items-center gap-3 mb-6 text-xs"
         >
           <span class="text-base-content/60">{gettext("Click to cycle:")}</span>
-          <div class="flex flex-col items-center">
-            <span class={[
-              "btn btn-xs gap-1 pointer-events-none btn-dash",
-              step_btn_class(@current_step)
-            ]}>
-              {intensity_soft_label(@current_step)}
-            </span>
-            <span class="text-xs text-base-content/50 mt-0.5">
-              {intensity_impact_label(@current_step, :soft)}
-            </span>
-          </div>
+          <span class={[
+            "btn btn-xs gap-1 pointer-events-none btn-dash",
+            step_btn_class(@current_step)
+          ]}>
+            {intensity_soft_label(@current_step)}
+          </span>
           <span class="text-base-content/40">&rarr;</span>
-          <div class="flex flex-col items-center">
-            <span class={[
-              "btn btn-xs gap-1 pointer-events-none",
-              step_btn_class(@current_step)
-            ]}>
-              {intensity_hard_label(@current_step)}
-            </span>
-            <span class="text-xs text-base-content/50 mt-0.5">
-              {intensity_impact_label(@current_step, :hard)}
-            </span>
-          </div>
+          <span class={[
+            "btn btn-xs gap-1 pointer-events-none",
+            step_btn_class(@current_step)
+          ]}>
+            {intensity_hard_label(@current_step)}
+          </span>
           <span class="text-base-content/40">&rarr;</span>
-          <div class="flex flex-col items-center">
-            <span class="btn btn-xs gap-1 pointer-events-none btn-outline">
-              {gettext("off")}
-            </span>
-            <span class="text-xs text-base-content/50 mt-0.5">
-              {gettext("0 pts")}
-            </span>
-          </div>
+          <span class="btn btn-xs gap-1 pointer-events-none btn-outline">
+            {gettext("off")}
+          </span>
         </div>
 
         <%!-- Core categories with their flags --%>
@@ -323,12 +308,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
           ]}
         >
           <span>{flag.emoji}</span> {TraitTranslations.translate(flag.name)}
-          <span
-            :if={flag_points_label(@user_flags, flag.id, @current_step)}
-            class="text-xs opacity-60"
-          >
-            {flag_points_label(@user_flags, flag.id, @current_step)}
-          </span>
         </button>
       </div>
     </div>
