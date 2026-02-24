@@ -357,7 +357,7 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
       assert view
              |> element("a", "Finish")
              |> render_click()
-             |> follow_redirect(conn, ~p"/my/settings/profile")
+             |> follow_redirect(conn, ~p"/my/settings")
     end
 
     test "finish link on step 3 navigates to waitlist for waitlisted user", %{conn: conn} do

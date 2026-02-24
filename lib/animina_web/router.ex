@@ -106,8 +106,8 @@ defmodule AniminaWeb.Router do
       # Settings hub
       live "/my/settings", UserLive.SettingsHub, :index
 
-      # Profile hub + nested sub-pages
-      live "/my/settings/profile", UserLive.ProfileHub, :index
+      # Profile sub-pages (hub merged into SettingsHub; old URL still works)
+      live "/my/settings/profile", UserLive.SettingsHub, :index
       live "/my/settings/profile/photo", UserLive.AvatarUpload, :edit
       live "/my/settings/profile/info", UserLive.EditProfile, :edit
       live "/my/settings/profile/moodboard", UserLive.MoodboardEditor

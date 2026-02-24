@@ -28,7 +28,6 @@ defmodule AniminaWeb.UserLive.MoodboardEditor do
           <.breadcrumb_nav class="">
             <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
             <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
-            <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
             <:crumb>{gettext("Moodboard")}</:crumb>
           </.breadcrumb_nav>
 

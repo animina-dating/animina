@@ -502,7 +502,6 @@ defmodule AniminaWeb.CoreComponents do
     <.page_header title={@title} subtitle={@subtitle}>
       <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
       <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
-      <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
     </.page_header>
     """
   end
@@ -514,7 +513,7 @@ defmodule AniminaWeb.CoreComponents do
 
   ## Examples
 
-      <.hub_card navigate={~p"/my/settings/profile"} icon="hero-user" title="Profile" subtitle="Edit your profile" />
+      <.hub_card navigate={~p"/my/settings"} icon="hero-user" title="Profile" subtitle="Edit your profile" />
 
       <.hub_card navigate={~p"/delete"} icon="hero-trash" title="Delete" danger={true} />
 

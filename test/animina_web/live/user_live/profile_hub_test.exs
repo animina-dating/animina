@@ -4,12 +4,12 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
   import Phoenix.LiveViewTest
   import Animina.AccountsFixtures
 
-  describe "Profile Hub page" do
-    test "renders profile cards with navigation links", %{conn: conn} do
+  describe "Settings Hub shows profile cards" do
+    test "renders profile cards with navigation links on /my/settings", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/my/settings/profile")
+        |> live(~p"/my/settings")
 
       assert has_element?(lv, "main a[href='/my/settings/profile/photo']")
       assert has_element?(lv, "main a[href='/my/settings/profile/info']")
@@ -19,56 +19,35 @@ defmodule AniminaWeb.UserLive.ProfileHubTest do
       assert has_element?(lv, "main a[href='/my/settings/profile/locations']")
     end
 
-    test "has page title", %{conn: conn} do
-      {:ok, lv, _html} =
-        conn
-        |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/my/settings/profile")
-
-      assert page_title(lv) == "My Profile · ANIMINA"
-    end
-
-    test "profile summary shows display name and email", %{conn: conn} do
-      user = user_fixture(language: "en", display_name: "Maria Schmidt")
-
-      {:ok, _lv, html} =
-        conn
-        |> log_in_user(user)
-        |> live(~p"/my/settings/profile")
-
-      assert html =~ "Maria Schmidt"
-      assert html =~ user.email
-    end
-
     test "shows profile completeness progress bar", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/my/settings/profile")
+        |> live(~p"/my/settings")
 
       assert html =~ "Profile completeness"
     end
 
-    test "shows My Profile section heading", %{conn: conn} do
+    test "shows Profile section heading", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
-        |> live(~p"/my/settings/profile")
+        |> live(~p"/my/settings")
 
-      assert has_element?(lv, "main h2", "My Profile")
+      assert has_element?(lv, "main h2", "Profile")
     end
 
-    test "has breadcrumb to settings", %{conn: conn} do
+    test "/my/settings/profile still works (redirects to settings hub)", %{conn: conn} do
       {:ok, lv, _html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/profile")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/photo']")
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/my/settings/profile")
+      assert {:error, redirect} = live(conn, ~p"/my/settings")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log-in"

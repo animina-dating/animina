@@ -110,7 +110,7 @@ defmodule AniminaWeb.UserLive.EditProfile do
         {:noreply,
          socket
          |> put_flash(:info, gettext("Profile updated successfully."))
-         |> push_navigate(to: ~p"/my/settings/profile")}
+         |> push_navigate(to: ~p"/my/settings")}
 
       {:error, changeset} ->
         {:noreply, assign(socket, form: to_form(changeset, action: :insert))}

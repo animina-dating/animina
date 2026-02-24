@@ -14,7 +14,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
         <.breadcrumb_nav>
           <:crumb navigate={~p"/my"}>{gettext("My Hub")}</:crumb>
           <:crumb navigate={~p"/my/settings"}>{gettext("Settings")}</:crumb>
-          <:crumb navigate={~p"/my/settings/profile"}>{gettext("My Profile")}</:crumb>
           <:crumb patch={traits_path(1)}>{gettext("My Flags")}</:crumb>
           <:crumb>{step_label(@current_step)}</:crumb>
         </.breadcrumb_nav>
@@ -509,7 +508,7 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
     user_flags = load_all_user_flags(user)
 
     finish_path =
-      if user.state == "waitlisted", do: ~p"/my", else: ~p"/my/settings/profile"
+      if user.state == "waitlisted", do: ~p"/my", else: ~p"/my/settings"
 
     {:ok,
      socket
