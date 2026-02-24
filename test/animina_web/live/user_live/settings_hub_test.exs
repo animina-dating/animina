@@ -5,14 +5,15 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
   import Animina.AccountsFixtures
 
   describe "Settings Hub page" do
-    test "renders 4 category cards", %{conn: conn} do
+    test "renders settings categories", %{conn: conn} do
       {:ok, _lv, html} =
         conn
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings")
 
       assert html =~ "Profile"
-      assert html =~ "Privacy &amp; Blocking"
+      assert html =~ "Privacy"
+      assert html =~ "Blocked Contacts"
       assert html =~ "Account &amp; Security"
       assert html =~ "Language"
     end
@@ -40,7 +41,7 @@ defmodule AniminaWeb.UserLive.SettingsHubTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings")
 
-      assert has_element?(lv, "main a[href='/my/settings/profile']")
+      assert has_element?(lv, "main a[href='/my/settings/profile/info']")
       assert has_element?(lv, "main a[href='/my/settings/privacy']")
       assert has_element?(lv, "main a[href='/my/settings/account']")
       assert has_element?(lv, "main a[href='/my/settings/language']")

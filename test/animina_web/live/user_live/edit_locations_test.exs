@@ -35,7 +35,7 @@ defmodule AniminaWeb.UserLive.EditLocationsTest do
         |> live(~p"/my/settings/profile/locations")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/my/settings/profile']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
       assert html =~ "Locations"
     end
 

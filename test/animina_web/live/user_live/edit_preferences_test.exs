@@ -38,7 +38,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
         |> live(~p"/my/settings/profile/preferences")
 
       assert html =~ "breadcrumbs"
-      assert has_element?(lv, ".breadcrumbs a[href='/my/settings/profile']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
       assert html =~ "Partner Preferences"
     end
 
@@ -80,7 +80,7 @@ defmodule AniminaWeb.UserLive.EditPreferencesTest do
         |> log_in_user(user_fixture(language: "en"))
         |> live(~p"/my/settings/profile/preferences")
 
-      assert has_element?(lv, ".breadcrumbs a[href='/my/settings/profile']")
+      assert has_element?(lv, ".breadcrumbs a[href='/my/settings']")
     end
   end
 end

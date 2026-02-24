@@ -90,5 +90,4 @@ defmodule AniminaWeb.UserLive.PrivacySettings do
         {:noreply, put_flash(socket, :error, gettext("Could not update privacy settings."))}
     end
   end
-
 end

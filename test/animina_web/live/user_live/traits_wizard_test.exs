@@ -205,28 +205,28 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
       assert html =~ "prefer not"
     end
 
-    test "step 2 legend shows scoring impact labels", %{conn: conn} do
+    test "step 2 legend shows intensity labels", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/my/settings/profile/traits?step=green")
 
-      assert html =~ "+10 pts"
-      assert html =~ "Required"
+      assert html =~ "nice to have"
+      assert html =~ "must have"
     end
 
-    test "step 3 legend shows scoring impact labels", %{conn: conn} do
+    test "step 3 legend shows intensity labels", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/my/settings/profile/traits?step=red")
 
-      assert html =~ "-50 pts"
-      assert html =~ "Excluded"
+      assert html =~ "prefer not"
+      assert html =~ "deal breaker"
     end
 
-    test "step 1 does not show scoring impact labels", %{conn: conn} do
+    test "step 1 does not show scoring tooltips", %{conn: conn} do
       {:ok, _view, html} = live(conn, ~p"/my/settings/profile/traits")
 
       refute html =~ "+10 pts"
       refute html =~ "-50 pts"
     end
 
-    test "selecting a green flag on step 2 shows point badge on button", %{
+    test "selecting a green flag on step 2 updates tooltip", %{
       conn: conn,
       flag1: flag1
     } do
@@ -240,16 +240,16 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
 
       assert html =~ "+10 pts"
 
-      # Click again to cycle to must have (hard) — shows "Required"
+      # Click again to cycle to must have (hard)
       html =
         view
         |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
         |> render_click()
 
-      assert html =~ "Required"
+      assert html =~ "must have (required)"
     end
 
-    test "selecting a red-hard flag on step 3 shows Excluded on button", %{
+    test "selecting a red-hard flag on step 3 updates tooltip", %{
       conn: conn,
       flag1: flag1
     } do
@@ -263,13 +263,13 @@ defmodule AniminaWeb.UserLive.TraitsWizardTest do
 
       assert html =~ "-50 pts"
 
-      # Click again to cycle to deal breaker (hard) — shows "Excluded"
+      # Click again to cycle to deal breaker (hard)
       html =
         view
         |> element("button[phx-click=toggle_flag][phx-value-flag-id=\"#{flag1.id}\"]")
         |> render_click()
 
-      assert html =~ "Excluded"
+      assert html =~ "deal breaker (excluded)"
     end
 
     test "green flags selected as red are disabled on step 2", %{conn: conn, flag1: flag1} do

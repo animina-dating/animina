@@ -33,6 +33,7 @@ defmodule Animina.Wingman do
   alias Animina.TimeMachine
   alias Animina.Traits
   alias Animina.Traits.Matching
+  alias Animina.Wingman.PromptTemplate
   alias Animina.Wingman.WingmanFeedback
   alias Animina.Wingman.WingmanSuggestion
 
@@ -192,7 +193,7 @@ defmodule Animina.Wingman do
   def build_prompt(context, language \\ "de") do
     Gettext.put_locale(AniminaWeb.Gettext, language)
     assigns = prepare_assigns(context, language)
-    Animina.Wingman.PromptTemplate.render(language, assigns)
+    PromptTemplate.render(language, assigns)
   end
 
   @doc """
@@ -686,7 +687,7 @@ defmodule Animina.Wingman do
             label: translate_rating(rating, language),
             content: content
           }
-        end),
+        end)
     }
   end
 
@@ -746,22 +747,24 @@ defmodule Animina.Wingman do
       end
     end)
     |> Enum.take(20)
-    |> Enum.map(fn name ->
-      case String.split(name, ": ", parts: 2) do
-        [_cat, flag] ->
-          translated = AniminaWeb.TraitTranslations.translate(flag)
-
-          if language == "de",
-            do:
-              "Dein User mag: #{translated}. Schlage vor zu fragen, ob das Gegenüber auch #{translated} mag.",
-            else:
-              "Your user likes: #{translated}. Suggest asking if the other person also enjoys #{translated}."
-
-        _ ->
-          nil
-      end
-    end)
+    |> Enum.map(&private_hint_for_flag(&1, language))
     |> Enum.reject(&is_nil/1)
+  end
+
+  defp private_hint_for_flag(name, language) do
+    case String.split(name, ": ", parts: 2) do
+      [_cat, flag] ->
+        translated = AniminaWeb.TraitTranslations.translate(flag)
+
+        if language == "de",
+          do:
+            "Dein User mag: #{translated}. Schlage vor zu fragen, ob das Gegenüber auch #{translated} mag.",
+          else:
+            "Your user likes: #{translated}. Suggest asking if the other person also enjoys #{translated}."
+
+      _ ->
+        nil
+    end
   end
 
   defp translate_intensity(intensity) do

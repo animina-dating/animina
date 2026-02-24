@@ -11,32 +11,20 @@ defmodule AniminaWeb.UserLive.PrivacySettingsTest do
       %{conn: conn, user: user}
     end
 
-    test "renders privacy settings page with wingman toggle", %{conn: conn} do
+    test "renders privacy settings page with online status toggle", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/my/settings/privacy")
 
-      assert html =~ "Privacy &amp; Blocking"
-      assert html =~ "Wingman"
+      assert html =~ "Privacy"
+      assert html =~ "Online status visible"
       assert html =~ "toggle-success"
     end
 
-    test "toggling wingman off shows inactive badge", %{conn: conn} do
+    test "toggling online status works", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/my/settings/privacy")
 
-      html = lv |> element(~s(input[phx-click="toggle_wingman"])) |> render_click()
+      html = lv |> element(~s(input[phx-click="toggle_online_status"])) |> render_click()
 
-      assert html =~ "Wingman is now inactive."
-    end
-
-    test "toggling wingman back on shows active message", %{conn: conn, user: user} do
-      # First disable wingman
-      {:ok, _user} =
-        Animina.Accounts.update_wingman_enabled(user, %{wingman_enabled: false})
-
-      {:ok, lv, _html} = live(conn, ~p"/my/settings/privacy")
-
-      html = lv |> element(~s(input[phx-click="toggle_wingman"])) |> render_click()
-
-      assert html =~ "Wingman is now active."
+      assert html =~ "Online status"
     end
   end
 end

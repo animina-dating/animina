@@ -402,11 +402,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   defp intensity_soft_label(2), do: gettext("nice to have")
   defp intensity_soft_label(3), do: gettext("prefer not")
 
-  defp intensity_impact_label(2, :soft), do: gettext("+10 pts")
-  defp intensity_impact_label(2, :hard), do: gettext("Required")
-  defp intensity_impact_label(3, :soft), do: gettext("-50 pts")
-  defp intensity_impact_label(3, :hard), do: gettext("Excluded")
-
   defp step_color(step) when step in [1, 2, 3], do: Map.fetch!(@step_params, step)
 
   defp step_color_class(1), do: "text-base-content"
@@ -449,18 +444,6 @@ defmodule AniminaWeb.UserLive.TraitsWizard do
   end
 
   defp flag_tooltip(_user_flags, _flag_id, _step), do: nil
-
-  defp flag_points_label(user_flags, flag_id, step) when step in [2, 3] do
-    color = step_color(step)
-
-    case find_user_flag(user_flags, flag_id, color) do
-      %{intensity: "soft"} -> intensity_impact_label(step, :soft)
-      %{intensity: "hard"} -> intensity_impact_label(step, :hard)
-      nil -> nil
-    end
-  end
-
-  defp flag_points_label(_user_flags, _flag_id, _step), do: nil
 
   # A flag is "taken" on step 2 (green) if it's already selected as red, and vice versa.
   defp flag_taken?(user_flags, flag_id, 2),
