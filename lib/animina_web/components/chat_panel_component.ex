@@ -472,8 +472,9 @@ defmodule AniminaWeb.ChatPanelComponent do
           </div>
           <p class="text-base-content/70 text-sm">
             {gettext(
-              "%{name} receives many short greetings. Write something personal to make a better first impression!",
-              name: @profile_user.display_name
+              "%{name} receives many short greetings. Write something more personal than \"%{message}\" to make a better first impression and improve your chances!",
+              name: @profile_user.display_name,
+              message: @greeting_guard_content
             )}
           </p>
           <div class="mt-6 flex gap-3 justify-end">
@@ -1019,10 +1020,15 @@ defmodule AniminaWeb.ChatPanelComponent do
            profile_user_id
          ) do
       {:ok, suggestions} ->
+        # Show progress bar for 4 seconds for dramatic effect before revealing
+        Process.send_after(self(), {:chat_panel_wingman_reveal, suggestions}, 4_000)
+
         assign(socket,
-          wingman_suggestions: suggestions,
-          wingman_loading: false,
-          wingman_feedback: feedback_map
+          wingman_suggestions: nil,
+          wingman_loading: true,
+          wingman_feedback: feedback_map,
+          wingman_estimated_ms: 4_000,
+          wingman_started_at: DateTime.utc_now()
         )
 
       {:pending, job_id} ->

@@ -331,8 +331,9 @@ defmodule AniminaWeb.MessagesLive do
           </div>
           <p class="text-base-content/70 text-sm">
             {gettext(
-              "%{name} receives many short greetings. Write something personal to make a better first impression!",
-              name: @greeting_guard_recipient
+              "%{name} receives many short greetings. Write something more personal than \"%{message}\" to make a better first impression and improve your chances!",
+              name: @greeting_guard_recipient,
+              message: @greeting_guard_content
             )}
           </p>
           <div class="mt-6 flex gap-3 justify-end">
@@ -1394,9 +1395,12 @@ defmodule AniminaWeb.MessagesLive do
 
     case Wingman.get_or_generate_suggestions(conversation_id, user.id, other_user.id) do
       {:ok, suggestions} ->
+        # Show progress bar for 4 seconds for dramatic effect before revealing
+        Process.send_after(self(), {:wingman_preheated_reveal, suggestions, feedback_map}, 4_000)
+
         assign(socket,
-          wingman_suggestions: suggestions,
-          wingman_loading: false,
+          wingman_suggestions: nil,
+          wingman_loading: true,
           wingman_dismissed: false,
           wingman_feedback: feedback_map
         )
@@ -2099,6 +2103,19 @@ defmodule AniminaWeb.MessagesLive do
      socket
      |> assign(:wingman_suggestions, suggestions)
      |> assign(:wingman_loading, false)
+     |> assign(:wingman_progress, 1.0)
+     |> assign(:wingman_progress_timer, nil)}
+  end
+
+  @impl true
+  def handle_info({:wingman_preheated_reveal, suggestions, feedback_map}, socket) do
+    cancel_wingman_timer(socket)
+
+    {:noreply,
+     socket
+     |> assign(:wingman_suggestions, suggestions)
+     |> assign(:wingman_loading, false)
+     |> assign(:wingman_feedback, feedback_map)
      |> assign(:wingman_progress, 1.0)
      |> assign(:wingman_progress_timer, nil)}
   end
