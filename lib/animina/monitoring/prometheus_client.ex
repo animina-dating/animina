@@ -17,7 +17,11 @@ defmodule Animina.Monitoring.PrometheusClient do
     port = node_exporter_port()
     url = "http://#{host}:#{port}/metrics"
 
-    case Req.get(url, retry: false, receive_timeout: @http_timeout, connect_options: [timeout: @http_timeout]) do
+    case Req.get(url,
+           retry: false,
+           receive_timeout: @http_timeout,
+           connect_options: [timeout: @http_timeout]
+         ) do
       {:ok, %{status: 200, body: body}} ->
         body
         |> parse_prometheus_text()
@@ -45,7 +49,11 @@ defmodule Animina.Monitoring.PrometheusClient do
   end
 
   defp fetch_and_parse_gpu(url, _host) do
-    case Req.get(url, retry: false, receive_timeout: @http_timeout, connect_options: [timeout: @http_timeout]) do
+    case Req.get(url,
+           retry: false,
+           receive_timeout: @http_timeout,
+           connect_options: [timeout: @http_timeout]
+         ) do
       {:ok, %{status: 200, body: body}} ->
         {:ok, parse_prometheus_text(body)}
 
@@ -61,8 +69,12 @@ defmodule Animina.Monitoring.PrometheusClient do
     gpus = extract_gpu_metrics(parsed)
 
     if gpus == [] do
-      nvidia_count = Enum.count(parsed, fn {name, _, _} -> String.starts_with?(name, "nvidia_smi") end)
-      Logger.warning("GPU exporter #{url}: #{length(parsed)} metrics (#{nvidia_count} nvidia), 0 GPUs extracted")
+      nvidia_count =
+        Enum.count(parsed, fn {name, _, _} -> String.starts_with?(name, "nvidia_smi") end)
+
+      Logger.warning(
+        "GPU exporter #{url}: #{length(parsed)} metrics (#{nvidia_count} nvidia), 0 GPUs extracted"
+      )
     end
 
     gpus

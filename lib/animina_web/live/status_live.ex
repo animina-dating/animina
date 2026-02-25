@@ -254,7 +254,10 @@ defmodule AniminaWeb.StatusLive do
     has_gpu? = by_host |> Map.get(host, []) |> Enum.any?(&("gpu" in &1.tags))
 
     if has_gpu?,
-      do: [node_task, {:gpu, host, Task.async(fn -> PrometheusClient.fetch_gpu_metrics(host) end)}],
+      do: [
+        node_task,
+        {:gpu, host, Task.async(fn -> PrometheusClient.fetch_gpu_metrics(host) end)}
+      ],
       else: [node_task]
   end
 
@@ -1007,7 +1010,14 @@ defmodule AniminaWeb.StatusLive do
         <%= if @node.has_gpu? && @node.gpu_metrics == [] do %>
           <div class="border-t border-gray-100 pt-3 flex items-center gap-2 text-xs text-gray-400">
             <svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              />
               <path
                 class="opacity-75"
                 fill="currentColor"
@@ -1041,7 +1051,9 @@ defmodule AniminaWeb.StatusLive do
                   <div class="flex items-center justify-between mb-1">
                     <span class="text-xs font-medium text-gray-600">VRAM</span>
                     <span class="text-xs font-mono text-gray-500">
-                      {format_bytes_short(gpu.memory_used_bytes)} / {format_bytes_short(gpu.memory_total_bytes)}
+                      {format_bytes_short(gpu.memory_used_bytes)} / {format_bytes_short(
+                        gpu.memory_total_bytes
+                      )}
                     </span>
                   </div>
                   <%= if gpu.memory_used_pct do %>

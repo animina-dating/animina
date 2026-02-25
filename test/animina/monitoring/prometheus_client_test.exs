@@ -239,7 +239,7 @@ defmodule Animina.Monitoring.PrometheusClientTest do
       [gpu] = gpus
 
       assert gpu.name == "NVIDIA GeForce RTX 3090"
-      assert_in_delta gpu.memory_total_bytes, 2.5769803776e10, 1
+      assert_in_delta gpu.memory_total_bytes, 25_769_803_776, 1
       assert_in_delta gpu.memory_used_bytes, 1.2e10, 1
       assert gpu.temperature == 65.0
       assert gpu.utilization_pct == 85.0
@@ -266,7 +266,7 @@ defmodule Animina.Monitoring.PrometheusClientTest do
       parsed = PrometheusClient.parse_prometheus_text(@sample_gpu_metrics)
       [gpu] = PrometheusClient.extract_gpu_metrics(parsed)
 
-      expected_pct = 1.2e10 / 2.5769803776e10 * 100
+      expected_pct = 1.2e10 / 25_769_803_776 * 100
       assert_in_delta gpu.memory_used_pct, expected_pct, 0.1
     end
 
