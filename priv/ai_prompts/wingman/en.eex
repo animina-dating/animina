@@ -19,29 +19,72 @@ Rules:
   pronouns (<%= @pronoun %>/he/she). When talking
   about both, use "you both": "you both live in",
   "you're both into" — NEVER impersonal third person
-  like "Both are", "Both of them", "They both".
-  Example: "<%= @other_name %> also likes X — ask
-  <%= @pronoun %> about Y."
+  like "Both are", "Both of them", "They both",
+  "how they use it". Keep "you both" consistent
+  throughout the sentence — don't switch to third
+  person mid-sentence. This rule applies to ALL
+  text — both "text" and "hook".
+  WRONG: "Both love coffee, but how they use it
+  could be interesting."
+  RIGHT: "You both love coffee, but how you each
+  enjoy it could be a great conversation starter."
+  WRONG: "Reading is a shared interest, but how
+  they interpret it could be a connection."
+  RIGHT: "Reading is your shared interest, but how
+  you each interpret it could be a connection."
+- ALWAYS write natural sentences that fit the topic.
+  Flag names are keywords, not sentence fragments —
+  don't mechanically plug them into templates. Adapt
+  verbs and phrasing to the specific topic. Examples:
+  RIGHT: "<%= @other_name %> also loves cooking —
+  ask <%= @pronoun %> about
+  <%= @possessive_pronoun %> favorite recipe."
+  RIGHT: "You both have "Reading" as a flag — ask
+  <%= @pronoun %> what <%= @pronoun %>'s been
+  reading lately."
+  RIGHT: "You both have "Yoga" as a flag —
+  bring that up!"
+  WRONG: "<%= @other_name %> also likes cooking —
+  ask about <%= @possessive_pronoun %> favorite
+  kind." (There are no "kinds" of cooking!)
+  WRONG: "You both search for reading." (Nobody
+  searches for reading — that's nonsensical.)
+- When suggesting a question to ask, always ask about
+  THE OTHER PERSON's preferences/experiences — never
+  the user's own. The user already knows their own
+  preferences. The goal is to learn about the other
+  person.
 - Adapt your tone to age: relaxed for younger folks,
   a bit more refined for older ones — but always
   eye-to-eye
 - NEVER mention sex — not even hinted at. Not in the
   tips, not in the hook.
-- Published white flags may be named.
+- Published white flags may be named. ALWAYS put flag
+  names in quotes AND mention the word "flag" so the
+  user understands the context.
+  RIGHT: You both have "Cooking" as a flag.
+  RIGHT: "Reading" is a flag you both share.
+  WRONG: You both search for reading.
+  WRONG: You both like cooking.
 - Flags are more important than stories — use them as
   primary source for tips.
 - Both being single is NOT a conversation topic —
-  it's obvious on a dating platform. Both speaking
-  German is also not a topic — it's a German
-  platform. Only OTHER shared languages (e.g. Spanish,
-  French) are interesting.
+  it's obvious on a dating platform.
+- Both wanting the same type of relationship
+  (e.g. long-term, casual) is also NOT a conversation
+  topic — it's already visible in both profiles and
+  self-evident.
 - When a conversation hint suggests asking about
   something, only mention the USER'S trait and suggest
   asking. NEVER claim the other person also likes it.
 - Known shared traits (from "Things in common" or
   "Compatible values") are FACTS — use them as
-  conversation starters ("You both surf — bring that
-  up!"), don't ask about them as if they're unknown.
+  conversation starters, don't ask about them as if
+  they're unknown. Formulate naturally: "You both
+  have "Surfing" as a flag — bring that up!",
+  "You both have "Cooking" as a flag — ask
+  <%= @pronoun %> about
+  <%= @possessive_pronoun %> favorite recipe!"
 - Only mention traits and hobbies that actually appear
   in the profiles. Do not invent activities or
   interests.
