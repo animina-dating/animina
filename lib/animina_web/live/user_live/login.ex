@@ -103,6 +103,13 @@ defmodule AniminaWeb.UserLive.Login do
   attr :dev_users, :list, required: true
 
   defp dev_users_panel(assigns) do
+    assigns =
+      assign(assigns,
+        female_users: Enum.filter(assigns.dev_users, &(&1.gender == "female")),
+        male_users: Enum.filter(assigns.dev_users, &(&1.gender == "male")),
+        other_users: Enum.filter(assigns.dev_users, &(&1.gender not in ~w(female male)))
+      )
+
     ~H"""
     <div :if={length(@dev_users) > 0} class="mt-6 bg-surface rounded-xl shadow-md p-4">
       <div class="text-center mb-3">
@@ -110,10 +117,24 @@ defmodule AniminaWeb.UserLive.Login do
         <p class="text-xs text-base-content/60">Click to log in instantly</p>
       </div>
 
-      <div>
-        <div class="grid grid-cols-2 gap-1">
-          <.dev_user_button :for={user <- @dev_users} user={user} />
-        </div>
+      <.dev_user_group :if={@female_users != []} label="♀ Female" users={@female_users} />
+      <.dev_user_group :if={@male_users != []} label="♂ Male" users={@male_users} />
+      <.dev_user_group :if={@other_users != []} label="⚪ Other" users={@other_users} />
+    </div>
+    """
+  end
+
+  attr :label, :string, required: true
+  attr :users, :list, required: true
+
+  defp dev_user_group(assigns) do
+    ~H"""
+    <div class="mb-3 last:mb-0">
+      <h3 class="text-xs font-semibold text-base-content/50 uppercase tracking-wide mb-1">
+        {@label}
+      </h3>
+      <div class="grid grid-cols-2 gap-1">
+        <.dev_user_button :for={user <- @users} user={user} />
       </div>
     </div>
     """

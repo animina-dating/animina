@@ -20,7 +20,6 @@ defmodule Animina.AI do
     "photo_classification" => Animina.AI.JobTypes.PhotoClassification,
     "gender_guess" => Animina.AI.JobTypes.GenderGuess,
     "wingman_suggestion" => Animina.AI.JobTypes.WingmanSuggestion,
-    "preheated_wingman" => Animina.AI.JobTypes.PreheatedWingman,
     "spellcheck" => Animina.AI.JobTypes.SpellCheck,
     "greeting_guard" => Animina.AI.JobTypes.GreetingGuard
   }

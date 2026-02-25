@@ -33,7 +33,6 @@ defmodule Animina.Wingman do
   alias Animina.TimeMachine
   alias Animina.Traits
   alias Animina.Traits.Matching
-  alias Animina.Wingman.PreheatedWingmanHint
   alias Animina.Wingman.PromptTemplate
   alias Animina.Wingman.WingmanFeedback
   alias Animina.Wingman.WingmanSuggestion
@@ -86,9 +85,9 @@ defmodule Animina.Wingman do
       _ ->
         # Check preheated hints before on-demand generation
         case get_preheated_hint(user_id, other_user_id) do
-          %PreheatedWingmanHint{suggestions: suggestions} when is_list(suggestions) ->
-            # Promote to wingman_suggestions so feedback/deletion works unchanged
-            save_and_broadcast(conversation_id, user_id, suggestions, nil, nil)
+          %WingmanSuggestion{suggestions: suggestions} = hint when is_list(suggestions) ->
+            # Promote the preheated row — sets conversation_id so feedback/deletion works
+            promote_preheated_hint(hint, conversation_id, user_id, suggestions)
             {:ok, suggestions}
 
           _ ->
@@ -152,11 +151,12 @@ defmodule Animina.Wingman do
       ai_job_id: ai_job_id
     }
 
-    %PreheatedWingmanHint{}
-    |> PreheatedWingmanHint.changeset(attrs)
+    %WingmanSuggestion{}
+    |> WingmanSuggestion.changeset(attrs)
     |> Repo.insert(
       on_conflict: {:replace, [:suggestions, :context_hash, :ai_job_id, :updated_at]},
-      conflict_target: [:user_id, :other_user_id, :shown_on]
+      conflict_target:
+        {:unsafe_fragment, "(user_id, other_user_id, shown_on) WHERE conversation_id IS NULL"}
     )
   end
 
@@ -167,12 +167,13 @@ defmodule Animina.Wingman do
   def get_preheated_hint(user_id, other_user_id) do
     today = berlin_today()
 
-    from(h in PreheatedWingmanHint,
+    from(ws in WingmanSuggestion,
       where:
-        h.user_id == ^user_id and
-          h.other_user_id == ^other_user_id and
-          h.shown_on == ^today and
-          not is_nil(h.suggestions)
+        is_nil(ws.conversation_id) and
+          ws.user_id == ^user_id and
+          ws.other_user_id == ^other_user_id and
+          ws.shown_on == ^today and
+          not is_nil(ws.suggestions)
     )
     |> Repo.one()
   end
@@ -184,8 +185,11 @@ defmodule Animina.Wingman do
   def invalidate_preheated_hints(user_id) do
     today = berlin_today()
 
-    from(h in PreheatedWingmanHint,
-      where: (h.user_id == ^user_id or h.other_user_id == ^user_id) and h.shown_on == ^today
+    from(ws in WingmanSuggestion,
+      where:
+        is_nil(ws.conversation_id) and
+          (ws.user_id == ^user_id or ws.other_user_id == ^user_id) and
+          ws.shown_on == ^today
     )
     |> Repo.delete_all()
   end
@@ -197,17 +201,32 @@ defmodule Animina.Wingman do
     today = berlin_today()
 
     {count, _} =
-      from(h in PreheatedWingmanHint, where: h.shown_on < ^today)
+      from(ws in WingmanSuggestion,
+        where: is_nil(ws.conversation_id) and ws.shown_on < ^today
+      )
       |> Repo.delete_all()
 
     if count > 0, do: Logger.info("Wingman: Cleaned up #{count} old preheated hint(s)")
     count
   end
 
-  defp berlin_today do
+  @doc "Returns today's date in Berlin timezone."
+  def berlin_today do
     TimeMachine.utc_now()
     |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
     |> DateTime.to_date()
+  end
+
+  defp promote_preheated_hint(hint, conversation_id, user_id, suggestions) do
+    hint
+    |> WingmanSuggestion.changeset(%{conversation_id: conversation_id, shown_on: nil})
+    |> Repo.update()
+
+    Phoenix.PubSub.broadcast(
+      Animina.PubSub,
+      suggestion_topic(conversation_id, user_id),
+      {:wingman_ready, suggestions}
+    )
   end
 
   # --- Feedback API ---
@@ -418,9 +437,6 @@ defmodule Animina.Wingman do
   end
 
   defp gather_user_data(user) do
-    # Reload user with locations
-    user = Repo.preload(user, :locations)
-
     stories = gather_stories(user.id)
     city_name = get_city_name(user)
     age = compute_age(user.birthday)
@@ -643,8 +659,7 @@ defmodule Animina.Wingman do
 
   defp compute_age(birthday) do
     today = TimeMachine.utc_today()
-    years = Date.diff(today, birthday) |> div(365)
-    years
+    Date.diff(today, birthday) |> div(365)
   end
 
   defp wildcard?(viewer_id, shown_user_id) do

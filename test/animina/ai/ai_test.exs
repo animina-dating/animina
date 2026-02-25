@@ -72,13 +72,13 @@ defmodule Animina.AITest do
 
   describe "list_runnable_jobs/1" do
     test "returns pending jobs sorted by priority then age" do
-      {:ok, low} = AI.enqueue("preheated_wingman", %{"prompt" => "test"})
+      {:ok, low} = AI.enqueue("wingman_suggestion", %{"prompt" => "test"}, priority: 50)
       {:ok, high} = AI.enqueue("gender_guess", %{"name" => "test"})
 
       jobs = AI.list_runnable_jobs(10)
       ids = Enum.map(jobs, & &1.id)
 
-      # gender_guess (P10) should come before preheated_wingman (P50)
+      # gender_guess (P10) should come before wingman_suggestion at P50
       assert Enum.find_index(ids, &(&1 == high.id)) < Enum.find_index(ids, &(&1 == low.id))
     end
   end

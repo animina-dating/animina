@@ -2,46 +2,8 @@ defmodule Animina.Wingman.PreheatedWingmanHintTest do
   use Animina.DataCase, async: true
 
   alias Animina.Wingman
-  alias Animina.Wingman.PreheatedWingmanHint
 
   import Animina.AccountsFixtures
-
-  describe "PreheatedWingmanHint changeset" do
-    test "valid changeset with required fields" do
-      user = user_fixture(language: "en")
-      other = user_fixture(language: "en")
-
-      changeset =
-        PreheatedWingmanHint.changeset(%PreheatedWingmanHint{}, %{
-          user_id: user.id,
-          other_user_id: other.id,
-          shown_on: ~D[2026-02-24]
-        })
-
-      assert changeset.valid?
-    end
-
-    test "invalid changeset without required fields" do
-      changeset = PreheatedWingmanHint.changeset(%PreheatedWingmanHint{}, %{})
-      refute changeset.valid?
-      assert %{user_id: _, other_user_id: _, shown_on: _} = errors_on(changeset)
-    end
-
-    test "changeset with suggestions" do
-      user = user_fixture(language: "en")
-      other = user_fixture(language: "en")
-
-      changeset =
-        PreheatedWingmanHint.changeset(%PreheatedWingmanHint{}, %{
-          user_id: user.id,
-          other_user_id: other.id,
-          shown_on: ~D[2026-02-24],
-          suggestions: [%{"text" => "Ask about hiking!", "hook" => "shared interest"}]
-        })
-
-      assert changeset.valid?
-    end
-  end
 
   describe "save_preheated_hint/6" do
     test "inserts a new hint" do

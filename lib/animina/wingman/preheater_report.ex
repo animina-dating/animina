@@ -15,8 +15,8 @@ defmodule Animina.Wingman.PreheaterReport do
   alias Animina.Discovery.Schemas.SpotlightEntry
   alias Animina.FeatureFlags
   alias Animina.Repo
-  alias Animina.TimeMachine
-  alias Animina.Wingman.PreheatedWingmanHint
+  alias Animina.Wingman
+  alias Animina.Wingman.WingmanSuggestion
 
   require Logger
 
@@ -100,22 +100,22 @@ defmodule Animina.Wingman.PreheaterReport do
   end
 
   defp count_completed_hints(today) do
-    from(h in PreheatedWingmanHint,
-      where: h.shown_on == ^today and not is_nil(h.suggestions)
+    from(ws in WingmanSuggestion,
+      where:
+        is_nil(ws.conversation_id) and
+          ws.shown_on == ^today and
+          not is_nil(ws.suggestions)
     )
     |> Repo.aggregate(:count)
   end
 
   defp count_jobs_by_status(statuses) do
     Job
-    |> where([j], j.job_type == "preheated_wingman")
+    |> where([j], j.job_type == "wingman_suggestion")
     |> where([j], j.status in ^statuses)
+    |> where([j], fragment("(params->>'conversation_id') IS NULL"))
     |> Repo.aggregate(:count)
   end
 
-  defp berlin_today do
-    TimeMachine.utc_now()
-    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
-    |> DateTime.to_date()
-  end
+  defp berlin_today, do: Wingman.berlin_today()
 end

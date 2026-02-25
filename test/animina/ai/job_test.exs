@@ -41,7 +41,7 @@ defmodule Animina.AI.JobTest do
 
     test "accepts all valid job types" do
       valid_types =
-        ~w(photo_classification gender_guess wingman_suggestion preheated_wingman spellcheck greeting_guard)
+        ~w(photo_classification gender_guess wingman_suggestion spellcheck greeting_guard)
 
       for type <- valid_types do
         changeset = Job.create_changeset(%Job{}, %{job_type: type, priority: 20, params: %{}})

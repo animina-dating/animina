@@ -819,6 +819,16 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
   end
 
   @impl true
+  def handle_info({:chat_panel_wingman_reveal, suggestions}, socket) do
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: "chat-panel",
+      chat_event: {:wingman_ready, suggestions}
+    )
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:wingman_expiry_check, job_id}, socket) do
     send_update(AniminaWeb.ChatPanelComponent,
       id: "chat-panel",

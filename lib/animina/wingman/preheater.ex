@@ -18,9 +18,8 @@ defmodule Animina.Wingman.Preheater do
   alias Animina.Discovery.Spotlight
   alias Animina.FeatureFlags
   alias Animina.Repo
-  alias Animina.TimeMachine
   alias Animina.Wingman
-  alias Animina.Wingman.PreheatedWingmanHint
+  alias Animina.Wingman.WingmanSuggestion
 
   require Logger
 
@@ -104,11 +103,12 @@ defmodule Animina.Wingman.Preheater do
   end
 
   defp hint_exists?(user_id, other_user_id, today) do
-    from(h in PreheatedWingmanHint,
+    from(ws in WingmanSuggestion,
       where:
-        h.user_id == ^user_id and
-          h.other_user_id == ^other_user_id and
-          h.shown_on == ^today
+        is_nil(ws.conversation_id) and
+          ws.user_id == ^user_id and
+          ws.other_user_id == ^other_user_id and
+          ws.shown_on == ^today
     )
     |> Repo.exists?()
   end
@@ -132,7 +132,7 @@ defmodule Animina.Wingman.Preheater do
         "context_hash" => hash
       }
 
-      AI.enqueue("preheated_wingman", params, requester_id: user.id)
+      AI.enqueue("wingman_suggestion", params, requester_id: user.id, priority: 50)
     end
   end
 
@@ -149,8 +149,9 @@ defmodule Animina.Wingman.Preheater do
   defp cancel_leftover_jobs do
     {count, _} =
       Job
-      |> where([j], j.job_type == "preheated_wingman")
+      |> where([j], j.job_type == "wingman_suggestion")
       |> where([j], j.status in ~w(pending scheduled))
+      |> where([j], fragment("(params->>'conversation_id') IS NULL"))
       |> Repo.update_all(
         set: [status: "cancelled", error: "Batch reset", updated_at: DateTime.utc_now()]
       )
@@ -158,9 +159,5 @@ defmodule Animina.Wingman.Preheater do
     count
   end
 
-  defp berlin_today do
-    TimeMachine.utc_now()
-    |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
-    |> DateTime.to_date()
-  end
+  defp berlin_today, do: Wingman.berlin_today()
 end

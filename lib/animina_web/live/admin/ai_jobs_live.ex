@@ -1048,7 +1048,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   defp format_job_type("photo_classification"), do: "Classification"
   defp format_job_type("gender_guess"), do: "Gender Guess"
   defp format_job_type("wingman_suggestion"), do: "Wingman"
-  defp format_job_type("preheated_wingman"), do: "Preheated Wingman"
   defp format_job_type("spellcheck"), do: "Spellcheck"
   defp format_job_type("greeting_guard"), do: "Greeting Guard"
   defp format_job_type(other), do: other
@@ -1085,7 +1084,6 @@ defmodule AniminaWeb.Admin.AIJobsLive do
   defp job_type_badge_class("photo_classification"), do: "badge-primary"
   defp job_type_badge_class("gender_guess"), do: "badge-secondary"
   defp job_type_badge_class("wingman_suggestion"), do: "badge-accent"
-  defp job_type_badge_class("preheated_wingman"), do: "badge-accent"
   defp job_type_badge_class("spellcheck"), do: "badge-info"
   defp job_type_badge_class("greeting_guard"), do: "badge-warning"
   defp job_type_badge_class(_), do: "badge-ghost"
