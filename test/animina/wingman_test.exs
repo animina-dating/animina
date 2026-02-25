@@ -395,6 +395,50 @@ defmodule Animina.WingmanTest do
       assert prompt =~ "stories"
     end
 
+    test "German prompt requires quotes around flag names" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Anführungszeichen"
+      assert prompt =~ ~s(RICHTIG: Ihr habt beide "Kochen" als Flagge.)
+      assert prompt =~ ~s(FALSCH: Ihr habt beide Kochen als Flagge.)
+    end
+
+    test "English prompt requires quotes around flag names" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ ~s("double quotes")
+      assert prompt =~ "EVERY flag name"
+      assert prompt =~ ~s(WRONG: You both have Cooking as a flag.)
+    end
+
+    test "German prompt mentions moodboard stories as conversation goldmine" do
+      user = user_fixture(display_name: "Anna", language: "de")
+      other = user_fixture(display_name: "Ben", language: "de")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "de")
+
+      assert prompt =~ "Goldgrube"
+    end
+
+    test "English prompt mentions moodboard stories as conversation goldmine" do
+      user = user_fixture(display_name: "Alice", language: "en")
+      other = user_fixture(display_name: "Bob", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+      prompt = Wingman.build_prompt(context, "en")
+
+      assert prompt =~ "goldmine"
+    end
+
     test "German prompt includes flag system explanation" do
       user = user_fixture(display_name: "Anna", language: "de")
       other = user_fixture(display_name: "Ben", language: "de")
@@ -698,50 +742,34 @@ defmodule Animina.WingmanTest do
     end
   end
 
-  describe "obvious overlap deprioritization" do
-    test "obvious overlap excluded when interesting overlap exists" do
+  describe "'What I'm Looking For' category excluded from prompt" do
+    test "WILF green flags never appear in prompt" do
       user = user_fixture(display_name: "Anna", language: "en")
       other = user_fixture(display_name: "Ben", language: "en")
-
       context = Wingman.gather_context(user, other, [])
 
-      # Inject both an obvious and an interesting compatible value
+      # Inject green flags including WILF
       context =
-        put_in(context, [:overlap, :compatible_values], [
-          "What I'm Looking For: Long-term Relationship",
-          "Hobbies: Sailing"
+        put_in(context, [:user, :green_flags], [
+          %{category: "What I'm Looking For", name: "Long-term Relationship", intensity: "hard"},
+          %{category: "Hobbies", name: "Hiking", intensity: "soft"}
+        ])
+
+      context =
+        put_in(context, [:other_user, :green_flags], [
+          %{category: "What I'm Looking For", name: "Marriage", intensity: "hard"},
+          %{category: "Music", name: "Jazz", intensity: "soft"}
         ])
 
       prompt = Wingman.build_prompt(context, "en")
 
-      assert prompt =~ "Sailing"
       refute prompt =~ "Long-term Relationship"
+      refute prompt =~ "Marriage"
+      assert prompt =~ "Hiking"
+      assert prompt =~ "Jazz"
     end
 
-    test "obvious overlap kept as fallback when no other overlap" do
-      user = user_fixture(display_name: "Anna", language: "en")
-      other = user_fixture(display_name: "Ben", language: "en")
-
-      context = Wingman.gather_context(user, other, [])
-
-      # Only obvious overlap, nothing else
-      context =
-        put_in(context, [:overlap, :shared_traits_public], [])
-
-      context =
-        put_in(context, [:overlap, :shared_traits_private], [])
-
-      context =
-        put_in(context, [:overlap, :compatible_values], [
-          "What I'm Looking For: Long-term Relationship"
-        ])
-
-      prompt = Wingman.build_prompt(context, "en")
-
-      assert prompt =~ "Long-term Relationship"
-    end
-
-    test "obvious overlap excluded from all three lists" do
+    test "WILF overlap excluded from all three overlap lists" do
       user = user_fixture(display_name: "Anna", language: "en")
       other = user_fixture(display_name: "Ben", language: "en")
 
@@ -769,6 +797,28 @@ defmodule Animina.WingmanTest do
       refute prompt =~ "Long-term Relationship"
       refute prompt =~ "Marriage"
       refute prompt =~ "Family"
+    end
+
+    test "WILF overlap excluded even when it is the only overlap" do
+      user = user_fixture(display_name: "Anna", language: "en")
+      other = user_fixture(display_name: "Ben", language: "en")
+
+      context = Wingman.gather_context(user, other, [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_public], [])
+
+      context =
+        put_in(context, [:overlap, :shared_traits_private], [])
+
+      context =
+        put_in(context, [:overlap, :compatible_values], [
+          "What I'm Looking For: Long-term Relationship"
+        ])
+
+      prompt = Wingman.build_prompt(context, "en")
+
+      refute prompt =~ "Long-term Relationship"
     end
   end
 

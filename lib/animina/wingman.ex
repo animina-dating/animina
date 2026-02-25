@@ -42,19 +42,26 @@ defmodule Animina.Wingman do
 
   @max_story_chars 1500
 
-  # Categories that are too obvious for conversation tips on a German dating platform
-  @trivial_categories MapSet.new(["Relationship Status"])
+  # Categories excluded from prompt data — too obvious or not a good conversation starter
+  @trivial_categories MapSet.new(["Relationship Status", "What I'm Looking For"])
   # Sex-related categories excluded from private overlap hints (the prompt already bans sex topics)
   @sex_categories MapSet.new(["Sexual Preferences", "Sexual Practices"])
-  # Flag names that are trivial when shared (everyone on a German platform speaks German)
-  @trivial_shared_flags MapSet.new(["Languages: Deutsch"])
+  # Map GUI language codes to language flag names — used to strip the shared
+  # GUI language from data sent to the LLM (it's obvious and not a conversation topic)
+  @language_code_to_flag %{
+    "de" => "Deutsch",
+    "en" => "English",
+    "tr" => "Türkçe",
+    "ru" => "Русский",
+    "ar" => "العربية",
+    "pl" => "Polski",
+    "fr" => "Français",
+    "es" => "Español",
+    "uk" => "Українська"
+  }
   # Categories too abstract for overlap — nobody says "I'm dishonest", so asking is pointless.
   # These still appear in individual profiles for context, just not in the "shared traits" section.
   @abstract_overlap_categories MapSet.new(["Character"])
-  # Overlap categories that are self-evident on a dating platform — only used as
-  # conversation starters when no more interesting overlap exists
-  @obvious_overlap_categories MapSet.new(["What I'm Looking For"])
-
   # --- PubSub ---
 
   def suggestion_topic(conversation_id, user_id) do
@@ -113,7 +120,8 @@ defmodule Animina.Wingman do
     user_data = gather_user_data(requesting_user)
     other_user_data = gather_user_data(other_user)
 
-    overlap = gather_safe_overlap(requesting_user, other_user)
+    trivial_lang_flags = trivial_language_flags(requesting_user, other_user)
+    overlap = gather_safe_overlap(requesting_user, other_user, trivial_lang_flags)
     user_ratings = gather_user_ratings(requesting_user.id, other_user.id)
     distance_km = compute_distance(requesting_user, other_user)
     is_wildcard = wildcard?(requesting_user.id, other_user.id)
@@ -122,6 +130,7 @@ defmodule Animina.Wingman do
       user: user_data,
       other_user: other_user_data,
       overlap: overlap,
+      trivial_lang_flags: trivial_lang_flags,
       user_ratings: user_ratings,
       distance_km: distance_km,
       is_wildcard: is_wildcard
@@ -423,6 +432,7 @@ defmodule Animina.Wingman do
       height: user.height,
       occupation: user.occupation,
       city: city_name,
+      language: user.language || "de",
       search_radius: user.search_radius,
       partner_age_min: if(user.birthday, do: age - user.partner_minimum_age_offset),
       partner_age_max: if(user.birthday, do: age + user.partner_maximum_age_offset),
@@ -516,7 +526,7 @@ defmodule Animina.Wingman do
 
   defp moodboard_item_description(_), do: ""
 
-  defp gather_safe_overlap(user_a, user_b) do
+  defp gather_safe_overlap(user_a, user_b, trivial_lang_flags) do
     overlap = Matching.compute_flag_overlap(user_a, user_b)
 
     # Get published category IDs for both users to determine visibility
@@ -524,9 +534,15 @@ defmodule Animina.Wingman do
     b_published = MapSet.new(Traits.list_published_white_flag_category_ids(user_b))
 
     {public_shared, private_shared} =
-      split_overlap_by_visibility(overlap.white_white, a_published, b_published)
+      split_overlap_by_visibility(
+        overlap.white_white,
+        a_published,
+        b_published,
+        trivial_lang_flags
+      )
 
-    green_white_names = resolve_flag_names(overlap.green_white) |> filter_trivial_overlap()
+    green_white_names =
+      resolve_flag_names(overlap.green_white) |> filter_trivial_overlap(trivial_lang_flags)
 
     %{
       shared_traits_public: public_shared,
@@ -536,9 +552,9 @@ defmodule Animina.Wingman do
   end
 
   # Splits shared white-white flag IDs into public (both published) vs private (at least one private)
-  defp split_overlap_by_visibility([], _a_pub, _b_pub), do: {[], []}
+  defp split_overlap_by_visibility([], _a_pub, _b_pub, _trivial), do: {[], []}
 
-  defp split_overlap_by_visibility(flag_ids, a_published, b_published) do
+  defp split_overlap_by_visibility(flag_ids, a_published, b_published, trivial_lang_flags) do
     flags =
       from(f in Animina.Traits.Flag,
         where: f.id in ^flag_ids,
@@ -552,8 +568,11 @@ defmodule Animina.Wingman do
           MapSet.member?(b_published, flag.category_id)
       end)
 
-    public_names = format_flag_overlap_names(public) |> filter_trivial_overlap()
-    private_names = format_flag_overlap_names(private) |> filter_trivial_overlap()
+    public_names = format_flag_overlap_names(public) |> filter_trivial_overlap(trivial_lang_flags)
+
+    private_names =
+      format_flag_overlap_names(private) |> filter_trivial_overlap(trivial_lang_flags)
+
     {public_names, private_names}
   end
 
@@ -568,9 +587,9 @@ defmodule Animina.Wingman do
     |> Enum.reject(&is_nil/1)
   end
 
-  defp filter_trivial_overlap(names) do
+  defp filter_trivial_overlap(names, trivial_language_flags) do
     Enum.reject(names, fn name ->
-      MapSet.member?(@trivial_shared_flags, name) or
+      MapSet.member?(trivial_language_flags, name) or
         Enum.any?(
           MapSet.union(@trivial_categories, @abstract_overlap_categories),
           &String.starts_with?(name, &1)
@@ -578,24 +597,17 @@ defmodule Animina.Wingman do
     end)
   end
 
-  # Removes self-evident overlap (e.g. "What I'm Looking For") unless that's
-  # the only overlap available — in which case it's kept as a fallback.
-  defp filter_obvious_overlap(public, private, compatible) do
-    filtered_public = reject_obvious(public)
-    filtered_private = reject_obvious(private)
-    filtered_compatible = reject_obvious(compatible)
-
-    if filtered_public == [] and filtered_private == [] and filtered_compatible == [] do
-      {public, private, compatible}
-    else
-      {filtered_public, filtered_private, filtered_compatible}
-    end
+  # Rejects overlap name strings whose category prefix matches @trivial_categories.
+  # Used in prepare_assigns as defense-in-depth (overlap names are "Category: Flag").
+  defp reject_trivial_category_names(names) do
+    Enum.reject(names, fn name ->
+      Enum.any?(@trivial_categories, &String.starts_with?(name, &1))
+    end)
   end
 
-  defp reject_obvious(names) do
-    Enum.reject(names, fn name ->
-      Enum.any?(@obvious_overlap_categories, &String.starts_with?(name, &1))
-    end)
+  # Rejects individual green/white flags whose category is in @trivial_categories.
+  defp reject_trivial_flag_category(flags) do
+    Enum.reject(flags, fn %{category: cat} -> MapSet.member?(@trivial_categories, cat) end)
   end
 
   defp resolve_flag_names([]), do: []
@@ -673,6 +685,43 @@ defmodule Animina.Wingman do
 
   defp deg_to_rad(deg), do: deg * :math.pi() / 180
 
+  # When both users share the same GUI language, that language as a flag is
+  # trivial (e.g. both use German UI → "Languages: Deutsch" is obvious).
+  # Returns a MapSet of "Languages: FlagName" strings to strip from all data.
+  defp trivial_language_flags(user_a, user_b) do
+    lang_a = user_a.language || "de"
+    lang_b = user_b.language || "de"
+
+    if lang_a == lang_b do
+      case Map.get(@language_code_to_flag, lang_a) do
+        nil -> MapSet.new()
+        flag_name -> MapSet.new(["Languages: #{flag_name}"])
+      end
+    else
+      MapSet.new()
+    end
+  end
+
+  # Removes the shared GUI language from a list of white flag maps
+  defp strip_gui_language_flags(flags, trivial_lang_flags) do
+    if MapSet.size(trivial_lang_flags) == 0 do
+      flags
+    else
+      trivial_names = MapSet.new(trivial_lang_flags, &extract_flag_name/1)
+
+      Enum.reject(flags, fn %{category: cat, name: name} ->
+        cat == "Languages" and MapSet.member?(trivial_names, name)
+      end)
+    end
+  end
+
+  defp extract_flag_name(entry) do
+    case String.split(entry, ": ", parts: 2) do
+      [_cat, name] -> name
+      _ -> entry
+    end
+  end
+
   defp pronoun("de", "male"), do: "ihn"
   defp pronoun("de", "female"), do: "sie"
   defp pronoun("de", _), do: "die Person"
@@ -680,24 +729,27 @@ defmodule Animina.Wingman do
   defp pronoun(_, "female"), do: "her"
   defp pronoun(_, _), do: "them"
 
+  defp possessive_pronoun("de", "male"), do: "seiner"
+  defp possessive_pronoun("de", "female"), do: "ihrer"
+  defp possessive_pronoun("de", _), do: "deren"
+  defp possessive_pronoun(_, "male"), do: "his"
+  defp possessive_pronoun(_, "female"), do: "her"
+  defp possessive_pronoun(_, _), do: "their"
+
   # --- Prompt assigns ---
 
   defp prepare_assigns(context, language) do
     user = context.user
     other = context.other_user
 
-    {public, private, compatible} =
-      filter_obvious_overlap(
-        context.overlap.shared_traits_public,
-        context.overlap.shared_traits_private,
-        context.overlap.compatible_values
-      )
-
+    # Filter out trivial categories from overlap (defense-in-depth; gather_safe_overlap does this
+    # too, but tests and future code paths may inject overlap values directly)
     overlap = %{
       context.overlap
-      | shared_traits_public: public,
-        shared_traits_private: private,
-        compatible_values: compatible
+      | shared_traits_public: reject_trivial_category_names(context.overlap.shared_traits_public),
+        shared_traits_private:
+          reject_trivial_category_names(context.overlap.shared_traits_private),
+        compatible_values: reject_trivial_category_names(context.overlap.compatible_values)
     }
 
     boldness = compute_boldness(overlap)
@@ -705,6 +757,11 @@ defmodule Animina.Wingman do
     now_berlin =
       TimeMachine.utc_now()
       |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
+
+    # Strip shared GUI language from individual white flags (it's obvious, not a conversation topic)
+    trivial_lang = Map.get(context, :trivial_lang_flags, MapSet.new())
+    user_white_filtered = strip_gui_language_flags(user.white_flags_published, trivial_lang)
+    other_white_filtered = strip_gui_language_flags(other.white_flags_published, trivial_lang)
 
     translate_flags = fn flags ->
       Enum.map(flags, fn %{category: cat, name: name, intensity: intensity} ->
@@ -720,6 +777,7 @@ defmodule Animina.Wingman do
       # System instruction
       user_age: user.age,
       pronoun: pronoun(language, other.gender),
+      possessive_pronoun: possessive_pronoun(language, other.gender),
       other_name: other.display_name,
       boldness_text: boldness_paragraph(language, boldness),
       # Time
@@ -737,8 +795,8 @@ defmodule Animina.Wingman do
       user_partner_height_min: user.partner_height_min,
       user_partner_height_max: user.partner_height_max,
       user_search_radius: user.search_radius,
-      user_white_flags_published: translate_flags.(user.white_flags_published),
-      user_green_flags: translate_flags.(user.green_flags),
+      user_white_flags_published: translate_flags.(user_white_filtered),
+      user_green_flags: translate_flags.(reject_trivial_flag_category(user.green_flags)),
       user_stories: user.stories,
       # Other user profile (strip private flags)
       other_gender: other.gender,
@@ -752,8 +810,8 @@ defmodule Animina.Wingman do
       other_partner_height_min: other.partner_height_min,
       other_partner_height_max: other.partner_height_max,
       other_search_radius: other.search_radius,
-      other_white_flags_published: translate_flags.(other.white_flags_published),
-      other_green_flags: translate_flags.(other.green_flags),
+      other_white_flags_published: translate_flags.(other_white_filtered),
+      other_green_flags: translate_flags.(reject_trivial_flag_category(other.green_flags)),
       other_stories: other.stories,
       # Overlap
       distance_km: context.distance_km,

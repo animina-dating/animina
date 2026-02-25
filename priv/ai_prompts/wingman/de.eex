@@ -34,6 +34,18 @@ Regeln:
   sie es interpretieren, könnte eine Verbindung sein."
   RICHTIG: "Lesen ist euer gemeinsamer Nerv, aber wie
   ihr es interpretiert, könnte eine Verbindung sein."
+  FALSCH: "<%= @other_name %> hat beide 'Musik: Rock'
+  als Flagge — das passt zu deinem Interesse."
+  RICHTIG: "Ihr habt beide 'Musik: Rock' als Flagge —
+  das könnte ein guter Einstieg sein."
+  (Das Wort "beide" gehört IMMER zu "ihr", nie zu
+  "<%= @other_name %> hat".)
+  FALSCH: "Ihr liebt beide die Stille — du am
+  Rheinufer, sie in der Natur."
+  RICHTIG: "Ihr liebt beide die Stille — du am
+  Rheinufer, <%= @other_name %> in der Natur."
+  (Verwende den Namen oder "du/ihr" — NIEMALS
+  "sie/er" als Pronomen für das Gegenüber.)
 - Formuliere IMMER natürliche Sätze, die zum Thema
   passen. Flaggen-Namen sind Stichwörter, keine
   Satzbausteine — steck sie nicht mechanisch in
@@ -42,10 +54,10 @@ Regeln:
   RICHTIG: "<%= @other_name %> kocht auch gern —
   frag <%= @pronoun %> doch mal nach
   <%= @possessive_pronoun %> Lieblingsrezept."
-  RICHTIG: "Ihr habt beide „Lesen" als Flagge — frag
+  RICHTIG: "Ihr habt beide "Lesen" als Flagge — frag
   <%= @pronoun %> mal, was <%= @pronoun %> zuletzt
   gelesen hat."
-  RICHTIG: "Ihr habt beide „Yoga" als Flagge —
+  RICHTIG: "Ihr habt beide "Yoga" als Flagge —
   sprich <%= @pronoun %> darauf an!"
   FALSCH: "<%= @other_name %> mag wie du Kochen —
   frag nach <%= @possessive_pronoun %>
@@ -66,12 +78,22 @@ Regeln:
   nennen. Setze Flaggen-Namen dabei IMMER in
   Anführungszeichen und erwähne IMMER das Wort
   "Flagge", damit der User den Kontext versteht.
+  JEDER Flaggen-Name MUSS in Anführungszeichen stehen —
+  ohne Ausnahme. Egal ob im text oder im hook.
   RICHTIG: Ihr habt beide "Kochen" als Flagge.
   RICHTIG: "Lesen" ist bei euch beiden eine Flagge.
+  RICHTIG: "Empathie" ist eine Flagge bei euch beiden.
+  FALSCH: Ihr habt beide Kochen als Flagge.
+  FALSCH: Ihr habt beide Empathie als Flagge.
   FALSCH: Ihr sucht beide nach Lesen.
   FALSCH: Ihr mögt beide Kochen.
-- Flaggen sind wichtiger als Geschichten — nutze sie
-  als primäre Quelle für Tipps.
+- Flaggen sind die primäre Quelle für Gesprächstipps.
+  Aber vergiss die Geschichten nicht — sie sind eine
+  Goldgrube für Gesprächseinstiege! Wenn jemand übers
+  Kochen schreibt, frag nach dem Lieblingsrezept. Wenn
+  jemand eine Reise beschreibt, frag nach dem besten
+  Erlebnis. Geschichten verraten, was jemanden wirklich
+  bewegt.
 - Dass beide Single sind, ist KEIN Gesprächsthema —
   auf einer Dating-Plattform ist das
   selbstverständlich.
@@ -87,9 +109,9 @@ Regeln:
   Eigenschaften" oder "Kompatible Werte") sind
   FAKTEN — nutze sie als Gesprächseinstieg, frag
   aber NICHT danach als wäre es unbekannt. Formuliere
-  natürlich: "Ihr habt beide „Surfen" als Flagge —
+  natürlich: "Ihr habt beide "Surfen" als Flagge —
   sprich <%= @pronoun %> darauf an!", "Ihr habt
-  beide „Kochen" als Flagge — frag <%= @pronoun %>
+  beide "Kochen" als Flagge — frag <%= @pronoun %>
   nach <%= @possessive_pronoun %> Lieblingsrezept!"
 - Erwähne NUR Eigenschaften und Hobbys, die tatsächlich
   in den Profilen stehen. Erfinde keine Aktivitäten
@@ -128,9 +150,8 @@ Einblick in die Persönlichkeit.
 - flexibel = wäre schön / flexibel
 - Sichtbarkeit: Öffentliche weiße Flaggen dürfen beim
   Namen genannt werden.
-- Flaggen sind WICHTIGER als Geschichten — beides
-  zählt, aber Flaggen sind strukturierter und
-  aussagekräftiger.
+- Flaggen und Geschichten ergänzen sich: Flaggen sind
+  strukturiert, Geschichten persönlich. Beides nutzen!
 
 ## <%= @user_name %> (dein User)
 <%= if @user_gender do %>Geschlecht: <%= @user_gender_label %>

@@ -16,6 +16,8 @@ defmodule AniminaWeb.ChatPanelComponent do
   import AniminaWeb.MessageComponents
 
   alias Animina.Accounts
+  alias Animina.AI
+  alias Animina.AI.JobTypes.GreetingGuard
   alias Animina.FeatureFlags
   alias Animina.Messaging
   alias Animina.Photos
@@ -42,9 +44,14 @@ defmodule AniminaWeb.ChatPanelComponent do
        wingman_available: false,
        wingman_enabled: true,
        wingman_expiry_timer: nil,
+       wingman_estimated_ms: nil,
+       wingman_started_at: nil,
        spellcheck_loading: false,
        spellcheck_original: nil,
-       last_spellchecked_text: nil
+       last_spellchecked_text: nil,
+       greeting_guard_pending: false,
+       greeting_guard_content: nil,
+       show_greeting_guard_modal: false
      )}
   end
 
@@ -120,7 +127,9 @@ defmodule AniminaWeb.ChatPanelComponent do
     {:ok,
      socket
      |> assign(:wingman_suggestions, suggestions)
-     |> assign(:wingman_loading, false)}
+     |> assign(:wingman_loading, false)
+     |> assign(:wingman_estimated_ms, nil)
+     |> assign(:wingman_started_at, nil)}
   end
 
   def update(%{chat_event: {:wingman_expiry_check, job_id}}, socket) do
@@ -131,6 +140,8 @@ defmodule AniminaWeb.ChatPanelComponent do
         {:ok,
          socket
          |> assign(:wingman_loading, false)
+         |> assign(:wingman_estimated_ms, nil)
+         |> assign(:wingman_started_at, nil)
          |> assign(:wingman_suggestions, nil)
          |> assign(:wingman_dismissed, true)}
       else
@@ -163,11 +174,51 @@ defmodule AniminaWeb.ChatPanelComponent do
     {:ok, assign(socket, :spellcheck_loading, false)}
   end
 
+  def update(%{chat_event: :greeting_guard_triggered}, socket) do
+    {:ok,
+     socket
+     |> assign(:greeting_guard_pending, false)
+     |> assign(:show_greeting_guard_modal, true)}
+  end
+
+  def update(%{chat_event: :greeting_guard_passed}, socket) do
+    content = socket.assigns.greeting_guard_content
+
+    socket =
+      socket
+      |> assign(:greeting_guard_pending, false)
+      |> assign(:greeting_guard_content, nil)
+
+    if content do
+      {:noreply, socket} = do_send_message(content, socket)
+      {:ok, socket}
+    else
+      {:ok, socket}
+    end
+  end
+
+  def update(%{chat_event: :greeting_guard_error}, socket) do
+    content = socket.assigns.greeting_guard_content
+
+    socket =
+      socket
+      |> assign(:greeting_guard_pending, false)
+      |> assign(:greeting_guard_content, nil)
+
+    if content do
+      {:noreply, socket} = do_send_message(content, socket)
+      {:ok, socket}
+    else
+      {:ok, socket}
+    end
+  end
+
   def update(assigns, socket) do
     socket =
       socket
       |> assign(:id, assigns.id)
       |> assign(:current_user_id, assigns.current_user_id)
+      |> assign(:current_user, assigns[:current_user])
       |> assign(:profile_user, assigns.profile_user)
       |> assign(:open, assigns.open)
       |> assign(:conversation_id, assigns.conversation_id)
@@ -248,7 +299,7 @@ defmodule AniminaWeb.ChatPanelComponent do
         <%!-- Messages --%>
         <div
           id="chat-panel-messages"
-          class="flex-1 overflow-y-auto px-4 py-3"
+          class="flex-1 min-h-0 overflow-y-auto px-4 py-3"
           phx-hook="ScrollToBottom"
         >
           <%= if Enum.empty?(@messages) do %>
@@ -271,7 +322,7 @@ defmodule AniminaWeb.ChatPanelComponent do
         <%!-- Wingman Card --%>
         <div
           :if={@wingman_suggestions != nil && !@wingman_dismissed}
-          class="mx-2 mb-2 p-2.5 bg-info/5 rounded-lg border border-info/20"
+          class="mx-2 mb-2 p-2.5 bg-info/5 rounded-lg border border-info/20 min-h-0 overflow-y-auto"
         >
           <div class="flex items-center justify-between mb-1.5">
             <span class="text-xs font-medium text-info">
@@ -350,7 +401,24 @@ defmodule AniminaWeb.ChatPanelComponent do
               <.icon name="hero-x-mark" class="h-3 w-3" />
             </button>
           </div>
-          <progress class="progress progress-info w-full h-1.5 mt-1" />
+          <%= if @wingman_estimated_ms do %>
+            <div
+              id="wingman-progress"
+              phx-hook="WingmanProgress"
+              data-estimated-ms={@wingman_estimated_ms}
+              data-started-at={DateTime.to_iso8601(@wingman_started_at)}
+            >
+              <progress
+                data-role="bar"
+                class="progress progress-info w-full h-1.5 mt-1"
+                max="100"
+                value="0"
+              />
+              <span data-role="remaining" class="text-xs text-info/70 mt-0.5 block text-right" />
+            </div>
+          <% else %>
+            <progress class="progress progress-info w-full h-1.5 mt-1" />
+          <% end %>
         </div>
 
         <%!-- Wingman Toggle --%>
@@ -388,7 +456,43 @@ defmodule AniminaWeb.ChatPanelComponent do
           spellcheck_enabled={FeatureFlags.spellcheck_available?()}
           spellcheck_loading={@spellcheck_loading}
           spellcheck_has_undo={@spellcheck_original != nil}
+          greeting_guard_pending={@greeting_guard_pending}
         />
+      </div>
+
+      <%!-- Greeting Guard Modal --%>
+      <div
+        :if={@show_greeting_guard_modal}
+        class="absolute inset-0 z-50 flex items-center justify-center bg-black/50"
+      >
+        <div class="bg-base-100 rounded-lg p-6 max-w-sm mx-4 shadow-xl">
+          <div class="flex items-center gap-2 mb-3">
+            <.icon name="hero-light-bulb" class="h-6 w-6 text-warning" />
+            <h3 class="text-lg font-semibold">{gettext("Stand out!")}</h3>
+          </div>
+          <p class="text-base-content/70 text-sm">
+            {gettext(
+              "%{name} receives many short greetings. Write something personal to make a better first impression!",
+              name: @profile_user.display_name
+            )}
+          </p>
+          <div class="mt-6 flex gap-3 justify-end">
+            <button
+              phx-click="greeting_guard_send_anyway"
+              phx-target={@myself}
+              class="btn btn-ghost btn-sm"
+            >
+              {gettext("Send anyway")}
+            </button>
+            <button
+              phx-click="greeting_guard_edit"
+              phx-target={@myself}
+              class="btn btn-primary btn-sm"
+            >
+              {gettext("Edit message")}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
     """
@@ -516,8 +620,27 @@ defmodule AniminaWeb.ChatPanelComponent do
   def handle_event("send_message", %{"message" => %{"content" => content}}, socket) do
     content = String.trim(content)
 
-    if content != "" do
-      do_send_message(content, socket)
+    if content != "" && !socket.assigns.greeting_guard_pending do
+      current_user = socket.assigns.current_user
+      profile_user = socket.assigns.profile_user
+
+      if current_user &&
+           GreetingGuard.should_check?(
+             current_user,
+             profile_user,
+             content,
+             socket.assigns.messages
+           ) do
+        send(self(), {:chat_panel_greeting_guard, socket.assigns.id, content})
+
+        {:noreply,
+         socket
+         |> assign(:greeting_guard_pending, true)
+         |> assign(:greeting_guard_content, content)
+         |> assign(:form, to_form(%{"content" => ""}, as: :message))}
+      else
+        do_send_message(content, socket)
+      end
     else
       {:noreply, socket}
     end
@@ -610,6 +733,37 @@ defmodule AniminaWeb.ChatPanelComponent do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("greeting_guard_send_anyway", _params, socket) do
+    content = socket.assigns.greeting_guard_content
+
+    socket =
+      socket
+      |> assign(:show_greeting_guard_modal, false)
+      |> assign(:greeting_guard_pending, false)
+      |> assign(:greeting_guard_content, nil)
+
+    if content do
+      do_send_message(content, socket)
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def handle_event("greeting_guard_edit", _params, socket) do
+    content = socket.assigns.greeting_guard_content
+
+    {:noreply,
+     socket
+     |> assign(:show_greeting_guard_modal, false)
+     |> assign(:greeting_guard_pending, false)
+     |> assign(:greeting_guard_content, nil)
+     |> assign(:form, to_form(%{"content" => content || ""}, as: :message))
+     |> push_event("greeting_guard_restore", %{
+       input_id: "chat-panel-input",
+       text: content || ""
+     })}
   end
 
   def handle_event("spellcheck", _params, socket) do
@@ -733,6 +887,8 @@ defmodule AniminaWeb.ChatPanelComponent do
             socket
             |> assign(:wingman_suggestions, nil)
             |> assign(:wingman_loading, false)
+            |> assign(:wingman_estimated_ms, nil)
+            |> assign(:wingman_started_at, nil)
             |> assign(:wingman_dismissed, true)
           else
             socket
@@ -872,12 +1028,15 @@ defmodule AniminaWeb.ChatPanelComponent do
       {:pending, job_id} ->
         # Schedule expiry check slightly after the 60s job expiry
         expiry_timer = Process.send_after(self(), {:wingman_expiry_check, job_id}, 65_000)
+        estimated_ms = AI.estimated_duration_ms("wingman_suggestion")
 
         assign(socket,
           wingman_loading: true,
           wingman_feedback: feedback_map,
           wingman_job_id: job_id,
-          wingman_expiry_timer: expiry_timer
+          wingman_expiry_timer: expiry_timer,
+          wingman_estimated_ms: estimated_ms,
+          wingman_started_at: DateTime.utc_now()
         )
 
       {:error, _reason} ->
@@ -908,6 +1067,8 @@ defmodule AniminaWeb.ChatPanelComponent do
     socket
     |> assign(:wingman_suggestions, nil)
     |> assign(:wingman_loading, false)
+    |> assign(:wingman_estimated_ms, nil)
+    |> assign(:wingman_started_at, nil)
     |> assign(:wingman_dismissed, true)
   end
 

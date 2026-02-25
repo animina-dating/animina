@@ -4,8 +4,8 @@ defmodule Animina.AI.Queue do
 
   Manages a list of Ollama instances, each either idle or busy with a job.
   Dispatches jobs to instances using preferred-family routing:
-  - Vision jobs prefer GPU, fall back to CPU
-  - Text jobs prefer CPU, fall back to GPU
+  - Both vision and text jobs prefer GPU for speed
+  - Falls back to CPU instances when GPU is busy
   - One job per instance — natural concurrency bound
 
   Wakes on:
@@ -207,7 +207,7 @@ defmodule Animina.AI.Queue do
   end
 
   defp preferred_tags(:vision), do: ["gpu"]
-  defp preferred_tags(:text), do: ["cpu"]
+  defp preferred_tags(:text), do: ["gpu"]
 
   # --- Job Execution ---
 
@@ -339,10 +339,20 @@ defmodule Animina.AI.Queue do
 
   defp warmup_instances(instances) do
     models = warmup_models()
+    Enum.each(instances, &warmup_instance(&1, models))
+  end
 
-    Enum.each(instances, fn inst ->
-      model = if "gpu" in inst.tags, do: models[:vision], else: models[:text]
+  defp warmup_instance(inst, models) do
+    # GPU instances: warm up both vision and text models
+    # CPU instances: warm up text model only
+    models_to_warm =
+      if "gpu" in inst.tags do
+        Enum.uniq(Map.values(models))
+      else
+        List.wrap(models[:text])
+      end
 
+    Enum.each(models_to_warm, fn model ->
       Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
         Client.warmup(inst.url, model)
       end)

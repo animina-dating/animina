@@ -147,7 +147,7 @@ defmodule AniminaWeb.MessageComponents do
   defp spellcheck_spinner_class(:sm), do: "loading loading-spinner loading-xs"
 
   defp wrapper_class(:default), do: "pt-4 border-t border-base-300"
-  defp wrapper_class(:sm), do: "px-4 py-3 border-t border-base-300"
+  defp wrapper_class(:sm), do: "px-4 py-3 border-t border-base-300 shrink-0"
 
   defp hint_class(:default), do: "mt-1.5 text-xs text-base-content/70"
   defp hint_class(:sm), do: "mt-1 text-[11px] text-base-content/70"

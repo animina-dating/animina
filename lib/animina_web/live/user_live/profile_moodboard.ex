@@ -322,6 +322,7 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
         module={AniminaWeb.ChatPanelComponent}
         id="chat-panel"
         current_user_id={@current_user_id}
+        current_user={@current_scope.user}
         profile_user={@profile_user}
         open={@chat_open}
         conversation_id={@chat_conversation_id}
@@ -996,6 +997,108 @@ defmodule AniminaWeb.UserLive.ProfileMoodboard do
      socket
      |> assign(spellcheck_task: nil, spellcheck_original: nil)
      |> put_flash(:error, gettext("Spell check unavailable right now"))}
+  end
+
+  # --- Chat panel greeting guard ---
+
+  @impl true
+  def handle_info({:chat_panel_greeting_guard, component_id, content}, socket) do
+    user = socket.assigns.current_scope.user
+    profile_user = socket.assigns.profile_user
+
+    params = %{
+      "content" => content,
+      "sender_name" => user.display_name,
+      "recipient_name" => profile_user.display_name
+    }
+
+    case AI.enqueue("greeting_guard", params) do
+      {:ok, job} ->
+        topic = "ai:result:#{job.id}"
+        Phoenix.PubSub.subscribe(Animina.PubSub, topic)
+
+        Process.send_after(self(), :greeting_guard_timeout, 5_000)
+
+        {:noreply,
+         assign(socket,
+           greeting_guard_task: topic,
+           greeting_guard_component_id: component_id
+         )}
+
+      {:error, _} ->
+        send_update(AniminaWeb.ChatPanelComponent,
+          id: component_id,
+          chat_event: :greeting_guard_error
+        )
+
+        {:noreply, socket}
+    end
+  end
+
+  # AI says it's a generic greeting → show modal
+  @impl true
+  def handle_info({:ai_result, topic, {:ok, %{"is_generic_greeting" => true}}}, socket)
+      when is_map_key(socket.assigns, :greeting_guard_task) and
+             socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
+    component_id = socket.assigns.greeting_guard_component_id
+
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: component_id,
+      chat_event: :greeting_guard_triggered
+    )
+
+    {:noreply, assign(socket, greeting_guard_task: nil)}
+  end
+
+  # AI says it's not a generic greeting → send normally
+  @impl true
+  def handle_info({:ai_result, topic, {:ok, %{"is_generic_greeting" => false}}}, socket)
+      when is_map_key(socket.assigns, :greeting_guard_task) and
+             socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
+    component_id = socket.assigns.greeting_guard_component_id
+
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: component_id,
+      chat_event: :greeting_guard_passed
+    )
+
+    {:noreply, assign(socket, greeting_guard_task: nil)}
+  end
+
+  # AI call failed → fail open
+  @impl true
+  def handle_info({:ai_result, topic, {:error, _reason}}, socket)
+      when is_map_key(socket.assigns, :greeting_guard_task) and
+             socket.assigns.greeting_guard_task == topic do
+    Phoenix.PubSub.unsubscribe(Animina.PubSub, topic)
+    component_id = socket.assigns.greeting_guard_component_id
+
+    send_update(AniminaWeb.ChatPanelComponent,
+      id: component_id,
+      chat_event: :greeting_guard_error
+    )
+
+    {:noreply, assign(socket, greeting_guard_task: nil)}
+  end
+
+  # Safety timeout — fail open after 5 seconds
+  @impl true
+  def handle_info(:greeting_guard_timeout, socket) do
+    if is_map_key(socket.assigns, :greeting_guard_task) && socket.assigns.greeting_guard_task do
+      Phoenix.PubSub.unsubscribe(Animina.PubSub, socket.assigns.greeting_guard_task)
+      component_id = socket.assigns.greeting_guard_component_id
+
+      send_update(AniminaWeb.ChatPanelComponent,
+        id: component_id,
+        chat_event: :greeting_guard_error
+      )
+
+      {:noreply, assign(socket, greeting_guard_task: nil)}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true

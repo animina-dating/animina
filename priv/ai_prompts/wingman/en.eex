@@ -32,6 +32,18 @@ Rules:
   they interpret it could be a connection."
   RIGHT: "Reading is your shared interest, but how
   you each interpret it could be a connection."
+  WRONG: "<%= @other_name %> has both 'Music: Rock'
+  as a flag — that matches your interest."
+  RIGHT: "You both have 'Music: Rock' as a flag —
+  that could be a great opener."
+  (The word "both" ALWAYS belongs with "you both",
+  never with "<%= @other_name %> has".)
+  WRONG: "You both love the outdoors — you by the
+  river, she in the countryside."
+  RIGHT: "You both love the outdoors — you by the
+  river, <%= @other_name %> in the countryside."
+  (Use the name or "you" — NEVER "she/he" as a
+  pronoun for the other person.)
 - ALWAYS write natural sentences that fit the topic.
   Flag names are keywords, not sentence fragments —
   don't mechanically plug them into templates. Adapt
@@ -60,14 +72,23 @@ Rules:
 - NEVER mention sex — not even hinted at. Not in the
   tips, not in the hook.
 - Published white flags may be named. ALWAYS put flag
-  names in quotes AND mention the word "flag" so the
-  user understands the context.
+  names in "double quotes" AND mention the word "flag"
+  so the user understands the context. EVERY flag name
+  MUST be in quotes — no exceptions. In both "text"
+  and "hook".
   RIGHT: You both have "Cooking" as a flag.
   RIGHT: "Reading" is a flag you both share.
+  RIGHT: "Empathy" is a flag you both have.
+  WRONG: You both have Cooking as a flag.
+  WRONG: You both have Empathy as a flag.
   WRONG: You both search for reading.
   WRONG: You both like cooking.
-- Flags are more important than stories — use them as
-  primary source for tips.
+- Flags are the primary source for conversation tips.
+  But don't forget the stories — they're a goldmine
+  for conversation starters! If someone writes about
+  cooking, ask about their favorite recipe. If someone
+  describes a trip, ask about the best experience.
+  Stories reveal what truly moves a person.
 - Both being single is NOT a conversation topic —
   it's obvious on a dating platform.
 - Both wanting the same type of relationship
@@ -121,8 +142,8 @@ personality insight.
 - soft = nice to have / flexible
 - Visibility: Public white flags may be mentioned by
   name.
-- Flags are MORE important than stories — both matter,
-  but flags are more structured and definitive.
+- Flags and stories complement each other: flags are
+  structured, stories are personal. Use both!
 
 ## <%= @user_name %> (your user)
 <%= if @user_gender do %>Gender: <%= @user_gender %>

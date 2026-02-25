@@ -477,6 +477,59 @@ defmodule Animina.AI do
     )
   end
 
+  # --- Duration Estimates ---
+
+  @doc """
+  Returns the average `duration_ms` of recent completed jobs for the given type,
+  scoped to the same model and server_url as the most recent completion.
+
+  Only considers jobs from the last 2 weeks with non-nil duration_ms.
+  Returns an integer (ms) or `nil` if no data is available.
+  """
+  def average_duration_ms(job_type) do
+    two_weeks_ago = DateTime.utc_now() |> DateTime.add(-14, :day)
+
+    # Find the most recent completed job to determine current model + server_url
+    recent =
+      Job
+      |> where([j], j.job_type == ^job_type and j.status == "completed")
+      |> where([j], not is_nil(j.duration_ms))
+      |> where([j], not is_nil(j.model) and not is_nil(j.server_url))
+      |> order_by([j], desc: j.inserted_at)
+      |> limit(1)
+      |> select([j], {j.model, j.server_url})
+      |> Repo.one()
+
+    case recent do
+      nil ->
+        nil
+
+      {model, server_url} ->
+        avg =
+          Job
+          |> where(
+            [j],
+            j.job_type == ^job_type and j.status == "completed" and
+              j.model == ^model and j.server_url == ^server_url
+          )
+          |> where([j], not is_nil(j.duration_ms))
+          |> where([j], j.inserted_at >= ^two_weeks_ago)
+          |> Repo.aggregate(:avg, :duration_ms)
+
+        if avg, do: avg |> Decimal.to_float() |> round(), else: nil
+    end
+  end
+
+  @doc """
+  Returns estimated duration with a 20% buffer, or `nil` if no historical data.
+  """
+  def estimated_duration_ms(job_type) do
+    case average_duration_ms(job_type) do
+      nil -> nil
+      avg -> round(avg * 1.2)
+    end
+  end
+
   # --- Config helpers ---
 
   @doc """
