@@ -189,6 +189,25 @@ defmodule AniminaWeb.StatusLiveTest do
       assert html =~ "Breakdown (Confirmed)"
     end
 
+    # Server nodes tests
+
+    test "renders server nodes with graceful degradation when prometheus unavailable", %{
+      conn: conn
+    } do
+      {:ok, _view, html} = live(conn, ~p"/status")
+
+      assert html =~ "Server Nodes"
+    end
+
+    test "server nodes section survives refresh when prometheus unavailable", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/status")
+
+      send(view.pid, :refresh)
+      html = render(view)
+
+      assert html =~ "Server Nodes"
+    end
+
     # Registration graph tests
 
     test "does not show registration graph for unauthenticated visitors", %{conn: conn} do

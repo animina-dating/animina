@@ -4,6 +4,7 @@ defmodule AniminaWeb.StatusLive do
   alias Animina.Accounts
   alias Animina.Accounts.Scope
   alias Animina.AI.Queue
+  alias Animina.Monitoring.PrometheusClient
   alias Ecto.Adapters.SQL
 
   @refresh_interval 5_000
@@ -182,31 +183,59 @@ defmodule AniminaWeb.StatusLive do
         _ -> nil
       end)
 
-    # Build node list with names
-    {nodes, _remote_counter} =
-      instances
-      |> Enum.zip(pings)
-      |> Enum.reduce({[], 1}, fn {inst, ping_ms}, {acc, counter} ->
-        if localhost?(inst.url) do
-          node = build_node("This Server", inst, ping_ms)
-          {[node | acc], counter}
+    # Group instances by host and assign names
+    instances_with_pings = Enum.zip(instances, pings)
+
+    # Collect unique hosts (preserving order) and group instances by host
+    {hosts_ordered, by_host} =
+      Enum.reduce(instances_with_pings, {[], %{}}, fn {inst, ping_ms}, {hosts, map} ->
+        host = extract_host(inst.url)
+        entry = %{online?: ping_ms != nil, ping_ms: ping_ms, tags: inst.tags, busy: inst.busy}
+
+        if Map.has_key?(map, host) do
+          {hosts, Map.update!(map, host, &[entry | &1])}
         else
-          node = build_node("ANIMINA Server #{counter}", inst, ping_ms)
-          {[node | acc], counter + 1}
+          {[host | hosts], Map.put(map, host, [entry])}
         end
       end)
 
-    assign(socket, server_nodes: Enum.reverse(nodes))
-  end
+    hosts_ordered = Enum.reverse(hosts_ordered)
 
-  defp build_node(name, inst, ping_ms) do
-    %{
-      name: name,
-      online?: ping_ms != nil,
-      ping_ms: ping_ms,
-      tags: inst.tags,
-      busy: inst.busy
-    }
+    # Fetch Prometheus metrics for unique hosts in parallel
+    host_metrics =
+      hosts_ordered
+      |> Task.async_stream(
+        fn host ->
+          {host, PrometheusClient.fetch_node_metrics(host)}
+        end,
+        timeout: 5_000,
+        on_timeout: :kill_task
+      )
+      |> Enum.reduce(%{}, fn
+        {:ok, {host, metrics}}, acc -> Map.put(acc, host, metrics)
+        _, acc -> acc
+      end)
+
+    # Build enriched node list
+    {nodes, _counter} =
+      Enum.reduce(hosts_ordered, {[], 1}, fn host, {acc, counter} ->
+        ollama_instances = Enum.reverse(Map.get(by_host, host, []))
+
+        {name, next_counter} =
+          if localhost_host?(host),
+            do: {"This Server", counter},
+            else: {"ANIMINA Server #{counter}", counter + 1}
+
+        node = %{
+          name: name,
+          ollama_instances: ollama_instances,
+          node_metrics: Map.get(host_metrics, host)
+        }
+
+        {[node | acc], next_counter}
+      end)
+
+    assign(socket, server_nodes: Enum.reverse(nodes))
   end
 
   defp ping_instance(stat) do
@@ -225,8 +254,15 @@ defmodule AniminaWeb.StatusLive do
     _ -> nil
   end
 
-  defp localhost?(url) do
-    String.contains?(url, "localhost") or String.contains?(url, "127.0.0.1")
+  defp extract_host(url) do
+    case URI.parse(url) do
+      %URI{host: host} when is_binary(host) -> host
+      _ -> url
+    end
+  end
+
+  defp localhost_host?(host) do
+    host in ["localhost", "127.0.0.1"]
   end
 
   defp assign_user_stats(socket) do
@@ -668,6 +704,14 @@ defmodule AniminaWeb.StatusLive do
       <div>
         <h1 class="text-2xl font-bold mb-8">System Status</h1>
 
+        <%!-- Server Nodes --%>
+        <h2 class="text-lg font-semibold mb-4">Server Nodes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <%= for node <- @server_nodes do %>
+            <.server_node_card node={node} />
+          <% end %>
+        </div>
+
         <%= if @current_scope && Scope.admin?(@current_scope) do %>
           <div class="grid grid-cols-3 gap-6 mb-8">
             <.section title="User Totals">
@@ -844,55 +888,154 @@ defmodule AniminaWeb.StatusLive do
             <.row label="Process Count" value={@process_count} />
           </.section>
         </div>
-
-        <%!-- Server Nodes --%>
-        <h2 class="text-lg font-semibold mb-4">Server Nodes</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-          <%= for node <- @server_nodes do %>
-            <div class="bg-white rounded-lg border border-gray-200 p-4">
-              <div class="flex items-center justify-between mb-3">
-                <h3 class="text-sm font-semibold text-gray-900">{node.name}</h3>
-                <span class={[
-                  "inline-flex items-center gap-1 text-xs font-medium",
-                  node.online? && "text-green-700",
-                  !node.online? && "text-red-700"
-                ]}>
-                  <span class={[
-                    "inline-block w-2 h-2 rounded-full",
-                    node.online? && "bg-green-500",
-                    !node.online? && "bg-red-500"
-                  ]}>
-                  </span>
-                  {if node.online?, do: "Online", else: "Offline"}
-                </span>
-              </div>
-              <div class="space-y-1.5 text-sm">
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Ping</span>
-                  <span class="font-mono text-gray-900">
-                    {if node.ping_ms, do: "#{node.ping_ms} ms", else: "—"}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Tags</span>
-                  <span class="font-mono text-gray-900">
-                    {Enum.join(node.tags, ", ")}
-                  </span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-gray-500">Status</span>
-                  <span class="font-mono text-gray-900">
-                    {if node.busy, do: "Busy", else: "Idle"}
-                  </span>
-                </div>
-              </div>
-            </div>
-          <% end %>
-        </div>
       </div>
     </Layouts.app>
     """
   end
+
+  attr :node, :map, required: true
+
+  defp server_node_card(assigns) do
+    any_online? = Enum.any?(assigns.node.ollama_instances, & &1.online?)
+
+    assigns =
+      assigns
+      |> assign(:any_online?, any_online?)
+      |> assign(:m, assigns.node.node_metrics)
+
+    ~H"""
+    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <%!-- Header --%>
+      <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-gray-700">{@node.name}</h3>
+        <span class={[
+          "inline-flex items-center gap-1 text-xs font-medium",
+          @any_online? && "text-green-700",
+          !@any_online? && "text-red-700"
+        ]}>
+          <span class={[
+            "inline-block w-2 h-2 rounded-full",
+            @any_online? && "bg-green-500",
+            !@any_online? && "bg-red-500"
+          ]}>
+          </span>
+          {if @any_online?, do: "Online", else: "Offline"}
+        </span>
+      </div>
+
+      <div class="p-4 space-y-4">
+        <%!-- Hardware Metrics --%>
+        <%= if @m do %>
+          <%!-- CPU / Load --%>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium text-gray-600">
+                CPU Load
+                <%= if @m.cpu_count do %>
+                  <span class="text-gray-400">({@m.cpu_count} cores)</span>
+                <% end %>
+              </span>
+              <span class="text-xs font-mono text-gray-500">
+                {@m.load1} / {@m.load5} / {@m.load15}
+              </span>
+            </div>
+            <%= if @m.load_pct do %>
+              <.usage_bar pct={@m.load_pct} />
+            <% end %>
+          </div>
+
+          <%!-- RAM --%>
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-medium text-gray-600">RAM</span>
+              <span class="text-xs font-mono text-gray-500">
+                {format_bytes_short(@m.memory_used_bytes)} / {format_bytes_short(
+                  @m.memory_total_bytes
+                )}
+              </span>
+            </div>
+            <.usage_bar pct={@m.memory_used_pct} />
+          </div>
+        <% else %>
+          <div class="text-xs text-gray-400 italic">Hardware metrics unavailable</div>
+        <% end %>
+
+        <%!-- Ollama Instances --%>
+        <div>
+          <span class="text-xs font-medium text-gray-600 block mb-2">Ollama Instances</span>
+          <div class="space-y-1.5">
+            <%= for inst <- @node.ollama_instances do %>
+              <div class="flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2">
+                  <span class={[
+                    "inline-block w-1.5 h-1.5 rounded-full",
+                    inst.online? && "bg-green-500",
+                    !inst.online? && "bg-red-500"
+                  ]}>
+                  </span>
+                  <span class="font-mono text-gray-700 text-xs">
+                    {Enum.join(inst.tags, ", ")}
+                  </span>
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                  <span class="font-mono text-gray-500">
+                    {if inst.ping_ms, do: "#{inst.ping_ms} ms", else: "—"}
+                  </span>
+                  <span class={[
+                    "font-medium",
+                    inst.busy && "text-amber-600",
+                    !inst.busy && "text-gray-400"
+                  ]}>
+                    {if inst.busy, do: "Busy", else: "Idle"}
+                  </span>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :pct, :float, required: true
+
+  defp usage_bar(assigns) do
+    capped = min(assigns.pct, 100)
+
+    color =
+      cond do
+        capped >= 90 -> "bg-red-500"
+        capped >= 70 -> "bg-amber-500"
+        capped >= 50 -> "bg-blue-500"
+        true -> "bg-green-500"
+      end
+
+    assigns =
+      assigns
+      |> assign(:capped, capped)
+      |> assign(:color, color)
+
+    ~H"""
+    <div class="w-full bg-gray-100 rounded-full h-2">
+      <div class={["h-2 rounded-full transition-all", @color]} style={"width: #{@capped}%"}></div>
+    </div>
+    <div class="text-right mt-0.5">
+      <span class="text-xs font-mono text-gray-500">{Float.round(@pct, 1)}%</span>
+    </div>
+    """
+  end
+
+  defp format_bytes_short(bytes) when is_number(bytes) do
+    cond do
+      bytes >= 1_073_741_824 -> "#{Float.round(bytes / 1_073_741_824, 1)} GB"
+      bytes >= 1_048_576 -> "#{Float.round(bytes / 1_048_576, 1)} MB"
+      bytes >= 1_024 -> "#{Float.round(bytes / 1_024, 1)} KB"
+      true -> "#{round(bytes)} B"
+    end
+  end
+
+  defp format_bytes_short(_), do: "—"
 
   defp section(assigns) do
     ~H"""

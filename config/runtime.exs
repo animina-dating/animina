@@ -61,6 +61,11 @@ if ollama_urls = System.get_env("OLLAMA_URLS") do
   end
 end
 
+if port = System.get_env("PROMETHEUS_NODE_EXPORTER_PORT") do
+  config :animina, Animina.Monitoring.PrometheusClient,
+    node_exporter_port: String.to_integer(port)
+end
+
 if config_env() == :prod do
   # Use a shared uploads directory that persists across releases
   upload_dir = System.get_env("UPLOAD_DIR", "/var/www/animina.de/shared/uploads")
