@@ -7,7 +7,7 @@ defmodule AniminaWeb.Admin.AdsLive do
   alias Animina.Ads.QrCode
   alias AniminaWeb.Layouts
 
-  import AniminaWeb.Helpers.AdminHelpers, only: [parse_int: 2, format_datetime: 1]
+  import AniminaWeb.Helpers.AdminHelpers, only: [parse_int: 2]
 
   use AniminaWeb.Helpers.PaginationHelpers, filter_events: []
 
@@ -214,18 +214,15 @@ defmodule AniminaWeb.Admin.AdsLive do
             <thead>
               <tr>
                 <th>#</th>
-                <th>{gettext("URL")}</th>
                 <th>{gettext("Description")}</th>
                 <th>{gettext("Status")}</th>
                 <th>{gettext("Visits")}</th>
-                <th>{gettext("Created")}</th>
                 <th></th>
               </tr>
             </thead>
             <tbody id="ads" phx-update="stream">
               <tr :for={{dom_id, ad} <- @streams.ads} id={dom_id} class="hover">
                 <td class="font-mono">{ad.number}</td>
-                <td class="font-mono text-xs">{ad.url}</td>
                 <td>{ad.description || "—"}</td>
                 <td>
                   <span class={[
@@ -236,7 +233,6 @@ defmodule AniminaWeb.Admin.AdsLive do
                   </span>
                 </td>
                 <td>{Ads.count_visits(ad.id)}</td>
-                <td class="text-sm">{format_datetime(ad.inserted_at)}</td>
                 <td>
                   <.link navigate={~p"/admin/ads/#{ad.id}"} class="btn btn-ghost btn-xs">
                     {gettext("Details")}

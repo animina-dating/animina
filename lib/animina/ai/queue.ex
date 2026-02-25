@@ -20,6 +20,7 @@ defmodule Animina.AI.Queue do
 
   alias Animina.AI
   alias Animina.AI.Client
+  alias Animina.Wingman.Preheater
 
   @tick_interval 5_000
   @stuck_timeout 180
@@ -66,6 +67,9 @@ defmodule Animina.AI.Queue do
 
     # Warmup after 2s delay
     Process.send_after(self(), :warmup, 2_000)
+
+    # Preheat wingman hints after warmup completes (~30s delay)
+    Process.send_after(self(), :preheat, 30_000)
 
     Logger.info("AI Queue started with #{length(instances)} instance(s)")
     {:ok, %{instances: instances, task_refs: %{}}}
@@ -148,6 +152,15 @@ defmodule Animina.AI.Queue do
   @impl true
   def handle_info(:warmup, state) do
     warmup_instances(state.instances)
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(:preheat, state) do
+    Task.Supervisor.start_child(Animina.AI.TaskSupervisor, fn ->
+      Preheater.run()
+    end)
+
     {:noreply, state}
   end
 
