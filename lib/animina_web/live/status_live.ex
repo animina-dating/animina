@@ -201,19 +201,24 @@ defmodule AniminaWeb.StatusLive do
 
     hosts_ordered = Enum.reverse(hosts_ordered)
 
-    # Fetch Prometheus metrics for unique hosts in parallel
-    host_metrics =
-      hosts_ordered
-      |> Task.async_stream(
-        fn host ->
-          {host, PrometheusClient.fetch_node_metrics(host)}
-        end,
-        timeout: 5_000,
-        on_timeout: :kill_task
-      )
-      |> Enum.reduce(%{}, fn
-        {:ok, {host, metrics}}, acc -> Map.put(acc, host, metrics)
-        _, acc -> acc
+    # Fetch node metrics for all hosts, GPU metrics only for hosts with gpu-tagged Ollama instances
+    all_tasks = Enum.flat_map(hosts_ordered, &spawn_metric_tasks(&1, by_host))
+
+    results = Enum.map(all_tasks, &yield_metric_task/1)
+
+    node_metrics_map =
+      results
+      |> Enum.filter(fn {type, _, _} -> type == :node end)
+      |> Map.new(fn {_, host, metrics} -> {host, metrics} end)
+
+    # Merge fresh GPU results into cache — only update when new data arrived
+    prev_gpu_cache = Map.get(socket.assigns, :gpu_cache, %{})
+
+    gpu_cache =
+      results
+      |> Enum.filter(fn {type, _, _} -> type == :gpu end)
+      |> Enum.reduce(prev_gpu_cache, fn {_, host, gpus}, cache ->
+        if gpus != [], do: Map.put(cache, host, gpus), else: cache
       end)
 
     # Build enriched node list
@@ -226,16 +231,40 @@ defmodule AniminaWeb.StatusLive do
             do: {"This Server", counter},
             else: {"ANIMINA Server #{counter}", counter + 1}
 
+        has_gpu? = Enum.any?(ollama_instances, &("gpu" in &1.tags))
+
         node = %{
           name: name,
+          has_gpu?: has_gpu?,
           ollama_instances: ollama_instances,
-          node_metrics: Map.get(host_metrics, host)
+          node_metrics: Map.get(node_metrics_map, host),
+          gpu_metrics: Map.get(gpu_cache, host, [])
         }
 
         {[node | acc], next_counter}
       end)
 
-    assign(socket, server_nodes: Enum.reverse(nodes))
+    socket
+    |> assign(:gpu_cache, gpu_cache)
+    |> assign(:server_nodes, Enum.reverse(nodes))
+  end
+
+  defp spawn_metric_tasks(host, by_host) do
+    node_task = {:node, host, Task.async(fn -> PrometheusClient.fetch_node_metrics(host) end)}
+    has_gpu? = by_host |> Map.get(host, []) |> Enum.any?(&("gpu" in &1.tags))
+
+    if has_gpu?,
+      do: [node_task, {:gpu, host, Task.async(fn -> PrometheusClient.fetch_gpu_metrics(host) end)}],
+      else: [node_task]
+  end
+
+  defp yield_metric_task({type, host, task}) do
+    # Yield timeout must exceed @http_timeout (4s) to avoid killing in-flight requests
+    case Task.yield(task, 8_000) || Task.shutdown(task) do
+      {:ok, result} -> {type, host, result}
+      _ when type == :gpu -> {:gpu, host, []}
+      _ -> {:node, host, nil}
+    end
   end
 
   defp ping_instance(stat) do
@@ -926,14 +955,28 @@ defmodule AniminaWeb.StatusLive do
       <div class="p-4 space-y-4">
         <%!-- Hardware Metrics --%>
         <%= if @m do %>
+          <%!-- CPU Info --%>
+          <div class="text-xs text-gray-500">
+            <%= if @m.cpu_model do %>
+              <div class="truncate" title={@m.cpu_model}>
+                {short_cpu_name(@m.cpu_model)}
+                <%= if @m.cpu_count do %>
+                  <span class="text-gray-400">({@m.cpu_count} cores)</span>
+                <% end %>
+              </div>
+            <% else %>
+              <span class="font-medium text-gray-600">{@m.cpu_count || "?"} cores</span>
+              <%= if @m.cpu_max_freq_hz do %>
+                <span>@ {format_freq(@m.cpu_max_freq_hz)}</span>
+              <% end %>
+            <% end %>
+          </div>
+
           <%!-- CPU / Load --%>
           <div>
             <div class="flex items-center justify-between mb-1">
               <span class="text-xs font-medium text-gray-600">
                 CPU Load
-                <%= if @m.cpu_count do %>
-                  <span class="text-gray-400">({@m.cpu_count} cores)</span>
-                <% end %>
               </span>
               <span class="text-xs font-mono text-gray-500">
                 {@m.load1} / {@m.load5} / {@m.load15}
@@ -958,6 +1001,70 @@ defmodule AniminaWeb.StatusLive do
           </div>
         <% else %>
           <div class="text-xs text-gray-400 italic">Hardware metrics unavailable</div>
+        <% end %>
+
+        <%!-- GPU Metrics --%>
+        <%= if @node.has_gpu? && @node.gpu_metrics == [] do %>
+          <div class="border-t border-gray-100 pt-3 flex items-center gap-2 text-xs text-gray-400">
+            <svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            Loading GPU metrics…
+          </div>
+        <% end %>
+        <%= if @node.gpu_metrics != [] do %>
+          <%= for gpu <- @node.gpu_metrics do %>
+            <div class="border-t border-gray-100 pt-3">
+              <div class="text-xs text-gray-500 truncate mb-2" title={gpu.name}>
+                {short_gpu_name(gpu.name)}
+              </div>
+
+              <%= if gpu.utilization_pct do %>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-medium text-gray-600">GPU Load</span>
+                    <span class="text-xs font-mono text-gray-500">
+                      {gpu.utilization_pct}%
+                    </span>
+                  </div>
+                  <.usage_bar pct={gpu.utilization_pct} />
+                </div>
+              <% end %>
+
+              <%= if gpu.memory_total_bytes && gpu.memory_used_bytes do %>
+                <div>
+                  <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-medium text-gray-600">VRAM</span>
+                    <span class="text-xs font-mono text-gray-500">
+                      {format_bytes_short(gpu.memory_used_bytes)} / {format_bytes_short(gpu.memory_total_bytes)}
+                    </span>
+                  </div>
+                  <%= if gpu.memory_used_pct do %>
+                    <.usage_bar pct={gpu.memory_used_pct} />
+                  <% end %>
+                </div>
+              <% end %>
+
+              <%= if gpu.temperature do %>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-medium text-gray-600">Temp</span>
+                  <span class={[
+                    "text-xs font-mono",
+                    gpu.temperature >= 85 && "text-red-600",
+                    gpu.temperature >= 70 && gpu.temperature < 85 && "text-amber-600",
+                    gpu.temperature < 70 && "text-gray-500"
+                  ]}>
+                    {round(gpu.temperature)}°C
+                  </span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
         <% end %>
 
         <%!-- Ollama Instances --%>
@@ -1036,6 +1143,29 @@ defmodule AniminaWeb.StatusLive do
   end
 
   defp format_bytes_short(_), do: "—"
+
+  defp short_cpu_name(name) when is_binary(name) do
+    name
+    |> String.replace(~r/\(R\)|\(TM\)/, "")
+    |> String.replace(~r/\s+/, " ")
+    |> String.trim()
+  end
+
+  defp short_cpu_name(_), do: "Unknown"
+
+  defp short_gpu_name("NVIDIA " <> rest), do: rest
+  defp short_gpu_name(name) when is_binary(name), do: name
+  defp short_gpu_name(_), do: "Unknown GPU"
+
+  defp format_freq(hz) when is_number(hz) do
+    ghz = hz / 1.0e9
+
+    if ghz >= 1 do
+      "#{Float.round(ghz, 1)} GHz"
+    else
+      "#{round(hz / 1.0e6)} MHz"
+    end
+  end
 
   defp section(assigns) do
     ~H"""
