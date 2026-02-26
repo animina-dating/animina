@@ -35,6 +35,7 @@ defmodule Mix.Tasks.Benchmark.Ollama do
   """
   use Mix.Task
 
+  alias Animina.AI.JobTypes.PhotoClassification
   alias Animina.Photos.PhotoProcessor
 
   @default_count 20
@@ -98,7 +99,9 @@ defmodule Mix.Tasks.Benchmark.Ollama do
       Keyword.get(opts, :url) ||
         Animina.AI.config(:ollama_url, "http://localhost:11434/api")
 
-    model = Keyword.get(opts, :model) || "qwen3-vl:8b"
+    model =
+      Keyword.get(opts, :model) ||
+        PhotoClassification.model()
 
     concurrency_levels =
       case Keyword.get(opts, :concurrency) do

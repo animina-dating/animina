@@ -3,7 +3,7 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   AI job type for photo classification (content safety, face detection, etc.).
 
   P30 for avatars, P40 for moodboard photos (set at enqueue time).
-  Uses qwen3-vl:8b vision model.
+  Uses qwen3.5:35b multimodal model (same model as wingman suggestions).
   """
 
   @behaviour Animina.AI.JobType
@@ -19,7 +19,7 @@ defmodule Animina.AI.JobTypes.PhotoClassification do
   def model_family, do: :vision
 
   @impl true
-  def model, do: "qwen3-vl:8b"
+  def model, do: "qwen3.5:35b"
 
   @impl true
   def priority, do: 30
