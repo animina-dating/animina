@@ -17,37 +17,17 @@ defmodule AniminaWeb.StatusLiveTest do
       assert html =~ "Erlang/OTP"
       assert html =~ "ANIMINA"
 
-      # Database section
-      assert html =~ "Database"
-
-      # BEAM Memory section
-      assert html =~ "BEAM Memory"
-      assert html =~ "Total"
-      assert html =~ "Processes"
-      assert html =~ "ETS"
-      assert html =~ "Atoms"
-      assert html =~ "Binaries"
-
-      # System Load section
-      assert html =~ "System Load"
-
-      # BEAM / CPU Info section
-      assert html =~ "BEAM / CPU Info"
-      assert html =~ "Process Count"
-      assert html =~ "Schedulers"
-      assert html =~ "CPU Model"
-      assert html =~ "CPU Cores"
-
       # Deployment section
+      assert html =~ "Last Deployment to All Nodes"
       assert html =~ "Deployment"
       assert html =~ "Deployed At"
       assert html =~ "Uptime"
 
-      # This Server heading
-      assert html =~ "This Server"
-
       # Server Nodes section
       assert html =~ "Server Nodes"
+
+      # Server nodes should be numbered (not "This Server" label)
+      refute Regex.match?(~r/<h3[^>]*>This Server<\/h3>/, html)
     end
 
     test "handles periodic refresh", %{conn: conn} do
@@ -60,7 +40,7 @@ defmodule AniminaWeb.StatusLiveTest do
       html = render(view)
       assert html =~ "System Status"
       assert html =~ "Versions"
-      assert html =~ "Database"
+      assert html =~ "Deployment"
     end
 
     test "renders shared layout with ANIMINA nav", %{conn: conn} do
@@ -206,6 +186,43 @@ defmodule AniminaWeb.StatusLiveTest do
       html = render(view)
 
       assert html =~ "Server Nodes"
+    end
+
+    # CPU sparkline tests
+
+    test "load window toggle buttons render and default to 15m", %{conn: conn} do
+      {:ok, _view, html} = live(conn, ~p"/status")
+
+      # Toggle buttons should always be present in the Server Nodes header
+      assert html =~ "set_load_window"
+      assert html =~ "15m"
+      assert html =~ "60m"
+    end
+
+    test "set_load_window event with 60m re-renders without crash", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/status")
+
+      html =
+        view
+        |> element("[phx-click='set_load_window'][phx-value-window='60m']")
+        |> render_click()
+
+      assert html =~ "Server Nodes"
+      assert html =~ "60m"
+    end
+
+    test "multiple refreshes accumulate load history without crash", %{conn: conn} do
+      {:ok, view, _html} = live(conn, ~p"/status")
+
+      send(view.pid, :refresh)
+      render(view)
+      send(view.pid, :refresh)
+      render(view)
+      send(view.pid, :refresh)
+      html = render(view)
+
+      assert html =~ "Server Nodes"
+      assert html =~ "set_load_window"
     end
 
     # Registration graph tests

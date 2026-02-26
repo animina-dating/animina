@@ -5,7 +5,6 @@ defmodule AniminaWeb.StatusLive do
   alias Animina.Accounts.Scope
   alias Animina.AI.Queue
   alias Animina.Monitoring.PrometheusClient
-  alias Ecto.Adapters.SQL
 
   @refresh_interval 5_000
 
@@ -31,6 +30,8 @@ defmodule AniminaWeb.StatusLive do
     socket =
       socket
       |> assign(page_title: "System Status")
+      |> assign(:load_history, %{})
+      |> assign(:load_sparkline_window, "15m")
       |> assign_metrics()
       |> assign_ollama_stats()
       |> assign_user_stats()
@@ -63,6 +64,11 @@ defmodule AniminaWeb.StatusLive do
     else
       {:noreply, socket}
     end
+  end
+
+  def handle_event("set_load_window", %{"window" => window}, socket)
+      when window in ["15m", "60m"] do
+    {:noreply, assign(socket, :load_sparkline_window, window)}
   end
 
   def handle_event("set_reg_time_frame", %{"frame" => frame}, socket) do
@@ -152,13 +158,6 @@ defmodule AniminaWeb.StatusLive do
       elixir_version: System.version(),
       otp_version: List.to_string(:erlang.system_info(:otp_release)),
       app_version: Animina.version(),
-      db_status: check_database(),
-      beam_memory: beam_memory(),
-      system_memory: system_memory(),
-      load_averages: load_averages(),
-      process_count: :erlang.system_info(:process_count),
-      scheduler_count: :erlang.system_info(:schedulers_online),
-      cpu_info: cpu_info(),
       deployed_at: format_deployed_at(),
       uptime: format_uptime()
     )
@@ -221,15 +220,28 @@ defmodule AniminaWeb.StatusLive do
         if gpus != [], do: Map.put(cache, host, gpus), else: cache
       end)
 
+    # Accumulate CPU load history per host
+    prev_load_history = Map.get(socket.assigns, :load_history, %{})
+    now = System.monotonic_time(:second)
+
+    load_history =
+      Enum.reduce(hosts_ordered, prev_load_history, fn host, hist ->
+        case node_metrics_map do
+          %{^host => %{load_pct: pct}} when is_number(pct) ->
+            prev = Map.get(hist, host, [])
+            Map.put(hist, host, Enum.take([{now, pct} | prev], 720))
+
+          _ ->
+            hist
+        end
+      end)
+
     # Build enriched node list
     {nodes, _counter} =
       Enum.reduce(hosts_ordered, {[], 1}, fn host, {acc, counter} ->
         ollama_instances = Enum.reverse(Map.get(by_host, host, []))
 
-        {name, next_counter} =
-          if localhost_host?(host),
-            do: {"This Server", counter},
-            else: {"ANIMINA Server #{counter}", counter + 1}
+        {name, next_counter} = {"ANIMINA Server #{counter}", counter + 1}
 
         has_gpu? = Enum.any?(ollama_instances, &("gpu" in &1.tags))
 
@@ -238,7 +250,8 @@ defmodule AniminaWeb.StatusLive do
           has_gpu?: has_gpu?,
           ollama_instances: ollama_instances,
           node_metrics: Map.get(node_metrics_map, host),
-          gpu_metrics: Map.get(gpu_cache, host, [])
+          gpu_metrics: Map.get(gpu_cache, host, []),
+          load_history: Map.get(load_history, host, [])
         }
 
         {[node | acc], next_counter}
@@ -246,6 +259,7 @@ defmodule AniminaWeb.StatusLive do
 
     socket
     |> assign(:gpu_cache, gpu_cache)
+    |> assign(:load_history, load_history)
     |> assign(:server_nodes, Enum.reverse(nodes))
   end
 
@@ -291,10 +305,6 @@ defmodule AniminaWeb.StatusLive do
       %URI{host: host} when is_binary(host) -> host
       _ -> url
     end
-  end
-
-  defp localhost_host?(host) do
-    host in ["localhost", "127.0.0.1"]
   end
 
   defp assign_user_stats(socket) do
@@ -344,141 +354,6 @@ defmodule AniminaWeb.StatusLive do
 
   defp format_avg(_), do: "0.0"
 
-  defp check_database do
-    case SQL.query(Animina.Repo, "SELECT 1") do
-      {:ok, _} -> :ok
-      {:error, _} -> :error
-    end
-  rescue
-    _ -> :error
-  end
-
-  defp beam_memory do
-    memory = :erlang.memory()
-
-    %{
-      total: format_bytes(memory[:total]),
-      processes: format_bytes(memory[:processes]),
-      ets: format_bytes(memory[:ets]),
-      atoms: format_bytes(memory[:atom]),
-      binaries: format_bytes(memory[:binary])
-    }
-  end
-
-  defp system_memory do
-    case :os.type() do
-      {:unix, :linux} ->
-        read_proc_meminfo()
-
-      _ ->
-        :not_available
-    end
-  end
-
-  defp read_proc_meminfo do
-    case File.read("/proc/meminfo") do
-      {:ok, content} ->
-        values =
-          Regex.scan(~r/^(MemTotal|MemAvailable):\s+(\d+)\s+kB/m, content)
-          |> Enum.into(%{}, fn [_, key, val] -> {key, String.to_integer(val) * 1024} end)
-
-        total = values["MemTotal"]
-        available = values["MemAvailable"]
-
-        if total && available do
-          %{
-            total: format_bytes(total),
-            available: format_bytes(available),
-            used: format_bytes(total - available)
-          }
-        else
-          :not_available
-        end
-
-      {:error, _} ->
-        :not_available
-    end
-  end
-
-  defp load_averages do
-    case :os.type() do
-      {:unix, :linux} ->
-        read_proc_loadavg()
-
-      {:unix, :darwin} ->
-        read_sysctl_loadavg()
-
-      _ ->
-        :not_available
-    end
-  end
-
-  defp read_proc_loadavg do
-    case File.read("/proc/loadavg") do
-      {:ok, content} ->
-        case String.split(content) do
-          [l1, l5, l15 | _] -> {l1, l5, l15}
-          _ -> :not_available
-        end
-
-      {:error, _} ->
-        :not_available
-    end
-  end
-
-  defp read_sysctl_loadavg do
-    case System.cmd("sysctl", ["-n", "vm.loadavg"], stderr_to_stdout: true) do
-      {output, 0} ->
-        output = String.trim(output) |> String.trim_leading("{ ") |> String.trim_trailing(" }")
-
-        case String.split(output) do
-          [l1, l5, l15 | _] -> {l1, l5, l15}
-          _ -> :not_available
-        end
-
-      _ ->
-        :not_available
-    end
-  end
-
-  defp cpu_info do
-    case :os.type() do
-      {:unix, :linux} -> cpu_info_linux()
-      {:unix, :darwin} -> cpu_info_darwin()
-      _ -> :not_available
-    end
-  end
-
-  defp cpu_info_linux do
-    case File.read("/proc/cpuinfo") do
-      {:ok, content} ->
-        model =
-          case Regex.run(~r/^model name\s*:\s*(.+)$/m, content) do
-            [_, name] -> String.trim(name)
-            _ -> "Unknown"
-          end
-
-        count =
-          Regex.scan(~r/^processor\s*:/m, content)
-          |> length()
-
-        %{model: model, count: count}
-
-      {:error, _} ->
-        :not_available
-    end
-  end
-
-  defp cpu_info_darwin do
-    with {model, 0} <-
-           System.cmd("sysctl", ["-n", "machdep.cpu.brand_string"], stderr_to_stdout: true),
-         {count_str, 0} <- System.cmd("sysctl", ["-n", "hw.ncpu"], stderr_to_stdout: true) do
-      %{model: String.trim(model), count: String.trim(count_str) |> String.to_integer()}
-    else
-      _ -> :not_available
-    end
-  end
-
   defp format_deployed_at do
     Animina.deployed_at()
     |> DateTime.shift_zone!("Europe/Berlin", Tz.TimeZoneDatabase)
@@ -499,15 +374,6 @@ defmodule AniminaWeb.StatusLive do
     case parts do
       [] -> "< 1m"
       _ -> Enum.join(parts, " ")
-    end
-  end
-
-  defp format_bytes(bytes) when is_integer(bytes) do
-    cond do
-      bytes >= 1_073_741_824 -> "#{Float.round(bytes / 1_073_741_824, 2)} GB"
-      bytes >= 1_048_576 -> "#{Float.round(bytes / 1_048_576, 2)} MB"
-      bytes >= 1_024 -> "#{Float.round(bytes / 1_024, 2)} KB"
-      true -> "#{bytes} B"
     end
   end
 
@@ -737,10 +603,29 @@ defmodule AniminaWeb.StatusLive do
         <h1 class="text-2xl font-bold mb-8">System Status</h1>
 
         <%!-- Server Nodes --%>
-        <h2 class="text-lg font-semibold mb-4">Server Nodes</h2>
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-semibold">Server Nodes</h2>
+          <div class="flex gap-1">
+            <%= for {key, label} <- [{"15m", "15m"}, {"60m", "60m"}] do %>
+              <button
+                phx-click="set_load_window"
+                phx-value-window={key}
+                class={[
+                  "px-2.5 py-1 text-xs font-medium rounded",
+                  if(@load_sparkline_window == key,
+                    do: "bg-blue-600 text-white",
+                    else: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  )
+                ]}
+              >
+                {label}
+              </button>
+            <% end %>
+          </div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <%= for node <- @server_nodes do %>
-            <.server_node_card node={node} />
+            <.server_node_card node={node} load_sparkline_window={@load_sparkline_window} />
           <% end %>
         </div>
 
@@ -854,8 +739,8 @@ defmodule AniminaWeb.StatusLive do
           </div>
         <% end %>
 
-        <%!-- This Server --%>
-        <h2 class="text-lg font-semibold mb-4">This Server</h2>
+        <%!-- Deployment Info --%>
+        <h2 class="text-lg font-semibold mb-4">Last Deployment to All Nodes</h2>
         <div class="grid grid-cols-2 gap-6 mb-8">
           <.section title="Deployment">
             <.row label="Deployed At" value={@deployed_at} />
@@ -867,58 +752,6 @@ defmodule AniminaWeb.StatusLive do
             <.row label="Elixir" value={@elixir_version} />
             <.row label="Erlang/OTP" value={@otp_version} />
           </.section>
-
-          <.section title="System Load">
-            <%= if @load_averages == :not_available do %>
-              <.row label="Status" value="N/A" />
-            <% else %>
-              <.row label="1 min" value={elem(@load_averages, 0)} />
-              <.row label="5 min" value={elem(@load_averages, 1)} />
-              <.row label="15 min" value={elem(@load_averages, 2)} />
-            <% end %>
-          </.section>
-
-          <.section title="BEAM Memory">
-            <.row label="Total" value={@beam_memory.total} />
-            <.row label="Processes" value={@beam_memory.processes} />
-            <.row label="ETS" value={@beam_memory.ets} />
-            <.row label="Atoms" value={@beam_memory.atoms} />
-            <.row label="Binaries" value={@beam_memory.binaries} />
-          </.section>
-
-          <.section title="System Memory">
-            <%= if @system_memory == :not_available do %>
-              <.row label="Status" value="N/A (not Linux)" />
-            <% else %>
-              <.row label="Total" value={@system_memory.total} />
-              <.row label="Available" value={@system_memory.available} />
-              <.row label="Used" value={@system_memory.used} />
-            <% end %>
-          </.section>
-
-          <.section title="Database">
-            <.row label="PostgreSQL">
-              <span class={[
-                "inline-flex items-center gap-1 font-medium",
-                @db_status == :ok && "text-green-800",
-                @db_status == :error && "text-red-800"
-              ]}>
-                {if @db_status == :ok, do: "● Connected", else: "● Unreachable"}
-              </span>
-            </.row>
-          </.section>
-
-          <.section title="BEAM / CPU Info">
-            <%= if @cpu_info != :not_available do %>
-              <.row label="CPU Model" value={@cpu_info.model} />
-              <.row label="CPU Cores" value={@cpu_info.count} />
-            <% else %>
-              <.row label="CPU Model" value="N/A" />
-              <.row label="CPU Cores" value="N/A" />
-            <% end %>
-            <.row label="Schedulers" value={@scheduler_count} />
-            <.row label="Process Count" value={@process_count} />
-          </.section>
         </div>
       </div>
     </Layouts.app>
@@ -926,6 +759,7 @@ defmodule AniminaWeb.StatusLive do
   end
 
   attr :node, :map, required: true
+  attr :load_sparkline_window, :string, required: true
 
   defp server_node_card(assigns) do
     any_online? = Enum.any?(assigns.node.ollama_instances, & &1.online?)
@@ -988,6 +822,7 @@ defmodule AniminaWeb.StatusLive do
             <%= if @m.load_pct do %>
               <.usage_bar pct={@m.load_pct} />
             <% end %>
+            <.sparkline data={@node.load_history} window={@load_sparkline_window} />
           </div>
 
           <%!-- RAM --%>
@@ -1115,6 +950,187 @@ defmodule AniminaWeb.StatusLive do
       </div>
     </div>
     """
+  end
+
+  defp window_seconds("15m"), do: 15 * 60
+  defp window_seconds(_), do: 60 * 60
+
+  @sparkline_w 200
+  @sparkline_h 60
+
+  attr :data, :list, required: true
+  attr :window, :string, required: true
+
+  defp sparkline(%{data: data} = assigns) when length(data) < 2 do
+    ~H"""
+    <div data-testid="cpu-sparkline">
+      <p class="text-[10px] text-gray-400 text-center mt-1">collecting data…</p>
+    </div>
+    """
+  end
+
+  defp sparkline(assigns) do
+    assigns = prepare_sparkline_assigns(assigns)
+
+    ~H"""
+    <div data-testid="cpu-sparkline" class="mt-2 border border-gray-100 rounded bg-gray-50/50 p-2">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-[10px] font-medium text-gray-500">CPU Load History</span>
+        <span class="text-[10px] font-mono text-gray-400">
+          min {format_pct(@min_val)} · max {format_pct(@max_val)} · now {format_pct(@current)}
+        </span>
+      </div>
+      <div class="relative">
+        <%!-- Y-axis labels --%>
+        <div
+          class="absolute left-0 top-0 bottom-0 flex flex-col justify-between text-[8px] font-mono text-gray-400 pr-1"
+          style="width: 28px;"
+        >
+          <span>{format_pct_short(@y_max)}</span>
+          <span>{format_pct_short(@y_max / 2)}</span>
+          <span>0%</span>
+        </div>
+        <%!-- Chart area --%>
+        <div style="margin-left: 30px;">
+          <svg
+            viewBox={"0 0 #{@sparkline_w} #{@sparkline_h}"}
+            preserveAspectRatio="none"
+            class="w-full"
+            style="height: 60px;"
+          >
+            <%!-- Grid lines --%>
+            <line
+              x1="0"
+              y1="0"
+              x2={@sparkline_w}
+              y2="0"
+              stroke="#e5e7eb"
+              stroke-width="0.5"
+              stroke-dasharray="3,3"
+            />
+            <line
+              x1="0"
+              y1={@sparkline_h / 2}
+              x2={@sparkline_w}
+              y2={@sparkline_h / 2}
+              stroke="#e5e7eb"
+              stroke-width="0.5"
+              stroke-dasharray="3,3"
+            />
+            <line
+              x1="0"
+              y1={@sparkline_h}
+              x2={@sparkline_w}
+              y2={@sparkline_h}
+              stroke="#e5e7eb"
+              stroke-width="0.5"
+            />
+            <%!-- Vertical tick marks --%>
+            <%= for {tx, _label} <- @x_ticks do %>
+              <line
+                x1={tx}
+                y1="0"
+                x2={tx}
+                y2={@sparkline_h}
+                stroke="#f3f4f6"
+                stroke-width="0.5"
+              />
+            <% end %>
+            <%!-- Area fill --%>
+            <polygon
+              points={sparkline_polygon(@positioned, @y_max, @sparkline_h)}
+              fill="#3b82f6"
+              fill-opacity="0.08"
+            />
+            <%!-- Line --%>
+            <polyline
+              points={sparkline_line(@positioned, @y_max, @sparkline_h)}
+              fill="none"
+              stroke="#3b82f6"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
+      <%!-- X-axis time labels --%>
+      <div
+        class="relative text-[8px] font-mono text-gray-400"
+        style="margin-left: 30px; height: 12px;"
+      >
+        <%= for {tx, label} <- @x_ticks do %>
+          <span
+            class="absolute"
+            style={"left: #{tx / @sparkline_w * 100}%; transform: translateX(-50%);"}
+          >
+            {label}
+          </span>
+        <% end %>
+      </div>
+    </div>
+    """
+  end
+
+  defp prepare_sparkline_assigns(assigns) do
+    window_secs = window_seconds(assigns.window)
+    now_t = assigns.data |> hd() |> elem(0)
+
+    positioned =
+      assigns.data
+      |> Enum.reverse()
+      |> Enum.map(fn {t, pct} ->
+        age = now_t - t
+        x = Float.round((@sparkline_w - 1) * (1 - age / window_secs), 1)
+        {x, pct}
+      end)
+      |> Enum.filter(fn {x, _} -> x >= 0 end)
+
+    pct_values = Enum.map(positioned, &elem(&1, 1))
+
+    tick_step = if assigns.window == "15m", do: 5 * 60, else: 15 * 60
+    tick_count = div(window_secs, tick_step)
+
+    x_ticks =
+      for i <- 0..tick_count do
+        age = window_secs - i * tick_step
+        x = Float.round((@sparkline_w - 1) * (1 - age / window_secs), 1)
+        label = if age == 0, do: "now", else: "#{div(age, 60)}m"
+        {x, label}
+      end
+
+    assigns
+    |> assign(:positioned, positioned)
+    |> assign(:y_max, pct_values |> Enum.max() |> max(100))
+    |> assign(:current, List.last(pct_values))
+    |> assign(:min_val, Enum.min(pct_values))
+    |> assign(:max_val, Enum.max(pct_values))
+    |> assign(:x_ticks, x_ticks)
+    |> assign(:sparkline_w, @sparkline_w)
+    |> assign(:sparkline_h, @sparkline_h)
+  end
+
+  defp format_pct(val), do: "#{Float.round(val / 1, 1)}%"
+
+  defp format_pct_short(val) when val >= 100, do: "#{round(val)}%"
+  defp format_pct_short(val), do: "#{round(val)}%"
+
+  defp sparkline_line(positioned, y_max, height) do
+    Enum.map_join(positioned, " ", fn {x, pct} ->
+      y = Float.round(height - pct / y_max * height, 1)
+      "#{x},#{y}"
+    end)
+  end
+
+  defp sparkline_polygon(positioned, y_max, height) do
+    line =
+      Enum.map_join(positioned, " ", fn {x, pct} ->
+        y = Float.round(height - pct / y_max * height, 1)
+        "#{x},#{y}"
+      end)
+
+    {first_x, _} = hd(positioned)
+    {last_x, _} = List.last(positioned)
+    "#{first_x},#{height} #{line} #{last_x},#{height}"
   end
 
   attr :pct, :float, required: true
