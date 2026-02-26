@@ -645,6 +645,21 @@ defmodule AniminaWeb.StatusLive do
             <% end %>
           </div>
 
+          <%!-- CPU Temp --%>
+          <%= if @m.cpu_temp do %>
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-gray-600">CPU Temp</span>
+              <span class={[
+                "text-xs font-mono",
+                @m.cpu_temp >= 85 && "text-red-600",
+                @m.cpu_temp >= 70 && @m.cpu_temp < 85 && "text-amber-600",
+                @m.cpu_temp < 70 && "text-gray-500"
+              ]}>
+                {round(@m.cpu_temp)}°C
+              </span>
+            </div>
+          <% end %>
+
           <%!-- CPU / Load --%>
           <div>
             <div class="flex items-center justify-between mb-1">

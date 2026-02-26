@@ -138,6 +138,7 @@ defmodule Animina.Monitoring.PrometheusClient do
 
     cpu_model = extract_cpu_model(parsed)
     cpu_max_freq_hz = extract_cpu_max_freq(parsed)
+    cpu_temp = extract_cpu_temp(parsed)
 
     if mem_total && mem_available && load1 do
       mem_used = mem_total - mem_available
@@ -155,6 +156,7 @@ defmodule Animina.Monitoring.PrometheusClient do
         cpu_count: cpu_count,
         cpu_model: cpu_model,
         cpu_max_freq_hz: cpu_max_freq_hz,
+        cpu_temp: cpu_temp,
         load_pct: if(load_pct, do: Float.round(load_pct, 1), else: nil)
       }
     else
@@ -224,6 +226,13 @@ defmodule Animina.Monitoring.PrometheusClient do
   defp extract_cpu_max_freq(parsed) do
     parsed
     |> Enum.filter(fn {name, _, _} -> name == "node_cpu_frequency_max_hertz" end)
+    |> Enum.map(fn {_, _, value} -> value end)
+    |> Enum.max(fn -> nil end)
+  end
+
+  defp extract_cpu_temp(parsed) do
+    parsed
+    |> Enum.filter(fn {name, _, _} -> name == "node_hwmon_temp_celsius" end)
     |> Enum.map(fn {_, _, value} -> value end)
     |> Enum.max(fn -> nil end)
   end

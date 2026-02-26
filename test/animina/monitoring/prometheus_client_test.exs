@@ -37,6 +37,11 @@ defmodule Animina.Monitoring.PrometheusClientTest do
   # TYPE node_cpu_frequency_max_hertz gauge
   node_cpu_frequency_max_hertz{cpu="0"} 4.2e+09
   node_cpu_frequency_max_hertz{cpu="1"} 4.2e+09
+  # HELP node_hwmon_temp_celsius Hardware monitor for temperature (input)
+  # TYPE node_hwmon_temp_celsius gauge
+  node_hwmon_temp_celsius{chip="coretemp",sensor="temp1"} 52
+  node_hwmon_temp_celsius{chip="coretemp",sensor="temp2"} 48
+  node_hwmon_temp_celsius{chip="coretemp",sensor="temp3"} 55
   """
 
   describe "parse_prometheus_text/1" do
@@ -184,6 +189,30 @@ defmodule Animina.Monitoring.PrometheusClientTest do
       metrics = PrometheusClient.extract_node_metrics(parsed)
 
       assert metrics.cpu_model == "AMD EPYC 9654 96-Core Processor"
+    end
+
+    test "extracts CPU temperature from hwmon metrics" do
+      parsed = PrometheusClient.parse_prometheus_text(@sample_metrics)
+      metrics = PrometheusClient.extract_node_metrics(parsed)
+
+      # Should pick the maximum across all sensors (55.0)
+      assert metrics.cpu_temp == 55.0
+    end
+
+    test "returns nil cpu_temp when hwmon metrics are absent" do
+      text = """
+      node_memory_MemTotal_bytes 6.7379503104e+10
+      node_memory_MemAvailable_bytes 1.9327676416e+10
+      node_load1 2.45
+      node_load5 1.89
+      node_load15 1.23
+      node_cpu_seconds_total{cpu="0",mode="idle"} 123456.78
+      """
+
+      parsed = PrometheusClient.parse_prometheus_text(text)
+      metrics = PrometheusClient.extract_node_metrics(parsed)
+
+      assert metrics.cpu_temp == nil
     end
 
     test "returns nil for empty parsed data" do
