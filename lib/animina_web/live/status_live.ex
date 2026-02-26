@@ -1,10 +1,8 @@
 defmodule AniminaWeb.StatusLive do
   use AniminaWeb, :live_view
 
-  alias Animina.Accounts
   alias Animina.Accounts.Scope
-  alias Animina.AI.Queue
-  alias Animina.Monitoring.PrometheusClient
+  alias Animina.StatusCache
 
   @refresh_interval 5_000
 
@@ -15,14 +13,6 @@ defmodule AniminaWeb.StatusLive do
   @padding_top 20
   @padding_bottom 40
 
-  @time_frames [
-    {"24h", 24, 10},
-    {"48h", 48, 20},
-    {"72h", 72, 30},
-    {"7d", 168, 120},
-    {"28d", 672, 360}
-  ]
-
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: schedule_refresh()
@@ -30,14 +20,9 @@ defmodule AniminaWeb.StatusLive do
     socket =
       socket
       |> assign(page_title: "System Status")
-      |> assign(:load_history, %{})
-      |> assign(:gpu_load_history, %{})
       |> assign(:load_sparkline_window, "15m")
       |> assign_metrics()
-      |> assign_ollama_stats()
-      |> assign_user_stats()
-      |> assign_online_graph()
-      |> assign_registration_graph()
+      |> assign_from_cache()
 
     {:ok, socket}
   end
@@ -49,10 +34,7 @@ defmodule AniminaWeb.StatusLive do
     {:noreply,
      socket
      |> assign_metrics()
-     |> assign_ollama_stats()
-     |> assign_user_stats()
-     |> assign_online_graph()
-     |> assign_registration_graph()}
+     |> assign_from_cache()}
   end
 
   @impl true
@@ -61,7 +43,7 @@ defmodule AniminaWeb.StatusLive do
       {:noreply,
        socket
        |> assign(:online_time_frame, frame)
-       |> load_online_data()}
+       |> assign(:online_data, StatusCache.online_graph(frame))}
     else
       {:noreply, socket}
     end
@@ -74,10 +56,13 @@ defmodule AniminaWeb.StatusLive do
 
   def handle_event("set_reg_time_frame", %{"frame" => frame}, socket) do
     if admin?(socket) do
+      {reg_data, confirm_data} = StatusCache.registration_graph(frame)
+
       {:noreply,
        socket
        |> assign(:reg_time_frame, frame)
-       |> load_registration_data()}
+       |> assign(:reg_data, reg_data)
+       |> assign(:confirm_data, confirm_data)}
     else
       {:noreply, socket}
     end
@@ -94,13 +79,71 @@ defmodule AniminaWeb.StatusLive do
     end
   end
 
-  defp assign_online_graph(socket) do
+  defp assign_from_cache(socket) do
+    socket
+    |> assign(:server_nodes, StatusCache.server_nodes())
+    |> assign_user_stats_from_cache()
+    |> assign_online_graph_from_cache()
+    |> assign_registration_graph_from_cache()
+  end
+
+  defp assign_user_stats_from_cache(socket) do
     if admin?(socket) do
+      case StatusCache.user_stats() do
+        %{} = stats ->
+          assign(socket,
+            stat_total_users: stats.stat_total_users,
+            stat_confirmed: stats.stat_confirmed,
+            stat_unconfirmed: stats.stat_unconfirmed,
+            stat_online_now: stats.stat_online_now,
+            stat_today_berlin: stats.stat_today_berlin,
+            stat_yesterday: stats.stat_yesterday,
+            stat_last_7_days: stats.stat_last_7_days,
+            stat_last_28_days: stats.stat_last_28_days,
+            stat_30_day_avg: stats.stat_30_day_avg,
+            stat_normal: stats.stat_normal,
+            stat_waitlisted: stats.stat_waitlisted,
+            stat_male: stats.stat_male,
+            stat_female: stats.stat_female,
+            stat_diverse: stats.stat_diverse
+          )
+
+        nil ->
+          assign_nil_user_stats(socket)
+      end
+    else
+      assign_nil_user_stats(socket)
+    end
+  end
+
+  defp assign_nil_user_stats(socket) do
+    assign(socket,
+      stat_total_users: nil,
+      stat_confirmed: nil,
+      stat_unconfirmed: nil,
+      stat_online_now: nil,
+      stat_today_berlin: nil,
+      stat_yesterday: nil,
+      stat_last_7_days: nil,
+      stat_last_28_days: nil,
+      stat_30_day_avg: nil,
+      stat_normal: nil,
+      stat_waitlisted: nil,
+      stat_male: nil,
+      stat_female: nil,
+      stat_diverse: nil
+    )
+  end
+
+  defp assign_online_graph_from_cache(socket) do
+    if admin?(socket) do
+      frame = socket.assigns[:online_time_frame] || "24h"
+
       socket
-      |> assign(:online_time_frame, socket.assigns[:online_time_frame] || "24h")
+      |> assign(:online_time_frame, frame)
       |> assign(:online_user_count, AniminaWeb.Presence.online_user_count())
       |> assign_chart_dimensions()
-      |> load_online_data()
+      |> assign(:online_data, StatusCache.online_graph(frame))
     else
       socket
       |> assign(:online_time_frame, nil)
@@ -109,11 +152,15 @@ defmodule AniminaWeb.StatusLive do
     end
   end
 
-  defp assign_registration_graph(socket) do
+  defp assign_registration_graph_from_cache(socket) do
     if admin?(socket) do
+      frame = socket.assigns[:reg_time_frame] || "7d"
+      {reg_data, confirm_data} = StatusCache.registration_graph(frame)
+
       socket
-      |> assign(:reg_time_frame, socket.assigns[:reg_time_frame] || "7d")
-      |> load_registration_data()
+      |> assign(:reg_time_frame, frame)
+      |> assign(:reg_data, reg_data)
+      |> assign(:confirm_data, confirm_data)
     else
       socket
       |> assign(:reg_time_frame, nil)
@@ -133,27 +180,6 @@ defmodule AniminaWeb.StatusLive do
     )
   end
 
-  defp load_online_data(socket) do
-    frame = socket.assigns.online_time_frame
-    {_label, hours, bucket_minutes} = Enum.find(@time_frames, fn {l, _, _} -> l == frame end)
-    since = DateTime.utc_now() |> DateTime.add(-hours, :hour)
-    data = Accounts.online_user_counts_since(since, bucket_minutes)
-    assign(socket, :online_data, data)
-  end
-
-  defp load_registration_data(socket) do
-    frame = socket.assigns.reg_time_frame
-    {_label, hours, bucket_minutes} = Enum.find(@time_frames, fn {l, _, _} -> l == frame end)
-    since = DateTime.utc_now() |> DateTime.add(-hours, :hour)
-
-    reg_data = Accounts.registration_counts_since(since, bucket_minutes)
-    confirm_data = Accounts.confirmation_counts_since(since, bucket_minutes)
-
-    socket
-    |> assign(:reg_data, reg_data)
-    |> assign(:confirm_data, confirm_data)
-  end
-
   defp assign_metrics(socket) do
     assign(socket,
       elixir_version: System.version(),
@@ -163,220 +189,6 @@ defmodule AniminaWeb.StatusLive do
       uptime: format_uptime()
     )
   end
-
-  defp assign_ollama_stats(socket) do
-    instances =
-      try do
-        Queue.status()
-      rescue
-        _ -> []
-      catch
-        :exit, _ -> []
-      end
-
-    # Ping all instances in parallel
-    pings =
-      instances
-      |> Task.async_stream(&ping_instance/1, timeout: 6_000, on_timeout: :kill_task)
-      |> Enum.map(fn
-        {:ok, result} -> result
-        _ -> nil
-      end)
-
-    # Group instances by host and assign names
-    instances_with_pings = Enum.zip(instances, pings)
-
-    # Collect unique hosts (preserving order) and group instances by host
-    {hosts_ordered, by_host} =
-      Enum.reduce(instances_with_pings, {[], %{}}, fn {inst, ping_ms}, {hosts, map} ->
-        host = extract_host(inst.url)
-        entry = %{online?: ping_ms != nil, ping_ms: ping_ms, tags: inst.tags, busy: inst.busy}
-
-        if Map.has_key?(map, host) do
-          {hosts, Map.update!(map, host, &[entry | &1])}
-        else
-          {[host | hosts], Map.put(map, host, [entry])}
-        end
-      end)
-
-    hosts_ordered = Enum.reverse(hosts_ordered)
-
-    # Fetch node metrics for all hosts, GPU metrics only for hosts with gpu-tagged Ollama instances
-    all_tasks = Enum.flat_map(hosts_ordered, &spawn_metric_tasks(&1, by_host))
-
-    results = Enum.map(all_tasks, &yield_metric_task/1)
-
-    node_metrics_map =
-      results
-      |> Enum.filter(fn {type, _, _} -> type == :node end)
-      |> Map.new(fn {_, host, metrics} -> {host, metrics} end)
-
-    # Merge fresh GPU results into cache — only update when new data arrived
-    prev_gpu_cache = Map.get(socket.assigns, :gpu_cache, %{})
-
-    gpu_cache =
-      results
-      |> Enum.filter(fn {type, _, _} -> type == :gpu end)
-      |> Enum.reduce(prev_gpu_cache, fn {_, host, gpus}, cache ->
-        if gpus != [], do: Map.put(cache, host, gpus), else: cache
-      end)
-
-    # Accumulate CPU load history per host
-    prev_load_history = Map.get(socket.assigns, :load_history, %{})
-    now = System.monotonic_time(:second)
-
-    load_history =
-      Enum.reduce(hosts_ordered, prev_load_history, fn host, hist ->
-        case node_metrics_map do
-          %{^host => %{load_pct: pct}} when is_number(pct) ->
-            prev = Map.get(hist, host, [])
-            Map.put(hist, host, Enum.take([{now, pct} | prev], 720))
-
-          _ ->
-            hist
-        end
-      end)
-
-    # Accumulate GPU load history per host per GPU UUID
-    prev_gpu_load_history = Map.get(socket.assigns, :gpu_load_history, %{})
-
-    gpu_load_history =
-      Enum.reduce(hosts_ordered, prev_gpu_load_history, fn host, hist ->
-        gpus = Map.get(gpu_cache, host, [])
-        host_hist = Map.get(hist, host, %{})
-        Map.put(hist, host, accumulate_gpu_history(gpus, host_hist, now))
-      end)
-
-    # Build enriched node list
-    {nodes, _counter} =
-      Enum.reduce(hosts_ordered, {[], 1}, fn host, {acc, counter} ->
-        ollama_instances = Enum.reverse(Map.get(by_host, host, []))
-
-        {name, next_counter} = {"ANIMINA Server #{counter}", counter + 1}
-
-        has_gpu? = Enum.any?(ollama_instances, &("gpu" in &1.tags))
-
-        node = %{
-          name: name,
-          has_gpu?: has_gpu?,
-          ollama_instances: ollama_instances,
-          node_metrics: Map.get(node_metrics_map, host),
-          gpu_metrics: Map.get(gpu_cache, host, []),
-          load_history: Map.get(load_history, host, []),
-          gpu_load_history: Map.get(gpu_load_history, host, %{})
-        }
-
-        {[node | acc], next_counter}
-      end)
-
-    socket
-    |> assign(:gpu_cache, gpu_cache)
-    |> assign(:load_history, load_history)
-    |> assign(:gpu_load_history, gpu_load_history)
-    |> assign(:server_nodes, Enum.reverse(nodes))
-  end
-
-  defp spawn_metric_tasks(host, by_host) do
-    node_task = {:node, host, Task.async(fn -> PrometheusClient.fetch_node_metrics(host) end)}
-    has_gpu? = by_host |> Map.get(host, []) |> Enum.any?(&("gpu" in &1.tags))
-
-    if has_gpu?,
-      do: [
-        node_task,
-        {:gpu, host, Task.async(fn -> PrometheusClient.fetch_gpu_metrics(host) end)}
-      ],
-      else: [node_task]
-  end
-
-  defp yield_metric_task({type, host, task}) do
-    # Yield timeout must exceed @http_timeout (4s) to avoid killing in-flight requests
-    case Task.yield(task, 8_000) || Task.shutdown(task) do
-      {:ok, result} -> {type, host, result}
-      _ when type == :gpu -> {:gpu, host, []}
-      _ -> {:node, host, nil}
-    end
-  end
-
-  defp accumulate_gpu_history(gpus, host_hist, now) do
-    Enum.reduce(gpus, host_hist, fn gpu, h ->
-      if is_binary(gpu.uuid) and is_number(gpu.utilization_pct) do
-        prev = Map.get(h, gpu.uuid, [])
-        Map.put(h, gpu.uuid, Enum.take([{now, gpu.utilization_pct} | prev], 720))
-      else
-        h
-      end
-    end)
-  end
-
-  defp ping_instance(stat) do
-    base_url = stat.url |> String.replace(~r{/api/?$}, "")
-
-    start = System.monotonic_time(:millisecond)
-
-    case Req.get(base_url, receive_timeout: 5_000, connect_options: [timeout: 5_000]) do
-      {:ok, %{status: 200}} ->
-        System.monotonic_time(:millisecond) - start
-
-      _ ->
-        nil
-    end
-  rescue
-    _ -> nil
-  end
-
-  defp extract_host(url) do
-    case URI.parse(url) do
-      %URI{host: host} when is_binary(host) -> host
-      _ -> url
-    end
-  end
-
-  defp assign_user_stats(socket) do
-    if admin?(socket) do
-      by_state = Accounts.count_confirmed_users_by_state()
-      by_gender = Accounts.count_confirmed_users_by_gender()
-
-      assign(socket,
-        stat_total_users: Accounts.count_active_users(),
-        stat_confirmed: Accounts.count_confirmed_users(),
-        stat_unconfirmed: Accounts.count_unconfirmed_users(),
-        stat_online_now: AniminaWeb.Presence.online_user_count(),
-        stat_today_berlin: Accounts.count_confirmed_users_today_berlin(),
-        stat_yesterday: Accounts.count_confirmed_users_yesterday_berlin(),
-        stat_last_7_days: Accounts.count_confirmed_users_last_7_days(),
-        stat_last_28_days: Accounts.count_confirmed_users_last_28_days(),
-        stat_30_day_avg: format_avg(Accounts.average_daily_confirmed_users_last_30_days()),
-        stat_normal: Map.get(by_state, "normal", 0),
-        stat_waitlisted: Map.get(by_state, "waitlisted", 0),
-        stat_male: Map.get(by_gender, "male", 0),
-        stat_female: Map.get(by_gender, "female", 0),
-        stat_diverse: Map.get(by_gender, "diverse", 0)
-      )
-    else
-      assign(socket,
-        stat_total_users: nil,
-        stat_confirmed: nil,
-        stat_unconfirmed: nil,
-        stat_online_now: nil,
-        stat_today_berlin: nil,
-        stat_yesterday: nil,
-        stat_last_7_days: nil,
-        stat_last_28_days: nil,
-        stat_30_day_avg: nil,
-        stat_normal: nil,
-        stat_waitlisted: nil,
-        stat_male: nil,
-        stat_female: nil,
-        stat_diverse: nil
-      )
-    end
-  end
-
-  defp format_avg(value) when is_float(value) do
-    :erlang.float_to_binary(value, decimals: 1)
-  end
-
-  defp format_avg(_), do: "0.0"
 
   defp format_deployed_at do
     Animina.deployed_at()

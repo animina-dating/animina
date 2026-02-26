@@ -31,7 +31,8 @@ defmodule Animina.Application do
         maybe_start_session_tracker() ++
         maybe_start_ai_services() ++
         maybe_start_mail_queue_checker() ++
-        maybe_start_mail_log_checker()
+        maybe_start_mail_log_checker() ++
+        maybe_start_status_cache()
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -125,6 +126,14 @@ defmodule Animina.Application do
   defp maybe_start_mail_queue_checker do
     if Application.get_env(:animina, :start_mail_queue_checker, false) do
       [Animina.MailQueueChecker]
+    else
+      []
+    end
+  end
+
+  defp maybe_start_status_cache do
+    if Application.get_env(:animina, :start_status_cache, true) do
+      [Animina.StatusCache]
     else
       []
     end
