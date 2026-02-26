@@ -31,6 +31,7 @@ defmodule AniminaWeb.StatusLive do
       socket
       |> assign(page_title: "System Status")
       |> assign(:load_history, %{})
+      |> assign(:gpu_load_history, %{})
       |> assign(:load_sparkline_window, "15m")
       |> assign_metrics()
       |> assign_ollama_stats()
@@ -236,6 +237,16 @@ defmodule AniminaWeb.StatusLive do
         end
       end)
 
+    # Accumulate GPU load history per host per GPU UUID
+    prev_gpu_load_history = Map.get(socket.assigns, :gpu_load_history, %{})
+
+    gpu_load_history =
+      Enum.reduce(hosts_ordered, prev_gpu_load_history, fn host, hist ->
+        gpus = Map.get(gpu_cache, host, [])
+        host_hist = Map.get(hist, host, %{})
+        Map.put(hist, host, accumulate_gpu_history(gpus, host_hist, now))
+      end)
+
     # Build enriched node list
     {nodes, _counter} =
       Enum.reduce(hosts_ordered, {[], 1}, fn host, {acc, counter} ->
@@ -251,7 +262,8 @@ defmodule AniminaWeb.StatusLive do
           ollama_instances: ollama_instances,
           node_metrics: Map.get(node_metrics_map, host),
           gpu_metrics: Map.get(gpu_cache, host, []),
-          load_history: Map.get(load_history, host, [])
+          load_history: Map.get(load_history, host, []),
+          gpu_load_history: Map.get(gpu_load_history, host, %{})
         }
 
         {[node | acc], next_counter}
@@ -260,6 +272,7 @@ defmodule AniminaWeb.StatusLive do
     socket
     |> assign(:gpu_cache, gpu_cache)
     |> assign(:load_history, load_history)
+    |> assign(:gpu_load_history, gpu_load_history)
     |> assign(:server_nodes, Enum.reverse(nodes))
   end
 
@@ -282,6 +295,17 @@ defmodule AniminaWeb.StatusLive do
       _ when type == :gpu -> {:gpu, host, []}
       _ -> {:node, host, nil}
     end
+  end
+
+  defp accumulate_gpu_history(gpus, host_hist, now) do
+    Enum.reduce(gpus, host_hist, fn gpu, h ->
+      if is_binary(gpu.uuid) and is_number(gpu.utilization_pct) do
+        prev = Map.get(h, gpu.uuid, [])
+        Map.put(h, gpu.uuid, Enum.take([{now, gpu.utilization_pct} | prev], 720))
+      else
+        h
+      end
+    end)
   end
 
   defp ping_instance(stat) do
@@ -878,6 +902,12 @@ defmodule AniminaWeb.StatusLive do
                     </span>
                   </div>
                   <.usage_bar pct={gpu.utilization_pct} />
+                  <.sparkline
+                    data={Map.get(@node.gpu_load_history, gpu.uuid, [])}
+                    window={@load_sparkline_window}
+                    label="GPU Load History"
+                    color="#8b5cf6"
+                  />
                 </div>
               <% end %>
 
@@ -960,14 +990,8 @@ defmodule AniminaWeb.StatusLive do
 
   attr :data, :list, required: true
   attr :window, :string, required: true
-
-  defp sparkline(%{data: data} = assigns) when length(data) < 2 do
-    ~H"""
-    <div data-testid="cpu-sparkline">
-      <p class="text-[10px] text-gray-400 text-center mt-1">collecting data…</p>
-    </div>
-    """
-  end
+  attr :label, :string, default: "CPU Load History"
+  attr :color, :string, default: "#3b82f6"
 
   defp sparkline(assigns) do
     assigns = prepare_sparkline_assigns(assigns)
@@ -975,9 +999,13 @@ defmodule AniminaWeb.StatusLive do
     ~H"""
     <div data-testid="cpu-sparkline" class="mt-2 border border-gray-100 rounded bg-gray-50/50 p-2">
       <div class="flex items-center justify-between mb-1">
-        <span class="text-[10px] font-medium text-gray-500">CPU Load History</span>
+        <span class="text-[10px] font-medium text-gray-500">{@label}</span>
         <span class="text-[10px] font-mono text-gray-400">
-          min {format_pct(@min_val)} · max {format_pct(@max_val)} · now {format_pct(@current)}
+          <%= if @has_data? do %>
+            min {format_pct(@min_val)} · max {format_pct(@max_val)} · now {format_pct(@current)}
+          <% else %>
+            collecting data…
+          <% end %>
         </span>
       </div>
       <div class="relative">
@@ -1036,20 +1064,21 @@ defmodule AniminaWeb.StatusLive do
                 stroke-width="0.5"
               />
             <% end %>
-            <%!-- Area fill --%>
-            <polygon
-              points={sparkline_polygon(@positioned, @y_max, @sparkline_h)}
-              fill="#3b82f6"
-              fill-opacity="0.08"
-            />
-            <%!-- Line --%>
-            <polyline
-              points={sparkline_line(@positioned, @y_max, @sparkline_h)}
-              fill="none"
-              stroke="#3b82f6"
-              stroke-width="1.5"
-              stroke-linejoin="round"
-            />
+            <%!-- Area fill + Line (only when data exists) --%>
+            <%= if @has_data? do %>
+              <polygon
+                points={sparkline_polygon(@positioned, @y_max, @sparkline_h)}
+                fill={@color}
+                fill-opacity="0.08"
+              />
+              <polyline
+                points={sparkline_line(@positioned, @y_max, @sparkline_h)}
+                fill="none"
+                stroke={@color}
+                stroke-width="1.5"
+                stroke-linejoin="round"
+              />
+            <% end %>
           </svg>
         </div>
       </div>
@@ -1069,6 +1098,31 @@ defmodule AniminaWeb.StatusLive do
       </div>
     </div>
     """
+  end
+
+  defp prepare_sparkline_assigns(%{data: data} = assigns) when length(data) < 2 do
+    window_secs = window_seconds(assigns.window)
+    tick_step = if assigns.window == "15m", do: 5 * 60, else: 15 * 60
+    tick_count = div(window_secs, tick_step)
+
+    x_ticks =
+      for i <- 0..tick_count do
+        age = window_secs - i * tick_step
+        x = Float.round((@sparkline_w - 1) * (1 - age / window_secs), 1)
+        label = if age == 0, do: "now", else: "#{div(age, 60)}m"
+        {x, label}
+      end
+
+    assigns
+    |> assign(:has_data?, false)
+    |> assign(:positioned, [])
+    |> assign(:y_max, 100)
+    |> assign(:current, 0)
+    |> assign(:min_val, 0)
+    |> assign(:max_val, 0)
+    |> assign(:x_ticks, x_ticks)
+    |> assign(:sparkline_w, @sparkline_w)
+    |> assign(:sparkline_h, @sparkline_h)
   end
 
   defp prepare_sparkline_assigns(assigns) do
@@ -1099,6 +1153,7 @@ defmodule AniminaWeb.StatusLive do
       end
 
     assigns
+    |> assign(:has_data?, true)
     |> assign(:positioned, positioned)
     |> assign(:y_max, pct_values |> Enum.max() |> max(100))
     |> assign(:current, List.last(pct_values))
