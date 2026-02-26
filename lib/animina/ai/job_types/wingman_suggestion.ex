@@ -6,7 +6,7 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   - **On-demand** (P20): `conversation_id` is present in params — saves and broadcasts.
   - **Preheated** (P50): `conversation_id` is absent — saves as a preheated hint (no broadcast).
 
-  Uses qwen3:14b text model.
+  Uses qwen3.5:35b text model.
   """
 
   @behaviour Animina.AI.JobType
@@ -23,7 +23,7 @@ defmodule Animina.AI.JobTypes.WingmanSuggestion do
   def model_family, do: :text
 
   @impl true
-  def model, do: "qwen3:14b"
+  def model, do: "qwen3.5:35b"
 
   @impl true
   def priority, do: 20
