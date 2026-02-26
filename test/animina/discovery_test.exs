@@ -1,5 +1,5 @@
 defmodule Animina.DiscoveryTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.Discovery
 

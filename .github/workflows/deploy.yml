@@ -21,6 +21,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore file modification times from git
+        run: |
+          git ls-files -z | while IFS= read -r -d '' file; do
+            touch -t "$(git log -1 --format='%cd' --date=format:'%Y%m%d%H%M.%S' -- "$file")" "$file" 2>/dev/null || true
+          done
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -75,12 +83,21 @@ jobs:
           - 5432:5432
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          --health-interval 2s
+          --health-timeout 2s
+          --health-retries 15
+          --tmpfs /var/lib/postgresql/data:rw
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Restore file modification times from git
+        run: |
+          git ls-files -z | while IFS= read -r -d '' file; do
+            touch -t "$(git log -1 --format='%cd' --date=format:'%Y%m%d%H%M.%S' -- "$file")" "$file" 2>/dev/null || true
+          done
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
