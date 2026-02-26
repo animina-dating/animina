@@ -1,5 +1,5 @@
 defmodule Animina.Accounts.SoftDeleteTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.Accounts.SoftDelete
   alias Animina.Accounts.User

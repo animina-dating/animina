@@ -1,5 +1,5 @@
 defmodule Animina.AccountsTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.Accounts
   alias Animina.ActivityLog.ActivityLogEntry

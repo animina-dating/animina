@@ -1,5 +1,5 @@
 defmodule Animina.PhotosTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.Photos
   alias Animina.Photos.Photo

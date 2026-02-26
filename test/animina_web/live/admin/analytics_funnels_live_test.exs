@@ -1,20 +1,11 @@
 defmodule AniminaWeb.Admin.AnalyticsFunnelsLiveTest do
-  use AniminaWeb.ConnCase, async: true
-
-  import Phoenix.LiveViewTest
-  import Animina.AccountsFixtures
+  use AniminaWeb.AdminCase
 
   describe "Analytics Funnels page" do
-    setup do
-      admin = admin_fixture()
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "requires admin access", %{conn: conn} do
-      user = user_fixture()
-      conn = log_in_user(conn, user)
-
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/analytics/funnels")
+      assert_requires_admin(conn, ~p"/admin/analytics/funnels")
     end
 
     test "renders funnel for admin", %{conn: conn, admin: admin} do

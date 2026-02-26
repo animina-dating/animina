@@ -1475,499 +1475,138 @@ defmodule Animina.TraitsTest do
     end
   end
 
-  describe "alcohol frequency (single-select sensitive)" do
-    setup do
-      {:ok, category} =
-        Traits.create_category(%{
-          name: "Alcohol #{System.unique_integer([:positive])}",
-          selection_mode: "single",
-          sensitive: true,
-          position: System.unique_integer([:positive])
-        })
-
-      flags =
-        for {name, emoji, pos} <- [
-              {"None at All", "🚫", 1},
-              {"Rarely", "🥂", 2},
-              {"Sometimes", "🍷", 3},
-              {"Often", "🍻", 4}
-            ] do
-          {:ok, flag} =
-            Traits.create_flag(%{
-              name: name,
-              emoji: emoji,
-              category_id: category.id,
-              position: pos
-            })
-
-          flag
-        end
-
-      %{category: category, flags: flags}
-    end
-
-    test "user can select one alcohol frequency as white flag", %{
-      category: _category,
-      flags: [_none, rarely, _sometimes, _often]
-    } do
-      user = user_fixture()
-
-      assert {:ok, uf} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: rarely.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 1
-               })
-
-      assert uf.flag_id == rarely.id
-      assert uf.color == "white"
-    end
-
-    test "single-select prevents two white flags in alcohol category", %{
-      category: _category,
-      flags: [_none, rarely, sometimes, _often]
-    } do
-      user = user_fixture()
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user.id,
-          flag_id: rarely.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      assert {:error, changeset} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: sometimes.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 2
-               })
-
-      assert %{flag_id: ["single-select category allows only one flag per color"]} =
-               errors_on(changeset)
-    end
-
-    test "alcohol flags visible only after opt-in", %{category: category} do
-      user = user_fixture()
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      refute category.id in visible_ids
-
-      Traits.opt_into_category(user, category)
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      assert category.id in visible_ids
-    end
-
-    test "alcohol overlap requires mutual opt-in", %{
-      category: category,
-      flags: [_none, rarely, _sometimes, _often]
-    } do
-      user_a = user_fixture()
-      user_b = user_fixture()
-
-      Traits.opt_into_category(user_a, category)
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_a.id,
-          flag_id: rarely.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_b.id,
-          flag_id: rarely.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      # Without mutual opt-in, no overlap
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert overlap.white_white == []
-
-      # With mutual opt-in, overlap found
-      Traits.opt_into_category(user_b, category)
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert length(overlap.white_white) == 1
-    end
-  end
-
-  describe "smoking frequency (single-select sensitive)" do
-    setup do
-      {:ok, category} =
-        Traits.create_category(%{
-          name: "Smoking #{System.unique_integer([:positive])}",
-          selection_mode: "single",
-          sensitive: true,
-          position: System.unique_integer([:positive])
-        })
-
-      flags =
-        for {name, emoji, pos} <- [
-              {"None at All", "🚫", 1},
-              {"Rarely", "🚬", 2},
-              {"Sometimes", "🚬", 3},
-              {"Often", "🚬", 4}
-            ] do
-          {:ok, flag} =
-            Traits.create_flag(%{
-              name: name,
-              emoji: emoji,
-              category_id: category.id,
-              position: pos
-            })
-
-          flag
-        end
-
-      %{category: category, flags: flags}
-    end
-
-    test "user can select one smoking frequency as white flag", %{
-      flags: [_none, rarely, _sometimes, _often]
-    } do
-      user = user_fixture()
-
-      assert {:ok, uf} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: rarely.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 1
-               })
-
-      assert uf.flag_id == rarely.id
-    end
-
-    test "single-select prevents two white flags in smoking category", %{
-      flags: [_none, rarely, sometimes, _often]
-    } do
-      user = user_fixture()
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user.id,
-          flag_id: rarely.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      assert {:error, changeset} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: sometimes.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 2
-               })
-
-      assert %{flag_id: ["single-select category allows only one flag per color"]} =
-               errors_on(changeset)
-    end
-
-    test "smoking flags visible only after opt-in", %{category: category} do
-      user = user_fixture()
-
-      visible = Traits.list_visible_categories(user)
-      refute category.id in Enum.map(visible, & &1.id)
-
-      Traits.opt_into_category(user, category)
-
-      visible = Traits.list_visible_categories(user)
-      assert category.id in Enum.map(visible, & &1.id)
-    end
-  end
-
-  describe "seeded category: Relationship Status" do
-    test "category uses single_white selection mode" do
-      categories = Traits.list_categories()
-
-      category =
-        Enum.find(categories, fn c -> c.name == "Relationship Status" end)
-
-      assert category != nil
-      assert category.selection_mode == "single_white"
-    end
-  end
-
-  describe "seeded category: What I'm Looking For" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category =
-        Enum.find(categories, fn c -> c.name == "What I'm Looking For" end)
-
-      assert category != nil
-      assert category.selection_mode == "multi"
-      assert category.sensitive == false
-      assert category.position == 2
-    end
-
-    test "category has all 8 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "What I'm Looking For" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 8
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "Long-term Relationship" in flag_names
-      assert "Marriage" in flag_names
-      assert "Something Casual" in flag_names
-      assert "Friendship" in flag_names
-      assert "Don't Know Yet" in flag_names
-      assert "Dates" in flag_names
-      assert "Shared Activities" in flag_names
-      assert "Open Relationship" in flag_names
-    end
-  end
-
-  describe "seeded category: Political Parties" do
-    test "category exists with correct name" do
-      categories = Traits.list_categories()
-
-      category =
-        Enum.find(categories, fn c -> c.name == "Political Parties" end)
-
-      assert category != nil
-      assert category.selection_mode == "multi"
-      assert category.sensitive == true
-    end
-
-    test "category has all 7 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Political Parties" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 7
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "CDU" in flag_names
-      assert "SPD" in flag_names
-      assert "Die Grünen" in flag_names
-      assert "FDP" in flag_names
-      assert "AfD" in flag_names
-      assert "The Left" in flag_names
-      assert "CSU" in flag_names
-    end
-  end
-
-  describe "seeded category: Sexual Preferences" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category =
-        Enum.find(categories, fn c -> c.name == "Sexual Preferences" end)
-
-      assert category != nil
-      assert category.selection_mode == "multi"
-      assert category.sensitive == true
-    end
-
-    test "category has all 14 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Preferences" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 14
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "Vanilla" in flag_names
-      assert "Dominant" in flag_names
-      assert "Submissive" in flag_names
-      assert "Switch" in flag_names
-      assert "Bondage" in flag_names
-      assert "S&M" in flag_names
-      assert "Role Play" in flag_names
-      assert "Tantra" in flag_names
-      assert "Fetish" in flag_names
-      assert "Exhibitionism" in flag_names
-      assert "Voyeurism" in flag_names
-      assert "Group Play" in flag_names
-      assert "Toys" in flag_names
-      assert "Swinging" in flag_names
-    end
-
-    test "category requires opt-in for visibility" do
-      user = user_fixture()
-
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Preferences" end)
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      refute category.id in visible_ids
-
-      Traits.opt_into_category(user, category)
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      assert category.id in visible_ids
-    end
-
-    test "sensitive flags excluded from matching without mutual opt-in" do
-      user_a = user_fixture()
-      user_b = user_fixture()
-
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Preferences" end)
-      flags = Traits.list_top_level_flags_by_category(category)
-      flag = hd(flags)
-
-      # Only user_a opts in
-      Traits.opt_into_category(user_a, category)
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_a.id,
-          flag_id: flag.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_b.id,
-          flag_id: flag.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert overlap.white_white == []
-
-      # With mutual opt-in, overlap found
-      Traits.opt_into_category(user_b, category)
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert length(overlap.white_white) == 1
-    end
-  end
-
-  describe "seeded category: Sexual Practices" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category =
-        Enum.find(categories, fn c -> c.name == "Sexual Practices" end)
-
-      assert category != nil
-      assert category.selection_mode == "multi"
-      assert category.sensitive == true
-    end
-
-    test "category has all 20 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Practices" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 20
-
-      flag_names = Enum.map(flags, & &1.name)
-
-      # Giving/Receiving practices (flat)
-      assert "Oral Sex: Giving" in flag_names
-      assert "Oral Sex: Receiving" in flag_names
-      assert "Anal Sex: Giving" in flag_names
-      assert "Anal Sex: Receiving" in flag_names
-      assert "Fingering: Giving" in flag_names
-      assert "Fingering: Receiving" in flag_names
-      assert "Massage: Giving" in flag_names
-      assert "Massage: Receiving" in flag_names
-
-      # Other practices (flat)
-      assert "Vaginal Sex" in flag_names
-      assert "Kissing" in flag_names
-      assert "Dirty Talk" in flag_names
-      assert "Sexting" in flag_names
-      assert "Phone Sex" in flag_names
-
-      # Positions (flat)
-      assert "Missionary" in flag_names
-      assert "Doggy Style" in flag_names
-      assert "Cowgirl" in flag_names
-      assert "Spooning" in flag_names
-      assert "69" in flag_names
-      assert "Standing" in flag_names
-      assert "Against the Wall" in flag_names
-    end
-
-    test "category requires opt-in for visibility" do
-      user = user_fixture()
-
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Practices" end)
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      refute category.id in visible_ids
-
-      Traits.opt_into_category(user, category)
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      assert category.id in visible_ids
-    end
-
-    test "sensitive flags excluded from matching without mutual opt-in" do
-      user_a = user_fixture()
-      user_b = user_fixture()
-
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Sexual Practices" end)
-      flags = Traits.list_top_level_flags_by_category(category)
-
-      # Use a flat flag (no children) to get a clean single-flag overlap
-      flag = Enum.find(flags, fn f -> f.name == "Kissing" end)
-
-      # Only user_a opts in
-      Traits.opt_into_category(user_a, category)
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_a.id,
-          flag_id: flag.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user_b.id,
-          flag_id: flag.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert overlap.white_white == []
-
-      # With mutual opt-in, overlap found
-      Traits.opt_into_category(user_b, category)
-      overlap = Traits.compute_flag_overlap(user_a, user_b)
-      assert length(overlap.white_white) == 1
+  # Parameterized tests for substance frequency categories (single-select sensitive)
+  for {substance, emojis} <- [
+        {"Alcohol", [{"🚫", "🥂", "🍷", "🍻"}]},
+        {"Smoking", [{"🚫", "🚬", "🚬", "🚬"}]},
+        {"Marijuana", [{"🚫", "🌿", "🌿", "🌿"}]}
+      ] do
+    {e_none, e_rarely, e_sometimes, e_often} = hd(emojis)
+
+    describe "#{substance} frequency (single-select sensitive)" do
+      setup do
+        {:ok, category} =
+          Traits.create_category(%{
+            name: "#{unquote(substance)} #{System.unique_integer([:positive])}",
+            selection_mode: "single",
+            sensitive: true,
+            position: System.unique_integer([:positive])
+          })
+
+        flags =
+          for {name, emoji, pos} <- [
+                {"None at All", unquote(e_none), 1},
+                {"Rarely", unquote(e_rarely), 2},
+                {"Sometimes", unquote(e_sometimes), 3},
+                {"Often", unquote(e_often), 4}
+              ] do
+            {:ok, flag} =
+              Traits.create_flag(%{
+                name: name,
+                emoji: emoji,
+                category_id: category.id,
+                position: pos
+              })
+
+            flag
+          end
+
+        %{category: category, flags: flags}
+      end
+
+      test "user can select one frequency as white flag", %{
+        flags: [_none, rarely, _sometimes, _often]
+      } do
+        user = user_fixture()
+
+        assert {:ok, uf} =
+                 Traits.add_user_flag(%{
+                   user_id: user.id,
+                   flag_id: rarely.id,
+                   color: "white",
+                   intensity: "hard",
+                   position: 1
+                 })
+
+        assert uf.flag_id == rarely.id
+        assert uf.color == "white"
+      end
+
+      test "single-select prevents two white flags", %{
+        flags: [_none, rarely, sometimes, _often]
+      } do
+        user = user_fixture()
+
+        {:ok, _} =
+          Traits.add_user_flag(%{
+            user_id: user.id,
+            flag_id: rarely.id,
+            color: "white",
+            intensity: "hard",
+            position: 1
+          })
+
+        assert {:error, changeset} =
+                 Traits.add_user_flag(%{
+                   user_id: user.id,
+                   flag_id: sometimes.id,
+                   color: "white",
+                   intensity: "hard",
+                   position: 2
+                 })
+
+        assert %{flag_id: ["single-select category allows only one flag per color"]} =
+                 errors_on(changeset)
+      end
+
+      test "flags visible only after opt-in", %{category: category} do
+        user = user_fixture()
+
+        visible = Traits.list_visible_categories(user)
+        refute category.id in Enum.map(visible, & &1.id)
+
+        Traits.opt_into_category(user, category)
+
+        visible = Traits.list_visible_categories(user)
+        assert category.id in Enum.map(visible, & &1.id)
+      end
+
+      test "overlap requires mutual opt-in", %{
+        category: category,
+        flags: [_none, rarely, _sometimes, _often]
+      } do
+        user_a = user_fixture()
+        user_b = user_fixture()
+
+        Traits.opt_into_category(user_a, category)
+
+        {:ok, _} =
+          Traits.add_user_flag(%{
+            user_id: user_a.id,
+            flag_id: rarely.id,
+            color: "white",
+            intensity: "hard",
+            position: 1
+          })
+
+        {:ok, _} =
+          Traits.add_user_flag(%{
+            user_id: user_b.id,
+            flag_id: rarely.id,
+            color: "white",
+            intensity: "hard",
+            position: 1
+          })
+
+        # Without mutual opt-in, no overlap
+        overlap = Traits.compute_flag_overlap(user_a, user_b)
+        assert overlap.white_white == []
+
+        # With mutual opt-in, overlap found
+        Traits.opt_into_category(user_b, category)
+        overlap = Traits.compute_flag_overlap(user_a, user_b)
+        assert length(overlap.white_white) == 1
+      end
     end
   end
 
@@ -2564,139 +2203,6 @@ defmodule Animina.TraitsTest do
     end
   end
 
-  describe "seeded category: Languages" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category = Enum.find(categories, fn c -> c.name == "Languages" end)
-
-      assert category != nil
-      assert category.selection_mode == "multi"
-      assert category.sensitive == false
-      assert category.core == true
-    end
-
-    test "category has all 9 language flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Languages" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 9
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "Deutsch" in flag_names
-      assert "English" in flag_names
-      assert "Türkçe" in flag_names
-      assert "Русский" in flag_names
-      assert "العربية" in flag_names
-      assert "Polski" in flag_names
-      assert "Français" in flag_names
-      assert "Español" in flag_names
-      assert "Українська" in flag_names
-    end
-
-    test "flags have correct emoji" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Languages" end)
-      flags = Traits.list_top_level_flags_by_category(category)
-
-      deutsch = Enum.find(flags, fn f -> f.name == "Deutsch" end)
-      assert deutsch.emoji == "🇩🇪"
-
-      english = Enum.find(flags, fn f -> f.name == "English" end)
-      assert english.emoji == "🇬🇧"
-    end
-  end
-
-  describe "marijuana frequency (single-select sensitive)" do
-    setup do
-      {:ok, category} =
-        Traits.create_category(%{
-          name: "Marijuana #{System.unique_integer([:positive])}",
-          selection_mode: "single",
-          sensitive: true,
-          position: System.unique_integer([:positive])
-        })
-
-      flags =
-        for {name, emoji, pos} <- [
-              {"None at All", "🚫", 1},
-              {"Rarely", "🌿", 2},
-              {"Sometimes", "🌿", 3},
-              {"Often", "🌿", 4}
-            ] do
-          {:ok, flag} =
-            Traits.create_flag(%{
-              name: name,
-              emoji: emoji,
-              category_id: category.id,
-              position: pos
-            })
-
-          flag
-        end
-
-      %{category: category, flags: flags}
-    end
-
-    test "user can select one marijuana frequency as white flag", %{
-      flags: [_none, _rarely, sometimes, _often]
-    } do
-      user = user_fixture()
-
-      assert {:ok, uf} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: sometimes.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 1
-               })
-
-      assert uf.flag_id == sometimes.id
-    end
-
-    test "single-select prevents two white flags in marijuana category", %{
-      flags: [none, _rarely, sometimes, _often]
-    } do
-      user = user_fixture()
-
-      {:ok, _} =
-        Traits.add_user_flag(%{
-          user_id: user.id,
-          flag_id: none.id,
-          color: "white",
-          intensity: "hard",
-          position: 1
-        })
-
-      assert {:error, changeset} =
-               Traits.add_user_flag(%{
-                 user_id: user.id,
-                 flag_id: sometimes.id,
-                 color: "white",
-                 intensity: "hard",
-                 position: 2
-               })
-
-      assert %{flag_id: ["single-select category allows only one flag per color"]} =
-               errors_on(changeset)
-    end
-
-    test "marijuana flags visible only after opt-in", %{category: category} do
-      user = user_fixture()
-
-      visible = Traits.list_visible_categories(user)
-      refute category.id in Enum.map(visible, & &1.id)
-
-      Traits.opt_into_category(user, category)
-
-      visible = Traits.list_visible_categories(user)
-      assert category.id in Enum.map(visible, & &1.id)
-    end
-  end
-
   describe "white flag category publish settings" do
     test "toggle_white_flag_category_publish/2 creates publish record when not published" do
       user = user_fixture()
@@ -2934,75 +2440,6 @@ defmodule Animina.TraitsTest do
     end
   end
 
-  describe "seeded category: Body Type" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
-
-      assert category != nil
-      assert category.selection_mode == "single"
-      assert category.core == true
-      assert category.sensitive == false
-      assert category.position == 7
-    end
-
-    test "category has all 5 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 5
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "Slim" in flag_names
-      assert "Average" in flag_names
-      assert "Athletic" in flag_names
-      assert "Curvy" in flag_names
-      assert "Plus-Size" in flag_names
-    end
-
-    test "flags have correct emojis and positions" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
-      flags = Traits.list_top_level_flags_by_category(category)
-
-      slim = Enum.find(flags, fn f -> f.name == "Slim" end)
-      assert slim.emoji == "🦊"
-      assert slim.position == 1
-
-      average = Enum.find(flags, fn f -> f.name == "Average" end)
-      assert average.emoji == "📏"
-      assert average.position == 2
-
-      athletic = Enum.find(flags, fn f -> f.name == "Athletic" end)
-      assert athletic.emoji == "🏋️"
-      assert athletic.position == 3
-
-      curvy = Enum.find(flags, fn f -> f.name == "Curvy" end)
-      assert curvy.emoji == "🧸"
-      assert curvy.position == 4
-
-      plus_size = Enum.find(flags, fn f -> f.name == "Plus-Size" end)
-      assert plus_size.emoji == "🐻"
-      assert plus_size.position == 5
-    end
-
-    test "category is visible by default as a core category" do
-      user = user_fixture()
-
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Body Type" end)
-
-      assert category.core == true
-
-      visible = Traits.list_visible_categories(user)
-      visible_ids = Enum.map(visible, & &1.id)
-      assert category.id in visible_ids
-    end
-  end
-
   describe "PaperTrail audit trail" do
     test "adding a user flag creates a version; inherited flags do not" do
       user = user_fixture()
@@ -3137,94 +2574,6 @@ defmodule Animina.TraitsTest do
 
       # Should have at least 2 deletions: the user flag + the opt-in record
       assert length(delete_versions) >= 2
-    end
-  end
-
-  describe "seeded category: Travels" do
-    test "category has all 14 flags including travel style flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Travels" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 14
-
-      flag_names = Enum.map(flags, & &1.name)
-
-      # Original 10 travel type flags
-      assert "Beach" in flag_names
-      assert "City Trips" in flag_names
-      assert "Hiking Vacation" in flag_names
-      assert "Cruises" in flag_names
-      assert "Bike Tours" in flag_names
-      assert "Wellness" in flag_names
-      assert "Active and Sports Vacation" in flag_names
-      assert "Camping" in flag_names
-      assert "Cultural Trips" in flag_names
-      assert "Winter Sports" in flag_names
-
-      # 4 new travel style flags
-      assert "Luxury" in flag_names
-      assert "Backpacking" in flag_names
-      assert "Low-Budget" in flag_names
-      assert "Adventure Travel" in flag_names
-    end
-  end
-
-  describe "seeded category: Love Languages" do
-    test "category exists with correct attributes" do
-      categories = Traits.list_categories()
-
-      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
-
-      assert category != nil
-      assert category.selection_mode == "single_white"
-      assert category.core == false
-      assert category.sensitive == false
-      assert category.picker_group == "lifestyle"
-      assert category.position == 30
-    end
-
-    test "category has all 5 flags" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
-      assert category != nil
-
-      flags = Traits.list_top_level_flags_by_category(category)
-      assert length(flags) == 5
-
-      flag_names = Enum.map(flags, & &1.name)
-      assert "Words of Affirmation" in flag_names
-      assert "Quality Time" in flag_names
-      assert "Acts of Service" in flag_names
-      assert "Receiving Gifts" in flag_names
-      assert "Physical Touch" in flag_names
-    end
-
-    test "flags have correct emojis and positions" do
-      categories = Traits.list_categories()
-      category = Enum.find(categories, fn c -> c.name == "Love Languages" end)
-      flags = Traits.list_top_level_flags_by_category(category)
-
-      words = Enum.find(flags, fn f -> f.name == "Words of Affirmation" end)
-      assert words.emoji == "💬"
-      assert words.position == 1
-
-      quality = Enum.find(flags, fn f -> f.name == "Quality Time" end)
-      assert quality.emoji == "⏰"
-      assert quality.position == 2
-
-      acts = Enum.find(flags, fn f -> f.name == "Acts of Service" end)
-      assert acts.emoji == "🤝"
-      assert acts.position == 3
-
-      gifts = Enum.find(flags, fn f -> f.name == "Receiving Gifts" end)
-      assert gifts.emoji == "🎁"
-      assert gifts.position == 4
-
-      touch = Enum.find(flags, fn f -> f.name == "Physical Touch" end)
-      assert touch.emoji == "🫂"
-      assert touch.position == 5
     end
   end
 

@@ -1,5 +1,5 @@
 defmodule Animina.GeoDataTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.GeoData
   alias Animina.GeoData.{City, Country}

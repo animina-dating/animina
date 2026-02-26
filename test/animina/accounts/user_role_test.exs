@@ -1,5 +1,5 @@
 defmodule Animina.Accounts.UserRoleTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   alias Animina.Accounts.UserRole
 

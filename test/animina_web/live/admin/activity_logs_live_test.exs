@@ -1,22 +1,13 @@
 defmodule AniminaWeb.Admin.ActivityLogsLiveTest do
-  use AniminaWeb.ConnCase, async: true
-
-  import Phoenix.LiveViewTest
-  import Animina.AccountsFixtures
+  use AniminaWeb.AdminCase
 
   alias Animina.ActivityLog
 
   describe "ActivityLogsLive" do
-    setup do
-      admin = admin_fixture()
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "requires admin access", %{conn: conn} do
-      user = user_fixture()
-      conn = log_in_user(conn, user)
-
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/logs/activity")
+      assert_requires_admin(conn, ~p"/admin/logs/activity")
     end
 
     test "renders empty state", %{conn: conn, admin: admin} do
@@ -116,10 +107,7 @@ defmodule AniminaWeb.Admin.ActivityLogsLiveTest do
   end
 
   describe "LogsIndexLive activity card" do
-    setup do
-      admin = admin_fixture()
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "shows Activity Logs card", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")

@@ -1,26 +1,11 @@
 defmodule Animina.Moodboard.MoodboardRatingTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
-  alias Animina.Accounts.User
   alias Animina.Moodboard
   alias Animina.Moodboard.MoodboardRating
   alias Animina.Repo
 
-  import Animina.AccountsFixtures
   import Animina.MoodboardFixtures
-
-  # Creates a user without going through registration (bypasses pinned item creation)
-  defp bare_user_fixture(attrs \\ %{}) do
-    attrs = valid_user_attributes(attrs)
-
-    {:ok, user} =
-      %User{}
-      |> User.registration_changeset(attrs)
-      |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
-      |> Repo.insert()
-
-    user
-  end
 
   describe "toggle_rating/3" do
     test "creates a new rating" do

@@ -1,8 +1,6 @@
 defmodule AniminaWeb.Admin.PhotoExplorerLiveTest do
-  use AniminaWeb.ConnCase, async: true
+  use AniminaWeb.AdminCase
 
-  import Phoenix.LiveViewTest
-  import Animina.AccountsFixtures
   import Animina.PhotosFixtures
 
   describe "Photo Explorer page" do

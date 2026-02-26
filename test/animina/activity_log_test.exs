@@ -1,6 +1,8 @@
 defmodule Animina.ActivityLogTest do
   use Animina.DataCase, async: true
 
+  import Ecto.Query
+
   alias Animina.ActivityLog
   alias Animina.ActivityLog.ActivityLogEntry
   alias Animina.Moodboard.Items
@@ -207,8 +209,13 @@ defmodule Animina.ActivityLogTest do
     end
 
     test "sorts descending by default" do
-      {:ok, _} = ActivityLog.log("auth", "login_email", "First")
-      Process.sleep(1100)
+      {:ok, first} = ActivityLog.log("auth", "login_email", "First")
+
+      Animina.Repo.update_all(
+        from(a in ActivityLogEntry, where: a.id == ^first.id),
+        set: [inserted_at: ~U[2024-01-01 00:00:00Z]]
+      )
+
       {:ok, _} = ActivityLog.log("auth", "login_email", "Second")
 
       result = ActivityLog.list_activity_logs()
@@ -217,8 +224,13 @@ defmodule Animina.ActivityLogTest do
     end
 
     test "sorts ascending when requested" do
-      {:ok, _} = ActivityLog.log("auth", "login_email", "First")
-      Process.sleep(1100)
+      {:ok, first} = ActivityLog.log("auth", "login_email", "First")
+
+      Animina.Repo.update_all(
+        from(a in ActivityLogEntry, where: a.id == ^first.id),
+        set: [inserted_at: ~U[2024-01-01 00:00:00Z]]
+      )
+
       {:ok, _} = ActivityLog.log("auth", "login_email", "Second")
 
       result = ActivityLog.list_activity_logs(sort_dir: :asc)

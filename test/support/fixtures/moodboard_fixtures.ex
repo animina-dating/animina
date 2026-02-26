@@ -3,13 +3,30 @@ defmodule Animina.MoodboardFixtures do
   Test helpers for creating moodboard entities.
   """
 
+  alias Animina.Accounts.User
   alias Animina.Moodboard
   alias Animina.Moodboard.MoodboardItem
   alias Animina.Moodboard.MoodboardPhoto
   alias Animina.Moodboard.MoodboardStory
   alias Animina.Repo
 
+  import Animina.AccountsFixtures, only: [valid_user_attributes: 1]
   import Animina.PhotosFixtures, only: [approved_photo_fixture: 1]
+
+  @doc """
+  Creates a user without going through registration (bypasses pinned item creation).
+  """
+  def bare_user_fixture(attrs \\ %{}) do
+    attrs = valid_user_attributes(attrs)
+
+    {:ok, user} =
+      %User{}
+      |> User.registration_changeset(attrs)
+      |> Ecto.Changeset.put_change(:confirmed_at, DateTime.utc_now(:second))
+      |> Repo.insert()
+
+    user
+  end
 
   @doc """
   Creates a moodboard item directly in the database.

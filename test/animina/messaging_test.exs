@@ -260,10 +260,13 @@ defmodule Animina.MessagingTest do
       user3 = AccountsFixtures.user_fixture()
 
       {:ok, conv1} = Messaging.get_or_create_conversation(user1.id, user2.id)
-      {:ok, _msg1} = Messaging.send_message(conv1.id, user1.id, "Old message")
+      {:ok, msg1} = Messaging.send_message(conv1.id, user1.id, "Old message")
 
-      # Ensure different timestamps by waiting over a second
-      Process.sleep(1100)
+      # Backdate the first message so the second one is newer
+      Animina.Repo.update_all(
+        from(m in Message, where: m.id == ^msg1.id),
+        set: [inserted_at: ~U[2024-01-01 00:00:00Z]]
+      )
 
       {:ok, conv2} = Messaging.get_or_create_conversation(user1.id, user3.id)
       {:ok, _msg2} = Messaging.send_message(conv2.id, user3.id, "New message")

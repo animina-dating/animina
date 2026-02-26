@@ -1,22 +1,13 @@
 defmodule AniminaWeb.Admin.EmailLogsLiveTest do
-  use AniminaWeb.ConnCase, async: true
-
-  import Phoenix.LiveViewTest
-  import Animina.AccountsFixtures
+  use AniminaWeb.AdminCase
 
   alias Animina.Emails
 
   describe "EmailLogsLive" do
-    setup do
-      admin = admin_fixture()
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "requires admin access", %{conn: conn} do
-      user = user_fixture()
-      conn = log_in_user(conn, user)
-
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/logs/emails")
+      assert_requires_admin(conn, ~p"/admin/logs/emails")
     end
 
     test "renders empty state", %{conn: conn, admin: admin} do
@@ -135,16 +126,10 @@ defmodule AniminaWeb.Admin.EmailLogsLiveTest do
   end
 
   describe "LogsIndexLive" do
-    setup do
-      admin = admin_fixture()
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "requires admin access", %{conn: conn} do
-      user = user_fixture()
-      conn = log_in_user(conn, user)
-
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/logs")
+      assert_requires_admin(conn, ~p"/admin/logs")
     end
 
     test "renders log index with cards", %{conn: conn, admin: admin} do

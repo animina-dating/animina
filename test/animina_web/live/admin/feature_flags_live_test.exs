@@ -1,23 +1,13 @@
 defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
-  use AniminaWeb.ConnCase, async: true
-
-  import Phoenix.LiveViewTest
-  import Animina.AccountsFixtures
+  use AniminaWeb.AdminCase
 
   alias Animina.FeatureFlags
 
   describe "Feature Flags hub page" do
-    setup do
-      admin = admin_fixture()
-
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "requires admin access", %{conn: conn} do
-      user = user_fixture()
-      conn = log_in_user(conn, user)
-
-      assert {:error, {:redirect, %{to: "/"}}} = live(conn, ~p"/admin/flags")
+      assert_requires_admin(conn, ~p"/admin/flags")
     end
 
     test "renders hub with 2 cards", %{conn: conn, admin: admin} do
@@ -39,11 +29,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
   end
 
   describe "AI/Ollama subpage" do
-    setup do
-      admin = admin_fixture()
-
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "renders AI settings page with breadcrumbs", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")
@@ -109,11 +95,7 @@ defmodule AniminaWeb.Admin.FeatureFlagsLiveTest do
   end
 
   describe "System subpage" do
-    setup do
-      admin = admin_fixture()
-
-      %{admin: admin}
-    end
+    setup :setup_admin
 
     test "renders system settings with breadcrumbs", %{conn: conn, admin: admin} do
       conn = log_in_user(conn, admin, current_role: "admin")

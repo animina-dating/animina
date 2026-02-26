@@ -1,5 +1,5 @@
 defmodule Animina.Accounts.DailyNewUsersReportTest do
-  use Animina.DataCase
+  use Animina.DataCase, async: true
 
   import Animina.AccountsFixtures
   import Swoosh.TestAssertions
