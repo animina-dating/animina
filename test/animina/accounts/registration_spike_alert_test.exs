@@ -1,10 +1,20 @@
 defmodule Animina.Accounts.RegistrationSpikeAlertTest do
-  use Animina.DataCase, async: true
+  use Animina.DataCase, async: false
 
   import Animina.AccountsFixtures
 
   alias Animina.Accounts
   alias Animina.Accounts.RegistrationSpikeAlert
+
+  setup do
+    try do
+      :persistent_term.erase(:registration_spike_last_alert)
+    rescue
+      ArgumentError -> :ok
+    end
+
+    :ok
+  end
 
   describe "count_confirmed_users_today_berlin/0" do
     test "returns 0 when no users exist" do
@@ -134,6 +144,67 @@ defmodule Animina.Accounts.RegistrationSpikeAlertTest do
 
       # Average is 30.0, threshold is 45.0
       # 1 user today is well below threshold
+      user_fixture()
+
+      assert RegistrationSpikeAlert.run() == :ok
+    end
+
+    test "suppresses repeat alert at same spike level" do
+      # With no history, avg is 0.0 — any registration triggers
+      user_fixture()
+
+      # First call should send
+      assert {:ok, _email} = RegistrationSpikeAlert.run()
+
+      # Second call at same level should be suppressed
+      assert RegistrationSpikeAlert.run() == :ok
+    end
+
+    test "re-alerts when spike factor doubles" do
+      # Create a baseline: 30 users across 30 days (1/day avg)
+      for day <- 1..30 do
+        user = user_fixture()
+        backdate_user(user, days_ago: day)
+      end
+
+      # 2 users today → factor 2.0x (above 1.5x threshold)
+      user_fixture()
+      user_fixture()
+
+      assert {:ok, _email} = RegistrationSpikeAlert.run()
+
+      # Add more users to double the factor: need factor >= 4.0x → 4 users today
+      user_fixture()
+      user_fixture()
+
+      assert {:ok, _email} = RegistrationSpikeAlert.run()
+    end
+
+    test "resets on new day" do
+      # Manually set persistent_term with yesterday's date
+      yesterday = Date.utc_today() |> Date.add(-1)
+      :persistent_term.put(:registration_spike_last_alert, {yesterday, 5.0})
+
+      # Any spike should send a fresh alert since it's a new day
+      user_fixture()
+
+      assert {:ok, _email} = RegistrationSpikeAlert.run()
+    end
+
+    test "suppresses just below escalation threshold" do
+      # Create a baseline: 30 users across 30 days (1/day avg)
+      for day <- 1..30 do
+        user = user_fixture()
+        backdate_user(user, days_ago: day)
+      end
+
+      # 2 users today → factor 2.0x
+      user_fixture()
+      user_fixture()
+
+      assert {:ok, _email} = RegistrationSpikeAlert.run()
+
+      # Add 1 more user → factor 3.0x, but need 4.0x to re-alert (2.0 * 2.0)
       user_fixture()
 
       assert RegistrationSpikeAlert.run() == :ok
