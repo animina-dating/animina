@@ -190,6 +190,7 @@ defmodule AniminaWeb.Router do
     # Ad QR code serving (admin-only)
     get "/admin/ads/:id/qr-code", AdQrController, :download
     get "/admin/ads/:id/qr-code/show", AdQrController, :show
+    get "/admin/ads/:id/qr-code/sized", AdQrController, :download_sized
 
     post "/role/switch", RoleController, :switch
     post "/my/settings/update-password", UserSessionController, :update_password

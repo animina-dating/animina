@@ -285,7 +285,7 @@ msgstr "Bağımlılık yerine keyif"
 
 #: lib/animina_web/components/layouts.ex:132
 #: lib/animina_web/components/layouts.ex:421
-#: lib/animina_web/live/admin/ad_detail_live.ex:235
+#: lib/animina_web/live/admin/ad_detail_live.ex:304
 #: lib/animina_web/live/user_live/language_settings.ex:14
 #: lib/animina_web/live/user_live/registration.ex:300
 #: lib/animina_web/live/user_live/settings_hub.ex:133
@@ -1017,7 +1017,7 @@ msgstr "Rol Ekle"
 
 #: lib/animina_web/components/layouts.ex:215
 #: lib/animina_web/live/admin/activity_logs_live.ex:246
-#: lib/animina_web/live/admin/ad_detail_live.ex:105
+#: lib/animina_web/live/admin/ad_detail_live.ex:151
 #: lib/animina_web/live/admin/admin_hub.ex:28
 #: lib/animina_web/live/admin/ads_live.ex:166
 #: lib/animina_web/live/admin/ai_jobs_live.ex:337
@@ -4133,7 +4133,7 @@ msgid "Status"
 msgstr "Durum"
 
 #: lib/animina_web/live/admin/activity_logs_live.ex:395
-#: lib/animina_web/live/admin/ad_detail_live.ex:230
+#: lib/animina_web/live/admin/ad_detail_live.ex:299
 #: lib/animina_web/live/admin/ai_jobs_live.ex:633
 #: lib/animina_web/live/admin/email_logs_live.ex:228
 #, elixir-autogen, elixir-format
@@ -5111,7 +5111,7 @@ msgid_plural "%{count} emails"
 msgstr[0] "%{count} kayıt"
 msgstr[1] "%{count} kayıt"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:200
+#: lib/animina_web/live/admin/ad_detail_live.ex:269
 #: lib/animina_web/live/admin/analytics_engagement_live.ex:96
 #: lib/animina_web/live/admin/analytics_funnels_live.ex:103
 #: lib/animina_web/live/admin/analytics_overview_live.ex:128
@@ -5725,7 +5725,7 @@ msgstr ""
 msgid "Dec"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:234
+#: lib/animina_web/live/admin/ad_detail_live.ex:303
 #: lib/animina_web/live/user_live/login_history.ex:177
 #, elixir-autogen, elixir-format
 msgid "Device"
@@ -6144,7 +6144,7 @@ msgstr "İtiraz gönderilemedi. Lütfen tekrar deneyin."
 msgid "Deleted user"
 msgstr "Sil"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:130
+#: lib/animina_web/live/admin/ad_detail_live.ex:176
 #: lib/animina_web/live/admin/ads_live.ex:185
 #: lib/animina_web/live/admin/ads_live.ex:217
 #: lib/animina_web/live/admin/ai_jobs_live.ex:724
@@ -6822,7 +6822,7 @@ msgstr ""
 msgid "Content Type"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:138
+#: lib/animina_web/live/admin/ad_detail_live.ex:184
 #: lib/animina_web/live/admin/photo_detail_live.ex:103
 #: lib/animina_web/live/admin/photo_explorer_live.ex:137
 #, elixir-autogen, elixir-format, fuzzy
@@ -7485,14 +7485,14 @@ msgstr ""
 msgid "Dislike"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:177
+#: lib/animina_web/live/admin/ad_detail_live.ex:246
 #, elixir-autogen, elixir-format, fuzzy
 msgid "%{count} incl. bots"
 msgstr "%{count} çalıştırma"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:28
-#: lib/animina_web/live/admin/ad_detail_live.ex:107
-#: lib/animina_web/live/admin/ad_detail_live.ex:115
+#: lib/animina_web/live/admin/ad_detail_live.ex:35
+#: lib/animina_web/live/admin/ad_detail_live.ex:153
+#: lib/animina_web/live/admin/ad_detail_live.ex:161
 #, elixir-autogen, elixir-format
 msgid "Ad #%{number}"
 msgstr ""
@@ -7507,7 +7507,7 @@ msgstr ""
 msgid "Ad #%{number} created, but QR generation failed: %{reason}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:106
+#: lib/animina_web/live/admin/ad_detail_live.ex:152
 #: lib/animina_web/live/admin/admin_hub.ex:120
 #: lib/animina_web/live/admin/ads_live.ex:21
 #: lib/animina_web/live/admin/ads_live.ex:167
@@ -7516,52 +7516,52 @@ msgstr ""
 msgid "Ad Campaigns"
 msgstr "Kamp"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:21
+#: lib/animina_web/live/admin/ad_detail_live.ex:23
 #, elixir-autogen, elixir-format
 msgid "Ad not found"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:284
+#: lib/animina_web/live/admin/ad_detail_live.ex:353
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Always active"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:189
+#: lib/animina_web/live/admin/ad_detail_live.ex:258
 #, elixir-autogen, elixir-format
 msgid "Bot visits"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:236
+#: lib/animina_web/live/admin/ad_detail_live.ex:305
 #, elixir-autogen, elixir-format
 msgid "Bot?"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:233
+#: lib/animina_web/live/admin/ad_detail_live.ex:302
 #, elixir-autogen, elixir-format
 msgid "Browser"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:219
+#: lib/animina_web/live/admin/ad_detail_live.ex:288
 #, elixir-autogen, elixir-format
 msgid "By Browser"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:220
+#: lib/animina_web/live/admin/ad_detail_live.ex:289
 #, elixir-autogen, elixir-format, fuzzy
 msgid "By Device"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:218
+#: lib/animina_web/live/admin/ad_detail_live.ex:287
 #, elixir-autogen, elixir-format
 msgid "By OS"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:185
+#: lib/animina_web/live/admin/ad_detail_live.ex:254
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Conversion rate"
 msgstr "Konuşma kapatıldı"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:181
+#: lib/animina_web/live/admin/ad_detail_live.ex:250
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Conversions"
 msgstr "Konuşma kapatıldı"
@@ -7576,17 +7576,17 @@ msgstr "Kedi"
 msgid "Create New Ad"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:196
+#: lib/animina_web/live/admin/ad_detail_live.ex:265
 #, elixir-autogen, elixir-format
 msgid "Daily Visits"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:134
+#: lib/animina_web/live/admin/ad_detail_live.ex:180
 #, elixir-autogen, elixir-format
 msgid "Date range"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:156
+#: lib/animina_web/live/admin/ad_detail_live.ex:202
 #, elixir-autogen, elixir-format
 msgid "Download QR"
 msgstr ""
@@ -7601,12 +7601,12 @@ msgstr ""
 msgid "Failed to create ad: %{errors}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:287
+#: lib/animina_web/live/admin/ad_detail_live.ex:356
 #, elixir-autogen, elixir-format
 msgid "From %{date}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:231
+#: lib/animina_web/live/admin/ad_detail_live.ex:300
 #, elixir-autogen, elixir-format
 msgid "IP"
 msgstr ""
@@ -7621,27 +7621,27 @@ msgstr ""
 msgid "No ads created yet."
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:279
+#: lib/animina_web/live/admin/ad_detail_live.ex:348
 #, elixir-autogen, elixir-format
 msgid "No data"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:256
+#: lib/animina_web/live/admin/ad_detail_live.ex:325
 #, elixir-autogen, elixir-format
 msgid "No visits recorded yet."
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:232
+#: lib/animina_web/live/admin/ad_detail_live.ex:301
 #, elixir-autogen, elixir-format
 msgid "OS"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:147
+#: lib/animina_web/live/admin/ad_detail_live.ex:193
 #, elixir-autogen, elixir-format
 msgid "QR Code"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:225
+#: lib/animina_web/live/admin/ad_detail_live.ex:294
 #, elixir-autogen, elixir-format
 msgid "Recent Visits"
 msgstr ""
@@ -7656,24 +7656,24 @@ msgstr ""
 msgid "Track ad performance and QR codes"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:126
+#: lib/animina_web/live/admin/ad_detail_live.ex:172
 #, elixir-autogen, elixir-format
 msgid "URL"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:290
+#: lib/animina_web/live/admin/ad_detail_live.ex:359
 #, elixir-autogen, elixir-format
 msgid "Until %{date}"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:174
-#: lib/animina_web/live/admin/ad_detail_live.ex:201
+#: lib/animina_web/live/admin/ad_detail_live.ex:243
+#: lib/animina_web/live/admin/ad_detail_live.ex:270
 #: lib/animina_web/live/admin/ads_live.ex:219
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Visits"
 msgstr "Görünür"
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:120
+#: lib/animina_web/live/admin/ad_detail_live.ex:166
 #: lib/animina_web/live/admin/ads_live.ex:232
 #, elixir-autogen, elixir-format, fuzzy
 msgid "active"
@@ -7684,23 +7684,23 @@ msgstr "Aktif"
 msgid "e.g. Magazine ABC, page 12"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:120
+#: lib/animina_web/live/admin/ad_detail_live.ex:166
 #: lib/animina_web/live/admin/ads_live.ex:232
 #, elixir-autogen, elixir-format
 msgid "inactive"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:165
+#: lib/animina_web/live/admin/ad_detail_live.ex:234
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Generate QR"
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:72
+#: lib/animina_web/live/admin/ad_detail_live.ex:81
 #, elixir-autogen, elixir-format
 msgid "QR code generated successfully."
 msgstr ""
 
-#: lib/animina_web/live/admin/ad_detail_live.ex:76
+#: lib/animina_web/live/admin/ad_detail_live.ex:85
 #, elixir-autogen, elixir-format
 msgid "QR code generated but failed to save path."
 msgstr ""
@@ -8127,3 +8127,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Instances"
 msgstr ""
+
+#: lib/animina_web/live/admin/ad_detail_live.ex:224
+#, elixir-autogen, elixir-format
+msgid "Download custom size"
+msgstr ""
+
+#: lib/animina_web/live/admin/ad_detail_live.ex:205
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Width (cm)"
+msgstr "Boy (cm)"

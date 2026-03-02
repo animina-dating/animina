@@ -53,6 +53,88 @@ defmodule AniminaWeb.Admin.AdDetailLiveTest do
     end
   end
 
+  describe "auto-regenerate missing QR code" do
+    test "regenerates QR code when file is missing from disk", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+      ad = ad_fixture()
+
+      # Set a qr_code_path that doesn't exist on disk
+      missing_path = "uploads/qr-codes/nonexistent_qr.png"
+      {:ok, ad} = Animina.Ads.update_qr_code_path(ad, missing_path)
+      assert ad.qr_code_path == missing_path
+      refute File.exists?(missing_path)
+
+      {:ok, _lv, html} =
+        conn
+        |> log_in_user(admin)
+        |> live(~p"/admin/ads/#{ad.id}")
+
+      case QrCode.check_dependencies() do
+        :ok ->
+          # Tools available — QR was auto-regenerated, should show download link
+          assert html =~ "Download QR"
+          refute html =~ "Generate QR"
+
+        {:error, _reason} ->
+          # Tools missing — can't regenerate, should show Generate QR button
+          assert html =~ "Generate QR"
+      end
+    end
+  end
+
+  describe "custom-size QR download form" do
+    test "shows custom-size form when qr_code_path is set", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+      ad = ad_fixture()
+
+      case QrCode.check_dependencies() do
+        :ok ->
+          # Generate a real QR so qr_code_path is set
+          {:ok, path} = QrCode.generate(ad)
+          {:ok, ad} = Animina.Ads.update_qr_code_path(ad, path)
+
+          {:ok, _lv, html} =
+            conn
+            |> log_in_user(admin)
+            |> live(~p"/admin/ads/#{ad.id}")
+
+          assert html =~ "Width (cm)"
+          assert html =~ "Download custom size"
+
+        {:error, _} ->
+          # Tools not available, skip
+          :ok
+      end
+    end
+
+    test "update-qr-size event computes pixels from cm", %{conn: conn} do
+      admin = Animina.AccountsFixtures.admin_fixture()
+      ad = ad_fixture()
+
+      case QrCode.check_dependencies() do
+        :ok ->
+          {:ok, path} = QrCode.generate(ad)
+          {:ok, _ad} = Animina.Ads.update_qr_code_path(ad, path)
+
+          {:ok, lv, _html} =
+            conn
+            |> log_in_user(admin)
+            |> live(~p"/admin/ads/#{ad.id}")
+
+          # 10 cm at 300 DPI = round(10 * 300 / 2.54) = 1181 px
+          html =
+            lv
+            |> element("form[phx-change=update-qr-size]")
+            |> render_change(%{"cm" => "10"})
+
+          assert html =~ "1181"
+
+        {:error, _} ->
+          :ok
+      end
+    end
+  end
+
   describe "generate-qr" do
     test "shows Generate QR button when qr_code_path is nil", %{conn: conn} do
       admin = Animina.AccountsFixtures.admin_fixture()

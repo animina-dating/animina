@@ -44,6 +44,28 @@ defmodule Animina.Ads.QrCode do
   end
 
   @doc """
+  Resizes a QR code PNG to the given pixel size using nearest-neighbor
+  interpolation (crisp edges). Returns `{:ok, tmp_path}` or `{:error, reason}`.
+  """
+  def resize(source_path, pixel_size) when is_integer(pixel_size) and pixel_size > 0 do
+    with :ok <- check_dependencies() do
+      tmp_path =
+        Path.join(
+          System.tmp_dir!(),
+          "qr_resized_#{pixel_size}_#{System.unique_integer([:positive])}.png"
+        )
+
+      size_str = "#{pixel_size}x#{pixel_size}"
+      {cmd, args} = magick_cmd([source_path, "-filter", "point", "-resize", size_str, tmp_path])
+
+      case System.cmd(cmd, args, stderr_to_stdout: true) do
+        {_, 0} -> {:ok, tmp_path}
+        {err, _} -> {:error, "ImageMagick resize failed: #{err}"}
+      end
+    end
+  end
+
+  @doc """
   Generates a QR code PNG for the given ad.
 
   Returns `{:ok, output_path}` or `{:error, reason}`.

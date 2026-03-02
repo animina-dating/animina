@@ -6,6 +6,8 @@ defmodule AniminaWeb.Admin.AdDetailLive do
   alias Animina.Ads.QrCode
   alias AniminaWeb.Layouts
 
+  require Logger
+
   import AniminaWeb.Helpers.AdminHelpers, only: [parse_int: 2, format_datetime: 1]
 
   use AniminaWeb.Helpers.PaginationHelpers, filter_events: []
@@ -22,6 +24,11 @@ defmodule AniminaWeb.Admin.AdDetailLive do
          |> push_navigate(to: ~p"/admin/ads")}
 
       ad ->
+        ad = maybe_regenerate_qr_code(ad)
+
+        default_cm = 5.0
+        default_pixels = cm_to_pixels(default_cm)
+
         {:ok,
          socket
          |> assign(
@@ -34,7 +41,9 @@ defmodule AniminaWeb.Admin.AdDetailLive do
            daily_counts: Ads.daily_visit_counts(ad.id),
            os_breakdown: Ads.visit_breakdown(ad.id, :os),
            browser_breakdown: Ads.visit_breakdown(ad.id, :browser),
-           device_breakdown: Ads.visit_breakdown(ad.id, :device_type)
+           device_breakdown: Ads.visit_breakdown(ad.id, :device_type),
+           custom_cm: default_cm,
+           custom_pixels: default_pixels
          )
          |> stream(:visits, [])}
     end
@@ -78,6 +87,46 @@ defmodule AniminaWeb.Admin.AdDetailLive do
 
       {:error, reason} ->
         {:noreply, put_flash(socket, :error, reason)}
+    end
+  end
+
+  @impl true
+  def handle_event("update-qr-size", %{"cm" => cm_str}, socket) do
+    case Float.parse(cm_str) do
+      {cm, _} when cm >= 1.0 and cm <= 80.0 ->
+        {:noreply, assign(socket, custom_cm: cm, custom_pixels: cm_to_pixels(cm))}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  defp cm_to_pixels(cm), do: round(cm * 300 / 2.54)
+
+  defp maybe_regenerate_qr_code(%{qr_code_path: path} = ad)
+       when is_binary(path) and path != "" do
+    if File.exists?(path), do: ad, else: regenerate_qr_code(ad, path)
+  end
+
+  defp maybe_regenerate_qr_code(ad), do: ad
+
+  defp regenerate_qr_code(ad, path) do
+    Logger.warning("QR code file missing for ad ##{ad.number}, regenerating: #{path}")
+
+    with {:ok, new_path} <- QrCode.generate(ad),
+         {:ok, updated_ad} <- Ads.update_qr_code_path(ad, new_path) do
+      updated_ad
+    else
+      {:error, reason} ->
+        Logger.error("Failed to regenerate QR code for ad ##{ad.number}: #{inspect(reason)}")
+        clear_stale_qr_path(ad)
+    end
+  end
+
+  defp clear_stale_qr_path(ad) do
+    case Ads.update_qr_code_path(ad, nil) do
+      {:ok, cleared_ad} -> cleared_ad
+      _ -> ad
     end
   end
 
@@ -155,6 +204,29 @@ defmodule AniminaWeb.Admin.AdDetailLive do
                 <.icon name="hero-arrow-down-tray-mini" class="w-3 h-3" />
                 {gettext("Download QR")}
               </a>
+              <form phx-change="update-qr-size" class="mt-2 flex flex-col items-center gap-1">
+                <label class="text-xs text-base-content/50">{gettext("Width (cm)")}</label>
+                <input
+                  type="number"
+                  name="cm"
+                  value={@custom_cm}
+                  step="0.1"
+                  min="1"
+                  max="80"
+                  class="input input-xs input-bordered w-20 text-center"
+                />
+                <span class="text-xs text-base-content/50">
+                  {@custom_pixels} × {@custom_pixels} px
+                </span>
+                <a
+                  href={~p"/admin/ads/#{@ad.id}/qr-code/sized?size=#{@custom_pixels}"}
+                  class="btn btn-outline btn-xs"
+                  download
+                >
+                  <.icon name="hero-arrow-down-tray-mini" class="w-3 h-3" />
+                  {gettext("Download custom size")}
+                </a>
+              </form>
             </div>
             <div :if={!@ad.qr_code_path} class="flex flex-col items-center gap-2">
               <div class="w-32 h-32 bg-base-300 rounded flex items-center justify-center">
