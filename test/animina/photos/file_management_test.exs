@@ -18,7 +18,7 @@ defmodule Animina.Photos.FileManagementTest do
       {:ok, image} = Image.new(100, 100, color: :blue)
       {:ok, _} = Image.write(image, main_path)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       assert :ok = FileManagement.generate_pixel_variant(photo)
 
@@ -37,7 +37,7 @@ defmodule Animina.Photos.FileManagementTest do
       {:ok, image} = Image.new(100, 100, color: :red)
       {:ok, _} = Image.write(image, main_path)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Generate once
       assert :ok = FileManagement.generate_pixel_variant(photo)
@@ -75,7 +75,7 @@ defmodule Animina.Photos.FileManagementTest do
       {:ok, image} = Image.new(100, 100, color: :green)
       {:ok, _} = Image.write(image, main_path)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       assert :ok = FileManagement.generate_review_pixel_variant(photo)
 
@@ -93,7 +93,7 @@ defmodule Animina.Photos.FileManagementTest do
       {:ok, image} = Image.new(100, 100, color: :red)
       {:ok, _} = Image.write(image, main_path)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Generate once
       assert :ok = FileManagement.generate_review_pixel_variant(photo)
@@ -124,7 +124,7 @@ defmodule Animina.Photos.FileManagementTest do
       dir = Photos.processed_path_dir(photo.owner_type, photo.owner_id)
       File.mkdir_p!(dir)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       {:ok, image} = Image.new(200, 200, color: :blue)
 

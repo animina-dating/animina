@@ -119,9 +119,7 @@ if config_env() == :prod do
     cmd_args: "-N delay,failure,success",
     qmail: false
 
-  # Monitor Postfix mail queue for delivery failures
-  config :animina, start_mail_queue_checker: true
-
-  # Monitor Postfix mail.log for bounce entries
-  config :animina, start_mail_log_checker: true
+  # Shutdown mode (see config/prod.exs): mail monitoring stays off
+  config :animina, start_mail_queue_checker: false
+  config :animina, start_mail_log_checker: false
 end

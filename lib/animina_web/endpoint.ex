@@ -11,9 +11,16 @@ defmodule AniminaWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+  # With the platform shut down (config :animina, :shutdown_mode, set at
+  # compile time in prod) the LiveView socket is removed entirely, so tabs
+  # that were open before the shutdown deploy cannot reconnect and keep
+  # using the app over the websocket; they fall back to HTTP and get the
+  # farewell page from AniminaWeb.Plugs.Shutdown.
+  if !Application.compile_env(:animina, :shutdown_mode, false) do
+    socket "/live", Phoenix.LiveView.Socket,
+      websocket: [connect_info: [session: @session_options]],
+      longpoll: [connect_info: [session: @session_options]]
+  end
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -32,6 +39,10 @@ defmodule AniminaWeb.Endpoint do
     at: "/uploads/blacklist",
     from: "uploads/blacklist",
     gzip: false
+
+  # While the platform is shut down, everything below the static plugs is
+  # replaced by the farewell page (except Impressum/Datenschutz/AGB/health).
+  plug AniminaWeb.Plugs.Shutdown
 
   if Code.ensure_loaded?(Tidewave) do
     plug Tidewave

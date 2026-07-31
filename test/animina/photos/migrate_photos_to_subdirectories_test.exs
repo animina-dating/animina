@@ -31,7 +31,7 @@ defmodule Animina.MigratePhotosToSubdirectoriesTest do
       refute File.exists?(legacy_main)
       refute File.exists?(legacy_thumb)
     after
-      File.rm_rf!(Photos.processed_dir())
+      File.rm_rf(Photos.processed_dir())
     end
 
     test "skips photos already at the new path" do
@@ -49,7 +49,7 @@ defmodule Animina.MigratePhotosToSubdirectoriesTest do
 
       assert File.read!(new_main) == original_content
     after
-      File.rm_rf!(Photos.processed_dir())
+      File.rm_rf(Photos.processed_dir())
     end
 
     test "handles MoodboardItem owner type" do
@@ -64,7 +64,7 @@ defmodule Animina.MigratePhotosToSubdirectoriesTest do
       assert File.exists?(new_main)
       assert String.contains?(new_main, "MoodboardItem/#{item_id}")
     after
-      File.rm_rf!(Photos.processed_dir())
+      File.rm_rf(Photos.processed_dir())
     end
   end
 

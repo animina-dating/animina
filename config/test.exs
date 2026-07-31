@@ -54,6 +54,12 @@ config :animina, start_status_cache: false
 # Disable analytics page view tracking in tests
 config :animina, :analytics_tracking, false
 
+# Disable the FunWithFlags ETS cache in tests: with the cache on, a flag
+# enabled in one test leaks into others (the DB write rolls back with the
+# sandbox, the global cache entry does not, ttl 900s). Without the cache
+# every read goes through the sandboxed repo and is isolated per test.
+config :fun_with_flags, :cache, enabled: false
+
 # Use a temp directory for photo uploads in tests
 config :animina, Animina.Photos, upload_dir: "tmp/test_uploads"
 

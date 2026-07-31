@@ -1,5 +1,11 @@
 # ANIMINA Dating Platform
 
+> [!IMPORTANT]
+> The hosted instance at animina.de was shut down on 31 July 2026; all
+> member data will be deleted on 28 August 2026. The code remains free and
+> open for anyone who wants to run their own instance or take over the
+> project.
+
 ANIMINA is a web based dating platform. In case you have a question do not
 hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 

@@ -13,6 +13,19 @@ config :animina, AniminaWeb.Endpoint,
     hosts: ["localhost", "127.0.0.1"]
   ]
 
+# ANIMINA is shut down: serve the farewell page everywhere and stop all
+# background workers so no jobs run and no mails go out. The mail queue
+# checkers are additionally forced off in runtime.exs. Remove this block
+# (and those runtime.exs lines) to bring the platform back.
+config :animina,
+  shutdown_mode: true,
+  start_unconfirmed_user_cleaner: false,
+  start_scheduler: false,
+  start_online_users_logger: false,
+  start_session_tracker: false,
+  start_ai_services: false,
+  start_status_cache: false
+
 # Sendmail adapter doesn't need an HTTP API client
 config :swoosh, api_client: false, local: false
 

@@ -10,7 +10,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = approved_photo_fixture()
       {_main, _thumb} = create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       url = Photos.signed_url(photo)
       conn = get(conn, url)
@@ -22,7 +22,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = approved_photo_fixture()
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       conn = get(conn, "/photos/invalid_sig_xxxxx/#{photo.id}.webp")
       assert conn.status == 404
@@ -39,7 +39,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = photo_fixture()
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       sig = Photos.compute_signature(photo.id)
       conn = get(conn, "/photos/#{sig}/#{photo.id}.webp")
@@ -50,7 +50,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = ollama_checking_photo_fixture()
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       url = Photos.signed_url(photo)
       conn = get(conn, url)
@@ -62,7 +62,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = approved_photo_fixture()
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       url = Photos.signed_url(photo, :thumbnail)
       conn = get(conn, url)
@@ -79,7 +79,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       {:ok, image} = Image.new(100, 100, color: :green)
       {:ok, _} = Image.write(image, main_path)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Pixel file should not exist yet
       pixel_path = Photos.processed_path(photo, :pixel)
@@ -99,7 +99,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = approved_photo_fixture()
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Compute a signature using a different date (simulating yesterday)
       yesterday_secret =
@@ -126,7 +126,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       create_processed_files(photo1)
       create_processed_files(photo2)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Get signature for photo1, try to access photo2 with it
       sig1 = Photos.compute_signature(photo1.id)
@@ -143,7 +143,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       create_processed_files(photo1)
       create_processed_files(photo2)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # User1's photo signature cannot be used to access User2's photo
       sig1 = Photos.compute_signature(photo1.id)
@@ -163,7 +163,7 @@ defmodule AniminaWeb.PhotoControllerTest do
       photo = approved_photo_fixture(%{owner_type: "User", owner_id: user_id})
       create_processed_files(photo)
 
-      on_exit(fn -> File.rm_rf!(Photos.processed_dir()) end)
+      on_exit(fn -> File.rm_rf(Photos.processed_dir()) end)
 
       # Try various invalid signatures with the correct photo ID
       invalid_signatures = [
