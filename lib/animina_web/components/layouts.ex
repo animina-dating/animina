@@ -503,7 +503,7 @@ defmodule AniminaWeb.Layouts do
                 {gettext("Imprint")}
               </a>
               <a
-                href="https://github.com/animina-dating/animina"
+                href="https://github.com/wintermeyer/animina"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-primary transition-colors"
@@ -511,8 +511,8 @@ defmodule AniminaWeb.Layouts do
                 GitHub
               </a>
               <a
-                href="https://github.com/animina-dating/animina/issues/new?template=bug_report.yml"
-                onclick="window.open('https://github.com/animina-dating/animina/issues/new?template=bug_report.yml&page_url=' + encodeURIComponent(window.location.href), '_blank'); return false;"
+                href="https://github.com/wintermeyer/animina/issues/new?template=bug_report.yml"
+                onclick="window.open('https://github.com/wintermeyer/animina/issues/new?template=bug_report.yml&page_url=' + encodeURIComponent(window.location.href), '_blank'); return false;"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="hover:text-primary transition-colors"

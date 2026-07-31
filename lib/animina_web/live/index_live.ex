@@ -340,7 +340,7 @@ defmodule AniminaWeb.IndexLive do
               )}
             </p>
             <a
-              href="https://github.com/animina-dating/animina"
+              href="https://github.com/wintermeyer/animina"
               target="_blank"
               rel="noopener noreferrer"
               class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors"

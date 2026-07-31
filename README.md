@@ -3,7 +3,7 @@
 ANIMINA is a web based dating platform. In case you have a question do not
 hesitate to contact Stefan Wintermeyer <sw@wintermeyer-consulting.de>
 
-![Screenshot of an admin ANIMINA view](https://github.com/animina-dating/animina/blob/main/priv/static/images/admin-screenshot.png?raw=true)
+![Screenshot of an admin ANIMINA view](https://github.com/wintermeyer/animina/blob/main/priv/static/images/admin-screenshot.png?raw=true)
 
 > [!NOTE]
 > Project founder Stefan Wintermeyer gave a (German) talk about the first
@@ -46,7 +46,7 @@ All schemas use UUIDs for primary keys. Real-time updates use Phoenix PubSub. Fe
 **Prerequisites:** macOS or Linux, [PostgreSQL](https://www.postgresql.org), [mise](https://mise.jdx.dev) for version management (Erlang/OTP 28.3, Elixir 1.19 — pinned in `.tool-versions`)
 
 ```bash
-git clone git@github.com:animina-dating/animina.git
+git clone git@github.com:wintermeyer/animina.git
 cd animina
 mise install
 mix deps.get
